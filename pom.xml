@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.ipor</groupId>
+    <artifactId>ipor-oracle</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>IPOR Oracle Contracts</name>
+    <description>IPOR Oracle Contracts</description>
+    <url>https://www.ipor.io</url>
+
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <!-- BASICS -->
+        <java.version>8</java.version>
+        <text.encoding>UTF-8</text.encoding>
+
+        <!-- LIBS VERSION -->
+        <web3j.version>4.8.4</web3j.version>
+
+        <!-- PLUGINS VERSION -->
+        <surefire-plugin.version>2.22.2</surefire-plugin.version>
+        <failsafe-plugin.version>2.22.2</failsafe-plugin.version>
+        <web3j-plugin.version>4.8.2</web3j-plugin.version>
+
+        <!-- DEPENDENT BASICS -->
+        <project.build.sourceEncoding>${text.encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${text.encoding}</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <solidity.version>0.7.4</solidity.version>
+    </properties>
+
+    <organization>
+        <name>IPOR Labs</name>
+        <url>https://www.ipor.io</url>
+    </organization>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://ipor-labs.atlassian.net/jira/software/c/projects/IL/issues/</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git@github.com:IPOR-Labs/ipor-oracle-service.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:IPOR-Labs/ipor-oracle-service.git</developerConnection>
+        <url>https://github.com/IPOR-Labs/ipor-oracle</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencies>
+
+        <!-- ETHEREUM -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>${web3j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>parity</artifactId>
+            <version>${web3j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>crypto</artifactId>
+            <version>${web3j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>abi</artifactId>
+            <version>${web3j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>codegen</artifactId>
+            <version>${web3j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>web3j-sokt</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.web3j</groupId>
+                <artifactId>web3j-maven-plugin</artifactId>
+                <version>${web3j-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <packageName>ip.ipor.oracle.contract</packageName>
+                    <sourceDestination>src/main/java/generated</sourceDestination>
+                    <nativeJavaType>true</nativeJavaType>
+                    <outputFormat>java,bin,abi</outputFormat>
+                    <soliditySourceFiles>
+                        <directory>contracts</directory>
+                        <includes>
+                            <include>**/*.sol</include>
+                        </includes>
+                    </soliditySourceFiles>
+                    <outputDirectory>
+                        <java>src/java/generated</java>
+                        <bin>src/bin/generated</bin>
+                        <abi>src/abi/generated</abi>
+                    </outputDirectory>
+                    <properties>
+                        <solidity.version>0.7.4</solidity.version>
+                    </properties>
+                    <pathPrefixes>
+                        <pathPrefix>dep=../dependencies</pathPrefix>
+                    </pathPrefixes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

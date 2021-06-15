@@ -1,0 +1,9 @@
+node_modules
+build
+app/src/contracts
+.DS_Store
+/src/java/generated/
+/src/abi/generated/
+/src/bin/generated/
+/ipor-oracle.iml
+/target/
