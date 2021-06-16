@@ -56,6 +56,11 @@ export default ({drizzle, drizzleState}) => {
                     />
                 </p>
             </div>
+
+            <h2>IPOR AMM</h2>
+
+            TODO
+
         </div>
     );
 };

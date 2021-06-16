@@ -3,6 +3,8 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import {Errors} from '../Errors.sol';
 import './IporOracleStorage.sol';
+import "../interfaces/IIporOracle.sol";
+import {DataTypes} from '../libraries/types/DataTypes.sol';
 
 
 /**
@@ -10,7 +12,7 @@ import './IporOracleStorage.sol';
  *
  * @author IPOR Labs
  */
-contract IporOracle is IporOracleV1Storage {
+contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     /// @notice event emitted when IPOR Index is updated by Updater
     event IporIndexUpdate(string ticker, uint256 value, uint256 interestBearingToken, uint256 date);
@@ -30,10 +32,10 @@ contract IporOracle is IporOracleV1Storage {
      * @return List of assets with calculated IPOR Index in current moment.
      *
      */
-    function getIndexes() external view returns (IporIndex[] memory) {
-        IporIndex[] memory _indexes = new IporIndex[](tickers.length);
+    function getIndexes() external view returns (DataTypes.IporIndex[] memory) {
+        DataTypes.IporIndex[] memory _indexes = new DataTypes.IporIndex[](tickers.length);
         for (uint256 i = 0; i < tickers.length; i++) {
-            _indexes[i] = IporIndex(
+            _indexes[i] = DataTypes.IporIndex(
                 indexes[tickers[i]].ticker,
                 indexes[tickers[i]].value,
                 indexes[tickers[i]].interestBearingToken,
@@ -66,7 +68,7 @@ contract IporOracle is IporOracleV1Storage {
         }
 
         uint256 updateDate = block.timestamp;
-        indexes[_tickerHash] = IporIndex(_ticker, _value, 100, updateDate);
+        indexes[_tickerHash] = DataTypes.IporIndex(_ticker, _value, 100, updateDate);
         emit IporIndexUpdate(_ticker, _value, 100, updateDate);
     }
 
@@ -79,13 +81,14 @@ contract IporOracle is IporOracleV1Storage {
      * @return date date when IPOR Index was calculated for asset
      *
      */
-    function getIndex(string memory _ticker) external view returns (uint256 value, uint256 interestBearingToken, uint256 date) {
+    function getIndex(string memory _ticker) external view  override(IIporOracle)
+        returns (uint256 value, uint256 interestBearingToken, uint256 date) {
         bytes32 _tickerHash = keccak256(abi.encodePacked(_ticker));
-        IporIndex storage _iporIndex = indexes[_tickerHash];
+        DataTypes.IporIndex storage _iporIndex = indexes[_tickerHash];
         return (
-        value = _iporIndex.value,
-        interestBearingToken = _iporIndex.interestBearingToken,
-        date = _iporIndex.date
+            value = _iporIndex.value,
+            interestBearingToken = _iporIndex.interestBearingToken,
+            date = _iporIndex.date
         );
     }
 

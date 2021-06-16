@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
+import {DataTypes} from '../libraries/types/DataTypes.sol';
+
 contract IporOracleStorage {
 
     /**
@@ -16,15 +18,8 @@ contract IporOracleStorage {
  */
 contract IporOracleV1Storage is IporOracleStorage {
 
-    struct IporIndex {
-        string ticker;
-        uint256 value;
-        uint256 interestBearingToken;
-        uint256 date;
-    }
-
     /// @notice list of IPOR indexes for particular assets
-    mapping(bytes32 => IporIndex) public indexes;
+    mapping(bytes32 => DataTypes.IporIndex) public indexes;
 
     /// @notice list of tickers used in indexes mapping
     bytes32[] public tickers;
