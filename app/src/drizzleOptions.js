@@ -1,5 +1,5 @@
 import IporOracle from "./contracts/IporOracle.json";
-import Amm from "./contracts/Amm.json";
+import IporAmm from "./contracts/IporAmm.json";
 
 const options = {
     web3: {
@@ -9,7 +9,7 @@ const options = {
         },
     },
 
-    contracts: [IporOracle, Amm],
+    contracts: [IporOracle, IporAmm],
     events: {
         IporOracle: ["IporIndexUpdate"],
     }

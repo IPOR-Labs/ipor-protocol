@@ -71,9 +71,9 @@ contract('IporOracle', (accounts) => {
         await iporOracle.updateIndex(tickerOne, 111, {from: updaterOne});
         await iporOracle.updateIndex(tickerTwo, 222, {from: updaterOne});
         const iporIndexes = await iporOracle.getIndexes();
-        assert( 2 === iporIndexes.length);
-        assert( tickerOne === iporIndexes[0].ticker);
-        assert( tickerTwo === iporIndexes[1].ticker);
+        assert(2 === iporIndexes.length);
+        assert(tickerOne === iporIndexes[0].ticker);
+        assert(tickerTwo === iporIndexes[1].ticker);
 
     });
 

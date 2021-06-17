@@ -30,20 +30,20 @@ export default ({drizzle, drizzleState}) => {
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporOracle"
+                        contract="IporOracleTest"
                         method="getIndexes"
                     />
                 </p>
-                <ContractForm drizzle={drizzle} contract="IporOracle" method="updateIndex"/>
+                <ContractForm drizzle={drizzle} contract="IporOracleTest" method="updateIndex"/>
 
                 <p>
                     <strong>Add updater</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracle" method="addUpdater"/>
+                    <ContractForm drizzle={drizzle} contract="IporOracleTest" method="addUpdater"/>
                 </p>
 
                 <p>
                     <strong>Remove updater</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracle" method="removeUpdater"/>
+                    <ContractForm drizzle={drizzle} contract="IporOracleTest" method="removeUpdater"/>
                 </p>
 
                 <p>
@@ -51,7 +51,7 @@ export default ({drizzle, drizzleState}) => {
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporOracle"
+                        contract="IporOracleTest"
                         method="getUpdaters"
                     />
                 </p>

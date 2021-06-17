@@ -1,7 +1,7 @@
-const Amm = artifacts.require('Amm');
+const IporAmm = artifacts.require('IporAmm');
 const IporOracle = artifacts.require('IporOracle');
 
-contract('Amm', (accounts) => {
+contract('IporAmm', (accounts) => {
 
     const [admin, updaterOne, updaterTwo, user] = accounts;
 
@@ -10,7 +10,7 @@ contract('Amm', (accounts) => {
 
     before(async () => {
         iporOracle = await IporOracle.deployed();
-        amm = await Amm.deployed();
+        amm = await IporAmm.deployed();
         await iporOracle.addUpdater(updaterOne);
     });
 
@@ -21,6 +21,5 @@ contract('Amm', (accounts) => {
         const iporIndexAmm = await amm.readIndex(ticker);
         let actualValue = parseInt(iporIndexAmm.value);
         assert(expectedValue === actualValue);
-
     });
 });
