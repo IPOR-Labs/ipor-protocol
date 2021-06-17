@@ -15,10 +15,16 @@ contract('IporAmm', (accounts) => {
     });
 
     it('should read Index from IPOR Oracle Smart Contract', async () => {
+        //given
         let ticker = "USDT";
         let expectedValue = 111;
-        await iporOracle.updateIndex(ticker, expectedValue, {from: updaterOne});
+        let expectedInterestBearingToken = 234;
+        await iporOracle.updateIndex(ticker, expectedValue, expectedInterestBearingToken, {from: updaterOne});
+
+        //when
         const iporIndexAmm = await amm.readIndex(ticker);
+
+        //then
         let actualValue = parseInt(iporIndexAmm.value);
         assert(expectedValue === actualValue);
     });

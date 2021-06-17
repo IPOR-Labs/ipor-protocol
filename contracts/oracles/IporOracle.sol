@@ -52,7 +52,7 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
      * @param _value The value of IPOR for particular asset
      *
      */
-    function updateIndex(string memory _ticker, uint256 _value) public onlyUpdater {
+    function updateIndex(string memory _ticker, uint256 _value, uint256 _interestBearingToken) public onlyUpdater {
 
         bool tickerExists = false;
         bytes32 _tickerHash = keccak256(abi.encodePacked(_ticker));
@@ -68,8 +68,8 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
         }
 
         uint256 updateDate = block.timestamp;
-        indexes[_tickerHash] = DataTypes.IporIndex(_ticker, _value, 100, updateDate);
-        emit IporIndexUpdate(_ticker, _value, 100, updateDate);
+        indexes[_tickerHash] = DataTypes.IporIndex(_ticker, _value, _interestBearingToken, updateDate);
+        emit IporIndexUpdate(_ticker, _value, _interestBearingToken, updateDate);
     }
 
 

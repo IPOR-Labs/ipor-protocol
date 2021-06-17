@@ -22,19 +22,27 @@ contract('IporOracle', (accounts) => {
 
     it('should not update IPOR Index', async () => {
         assertError(
-            iporOracle.updateIndex("USDT", 123, {from: updaterOne}),
+            iporOracle.updateIndex("USDT", 123, 456, {from: updaterOne}),
             'Reason given: 2'
         );
     });
 
     it('should update IPOR Index', async () => {
+        //given
         let ticker = "USDT";
-        let value = 123;
+        let expectedValue = 123;
+        let expectedInterestBearingToken = 234;
         await iporOracle.addUpdater(updaterOne);
-        await iporOracle.updateIndex(ticker, value, {from: updaterOne})
+
+        //when
+        await iporOracle.updateIndex(ticker, expectedValue, expectedInterestBearingToken, {from: updaterOne})
+
+        //then
         const iporIndex = await iporOracle.getIndex(ticker);
-        let convValue = parseInt(iporIndex.value);
-        assert(convValue === value);
+        let actualValue = parseInt(iporIndex.value);
+        let actualInterestBearingToken = parseInt(iporIndex.interestBearingToken);
+        assert(expectedValue === actualValue);
+        assert(expectedInterestBearingToken === actualInterestBearingToken);
     });
 
     it('should add IPOR Index Updater', async () => {
@@ -65,28 +73,44 @@ contract('IporOracle', (accounts) => {
     });
 
     it('should retrieve list of IPOR Indexes', async () => {
-        let tickerOne = "USDT";
-        let tickerTwo = "DAI";
+        //given
+        let expectedTickerOne = "USDT";
+        let expectedTickerTwo = "DAI";
+        let expectedIporIndexesSize = 2;
         await iporOracle.addUpdater(updaterOne);
-        await iporOracle.updateIndex(tickerOne, 111, {from: updaterOne});
-        await iporOracle.updateIndex(tickerTwo, 222, {from: updaterOne});
+        await iporOracle.updateIndex(expectedTickerOne, 111, 234, {from: updaterOne});
+        await iporOracle.updateIndex(expectedTickerTwo, 222, 234, {from: updaterOne});
+
+        //when
         const iporIndexes = await iporOracle.getIndexes();
-        assert(2 === iporIndexes.length);
-        assert(tickerOne === iporIndexes[0].ticker);
-        assert(tickerTwo === iporIndexes[1].ticker);
+
+        //then
+        assert(expectedIporIndexesSize === iporIndexes.length);
+        assert(expectedTickerOne === iporIndexes[0].ticker);
+        assert(expectedTickerTwo === iporIndexes[1].ticker);
 
     });
 
     it('should update existing IPOR Index', async () => {
+        //given
         let ticker = "USDT";
-        let valueOne = 123;
-        let valueTwo = 321;
+        let expectedValueOne = 123;
+        let expectedInterestBearingTokenOne = 234;
+        let expectedValueTwo = 321;
+        let expectedInterestBearingTokenTwo = 567;
         await iporOracle.addUpdater(updaterOne);
-        await iporOracle.updateIndex(ticker, valueOne, {from: updaterOne});
-        await iporOracle.updateIndex(ticker, valueTwo, {from: updaterOne});
+
+        //when
+        await iporOracle.updateIndex(ticker, expectedValueOne, expectedInterestBearingTokenOne, {from: updaterOne});
+        await iporOracle.updateIndex(ticker, expectedValueTwo, expectedInterestBearingTokenTwo, {from: updaterOne});
+
+        //then
         const iporIndex = await iporOracle.getIndex(ticker);
-        let convValue = parseInt(iporIndex.value);
-        assert(convValue === valueTwo);
+        let actualValue = parseInt(iporIndex.value);
+        let actualInterestBearingToken = parseInt(iporIndex.interestBearingToken);
+
+        assert(actualValue === expectedValueTwo);
+        assert(actualInterestBearingToken === expectedInterestBearingTokenTwo);
     });
 
 });
