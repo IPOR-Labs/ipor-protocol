@@ -7,3 +7,4 @@ app/src/contracts
 /src/bin/generated/
 /ipor-oracle.iml
 /target/
+/contracts/oracles/artifacts/

@@ -15,7 +15,7 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
 contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     /// @notice event emitted when IPOR Index is updated by Updater
-    event IporIndexUpdate(string ticker, uint256 value, uint256 interestBearingToken, uint256 date);
+    event IporIndexUpdate(string asset, uint256 value, uint256 ibtPrice, uint256 date);
 
     /// @notice event emitted when IPOR Index Updater is added by Admin
     event IporIndexUpdaterAdd(address _updater);
@@ -33,13 +33,13 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
      *
      */
     function getIndexes() external view returns (DataTypes.IporIndex[] memory) {
-        DataTypes.IporIndex[] memory _indexes = new DataTypes.IporIndex[](tickers.length);
-        for (uint256 i = 0; i < tickers.length; i++) {
+        DataTypes.IporIndex[] memory _indexes = new DataTypes.IporIndex[](assets.length);
+        for (uint256 i = 0; i < assets.length; i++) {
             _indexes[i] = DataTypes.IporIndex(
-                indexes[tickers[i]].ticker,
-                indexes[tickers[i]].value,
-                indexes[tickers[i]].interestBearingToken,
-                indexes[tickers[i]].date
+                indexes[assets[i]].asset,
+                indexes[assets[i]].value,
+                indexes[assets[i]].ibtPrice,
+                indexes[assets[i]].blockTimestamp
             );
         }
         return _indexes;
@@ -48,47 +48,47 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     /**
      * @notice Update IPOR index for specific asset
-     * @param _ticker The ticker of the asset
+     * @param _asset The asset symbol
      * @param _value The value of IPOR for particular asset
      *
      */
-    function updateIndex(string memory _ticker, uint256 _value, uint256 _interestBearingToken) public onlyUpdater {
+    function updateIndex(string memory _asset, uint256 _value, uint256 _ibtPrice) public onlyUpdater {
 
-        bool tickerExists = false;
-        bytes32 _tickerHash = keccak256(abi.encodePacked(_ticker));
+        bool assetExists = false;
+        bytes32 _assetHash = keccak256(abi.encodePacked(_asset));
 
-        for (uint256 i = 0; i < tickers.length; i++) {
-            if (tickers[i] == _tickerHash) {
-                tickerExists = true;
+        for (uint256 i = 0; i < assets.length; i++) {
+            if (assets[i] == _assetHash) {
+                assetExists = true;
             }
         }
 
-        if (tickerExists == false) {
-            tickers.push(_tickerHash);
+        if (assetExists == false) {
+            assets.push(_assetHash);
         }
 
         uint256 updateDate = block.timestamp;
-        indexes[_tickerHash] = DataTypes.IporIndex(_ticker, _value, _interestBearingToken, updateDate);
-        emit IporIndexUpdate(_ticker, _value, _interestBearingToken, updateDate);
+        indexes[_assetHash] = DataTypes.IporIndex(_asset, _value, _ibtPrice, updateDate);
+        emit IporIndexUpdate(_asset, _value, _ibtPrice, updateDate);
     }
 
 
     /**
      * @notice Return IPOR index for specific asset
-     * @param _ticker The ticker of the asset
-     * @return value then value of IPOR Index for asset with ticker name _ticker
-     * @return interestBearingToken interest bearing token in this particular moment
-     * @return date date when IPOR Index was calculated for asset
+     * @param _asset The asset symbol
+     * @return value then value of IPOR Index for particular asset
+     * @return ibtPrice interest bearing token in this particular moment
+     * @return blockTimestamp date when IPOR Index was calculated for asset
      *
      */
-    function getIndex(string memory _ticker) external view  override(IIporOracle)
-        returns (uint256 value, uint256 interestBearingToken, uint256 date) {
-        bytes32 _tickerHash = keccak256(abi.encodePacked(_ticker));
-        DataTypes.IporIndex storage _iporIndex = indexes[_tickerHash];
+    function getIndex(string memory _asset) external view  override(IIporOracle)
+        returns (uint256 value, uint256 ibtPrice, uint256 blockTimestamp) {
+        bytes32 _assetHash = keccak256(abi.encodePacked(_asset));
+        DataTypes.IporIndex storage _iporIndex = indexes[_assetHash];
         return (
             value = _iporIndex.value,
-            interestBearingToken = _iporIndex.interestBearingToken,
-            date = _iporIndex.date
+            ibtPrice = _iporIndex.ibtPrice,
+            blockTimestamp = _iporIndex.blockTimestamp
         );
     }
 

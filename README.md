@@ -5,6 +5,10 @@ MNEMONIC=
 INFURA_PROJECT_ID=
 ``` 
 
+#### Build project
+
+`npm install`
+
 #### Deploy Smart Contract on Kovan Testnet
 
 In project root folder execute in command line:
