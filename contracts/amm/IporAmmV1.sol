@@ -69,7 +69,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
         nextDerivativeId++;
 
-        payFixedReceiveFloatingPositions[keccak256(abi.encodePacked(_asset))].push(
+        payFixedPositions[keccak256(abi.encodePacked(_asset))].push(
             DataTypes.IporDerivative(
                 nextDerivativeId,
                 msg.sender,

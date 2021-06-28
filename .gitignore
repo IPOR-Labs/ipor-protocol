@@ -8,3 +8,4 @@ app/src/contracts
 /ipor-oracle.iml
 /target/
 /contracts/oracles/artifacts/
+/coverage/

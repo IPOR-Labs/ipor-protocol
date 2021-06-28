@@ -16,16 +16,16 @@ contract IporAmmStorage {
  */
 contract IporAmmV1Storage is IporAmmStorage {
 
-    // @notice Map of available Liquidity Pools, key in this map are underlying assets
+    // @notice Map of available Liquidity Pools, key in this map are underlying asset symbol
     mapping(bytes32 => address) public pools;
 
     // @notice list of long positions for particular asset, where buyer want to pay fixed and receive floating
     //TODO: figure out better structure
-    mapping(bytes32 => DataTypes.IporDerivative[]) public payFixedReceiveFloatingPositions;
+    mapping(bytes32 => DataTypes.IporDerivative[]) public payFixedPositions;
 
-    // @notice list of short positions for particular asset, where burer want to pay floating and reveice fixed
+    // @notice list of short positions for particular asset, where buyer want to pay floating and reveice fixed
     //TODO: figure out better structure
-    mapping(bytes32 => DataTypes.IporDerivative[]) public payFloatingReceiveFixedPositions;
+    mapping(bytes32 => DataTypes.IporDerivative[]) public recFixedPositions;
 
     // @notice next derivative id (long or short)
     uint256 public nextDerivativeId;

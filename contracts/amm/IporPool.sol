@@ -10,10 +10,9 @@ import "./IporPoolStorage.sol";
  */
 contract IporPool is IporPoolV1Storage {
 
-
-    constructor(string memory _ticker) {
+    constructor(address _token) {
         admin = msg.sender;
-        ticker = _ticker;
+        token = _token;
     }
 
     /**
@@ -28,33 +27,39 @@ contract IporPool is IporPoolV1Storage {
         //TODO: ??? assert(cToken.mint(_amount) == 0);
     }
 
-    function redeem(uint256 _amount) external isLongUtilized() isShortUtilized() returns (uint256) {
+    function redeem(uint256 _amount) external isPayFixUtilized() isRecFixUtilized() returns (uint256) {
     }
 
 
-    function calculateLongPoolUtilization(uint256 _longPoolReserved) public view returns (uint256) {
+    function calculatePayFixedPoolUtilization(uint256 _payFixedPoolReserved) public view returns (uint256) {
     }
 
-    function calculateShortPoolUtilization(uint256 _shortPoolReserved) public view returns (uint256) {
+    function calculateRecFixedPoolUtilization(uint256 _recFixedPoolReserved) public view returns (uint256) {
     }
 
-    function payout(address _redeemer, uint256 _redeemedDaiAmount, uint256 _redeemedCherryDaiTokens) internal {
+    /**
+     * @notice Transfer the underlying asset
+     * @param _redeemer redeemer address
+     * @param _redeemedTokenAmount amount of Token to transfer
+     * @param _redeemedIpTokenAmount amount of IpToken to burn
+     */
+    function payout(address _redeemer, uint256 _redeemedTokenAmount, uint256 _redeemedIpTokenAmount) internal {
     }
 
-    function _reserveLongPool(uint256 _amount) internal canReserveLong(_amount) {
+    function _reservePayFixPool(uint256 _amount) internal canReservePayFix(_amount) {
         //TODO: reqire amount
 
         //longPoolReserved = longPoolReserved.add(_amount);
     }
 
-    function _reserveShortPool(uint256 _amount) internal canReserveShort(_amount) {
+    function _reserveRecFixPool(uint256 _amount) internal canReserveRecFix(_amount) {
         //TODO:
         //require(_amount > 0, "Cherrypool::invalid amount to reserve");
 
         //        shortPoolReserved = shortPoolReserved.add(_amount);
     }
 
-    function _releaseAssetFromLongPool(uint256 _amount) internal {
+    function _releaseAssetFromPayFixPool(uint256 _amount) internal {
         //TODO: require
         //        require(_amount > 0, "Cherrypool::invalid amount to free");
         // longPoolReserved.sub(_amount);
@@ -62,7 +67,7 @@ contract IporPool is IporPoolV1Storage {
         //        emit FreeLongPool(_amount);
     }
 
-    function _releaseAssetFromShortPool(uint256 _amount) internal {
+    function _releaseAssetFromRecFixPool(uint256 _amount) internal {
         //TODO: require
         //        require(_amount > 0, "Cherrypool::invalid amount to free");
         // shortPoolReserved.sub(_amount);
@@ -70,29 +75,29 @@ contract IporPool is IporPoolV1Storage {
         //        emit FreeShortPool(_amount);
     }
 
-    function _freeShortPool(uint256 _amount) pure internal {
+    function _freeRecFixPool(uint256 _amount) pure internal {
         require(_amount > 0, "Cherrypool::invalid amount to free");
         // shortPoolReserved.sub(_amount);
 
         // emit FreeShortPool(_amount);
     }
 
-    modifier isLongUtilized() {
+    modifier isPayFixUtilized() {
         //TODO: user defined parameters for pool
         _;
     }
 
-    modifier isShortUtilized() {
+    modifier isRecFixUtilized() {
         //TODO: user defined parameters for pool
         _;
     }
 
-    modifier canReserveLong(uint256 _amount) {
+    modifier canReservePayFix(uint256 _amount) {
         //TODO: check if long pool does not have liquidity
         _;
     }
 
-    modifier canReserveShort(uint256 _amount) {
+    modifier canReserveRecFix(uint256 _amount) {
         //TODO: check if long pool does not have liquidity
         _;
     }
