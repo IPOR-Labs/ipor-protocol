@@ -12,7 +12,7 @@ contract IporPool is IporPoolV1Storage {
 
     constructor(address _token) {
         admin = msg.sender;
-        token = _token;
+        token = ERC20(_token);
     }
 
     /**

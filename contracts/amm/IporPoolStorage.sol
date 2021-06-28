@@ -2,6 +2,8 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import {DataTypes} from '../libraries/types/DataTypes.sol';
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract IporPoolStorage {
 
@@ -19,10 +21,10 @@ contract IporPoolStorage {
 contract IporPoolV1Storage is IporPoolStorage {
 
     //@notice Address of Smart Contract in ERC20 Token Standard. Smart Contract operate on underlying asset which is ERC20 token.
-    address public token;
+    ERC20 public token;
 
     //@notice Address of Smart Contract in ERC20 Token Standard. Smart Contract operate on IPOR token which is ERC20 token and refer to underlying asset.
-    address public ipToken;
+    ERC20 public ipToken;
 
     //@notice Total pool token balance
     uint256 public poolTokenBalance;
