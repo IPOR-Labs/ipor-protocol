@@ -20,6 +20,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     uint256 constant ONE_MONTH_SECONDS = 60 * 60 * 24 * 30;
 
     constructor(address _iporOracle, address _usdtPool, address _usdcPool, address _daiPool) {
+
         admin = msg.sender;
         iporOracle = IIporOracle(_iporOracle);
         pools["USDT"] = _usdtPool;
@@ -37,18 +38,18 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 _notionalAmount,
         uint256 _depositAmount,
         uint256 _maximumSlippage,
-        DataTypes.DerivativeDirection direction) public {
+        uint256 direction) public {
 
-        require(_notionalAmount > 0, Errors.AMM_NOTIONAL_AMOUNT_TOO_LOW);
-        require(_depositAmount > 0, Errors.AMM_DEPOSIT_AMOUNT_TOO_LOW);
-        require(_maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
+//        require(_notionalAmount > 0, Errors.AMM_NOTIONAL_AMOUNT_TOO_LOW);
+//        require(_depositAmount > 0, Errors.AMM_DEPOSIT_AMOUNT_TOO_LOW);
+//        require(_maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
         //TODO: check to hight positions
         //TODO: confirm if notional >= deposit
 
 
         //TODO: BEGIN - calculate derivative indicators
-        uint256 spread = _calculateSpread();
-        uint256 fee = _calculateFee();
+//        uint256 spread = _calculateSpread();
+//        uint256 fee = _calculateFee();
         //TODO: calculate Opening Fee
         //TODO: calculate liquidataion Fee
         //TODO: maybe calculate earlyTerminationFee
@@ -57,8 +58,8 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         //TODO: calculate IBT price - from oracle
 
 
-        uint256 gas = _calculateGasForIporPublishing();
-        uint256 fixedRate = 10;
+//        uint256 gas = _calculateGasForIporPublishing();
+//        uint256 fixedRate = 10;
         uint256 iporIndexValue = 3;
 
         //uint256 soap = 10000;
@@ -68,39 +69,65 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 endingTime = startingTime + ONE_MONTH_SECONDS;
 
         nextDerivativeId++;
+//        address pool = pools[_asset];
 
-        payFixedPositions[keccak256(abi.encodePacked(_asset))].push(
-            DataTypes.IporDerivative(
-                nextDerivativeId,
-                msg.sender,
-                _asset,
-                _notionalAmount,
-                _depositAmount,
-                startingTime,
-                endingTime,
-                fixedRate,
+            derivatives.push(
+                DataTypes.IporDerivative(
+                    nextDerivativeId,
+                    msg.sender,
+                    _asset,
+                    _notionalAmount,
+                    _depositAmount,
+                    startingTime,
+                    endingTime,
+                    10,
                     10000,
-                iporIndexValue,
-        130, //ibtPrice,
-                300 //ibtQuantity
-            )
-        );
+                    iporIndexValue,
+                    130, //ibtPrice,
+                    300 //ibtQuantity,
+                )
+            );
 
         emit OpenPosition(
             nextDerivativeId,
-            direction,
+                DataTypes.DerivativeDirection(direction),
             msg.sender,
                 _asset,
             _notionalAmount,
             _depositAmount,
             startingTime,
             endingTime,
-            fixedRate,
+            10,
                 10000,
             iporIndexValue,
             222, //ibtPrice
             333 //ibtQuantity
         );
+    }
+
+    function getOpenPositions() external view returns (DataTypes.IporDerivative[] memory) {
+        DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](derivatives.length);
+
+        for (uint256 i = 0; i < derivatives.length; i++) {
+            _derivatives[i] = DataTypes.IporDerivative(
+                derivatives[i].id,
+                    derivatives[i].buyer,
+                    derivatives[i].asset,
+                    derivatives[i].notionalAmount,
+            derivatives[i].depositAmount,
+            derivatives[i].startingTimestamp,
+            derivatives[i].endingTimestamp,
+            derivatives[i].fixedRate,
+            derivatives[i].soap,
+            derivatives[i].iporIndexValue,
+            derivatives[i].ibtPrice,
+            derivatives[i].ibtQuantity
+            );
+        }
+
+
+        return _derivatives;
+
     }
 
     function closeShortPosition(uint256 _derivativeId) public {
@@ -135,7 +162,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     function _calculateFee() internal returns (uint256) {
         //TODO:
-
+        return 1;
     }
 
     function _calculateSpread() internal returns (uint256) {

@@ -67,5 +67,6 @@ library DataTypes {
         //@notice IPOR Interest Bearing Token quantity
         uint256 ibtQuantity;
 
+
     }
 }

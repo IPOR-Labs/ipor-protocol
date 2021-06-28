@@ -14,6 +14,13 @@ contract('IporAmm', (accounts) => {
         await iporOracle.addUpdater(updaterOne);
     });
 
+    it('should open position', async () => {
+        //when
+        const iporIndexAmm = await amm.openPosition("DAI", 10000, 10, 3, 0);
+
+        const derivatives = await amm.getOpenPositions();
+    });
+
     it('should read Index from IPOR Oracle Smart Contract', async () => {
         //given
         let ticker = "USDT";
