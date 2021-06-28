@@ -13,3 +13,5 @@ app/src/contracts
 /contracts/interfaces/artifacts/
 /contracts/libraries/types/artifacts/
 /ipor-protocol.iml
+/.env
+/package-lock.json
