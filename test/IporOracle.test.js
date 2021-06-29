@@ -16,12 +16,12 @@ contract('IporOracle', (accounts) => {
 
     let iporOracle = null;
 
-    before(async () => {
-        iporOracle = await IporOracle.deployed();
+    beforeEach(async () => {
+        iporOracle = await IporOracle.new();
     });
 
-    it('should not update IPOR Index', async () => {
-        assertError(
+    it('should NOT update IPOR Index', async () => {
+        await assertError(
             iporOracle.updateIndex("USDT", 123, 456, {from: updaterOne}),
             'Reason given: 2'
         );
@@ -51,8 +51,8 @@ contract('IporOracle', (accounts) => {
         assert(updaters.includes(updaterOne));
     });
 
-    it('should not add IPOR Index Updater', async () => {
-        assertError(
+    it('should NOT add IPOR Index Updater', async () => {
+        await assertError(
             iporOracle.addUpdater(updaterTwo, {from: user}),
             'Reason given: 1'
         );
@@ -65,8 +65,8 @@ contract('IporOracle', (accounts) => {
         assert(!updaters.includes(updaterOne));
     });
 
-    it('should not remove IPOR Index Updater', async () => {
-        assertError(
+    it('should NOT remove IPOR Index Updater', async () => {
+        await assertError(
             iporOracle.removeUpdater(updaterTwo, {from: user}),
             'Reason given: 1'
         );

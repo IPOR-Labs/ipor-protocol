@@ -19,6 +19,7 @@ library DataTypes {
         uint256 blockTimestamp;
     }
 
+    //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum DerivativeDirection {
 
         //@notice In long position the trader will pay a fixed rate and receive a floating rate.
@@ -27,12 +28,31 @@ library DataTypes {
         //@notice In short position the trader will receive fixed rate and pay a floating rate.
         PayFloatingReceiveFixed
     }
+    struct IporDerivativeIndicator {
+        //@notice Fixed Rate
+        uint256 fixedRate;
+
+        //@notice SOAP - Sum Of All Payouts indicator
+        uint256 soap;
+
+        //@notice IPOR Index value indicator
+        uint256 iporIndexValue;
+
+        //@notice IPOR Interest Bearing Token price
+        uint256 ibtPrice;
+
+        //@notice IPOR Interest Bearing Token quantity
+        uint256 ibtQuantity;
+    }
 
     //@notice IPOR Derivative
     struct IporDerivative {
 
         //@notice unique ID of this derivative
         uint256 id;
+
+        //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
+        uint8 direction;
 
         //@notice Buyer of this derivative
         address buyer;
@@ -52,21 +72,7 @@ library DataTypes {
         //@notice Endind time of this Derivative
         uint256 endingTimestamp;
 
-        //@notice Fixed Rate
-        uint256 fixedRate;
-
-        //@notice SOAP - Sum Of All Payouts indicator
-        uint256 soap;
-
-        //@notice IPOR Index value indicator
-        uint256 iporIndexValue;
-
-        //@notice IPOR Interest Bearing Token price
-        uint256 ibtPrice;
-
-        //@notice IPOR Interest Bearing Token quantity
-        uint256 ibtQuantity;
-
+        IporDerivativeIndicator indicator;
 
     }
 }

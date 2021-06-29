@@ -15,6 +15,10 @@ import './IporPool.sol';
  */
 contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
+    uint256 internal constant MAX_NOTIONAL_AMOUNT = 1e18;
+    uint256 internal constant MAX_DEPOSIT_AMOUNT = 1e17;
+    uint256 internal constant MAX_SLIPPAGE = 1e16;
+
     IIporOracle public iporOracle;
 
     uint256 constant ONE_MONTH_SECONDS = 60 * 60 * 24 * 30;
@@ -30,7 +34,13 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     }
 
     /**
-    * @notice function called by trader to enter into long derivative position
+    * @notice Trader open new derivative position. Depending on the direction it could be derivative
+    * where trader pay fixed and receive a floating (long position) or receive fixed and pay a floating.
+    * @param _asset symbol of asset of the derivative
+    * @param _notionalAmount value of notional principal amount (reference or theoretical amount) on which the exchanged interest payments are based
+    * @param _depositAmount value of asset which is deposited for this derivative
+    * @param _direction pay fixed and receive a floating (trader assume that interest rate will increase)
+    * or receive a floating and pay fixed (trader assume that interest rate will decrease)
     * In a long position the trader will pay a fixed rate and receive a floating rate.
     */
     function openPosition(
@@ -38,18 +48,23 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 _notionalAmount,
         uint256 _depositAmount,
         uint256 _maximumSlippage,
-        uint256 direction) public {
+        uint8 _direction) public {
 
-//        require(_notionalAmount > 0, Errors.AMM_NOTIONAL_AMOUNT_TOO_LOW);
-//        require(_depositAmount > 0, Errors.AMM_DEPOSIT_AMOUNT_TOO_LOW);
-//        require(_maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
-        //TODO: check to hight positions
-        //TODO: confirm if notional >= deposit
+        require(_notionalAmount > 0, Errors.AMM_NOTIONAL_AMOUNT_TOO_LOW);
+        require(_depositAmount > 0, Errors.AMM_DEPOSIT_AMOUNT_TOO_LOW);
+        require(_maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
+        require(_notionalAmount > _depositAmount, Errors.AMM_NOTIONAL_AMOUNT_NOT_GREATER_THAN_DEPOSIT_AMOUNT);
+        require(pools[_asset] != address(0), Errors.AMM_LIQUIDITY_POOL_NOT_EXISTS);
+        require(_direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.AMM_DERIVATIVE_DIRECTION_NOT_EXISTS);
+
+        //TODO: check too hight positions
+
+        //TODO: calculate Exchange Rate and SOAP
 
 
         //TODO: BEGIN - calculate derivative indicators
-//        uint256 spread = _calculateSpread();
-//        uint256 fee = _calculateFee();
+        //        uint256 spread = _calculateSpread();
+        //        uint256 fee = _calculateFee();
         //TODO: calculate Opening Fee
         //TODO: calculate liquidataion Fee
         //TODO: maybe calculate earlyTerminationFee
@@ -58,8 +73,8 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         //TODO: calculate IBT price - from oracle
 
 
-//        uint256 gas = _calculateGasForIporPublishing();
-//        uint256 fixedRate = 10;
+        //        uint256 gas = _calculateGasForIporPublishing();
+        //        uint256 fixedRate = 10;
         uint256 iporIndexValue = 3;
 
         //uint256 soap = 10000;
@@ -69,36 +84,39 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 endingTime = startingTime + ONE_MONTH_SECONDS;
 
         nextDerivativeId++;
-//        address pool = pools[_asset];
-
-            derivatives.push(
-                DataTypes.IporDerivative(
-                    nextDerivativeId,
-                    msg.sender,
-                    _asset,
-                    _notionalAmount,
-                    _depositAmount,
-                    startingTime,
-                    endingTime,
-                    10,
-                    10000,
-                    iporIndexValue,
-                    130, //ibtPrice,
-                    300 //ibtQuantity,
-                )
-            );
+        //        address pool = pools[_asset];
+        DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
+            10,
+            10000,
+            iporIndexValue,
+            130, //ibtPrice,
+            300 //ibtQuantity,
+        );
+        derivatives.push(
+            DataTypes.IporDerivative(
+                nextDerivativeId,
+                _direction,
+                msg.sender,
+                _asset,
+                _notionalAmount,
+                _depositAmount,
+                startingTime,
+                endingTime,
+                indicator
+            )
+        );
 
         emit OpenPosition(
             nextDerivativeId,
-                DataTypes.DerivativeDirection(direction),
+            DataTypes.DerivativeDirection(_direction),
             msg.sender,
-                _asset,
+            _asset,
             _notionalAmount,
             _depositAmount,
             startingTime,
             endingTime,
             10,
-                10000,
+            10000,
             iporIndexValue,
             222, //ibtPrice
             333 //ibtQuantity
@@ -109,19 +127,23 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](derivatives.length);
 
         for (uint256 i = 0; i < derivatives.length; i++) {
+            DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
+                derivatives[i].indicator.fixedRate,
+                derivatives[i].indicator.soap,
+                derivatives[i].indicator.iporIndexValue,
+                derivatives[i].indicator.ibtPrice,
+                derivatives[i].indicator.ibtQuantity
+            );
             _derivatives[i] = DataTypes.IporDerivative(
                 derivatives[i].id,
-                    derivatives[i].buyer,
-                    derivatives[i].asset,
-                    derivatives[i].notionalAmount,
-            derivatives[i].depositAmount,
-            derivatives[i].startingTimestamp,
-            derivatives[i].endingTimestamp,
-            derivatives[i].fixedRate,
-            derivatives[i].soap,
-            derivatives[i].iporIndexValue,
-            derivatives[i].ibtPrice,
-            derivatives[i].ibtQuantity
+                derivatives[i].direction,
+                derivatives[i].buyer,
+                derivatives[i].asset,
+                derivatives[i].notionalAmount,
+                derivatives[i].depositAmount,
+                derivatives[i].startingTimestamp,
+                derivatives[i].endingTimestamp,
+                indicator
             );
         }
 
@@ -130,11 +152,8 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     }
 
-    function closeShortPosition(uint256 _derivativeId) public {
-        //TODO: closeTrade
-    }
-
-    function closeLongPosition(uint256 _derivativeId) public {
+    function closePosition(uint256 _derivativeId) public {
+        //TODO: calculate Exchange Rate and SOAP
         //TODO: closeTrade
     }
 
