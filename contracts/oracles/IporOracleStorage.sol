@@ -21,8 +21,8 @@ contract IporOracleV1Storage is IporOracleStorage {
     /// @notice list of IPOR indexes for particular assets
     mapping(bytes32 => DataTypes.IporIndex) public indexes;
 
-    /// @notice list of tickers used in indexes mapping
-    bytes32[] public tickers;
+    /// @notice list of assets used in indexes mapping
+    bytes32[] public assets;
 
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;

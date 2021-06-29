@@ -7,3 +7,11 @@ app/src/contracts
 /src/bin/generated/
 /ipor-oracle.iml
 /target/
+/contracts/oracles/artifacts/
+/contracts/amm/artifacts/
+/contracts/artifacts/
+/contracts/interfaces/artifacts/
+/contracts/libraries/types/artifacts/
+/ipor-protocol.iml
+/.env
+/package-lock.json

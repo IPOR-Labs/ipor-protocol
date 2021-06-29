@@ -1,17 +1,24 @@
-const IporAmm = artifacts.require('IporAmm');
+const IporAmmV1 = artifacts.require('IporAmmV1');
 const IporOracle = artifacts.require('IporOracle');
 
 contract('IporAmm', (accounts) => {
 
-    const [admin, updaterOne, updaterTwo, user] = accounts;
+    const [admin, updaterOne, updaterTwo, user, usdtToken, usdcToken, daiToken] = accounts;
 
     let amm = null;
     let iporOracle = null;
 
     before(async () => {
         iporOracle = await IporOracle.deployed();
-        amm = await IporAmm.deployed();
+        amm = await IporAmmV1.deployed();
         await iporOracle.addUpdater(updaterOne);
+    });
+
+    it('should open position', async () => {
+        //when
+        const iporIndexAmm = await amm.openPosition("DAI", 10000, 10, 3, 0);
+
+        const derivatives = await amm.getOpenPositions();
     });
 
     it('should read Index from IPOR Oracle Smart Contract', async () => {
