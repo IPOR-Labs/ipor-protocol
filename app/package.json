@@ -8,6 +8,7 @@
     "@drizzle/store": "^1.5.1",
     "bootstrap": "^5.0.2",
     "react": "^16.11.0",
+    "react-bootstrap": "^1.6.1",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0"
   },
