@@ -28,6 +28,7 @@ library DataTypes {
         //@notice In short position the trader will receive fixed rate and pay a floating rate.
         PayFloatingReceiveFixed
     }
+
     struct IporDerivativeIndicator {
         //@notice Fixed Rate
         uint256 fixedRate;

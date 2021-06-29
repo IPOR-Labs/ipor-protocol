@@ -75,7 +75,8 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
         //        uint256 gas = _calculateGasForIporPublishing();
         //        uint256 fixedRate = 10;
-        uint256 iporIndexValue = 3;
+
+        (uint256 iporIndexValue,uint256  ibtPrice,uint256  blockTimestamp) = iporOracle.getIndex(_asset);
 
         //uint256 soap = 10000;
         //TODO: END - calculate derivative indicators
@@ -88,8 +89,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             10,
             10000,
-            iporIndexValue,
-            130, //ibtPrice,
+            iporIndexValue, ibtPrice,
             300 //ibtQuantity,
         );
         derivatives.push(
@@ -106,21 +106,21 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             )
         );
 
-        emit OpenPosition(
-            nextDerivativeId,
-            DataTypes.DerivativeDirection(_direction),
-            msg.sender,
-            _asset,
-            _notionalAmount,
-            _depositAmount,
-            startingTime,
-            endingTime,
-            10,
-            10000,
-            iporIndexValue,
-            222, //ibtPrice
-            333 //ibtQuantity
-        );
+//        emit OpenPosition(
+//            nextDerivativeId,
+//            DataTypes.DerivativeDirection(_direction),
+//            msg.sender,
+//            _asset,
+//            _notionalAmount,
+//            _depositAmount,
+//            startingTime,
+//            endingTime,
+//            10,
+//            10000,
+//            iporIndexValue,
+//            222, //ibtPrice
+//            333 //ibtQuantity
+//        );
     }
 
     function getOpenPositions() external view returns (DataTypes.IporDerivative[] memory) {
@@ -155,6 +155,15 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     function closePosition(uint256 _derivativeId) public {
         //TODO: calculate Exchange Rate and SOAP
         //TODO: closeTrade
+    }
+
+    /**
+     * @dev Returns the number of decimals used to get its user representation.
+     * For example, if `decimals` equals `3`, a balance of `707` tokens should
+     * be displayed to a user as `0,707` (`707 / 10 ** 3`).
+     */
+    function decimals() public view virtual returns (uint8) {
+        return 18;
     }
 
     function withdrawGas() public {

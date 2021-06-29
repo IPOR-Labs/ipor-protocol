@@ -59,9 +59,9 @@ export default ({drizzle, drizzleState}) => (
             contract="IporAmmV1"
             method="openPosition"/>
         <hr/>
-        <strong>
+        <h4>
             Open positions
-        </strong>
+        </h4>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}

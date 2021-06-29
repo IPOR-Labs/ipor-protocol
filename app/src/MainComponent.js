@@ -30,7 +30,7 @@ export default ({drizzle, drizzleState}) => {
             </div>
 
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-                <Tab eventKey="iporIndex" title="IPOR Index">
+                <Tab eventKey="iporIndex" title="Oracle IPOR Index">
                     <IporIndexComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}

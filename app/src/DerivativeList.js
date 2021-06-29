@@ -31,15 +31,15 @@ export default (derivatives) => (
                     <td>{derivative.depositAmount}</td>
                     <td>{toDate(derivative.startingTimestamp)}</td>
                     <td>{toDate(derivative.endingTimestamp)}</td>
-                    <td>{derivative.fixedRate}</td>
-                    <td>{derivative.soap}</td>
-                    <td>{derivative.iporIndexValue}</td>
-                    <td>{derivative.ibtPrice}</td>
-                    <td>{derivative.ibtQuantity}</td>
+                    <td>{derivative.indicator.fixedRate}</td>
+                    <td>{derivative.indicator.soap}</td>
+                    <td>{derivative.indicator.iporIndexValue}</td>
+                    <td>{derivative.indicator.ibtPrice}</td>
+                    <td>{derivative.indicator.ibtQuantity}</td>
                     {/*<td>{toDate(derivative.end)}</td>                    */}
                 </tr>
             ))}
             </tbody>
         </table>
-    ) : <p>No auction yet</p>
+    ) : <p>No derivatives yet</p>
 );
