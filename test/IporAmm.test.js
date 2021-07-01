@@ -152,6 +152,63 @@ contract('IporAmm', (accounts) => {
         );
     });
 
+    it('should NOT open position because slippage too high', async () => {
+        //given
+        let asset = "DAI";
+        let notionalAmount = 100;
+        let depositAmount = 10;
+        let slippageValue = web3.utils.toBN(1e18);
+        let theOne = web3.utils.toBN(1);
+        slippageValue = slippageValue.add(theOne);
+        let direction = 0;
+
+        await assertError(
+            //when
+            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
+            //then
+            'Reason given: 9'
+        );
+    });
+
+    it('should NOT open position because notional amount too high', async () => {
+        //given
+        let asset = "DAI";
+        let notionalAmount = web3.utils.toBN(1e18);
+        let theOne = web3.utils.toBN(1);
+        notionalAmount = notionalAmount.add(theOne);
+        let depositAmount = 10;
+        let slippageValue = 3;
+        let direction = 0;
+
+        await assertError(
+            //when
+            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
+            //then
+            'Reason given: 11'
+        );
+    });
+
+    it('should NOT open position because deposit amount too high', async () => {
+        //given
+        let asset = "DAI";
+        let notionalAmount = 10;
+        let depositAmount = web3.utils.toBN(1e18);
+        let theOne = web3.utils.toBN(1);
+        depositAmount = depositAmount.add(theOne);
+        let slippageValue = 3;
+        let direction = 0;
+
+        await assertError(
+            //when
+            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
+            //then
+            'Reason given: 10'
+        );
+    });
+
+    //TODO: check initial IBT
+    //
+
     // it('should read Index from IPOR Oracle Smart Contract', async () => {
     //     //given
     //     let ticker = "USDT";

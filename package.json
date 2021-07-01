@@ -29,6 +29,7 @@
     "truffle": "^5.3.10"
   },
   "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.11",
     "solidity-coverage": "^0.7.16"
   }
 }

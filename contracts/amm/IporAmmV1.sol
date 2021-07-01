@@ -15,18 +15,17 @@ import './IporPool.sol';
  */
 contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
-    uint256 internal constant MAX_NOTIONAL_AMOUNT = 1e18;
-    uint256 internal constant MAX_DEPOSIT_AMOUNT = 1e17;
-    uint256 internal constant MAX_SLIPPAGE = 1e16;
-
     IIporOracle public iporOracle;
 
-    uint256 constant ONE_MONTH_SECONDS = 60 * 60 * 24 * 30;
+    //@notice By default every derivative takes 28 days, this variable show this value in seconds
+    uint256 constant DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS = 60 * 60 * 24 * 28;
 
     constructor(address _iporOracle, address _usdtPool, address _usdcPool, address _daiPool) {
 
         admin = msg.sender;
+
         iporOracle = IIporOracle(_iporOracle);
+
         pools["USDT"] = _usdtPool;
         pools["USDC"] = _usdcPool;
         pools["DAI"] = _daiPool;
@@ -51,13 +50,14 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint8 _direction) public {
 
         require(_notionalAmount > 0, Errors.AMM_NOTIONAL_AMOUNT_TOO_LOW);
+        require(_notionalAmount <= 1e18, Errors.AMM_NOTIONAL_AMOUNT_TOO_HIGH);
         require(_depositAmount > 0, Errors.AMM_DEPOSIT_AMOUNT_TOO_LOW);
+        require(_depositAmount <= 1e18, Errors.AMM_DEPOSIT_AMOUNT_TOO_HIGH);
         require(_maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
+        require(_maximumSlippage <= 1e18, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_HIGH);
         require(_notionalAmount > _depositAmount, Errors.AMM_NOTIONAL_AMOUNT_NOT_GREATER_THAN_DEPOSIT_AMOUNT);
         require(pools[_asset] != address(0), Errors.AMM_LIQUIDITY_POOL_NOT_EXISTS);
         require(_direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.AMM_DERIVATIVE_DIRECTION_NOT_EXISTS);
-
-        //TODO: check too hight positions
 
         //TODO: calculate Exchange Rate and SOAP
 
@@ -82,7 +82,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         //TODO: END - calculate derivative indicators
 
         uint256 startingTime = block.timestamp;
-        uint256 endingTime = startingTime + ONE_MONTH_SECONDS;
+        uint256 endingTime = startingTime + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS;
 
         nextDerivativeId++;
         //        address pool = pools[_asset];
@@ -106,21 +106,21 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             )
         );
 
-//        emit OpenPosition(
-//            nextDerivativeId,
-//            DataTypes.DerivativeDirection(_direction),
-//            msg.sender,
-//            _asset,
-//            _notionalAmount,
-//            _depositAmount,
-//            startingTime,
-//            endingTime,
-//            10,
-//            10000,
-//            iporIndexValue,
-//            222, //ibtPrice
-//            333 //ibtQuantity
-//        );
+        //        emit OpenPosition(
+        //            nextDerivativeId,
+        //            DataTypes.DerivativeDirection(_direction),
+        //            msg.sender,
+        //            _asset,
+        //            _notionalAmount,
+        //            _depositAmount,
+        //            startingTime,
+        //            endingTime,
+        //            10,
+        //            10000,
+        //            iporIndexValue,
+        //            222, //ibtPrice
+        //            333 //ibtQuantity
+        //        );
     }
 
     function getOpenPositions() external view returns (DataTypes.IporDerivative[] memory) {

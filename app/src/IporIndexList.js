@@ -17,7 +17,7 @@ export default (indexes) => (
             {indexes.map(index => (
                 <tr key={index.asset}>
                     <td>{index.asset}</td>
-                    <td>{index.value}</td>
+                    <td>{index.indexValue}</td>
                     <td>{index.ibtPrice}</td>
                     <td>{toDate(index.blockTimestamp)}</td>
                 </tr>

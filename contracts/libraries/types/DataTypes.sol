@@ -3,14 +3,14 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library DataTypes {
 
-    //@notice IPOR Index structure
-    struct IporIndex {
+    //@notice IPOR Structure
+    struct IPOR {
 
         //@notice Asset Symbol like USDT, USDC, DAI etc.
         string asset;
 
         //@notice IPOR Index Value
-        uint256 value;
+        uint256 indexValue;
 
         //@notice Interest Bearing Token Price
         uint256 ibtPrice;
