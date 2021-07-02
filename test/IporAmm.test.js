@@ -207,6 +207,14 @@ contract('IporAmm', (accounts) => {
     });
 
     //TODO: check initial IBT
+    //TODO: check open long position every parameter
+    //TODO: check open short position every parameter
+    //TODO: check derivativesTotalBalances
+    //TODO: check openingFeeTotalBalances
+    //TODO: check liquidationDepositFeeTotalBalances
+    //TODO: check liquidationDepositFeeTotalBalances
+    //TODO: create test when ipor index not yet created for specific asset
+
     //
 
     // it('should read Index from IPOR Oracle Smart Contract', async () => {

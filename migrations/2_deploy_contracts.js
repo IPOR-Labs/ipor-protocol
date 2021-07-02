@@ -10,19 +10,19 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(SimpleToken, 'Fake USDT', 'fUSDT', '10000000000000000000000');
     const fakeUsdt = await SimpleToken.deployed();
-    await deployer.deploy(IporPool, fakeUsdt.address);
-    const usdtPool = await IporPool.deployed();
+    // await deployer.deploy(IporPool, fakeUsdt.address);
+    // const usdtPool = await IporPool.deployed();
 
     await deployer.deploy(SimpleToken, 'Fake USDC', 'fUSDC', '10000000000000000000000');
     const fakeUsdc = await SimpleToken.deployed();
-    await deployer.deploy(IporPool, fakeUsdc.address);
-    const usdcPool = await IporPool.deployed();
+    // await deployer.deploy(IporPool, fakeUsdc.address);
+    // const usdcPool = await IporPool.deployed();
 
 
     await deployer.deploy(SimpleToken, 'Fake DAI', 'fDAI', '10000000000000000000000');
     const fakeDai = await SimpleToken.deployed();
-    await deployer.deploy(IporPool, fakeDai.address);
-    const daiPool = await IporPool.deployed();
+    // await deployer.deploy(IporPool, fakeDai.address);
+    // const daiPool = await IporPool.deployed();
 
-    await deployer.deploy(IporAmmV1, iporOracle.address, usdtPool.address, usdcPool.address, daiPool.address);
+    await deployer.deploy(IporAmmV1, iporOracle.address, fakeUsdt.address, fakeUsdc.address, fakeDai.address);
 };

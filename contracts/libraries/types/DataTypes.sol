@@ -30,12 +30,6 @@ library DataTypes {
     }
 
     struct IporDerivativeIndicator {
-        //@notice Fixed Rate
-        uint256 fixedRate;
-
-        //@notice SOAP - Sum Of All Payouts indicator
-        uint256 soap;
-
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
 
@@ -44,6 +38,23 @@ library DataTypes {
 
         //@notice IPOR Interest Bearing Token quantity
         uint256 ibtQuantity;
+
+        //@notice Fixed interest rate at which the position has been locked (IPOR Index Vale +/- spread)
+        uint256 fixedInterestRate;
+
+        //@notice SOAP - Sum Of All Payouts indicator
+        uint256 soap;
+
+    }
+
+    struct IporDerivativeFee {
+        //@notice amount
+        uint256 liquidationDepositAmount;
+        //@notice amount calculated based on deposit amount
+        uint256 openingAmount;
+        uint256 iporPublicationAmount;
+        uint256 spreadPercentage;
+
     }
 
     //@notice IPOR Derivative
@@ -52,20 +63,24 @@ library DataTypes {
         //@notice unique ID of this derivative
         uint256 id;
 
-        //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
-        uint8 direction;
-
         //@notice Buyer of this derivative
         address buyer;
 
         //@notice the name of the asset to which the derivative relates
         string asset;
 
-        //@notice Notional Principal Amount
-        uint256 notionalAmount;
+        //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
+        uint8 direction;
 
         //@notice Derivative deposit amount
         uint256 depositAmount;
+
+        IporDerivativeFee fee;
+
+        uint256 leverage;
+
+        //@notice Notional Principal Amount
+        uint256 notionalAmount;
 
         //@notice Starting time of this Derivative
         uint256 startingTimestamp;
