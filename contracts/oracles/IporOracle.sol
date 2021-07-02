@@ -14,7 +14,8 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
  */
 contract IporOracle is IporOracleV1Storage, IIporOracle {
 
-    uint256 constant TOTAL_SECONDS_IN_YEAR = 60 * 60 * 24 * 365 * 1e18;
+    uint256 constant NUMBER_OF_DECIMAL_PLACES = 1e18;
+    uint256 constant TOTAL_SECONDS_IN_YEAR = 60 * 60 * 24 * 365 * NUMBER_OF_DECIMAL_PLACES;
 
     /// @notice event emitted when IPOR Index is updated by Updater
     event IporIndexUpdate(string asset, uint256 indexValue, uint256 ibtPrice, uint256 date);
@@ -24,7 +25,7 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address _updater);
-    
+
     event Log(uint256 message);
 
     constructor() {
@@ -131,7 +132,6 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
         return updaters;
     }
 
-
     /**
      * @notice Remove specific address from list of IPOR Index authorized updaters
      * @param _updater address which will be removed from list of IPOR Index authorized updaters
@@ -147,18 +147,14 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
     }
 
     /**
-    * @notice Mathematical formula which accrue actual Interest Bearing Token Price based on
+    * @notice Mathematical formula which accrue actual Interest Bearing Token Price based on currently valid IPOR Index and current block timestamp
+    * @param _lastIPOR last IPOR Index stored in blockchain
+    * @param _currentBlockTimestamp current block timestamp
     */
-    function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory _previousIPOR, uint256 _currentBlockTimestamp) internal  returns(uint256){
-        uint256 part1=_previousIPOR.indexValue * (_currentBlockTimestamp - _previousIPOR.blockTimestamp);
-        emit Log(part1);
-        emit Log(TOTAL_SECONDS_IN_YEAR);
-        uint256 part2 = (part1 * 1e18) / TOTAL_SECONDS_IN_YEAR;
-        emit Log(part2);
-        
-        uint256 result =  _previousIPOR.ibtPrice * (1e20 + part2) / 1e18;
-        emit Log(result);
-        return result;
+    function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory _lastIPOR, uint256 _currentBlockTimestamp) internal returns (uint256){
+        return _lastIPOR.ibtPrice * (NUMBER_OF_DECIMAL_PLACES
+            + (_lastIPOR.indexValue * ((_currentBlockTimestamp - _lastIPOR.blockTimestamp) * NUMBER_OF_DECIMAL_PLACES))
+                / TOTAL_SECONDS_IN_YEAR) / NUMBER_OF_DECIMAL_PLACES;
     }
 
 
