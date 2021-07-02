@@ -1,69 +1,30 @@
 import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
 import DerivativeList from "./DerivativeList";
-import ParseBigInt from "./ParseBigInt";
+import AmmBalanceComponent from "./AmmBalanceComponent";
 
 const {ContractData, ContractForm} = newContextComponents;
 
 export default ({drizzle, drizzleState}) => (
     <div>
-        <h2>IPOR AMM</h2>
-        <div className="section">
+        <div>
+            <br/>
             <table className="table" align="center">
                 <tr>
-                    <td><strong>TOKEN USDT</strong></td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="tokens"
-                            methodArgs={["USDT"]}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>TOKEN USDC</strong></td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="tokens"
-                            methodArgs={["USDC"]}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>TOKEN DAI</strong></td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="tokens"
-                            methodArgs={["DAI"]}
-                        />
-                    </td>
-                </tr>
-            </table>
-            <table className="table" align="center">
-                <tr>
-                    <th scope="col">Balance</th>
+                    <th scope="col"></th>
                     <th scope="col">USDT</th>
                     <th scope="col">USDC</th>
                     <th scope="col">DAI</th>
                 </tr>
                 <tr>
-                    <td>Derivatives</td>
+                    <td><strong>Token Address</strong></td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="IporAmmV1"
-                            method="derivativesTotalBalances"
+                            method="tokens"
                             methodArgs={["USDT"]}
-                            render={ParseBigInt}
                         />
                     </td>
                     <td>
@@ -71,9 +32,8 @@ export default ({drizzle, drizzleState}) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="IporAmmV1"
-                            method="derivativesTotalBalances"
+                            method="tokens"
                             methodArgs={["USDC"]}
-                            render={ParseBigInt}
                         />
                     </td>
                     <td>
@@ -81,22 +41,20 @@ export default ({drizzle, drizzleState}) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="IporAmmV1"
-                            method="derivativesTotalBalances"
+                            method="tokens"
                             methodArgs={["DAI"]}
-                            render={ParseBigInt}
                         />
                     </td>
                 </tr>
                 <tr>
-                    <td>Opening Fee</td>
+                    <td><strong>Total Supply</strong></td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="IporAmmV1"
-                            method="openingFeeTotalBalances"
+                            method="getTotalSupply"
                             methodArgs={["USDT"]}
-                            render={ParseBigInt}
                         />
                     </td>
                     <td>
@@ -104,9 +62,8 @@ export default ({drizzle, drizzleState}) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="IporAmmV1"
-                            method="openingFeeTotalBalances"
+                            method="getTotalSupply"
                             methodArgs={["USDC"]}
-                            render={ParseBigInt}
                         />
                     </td>
                     <td>
@@ -114,80 +71,18 @@ export default ({drizzle, drizzleState}) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="IporAmmV1"
-                            method="openingFeeTotalBalances"
+                            method="getTotalSupply"
                             methodArgs={["DAI"]}
-                            render={ParseBigInt}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Liquidation Deposit Fee</td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="liquidationDepositFeeTotalBalances"
-                            methodArgs={["USDT"]}
-                            render={ParseBigInt}
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="liquidationDepositFeeTotalBalances"
-                            methodArgs={["USDC"]}
-                            render={ParseBigInt}
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="liquidationDepositFeeTotalBalances"
-                            methodArgs={["DAI"]}
-                            render={ParseBigInt}
-
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Ipor Publication Fee</td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="iporPublicationFeeTotalBalances"
-                            methodArgs={["USDT"]}
-                            render={ParseBigInt}
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="iporPublicationFeeTotalBalances"
-                            methodArgs={["USDC"]}
-                            render={ParseBigInt}
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAmmV1"
-                            method="iporPublicationFeeTotalBalances"
-                            methodArgs={["DAI"]}
-                            render={ParseBigInt}
                         />
                     </td>
                 </tr>
             </table>
+
+
+            <AmmBalanceComponent
+                drizzle={drizzle}
+                drizzleState={drizzleState}
+            />
         </div>
         <hr/>
 

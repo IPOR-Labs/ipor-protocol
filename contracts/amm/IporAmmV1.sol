@@ -160,6 +160,12 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     }
 
     //@notice FOR FRONTEND
+    function getTotalSupply(string memory _asset) external view returns (uint256) {
+        ERC20 token = ERC20(tokens[_asset]);
+        return token.totalSupply();
+    }
+
+    //@notice FOR FRONTEND
     function getOpenPositions() external view returns (DataTypes.IporDerivative[] memory) {
         DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](derivatives.length);
 

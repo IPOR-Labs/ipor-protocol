@@ -6,7 +6,6 @@ const {AccountData, ContractData, ContractForm} = newContextComponents;
 
 export default ({drizzle, drizzleState}) => (
     <div>
-        <h2>Oracle IPOR Index</h2>
         <div class="section">
             <p>
                 <strong>Add IPOR Index</strong>
@@ -33,7 +32,6 @@ export default ({drizzle, drizzleState}) => (
         <div>
             <hr/>
             <p>
-                <h4>IPOR Indexes</h4>
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
