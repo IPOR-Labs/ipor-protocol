@@ -47,7 +47,7 @@ export default ({drizzle, drizzleState}) => (
                     </td>
                 </tr>
                 <tr>
-                    <td><strong>Total Supply</strong></td>
+                    <td><strong>AMM Balance of</strong></td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
@@ -76,6 +76,7 @@ export default ({drizzle, drizzleState}) => (
                         />
                     </td>
                 </tr>
+
             </table>
 
 
@@ -85,12 +86,13 @@ export default ({drizzle, drizzleState}) => (
             />
         </div>
         <hr/>
-
+        <div>
         <strong>Open Position Form</strong>
         <ContractForm
             drizzle={drizzle}
             contract="IporAmmV1"
             method="openPosition"/>
+        </div>
         <hr/>
         <h4>
             Open positions

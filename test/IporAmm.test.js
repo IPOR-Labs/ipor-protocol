@@ -7,7 +7,7 @@ const assertError = async (promise, error) => {
     try {
         await promise;
     } catch (e) {
-        assert(e.message.includes(error))
+        assert(e.message.includes(error), `Expected exception with message ${error}`)
         return;
     }
     assert(false);
@@ -15,58 +15,29 @@ const assertError = async (promise, error) => {
 
 contract('IporAmm', (accounts) => {
 
-    const [admin, updaterOne, updaterTwo, user, usdtToken, usdcToken, daiToken] = accounts;
+    const [admin, userOne, userTwo, _] = accounts;
 
     let amm = null;
     let iporOracle = null;
 
     beforeEach(async () => {
-        // iporOracle = await IporOracle.new();
-        //
-        //
-        // const fakeUsdt = await SimpleToken.new('Fake USDT', 'fUSDT', '10000000000000000000000');
-        // const usdtPool = await IporPool.new(fakeUsdt.address);
-        //
-        // const fakeUsdc = await SimpleToken.new('Fake USDC', 'fUSDC', '10000000000000000000000');
-        // const usdcPool = await IporPool.new(fakeUsdc.address);
-        //
-        // const fakeDai = await SimpleToken.new('Fake DAI', 'fDAI', '10000000000000000000000');
-        // const daiPool = await IporPool.new(fakeDai.address);
-        //
-        // amm = await IporAmmV1.new(iporOracle.address, usdtPool.address, usdcPool.address, daiPool.address);
         iporOracle = await IporOracle.deployed();
         amm = await IporAmmV1.deployed();
-        await iporOracle.addUpdater(updaterOne);
-
+        await iporOracle.addUpdater(userOne);
     });
 
-    it('should NOT open position because notional amount too low', async () => {
-        //given
-        let asset = "DAI";
-        let notionalAmount = 0;
-        let depositAmount = 10;
-        let slippageValue = 3;
-        let direction = 0;
-
-        await assertError(
-            //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
-            //then
-            'Reason given: 3'
-        );
-    });
 
     it('should NOT open position because deposit amount too low', async () => {
         //given
         let asset = "DAI";
-        let notionalAmount = 10;
         let depositAmount = 0;
         let slippageValue = 3;
         let direction = 0;
+        let leverage = 10;
 
         await assertError(
             //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
+            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'Reason given: 4'
         );
@@ -75,135 +46,62 @@ contract('IporAmm', (accounts) => {
     it('should NOT open position because slippage too low', async () => {
         //given
         let asset = "DAI";
-        let notionalAmount = 100;
-        let depositAmount = 10;
+        let depositAmount = BigInt("30000000000000000001");
         let slippageValue = 0;
         let direction = 0;
+        let leverage = 10;
 
         await assertError(
             //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
+            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'Reason given: 5'
-        );
-    });
-
-    it('should NOT open position because notional amount lower than deposit amount', async () => {
-        //given
-        let asset = "DAI";
-        let notionalAmount = 10;
-        let depositAmount = 20;
-        let slippageValue = 3;
-        let direction = 0;
-
-        await assertError(
-            //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
-            //then
-            'Reason given: 6'
-        );
-    });
-
-    it('should NOT open position because notional amount equal deposit amount', async () => {
-        //given
-        let asset = "DAI";
-        let notionalAmount = 10;
-        let depositAmount = 10;
-        let slippageValue = 3;
-        let direction = 0;
-
-        await assertError(
-            //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
-            //then
-            'Reason given: 6'
-        );
-    });
-
-    it('should NOT open position because notional amount equal deposit amount', async () => {
-        //given
-        let asset = "FAKE";
-        let notionalAmount = 100;
-        let depositAmount = 10;
-        let slippageValue = 3;
-        let direction = 0;
-
-        await assertError(
-            //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
-            //then
-            'Reason given: 7'
-        );
-    });
-
-    it('should NOT open position because notional amount equal deposit amount', async () => {
-        //given
-        let asset = "USDT";
-        let notionalAmount = 100;
-        let depositAmount = 10;
-        let slippageValue = 3;
-        let direction = 3;
-
-        await assertError(
-            //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
-            //then
-            'Reason given: 8'
         );
     });
 
     it('should NOT open position because slippage too high', async () => {
         //given
         let asset = "DAI";
-        let notionalAmount = 100;
-        let depositAmount = 10;
-        let slippageValue = web3.utils.toBN(1e18);
+        let depositAmount = BigInt("30000000000000000001");
+        let slippageValue = web3.utils.toBN(1e20);
         let theOne = web3.utils.toBN(1);
         slippageValue = slippageValue.add(theOne);
         let direction = 0;
+        let leverage = 10;
 
         await assertError(
             //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
+            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'Reason given: 9'
-        );
-    });
-
-    it('should NOT open position because notional amount too high', async () => {
-        //given
-        let asset = "DAI";
-        let notionalAmount = web3.utils.toBN(1e18);
-        let theOne = web3.utils.toBN(1);
-        notionalAmount = notionalAmount.add(theOne);
-        let depositAmount = 10;
-        let slippageValue = 3;
-        let direction = 0;
-
-        await assertError(
-            //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
-            //then
-            'Reason given: 11'
         );
     });
 
     it('should NOT open position because deposit amount too high', async () => {
         //given
         let asset = "DAI";
-        let notionalAmount = 10;
-        let depositAmount = web3.utils.toBN(1e18);
-        let theOne = web3.utils.toBN(1);
-        depositAmount = depositAmount.add(theOne);
+        let depositAmount = BigInt("1000000000000000000000001")
         let slippageValue = 3;
         let direction = 0;
+        let leverage = 10;
 
         await assertError(
             //when
-            amm.openPosition(asset, notionalAmount, depositAmount, slippageValue, direction),
+            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'Reason given: 10'
         );
+    });
+
+    it('should open position', async () => {
+        let asset = "DAI";
+        let depositAmount = BigInt("100000000000000000000")
+        let slippageValue = 3;
+        let direction = 0;
+        let leverage = 10;
+
+        iporOracle.updateIndex(asset, BigInt(10000000000000000), {from: userOne});
+        await amm.openPosition(asset, depositAmount, slippageValue, leverage, direction, {from: userTwo});
     });
 
     //TODO: check initial IBT
@@ -214,7 +112,9 @@ contract('IporAmm', (accounts) => {
     //TODO: check liquidationDepositFeeTotalBalances
     //TODO: check liquidationDepositFeeTotalBalances
     //TODO: create test when ipor index not yet created for specific asset
-
+    //TODO: test na balance uzytkownika czy ma totalAmount
+    //TODO: test na 1 sprwdzenie czy totalAmount wiekszy od fee
+    //TODO: test na 2 sprwdzenie czy totalAmount wiekszy od fee (po przeliczeniu openingFeeAmount)
     //
 
     // it('should read Index from IPOR Oracle Smart Contract', async () => {

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
-
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IIporOracle.sol";
@@ -45,17 +45,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     }
 
-    //    function register() public {
-    //        ERC20 usdtToken = ERC20(tokens["USDT"]);
-    //        usdtToken.approve(address(this), 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff);
-    //
-    //        ERC20 usdcToken = ERC20(tokens["USDC"]);
-    //        usdcToken.approve(address(this), 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff);
-    //
-    //        ERC20 daiToken = ERC20(tokens["DAI"]);
-    //        daiToken.approve(address(this), 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff);
-    //    }
-
     /**
     * @notice Trader open new derivative position. Depending on the direction it could be derivative
     * where trader pay fixed and receive a floating (long position) or receive fixed and pay a floating.
@@ -73,35 +62,24 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint8 _leverage,
         uint8 _direction) public {
 
-//        _totalAmount = _totalAmount * 1e18;
-//        _maximumSlippage = _maximumSlippage * 1e16;
-
         require(_leverage > 0, Errors.AMM_LEVERAGE_TOO_LOW);
-        //        require(_notionalAmount > 0, Errors.AMM_NOTIONAL_AMOUNT_TOO_LOW);
-        //        require(_notionalAmount <= 1e24, Errors.AMM_NOTIONAL_AMOUNT_TOO_HIGH);
         require(_totalAmount > 0, Errors.AMM_TOTAL_AMOUNT_TOO_LOW);
+        require(_totalAmount > LIQUIDATION_DEPOSIT_FEE_AMOUNT + IPOR_PUBLICATION_FEE_AMOUNT, Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
         require(_totalAmount <= 1e24, Errors.AMM_TOTAL_AMOUNT_TOO_HIGH);
         require(_maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(_maximumSlippage <= 1e20, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_HIGH);
-        //        require(_notionalAmount > _depositAmount, Errors.AMM_NOTIONAL_AMOUNT_NOT_GREATER_THAN_DEPOSIT_AMOUNT);
         require(tokens[_asset] != address(0), Errors.AMM_LIQUIDITY_POOL_NOT_EXISTS);
         require(_direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.AMM_DERIVATIVE_DIRECTION_NOT_EXISTS);
+        require(IERC20(tokens[_asset]).balanceOf(msg.sender) >= _totalAmount, Errors.AMM_ASSET_BALANCE_OF_TOO_LOW);
 
-        //        uint256 ibtQuantity = _calculateIbtQuantity(_asset, notionalAmount);
+        uint256 openingFeeAmount = (_totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT) * OPENING_FEE_PERCENTAGE / (OPENING_FEE_PERCENTAGE + 1e20);
+        require(_totalAmount > LIQUIDATION_DEPOSIT_FEE_AMOUNT + IPOR_PUBLICATION_FEE_AMOUNT + openingFeeAmount, Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
-        uint256 totalAmountMinusFee = _totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT;
-        uint256 openingFeeAmount = totalAmountMinusFee * OPENING_FEE_PERCENTAGE / (OPENING_FEE_PERCENTAGE + 1e20);
-        uint256 depositAmount = totalAmountMinusFee - openingFeeAmount;
+
+        uint256 depositAmount = _totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT - openingFeeAmount;
         uint256 notionalAmount = _leverage * depositAmount;
 
-        //        uint256 newDepositAmount = _depositAmount + feeAmount;
-        //        ERC20 token = ERC20(tokens[_asset]);
-        //        token.transferFrom(msg.sender, address(this), newDepositAmount);
         (uint256 iporIndexValue, uint256  ibtPrice,) = iporOracle.getIndex(_asset);
-        //        uint256 startingTime = block.timestamp;
-        //        uint256 endingTime = startingTime + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS;
-
-        nextDerivativeId++;
 
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             iporIndexValue,
@@ -114,10 +92,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
             LIQUIDATION_DEPOSIT_FEE_AMOUNT, openingFeeAmount, IPOR_PUBLICATION_FEE_AMOUNT, SPREAD_FEE_PERCENTAGE);
 
-        derivativesTotalBalances[_asset] = derivativesTotalBalances[_asset] + depositAmount;
-        openingFeeTotalBalances[_asset] = openingFeeTotalBalances[_asset] + openingFeeAmount;
-        liquidationDepositFeeTotalBalances[_asset] = liquidationDepositFeeTotalBalances[_asset] + LIQUIDATION_DEPOSIT_FEE_AMOUNT;
-        iporPublicationFeeTotalBalances[_asset] = iporPublicationFeeTotalBalances[_asset] + IPOR_PUBLICATION_FEE_AMOUNT;
+        nextDerivativeId++;
 
         derivatives.push(
             DataTypes.IporDerivative(
@@ -135,6 +110,12 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             )
         );
 
+        IERC20(tokens[_asset]).transferFrom(msg.sender, address(this), _totalAmount);
+
+        derivativesTotalBalances[_asset] = derivativesTotalBalances[_asset] + depositAmount;
+        openingFeeTotalBalances[_asset] = openingFeeTotalBalances[_asset] + openingFeeAmount;
+        liquidationDepositFeeTotalBalances[_asset] = liquidationDepositFeeTotalBalances[_asset] + LIQUIDATION_DEPOSIT_FEE_AMOUNT;
+        iporPublicationFeeTotalBalances[_asset] = iporPublicationFeeTotalBalances[_asset] + IPOR_PUBLICATION_FEE_AMOUNT;
 
         //        emit OpenPosition(
         //            nextDerivativeId,
@@ -151,8 +132,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         //            222, //ibtPrice
         //            333 //ibtQuantity
         //        );
-    }
 
+
+    }
 
     function _calculateIbtQuantity(string memory _asset, uint256 _notionalAmount) internal returns (uint256){
         (uint256 _indexValue, uint256 _ibtPrice, uint256 _blockTimestamp) = iporOracle.getIndex(_asset);
@@ -162,7 +144,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     //@notice FOR FRONTEND
     function getTotalSupply(string memory _asset) external view returns (uint256) {
         ERC20 token = ERC20(tokens[_asset]);
-        return token.totalSupply();
+        return token.balanceOf(address(this));
     }
 
     //@notice FOR FRONTEND
@@ -215,11 +197,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
      */
     function decimals() public view virtual returns (uint8) {
         return 18;
-    }
-
-    function readIndex(string memory _ticker) external view returns (uint256 value, uint256 interestBearingToken, uint256 date)  {
-        (uint256 _value, uint256 _interestBearingToken, uint256 _date) = iporOracle.getIndex(_ticker);
-        return (_value, _interestBearingToken, _date);
     }
 
     /**

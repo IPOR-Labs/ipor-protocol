@@ -54,7 +54,7 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
     /**
      * @notice Update IPOR index for specific asset
      * @param _asset The asset symbol
-     * @param _indexValue The index value of IPOR for particular asset
+     * @param _indexValue The index value of IPOR for particular asset, Smart Contract assume that _indexValue has 18 decimals
      *
      */
     function updateIndex(string memory _asset, uint256 _indexValue) public onlyUpdater {

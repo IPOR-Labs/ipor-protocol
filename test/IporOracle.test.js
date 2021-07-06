@@ -27,7 +27,7 @@ contract('IporOracle', (accounts) => {
 
     it('should NOT update IPOR Index', async () => {
         await assertError(
-            iporOracle.updateIndex("USDT", 123, {from: updaterOne}),
+            iporOracle.updateIndex("ASSET_SYMBOL", 123, {from: updaterOne}),
             'Reason given: 2'
         );
     });
