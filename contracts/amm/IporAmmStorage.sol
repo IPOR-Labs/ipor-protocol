@@ -19,12 +19,6 @@ contract IporAmmV1Storage is IporAmmStorage {
     // @notice Map of available Liquidity Pools, key in this map are underlying asset symbol
     mapping(string => address) public tokens;
 
-    //@notice first key = asset, second key = trader address, valye = total quantity of Interest Bearing Tokens for specific asset and trader
-//    mapping(string => mapping(address => uint256)) public ipTokens;
-
-    // @notice total derivative Pay Fixed Receive Floating balances for every asset
-//    mapping(string => uint256) public payFixDerivativesTotalBalances;
-
     // @notice total derivative balances for every asset
     mapping(string => uint256) public derivativesTotalBalances;
 

@@ -151,7 +151,7 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
     * @param _lastIPOR last IPOR Index stored in blockchain
     * @param _currentBlockTimestamp current block timestamp
     */
-    function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory _lastIPOR, uint256 _currentBlockTimestamp) internal returns (uint256){
+    function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory _lastIPOR, uint256 _currentBlockTimestamp) internal pure returns (uint256){
         return _lastIPOR.ibtPrice * (NUMBER_OF_DECIMAL_PLACES
             + (_lastIPOR.indexValue * ((_currentBlockTimestamp - _lastIPOR.blockTimestamp) * NUMBER_OF_DECIMAL_PLACES))
                 / TOTAL_SECONDS_IN_YEAR) / NUMBER_OF_DECIMAL_PLACES;

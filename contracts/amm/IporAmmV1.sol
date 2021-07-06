@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
+
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
@@ -7,6 +8,7 @@ import "../interfaces/IIporOracle.sol";
 import './IporAmmStorage.sol';
 import './IporAmmEvents.sol';
 import './IporPool.sol';
+import "../libraries/types/DataTypes.sol";
 
 /**
  * @title Automated Market Maker for derivatives based on IPOR Index.
@@ -24,7 +26,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     uint256 constant LIQUIDATION_DEPOSIT_FEE_AMOUNT = 20 * 1e18;
 
     //@notice percentage of deposit amount
-    uint256 constant OPENING_FEE_PERCENTAGE = 10 * 1e18;
+    uint256 constant OPENING_FEE_PERCENTAGE = 1e16;
 
     //@notice amount of asset taken for IPOR publication
     uint256 constant IPOR_PUBLICATION_FEE_AMOUNT = 10 * 1e18;
@@ -71,73 +73,87 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         require(tokens[_asset] != address(0), Errors.AMM_LIQUIDITY_POOL_NOT_EXISTS);
         require(_direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.AMM_DERIVATIVE_DIRECTION_NOT_EXISTS);
         require(IERC20(tokens[_asset]).balanceOf(msg.sender) >= _totalAmount, Errors.AMM_ASSET_BALANCE_OF_TOO_LOW);
-
-        uint256 openingFeeAmount = (_totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT) * OPENING_FEE_PERCENTAGE / (OPENING_FEE_PERCENTAGE + 1e20);
-        require(_totalAmount > LIQUIDATION_DEPOSIT_FEE_AMOUNT + IPOR_PUBLICATION_FEE_AMOUNT + openingFeeAmount, Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
-
-
-        uint256 depositAmount = _totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT - openingFeeAmount;
-        uint256 notionalAmount = _leverage * depositAmount;
+        //TODO consider check if it is smart contract, if yes then revert
+        DataTypes.IporDerivativeAmount memory derivativeAmount = _calculateDerivativeAmount(_totalAmount, _leverage);
+        require(_totalAmount > LIQUIDATION_DEPOSIT_FEE_AMOUNT + IPOR_PUBLICATION_FEE_AMOUNT + derivativeAmount.openingFee, Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         (uint256 iporIndexValue, uint256  ibtPrice,) = iporOracle.getIndex(_asset);
 
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             iporIndexValue,
             ibtPrice,
-            _calculateIbtQuantity(_asset, notionalAmount),
+            _calculateIbtQuantity(_asset, derivativeAmount.notional),
             _direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE),
             soap
         );
 
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-            LIQUIDATION_DEPOSIT_FEE_AMOUNT, openingFeeAmount, IPOR_PUBLICATION_FEE_AMOUNT, SPREAD_FEE_PERCENTAGE);
+            LIQUIDATION_DEPOSIT_FEE_AMOUNT,
+            derivativeAmount.openingFee,
+            IPOR_PUBLICATION_FEE_AMOUNT,
+            SPREAD_FEE_PERCENTAGE);
 
-        nextDerivativeId++;
+        uint256 startingTimestamp = block.timestamp;
 
         derivatives.push(
             DataTypes.IporDerivative(
                 nextDerivativeId,
+                DataTypes.DerivativeState.ACTIVE,
                 msg.sender,
                 _asset,
                 _direction,
-                depositAmount,
+                derivativeAmount.deposit,
                 fee,
                 _leverage,
-                notionalAmount,
-                block.timestamp,
-                block.timestamp + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                derivativeAmount.notional,
+                startingTimestamp,
+                startingTimestamp + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                 indicator
             )
         );
 
+        nextDerivativeId++;
+
         IERC20(tokens[_asset]).transferFrom(msg.sender, address(this), _totalAmount);
 
-        derivativesTotalBalances[_asset] = derivativesTotalBalances[_asset] + depositAmount;
-        openingFeeTotalBalances[_asset] = openingFeeTotalBalances[_asset] + openingFeeAmount;
+        derivativesTotalBalances[_asset] = derivativesTotalBalances[_asset] + derivativeAmount.deposit;
+        openingFeeTotalBalances[_asset] = openingFeeTotalBalances[_asset] + derivativeAmount.openingFee;
         liquidationDepositFeeTotalBalances[_asset] = liquidationDepositFeeTotalBalances[_asset] + LIQUIDATION_DEPOSIT_FEE_AMOUNT;
         iporPublicationFeeTotalBalances[_asset] = iporPublicationFeeTotalBalances[_asset] + IPOR_PUBLICATION_FEE_AMOUNT;
 
-        //        emit OpenPosition(
-        //            nextDerivativeId,
-        //            DataTypes.DerivativeDirection(_direction),
-        //            msg.sender,
-        //            _asset,
-        //            _notionalAmount,
-        //            _depositAmount,
-        //            startingTime,
-        //            endingTime,
-        //            10,
-        //            10000,
-        //            iporIndexValue,
-        //            222, //ibtPrice
-        //            333 //ibtQuantity
-        //        );
-
-
+        emit OpenPosition(
+            nextDerivativeId,
+            msg.sender,
+            _asset,
+            DataTypes.DerivativeDirection(_direction),
+            derivativeAmount.deposit,
+            fee,
+            _leverage,
+            derivativeAmount.notional,
+            startingTimestamp,
+            startingTimestamp + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+            indicator
+        );
     }
 
-    function _calculateIbtQuantity(string memory _asset, uint256 _notionalAmount) internal returns (uint256){
-        (uint256 _indexValue, uint256 _ibtPrice, uint256 _blockTimestamp) = iporOracle.getIndex(_asset);
+    function closePosition(uint256 _derivativeId) public {
+        derivatives[_derivativeId].state = DataTypes.DerivativeState.INACTIVE;
+    }
+
+    function _calculateDerivativeAmount(
+        uint256 _totalAmount, uint8 _leverage
+    ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
+        uint256 openingFeeAmount = (_totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT) * OPENING_FEE_PERCENTAGE / 1e18;
+        uint256 depositAmount = _totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT - openingFeeAmount;
+        return DataTypes.IporDerivativeAmount(
+            depositAmount,
+            _leverage * depositAmount,
+            openingFeeAmount
+        );
+    }
+
+    function _calculateIbtQuantity(string memory _asset, uint256 _notionalAmount) internal view returns (uint256){
+        (, uint256 _ibtPrice,) = iporOracle.getIndex(_asset);
         return _notionalAmount / _ibtPrice;
     }
 
@@ -168,6 +184,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             );
             _derivatives[i] = DataTypes.IporDerivative(
                 derivatives[i].id,
+                derivatives[i].state,
                 derivatives[i].buyer,
                 derivatives[i].asset,
                 derivatives[i].direction,
@@ -179,15 +196,11 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 derivatives[i].endingTimestamp,
                 indicator
             );
+
         }
 
         return _derivatives;
 
-    }
-
-    function closePosition(uint256 _derivativeId) public {
-        //TODO: calculate Exchange Rate and SOAP
-        //TODO: closeTrade
     }
 
     /**

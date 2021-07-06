@@ -18,12 +18,18 @@ contract('IporAmm', (accounts) => {
     const [admin, userOne, userTwo, _] = accounts;
 
     let amm = null;
+    let tokenDai = null;
+    let tokenUsdt = null;
+    let tokenUsdc = null;
     let iporOracle = null;
 
     beforeEach(async () => {
         iporOracle = await IporOracle.deployed();
         amm = await IporAmmV1.deployed();
         await iporOracle.addUpdater(userOne);
+        tokenDai = await SimpleToken.at(await amm.tokens("DAI"));
+        tokenUsdt = await SimpleToken.at(await amm.tokens("USDT"));
+        tokenUsdc = await SimpleToken.at(await amm.tokens("USDC"));
     });
 
 
@@ -93,42 +99,73 @@ contract('IporAmm', (accounts) => {
         );
     });
 
-    it('should open position', async () => {
+    it('should open pay fixed position - simple case DAI', async () => {
+        //given
         let asset = "DAI";
         let depositAmount = BigInt("100000000000000000000")
         let slippageValue = 3;
         let direction = 0;
         let leverage = 10;
+        iporOracle.updateIndex(asset, BigInt("30000000000000000"), {from: userOne});
 
-        iporOracle.updateIndex(asset, BigInt(10000000000000000), {from: userOne});
+        //when
         await amm.openPosition(asset, depositAmount, slippageValue, leverage, direction, {from: userTwo});
+
+        //then
+        const expectedDerivativesTotalBalance = BigInt("69300000000000000000");
+        const expectedOpeningFee = BigInt("700000000000000000");
+        const expectedLiquidationDepositFee = BigInt("20000000000000000000");
+        const expectedIporPublicationFee = BigInt("10000000000000000000");
+
+        const actualDerivativesTotalBalance = BigInt(await amm.derivativesTotalBalances(asset));
+        const actualOpeningFeeTotalBalance = BigInt(await amm.openingFeeTotalBalances(asset));
+        const actualLiquidationDepositFeeTotalBalance = BigInt(await amm.liquidationDepositFeeTotalBalances(asset));
+        const actualPublicationFeeTotalBalance = BigInt(await amm.iporPublicationFeeTotalBalances(asset));
+
+        assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
+            `Incorrect derivatives total balance for ${asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
+        assert(expectedOpeningFee === actualOpeningFeeTotalBalance,
+            `Incorrect opening fee total balance for ${asset} ${actualOpeningFeeTotalBalance}, expected ${expectedOpeningFee}`)
+        assert(expectedLiquidationDepositFee === actualLiquidationDepositFeeTotalBalance,
+            `Incorrect liquidation deposit fee total balance for ${asset} ${actualLiquidationDepositFeeTotalBalance}, expected ${expectedLiquidationDepositFee}`)
+        assert(expectedIporPublicationFee === actualPublicationFeeTotalBalance,
+            `Incorrect ipor publication fee total balance for ${asset} ${actualPublicationFeeTotalBalance}, expected ${expectedIporPublicationFee}`)
+
+        let actualAmmTotalSupplyForDai = BigInt(await amm.getTotalSupply(asset));
+
+        assert(depositAmount === actualAmmTotalSupplyForDai,
+            `Incorrect total supply of ${asset} tokens in AMM address ${actualAmmTotalSupplyForDai}, expected ${depositAmount}`);
+
+
+        let actualUserTwoDAITokenBalance = await tokenDai.balanceOf(userTwo);
+        const expectedUserTwoDAITokenBalance = BigInt("9999900000000000000000000");
+
+        assert(expectedUserTwoDAITokenBalance.toString()  === actualUserTwoDAITokenBalance.toString(),
+            `Incorrect ${asset} token balance in user wallet ${actualUserTwoDAITokenBalance}, expected ${expectedUserTwoDAITokenBalance}`);
+    });
+
+    it('should close pay fixed position - simple case DAI', async () => {
+        //given
+        let asset = "DAI";
+        let depositAmount = BigInt("100000000000000000000")
+        let slippageValue = 3;
+        let direction = 0;
+        let leverage = 10;
+        iporOracle.updateIndex(asset, BigInt("30000000000000000"), {from: userOne});
+        await amm.openPosition(asset, depositAmount, slippageValue, leverage, direction, {from: userTwo});
+
+        //when
+        await amm.closePosition(1);
+
+        //then
+
     });
 
     //TODO: check initial IBT
-    //TODO: check open long position every parameter
     //TODO: check open short position every parameter
-    //TODO: check derivativesTotalBalances
-    //TODO: check openingFeeTotalBalances
-    //TODO: check liquidationDepositFeeTotalBalances
-    //TODO: check liquidationDepositFeeTotalBalances
     //TODO: create test when ipor index not yet created for specific asset
-    //TODO: test na balance uzytkownika czy ma totalAmount
+
     //TODO: test na 1 sprwdzenie czy totalAmount wiekszy od fee
     //TODO: test na 2 sprwdzenie czy totalAmount wiekszy od fee (po przeliczeniu openingFeeAmount)
-    //
-
-    // it('should read Index from IPOR Oracle Smart Contract', async () => {
-    //     //given
-    //     let ticker = "USDT";
-    //     let expectedValue = 111;
-    //     let expectedInterestBearingToken = 234;
-    //     await iporOracle.updateIndex(ticker, expectedValue, expectedInterestBearingToken, {from: updaterOne});
-    //
-    //     //when
-    //     const iporIndexAmm = await amm.readIndex(ticker);
-    //
-    //     //then
-    //     let actualValue = parseInt(iporIndexAmm.value);
-    //     assert(expectedValue === actualValue);
-    // });
+    //TODO: test na wysłanie USDT które ma 6 miejsc po przecinku i weryfikacja liczb
 });

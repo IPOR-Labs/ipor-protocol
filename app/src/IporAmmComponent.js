@@ -86,13 +86,23 @@ export default ({drizzle, drizzleState}) => (
             />
         </div>
         <hr/>
-        <div>
-        <strong>Open Position Form</strong>
-        <ContractForm
-            drizzle={drizzle}
-            contract="IporAmmV1"
-            method="openPosition"/>
+        <div class="row">
+            <div className="col-md-9">
+                <strong>Open Position Form</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporAmmV1"
+                    method="openPosition"/>
+            </div>
+            <div className="col-md-3">
+                <strong>Close Position Form</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporAmmV1"
+                    method="closePosition"/>
+            </div>
         </div>
+
         <hr/>
         <h4>
             Open positions
@@ -105,6 +115,7 @@ export default ({drizzle, drizzleState}) => (
             render={DerivativeList}
         />
         <hr/>
+
     </div>
 );
 

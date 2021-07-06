@@ -29,6 +29,16 @@ library DataTypes {
         PayFloatingReceiveFixed
     }
 
+    enum DerivativeState {
+        ACTIVE, INACTIVE
+    }
+
+    struct IporDerivativeAmount {
+        uint256 deposit;
+        uint256 notional;
+        uint256 openingFee;
+    }
+
     struct IporDerivativeIndicator {
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
@@ -62,6 +72,8 @@ library DataTypes {
 
         //@notice unique ID of this derivative
         uint256 id;
+
+        DerivativeState state;
 
         //@notice Buyer of this derivative
         address buyer;
