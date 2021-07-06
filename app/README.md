@@ -1,5 +1,15 @@
 ## IPOR Protocol
 
+### Run IPOR App and Ganache - local blockchain
+
+`docker build . -t ipor-labs/ipor-app`
+
+`docker-compose up`
+
+IPOR App available in port `3000`
+
+Ganache Blockchain available in port `8545`
+
 #### Compile contracts
 
 In project root folder execute in command line:
