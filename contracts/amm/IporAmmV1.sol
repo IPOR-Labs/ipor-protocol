@@ -45,6 +45,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         tokens["USDC"] = _usdcToken;
         tokens["DAI"] = _daiToken;
 
+        //TODO: allow admin to setup it during runtime
+        closingFeePercentage = 0;
+
     }
 
     /**
@@ -120,6 +123,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         openingFeeTotalBalances[_asset] = openingFeeTotalBalances[_asset] + derivativeAmount.openingFee;
         liquidationDepositFeeTotalBalances[_asset] = liquidationDepositFeeTotalBalances[_asset] + LIQUIDATION_DEPOSIT_FEE_AMOUNT;
         iporPublicationFeeTotalBalances[_asset] = iporPublicationFeeTotalBalances[_asset] + IPOR_PUBLICATION_FEE_AMOUNT;
+        liquidityPoolTotalBalances[_asset] = liquidityPoolTotalBalances[_asset] + derivativeAmount.openingFee;
 
         emit OpenPosition(
             nextDerivativeId,
@@ -134,10 +138,45 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             startingTimestamp + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
             indicator
         );
+
+        //TODO: clarify if ipAsset should be transfered to trader when position is opened
     }
 
     function closePosition(uint256 _derivativeId) public {
+        //TODO: check based on algorithms
+
         derivatives[_derivativeId].state = DataTypes.DerivativeState.INACTIVE;
+        uint256 deposit = derivatives[_derivativeId].depositAmount;
+        uint256 fixedRate = derivatives[_derivativeId].indicator.fixedInterestRate;
+        //uint256 floatingRate = iporOracle.getIndex(derivatives[_derivativeId].asset);
+        uint256 I = 0;
+
+        //pay fixed, receive floating
+        if (derivatives[_derivativeId].direction == 0) {
+
+        }
+
+        //receive fixed, pay floating
+        if (derivatives[_derivativeId].direction == 1) {
+
+        }
+
+        //TODO: check if
+
+        //TODO: rebalance soap
+    }
+
+    function provideLiquidity(string memory _asset, uint256 _liquidityAmount) public {
+        liquidityPoolTotalBalances[_asset] = liquidityPoolTotalBalances[_asset] + _liquidityAmount;
+        IERC20(tokens[_asset]).transferFrom(msg.sender, address(this), _liquidityAmount);
+    }
+
+    function _calculcatePayout() internal returns (uint256) {
+        return 1e10;
+    }
+
+    function _calculateClosingFeeAmount(uint256 depositAmount) internal returns (uint256) {
+        return depositAmount * closingFeePercentage / 1e20;
     }
 
     function _calculateDerivativeAmount(

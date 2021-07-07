@@ -116,11 +116,13 @@ contract('IporAmm', (accounts) => {
         const expectedOpeningFee = BigInt("700000000000000000");
         const expectedLiquidationDepositFee = BigInt("20000000000000000000");
         const expectedIporPublicationFee = BigInt("10000000000000000000");
+        const expectedLiquidityPoolTotalBalance = expectedOpeningFee;
 
         const actualDerivativesTotalBalance = BigInt(await amm.derivativesTotalBalances(asset));
         const actualOpeningFeeTotalBalance = BigInt(await amm.openingFeeTotalBalances(asset));
         const actualLiquidationDepositFeeTotalBalance = BigInt(await amm.liquidationDepositFeeTotalBalances(asset));
         const actualPublicationFeeTotalBalance = BigInt(await amm.iporPublicationFeeTotalBalances(asset));
+        const actualLiquidityPoolTotalBalance = BigInt(await amm.liquidityPoolTotalBalances(asset));
 
         assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
             `Incorrect derivatives total balance for ${asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
@@ -130,6 +132,9 @@ contract('IporAmm', (accounts) => {
             `Incorrect liquidation deposit fee total balance for ${asset} ${actualLiquidationDepositFeeTotalBalance}, expected ${expectedLiquidationDepositFee}`)
         assert(expectedIporPublicationFee === actualPublicationFeeTotalBalance,
             `Incorrect ipor publication fee total balance for ${asset} ${actualPublicationFeeTotalBalance}, expected ${expectedIporPublicationFee}`)
+
+        assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
+            `Incorrect Liquidity Pool total balance for ${asset} ${actualLiquidityPoolTotalBalance}, expected ${expectedLiquidityPoolTotalBalance}`)
 
         let actualAmmTotalSupplyForDai = BigInt(await amm.getTotalSupply(asset));
 
@@ -161,9 +166,13 @@ contract('IporAmm', (accounts) => {
 
     });
 
+    //TODO: test when ipor not ready yet
+
     //TODO: check initial IBT
     //TODO: check open short position every parameter
     //TODO: create test when ipor index not yet created for specific asset
+
+    //TODO: test if opening fee is part of liquidity pool
 
     //TODO: test na 1 sprwdzenie czy totalAmount wiekszy od fee
     //TODO: test na 2 sprwdzenie czy totalAmount wiekszy od fee (po przeliczeniu openingFeeAmount)

@@ -47,6 +47,39 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
             <tr>
+                <td>Liquidity Pool</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAmmV1"
+                        method="liquidityPoolTotalBalances"
+                        methodArgs={["USDT"]}
+                        render={ParseBigInt}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAmmV1"
+                        method="liquidityPoolTotalBalances"
+                        methodArgs={["USDC"]}
+                        render={ParseBigInt}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAmmV1"
+                        method="liquidityPoolTotalBalances"
+                        methodArgs={["DAI"]}
+                        render={ParseBigInt}
+                    />
+                </td>
+            </tr>
+            <tr>
                 <td>Opening Fee</td>
                 <td>
                     <ContractData

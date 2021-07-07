@@ -31,6 +31,9 @@ contract IporAmmV1Storage is IporAmmStorage {
     //@notice IPOR Publication Fee total balances for every asset
     mapping(string => uint256) public iporPublicationFeeTotalBalances;
 
+    //@notice Liquidity Pool total balances for every asset
+    mapping(string => uint256) public liquidityPoolTotalBalances;
+
     mapping(string => Balance) public balances;
 
     struct Balance {
@@ -49,5 +52,7 @@ contract IporAmmV1Storage is IporAmmStorage {
 
     // @notice Sum Of All Payouts
     uint256 public soap;
+
+    uint256 public closingFeePercentage;
 
 }
