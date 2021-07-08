@@ -17,7 +17,31 @@ contract IporAmmStorage {
 contract IporAmmV1Storage is IporAmmStorage {
 
     // @notice Map of available Liquidity Pools, key in this map are underlying asset symbol
-    mapping(string => address) public pools;
+    mapping(string => address) public tokens;
+
+    // @notice total derivative balances for every asset
+    mapping(string => uint256) public derivativesTotalBalances;
+
+    //@notice Opening Fee total balances for every asset;
+    mapping(string => uint256) public openingFeeTotalBalances;
+
+    //@notice Liquidation Deposit total balances for every asset
+    mapping(string => uint256) public liquidationDepositFeeTotalBalances;
+
+    //@notice IPOR Publication Fee total balances for every asset
+    mapping(string => uint256) public iporPublicationFeeTotalBalances;
+
+    //@notice Liquidity Pool total balances for every asset
+    mapping(string => uint256) public liquidityPoolTotalBalances;
+
+    mapping(string => Balance) public balances;
+
+    struct Balance {
+        uint256 derivative;
+        uint256 openingFee;
+        uint256 liquidationDepositFee;
+        uint256 iporPublicationFee;
+    }
 
     // @notice list of long positions for particular asset, where buyer want to pay fixed and receive floating
     // first key is an address of token, second key is an address of trader
@@ -28,5 +52,7 @@ contract IporAmmV1Storage is IporAmmStorage {
 
     // @notice Sum Of All Payouts
     uint256 public soap;
+
+    uint256 public closingFeePercentage;
 
 }

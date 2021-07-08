@@ -1,67 +1,56 @@
 import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
 import DerivativeList from "./DerivativeList";
+import AmmBalanceComponent from "./AmmBalanceComponent";
+import AmmTotalBalanceComponent from "./AmmTotalBalanceComponent";
 
 const {ContractData, ContractForm} = newContextComponents;
 
 export default ({drizzle, drizzleState}) => (
     <div>
-        <h2>IPOR AMM</h2>
-        <table align="center">
-            <tr>
-                <td>
-                    <strong>POOL USDT</strong>
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="IporAmmV1"
-                        method="pools"
-                        methodArgs={["USDT"]}
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>POOL USDC</strong>
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="IporAmmV1"
-                        method="pools"
-                        methodArgs={["USDC"]}
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>POOL DAI</strong>
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="IporAmmV1"
-                        method="pools"
-                        methodArgs={["DAI"]}
-                    />
-                </td>
-            </tr>
-        </table>
+        <div>
+            <br/>
+            <AmmTotalBalanceComponent
+                drizzle={drizzle}
+                drizzleState={drizzleState}
+            />
+            <AmmBalanceComponent
+                drizzle={drizzle}
+                drizzleState={drizzleState}
+            />
+        </div>
         <hr/>
+        <div class="row">
+            <div className="col-md-12">
+                <strong>Open Position Form</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporAmmV1"
+                    method="openPosition"/>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div className="col-md-7">
+                <strong>Provide Liquidity</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporAmmV1"
+                    method="provideLiquidity"/>
+            </div>
+            <div className="col-md-5">
+                <strong>Close Position Form</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporAmmV1"
+                    method="closePosition"/>
+            </div>
+        </div>
 
-        <strong>Open Position Form</strong>
-        <ContractForm
-            drizzle={drizzle}
-            contract="IporAmmV1"
-            method="openPosition"/>
         <hr/>
-        <strong>
+        <h4>
             Open positions
-        </strong>
+        </h4>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
@@ -70,6 +59,7 @@ export default ({drizzle, drizzleState}) => (
             render={DerivativeList}
         />
         <hr/>
+
     </div>
 );
 

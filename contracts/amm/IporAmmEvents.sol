@@ -11,18 +11,16 @@ contract IporAmmV1Events is IporAmmEvents {
     // @notice Open derivative position
     event OpenPosition(
         uint256 indexed derivativeId,
-        DataTypes.DerivativeDirection direction,
         address indexed buyer,
         string asset,
-        uint256 notionalAmount,
+        DataTypes.DerivativeDirection direction,
         uint256 depositAmount,
-        uint256 startingTime,
-        uint256 endingTime,
-        uint256 fixedRate,
-        uint256 soap,
-        uint256 iporIndexValue,
-        uint256 ibtPrice,
-        uint256 ibtQuantity
+        DataTypes.IporDerivativeFee fee,
+        uint256 leverage,
+        uint256 notionalAmount,
+        uint256 startingTimestamp,
+        uint256 endingTimestamp,
+        DataTypes.IporDerivativeIndicator indicator
     );
 
     // @notice Close derivative position
