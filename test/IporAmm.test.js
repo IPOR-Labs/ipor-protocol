@@ -160,7 +160,7 @@ contract('IporAmm', (accounts) => {
         await amm.openPosition(asset, depositAmount, slippageValue, leverage, direction, {from: userTwo});
 
         //when
-        // await amm.closePosition(1);
+        await amm.closePosition(1, {from: userTwo});
 
         //then
 
@@ -182,4 +182,9 @@ contract('IporAmm', (accounts) => {
     //TODO: test close position - I greater than D and I plus for long derivative, check every balance
     //TODO: test close position - I greater than D and I minus for short derivative, check every balance
     //TODO: test close position - I greater than D and I plus for short derivative, check every balance
+
+    //TODO: test close position - check if derivative is closed in list of derivatives
+    //TODO: test close position - check if sender who closed has liquidation deposit in DAI token.
+    //
+
 });

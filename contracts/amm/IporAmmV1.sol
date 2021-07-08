@@ -156,59 +156,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         //TODO: owner moze zamknąc zawsze, ktokolwiek moze zamknąc gdy: minęło 28 dni (maturity), gdy jest poza zakresem +- 100%
         //TODO: liquidation deposit trafia do osoby która wykona zamknięcie depozytu
         //TODO: potwierdzić czy likwidacji może dokonywać inny smartcontract czy tylko 'osoba'
-        //        require(derivatives[_derivativeId].startingTimestamp >= block.timestamp + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS, "maturity not achieved");
-
-        derivatives[_derivativeId].state = DataTypes.DerivativeState.INACTIVE;
 
         DataTypes.IporDerivativeInterest memory derivativeInterest = _calculateDerivativeInterest(_derivativeId);
-
-        //P = D + I
-        int256 I = 0;
-        //
-        //        //pay fixed, receive floating
-        //        if (derivatives[_derivativeId].direction == 0) {
-        //            I = iFloating - iFixed;
-        //            //calculate P = D + I;
-        //            if (I > 0) {
-        //
-        //                if (I > derivatives[_derivativeId].depositAmount){
-        //                    //fetch D amount from Liquidity Pool
-        //                    //transfer D+D to user's address
-        //                } else {
-        //                    //fetch I amount from Liquidity Pool
-        //                    //transfer P=D+I to user's address
-        //                }
-        //
-        //            } else {
-        //                //transfer P to user's address
-        //                //transfer |I| to liquidity pool
-        //
-        //                if (I > derivatives[_derivativeId].depositAmount){
-        //                    //transfer D  to Liquidity Pool
-        //                } else {
-        //                    //transfer I to Liquidity Pool
-        //                    //transfer D-I to user's address
-        //                }
-        //            }
-        //        }
-        //
-        //        //receive fixed, pay floating
-        //        if (derivatives[_derivativeId].direction == 1) {
-        //            I = iFixed - iFloating;
-        //            if (I > 0) {
-        //                if (I > derivatives[_derivativeId].depositAmount){
-        //                } else {
-        //
-        //                }
-        //            } else {
-        //                if (I > derivatives[_derivativeId].depositAmount){
-        //                } else {
-        //
-        //                }
-        //            }
-        //        }
-
-        //TODO: check if
+        _rebalanceBasedOnInterestDifferenceAmount(_derivativeId, derivativeInterest.interestDifferenceAmount);
 
         //TODO: rebalance soap
     }
@@ -219,7 +169,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         (, uint256 ibtPrice,) = iporOracle.getIndex(derivatives[_derivativeId].asset);
         //iFloating = IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
         uint256 iFloating = derivatives[_derivativeId].indicator.ibtQuantity * ibtPrice;
-        int256 interestDifferenceAmount = derivatives[_derivativeId].direction == 0 ? (int256)(iFixed - iFloating) : (int256)(iFloating - iFixed);
+        int256 interestDifferenceAmount = derivatives[_derivativeId].direction == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating) ? int256(iFixed) - int256(iFloating) : int256(iFloating) - int256(iFixed);
         return DataTypes.IporDerivativeInterest(iFixed, iFloating, interestDifferenceAmount);
     }
 
@@ -307,11 +257,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         IERC20(tokens[_asset]).transferFrom(msg.sender, address(this), _liquidityAmount);
     }
 
-    function _calculcatePayout() internal returns (uint256) {
-        return 1e10;
-    }
-
-    function _calculateClosingFeeAmount(uint256 depositAmount) internal returns (uint256) {
+    function _calculateClosingFeeAmount(uint256 depositAmount) internal view returns (uint256) {
         return depositAmount * closingFeePercentage / 1e20;
     }
 
