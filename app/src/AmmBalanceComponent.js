@@ -22,7 +22,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="derivativesTotalBalances"
                         methodArgs={["USDT"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -32,7 +31,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="derivativesTotalBalances"
                         methodArgs={["USDC"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -42,7 +40,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="derivativesTotalBalances"
                         methodArgs={["DAI"]}
-                        render={ParseBigInt}
                     />
                 </td>
             </tr>
@@ -55,7 +52,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="liquidityPoolTotalBalances"
                         methodArgs={["USDT"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -65,7 +61,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="liquidityPoolTotalBalances"
                         methodArgs={["USDC"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -75,7 +70,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="liquidityPoolTotalBalances"
                         methodArgs={["DAI"]}
-                        render={ParseBigInt}
                     />
                 </td>
             </tr>
@@ -88,7 +82,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="openingFeeTotalBalances"
                         methodArgs={["USDT"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -98,7 +91,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="openingFeeTotalBalances"
                         methodArgs={["USDC"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -108,7 +100,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="openingFeeTotalBalances"
                         methodArgs={["DAI"]}
-                        render={ParseBigInt}
                     />
                 </td>
             </tr>
@@ -121,7 +112,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="liquidationDepositFeeTotalBalances"
                         methodArgs={["USDT"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -131,7 +121,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="liquidationDepositFeeTotalBalances"
                         methodArgs={["USDC"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -141,7 +130,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="liquidationDepositFeeTotalBalances"
                         methodArgs={["DAI"]}
-                        render={ParseBigInt}
 
                     />
                 </td>
@@ -155,7 +143,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="iporPublicationFeeTotalBalances"
                         methodArgs={["USDT"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -165,7 +152,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="iporPublicationFeeTotalBalances"
                         methodArgs={["USDC"]}
-                        render={ParseBigInt}
                     />
                 </td>
                 <td>
@@ -175,7 +161,6 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAmmV1"
                         method="iporPublicationFeeTotalBalances"
                         methodArgs={["DAI"]}
-                        render={ParseBigInt}
                     />
                 </td>
             </tr>

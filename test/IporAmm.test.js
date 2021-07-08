@@ -160,7 +160,7 @@ contract('IporAmm', (accounts) => {
         await amm.openPosition(asset, depositAmount, slippageValue, leverage, direction, {from: userTwo});
 
         //when
-        await amm.closePosition(1);
+        // await amm.closePosition(1);
 
         //then
 
@@ -177,4 +177,9 @@ contract('IporAmm', (accounts) => {
     //TODO: test na 1 sprwdzenie czy totalAmount wiekszy od fee
     //TODO: test na 2 sprwdzenie czy totalAmount wiekszy od fee (po przeliczeniu openingFeeAmount)
     //TODO: test na wysłanie USDT które ma 6 miejsc po przecinku i weryfikacja liczb
+
+    //TODO: test close position - I greater than D and I minus for long derivative, check every balance
+    //TODO: test close position - I greater than D and I plus for long derivative, check every balance
+    //TODO: test close position - I greater than D and I minus for short derivative, check every balance
+    //TODO: test close position - I greater than D and I plus for short derivative, check every balance
 });

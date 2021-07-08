@@ -13,6 +13,9 @@ library Errors {
     string public constant AMM_TOTAL_AMOUNT_TOO_HIGH = '10'; // 'Deposit Amount when creating derivative position is too high'
     string public constant AMM_LEVERAGE_TOO_LOW = '12'; //'Deposit amount to notional amount leverage is too low'
     string public constant AMM_ASSET_BALANCE_OF_TOO_LOW = '13'; //'Trader doesnt have enought tokens to execute transaction'
-
+    string public constant AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW = '14'; //'Derivative cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen.'
+    string public constant AMM_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = '15'; //'Derivative cannot be closed because liquidation deposit balance is to low to pay sender for liquidation.'
+    string public constant AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET = '16'; //'Derivative cannot be closed because general condition are not met'
+    string public constant AMM_DERIVATIVE_IS_INACTIVE = '17'; //'Derivative should be in ACTIVE state'
 
 }
