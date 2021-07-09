@@ -30,7 +30,7 @@ export default (derivatives) => (
             </thead>
             <tbody>
             {derivatives.map(derivative => {
-                    if (derivative.state == 0) {
+                    if (derivative.state == 0 ||derivative.state == 1) {
                         return (
                             <tr key={derivative.id}>
                                 <td>{derivative.id}</td>

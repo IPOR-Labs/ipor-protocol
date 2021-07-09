@@ -1,9 +1,12 @@
 const IporOracle = artifacts.require("IporOracle");
 const IporAmmV1 = artifacts.require("IporAmmV1");
 const SimpleToken = artifacts.require('SimpleToken');
+const DerivativeLogic = artifacts.require('DerivativeLogic');
+const AmmMath = artifacts.require('AmmMath');
 
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
+
     await deployer.deploy(IporOracle);
     const iporOracle = await IporOracle.deployed();
 
@@ -23,7 +26,12 @@ module.exports = async function (deployer, _network, addresses) {
     let dai = null;
     let tusd = null;
 
-    if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'test') {
+    await deployer.deploy(DerivativeLogic);
+    await deployer.link(DerivativeLogic, IporAmmV1);
+    await deployer.deploy(AmmMath);
+    await deployer.link(AmmMath, IporAmmV1);
+
+    if (_network === 'develop' || _network === 'develop2' || _network === 'dev') {
 
         await deployer.deploy(SimpleToken, 'Mocked USDT', 'USDT', totalSupply6Decimals, 6);
         usdt = await SimpleToken.deployed();
@@ -41,9 +49,14 @@ module.exports = async function (deployer, _network, addresses) {
         tusd = await SimpleToken.deployed();
     }
 
-    const iporAmm = await deployer.deploy(IporAmmV1, iporOracle.address, usdt.address, usdc.address, dai.address);
+    let iporAmm = null;
 
-    if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'test') {
+    if (_network !== 'test') {
+        iporAmm = await deployer.deploy(IporAmmV1, iporOracle.address, usdt.address, usdc.address, dai.address);
+    }
+
+
+    if (_network === 'develop' || _network === 'develop2' || _network === 'dev') {
 
         //first address is an admin, last two addresses will not have tokens and approves
         for (let i = 1; i < addresses.length - 2; i++) {

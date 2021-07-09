@@ -35,7 +35,7 @@ library DataTypes {
 
     struct IporDerivativeInterest {
         uint256 interestFixed;
-        uint256 interestFloating;
+        int256 interestFloating;
         int256 interestDifferenceAmount;
     }
 

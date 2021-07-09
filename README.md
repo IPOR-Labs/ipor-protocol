@@ -1,3 +1,7 @@
+### How to run?
+
+1. Build project
+
 #### Configure your local `.env`
 
 ```properties
@@ -20,3 +24,5 @@ In project root folder execute in command line:
 In project root folder execute in command line:
 
 `truffle migrate --network kovan --skip-dry-run`
+
+
