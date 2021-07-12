@@ -5,6 +5,8 @@ const IporPool = artifacts.require("IporPool");
 const SimpleToken = artifacts.require('SimpleToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 
+
+
 const assertError = async (promise, error) => {
     try {
         await promise;
@@ -83,21 +85,21 @@ contract('IporAmm', (accounts) => {
     //     );
     // });
     //
-    it('should NOT open position because slippage too low', async () => {
-        //given
-        let asset = "DAI";
-        let depositAmount = BigInt("30000000000000000001");
-        let slippageValue = 0;
-        let direction = 0;
-        let leverage = 10;
-
-        await assertError(
-            //when
-            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
-            //then
-            'Reason given: 5'
-        );
-    });
+    // it('should NOT open position because slippage too low', async () => {
+    //     //given
+    //     let asset = "DAI";
+    //     let depositAmount = BigInt("30000000000000000001");
+    //     let slippageValue = 0;
+    //     let direction = 0;
+    //     let leverage = 10;
+    //
+    //     await assertError(
+    //         //when
+    //         amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+    //         //then
+    //         'Reason given: 5'
+    //     );
+    // });
     //
     // it('should NOT open position because slippage too high', async () => {
     //     //given
@@ -188,34 +190,175 @@ contract('IporAmm', (accounts) => {
     //
     // });
 
-    it('should calculate correct derivative interest when close pay fixed position - DAI', async () => {
+    // it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
+    //     //given
+    //     const params = {
+    //         asset: "DAI",
+    //         depositAmount: BigInt("10000000000000000000000"),
+    //         slippageValue: 3,
+    //         leverage: 10,
+    //         direction: 0,
+    //         from: userTwo
+    //     }
+    //
+    //     await iporOracle.updateIndex(params.asset, BigInt("30000000000000000"), {from: userOne});
+    //     await openPositionFunc(params);
+    //
+    //     //when
+    //     await amm.closePosition(0, {from: userTwo});
+    //
+    //     //then
+    //     let actualDerivatives = await amm.getPositions();
+    //     let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
+    //
+    //     //Number of opened derivatives
+    //     assert(0 === actualOpenPositionsVol, `Incorrect number of opened derivatives ${actualOpenPositionsVol}, expected 0`)
+    //
+    //     let expectedOpenerUserTokenBalance = BigInt("9999890300000000000000000");
+    //
+    //     //opening fee + ipor publication fee
+    //     let expectedAMMTokenBalance = BigInt("109700000000000000000");
+    //     let expectedDerivativesTotalBalance = BigInt(0);
+    //     let expectedOpeningFeeTotalBalance = BigInt("99700000000000000000");
+    //     let expectedLiquidationDepositFeeTotalBalance = BigInt(0);
+    //     let expectedPublicationFeeTotalBalance = BigInt("10000000000000000000");
+    //     let expectedLiquidityPoolTotalBalance = BigInt("99700000000000000000");
+    //
+    //     await assertBalances(
+    //         params.asset,
+    //         userTwo,
+    //         expectedOpenerUserTokenBalance,
+    //         expectedAMMTokenBalance,
+    //         expectedDerivativesTotalBalance,
+    //         expectedOpeningFeeTotalBalance,
+    //         expectedLiquidationDepositFeeTotalBalance,
+    //         expectedPublicationFeeTotalBalance,
+    //         expectedLiquidityPoolTotalBalance
+    //     );
+    // });
+
+
+    it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity', async () => {
+
         //given
-        let asset = "DAI";
-        // 10100000000000000000000
-        // 10000000000000000000000000000000
-        // 10000000000000000000000
+        const params = {
+            asset: "DAI",
+            depositAmount: BigInt("10000000000000000000000"), //10 000 USD
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            from: userTwo
+        }
 
-        //Every user has 10 000 000 USD DAI = 10000000000000000000000000
-        //AMM has 10 000 000 000 000 DAI = 10000000000000000000000000000000
-        //10 000 USD = 10000000000000000000000
-        let depositAmount = BigInt("10000000000000000000000")
+        //IPOR has 365% (3,65 * 1e18)
+        await iporOracle.updateIndex(params.asset, BigInt("3650000000000000000"), {from: userOne});
+        await openPositionFunc(params);
 
-        let slippageValue = 3;
-        let direction = 0;
-        let leverage = 10;
-        iporOracle.updateIndex(asset, BigInt("30000000000000000"), {from: userOne});
-        await amm.openPosition(asset, depositAmount, slippageValue, leverage, direction, {from: userTwo});
+        //25 days left
+        await time.increase(60 * 60 * 24 * 25);
+        //If IPOR is 365% then when 25 days left IBT price should increase 25%
+        await iporOracle.updateIndex(params.asset, BigInt("3650000000000000000"), {from: userOne});
 
+        const iporIndex = await iporOracle.getIndex(params.asset);
+        console.log(iporIndex.ibtPrice.toString());
         //when
-        let openPosition = await amm.getOpenPosition(0);
-        // const result = await derivativeLogic.calculateInterest(0, await time.latest(), {from: userTwo});
-        let openPositions = await amm.getOpenPositions();
-        console.log(openPositions);
+        await amm.closePosition(0, {from: userTwo});
+
         //then
+        let actualDerivatives = await amm.getPositions();
+        let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
 
+        //Number of opened derivatives
+        assert(0 === actualOpenPositionsVol, `Incorrect number of opened derivatives ${actualOpenPositionsVol}, expected 0`)
 
+        let expectedOpenerUserTokenBalance = BigInt("9999890300000000000000000");
+
+        let expectedAMMTokenBalance = BigInt("109700000000000000000");
+        let expectedDerivativesTotalBalance = BigInt(0);
+        let expectedOpeningFeeTotalBalance = BigInt("99700000000000000000");
+        let expectedLiquidationDepositFeeTotalBalance = BigInt(0);
+        let expectedPublicationFeeTotalBalance = BigInt("10000000000000000000");
+        let expectedLiquidityPoolTotalBalance = BigInt("99700000000000000000");
+
+        await assertBalances(
+            params.asset,
+            userTwo,
+            expectedOpenerUserTokenBalance,
+            expectedAMMTokenBalance,
+            expectedDerivativesTotalBalance,
+            expectedOpeningFeeTotalBalance,
+            expectedLiquidationDepositFeeTotalBalance,
+            expectedPublicationFeeTotalBalance,
+            expectedLiquidityPoolTotalBalance
+        );
+
+        // let expectedCloserUserTokenBalance = BigInt("");
+        // let actualCloserUserTokenBalance = await tokenDai.balanceOf(closerUserAddress);
+        // assert(actualCloserUserTokenBalance === expectedCloserUserTokenBalance,
+        //     `Incorrect total supply of ${asset} tokens in Closer User address ${actualUserTokenBalance}, expected ${expectedUserTokenBalance}`);
 
     });
+
+
+    // it('should calculate correct derivative interest when close pay fixed position - DAI', async () => {
+    //     //given
+    //     const params = {
+    //         asset: "DAI",
+    //         depositAmount: BigInt("10000000000000000000000"),
+    //         slippageValue: 3,
+    //         leverage: 10,
+    //         direction: 0,
+    //         from: userTwo
+    //     }
+    //
+    //     await iporOracle.updateIndex(params.asset, BigInt("30000000000000000"), {from: userOne});
+    //     await openPositionFunc(params);
+    //     let iporIndex = await iporOracle.getIndex(params.asset);
+    //     let openPosition = await amm.getOpenPosition(0);
+    //
+    //     //when
+    //
+    //
+    //     //then
+    //
+    //     const expectedDerivative = {
+    //         id: '0',
+    //         state: '0',
+    //         buyer: '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef',
+    //         asset: 'DAI',
+    //         direction: '0',
+    //         depositAmount: '9870300000000000000000',
+    //         fee: {
+    //             liquidationDepositAmount: '20000000000000000000',
+    //             openingAmount: '99700000000000000000',
+    //             iporPublicationAmount: '10000000000000000000',
+    //             spreadPercentage: '10000000000000000'
+    //         },
+    //         leverage: '10',
+    //         notionalAmount: '98703000000000000000000',
+    //         startingTimestamp: '1625907631',
+    //         endingTimestamp: '1628326831',
+    //         indicator: {
+    //             iporIndexValue: '30000000000000000',
+    //             ibtPrice: '100000000000000000000',
+    //             ibtQuantity: '987030000000000000000',
+    //             fixedInterestRate: '40000000000000000',
+    //             soap: '0'
+    //         }
+    //     }
+    //
+    //     await assertDerivative(0, expectedDerivative);
+    //
+    // });
+
+
+    // 10100000000000000000000
+    // 10000000000000000000000000000000
+    // 10000000000000000000000
+
+    //Every user has 10 000 000 USD DAI = 10000000000000000000000000
+    //AMM has 10 000 000 000 000 DAI = 10000000000000000000000000000000
+    //10 000 USD = 10000000000000000000000
 
     // it('should close pay fixed position - simple case DAI', async () => {
     //     //given
@@ -271,14 +414,8 @@ contract('IporAmm', (accounts) => {
     //
     // });
     //
-    // it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
-    //
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price changed 25%, before maturity', async () => {
-    //
-    // });
-    //
+
+
     // it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price changed 50%, before maturity,', async () => {
     //
     // });
@@ -462,71 +599,107 @@ contract('IporAmm', (accounts) => {
     //TODO: owner moze zamknąc zawsze, ktokolwiek moze zamknąc gdy: minęło 28 dni (maturity), gdy jest poza zakresem +- 100%
     //TODO: liquidation deposit trafia do osoby która wykona zamknięcie depozytu
 
-    const assertDerivative = async(
+    const openPositionFunc = async (params) => {
+        await amm.openPosition(params.asset, params.depositAmount, params.slippageValue, params.leverage, params.direction, {from: params.from});
+    }
+
+    const countOpenPositions = (derivatives) => {
+        let count = 0;
+        for (let i = 0; i < derivatives.length; i++) {
+            if (derivatives[i].state == 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    const assertDerivative = async (
         derivativeId,
-        expectedLiquidationDepositAmount,
-        expectedOpeningAmount,
-        epxectedIporPublicationAmount,
-        expectedSpreadPercentage,
-        expectedIporIndexValue,
-        expectecIbtPrice,
-        expectedIbtQuantity,
-        expectedFixedInterestRate,
-        expectedSoap,
-        expectedState,
-        expectedAsset,
-        expectedDirection,
-        expectedDepositAmount,
-        expectedFeeLiqDepositAmount,
-        expectedFeeOpeningAmount,
-        expectedFeeIporPublicationAmount,
-        expectedFeeSpreadPercentage,
-        expectedLeverage,
-        expectedNotionalAmount,
-        expectedStartingTimestamp,
-        expectedEndingTimestamp
+        expectedDerivative
     ) => {
 
+        let actualDerivative = await amm.getOpenPosition(derivativeId);
 
+        assertDerivativeItem('ID', expectedDerivative.id, actualDerivative.id);
+        assertDerivativeItem('State', expectedDerivative.state, actualDerivative.state);
+        assertDerivativeItem('Buyer', expectedDerivative.buyer, actualDerivative.buyer);
+        assertDerivativeItem('Asset', expectedDerivative.asset, actualDerivative.asset);
+        assertDerivativeItem('Direction', expectedDerivative.direction, actualDerivative.direction);
+        assertDerivativeItem('Deposit Amount', expectedDerivative.depositAmount, actualDerivative.depositAmount);
+        assertDerivativeItem('Liquidation Deposit Amount', expectedDerivative.fee.liquidationDepositAmount, actualDerivative.fee.liquidationDepositAmount);
+        assertDerivativeItem('Opening Amount Fee', expectedDerivative.fee.openingAmount, actualDerivative.fee.openingAmount);
+        assertDerivativeItem('IPOR Publication Amount Fee', expectedDerivative.fee.iporPublicationAmount, actualDerivative.fee.iporPublicationAmount);
+        assertDerivativeItem('Spread Percentage Fee', expectedDerivative.fee.spreadPercentage, actualDerivative.fee.spreadPercentage);
+        assertDerivativeItem('Leverage', expectedDerivative.leverage, actualDerivative.leverage);
+        assertDerivativeItem('Notional Amount', expectedDerivative.notionalAmount, actualDerivative.notionalAmount);
+        // assertDerivativeItem('Derivative starting timestamp', expectedDerivative.startingTimestamp, actualDerivative.startingTimestamp);
+        // assertDerivativeItem('Derivative ending timestamp', expectedDerivative.endingTimestamp, actualDerivative.endingTimestamp);
+        assertDerivativeItem('IPOR Index Value', expectedDerivative.indicator.iporIndexValue, actualDerivative.indicator.iporIndexValue);
+        assertDerivativeItem('IBT Price', expectedDerivative.indicator.ibtPrice, actualDerivative.indicator.ibtPrice);
+        assertDerivativeItem('IBT Quantity', expectedDerivative.indicator.ibtQuantity, actualDerivative.indicator.ibtQuantity);
+        assertDerivativeItem('Fixed Interest Rate', expectedDerivative.indicator.fixedInterestRate, actualDerivative.indicator.fixedInterestRate);
+        assertDerivativeItem('SOAP', expectedDerivative.indicator.soap, actualDerivative.indicator.soap);
+
+    }
+    const assertDerivativeItem = function (itemName, expected, actual) {
+        assert(actual === expected, `Incorrect ${itemName} ${actual}, expected ${expected}`);
     }
     const assertBalances = async (
         asset,
-        expectedUserTwoDAITokenBalance,
-        expectedAMMDAITokenBalance,
+        userAddress,
+        expectedUserTokenBalance,
+        expectedAMMTokenBalance,
         expectedDerivativesTotalBalance,
         expectedOpeningFeeTotalBalance,
         expectedLiquidationDepositFeeTotalBalance,
         expectedPublicationFeeTotalBalance,
         expectedLiquidityPoolTotalBalance
     ) => {
-        const actualUserTwoDAITokenBalance = await tokenDai.balanceOf(userTwo);
-        const actualAMMDAITokenBalance = await amm.getTotalSupply(asset);
+
+        let actualUserTokenBalance = null;
+        if (asset === "DAI") {
+            actualUserTokenBalance = BigInt(await tokenDai.balanceOf(userAddress));
+        }
+
+        const actualAMMTokenBalance = BigInt(await amm.getTotalSupply(asset));
         const actualDerivativesTotalBalance = BigInt(await amm.derivativesTotalBalances(asset));
         const actualOpeningFeeTotalBalance = BigInt(await amm.openingFeeTotalBalances(asset));
         const actualLiquidationDepositFeeTotalBalance = BigInt(await amm.liquidationDepositFeeTotalBalances(asset));
         const actualPublicationFeeTotalBalance = BigInt(await amm.iporPublicationFeeTotalBalances(asset));
         const actualLiquidityPoolTotalBalance = BigInt(await amm.liquidityPoolTotalBalances(asset));
 
-        assert(actualAMMDAITokenBalance === expectedAMMDAITokenBalance,
-            `Incorrect total supply of ${asset} tokens in AMM address ${actualAMMDAITokenBalance}, expected ${expectedAMMDAITokenBalance}`);
+        if (expectedUserTokenBalance !== null) {
+            assert(actualAMMTokenBalance === expectedAMMTokenBalance,
+                `Incorrect total supply of ${asset} tokens in AMM address ${actualAMMTokenBalance}, expected ${expectedAMMTokenBalance}`);
+        }
 
-        assert(actualUserTwoDAITokenBalance === expectedUserTwoDAITokenBalance,
-            `Incorrect total supply of ${asset} tokens in AMM address ${actualUserTwoDAITokenBalance}, expected ${expectedUserTwoDAITokenBalance}`);
+        if (expectedUserTokenBalance != null) {
+            assert(actualUserTokenBalance === expectedUserTokenBalance,
+                `Incorrect total supply of ${asset} tokens in User address ${actualUserTokenBalance}, expected ${expectedUserTokenBalance}`);
+        }
+        if (expectedDerivativesTotalBalance != null) {
+            assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
+                `Incorrect derivatives total balance for ${asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
+        }
 
-        assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
-            `Incorrect derivatives total balance for ${asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
+        if (expectedOpeningFeeTotalBalance != null) {
+            assert(expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
+                `Incorrect opening fee total balance for ${asset} ${actualOpeningFeeTotalBalance}, expected ${expectedOpeningFeeTotalBalance}`)
+        }
 
-        assert(expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
-            `Incorrect opening fee total balance for ${asset} ${actualOpeningFeeTotalBalance}, expected ${expectedOpeningFeeTotalBalance}`)
+        if (expectedLiquidationDepositFeeTotalBalance !== null) {
+            assert(expectedLiquidationDepositFeeTotalBalance === actualLiquidationDepositFeeTotalBalance,
+                `Incorrect liquidation deposit fee total balance for ${asset} ${actualLiquidationDepositFeeTotalBalance}, expected ${expectedLiquidationDepositFeeTotalBalance}`)
+        }
 
-        assert(expectedLiquidationDepositFeeTotalBalance === actualLiquidationDepositFeeTotalBalance,
-            `Incorrect liquidation deposit fee total balance for ${asset} ${actualLiquidationDepositFeeTotalBalance}, expected ${expectedLiquidationDepositFeeTotalBalance}`)
-        assert(expectedPublicationFeeTotalBalance === actualPublicationFeeTotalBalance,
-            `Incorrect ipor publication fee total balance for ${asset} ${actualPublicationFeeTotalBalance}, expected ${expectedPublicationFeeTotalBalance}`)
+        if (expectedPublicationFeeTotalBalance != null) {
+            assert(expectedPublicationFeeTotalBalance === actualPublicationFeeTotalBalance,
+                `Incorrect ipor publication fee total balance for ${asset} ${actualPublicationFeeTotalBalance}, expected ${expectedPublicationFeeTotalBalance}`)
+        }
 
-        assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
-            `Incorrect Liquidity Pool total balance for ${asset} ${actualLiquidityPoolTotalBalance}, expected ${expectedLiquidityPoolTotalBalance}`)
-
-
+        if (expectedLiquidityPoolTotalBalance != null) {
+            assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
+                `Incorrect Liquidity Pool total balance for ${asset} ${actualLiquidityPoolTotalBalance}, expected ${expectedLiquidityPoolTotalBalance}`)
+        }
     }
 });

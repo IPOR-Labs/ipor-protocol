@@ -37,18 +37,18 @@ export default (derivatives) => (
                                 <td>{derivative.buyer}</td>
                                 <td>{derivative.asset}</td>
                                 <td>{derivative.direction}</td>
-                                <td>{derivative.depositAmount / 1000000000000000000}</td>
+                                <td>{derivative.depositAmount}</td>
                                 <td>{derivative.leverage}</td>
-                                <td>{derivative.notionalAmount / 1000000000000000000}</td>
-                                <td>{derivative.fee.liquidationDepositAmount / 1000000000000000000}</td>
-                                <td>{derivative.fee.openingAmount / 1000000000000000000}</td>
-                                <td>{derivative.fee.iporPublicationAmount / 1000000000000000000}</td>
-                                <td>{derivative.fee.spreadPercentage / 1000000000000000000}</td>
-                                <td>{derivative.indicator.iporIndexValue / 1000000000000000000}</td>
-                                <td>{derivative.indicator.ibtPrice / 1000000000000000000}</td>
-                                <td>{derivative.indicator.ibtQuantity / 1000000000000000000}</td>
-                                <td>{derivative.indicator.fixedInterestRate / 1000000000000000000}</td>
-                                <td>{derivative.indicator.soap / 1000000000000000000}</td>
+                                <td>{derivative.notionalAmount}</td>
+                                <td>{derivative.fee.liquidationDepositAmount }</td>
+                                <td>{derivative.fee.openingAmount }</td>
+                                <td>{derivative.fee.iporPublicationAmount }</td>
+                                <td>{derivative.fee.spreadPercentage }</td>
+                                <td>{derivative.indicator.iporIndexValue }</td>
+                                <td>{derivative.indicator.ibtPrice }</td>
+                                <td>{derivative.indicator.ibtQuantity}</td>
+                                <td>{derivative.indicator.fixedInterestRate}</td>
+                                <td>{derivative.indicator.soap}</td>
                                 <td>{toDate(derivative.startingTimestamp)}</td>
                                 <td>{toDate(derivative.endingTimestamp)}</td>
                             </tr>

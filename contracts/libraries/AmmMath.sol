@@ -5,7 +5,9 @@ import "./types/DataTypes.sol";
 
 library AmmMath {
 
-    function calculateIbtQuantity(string memory asset, uint256 notionalAmount, uint256 ibtPrice) public view returns (uint256){
-        return notionalAmount * 1e18 / ibtPrice;
+    uint256 constant LAS_VEGAS_DECIMALS_FACTOR = 1e18;
+
+    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice) public pure returns (uint256){
+        return notionalAmount * LAS_VEGAS_DECIMALS_FACTOR / ibtPrice;
     }
 }

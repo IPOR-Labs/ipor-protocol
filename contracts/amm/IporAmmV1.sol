@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
+
 import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
@@ -22,23 +23,14 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     IIporOracle public iporOracle;
 
-    //@notice
-    uint256 constant LAS_VEGAS_DECIMALS_FACTOR = 1e18;
-
-    //@notice Year in seconds
-    uint256 constant YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
-
-    //@notice By default every derivative takes 28 days, this variable show this value in seconds
-    uint256 constant DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS = 60 * 60 * 24 * 28;
-
     //@notice amount of asset taken in case of deposit liquidation
-    uint256 constant LIQUIDATION_DEPOSIT_FEE_AMOUNT = 20 * LAS_VEGAS_DECIMALS_FACTOR;
+    uint256 constant LIQUIDATION_DEPOSIT_FEE_AMOUNT = 20 * 1e18;
 
     //@notice percentage of deposit amount
     uint256 constant OPENING_FEE_PERCENTAGE = 1e16;
 
     //@notice amount of asset taken for IPOR publication
-    uint256 constant IPOR_PUBLICATION_FEE_AMOUNT = 10 * LAS_VEGAS_DECIMALS_FACTOR;
+    uint256 constant IPOR_PUBLICATION_FEE_AMOUNT = 10 * 1e18;
 
     //@notice percentage of deposit amount
     uint256 constant SPREAD_FEE_PERCENTAGE = 1e16;
@@ -100,7 +92,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             iporIndexValue,
             ibtPrice,
-                AmmMath.calculateIbtQuantity(_asset, derivativeAmount.notional, ibtPrice),
+            AmmMath.calculateIbtQuantity(derivativeAmount.notional, ibtPrice),
             _direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE),
             soap
         );
@@ -125,7 +117,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 _leverage,
                 derivativeAmount.notional,
                 startingTimestamp,
-                startingTimestamp + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                startingTimestamp + DerivativeLogic.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                 indicator
             )
         );
@@ -150,7 +142,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             _leverage,
             derivativeAmount.notional,
             startingTimestamp,
-            startingTimestamp + DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+            startingTimestamp + DerivativeLogic.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
             indicator
         );
         //TODO: clarify if ipAsset should be transfered to trader when position is opened
@@ -207,7 +199,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 require(liquidityPoolTotalBalances[derivatives[_derivativeId].asset] >= absInterestDifferenceAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 require(msg.sender == derivatives[_derivativeId].buyer ||
-                    block.timestamp > derivatives[_derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                    block.timestamp >= derivatives[_derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
 
                 //fetch "I" amount from Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[_derivativeId].asset] = liquidityPoolTotalBalances[derivatives[_derivativeId].asset] - absInterestDifferenceAmount;
@@ -227,7 +219,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             } else {
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 require(msg.sender == derivatives[_derivativeId].buyer ||
-                    block.timestamp > derivatives[_derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                    block.timestamp >= derivatives[_derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
 
                 //transfer I to Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[_derivativeId].asset] = liquidityPoolTotalBalances[derivatives[_derivativeId].asset] + absInterestDifferenceAmount;
@@ -253,13 +245,13 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     }
 
     function _calculateClosingFeeAmount(uint256 depositAmount) internal view returns (uint256) {
-        return depositAmount * closingFeePercentage / 100 * LAS_VEGAS_DECIMALS_FACTOR;
+        return depositAmount * closingFeePercentage / 100 * AmmMath.LAS_VEGAS_DECIMALS_FACTOR;
     }
 
     function _calculateDerivativeAmount(
         uint256 _totalAmount, uint8 _leverage
     ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
-        uint256 openingFeeAmount = (_totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT) * OPENING_FEE_PERCENTAGE / LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 openingFeeAmount = (_totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT) * OPENING_FEE_PERCENTAGE / AmmMath.LAS_VEGAS_DECIMALS_FACTOR;
         uint256 depositAmount = _totalAmount - LIQUIDATION_DEPOSIT_FEE_AMOUNT - IPOR_PUBLICATION_FEE_AMOUNT - openingFeeAmount;
         return DataTypes.IporDerivativeAmount(
             depositAmount,
@@ -279,7 +271,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     }
 
     //@notice FOR FRONTEND
-    function getOpenPositions() external view returns (DataTypes.IporDerivative[] memory) {
+    function getPositions() external view returns (DataTypes.IporDerivative[] memory) {
         DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](derivatives.length);
 
         for (uint256 i = 0; i < derivatives.length; i++) {

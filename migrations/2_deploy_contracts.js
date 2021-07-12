@@ -49,6 +49,14 @@ module.exports = async function (deployer, _network, addresses) {
         tusd = await SimpleToken.deployed();
     }
 
+    if (_network == 'develop2') {
+        //by default add ADMIN as updater for IPOR Oracle
+        await iporOracle.addUpdater(admin);
+        await iporOracle.updateIndex("DAI", BigInt("30000000000000000"));
+        await iporOracle.updateIndex("USDT", BigInt("30000000000000000"));
+        await iporOracle.updateIndex("USDC", BigInt("30000000000000000"));
+    }
+
     let iporAmm = null;
 
     if (_network !== 'test') {
