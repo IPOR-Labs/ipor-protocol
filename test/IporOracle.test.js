@@ -28,14 +28,14 @@ contract('IporOracle', (accounts) => {
     it('should NOT update IPOR Index', async () => {
         await assertError(
             iporOracle.updateIndex("ASSET_SYMBOL", 123, {from: updaterOne}),
-            'Reason given: 2'
+            'Reason given: IPOR_2'
         );
     });
 
     it('should NOT update IPOR Index because input value is too low', async () => {
         await assertError(
             iporOracle.updateIndex("USDT", 123, {from: updaterOne}),
-            'Reason given: 2'
+            'Reason given: IPOR_2'
         );
     });
 
@@ -68,7 +68,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT add IPOR Index Updater', async () => {
         await assertError(
             iporOracle.addUpdater(updaterTwo, {from: user}),
-            'Reason given: 1'
+            'Reason given: IPOR_1'
         );
     });
 
@@ -82,7 +82,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT remove IPOR Index Updater', async () => {
         await assertError(
             iporOracle.removeUpdater(updaterTwo, {from: user}),
-            'Reason given: 1'
+            'Reason given: IPOR_1'
         );
     });
 

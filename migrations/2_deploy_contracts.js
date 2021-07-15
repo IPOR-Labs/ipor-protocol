@@ -1,5 +1,6 @@
 const IporOracle = artifacts.require("IporOracle");
 const IporAmmV1 = artifacts.require("IporAmmV1");
+const TestIporAmmV1Proxy = artifacts.require("TestIporAmmV1Proxy");
 const SimpleToken = artifacts.require('SimpleToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const AmmMath = artifacts.require('AmmMath');
@@ -61,7 +62,14 @@ module.exports = async function (deployer, _network, addresses) {
 
     if (_network !== 'test') {
         iporAmm = await deployer.deploy(IporAmmV1, iporOracle.address, usdt.address, usdc.address, dai.address);
-    }
+    }else {
+        await deployer.link(DerivativeLogic, TestIporAmmV1Proxy);
+        await deployer.link(AmmMath, TestIporAmmV1Proxy);
+
+         // iporAmm = await deployer.deploy(TestIporAmmV1Proxy, iporOracle.address, usdt.address, usdc.address, dai.address);
+     }
+
+
 
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev') {

@@ -2,12 +2,23 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import "./types/DataTypes.sol";
+import "./Constants.sol";
 
 library AmmMath {
 
-    uint256 constant LAS_VEGAS_DECIMALS_FACTOR = 1e18;
-
     function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice) public pure returns (uint256){
-        return notionalAmount * LAS_VEGAS_DECIMALS_FACTOR / ibtPrice;
+        return notionalAmount * Constants.LAS_VEGAS_DECIMALS_FACTOR / ibtPrice;
+    }
+
+    function calculateDerivativeAmount(
+        uint256 totalAmount, uint8 leverage
+    ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
+        uint256 openingFeeAmount = (totalAmount - Constants.LIQUIDATION_DEPOSIT_FEE_AMOUNT - Constants.IPOR_PUBLICATION_FEE_AMOUNT) * Constants.OPENING_FEE_PERCENTAGE / Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 depositAmount = totalAmount - Constants.LIQUIDATION_DEPOSIT_FEE_AMOUNT - Constants.IPOR_PUBLICATION_FEE_AMOUNT - openingFeeAmount;
+        return DataTypes.IporDerivativeAmount(
+            depositAmount,
+            leverage * depositAmount,
+            openingFeeAmount
+        );
     }
 }

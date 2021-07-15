@@ -26,7 +26,7 @@ contract IporAmmV1Storage is IporAmmStorage {
     mapping(string => uint256) public openingFeeTotalBalances;
 
     //@notice Liquidation Deposit total balances for every asset
-    mapping(string => uint256) public liquidationDepositFeeTotalBalances;
+    mapping(string => uint256) public liquidationDepositTotalBalances;
 
     //@notice IPOR Publication Fee total balances for every asset
     mapping(string => uint256) public iporPublicationFeeTotalBalances;

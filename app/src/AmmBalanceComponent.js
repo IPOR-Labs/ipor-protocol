@@ -110,7 +110,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="IporAmmV1"
-                        method="liquidationDepositFeeTotalBalances"
+                        method="liquidationDepositTotalBalances"
                         methodArgs={["USDT"]}
                     />
                 </td>
@@ -119,7 +119,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="IporAmmV1"
-                        method="liquidationDepositFeeTotalBalances"
+                        method="liquidationDepositTotalBalances"
                         methodArgs={["USDC"]}
                     />
                 </td>
@@ -128,7 +128,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="IporAmmV1"
-                        method="liquidationDepositFeeTotalBalances"
+                        method="liquidationDepositTotalBalances"
                         methodArgs={["DAI"]}
 
                     />
