@@ -194,7 +194,7 @@ contract DerivativeLogicTest {
     /*
     * @param fixedInterestRate is a spread with IPOR index
     */
-    function prepareDerivativeCase1(uint256 fixedInterestRate) internal pure returns (DataTypes.IporDerivative memory) {
+    function prepareDerivativeCase1(uint256 fixedInterestRate) internal view returns (DataTypes.IporDerivative memory) {
 
         uint256 ibtPriceFirst = 100 * Constants.MILTON_DECIMALS_FACTOR;
         uint256 depositAmount = 9870300000000000000000;

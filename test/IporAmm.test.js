@@ -104,631 +104,631 @@ contract('IporAmm', (accounts) => {
         );
     });
 
-    //
-    // it('should NOT open position because slippage too low', async () => {
-    //     //given
-    //     let asset = "DAI";
-    //     let depositAmount = BigInt("30000000000000000001");
-    //     let slippageValue = 0;
-    //     let direction = 0;
-    //     let leverage = 10;
-    //
-    //     await assertError(
-    //         //when
-    //         amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
-    //         //then
-    //         'Reason given: IPOR_5'
-    //     );
-    // });
-    //
-    // it('should NOT open position because slippage too high', async () => {
-    //     //given
-    //     let asset = "DAI";
-    //     let depositAmount = BigInt("30000000000000000001");
-    //     let slippageValue = web3.utils.toBN(1e20);
-    //     let theOne = web3.utils.toBN(1);
-    //     slippageValue = slippageValue.add(theOne);
-    //     let direction = 0;
-    //     let leverage = 10;
-    //
-    //     await assertError(
-    //         //when
-    //         amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
-    //         //then
-    //         'Reason given: IPOR_9'
-    //     );
-    // });
-    //
-    // it('should NOT open position because deposit amount too high', async () => {
-    //     //given
-    //     let asset = "DAI";
-    //     let depositAmount = BigInt("1000000000000000000000001")
-    //     let slippageValue = 3;
-    //     let direction = 0;
-    //     let leverage = 10;
-    //
-    //     await assertError(
-    //         //when
-    //         amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
-    //         //then
-    //         'Reason given: IPOR_10'
-    //     );
-    // });
-    //
-    // it('should open pay fixed position - simple case DAI', async () => {
-    //     //given
-    //     const params = {
-    //         asset: "DAI",
-    //         totalAmount: MILTON_10_000_USD,
-    //         slippageValue: 3,
-    //         leverage: 10,
-    //         direction: 0,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo
-    //     }
-    //     await iporOracle.updateIndex(params.asset, MILTON_3_PERCENTAGE, {from: userOne});
-    //
-    //     //when
-    //     await amm.openPosition(
-    //         params.asset, params.totalAmount,
-    //         params.slippageValue, params.leverage,
-    //         params.direction, {from: userTwo});
-    //
-    //     //then
-    //     const expectedDerivativesTotalBalance = BigInt("9870300000000000000000");
-    //
-    //     await assertExpectedValues(
-    //         params.asset,
-    //         userTwo,
-    //         userTwo,
-    //         ZERO,
-    //         MILTON_10_000_USD,
-    //         BigInt("9990000000000000000000000"),
-    //         BigInt("9990000000000000000000000"),
-    //         BigInt("99700000000000000000"),
-    //         1,
-    //         BigInt("9870300000000000000000"),
-    //         MILTON_20_USD
-    //     );
-    //
-    //     const actualDerivativesTotalBalance = BigInt(await amm.derivativesTotalBalances(params.asset));
-    //
-    //     assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
-    //         `Incorrect derivatives total balance for ${params.asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
-    //
-    // });
-    //
-    // //TODO: implement it
-    // // it('should open receive fixed position - simple case DAI', async () => {
-    // //
-    // // });
-    //
-    // it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_3_PERCENTAGE, MILTON_3_PERCENTAGE, 0, ZERO,
-    //         BigInt("109700000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9999890300000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9999890300000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("99700000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_365_PERCENTAGE, MILTON_365_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("177304794520547945205"), //expectedAMMTokenBalance
-    //         BigInt("9999822695205479452054795"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9999822695205479452054795"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("167304794520547945205"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should NOT open position because Liquidity Pool is to low', async () => {
-    //     //given
-    //     const params = {
-    //         asset: "DAI",
-    //         totalAmount: BigInt("10000000000000000000000"), //10 000 USD
-    //         slippageValue: 3,
-    //         leverage: 10,
-    //         direction: 0,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo
-    //     }
-    //
-    //     await iporOracle.updateIndex(params.asset, BigInt("10000000000000000"), {from: userOne});
-    //     await openPositionFunc(params);
-    //     await iporOracle.updateIndex(params.asset, BigInt("1600000000000000000"), {from: userOne});
-    //     await time.increase(PERIOD_25_DAYS_IN_SECONDS);
-    //     await iporOracle.updateIndex(params.asset, BigInt("50000000000000000"), {from: userOne});
-    //
-    //     //when
-    //     await assertError(
-    //         //when
-    //         amm.closePosition(0, {from: userTwo}),
-    //         //then
-    //         'Reason given: IPOR_14'
-    //     );
+
+    it('should NOT open position because slippage too low', async () => {
+        //given
+        let asset = "DAI";
+        let depositAmount = BigInt("30000000000000000001");
+        let slippageValue = 0;
+        let direction = 0;
+        let leverage = 10;
+
+        await assertError(
+            //when
+            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+            //then
+            'Reason given: IPOR_5'
+        );
+    });
+
+    it('should NOT open position because slippage too high', async () => {
+        //given
+        let asset = "DAI";
+        let depositAmount = BigInt("30000000000000000001");
+        let slippageValue = web3.utils.toBN(1e20);
+        let theOne = web3.utils.toBN(1);
+        slippageValue = slippageValue.add(theOne);
+        let direction = 0;
+        let leverage = 10;
+
+        await assertError(
+            //when
+            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+            //then
+            'Reason given: IPOR_9'
+        );
+    });
+
+    it('should NOT open position because deposit amount too high', async () => {
+        //given
+        let asset = "DAI";
+        let depositAmount = BigInt("1000000000000000000000001")
+        let slippageValue = 3;
+        let direction = 0;
+        let leverage = 10;
+
+        await assertError(
+            //when
+            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+            //then
+            'Reason given: IPOR_10'
+        );
+    });
+
+    it('should open pay fixed position - simple case DAI', async () => {
+        //given
+        const params = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await iporOracle.updateIndex(params.asset, MILTON_3_PERCENTAGE, {from: userOne});
+
+        //when
+        await amm.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        //then
+        const expectedDerivativesTotalBalance = BigInt("9870300000000000000000");
+
+        await assertExpectedValues(
+            params.asset,
+            userTwo,
+            userTwo,
+            ZERO,
+            MILTON_10_000_USD,
+            BigInt("9990000000000000000000000"),
+            BigInt("9990000000000000000000000"),
+            BigInt("99700000000000000000"),
+            1,
+            BigInt("9870300000000000000000"),
+            MILTON_20_USD
+        );
+
+        const actualDerivativesTotalBalance = BigInt(await amm.derivativesTotalBalances(params.asset));
+
+        assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
+            `Incorrect derivatives total balance for ${params.asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
+
+    });
+
+    //TODO: implement it
+    // it('should open receive fixed position - simple case DAI', async () => {
     //
     // });
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("7951856164383561677638"), //expectedAMMTokenBalance
-    //         BigInt("9992048143835616438322362"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9992048143835616438322362"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("7941856164383561677638"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("8595453808219178149796"), //expectedAMMTokenBalance
-    //         BigInt("9991404546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9991404546191780821850204"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("2802753424657534268208"), //expectedAMMTokenBalance
-    //         BigInt("10007597246575342465731792"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10007597246575342465731792"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("2792753424657534268208"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("4203524767123287755062"), //expectedAMMTokenBalance
-    //         BigInt("10006196475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10006196475232876712244938"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userThree,
-    //         MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
-    //     //given
-    //     const params = {
-    //         asset: "DAI",
-    //         totalAmount: MILTON_10_000_USD,
-    //         slippageValue: 3,
-    //         leverage: 10,
-    //         direction: 0,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo
-    //     }
-    //
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     await openPositionFunc(params);
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
-    //     await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
-    //
-    //     //when
-    //     await assertError(
-    //         //when
-    //         amm.test_closePosition(0, endTimestamp, {from: userThree}),
-    //         //then
-    //         'Reason given: IPOR_16');
-    // });
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userThree,
-    //         MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userThree,
-    //         MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("4203524767123287755062"), //expectedAMMTokenBalance
-    //         BigInt("10006176475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userThree,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS,
-    //         ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
-    //     //given
-    //     const params = {
-    //         asset: "DAI",
-    //         totalAmount: MILTON_10_000_USD,
-    //         slippageValue: 3,
-    //         leverage: 10,
-    //         direction: 0,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo
-    //     }
-    //
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     await openPositionFunc(params);
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
-    //     await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
-    //
-    //     //when
-    //     await assertError(
-    //         //when
-    //         amm.test_closePosition(0, endTimestamp, {from: userThree}),
-    //         //then
-    //         'Reason given: IPOR_16');
-    // });
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userThree,
-    //         MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS,
-    //         ZERO,
-    //         BigInt("8595453808219178149796"), //expectedAMMTokenBalance
-    //         BigInt("9991384546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userThree,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS,
-    //         ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_3_PERCENTAGE, MILTON_3_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("177304794520547924925"), //expectedAMMTokenBalance
-    //         BigInt("9999822695205479452075075"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9999822695205479452075075"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("167304794520547924925"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    //
-    // it('should close position, DAI, owner, receive fixed, IPOR not changed, IBT price changed 25%, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_365_PERCENTAGE, MILTON_365_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("177304794520547945206"), //expectedAMMTokenBalance
-    //         BigInt("9999822695205479452054794"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9999822695205479452054794"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("167304794520547945206"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("2802753424657534212773"), //expectedAMMTokenBalance
-    //         BigInt("10007597246575342465787227"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10007597246575342465787227"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("2792753424657534212773"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("7951856164383561622203"), //expectedAMMTokenBalance
-    //         BigInt("9992048143835616438377797"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9992048143835616438377797"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("7941856164383561622203"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("2175380931506849247464"), //expectedAMMTokenBalance
-    //         BigInt("10008224619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10008224619068493150752536"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userTwo,
-    //         MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("6567309972602739642198"), //expectedAMMTokenBalance
-    //         BigInt("9993432690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9993432690027397260357802"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userThree,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
-    //     //given
-    //     const params = {
-    //         asset: "DAI",
-    //         totalAmount: MILTON_10_000_USD,
-    //         slippageValue: 3,
-    //         leverage: 10,
-    //         direction: 1,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo
-    //     }
-    //
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     await openPositionFunc(params);
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
-    //     await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
-    //
-    //     //when
-    //     await assertError(
-    //         //when
-    //         amm.test_closePosition(0, endTimestamp, {from: userThree}),
-    //         //then
-    //         'Reason given: IPOR_16');
-    // });
-    //
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userThree,
-    //         MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
-    //     //given
-    //     const params = {
-    //         asset: "DAI",
-    //         totalAmount: MILTON_10_000_USD,
-    //         slippageValue: 3,
-    //         leverage: 10,
-    //         direction: 1,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo
-    //     }
-    //
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     await openPositionFunc(params);
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
-    //
-    //     //when
-    //     await assertError(
-    //         //when
-    //         amm.test_closePosition(0, endTimestamp, {from: userThree}),
-    //         //then
-    //         'Reason given: IPOR_16');
-    // });
-    // //----
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userThree,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("639400000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userThree,
-    //         MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-    //         BigInt("2175380931506849247464"), //expectedAMMTokenBalance
-    //         BigInt("10008204619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userThree,
-    //         MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 1, userTwo, userThree,
-    //         MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("6567309972602739642198"), //expectedAMMTokenBalance
-    //         BigInt("9993412690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
-    //
-    // it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
-    //     await exetuceTestCase(
-    //         "DAI", 10, 0, userTwo, userTwo,
-    //         MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-    //         BigInt("9980000000000000000000"), //expectedAMMTokenBalance
-    //         BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
-    //         BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-    //         BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-    //         0, ZERO, ZERO
-    //     );
-    // });
+
+    it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_3_PERCENTAGE, MILTON_3_PERCENTAGE, 0, ZERO,
+            BigInt("109700000000000000000"), //expectedAMMTokenBalance
+            BigInt("9999890300000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9999890300000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("99700000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_365_PERCENTAGE, MILTON_365_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("177304794520547945205"), //expectedAMMTokenBalance
+            BigInt("9999822695205479452054795"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9999822695205479452054795"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("167304794520547945205"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should NOT open position because Liquidity Pool is to low', async () => {
+        //given
+        const params = {
+            asset: "DAI",
+            totalAmount: BigInt("10000000000000000000000"), //10 000 USD
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+
+        await iporOracle.updateIndex(params.asset, BigInt("10000000000000000"), {from: userOne});
+        await openPositionFunc(params);
+        await iporOracle.updateIndex(params.asset, BigInt("1600000000000000000"), {from: userOne});
+        await time.increase(PERIOD_25_DAYS_IN_SECONDS);
+        await iporOracle.updateIndex(params.asset, BigInt("50000000000000000"), {from: userOne});
+
+        //when
+        await assertError(
+            //when
+            amm.closePosition(0, {from: userTwo}),
+            //then
+            'Reason given: IPOR_14'
+        );
+
+    });
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("7951856164383561677638"), //expectedAMMTokenBalance
+            BigInt("9992048143835616438322362"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9992048143835616438322362"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("7941856164383561677638"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
+            BigInt("8595453808219178149796"), //expectedAMMTokenBalance
+            BigInt("9991404546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9991404546191780821850204"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("2802753424657534268208"), //expectedAMMTokenBalance
+            BigInt("10007597246575342465731792"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10007597246575342465731792"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("2792753424657534268208"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("4203524767123287755062"), //expectedAMMTokenBalance
+            BigInt("10006196475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10006196475232876712244938"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userThree,
+            MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
+        //given
+        const params = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+
+        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await openPositionFunc(params);
+        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
+
+        //when
+        await assertError(
+            //when
+            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            //then
+            'Reason given: IPOR_16');
+    });
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userThree,
+            MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userThree,
+            MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("4203524767123287755062"), //expectedAMMTokenBalance
+            BigInt("10006176475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userThree,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS,
+            ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
+        //given
+        const params = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+
+        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await openPositionFunc(params);
+        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
+
+        //when
+        await assertError(
+            //when
+            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            //then
+            'Reason given: IPOR_16');
+    });
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userThree,
+            MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS,
+            ZERO,
+            BigInt("8595453808219178149796"), //expectedAMMTokenBalance
+            BigInt("9991384546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userThree,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS,
+            ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_3_PERCENTAGE, MILTON_3_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("177304794520547924925"), //expectedAMMTokenBalance
+            BigInt("9999822695205479452075075"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9999822695205479452075075"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("167304794520547924925"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+
+    it('should close position, DAI, owner, receive fixed, IPOR not changed, IBT price changed 25%, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_365_PERCENTAGE, MILTON_365_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("177304794520547945206"), //expectedAMMTokenBalance
+            BigInt("9999822695205479452054794"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9999822695205479452054794"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("167304794520547945206"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("2802753424657534212773"), //expectedAMMTokenBalance
+            BigInt("10007597246575342465787227"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10007597246575342465787227"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("2792753424657534212773"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("7951856164383561622203"), //expectedAMMTokenBalance
+            BigInt("9992048143835616438377797"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9992048143835616438377797"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("7941856164383561622203"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("2175380931506849247464"), //expectedAMMTokenBalance
+            BigInt("10008224619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10008224619068493150752536"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userTwo,
+            MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
+            BigInt("6567309972602739642198"), //expectedAMMTokenBalance
+            BigInt("9993432690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9993432690027397260357802"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userThree,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
+        //given
+        const params = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 1,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+
+        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await openPositionFunc(params);
+        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
+
+        //when
+        await assertError(
+            //when
+            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            //then
+            'Reason given: IPOR_16');
+    });
+
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userThree,
+            MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
+        //given
+        const params = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 1,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+
+        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await openPositionFunc(params);
+        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+
+        //when
+        await assertError(
+            //when
+            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            //then
+            'Reason given: IPOR_16');
+    });
+    //----
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userThree,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("639400000000000000000"), //expectedAMMTokenBalance
+            BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userThree,
+            MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
+            BigInt("2175380931506849247464"), //expectedAMMTokenBalance
+            BigInt("10008204619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userThree,
+            MILTON_5_PERCENTAGE, MILTON_160_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 1, userTwo, userThree,
+            MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
+            BigInt("6567309972602739642198"), //expectedAMMTokenBalance
+            BigInt("9993412690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
+
+    it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await exetuceTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            MILTON_160_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
+            BigInt("9980000000000000000000"), //expectedAMMTokenBalance
+            BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
+            0, ZERO, ZERO
+        );
+    });
 
     //TODO: test when ipor not ready yet
     //TODO: check initial IBT
