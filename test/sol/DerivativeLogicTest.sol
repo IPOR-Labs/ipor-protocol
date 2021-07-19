@@ -86,7 +86,7 @@ contract DerivativeLogicTest {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp, 100 * Constants.LAS_VEGAS_DECIMALS_FACTOR);
+            derivative.startingTimestamp, 100 * Constants.MILTON_DECIMALS_FACTOR);
 
         //then
         Assert.equal(derivativeInterest.interestFixed, 98703000000000000000000, "Wrong interest fixed");
@@ -101,7 +101,7 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 125 * Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 125 * Constants.MILTON_DECIMALS_FACTOR;
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
             derivative.startingTimestamp, ibtPriceSecond);
@@ -119,7 +119,7 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 100 * Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 100 * Constants.MILTON_DECIMALS_FACTOR;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
@@ -138,7 +138,7 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 125 * Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 125 * Constants.MILTON_DECIMALS_FACTOR;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
@@ -160,7 +160,7 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 125 * Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 125 * Constants.MILTON_DECIMALS_FACTOR;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
@@ -179,7 +179,7 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 100 * Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 100 * Constants.MILTON_DECIMALS_FACTOR;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
@@ -194,9 +194,9 @@ contract DerivativeLogicTest {
     /*
     * @param fixedInterestRate is a spread with IPOR index
     */
-    function prepareDerivativeCase1(uint256 fixedInterestRate) internal returns (DataTypes.IporDerivative memory) {
+    function prepareDerivativeCase1(uint256 fixedInterestRate) internal pure returns (DataTypes.IporDerivative memory) {
 
-        uint256 ibtPriceFirst = 100 * Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        uint256 ibtPriceFirst = 100 * Constants.MILTON_DECIMALS_FACTOR;
         uint256 depositAmount = 9870300000000000000000;
         uint256 leverage = 10;
 
@@ -209,9 +209,9 @@ contract DerivativeLogicTest {
         );
 
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-            20 * Constants.LAS_VEGAS_DECIMALS_FACTOR, //liquidation deposit amount
+            20 * Constants.MILTON_DECIMALS_FACTOR, //liquidation deposit amount
             99700000000000000000, //opening fee amount
-            10 * Constants.LAS_VEGAS_DECIMALS_FACTOR, //ipor publication amount
+            10 * Constants.MILTON_DECIMALS_FACTOR, //ipor publication amount
             1e16 // spread percentege
         );
 

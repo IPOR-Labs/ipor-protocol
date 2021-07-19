@@ -151,9 +151,9 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
     * @param _currentBlockTimestamp current block timestamp
     */
     function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory _lastIPOR, uint256 _currentBlockTimestamp) internal pure returns (uint256){
-        return _lastIPOR.ibtPrice * (Constants.LAS_VEGAS_DECIMALS_FACTOR
-        + (_lastIPOR.indexValue * ((_currentBlockTimestamp - _lastIPOR.blockTimestamp) * Constants.LAS_VEGAS_DECIMALS_FACTOR))
-        / Constants.YEAR_IN_SECONDS_WITH_FACTOR) / Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        return _lastIPOR.ibtPrice * (Constants.MILTON_DECIMALS_FACTOR
+        + (_lastIPOR.indexValue * ((_currentBlockTimestamp - _lastIPOR.blockTimestamp) * Constants.MILTON_DECIMALS_FACTOR))
+        / Constants.YEAR_IN_SECONDS_WITH_FACTOR) / Constants.MILTON_DECIMALS_FACTOR;
     }
 
 

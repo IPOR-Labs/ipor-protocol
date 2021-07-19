@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  ipor-protocol-milton-tool:
+    container_name: ipor-protocol-milton-tool
+    image: io.ipor/ipor-protocol-milton-tool:latest
+    restart: always
+    ports:
+      - 4000:3000
+    environment:
+      - TZ=${TIMEZONE}

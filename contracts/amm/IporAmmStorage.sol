@@ -43,8 +43,7 @@ contract IporAmmV1Storage is IporAmmStorage {
         uint256 iporPublicationFee;
     }
 
-    // @notice list of long positions for particular asset, where buyer want to pay fixed and receive floating
-    // first key is an address of token, second key is an address of trader
+    // @notice list of positions for particular asset, first key is an address of token, second key is an address of trader
     DataTypes.IporDerivative[] public derivatives;
 
     // @notice next derivative id (long or short)

@@ -71,7 +71,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint8 leverage,
-        uint8 direction) internal {
+        uint8 direction) internal returns(uint256) {
 
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
@@ -125,6 +125,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         _emitOpenPositionEvent(iporDerivative);
 
         //TODO: clarify if ipAsset should be transfered to trader when position is opened
+        return iporDerivative.id;
     }
 
     function _emitOpenPositionEvent(DataTypes.IporDerivative memory iporDerivative) internal {
@@ -291,7 +292,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     }
 
     function _calculateClosingFeeAmount(uint256 depositAmount) internal view returns (uint256) {
-        return depositAmount * closingFeePercentage / 100 * Constants.LAS_VEGAS_DECIMALS_FACTOR;
+        return depositAmount * closingFeePercentage / 100 * Constants.MILTON_DECIMALS_FACTOR;
     }
 
     //@notice FOR FRONTEND
