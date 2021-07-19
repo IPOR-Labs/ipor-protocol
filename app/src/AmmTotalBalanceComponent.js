@@ -12,7 +12,7 @@ export default ({drizzle, drizzleState}) => (
             <th scope="col">DAI</th>
         </tr>
         <tr>
-            <td><strong>Token Address</strong></td>
+            <td><strong>ERC20 Token Address</strong></td>
             <td>
                 <ContractData
                     drizzle={drizzle}
@@ -67,6 +67,36 @@ export default ({drizzle, drizzleState}) => (
                     drizzleState={drizzleState}
                     contract="IporAmmV1"
                     method="getTotalSupply"
+                    methodArgs={["DAI"]}
+                />
+            </td>
+        </tr>
+        <tr>
+            <td><strong>My Total Balance</strong></td>
+            <td>
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporAmmV1"
+                    method="getMyTotalSupply"
+                    methodArgs={["USDT"]}
+                />
+            </td>
+            <td>
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporAmmV1"
+                    method="getMyTotalSupply"
+                    methodArgs={["USDC"]}
+                />
+            </td>
+            <td>
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporAmmV1"
+                    method="getMyTotalSupply"
                     methodArgs={["DAI"]}
                 />
             </td>

@@ -1,5 +1,5 @@
 const {time} = require('@openzeppelin/test-helpers');
-const IporOracle = artifacts.require('IporOracle');
+const TestIporOracleProxy = artifacts.require('TestIporOracleProxy');
 
 const assertError = async (promise, error) => {
     try {
@@ -22,20 +22,20 @@ contract('IporOracle', (accounts) => {
     let iporOracle = null;
 
     beforeEach(async () => {
-        iporOracle = await IporOracle.new();
+        iporOracle = await TestIporOracleProxy.new();
     });
 
     it('should NOT update IPOR Index', async () => {
         await assertError(
             iporOracle.updateIndex("ASSET_SYMBOL", 123, {from: updaterOne}),
-            'Reason given: 2'
+            'Reason given: IPOR_2'
         );
     });
 
     it('should NOT update IPOR Index because input value is too low', async () => {
         await assertError(
             iporOracle.updateIndex("USDT", 123, {from: updaterOne}),
-            'Reason given: 2'
+            'Reason given: IPOR_2'
         );
     });
 
@@ -68,7 +68,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT add IPOR Index Updater', async () => {
         await assertError(
             iporOracle.addUpdater(updaterTwo, {from: user}),
-            'Reason given: 1'
+            'Reason given: IPOR_1'
         );
     });
 
@@ -82,7 +82,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT remove IPOR Index Updater', async () => {
         await assertError(
             iporOracle.removeUpdater(updaterTwo, {from: user}),
-            'Reason given: 1'
+            'Reason given: IPOR_1'
         );
     });
 
@@ -171,13 +171,14 @@ contract('IporOracle', (accounts) => {
     it('should calculate next Interest Bearing Token Price - one month period', async () => {
         //given
         let asset = "USDT";
+        let updateDate = Math.floor(Date.now() / 1000);
         await iporOracle.addUpdater(updaterOne);
-        await iporOracle.updateIndex(asset, BigInt("50000000000000000"), {from: updaterOne});
-        await time.increase(MONTH_IN_SECONDS);
+        await iporOracle.test_updateIndex(asset, BigInt("50000000000000000"), updateDate, {from: updaterOne});
+        updateDate = updateDate + MONTH_IN_SECONDS;
         let iporIndexSecondValue = BigInt("60000000000000000");
 
         //when
-        await iporOracle.updateIndex(asset, iporIndexSecondValue, {from: updaterOne});
+        await iporOracle.test_updateIndex(asset, iporIndexSecondValue, updateDate, {from: updaterOne});
 
         //then
         const iporIndex = await iporOracle.getIndex(asset);
@@ -195,15 +196,16 @@ contract('IporOracle', (accounts) => {
         //given
         let asset = "USDT";
         await iporOracle.addUpdater(updaterOne);
-        await iporOracle.updateIndex(asset, BigInt("50000000000000000"), {from: updaterOne});
-        await time.increase(YEAR_IN_SECONDS / 2);
-        await iporOracle.updateIndex(asset, BigInt("60000000000000000"), {from: updaterOne});
-        await time.increase(YEAR_IN_SECONDS / 4);
+        let updateDate = Math.floor(Date.now() / 1000);
+        await iporOracle.test_updateIndex(asset, BigInt("50000000000000000"), updateDate, {from: updaterOne});
+        updateDate = updateDate + YEAR_IN_SECONDS / 2;
+        await iporOracle.test_updateIndex(asset, BigInt("60000000000000000"), updateDate, {from: updaterOne});
+        updateDate = updateDate + YEAR_IN_SECONDS / 4;
 
         let iporIndexThirdValue = BigInt("70000000000000000");
 
         //when
-        await iporOracle.updateIndex(asset, iporIndexThirdValue, {from: updaterOne});
+        await iporOracle.test_updateIndex(asset, iporIndexThirdValue, updateDate, {from: updaterOne});
 
         //then
         const iporIndex = await iporOracle.getIndex(asset);

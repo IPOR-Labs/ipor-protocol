@@ -55,7 +55,7 @@ export default ({drizzle, drizzleState}) => (
             drizzle={drizzle}
             drizzleState={drizzleState}
             contract="IporAmmV1"
-            method="getOpenPositions"
+            method="getPositions"
             render={DerivativeList}
         />
         <hr/>

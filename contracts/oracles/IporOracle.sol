@@ -5,7 +5,7 @@ import {Errors} from '../Errors.sol';
 import './IporOracleStorage.sol';
 import "../interfaces/IIporOracle.sol";
 import {DataTypes} from '../libraries/types/DataTypes.sol';
-
+import {Constants} from '../libraries/Constants.sol';
 
 /**
  * @title IPOR Index Oracle Contract
@@ -13,9 +13,6 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
  * @author IPOR Labs
  */
 contract IporOracle is IporOracleV1Storage, IIporOracle {
-
-    uint256 constant NUMBER_OF_DECIMAL_PLACES = 1e18;
-    uint256 constant TOTAL_SECONDS_IN_YEAR = 60 * 60 * 24 * 365 * NUMBER_OF_DECIMAL_PLACES;
 
     /// @notice event emitted when IPOR Index is updated by Updater
     event IporIndexUpdate(string asset, uint256 indexValue, uint256 ibtPrice, uint256 date);
@@ -58,7 +55,11 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
      *
      */
     function updateIndex(string memory _asset, uint256 _indexValue) public onlyUpdater {
+        _updateIndex(_asset, _indexValue, block.timestamp);
 
+    }
+
+    function _updateIndex(string memory _asset, uint256 _indexValue, uint256 updateTimestamp) public onlyUpdater {
         bool assetExists = false;
         bytes32 _assetHash = keccak256(abi.encodePacked(_asset));
 
@@ -69,20 +70,18 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
         }
 
         uint256 _ibtNewPrice;
-        uint256 _currentBlockTimestamp = block.timestamp;
 
         if (assetExists == false) {
             assets.push(_assetHash);
             _ibtNewPrice = 1e20;
         } else {
-            _ibtNewPrice = _accrueInterestBearingTokenPrice(indexes[_assetHash], _currentBlockTimestamp);
+            _ibtNewPrice = _accrueInterestBearingTokenPrice(indexes[_assetHash], updateTimestamp);
         }
 
-        indexes[_assetHash] = DataTypes.IPOR(_asset, _indexValue, _ibtNewPrice, _currentBlockTimestamp);
+        indexes[_assetHash] = DataTypes.IPOR(_asset, _indexValue, _ibtNewPrice, updateTimestamp);
 
-        emit IporIndexUpdate(_asset, _indexValue, _ibtNewPrice, _currentBlockTimestamp);
+        emit IporIndexUpdate(_asset, _indexValue, _ibtNewPrice, updateTimestamp);
     }
-
 
     /**
      * @notice Return IPOR index for specific asset
@@ -152,9 +151,9 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
     * @param _currentBlockTimestamp current block timestamp
     */
     function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory _lastIPOR, uint256 _currentBlockTimestamp) internal pure returns (uint256){
-        return _lastIPOR.ibtPrice * (NUMBER_OF_DECIMAL_PLACES
-            + (_lastIPOR.indexValue * ((_currentBlockTimestamp - _lastIPOR.blockTimestamp) * NUMBER_OF_DECIMAL_PLACES))
-                / TOTAL_SECONDS_IN_YEAR) / NUMBER_OF_DECIMAL_PLACES;
+        return _lastIPOR.ibtPrice * (Constants.MILTON_DECIMALS_FACTOR
+        + (_lastIPOR.indexValue * ((_currentBlockTimestamp - _lastIPOR.blockTimestamp) * Constants.MILTON_DECIMALS_FACTOR))
+        / Constants.YEAR_IN_SECONDS_WITH_FACTOR) / Constants.MILTON_DECIMALS_FACTOR;
     }
 
 
