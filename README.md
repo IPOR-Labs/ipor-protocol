@@ -2,7 +2,11 @@
 
 1. Clone in the same folder `ipor-blockchain` and `ipor-protocol` repositories.
 2. In folder `ipor-protocol` configure `.env` file based on `.env-sample`
-3. Execute script `./run.sh`
+3. Execute script `./run.sh` with specific commands which can be joined
+   - `g` - run Ganache blockchain
+   - `m` - migrate Smart Contracts to blockchain
+   - `b` - build Milton Tool docker
+   - 'r' - run Milton Tool
 4. Application available in url `http://localhost:4000`
 5. Local blockchain Ganacha available in url `http://localhost:9545` `chainId = 2337`
 6. Before enter on web page `http://localhost:4000` connect to local blockchain Ganache using Metamask
