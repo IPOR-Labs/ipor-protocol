@@ -1,6 +1,7 @@
 node_modules
 build
 app/src/contracts
+.idea
 .DS_Store
 /src/java/generated/
 /src/abi/generated/
