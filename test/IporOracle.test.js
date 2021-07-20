@@ -219,4 +219,37 @@ contract('IporOracle', (accounts) => {
 
     });
 
+    it('should NOT update IPOR Index - wrong input arrays', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await iporOracle.addUpdater(updaterOne);
+        let assets = ["USDC", "DAI"];
+        let indexValues = [BigInt("50000000000000000")];
+
+        await assertError(
+            //when
+            iporOracle.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne}),
+            //then
+            'Reason given: IPOR_18'
+        );
+    });
+
+    it('should update IPOR Index - correct input arrays', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await iporOracle.addUpdater(updaterOne);
+        let assets = ["USDC", "DAI"];
+        let indexValues = [BigInt("80000000000000000"), BigInt("70000000000000000")];
+
+        //when
+        await iporOracle.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne})
+
+        //then
+        for (let i = 0; i < assets.length; i++) {
+            const iporIndex = await iporOracle.getIndex(assets[i]);
+            let actualIndexValue = BigInt(iporIndex.indexValue);
+            assert(actualIndexValue === indexValues[i], `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${indexValues[i]}`);
+        }
+    });
+
 });

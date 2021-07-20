@@ -17,5 +17,6 @@ library Errors {
     string public constant AMM_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = 'IPOR_15'; //'Derivative cannot be closed because liquidation deposit balance is to low to pay sender for liquidation.'
     string public constant AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET = 'IPOR_16'; //'Derivative cannot be closed because general condition are not met'
     string public constant AMM_DERIVATIVE_IS_INACTIVE = 'IPOR_17'; //'Derivative should be in ACTIVE state'
+    string public constant IPOR_ORACLE_INPUT_ARRAYS_LENGTH_MISMATCH = 'IPOR_18'; //'Input arrays which should have the same length - mismatch.'
 
 }
