@@ -61,6 +61,11 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
     }
 
+    function getSoap() public pure returns(uint256) {
+        //TODO: calculate soap based on current time;
+        return 33;
+    }
+
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) public {
         _closePosition(derivativeId, block.timestamp);
     }
@@ -125,6 +130,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         _emitOpenPositionEvent(iporDerivative);
 
         //TODO: clarify if ipAsset should be transfered to trader when position is opened
+        //TODO: calculate TTpf or TTrf
+        //TODO: calculate weighted average interest for specific leg
+
         return iporDerivative.id;
     }
 
@@ -150,6 +158,10 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         liquidationDepositTotalBalances[asset] = liquidationDepositTotalBalances[asset] + Constants.LIQUIDATION_DEPOSIT_FEE_AMOUNT;
         iporPublicationFeeTotalBalances[asset] = iporPublicationFeeTotalBalances[asset] + Constants.IPOR_PUBLICATION_FEE_AMOUNT;
         liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + derivativeAmount.openingFee;
+    }
+
+    function _calculateSoap(uint256 derivativeId) internal{
+
     }
 
     function _calculateDerivativeIndicators(string memory asset, uint8 direction, uint256 notionalAmount) internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
@@ -208,6 +220,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW);
 
         liquidationDepositTotalBalances[derivatives[derivativeId].asset] = liquidationDepositTotalBalances[derivatives[derivativeId].asset] - derivatives[derivativeId].fee.liquidationDepositAmount;
+
         derivativesTotalBalances[derivatives[derivativeId].asset] = derivativesTotalBalances[derivatives[derivativeId].asset] - derivatives[derivativeId].depositAmount;
 
         uint256 transferAmount = derivatives[derivativeId].depositAmount;

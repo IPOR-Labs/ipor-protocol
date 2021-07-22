@@ -738,6 +738,10 @@ contract('IporAmm', (accounts) => {
     //TODO: test na 2 sprwdzenie czy totalAmount wiekszy od fee (po przeliczeniu openingFeeAmount)
     //TODO: test na wysłanie USDT które ma 6 miejsc po przecinku i weryfikacja liczb
 
+    //TODO: sprawdz czy SoapIndicator podczas inicjalnego uruchomienia hypotheticalInterestCumulative jest równe zero
+    //TODO: sprawdz w JS czy otworzenie nowej PIERWSZEJ derywatywy poprawnie wylicza SoapIndicator, hypotheticalInterestCumulative powinno być nadal zero
+    //TODO: sprawdz w JS czy otworzenej KOLEJNEJ derywatywy poprawnie wylicza SoapIndicator
+
     const openPositionFunc = async (params) => {
         await amm.test_openPosition(params.openTimestamp, params.asset, params.totalAmount, params.slippageValue, params.leverage, params.direction, {from: params.from});
     }

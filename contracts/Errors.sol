@@ -18,5 +18,6 @@ library Errors {
     string public constant AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET = 'IPOR_16'; //'Derivative cannot be closed because general condition are not met'
     string public constant AMM_DERIVATIVE_IS_INACTIVE = 'IPOR_17'; //'Derivative should be in ACTIVE state'
     string public constant IPOR_ORACLE_INPUT_ARRAYS_LENGTH_MISMATCH = 'IPOR_18'; //'Input arrays which should have the same length - mismatch.'
+    string public constant AMM_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = 'IPOR_19'; //'Derivative Notional Amount is higher than Total Notional
 
 }

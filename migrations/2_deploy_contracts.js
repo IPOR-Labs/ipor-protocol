@@ -3,6 +3,7 @@ const IporAmmV1 = artifacts.require("IporAmmV1");
 const TestIporAmmV1Proxy = artifacts.require("TestIporAmmV1Proxy");
 const SimpleToken = artifacts.require('SimpleToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
+const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const AmmMath = artifacts.require('AmmMath');
 
 module.exports = async function (deployer, _network, addresses) {
@@ -28,6 +29,7 @@ module.exports = async function (deployer, _network, addresses) {
     let tusd = null;
 
     await deployer.deploy(DerivativeLogic);
+    await deployer.deploy(SoapIndicatorLogic);
     await deployer.link(DerivativeLogic, IporAmmV1);
     await deployer.deploy(AmmMath);
     await deployer.link(AmmMath, IporAmmV1);
