@@ -8,7 +8,7 @@ library DataTypes {
         uint256 timestamp;
     }
 
-    //payfixed and recfixed indicators
+    //soap payfixed and soap recfixed indicators
     struct SoapIndicator {
         uint256 rebalanceTimestamp;
         //O_0
@@ -19,6 +19,8 @@ library DataTypes {
         uint256 averageInterestRate;
         //TT
         uint256 totalIbtQuantity;
+
+        int256 x;
     }
 
     //@notice IPOR Structure
