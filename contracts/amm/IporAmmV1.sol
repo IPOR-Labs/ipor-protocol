@@ -13,7 +13,7 @@ import './IporAmmEvents.sol';
 
 
 /**
- * @title Automated Market Maker for derivatives based on IPOR Index.
+ * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
  * @author IPOR Labs
  */

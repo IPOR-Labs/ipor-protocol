@@ -206,6 +206,7 @@ contract SoapIndicatorLogicTest {
 
         uint256 averageInterestRateAfterFirstOpen = siStorage.averageInterestRate;
 
+
         uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         uint256 derivativeNotionalSecond = 20000 * 1e18;
         uint256 derivativeFixedInterestRateSecond = 8 * 1e16;
@@ -233,7 +234,69 @@ contract SoapIndicatorLogicTest {
         uint256 expectedTotalNotional = 10000 * 1e18;
         uint256 expectedTotalIbtQuantity = 95 * 1e18;
         uint256 expectedAverageInterestRate = averageInterestRateAfterFirstOpen;
-        uint256 expectedHypotheticalInterestCumulative = ;
+        uint256 expectedHypotheticalInterestCumulative = 68493150684931506849;
+
+        Assert.equal(siStorage.rebalanceTimestamp, expectedRebalanceTimestamp, 'Incorrect rebalance timestamp');
+        Assert.equal(siStorage.totalNotional, expectedTotalNotional, 'Incorrect total notional');
+        Assert.equal(siStorage.totalIbtQuantity, expectedTotalIbtQuantity, 'Incorrect total IBT quantity');
+        Assert.equal(siStorage.averageInterestRate, expectedAverageInterestRate, 'Incorrect average weighted interest rate');
+        Assert.equal(siStorage.hypotheticalInterestCumulative, expectedHypotheticalInterestCumulative, 'Incorrect hypothetical interest cumulative');
+    }
+
+    function testRebalanceSoapIndicatorsWhenOpenTwoPositionCloseTwoPosition() public {
+
+        //given
+        siStorage = prepareInitialSoapIndicator(block.timestamp);
+        uint256 rebalanceTimestampFirst = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        uint256 derivativeNotionalFirst = 10000 * 1e18;
+        uint256 derivativeFixedInterestRateFirst = 5 * 1e16;
+        uint256 derivativeIbtQuantityFirst = 95 * 1e18;
+
+        siStorage.rebalanceWhenOpenPosition(
+            rebalanceTimestampFirst, derivativeNotionalFirst, derivativeFixedInterestRateFirst,
+            derivativeIbtQuantityFirst);
+
+        uint256 averageInterestRateAfterFirstOpen = siStorage.averageInterestRate;
+
+
+        uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        uint256 derivativeNotionalSecond = 20000 * 1e18;
+        uint256 derivativeFixedInterestRateSecond = 8 * 1e16;
+        uint256 derivativeIbtQuantitySecond = 173 * 1e18;
+
+        siStorage.rebalanceWhenOpenPosition(
+            rebalanceTimestampSecond,
+            derivativeNotionalSecond,
+            derivativeFixedInterestRateSecond,
+            derivativeIbtQuantitySecond);
+
+        uint256 closeTimestampSecondPosition = rebalanceTimestampSecond + PERIOD_25_DAYS_IN_SECONDS;
+
+        siStorage.rebalanceWhenClosePosition(
+            closeTimestampSecondPosition,
+            rebalanceTimestampSecond,
+            derivativeNotionalSecond,
+            derivativeFixedInterestRateSecond,
+            derivativeIbtQuantitySecond
+        );
+
+        uint256 closeTimestampFirstPosition = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        //when
+        siStorage.rebalanceWhenClosePosition(
+            closeTimestampFirstPosition,
+            rebalanceTimestampFirst,
+            derivativeNotionalFirst,
+            derivativeFixedInterestRateFirst,
+            derivativeIbtQuantityFirst
+        );
+
+        //then
+        uint256 expectedRebalanceTimestamp = closeTimestampFirstPosition;
+        uint256 expectedTotalNotional = 0;
+        uint256 expectedTotalIbtQuantity = 0;
+        uint256 expectedAverageInterestRate = 0;
+        uint256 expectedHypotheticalInterestCumulative = 0;
 
         Assert.equal(siStorage.rebalanceTimestamp, expectedRebalanceTimestamp, 'Incorrect rebalance timestamp');
         Assert.equal(siStorage.totalNotional, expectedTotalNotional, 'Incorrect total notional');
