@@ -8,19 +8,17 @@ import "../../contracts/libraries/SoapIndicatorLogic.sol";
 
 contract SoapIndicatorLogicTest {
 
+    event Log(string name, uint256 value);
+
     using SoapIndicatorLogic  for DataTypes.SoapIndicator;
 
     DataTypes.SoapIndicator public siStorage;
-
-    //    constructor() public {
-    //        siStorage = prepareInitialSoapIndicator(block.timestamp);
-    //    }
 
     uint256 constant PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;
 
     function testCalculatInterestRateWhenOpenPositionSimpleCase() public {
         //given
-        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorCase1();
+        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorPfCase1();
         uint256 derivativeNotional = 10000 * 1e18;
         uint256 derivativeFixedInterestRate = 4 * 1e16;
 
@@ -34,7 +32,7 @@ contract SoapIndicatorLogicTest {
 
     function testCalculatInterestRateWhenClosePositionSimpleCase() public {
         //given
-        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorCase1();
+        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorPfCase1();
         uint256 derivativeNotional = 10000 * 1e18;
         uint256 derivativeFixedInterestRate = 4 * 1e16;
 
@@ -49,7 +47,7 @@ contract SoapIndicatorLogicTest {
 
     function testCalculatInterestRateWhenClosePositionDerivativeNotionalTooHigh() public {
         //given
-        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorCase1();
+        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorPfCase1();
         uint256 derivativeNotional = 40000 * 1e18;
         uint256 derivativeFixedInterestRate = 4 * 1e16;
 
@@ -63,7 +61,7 @@ contract SoapIndicatorLogicTest {
 
     function testCalculateInterestDeltaSimpleCase() public {
         //given
-        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorCase1();
+        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorPfCase1();
         uint256 timestamp = soapIndicator.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
@@ -76,7 +74,7 @@ contract SoapIndicatorLogicTest {
 
     function testCalculateHyphoteticalInterestTotalCase1() public {
         //given
-        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorCase1();
+        DataTypes.SoapIndicator memory soapIndicator = prepareSoapIndicatorPfCase1();
         uint256 timestamp = soapIndicator.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
@@ -305,13 +303,49 @@ contract SoapIndicatorLogicTest {
         Assert.equal(siStorage.hypotheticalInterestCumulative, expectedHypotheticalInterestCumulative, 'Incorrect hypothetical interest cumulative');
     }
 
+    function testSoapPayFixedSimpleCase() public {
+        //given
+        siStorage = prepareSoapIndicatorPfCase1();
+        uint256 ibtPrice = 145 * 1e18;
+        uint256 calculationTimestamp = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        //when
+        int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp);
+
+        //then
+        int256 expectedSoapPf = - 6109589041095890410958;
+        Assert.equal(actualSoapPf, expectedSoapPf, 'Incorrect SOAP for Pay Fixed Derivatives');
+    }
+
+    function testSoapRecFixedSimpleCase() public {
+        //given
+        siStorage = prepareSoapIndicatorRfCase1();
+        uint256 ibtPrice = 145 * 1e18;
+        uint256 calculationTimestamp = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        //when
+        int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp);
+
+        //then
+        int256 expectedSoapPf = 6109589041095890410958;
+        Assert.equal(actualSoapPf, expectedSoapPf, 'Incorrect SOAP for Pay Fixed Derivatives');
+    }
 
     function prepareInitialSoapIndicator(uint256 timestamp) internal pure returns (DataTypes.SoapIndicator memory) {
-        DataTypes.SoapIndicator memory soapIndicator = DataTypes.SoapIndicator(timestamp, 0, 0, 0, 0, 0);
+        DataTypes.SoapIndicator memory soapIndicator
+        = DataTypes.SoapIndicator(timestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0);
         return soapIndicator;
     }
 
-    function prepareSoapIndicatorCase1() internal view returns (DataTypes.SoapIndicator memory) {
+    function prepareSoapIndicatorPfCase1() internal view returns (DataTypes.SoapIndicator memory) {
+        return prepareSoapIndicatorCase1(DataTypes.DerivativeDirection.PayFixedReceiveFloating);
+    }
+
+    function prepareSoapIndicatorRfCase1() internal view returns (DataTypes.SoapIndicator memory) {
+        return prepareSoapIndicatorCase1(DataTypes.DerivativeDirection.PayFloatingReceiveFixed);
+    }
+
+    function prepareSoapIndicatorCase1(DataTypes.DerivativeDirection direction) internal view returns (DataTypes.SoapIndicator memory) {
         uint256 totalNotional = 20000 * 1e18;
         uint256 averageInterestRate = 8 * 1e16;
         uint256 totalIbtQuantity = 100 * 1e18;
@@ -319,6 +353,7 @@ contract SoapIndicatorLogicTest {
 
         DataTypes.SoapIndicator memory soapIndicator = DataTypes.SoapIndicator(
             block.timestamp,
+            direction,
             hypotheticalInterestCumulative,
             totalNotional,
             averageInterestRate,

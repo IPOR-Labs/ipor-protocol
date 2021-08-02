@@ -37,23 +37,15 @@ contract IporAmmV1Storage is IporAmmStorage {
 
     //TODO: treasury balance - tam trafia income tax
 
-    DataTypes.SoapIndicator public payFixedSoapIndicator;
-    DataTypes.SoapIndicator public recFixedSoapIndicator;
+    mapping(string => DataTypes.SoapIndicator) public payFixedSoapIndicators;
+
+    mapping(string => DataTypes.SoapIndicator) public recFixedSoapIndicators;
 
     // @notice list of positions for particular asset, first key is an address of token, second key is an address of trader
     DataTypes.IporDerivative[] public derivatives;
 
     // @notice next derivative id (long or short)
     uint256 public nextDerivativeId;
-
-    // @notice Sum Of All Payouts
-    DataTypes.SOAP public soap;
-
-    // @notice Total Issued Interest Bearing Tokens for leg
-    uint256 public TTpf;
-
-    // @notice Total sum of all contracts in notional
-    uint256 public N0;
 
     uint256 public closingFeePercentage;
 

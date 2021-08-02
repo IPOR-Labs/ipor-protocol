@@ -7,6 +7,19 @@ import {Constants} from '../libraries/Constants.sol';
 
 library SoapIndicatorLogic {
 
+    function calculateSoap(
+        DataTypes.SoapIndicator storage si,
+        uint256 ibtPrice,
+        uint256 timestamp) public view returns (int256){
+        if (si.direction == DataTypes.DerivativeDirection.PayFixedReceiveFloating) {
+            return int256(si.totalIbtQuantity * ibtPrice / Constants.MILTON_DECIMALS_FACTOR)
+            - int256(si.totalNotional + si.hypotheticalInterestCumulative + calculateHypotheticalInterestDelta(si, timestamp));
+        } else {
+            return int256(si.totalNotional + si.hypotheticalInterestCumulative + calculateHypotheticalInterestDelta(si, timestamp))
+            - int256(si.totalIbtQuantity * ibtPrice / Constants.MILTON_DECIMALS_FACTOR);
+        }
+    }
+
     function rebalanceWhenOpenPosition(
         DataTypes.SoapIndicator storage si,
         uint256 rebalanceTimestamp,

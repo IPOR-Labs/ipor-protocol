@@ -1,7 +1,5 @@
 const {time} = require("@openzeppelin/test-helpers");
-const IporAmmV1 = artifacts.require('IporAmmV1');
 const TestIporAmmV1Proxy = artifacts.require('TestIporAmmV1Proxy');
-const IporOracle = artifacts.require('IporOracle');
 const TestIporOracleProxy = artifacts.require('TestIporOracleProxy');
 const SimpleToken = artifacts.require('SimpleToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');

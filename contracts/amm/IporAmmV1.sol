@@ -10,6 +10,7 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IIporOracle.sol";
 import './IporAmmStorage.sol';
 import './IporAmmEvents.sol';
+import "../libraries/SoapIndicatorLogic.sol";
 
 
 /**
@@ -20,6 +21,7 @@ import './IporAmmEvents.sol';
 contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     using DerivativeLogic  for DataTypes.IporDerivative;
+    using SoapIndicatorLogic for DataTypes.SoapIndicator;
 
     IIporOracle public iporOracle;
 
@@ -42,6 +44,18 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     }
 
+    function calculateSoap(string memory asset) public view returns (int256) {
+        uint256 timestamp = block.timestamp;
+        (, uint256  ibtPrice,) = iporOracle.getIndex(asset);
+        DataTypes.SoapIndicator storage payFixedSoapIndicator = payFixedSoapIndicators[asset];
+        DataTypes.SoapIndicator storage recFixedSoapIndicator = recFixedSoapIndicators[asset];
+        return payFixedSoapIndicator.calculateSoap(ibtPrice, timestamp) + recFixedSoapIndicator.calculateSoap(ibtPrice, timestamp);
+    }
+
+    //    fallback() external payable  {
+    //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
+    //    }
+
     /**
     * @notice Trader open new derivative position. Depending on the direction it could be derivative
     * where trader pay fixed and receive a floating (long position) or receive fixed and pay a floating.
@@ -61,7 +75,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
     }
 
-    function getSoap() public pure returns(uint256) {
+    function getSoap() public pure returns (uint256) {
         //TODO: calculate soap based on current time;
         return 33;
     }
@@ -76,7 +90,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint8 leverage,
-        uint8 direction) internal returns(uint256) {
+        uint8 direction) internal returns (uint256) {
 
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
@@ -123,9 +137,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
         nextDerivativeId++;
 
-        IERC20(tokens[asset]).transferFrom(msg.sender, address(this), totalAmount);
-
         _updateBalances(asset, derivativeAmount);
+
+        IERC20(tokens[asset]).transferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
 
@@ -160,7 +174,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + derivativeAmount.openingFee;
     }
 
-    function _calculateSoap(uint256 derivativeId) internal{
+    function _calculateSoap(uint256 derivativeId) internal {
 
     }
 
@@ -170,8 +184,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             iporIndexValue,
             ibtPrice,
             AmmMath.calculateIbtQuantity(notionalAmount, ibtPrice),
-            direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE),
-            soap
+            direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE)
         );
         return indicator;
     }
@@ -332,8 +345,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 derivatives[i].indicator.iporIndexValue,
                 derivatives[i].indicator.ibtPrice,
                 derivatives[i].indicator.ibtQuantity,
-                derivatives[i].indicator.fixedInterestRate,
-                derivatives[i].indicator.soap
+                derivatives[i].indicator.fixedInterestRate
             );
 
             DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
