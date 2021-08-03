@@ -66,14 +66,17 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     }
 
     function calculateSoap(string memory asset) public view returns (int256) {
-        uint256 timestamp = block.timestamp;
-        (, uint256 ibtPrice,) = iporOracle.getIndex(asset);
-        return soapIndicators[asset].calculateSoap(timestamp, ibtPrice);
+        return _calculateSoap(asset, block.timestamp);
     }
 
     //    fallback() external payable  {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
+
+    function _calculateSoap(string memory asset, uint256 calculateTimestamp) internal view returns (int256){
+        (, uint256 ibtPrice,) = iporOracle.getIndex(asset);
+        return soapIndicators[asset].calculateSoap(calculateTimestamp, ibtPrice);
+    }
 
     function openPosition(
         string memory asset,
@@ -244,7 +247,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         return (uint256)(value < 0 ? - value : value);
     }
 
-    function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 calculationTimestamp) internal {
+    function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 _calculationTimestamp) internal {
 
         uint256 absInterestDifferenceAmount = _calculateAbsValue(interestDifferenceAmount);
 
@@ -280,7 +283,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 require(msg.sender == derivatives[derivativeId].buyer ||
-                    calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                    _calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
 
                 //fetch "I" amount from Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[derivativeId].asset] = liquidityPoolTotalBalances[derivatives[derivativeId].asset] - absInterestDifferenceAmount;
@@ -306,7 +309,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 require(msg.sender == derivatives[derivativeId].buyer ||
-                    calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                    _calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
 
                 //transfer I to Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[derivativeId].asset] = liquidityPoolTotalBalances[derivatives[derivativeId].asset] + absInterestDifferenceAmount;

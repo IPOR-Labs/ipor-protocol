@@ -7,11 +7,12 @@ import {Constants} from '../libraries/Constants.sol';
 
 library SoapIndicatorLogic {
 
+    event SoapIndicatorLog(string name, uint256 value);
+
     function calculateSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,
         uint256 timestamp) public view returns (int256) {
-
         if (si.direction == DataTypes.DerivativeDirection.PayFixedReceiveFloating) {
             return int256(si.totalIbtQuantity * ibtPrice / Constants.MILTON_DECIMALS_FACTOR)
             - int256(si.totalNotional + si.hypotheticalInterestCumulative + calculateHypotheticalInterestDelta(si, timestamp));
@@ -28,7 +29,7 @@ library SoapIndicatorLogic {
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity) public {
 
-        uint256 averageInterestRate = calculatInterestRateWhenOpenPosition(si, derivativeNotional, derivativeFixedInterestRate);
+        uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(si, derivativeNotional, derivativeFixedInterestRate);
         uint256 hypotheticalInterestTotal = calculateHyphoteticalInterestTotal(si, rebalanceTimestamp);
 
         si.rebalanceTimestamp = rebalanceTimestamp;
@@ -52,7 +53,7 @@ library SoapIndicatorLogic {
             derivativeNotional,
             derivativeFixedInterestRate);
 
-        uint256 averageInterestRate = calculatInterestRateWhenClosePosition(si, derivativeNotional, derivativeFixedInterestRate);
+        uint256 averageInterestRate = calculateInterestRateWhenClosePosition(si, derivativeNotional, derivativeFixedInterestRate);
         uint256 hypotheticalInterestTotal = calculateHyphoteticalInterestTotal(si, rebalanceTimestamp) - interestPaidOut;
 
         si.rebalanceTimestamp = rebalanceTimestamp;
@@ -77,10 +78,11 @@ library SoapIndicatorLogic {
     }
 
     function calculateHypotheticalInterestDelta(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256) {
+        require(timestamp >= si.rebalanceTimestamp, Errors.AMM_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP);
         return (si.totalNotional * si.averageInterestRate * (timestamp - si.rebalanceTimestamp) / Constants.YEAR_IN_SECONDS) / Constants.MILTON_DECIMALS_FACTOR;
     }
 
-    function calculatInterestRateWhenOpenPosition(
+    function calculateInterestRateWhenOpenPosition(
         DataTypes.SoapIndicator memory si,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate) public pure returns (uint256) {
@@ -89,7 +91,7 @@ library SoapIndicatorLogic {
 
     }
 
-    function calculatInterestRateWhenClosePosition(
+    function calculateInterestRateWhenClosePosition(
         DataTypes.SoapIndicator memory si,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate) public pure returns (uint256) {

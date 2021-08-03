@@ -20,5 +20,6 @@ library Errors {
     string public constant IPOR_ORACLE_INPUT_ARRAYS_LENGTH_MISMATCH = 'IPOR_18'; //'Input arrays which should have the same length - mismatch.'
     string public constant AMM_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = 'IPOR_19'; //'Derivative Notional Amount is higher than Total Notional
     string public constant AMM_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP = 'IPOR_20'; //'Calculation timestamp is higher than derivative open timestamp, but should be lower or equal`
+    string public constant AMM_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP = 'IPOR_21'; //'Calculation timestamp is lower than last rebalance in soap indicator timestamp, but should be higher or equal`
 
 }

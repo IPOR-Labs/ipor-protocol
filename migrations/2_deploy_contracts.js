@@ -80,6 +80,7 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(TotalSoapIndicatorLogic, TestIporAmmV1Proxy);
         await deployer.link(DerivativesView, TestIporAmmV1Proxy);
         await deployer.link(AmmMath, TestIporAmmV1Proxy);
+
     }
 
 
