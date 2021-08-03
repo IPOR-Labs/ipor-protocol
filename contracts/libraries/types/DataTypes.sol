@@ -3,6 +3,10 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library DataTypes {
 
+    struct TotalSoapIndicator {
+        SoapIndicator pf;
+        SoapIndicator rf;
+    }
     //soap payfixed and soap recfixed indicators
     struct SoapIndicator {
 

@@ -16,6 +16,10 @@
     - Enter Chain ID: `2337`
     - Click `Save`
 
+#### How to check contract size?
+
+Run in command line: `truffle run contract-size`
+
 
 #### Configure your local `.env` using sample in file `.env-sample`
 
