@@ -5,7 +5,11 @@ import "./IporAmmV1.sol";
 
 contract TestIporAmmV1Proxy is IporAmmV1 {
 
-    constructor(address iporOracleAddr, address usdtToken, address usdcToken, address daiToken) IporAmmV1(iporOracleAddr, usdtToken, usdcToken, daiToken) {
+    constructor(
+        address iporOracleAddr,
+        address usdtToken,
+        address usdcToken,
+        address daiToken) IporAmmV1(iporOracleAddr, usdtToken, usdcToken, daiToken) {
     }
 
     function test_openPosition(
@@ -14,8 +18,8 @@ contract TestIporAmmV1Proxy is IporAmmV1 {
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint8 leverage,
-        uint8 direction) public {
-        _openPosition(openTimestamp, asset, totalAmount, maximumSlippage, leverage, direction);
+        uint8 direction) public returns (uint256) {
+        return _openPosition(openTimestamp, asset, totalAmount, maximumSlippage, leverage, direction);
     }
 
     function test_closePosition(uint256 derivativeId, uint256 closeTimestamp) public {

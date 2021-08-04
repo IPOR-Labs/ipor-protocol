@@ -7,6 +7,7 @@ import "truffle/DeployedAddresses.sol";
 
 contract TestData {
 
+    uint256 constant PERIOD_1_DAY_IN_SECONDS = 60 * 60 * 24 * 1;
     uint256 constant PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;
 
     function prepareInitialTotalSoapIndicator(uint256 timestamp) public pure returns (DataTypes.TotalSoapIndicator memory) {

@@ -62,6 +62,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
         //TODO: allow admin to setup it during runtime
         closingFeePercentage = 0;
+        nextDerivativeId = 0;
 
     }
 
@@ -83,8 +84,8 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint8 leverage,
-        uint8 direction) public {
-        _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
+        uint8 direction) public returns (uint256){
+        return _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
     }
 
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) public {
@@ -282,8 +283,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 require(liquidityPoolTotalBalances[derivatives[derivativeId].asset] >= absInterestDifferenceAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                require(msg.sender == derivatives[derivativeId].buyer ||
-                    _calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                if (msg.sender != derivatives[derivativeId].buyer) {
+                    require(_calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                }
 
                 //fetch "I" amount from Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[derivativeId].asset] = liquidityPoolTotalBalances[derivatives[derivativeId].asset] - absInterestDifferenceAmount;
@@ -308,8 +310,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 // |I| <= D
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                require(msg.sender == derivatives[derivativeId].buyer ||
-                    _calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                if (msg.sender != derivatives[derivativeId].buyer) {
+                    require(_calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                }
 
                 //transfer I to Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[derivativeId].asset] = liquidityPoolTotalBalances[derivatives[derivativeId].asset] + absInterestDifferenceAmount;

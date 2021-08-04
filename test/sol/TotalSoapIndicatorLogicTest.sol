@@ -21,17 +21,17 @@ contract TotalSoapIndicatorLogicTest is TestData {
         uint256 ibtPrice = 100 * 1e18;
         uint256 timestamp = block.timestamp;
         tsiStorage = prepareInitialTotalSoapIndicator(timestamp);
-        simulateOpenPayFixPositionCase2(0);
+        simulateOpenPayFixPositionCase2(PERIOD_1_DAY_IN_SECONDS);
 
         //when
-        int256 soap = tsiStorage.calculateSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice);
+        int256 soap = tsiStorage.calculateSoap(timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS, ibtPrice);
 
         //then
         int256 expectedSOAP = - 202814383561643835616;
         Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
     }
 
-    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotional() public {
+    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalSameMoment() public {
         //given
         uint256 ibtPrice = 100 * 1e18;
         uint256 timestamp = block.timestamp;
@@ -44,6 +44,22 @@ contract TotalSoapIndicatorLogicTest is TestData {
 
         //then
         int256 expectedSOAP = 0;
+        Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
+    }
+
+    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalDifferentMoment() public {
+        //given
+        uint256 ibtPrice = 100 * 1e18;
+        uint256 timestamp = block.timestamp;
+        tsiStorage = prepareInitialTotalSoapIndicator(timestamp);
+        simulateOpenPayFixPositionCase2(PERIOD_25_DAYS_IN_SECONDS);
+        simulateOpenRecFixPositionCase2(0);
+
+        //when
+        int256 soap = tsiStorage.calculateSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice);
+
+        //then
+        int256 expectedSOAP = 202814383561643835616;
         Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
     }
 
