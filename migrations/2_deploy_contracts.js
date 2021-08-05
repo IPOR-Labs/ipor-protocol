@@ -1,7 +1,9 @@
 const IporOracle = artifacts.require("IporOracle");
 const IporAmmV1 = artifacts.require("IporAmmV1");
+const TestIporOracleProxy = artifacts.require("TestIporOracleProxy");
 const TestIporAmmV1Proxy = artifacts.require("TestIporAmmV1Proxy");
 const SimpleToken = artifacts.require('SimpleToken');
+const IporLogic = artifacts.require('IporLogic');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
@@ -12,6 +14,8 @@ const AmmMath = artifacts.require('AmmMath');
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
 
+    await deployer.deploy(IporLogic);
+    await deployer.link(IporLogic, IporOracle);
     await deployer.deploy(IporOracle);
     const iporOracle = await IporOracle.deployed();
 
@@ -33,7 +37,7 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(DerivativeLogic);
     await deployer.deploy(SoapIndicatorLogic);
-    await deployer.link(SoapIndicatorLogic,TotalSoapIndicatorLogic);
+    await deployer.link(SoapIndicatorLogic, TotalSoapIndicatorLogic);
     await deployer.deploy(TotalSoapIndicatorLogic);
     await deployer.deploy(DerivativesView);
     await deployer.link(SoapIndicatorLogic, IporAmmV1);
@@ -75,14 +79,13 @@ module.exports = async function (deployer, _network, addresses) {
     if (_network !== 'test') {
         iporAmm = await deployer.deploy(IporAmmV1, iporOracle.address, usdt.address, usdc.address, dai.address);
     } else {
+        await deployer.link(IporLogic, TestIporOracleProxy);
         await deployer.link(DerivativeLogic, TestIporAmmV1Proxy);
         await deployer.link(SoapIndicatorLogic, TestIporAmmV1Proxy);
         await deployer.link(TotalSoapIndicatorLogic, TestIporAmmV1Proxy);
         await deployer.link(DerivativesView, TestIporAmmV1Proxy);
         await deployer.link(AmmMath, TestIporAmmV1Proxy);
-
     }
-
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 

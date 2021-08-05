@@ -1,5 +1,10 @@
 const {time} = require('@openzeppelin/test-helpers');
+const IporLogic = artifacts.require('IporLogic');
 const TestIporOracleProxy = artifacts.require('TestIporOracleProxy');
+const WARREN_5_PERCENTAGE = BigInt("50000000000000000");
+const WARREN_6_PERCENTAGE = BigInt("60000000000000000");
+const WARREN_7_PERCENTAGE = BigInt("70000000000000000");
+const WARREN_8_PERCENTAGE = BigInt("80000000000000000");
 
 const assertError = async (promise, error) => {
     try {
@@ -15,7 +20,7 @@ contract('IporOracle', (accounts) => {
 
     const [admin, updaterOne, updaterTwo, user] = accounts;
 
-    const INITIAL_INTEREST_BEARING_TOKEN_PRICE = BigInt(1e20);
+    const INITIAL_INTEREST_BEARING_TOKEN_PRICE = BigInt(1e18);
     const YEAR_IN_SECONDS = 31536000;
     const MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
 
@@ -150,7 +155,7 @@ contract('IporOracle', (accounts) => {
         //given
         let asset = "USDT";
         await iporOracle.addUpdater(updaterOne);
-        await iporOracle.updateIndex(asset, BigInt("50000000000000000"), {from: updaterOne});
+        await iporOracle.updateIndex(asset, WARREN_5_PERCENTAGE, {from: updaterOne});
         await time.increase(YEAR_IN_SECONDS);
         let iporIndexSecondValue = BigInt("51000000000000000");
 
@@ -161,10 +166,10 @@ contract('IporOracle', (accounts) => {
         const iporIndex = await iporOracle.getIndex(asset);
         let actualIbtPrice = BigInt(iporIndex.ibtPrice);
         let actualIndexValue = BigInt(iporIndex.indexValue);
-        let expectedIbtPrice = BigInt("105000000000000000000");
+        let expectedIbtPrice = BigInt("1050000000000000000");
 
-        assert(actualIbtPrice === expectedIbtPrice, `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${expectedIbtPrice}`);
-        assert(actualIndexValue === iporIndexSecondValue, `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${iporIndexSecondValue}`);
+        assert(actualIbtPrice === expectedIbtPrice, `Actual Interest Bearing Token Price is incorrect, actual: ${actualIbtPrice}, expected: ${expectedIbtPrice}`);
+        assert(actualIndexValue === iporIndexSecondValue, `Actual IPOR Index Value is incorrect, actual: ${actualIndexValue}, expected: ${iporIndexSecondValue}`);
 
     });
 
@@ -173,9 +178,9 @@ contract('IporOracle', (accounts) => {
         let asset = "USDT";
         let updateDate = Math.floor(Date.now() / 1000);
         await iporOracle.addUpdater(updaterOne);
-        await iporOracle.test_updateIndex(asset, BigInt("50000000000000000"), updateDate, {from: updaterOne});
+        await iporOracle.test_updateIndex(asset, WARREN_5_PERCENTAGE, updateDate, {from: updaterOne});
         updateDate = updateDate + MONTH_IN_SECONDS;
-        let iporIndexSecondValue = BigInt("60000000000000000");
+        let iporIndexSecondValue = WARREN_6_PERCENTAGE;
 
         //when
         await iporOracle.test_updateIndex(asset, iporIndexSecondValue, updateDate, {from: updaterOne});
@@ -185,10 +190,13 @@ contract('IporOracle', (accounts) => {
         let actualIbtPrice = BigInt(iporIndex.ibtPrice);
         let actualIndexValue = BigInt(iporIndex.indexValue);
 
-        let expectedIbtPrice = BigInt("100410958904109589000");
+        let expectedIbtPrice = BigInt("1004109589041095890");
 
-        assert(actualIbtPrice === expectedIbtPrice, `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${expectedIbtPrice}`);
-        assert(actualIndexValue === iporIndexSecondValue, `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${iporIndexSecondValue}`);
+        assert(actualIbtPrice === expectedIbtPrice,
+            `Actual Interest Bearing Token Price is incorrect, actual: ${actualIbtPrice}, expected: ${expectedIbtPrice}`);
+
+        assert(actualIndexValue === iporIndexSecondValue,
+            `Actual IPOR Index Value is incorrect, actual: ${actualIndexValue}, expected: ${iporIndexSecondValue}`);
 
     });
 
@@ -197,25 +205,26 @@ contract('IporOracle', (accounts) => {
         let asset = "USDT";
         await iporOracle.addUpdater(updaterOne);
         let updateDate = Math.floor(Date.now() / 1000);
-        await iporOracle.test_updateIndex(asset, BigInt("50000000000000000"), updateDate, {from: updaterOne});
+        await iporOracle.test_updateIndex(asset, WARREN_5_PERCENTAGE, updateDate, {from: updaterOne});
         updateDate = updateDate + YEAR_IN_SECONDS / 2;
-        await iporOracle.test_updateIndex(asset, BigInt("60000000000000000"), updateDate, {from: updaterOne});
+        await iporOracle.test_updateIndex(asset, WARREN_6_PERCENTAGE, updateDate, {from: updaterOne});
         updateDate = updateDate + YEAR_IN_SECONDS / 4;
 
-        let iporIndexThirdValue = BigInt("70000000000000000");
+        let iporIndexThirdValue = WARREN_7_PERCENTAGE;
 
         //when
         await iporOracle.test_updateIndex(asset, iporIndexThirdValue, updateDate, {from: updaterOne});
 
         //then
         const iporIndex = await iporOracle.getIndex(asset);
+
         let actualIbtPrice = BigInt(iporIndex.ibtPrice);
         let actualIndexValue = BigInt(iporIndex.indexValue);
 
-        let expectedIbtPrice = BigInt("104037500000000000000");
+        let expectedIbtPrice = BigInt("1040000000000000000");
 
-        assert(actualIbtPrice === expectedIbtPrice, `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${expectedIbtPrice}`);
-        assert(actualIndexValue === iporIndexThirdValue, `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${iporIndexThirdValue}`);
+        assert(actualIbtPrice === expectedIbtPrice, `Actual Interest Bearing Token Price is incorrect, actual: ${actualIbtPrice}, expected: ${expectedIbtPrice}`);
+        assert(actualIndexValue === iporIndexThirdValue, `Actual IPOR Index Value is incorrect, actual: ${actualIndexValue}, expected: ${iporIndexThirdValue}`);
 
     });
 
@@ -239,7 +248,7 @@ contract('IporOracle', (accounts) => {
         let updateDate = Math.floor(Date.now() / 1000);
         await iporOracle.addUpdater(updaterOne);
         let assets = ["USDC", "DAI"];
-        let indexValues = [BigInt("80000000000000000"), BigInt("70000000000000000")];
+        let indexValues = [WARREN_8_PERCENTAGE, WARREN_7_PERCENTAGE];
 
         //when
         await iporOracle.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne})
