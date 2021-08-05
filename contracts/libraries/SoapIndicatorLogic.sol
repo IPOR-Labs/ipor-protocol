@@ -7,8 +7,6 @@ import {Constants} from '../libraries/Constants.sol';
 
 library SoapIndicatorLogic {
 
-    event SoapIndicatorLog(string name, uint256 value);
-
     function calculateSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,

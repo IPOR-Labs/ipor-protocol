@@ -6,6 +6,7 @@ import './IporOracleStorage.sol';
 import "../interfaces/IIporOracle.sol";
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import {Constants} from '../libraries/Constants.sol';
+import "../libraries/IporLogic.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -13,6 +14,8 @@ import {Constants} from '../libraries/Constants.sol';
  * @author IPOR Labs
  */
 contract IporOracle is IporOracleV1Storage, IIporOracle {
+
+    using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
     event IporIndexUpdate(string asset, uint256 indexValue, uint256 ibtPrice, uint256 date);
@@ -22,8 +25,6 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address _updater);
-
-    event Log(uint256 message);
 
     constructor() {
         admin = msg.sender;
@@ -83,9 +84,9 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
 
         if (assetExists == false) {
             assets.push(_assetHash);
-            _ibtNewPrice = 1e20;
+            _ibtNewPrice = 1e18;
         } else {
-            _ibtNewPrice = _accrueInterestBearingTokenPrice(indexes[_assetHash], updateTimestamp);
+            _ibtNewPrice = indexes[_assetHash].accrueIbtPrice(updateTimestamp);
         }
 
         indexes[_assetHash] = DataTypes.IPOR(_asset, _indexValue, _ibtNewPrice, updateTimestamp);
@@ -111,8 +112,6 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
         blockTimestamp = _iporIndex.blockTimestamp
         );
     }
-
-
 
     /**
      * @notice Add updater address to list of updaters who are authorized to actualize IPOR Index in Oracle
@@ -157,13 +156,13 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     /**
     * @notice Mathematical formula which accrue actual Interest Bearing Token Price based on currently valid IPOR Index and current block timestamp
-    * @param _lastIPOR last IPOR Index stored in blockchain
-    * @param _currentBlockTimestamp current block timestamp
+    * @param lastIPOR last IPOR Index stored in blockchain
+    * @param currentBlockTimestamp current block timestamp
     */
-    function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory _lastIPOR, uint256 _currentBlockTimestamp) internal pure returns (uint256){
-        return _lastIPOR.ibtPrice * (Constants.MILTON_DECIMALS_FACTOR
-        + (_lastIPOR.indexValue * ((_currentBlockTimestamp - _lastIPOR.blockTimestamp) * Constants.MILTON_DECIMALS_FACTOR))
-        / Constants.YEAR_IN_SECONDS_WITH_FACTOR) / Constants.MILTON_DECIMALS_FACTOR;
+    function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory lastIPOR, uint256 currentBlockTimestamp) internal pure returns (uint256){
+        return lastIPOR.ibtPrice
+        + (lastIPOR.indexValue * ((currentBlockTimestamp - lastIPOR.blockTimestamp) * Constants.MILTON_DECIMALS_FACTOR))
+        / Constants.YEAR_IN_SECONDS_WITH_FACTOR;
     }
 
 
