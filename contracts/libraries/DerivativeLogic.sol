@@ -16,7 +16,10 @@ library DerivativeLogic {
         return ibtQuantity * ibtCurrentPrice / Constants.MILTON_DECIMALS_FACTOR;
     }
 
-    function calculateInterest(DataTypes.IporDerivative memory derivative, uint256 closingTimestamp, uint256 ibtPrice) public pure returns (DataTypes.IporDerivativeInterest memory) {
+    function calculateInterest(
+        DataTypes.IporDerivative memory derivative,
+        uint256 closingTimestamp,
+        uint256 ibtPrice) public pure returns (DataTypes.IporDerivativeInterest memory) {
 
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(closingTimestamp >= derivative.startingTimestamp, "Derivative closing timestamp cannot be before derivative starting timestamp");

@@ -3,6 +3,30 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library DataTypes {
 
+    struct TotalSoapIndicator {
+        SoapIndicator pf;
+        SoapIndicator rf;
+    }
+
+    //soap payfixed and soap recfixed indicators
+    struct SoapIndicator {
+
+        uint256 rebalanceTimestamp;
+        //leg
+        DataTypes.DerivativeDirection direction;
+        //O_0
+        uint256 hypotheticalInterestCumulative;
+        //N_0
+        uint256 totalNotional;
+        //I_0
+        uint256 averageInterestRate;
+        //TT
+        uint256 totalIbtQuantity;
+        //SOAP
+        int256 soap;
+
+    }
+
     //@notice IPOR Structure
     struct IPOR {
 
@@ -57,9 +81,6 @@ library DataTypes {
 
         //@notice Fixed interest rate at which the position has been locked (IPOR Index Vale +/- spread)
         uint256 fixedInterestRate;
-
-        //@notice SOAP - Sum Of All Payouts indicator
-        uint256 soap;
 
     }
 

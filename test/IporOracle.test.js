@@ -5,7 +5,7 @@ const assertError = async (promise, error) => {
     try {
         await promise;
     } catch (e) {
-        assert(e.message.includes(error), `Expected exception with message ${error}`);
+        assert(e.message.includes(error), `Expected exception with message ${error} but actual error message: ${e.message}`);
         return;
     }
     assert(false);
@@ -28,14 +28,14 @@ contract('IporOracle', (accounts) => {
     it('should NOT update IPOR Index', async () => {
         await assertError(
             iporOracle.updateIndex("ASSET_SYMBOL", 123, {from: updaterOne}),
-            'Reason given: IPOR_2'
+            'IPOR_2'
         );
     });
 
     it('should NOT update IPOR Index because input value is too low', async () => {
         await assertError(
             iporOracle.updateIndex("USDT", 123, {from: updaterOne}),
-            'Reason given: IPOR_2'
+            'IPOR_2'
         );
     });
 
@@ -68,7 +68,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT add IPOR Index Updater', async () => {
         await assertError(
             iporOracle.addUpdater(updaterTwo, {from: user}),
-            'Reason given: IPOR_1'
+            'IPOR_1'
         );
     });
 
@@ -82,7 +82,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT remove IPOR Index Updater', async () => {
         await assertError(
             iporOracle.removeUpdater(updaterTwo, {from: user}),
-            'Reason given: IPOR_1'
+            'IPOR_1'
         );
     });
 
@@ -230,7 +230,7 @@ contract('IporOracle', (accounts) => {
             //when
             iporOracle.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne}),
             //then
-            'Reason given: IPOR_18'
+            'IPOR_18'
         );
     });
 

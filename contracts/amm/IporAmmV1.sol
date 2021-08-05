@@ -10,22 +10,28 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IIporOracle.sol";
 import './IporAmmStorage.sol';
 import './IporAmmEvents.sol';
+import "../libraries/SoapIndicatorLogic.sol";
+import "../libraries/TotalSoapIndicatorLogic.sol";
+import "../libraries/DerivativesView.sol";
+
 
 
 /**
- * @title Automated Market Maker for derivatives based on IPOR Index.
+ * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
  * @author IPOR Labs
  */
 contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
-    using DerivativeLogic  for DataTypes.IporDerivative;
+    using DerivativeLogic for DataTypes.IporDerivative;
+    using SoapIndicatorLogic for DataTypes.SoapIndicator;
+    using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
+    using DerivativesView for DataTypes.IporDerivative[];
 
     IIporOracle public iporOracle;
 
     //@notice percentage of deposit amount
     uint256 constant SPREAD_FEE_PERCENTAGE = 1e16;
-
 
     constructor(address iporOracleAddr, address usdtToken, address usdcToken, address daiToken) {
 
@@ -37,28 +43,53 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         tokens["USDC"] = usdcToken;
         tokens["DAI"] = daiToken;
 
+        uint256 blockTimestamp = block.timestamp;
+
+        soapIndicators["USDT"] = DataTypes.TotalSoapIndicator(
+            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
+            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
+        );
+
+        soapIndicators["USDC"] = DataTypes.TotalSoapIndicator(
+            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
+            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
+        );
+
+        soapIndicators["DAI"] = DataTypes.TotalSoapIndicator(
+            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
+            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
+        );
+
         //TODO: allow admin to setup it during runtime
         closingFeePercentage = 0;
+        nextDerivativeId = 0;
 
     }
 
-    /**
-    * @notice Trader open new derivative position. Depending on the direction it could be derivative
-    * where trader pay fixed and receive a floating (long position) or receive fixed and pay a floating.
-    * @param asset symbol of asset of the derivative
-    * @param totalAmount sum of deposit amount and fees
-    * @param leverage leverage level - proportion between _depositAmount and notional amount
-    * @param direction pay fixed and receive a floating (trader assume that interest rate will increase)
-    * or receive a floating and pay fixed (trader assume that interest rate will decrease)
-    * In a long position the trader will pay a fixed rate and receive a floating rate.
-    */
+    function calculateSoap(string memory asset) public view returns (int256 soapPf, int256 soapRf, int256 soap) {
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
+        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
+    }
+
+    //    fallback() external payable  {
+    //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
+    //    }
+
+    function _calculateSoap(
+        string memory asset,
+        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
+        (, uint256 ibtPrice,) = iporOracle.getIndex(asset);
+        (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateSoap(calculateTimestamp, ibtPrice);
+        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
+    }
+
     function openPosition(
         string memory asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint8 leverage,
-        uint8 direction) public {
-        _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
+        uint8 direction) public returns (uint256){
+        return _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
     }
 
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) public {
@@ -71,7 +102,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint8 leverage,
-        uint8 direction) internal returns(uint256) {
+        uint8 direction) internal returns (uint256) {
 
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
@@ -100,6 +131,8 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             Constants.IPOR_PUBLICATION_FEE_AMOUNT,
             SPREAD_FEE_PERCENTAGE);
 
+        DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(asset, direction, derivativeAmount.notional);
+
         DataTypes.IporDerivative memory iporDerivative = DataTypes.IporDerivative(
             nextDerivativeId,
             DataTypes.DerivativeState.ACTIVE,
@@ -112,19 +145,28 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             derivativeAmount.notional,
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
-            _calculateDerivativeIndicators(asset, direction, derivativeAmount.notional)
+            iporDerivativeIndicator
         );
         derivatives.push(iporDerivative);
 
         nextDerivativeId++;
 
-        IERC20(tokens[asset]).transferFrom(msg.sender, address(this), totalAmount);
-
         _updateBalances(asset, derivativeAmount);
+
+        soapIndicators[asset].rebalanceSoapWhenOpenPosition(
+            direction,
+            openTimestamp,
+            derivativeAmount.notional,
+            iporDerivativeIndicator.fixedInterestRate,
+            iporDerivativeIndicator.ibtQuantity
+        );
+
+        IERC20(tokens[asset]).transferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
 
         //TODO: clarify if ipAsset should be transfered to trader when position is opened
+
         return iporDerivative.id;
     }
 
@@ -152,14 +194,14 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + derivativeAmount.openingFee;
     }
 
-    function _calculateDerivativeIndicators(string memory asset, uint8 direction, uint256 notionalAmount) internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
+    function _calculateDerivativeIndicators(string memory asset, uint8 direction, uint256 notionalAmount)
+    internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
         (uint256 iporIndexValue, uint256  ibtPrice,) = iporOracle.getIndex(asset);
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             iporIndexValue,
             ibtPrice,
             AmmMath.calculateIbtQuantity(notionalAmount, ibtPrice),
-            direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE),
-            soap
+            direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE)
         );
         return indicator;
     }
@@ -173,6 +215,15 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivatives[derivativeId].calculateInterest(closeTimestamp, ibtPrice);
 
         _rebalanceBasedOnInterestDifferenceAmount(derivativeId, derivativeInterest.interestDifferenceAmount, closeTimestamp);
+
+        soapIndicators[derivatives[derivativeId].asset].rebalanceSoapWhenClosePosition(
+            derivatives[derivativeId].direction,
+            closeTimestamp,
+            derivatives[derivativeId].startingTimestamp,
+            derivatives[derivativeId].notionalAmount,
+            derivatives[derivativeId].indicator.fixedInterestRate,
+            derivatives[derivativeId].indicator.ibtQuantity
+        );
 
         emit ClosePosition(
             derivativeId,
@@ -191,7 +242,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             iporPublicationFeeTotalBalances[derivatives[derivativeId].asset],
             liquidityPoolTotalBalances[derivatives[derivativeId].asset]
         );
-        //TODO: rebalance soap
     }
 
     //TODO: [REFACTOR] move to library extend int256
@@ -199,7 +249,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         return (uint256)(value < 0 ? - value : value);
     }
 
-    function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 calculationTimestamp) internal {
+    function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 _calculationTimestamp) internal {
 
         uint256 absInterestDifferenceAmount = _calculateAbsValue(interestDifferenceAmount);
 
@@ -208,6 +258,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW);
 
         liquidationDepositTotalBalances[derivatives[derivativeId].asset] = liquidationDepositTotalBalances[derivatives[derivativeId].asset] - derivatives[derivativeId].fee.liquidationDepositAmount;
+
         derivativesTotalBalances[derivatives[derivativeId].asset] = derivativesTotalBalances[derivatives[derivativeId].asset] - derivatives[derivativeId].depositAmount;
 
         uint256 transferAmount = derivatives[derivativeId].depositAmount;
@@ -233,8 +284,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 require(liquidityPoolTotalBalances[derivatives[derivativeId].asset] >= absInterestDifferenceAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                require(msg.sender == derivatives[derivativeId].buyer ||
-                    calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                if (msg.sender != derivatives[derivativeId].buyer) {
+                    require(_calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                }
 
                 //fetch "I" amount from Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[derivativeId].asset] = liquidityPoolTotalBalances[derivatives[derivativeId].asset] - absInterestDifferenceAmount;
@@ -259,8 +311,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
                 // |I| <= D
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                require(msg.sender == derivatives[derivativeId].buyer ||
-                    calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET);
+                if (msg.sender != derivatives[derivativeId].buyer) {
+                    require(_calculationTimestamp >= derivatives[derivativeId].endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                }
 
                 //transfer I to Liquidity Pool
                 liquidityPoolTotalBalances[derivatives[derivativeId].asset] = liquidityPoolTotalBalances[derivatives[derivativeId].asset] + absInterestDifferenceAmount;
@@ -312,42 +365,8 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     //@notice FOR FRONTEND
     function getPositions() external view returns (DataTypes.IporDerivative[] memory) {
-        DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](derivatives.length);
-
-        for (uint256 i = 0; i < derivatives.length; i++) {
-            DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
-                derivatives[i].indicator.iporIndexValue,
-                derivatives[i].indicator.ibtPrice,
-                derivatives[i].indicator.ibtQuantity,
-                derivatives[i].indicator.fixedInterestRate,
-                derivatives[i].indicator.soap
-            );
-
-            DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-                derivatives[i].fee.liquidationDepositAmount,
-                derivatives[i].fee.openingAmount,
-                derivatives[i].fee.iporPublicationAmount,
-                derivatives[i].fee.spreadPercentage
-            );
-            _derivatives[i] = DataTypes.IporDerivative(
-                derivatives[i].id,
-                derivatives[i].state,
-                derivatives[i].buyer,
-                derivatives[i].asset,
-                derivatives[i].direction,
-                derivatives[i].depositAmount,
-                fee,
-                derivatives[i].leverage,
-                derivatives[i].notionalAmount,
-                derivatives[i].startingTimestamp,
-                derivatives[i].endingTimestamp,
-                indicator
-            );
-
-        }
-
-        return _derivatives;
-
+        //TODO: fix it, looks bad
+        return derivatives.getPositions();
     }
 
     /**
