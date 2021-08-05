@@ -16,3 +16,4 @@ app/src/contracts
 /ipor-protocol.iml
 /.env
 /package-lock.json
+/src/generated/

@@ -47,6 +47,9 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
         return _indexes;
     }
 
+    function updateIndexes(string[] memory _assets, uint256[] memory _indexValues) public onlyUpdater {
+        _updateIndexes(_assets, _indexValues, block.timestamp);
+    }
 
     /**
      * @notice Update IPOR index for specific asset
@@ -59,7 +62,14 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     }
 
-    function _updateIndex(string memory _asset, uint256 _indexValue, uint256 updateTimestamp) public onlyUpdater {
+    function _updateIndexes(string[] memory _assets, uint256[] memory _indexValues, uint256 updateTimestamp) internal onlyUpdater {
+        require(_assets.length == _indexValues.length, Errors.IPOR_ORACLE_INPUT_ARRAYS_LENGTH_MISMATCH);
+        for (uint256 i = 0; i < _assets.length; i++) {
+            _updateIndex(_assets[i], _indexValues[i], updateTimestamp);
+        }
+    }
+
+    function _updateIndex(string memory _asset, uint256 _indexValue, uint256 updateTimestamp) internal onlyUpdater {
         bool assetExists = false;
         bytes32 _assetHash = keccak256(abi.encodePacked(_asset));
 

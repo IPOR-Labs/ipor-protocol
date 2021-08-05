@@ -9,4 +9,8 @@ contract TestIporOracleProxy is IporOracle {
         _updateIndex(asset, indexValue, updateTimestamp);
     }
 
+    function test_updateIndexes(string[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) public {
+        _updateIndexes(_assets, indexValues, updateTimestamp);
+    }
+
 }

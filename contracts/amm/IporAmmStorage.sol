@@ -2,6 +2,11 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import {DataTypes} from '../libraries/types/DataTypes.sol';
+import "../libraries/DerivativeLogic.sol";
+import "../libraries/SoapIndicatorLogic.sol";
+import "../libraries/TotalSoapIndicatorLogic.sol";
+import "../libraries/DerivativesView.sol";
+
 
 contract IporAmmStorage {
     /**
@@ -34,23 +39,16 @@ contract IporAmmV1Storage is IporAmmStorage {
     //@notice Liquidity Pool total balances for every asset
     mapping(string => uint256) public liquidityPoolTotalBalances;
 
-    mapping(string => Balance) public balances;
+    //TODO: treasury balance - tam trafia income tax
 
-    struct Balance {
-        uint256 derivative;
-        uint256 openingFee;
-        uint256 liquidationDepositFee;
-        uint256 iporPublicationFee;
-    }
+    mapping(string => DataTypes.TotalSoapIndicator) public soapIndicators;
 
     // @notice list of positions for particular asset, first key is an address of token, second key is an address of trader
     DataTypes.IporDerivative[] public derivatives;
 
     // @notice next derivative id (long or short)
-    uint256 public nextDerivativeId;
 
-    // @notice Sum Of All Payouts
-    uint256 public soap;
+    uint256 public nextDerivativeId;
 
     uint256 public closingFeePercentage;
 

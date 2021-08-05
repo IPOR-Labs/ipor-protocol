@@ -13,9 +13,13 @@ library Errors {
     string public constant AMM_TOTAL_AMOUNT_TOO_HIGH = 'IPOR_10'; // 'Deposit Amount when creating derivative position is too high'
     string public constant AMM_LEVERAGE_TOO_LOW = 'IPOR_12'; //'Deposit amount to notional amount leverage is too low'
     string public constant AMM_ASSET_BALANCE_OF_TOO_LOW = 'IPOR_13'; //'Trader doesnt have enought tokens to execute transaction'
-    string public constant AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_14'; //'Derivative cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen.'
+    string public constant AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_14'; //'Derivative cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent'
     string public constant AMM_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = 'IPOR_15'; //'Derivative cannot be closed because liquidation deposit balance is to low to pay sender for liquidation.'
-    string public constant AMM_CANNOT_CLOSE_DERIVATE_CONDITION_NOT_MET = 'IPOR_16'; //'Derivative cannot be closed because general condition are not met'
+    string public constant AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY = 'IPOR_16'; //'Derivative cannot be closed because sender is not an owner of derivative and derivative maturity not achieved'
     string public constant AMM_DERIVATIVE_IS_INACTIVE = 'IPOR_17'; //'Derivative should be in ACTIVE state'
+    string public constant IPOR_ORACLE_INPUT_ARRAYS_LENGTH_MISMATCH = 'IPOR_18'; //'Input arrays which should have the same length - mismatch.'
+    string public constant AMM_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = 'IPOR_19'; //'Derivative Notional Amount is higher than Total Notional
+    string public constant AMM_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP = 'IPOR_20'; //'Calculation timestamp is higher than derivative open timestamp, but should be lower or equal`
+    string public constant AMM_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP = 'IPOR_21'; //'Calculation timestamp is lower than last rebalance in soap indicator timestamp, but should be higher or equal`
 
 }

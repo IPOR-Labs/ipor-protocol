@@ -204,8 +204,7 @@ contract DerivativeLogicTest {
             3 * 1e16, //ipor index value
             ibtPriceFirst,
             987030000000000000000, //ibtQuantity
-            fixedInterestRate,
-            0 //soap
+            fixedInterestRate
         );
 
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(

@@ -9,7 +9,7 @@
   "scripts": {
     "truffle:deploy:kovan": "truffle migrate --network kovan",
     "coverage": "truffle run coverage",
-    "test": "truffle test"
+    "test": "truffle test --stacktrace-extra"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,8 @@
     "@openzeppelin/contracts": "^4.1.0",
     "@truffle/hdwallet-provider": "^1.4.0",
     "dotenv": "^10.0.0",
-    "truffle": "^5.3.10"
+    "truffle": "^5.3.10",
+    "truffle-contract-size": "^2.0.1"
   },
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.11",

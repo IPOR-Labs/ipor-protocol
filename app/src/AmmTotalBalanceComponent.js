@@ -50,6 +50,12 @@ export default ({drizzle, drizzleState}) => (
                     contract="IporAmmV1"
                     method="getTotalSupply"
                     methodArgs={["USDT"]}
+                    render={(value) => (
+                        <div>
+                            {value / 1000000000000000000}<br/>
+                            <small>{value}</small>
+                        </div>
+                    )}
                 />
             </td>
             <td>
@@ -59,6 +65,12 @@ export default ({drizzle, drizzleState}) => (
                     contract="IporAmmV1"
                     method="getTotalSupply"
                     methodArgs={["USDC"]}
+                    render={(value) => (
+                        <div>
+                            {value / 1000000000000000000}<br/>
+                            <small>{value}</small>
+                        </div>
+                    )}
                 />
             </td>
             <td>
@@ -68,6 +80,12 @@ export default ({drizzle, drizzleState}) => (
                     contract="IporAmmV1"
                     method="getTotalSupply"
                     methodArgs={["DAI"]}
+                    render={(value) => (
+                        <div>
+                            {value / 1000000000000000000}<br/>
+                            <small>{value}</small>
+                        </div>
+                    )}
                 />
             </td>
         </tr>
@@ -80,6 +98,12 @@ export default ({drizzle, drizzleState}) => (
                     contract="IporAmmV1"
                     method="getMyTotalSupply"
                     methodArgs={["USDT"]}
+                    render={(value) => (
+                        <div>
+                            {value / 1000000000000000000}<br/>
+                            <small>{value}</small>
+                        </div>
+                    )}
                 />
             </td>
             <td>
@@ -89,6 +113,12 @@ export default ({drizzle, drizzleState}) => (
                     contract="IporAmmV1"
                     method="getMyTotalSupply"
                     methodArgs={["USDC"]}
+                    render={(value) => (
+                        <div>
+                            {value / 1000000000000000000}<br/>
+                            <small>{value}</small>
+                        </div>
+                    )}
                 />
             </td>
             <td>
@@ -98,6 +128,12 @@ export default ({drizzle, drizzleState}) => (
                     contract="IporAmmV1"
                     method="getMyTotalSupply"
                     methodArgs={["DAI"]}
+                    render={(value) => (
+                        <div>
+                            {value / 1000000000000000000}<br/>
+                            <small>{value}</small>
+                        </div>
+                    )}
                 />
             </td>
         </tr>

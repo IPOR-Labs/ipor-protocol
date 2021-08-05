@@ -5,31 +5,44 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.ipor</groupId>
-    <artifactId>ipor-oracle</artifactId>
+    <artifactId>ipor-protocol</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>IPOR Oracle Contracts</name>
+    <name>IPOR Protocol Contracts</name>
     <description>IPOR Oracle Contracts</description>
     <url>https://www.ipor.io</url>
+    <inceptionYear>2021</inceptionYear>
 
     <licenses>
         <license>
-            <name>Apache 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <name>TODO</name>
+            <url>TODO</url>
         </license>
     </licenses>
 
     <properties>
         <!-- BASICS -->
-        <java.version>8</java.version>
+        <java.version>11</java.version>
         <text.encoding>UTF-8</text.encoding>
 
+        <!-- DIRECTORIES -->
+        <generated.sources>src/generated</generated.sources>
+        <contracts.sources>contracts</contracts.sources>
+
         <!-- LIBS VERSION -->
-        <web3j.version>4.8.4</web3j.version>
+        <web3j.version>4.8.6</web3j.version>
+        <gitexe.version>1.11.2</gitexe.version>
 
         <!-- PLUGINS VERSION -->
+        <exec-plugin.version>3.0.0</exec-plugin.version>
+        <web3j-plugin.version>4.8.2</web3j-plugin.version>
+        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <build-helper-plugin.version>3.2.0</build-helper-plugin.version>
+        <source-plugin.version>3.2.1</source-plugin.version>
+        <javadoc-plugin.version>3.3.0</javadoc-plugin.version>
         <surefire-plugin.version>2.22.2</surefire-plugin.version>
         <failsafe-plugin.version>2.22.2</failsafe-plugin.version>
-        <web3j-plugin.version>4.8.2</web3j-plugin.version>
+        <deploy-plugin.version>2.8.2</deploy-plugin.version>
+        <release-plugin.version>3.0.0-M4</release-plugin.version>
 
         <!-- DEPENDENT BASICS -->
         <project.build.sourceEncoding>${text.encoding}</project.build.sourceEncoding>
@@ -37,7 +50,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <solidity.version>0.7.4</solidity.version>
+        <generated.sources.java>${generated.sources}/java</generated.sources.java>
+        <generated.sources.abi>${generated.sources}/abi</generated.sources.abi>
     </properties>
 
     <organization>
@@ -50,52 +64,77 @@
         <url>https://ipor-labs.atlassian.net/jira/software/c/projects/IL/issues/</url>
     </issueManagement>
 
+    <ciManagement>
+        <system>TODO</system>
+        <url>TODO</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <site>
+            <id>TODO</id>
+            <url>TODO</url>
+        </site>
+    </distributionManagement>
+
     <scm>
-        <connection>scm:git:ssh://git@github.com:IPOR-Labs/ipor-oracle-service.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:IPOR-Labs/ipor-oracle-service.git</developerConnection>
-        <url>https://github.com/IPOR-Labs/ipor-oracle</url>
+        <connection>scm:git:ssh://git@github.com:IPOR-Labs/ipor-protocol.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:IPOR-Labs/ipor-protocol.git</developerConnection>
+        <url>https://github.com/IPOR-Labs/ipor-protocol</url>
         <tag>HEAD</tag>
     </scm>
 
     <dependencies>
-
-        <!-- ETHEREUM -->
+        <!-- WEB3J -->
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
             <version>${web3j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>parity</artifactId>
-            <version>${web3j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>crypto</artifactId>
-            <version>${web3j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>abi</artifactId>
-            <version>${web3j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>codegen</artifactId>
-            <version>${web3j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>web3j-sokt</artifactId>
-            <version>0.2.1</version>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>solc</executable>
+                    <arguments>
+                        <argument>--abi</argument>
+                        <argument>--overwrite</argument>
+                        <argument>-o</argument>
+                        <argument>${generated.sources.abi}</argument>
+                        <argument>@openzeppelin/contracts=${PWD}/node_modules/@openzeppelin/contracts</argument>
+                        <!-- INFO: wildcards not working here :( -->
+                        <argument>${contracts.sources}/amm/IporAmmEvents.sol</argument>
+                        <argument>${contracts.sources}/amm/IporAmmStorage.sol</argument>
+                        <argument>${contracts.sources}/amm/IporAmmV1.sol</argument>
+                        <argument>${contracts.sources}/amm/TestIporAmmV1Proxy.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IIporOracle.sol</argument>
+                        <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
+                        <argument>${contracts.sources}/libraries/AmmMath.sol</argument>
+                        <argument>${contracts.sources}/libraries/Constants.sol</argument>
+                        <argument>${contracts.sources}/libraries/DerivativeLogic.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/SimpleToken.sol</argument>
+                        <argument>${contracts.sources}/oracles/IporOracle.sol</argument>
+                        <argument>${contracts.sources}/oracles/IporOracleStorage.sol</argument>
+                        <argument>${contracts.sources}/oracles/TestIporOracleProxy.sol</argument>
+                        <argument>${contracts.sources}/Errors.sol</argument>
+                        <argument>${contracts.sources}/Migrations.sol</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.web3j</groupId>
                 <artifactId>web3j-maven-plugin</artifactId>
@@ -109,28 +148,91 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageName>ip.ipor.oracle.contract</packageName>
-                    <sourceDestination>src/main/java/generated</sourceDestination>
+                    <packageName>io.ipor.oracle.contract</packageName>
+                    <sourceDestination>${generated.sources.java}</sourceDestination>
                     <nativeJavaType>true</nativeJavaType>
-                    <outputFormat>java,bin,abi</outputFormat>
-                    <soliditySourceFiles>
-                        <directory>contracts</directory>
+                    <outputFormat>java</outputFormat>
+                    <abiSourceFiles>
+                        <directory>${generated.sources.abi}</directory>
                         <includes>
-                            <include>**/*.sol</include>
+                            <include>IporAmmV1.abi</include>
+                            <include>IporAmmV1Events.abi</include>
+                            <include>IporOracle.abi</include>
                         </includes>
-                    </soliditySourceFiles>
+                    </abiSourceFiles>
                     <outputDirectory>
-                        <java>src/java/generated</java>
-                        <bin>src/bin/generated</bin>
-                        <abi>src/abi/generated</abi>
+                        <java>${generated.sources.java}</java>
                     </outputDirectory>
-                    <properties>
-                        <solidity.version>0.7.4</solidity.version>
-                    </properties>
-                    <pathPrefixes>
-                        <pathPrefix>dep=../dependencies</pathPrefix>
-                    </pathPrefixes>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.web3j</groupId>
+                        <artifactId>codegen</artifactId>
+                        <version>${web3j.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.web3j</groupId>
+                        <artifactId>core</artifactId>
+                        <version>${web3j.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${generated.sources.java}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -142,6 +244,29 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${failsafe-plugin.version}</version>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${deploy-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${release-plugin.version}</version>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>${gitexe.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
         </plugins>
     </build>
 

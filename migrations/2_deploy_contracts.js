@@ -3,6 +3,10 @@ const IporAmmV1 = artifacts.require("IporAmmV1");
 const TestIporAmmV1Proxy = artifacts.require("TestIporAmmV1Proxy");
 const SimpleToken = artifacts.require('SimpleToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
+const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
+const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
+const DerivativesView = artifacts.require('DerivativesView');
+
 const AmmMath = artifacts.require('AmmMath');
 
 module.exports = async function (deployer, _network, addresses) {
@@ -28,7 +32,15 @@ module.exports = async function (deployer, _network, addresses) {
     let tusd = null;
 
     await deployer.deploy(DerivativeLogic);
+    await deployer.deploy(SoapIndicatorLogic);
+    await deployer.link(SoapIndicatorLogic,TotalSoapIndicatorLogic);
+    await deployer.deploy(TotalSoapIndicatorLogic);
+    await deployer.deploy(DerivativesView);
+    await deployer.link(SoapIndicatorLogic, IporAmmV1);
     await deployer.link(DerivativeLogic, IporAmmV1);
+    await deployer.link(DerivativesView, IporAmmV1);
+
+    await deployer.link(TotalSoapIndicatorLogic, IporAmmV1);
     await deployer.deploy(AmmMath);
     await deployer.link(AmmMath, IporAmmV1);
 
@@ -64,7 +76,11 @@ module.exports = async function (deployer, _network, addresses) {
         iporAmm = await deployer.deploy(IporAmmV1, iporOracle.address, usdt.address, usdc.address, dai.address);
     } else {
         await deployer.link(DerivativeLogic, TestIporAmmV1Proxy);
+        await deployer.link(SoapIndicatorLogic, TestIporAmmV1Proxy);
+        await deployer.link(TotalSoapIndicatorLogic, TestIporAmmV1Proxy);
+        await deployer.link(DerivativesView, TestIporAmmV1Proxy);
         await deployer.link(AmmMath, TestIporAmmV1Proxy);
+
     }
 
 

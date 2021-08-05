@@ -5,7 +5,7 @@ const assertError = async (promise, error) => {
     try {
         await promise;
     } catch (e) {
-        assert(e.message.includes(error), `Expected exception with message ${error}`);
+        assert(e.message.includes(error), `Expected exception with message ${error} but actual error message: ${e.message}`);
         return;
     }
     assert(false);
@@ -28,14 +28,14 @@ contract('IporOracle', (accounts) => {
     it('should NOT update IPOR Index', async () => {
         await assertError(
             iporOracle.updateIndex("ASSET_SYMBOL", 123, {from: updaterOne}),
-            'Reason given: IPOR_2'
+            'IPOR_2'
         );
     });
 
     it('should NOT update IPOR Index because input value is too low', async () => {
         await assertError(
             iporOracle.updateIndex("USDT", 123, {from: updaterOne}),
-            'Reason given: IPOR_2'
+            'IPOR_2'
         );
     });
 
@@ -68,7 +68,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT add IPOR Index Updater', async () => {
         await assertError(
             iporOracle.addUpdater(updaterTwo, {from: user}),
-            'Reason given: IPOR_1'
+            'IPOR_1'
         );
     });
 
@@ -82,7 +82,7 @@ contract('IporOracle', (accounts) => {
     it('should NOT remove IPOR Index Updater', async () => {
         await assertError(
             iporOracle.removeUpdater(updaterTwo, {from: user}),
-            'Reason given: IPOR_1'
+            'IPOR_1'
         );
     });
 
@@ -217,6 +217,39 @@ contract('IporOracle', (accounts) => {
         assert(actualIbtPrice === expectedIbtPrice, `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${expectedIbtPrice}`);
         assert(actualIndexValue === iporIndexThirdValue, `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${iporIndexThirdValue}`);
 
+    });
+
+    it('should NOT update IPOR Index - wrong input arrays', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await iporOracle.addUpdater(updaterOne);
+        let assets = ["USDC", "DAI"];
+        let indexValues = [BigInt("50000000000000000")];
+
+        await assertError(
+            //when
+            iporOracle.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne}),
+            //then
+            'IPOR_18'
+        );
+    });
+
+    it('should update IPOR Index - correct input arrays', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await iporOracle.addUpdater(updaterOne);
+        let assets = ["USDC", "DAI"];
+        let indexValues = [BigInt("80000000000000000"), BigInt("70000000000000000")];
+
+        //when
+        await iporOracle.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne})
+
+        //then
+        for (let i = 0; i < assets.length; i++) {
+            const iporIndex = await iporOracle.getIndex(assets[i]);
+            let actualIndexValue = BigInt(iporIndex.indexValue);
+            assert(actualIndexValue === indexValues[i], `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${indexValues[i]}`);
+        }
     });
 
 });

@@ -8,6 +8,8 @@ contract IporAmmEvents {
 
 contract IporAmmV1Events is IporAmmEvents {
 
+    event LogDepositReceived(address _sender);
+
     // @notice Open derivative position
     event OpenPosition(
         uint256 indexed derivativeId,
