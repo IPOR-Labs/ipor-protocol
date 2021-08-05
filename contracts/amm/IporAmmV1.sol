@@ -66,17 +66,21 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     }
 
-    function calculateSoap(string memory asset) public view returns (int256) {
-        return _calculateSoap(asset, block.timestamp);
+    function calculateSoap(string memory asset) public view returns (int256 soapPf, int256 soapRf, int256 soap) {
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
+        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
     //    fallback() external payable  {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
-    function _calculateSoap(string memory asset, uint256 calculateTimestamp) internal view returns (int256){
+    function _calculateSoap(
+        string memory asset,
+        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
         (, uint256 ibtPrice,) = iporOracle.getIndex(asset);
-        return soapIndicators[asset].calculateSoap(calculateTimestamp, ibtPrice);
+        (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateSoap(calculateTimestamp, ibtPrice);
+        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
 
     function openPosition(
@@ -162,8 +166,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         _emitOpenPositionEvent(iporDerivative);
 
         //TODO: clarify if ipAsset should be transfered to trader when position is opened
-        //TODO: calculate TTpf or TTrf
-        //TODO: calculate weighted average interest for specific leg
 
         return iporDerivative.id;
     }
@@ -240,7 +242,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             iporPublicationFeeTotalBalances[derivatives[derivativeId].asset],
             liquidityPoolTotalBalances[derivatives[derivativeId].asset]
         );
-        //TODO: rebalance soap
     }
 
     //TODO: [REFACTOR] move to library extend int256

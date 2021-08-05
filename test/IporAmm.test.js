@@ -219,7 +219,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9999890300000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9999890300000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("99700000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -231,7 +231,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9999822695205479452054795"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9999822695205479452054795"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("167304794520547945205"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -272,7 +272,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -284,7 +284,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9992048143835616438322362"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9992048143835616438322362"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("7941856164383561677638"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -296,7 +296,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9991404546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9991404546191780821850204"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -308,7 +308,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -320,7 +320,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10007597246575342465731792"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10007597246575342465731792"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("2792753424657534268208"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -332,7 +332,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -345,7 +345,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10006196475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10006196475232876712244938"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -358,7 +358,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -398,7 +398,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -410,7 +410,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10006176475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -423,7 +423,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -463,7 +463,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9991384546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -476,7 +476,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -488,7 +488,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9999822695205479452075075"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9999822695205479452075075"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("167304794520547924925"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -501,7 +501,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9999822695205479452054794"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9999822695205479452054794"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("167304794520547945206"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -513,7 +513,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -525,7 +525,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10007597246575342465787227"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10007597246575342465787227"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("2792753424657534212773"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -537,7 +537,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -549,7 +549,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9992048143835616438377797"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9992048143835616438377797"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("7941856164383561622203"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -561,7 +561,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009760600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10009760600000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -574,7 +574,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10008224619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10008224619068493150752536"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -586,7 +586,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9990020000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -598,7 +598,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9993432690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9993432690027397260357802"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -610,7 +610,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -649,7 +649,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -687,7 +687,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10009740600000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("629400000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -699,7 +699,7 @@ contract('IporAmm', (accounts) => {
             BigInt("10008204619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -711,7 +711,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9990000000000000000000000"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("9970000000000000000000"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -723,7 +723,7 @@ contract('IporAmm', (accounts) => {
             BigInt("9993412690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
-            0, ZERO, ZERO,ZERO
+            0, ZERO, ZERO, ZERO
         );
     });
 
@@ -750,7 +750,8 @@ contract('IporAmm', (accounts) => {
         let expectedSoap = ZERO;
 
         //when
-        let actualSoap = BigInt(await calculateSoap(params));
+        let actualSoapStruct = await calculateSoap(params)
+        let actualSoap = BigInt(actualSoapStruct.soap);
 
         //then
 
@@ -784,7 +785,7 @@ contract('IporAmm', (accounts) => {
         const soapParams = {
             asset: "DAI",
             calculateTimestamp: derivativeParams.openTimestamp,
-            expectedSoap : expectedSoap,
+            expectedSoap: expectedSoap,
             from: userTwo
         }
         await assertSoap(soapParams);
@@ -1564,7 +1565,9 @@ contract('IporAmm', (accounts) => {
     }
 
     const assertSoap = async (params) => {
-        let actualSoap = BigInt(await calculateSoap(params));
+        let actualSoapStruct = await calculateSoap(params);
+        let actualSoap = BigInt(actualSoapStruct.soap);
+
         //then
         assert(params.expectedSoap === actualSoap,
             `Incorrect SOAP for asset ${params.asset} actual: ${actualSoap}, expected: ${params.expectedSoap}`)

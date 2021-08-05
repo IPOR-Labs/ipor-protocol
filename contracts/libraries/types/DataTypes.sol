@@ -7,6 +7,7 @@ library DataTypes {
         SoapIndicator pf;
         SoapIndicator rf;
     }
+
     //soap payfixed and soap recfixed indicators
     struct SoapIndicator {
 

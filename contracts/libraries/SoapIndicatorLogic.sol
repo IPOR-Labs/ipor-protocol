@@ -88,7 +88,6 @@ library SoapIndicatorLogic {
         uint256 derivativeFixedInterestRate) public pure returns (uint256) {
         return (si.totalNotional * si.averageInterestRate + derivativeNotional * derivativeFixedInterestRate)
         / (si.totalNotional + derivativeNotional);
-
     }
 
     function calculateInterestRateWhenClosePosition(
@@ -102,7 +101,6 @@ library SoapIndicatorLogic {
             return (si.totalNotional * si.averageInterestRate - derivativeNotional * derivativeFixedInterestRate)
             / (si.totalNotional - derivativeNotional);
         }
-
     }
 
     function calculateSoapPayFixed(DataTypes.SoapIndicator memory si, uint256 ibtPrice) public pure returns (uint256){

@@ -26,7 +26,9 @@ contract TestIporAmmV1Proxy is IporAmmV1 {
         _closePosition(derivativeId, closeTimestamp);
     }
 
-    function test_calculateSoap(string memory asset, uint256 calculateTimestamp) public view returns (int256){
+    function test_calculateSoap(
+        string memory asset,
+        uint256 calculateTimestamp) public view returns (int256 soapPf, int256 soapRf, int256 soap){
         return _calculateSoap(asset, calculateTimestamp);
     }
 }

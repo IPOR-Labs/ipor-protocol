@@ -252,9 +252,6 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst, derivativeNotionalFirst, derivativeFixedInterestRateFirst,
             derivativeIbtQuantityFirst);
 
-        uint256 averageInterestRateAfterFirstOpen = siStorage.averageInterestRate;
-
-
         uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         uint256 derivativeNotionalSecond = 20000 * 1e18;
         uint256 derivativeFixedInterestRateSecond = 8 * 1e16;
