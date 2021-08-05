@@ -62,4 +62,3 @@ export default ({drizzle, drizzleState}) => (
 
     </div>
 );
-
