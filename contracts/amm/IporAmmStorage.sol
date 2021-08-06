@@ -21,6 +21,8 @@ contract IporAmmStorage {
  */
 contract IporAmmV1Storage is IporAmmStorage {
 
+    DataTypes.ConfigParams public configParams;
+
     // @notice Map of available Liquidity Pools, key in this map are underlying asset symbol
     mapping(string => address) public tokens;
 
@@ -48,6 +50,8 @@ contract IporAmmV1Storage is IporAmmStorage {
 
     // @notice next derivative id (long or short)
 
+
+    //TODO: dodac test na 2 pozycje w jednym bloku - czy sie nie naklada
     uint256 public nextDerivativeId;
 
     uint256 public closingFeePercentage;

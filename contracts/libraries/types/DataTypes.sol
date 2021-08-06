@@ -3,9 +3,33 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library DataTypes {
 
+    struct ConfigParams {
+        uint256 incomeTax;
+        uint256 liquidationDepositFeeAmount;
+        uint256 openingAmount;
+        uint256 iporPublicationAmount;
+        uint256 liquiditiMaxUtilizationRate;
+
+        //this treasurer manage ipor publication fee balance
+        address charlieTreasurer;
+
+        //this treasurer manage opening fee balance
+        address treasureTreasurer;
+    }
+
     struct TotalSoapIndicator {
         SoapIndicator pf;
         SoapIndicator rf;
+    }
+
+    struct TotalSpreadIndicator {
+        SpreadIndicator pf;
+        SpreadIndicator rf;
+    }
+
+    struct SpreadIndicator {
+        uint256 value;
+        //TODO: jak bedzie znany sposob liczenia
     }
 
     //soap payfixed and soap recfixed indicators

@@ -14,8 +14,6 @@ import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 
-
-
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
@@ -117,7 +115,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.AMM_DERIVATIVE_DIRECTION_NOT_EXISTS);
         require(IERC20(tokens[asset]).balanceOf(msg.sender) >= totalAmount, Errors.AMM_ASSET_BALANCE_OF_TOO_LOW);
 
-        //TODO consider check if it is smart contract, if yes then revert
         //TODO verify if this opened derivatives is closable based on liquidity pool
         //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
 
@@ -161,6 +158,9 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             iporDerivativeIndicator.ibtQuantity
         );
 
+        //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
+        //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
+        //TODO: Use OpenZeppelin’s SafeERC20 wrappers.
         IERC20(tokens[asset]).transferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
@@ -344,10 +344,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         IERC20(tokens[asset]).transferFrom(msg.sender, address(this), liquidityAmount);
     }
 
-    function _calculateClosingFeeAmount(uint256 depositAmount) internal view returns (uint256) {
-        return depositAmount * closingFeePercentage / 100 * Constants.MILTON_DECIMALS_FACTOR;
-    }
-
     //@notice FOR FRONTEND
     function getTotalSupply(string memory asset) external view returns (uint256) {
         IERC20 token = IERC20(tokens[asset]);
@@ -365,7 +361,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     //@notice FOR FRONTEND
     function getPositions() external view returns (DataTypes.IporDerivative[] memory) {
-        //TODO: fix it, looks bad
+        //TODO: fix it, looks bad, DoS, possible out of gas
         return derivatives.getPositions();
     }
 

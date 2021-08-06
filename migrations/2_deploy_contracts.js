@@ -97,6 +97,7 @@ module.exports = async function (deployer, _network, addresses) {
             await tusd.transfer(addresses[i], userSupply18Decimals);
 
             //AMM has rights to spend money on behalf of user
+            //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
             usdt.approve(iporAmm.address, totalSupply6Decimals, {from: addresses[i]});
             usdc.approve(iporAmm.address, totalSupply6Decimals, {from: addresses[i]});
             dai.approve(iporAmm.address, totalSupply18Decimals, {from: addresses[i]});
