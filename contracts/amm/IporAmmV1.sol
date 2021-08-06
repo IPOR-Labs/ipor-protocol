@@ -13,6 +13,7 @@ import './IporAmmEvents.sol';
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
+import "../libraries/SpreadIndicatorLogic.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
@@ -23,6 +24,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
     using DerivativeLogic for DataTypes.IporDerivative;
     using SoapIndicatorLogic for DataTypes.SoapIndicator;
+    using SpreadIndicatorLogic for DataTypes.SpreadIndicator;
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.IporDerivative[];
 
@@ -58,10 +60,28 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
             DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
         );
 
+        //TODO: clarify what is default value for spread when spread is calculated in final way
+        spreadIndicators["USDT"] = DataTypes.TotalSpreadIndicator(
+            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
+        );
+
+        spreadIndicators["USDC"] = DataTypes.TotalSpreadIndicator(
+            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
+        );
+
+        spreadIndicators["DAI"] = DataTypes.TotalSpreadIndicator(
+            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
+        );
+
         //TODO: allow admin to setup it during runtime
         closingFeePercentage = 0;
         nextDerivativeId = 0;
 
+    }
+
+    function calculateSpread(string memory asset) public view returns (uint256 spreadPf, uint256 spreadRf) {
+        (uint256 _spreadPf, uint256 _spreadRf) = _calculateSpread(asset, block.timestamp);
+        return (spreadPf = _spreadPf, spreadRf = _spreadRf);
     }
 
     function calculateSoap(string memory asset) public view returns (int256 soapPf, int256 soapRf, int256 soap) {
@@ -72,6 +92,15 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     //    fallback() external payable  {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
+
+    function _calculateSpread(
+        string memory asset,
+        uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
+        return (
+        spreadPf = spreadIndicators[asset].pf.calculateSpread(calculateTimestamp),
+        spreadRf = spreadIndicators[asset].rf.calculateSpread(calculateTimestamp)
+        );
+    }
 
     function _calculateSoap(
         string memory asset,
