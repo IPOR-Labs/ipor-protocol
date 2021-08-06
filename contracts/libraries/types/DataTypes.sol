@@ -28,8 +28,7 @@ library DataTypes {
     }
 
     struct SpreadIndicator {
-        uint256 value;
-        //TODO: jak bedzie znany sposob liczenia
+        uint256 spread;
     }
 
     //soap payfixed and soap recfixed indicators

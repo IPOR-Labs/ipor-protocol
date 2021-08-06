@@ -6,6 +6,7 @@ const SimpleToken = artifacts.require('SimpleToken');
 const IporLogic = artifacts.require('IporLogic');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
+const SpreadIndicatorLogic = artifacts.require('SpreadIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const DerivativesView = artifacts.require('DerivativesView');
 
@@ -37,10 +38,12 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(DerivativeLogic);
     await deployer.deploy(SoapIndicatorLogic);
+    await deployer.deploy(SpreadIndicatorLogic);
     await deployer.link(SoapIndicatorLogic, TotalSoapIndicatorLogic);
     await deployer.deploy(TotalSoapIndicatorLogic);
     await deployer.deploy(DerivativesView);
     await deployer.link(SoapIndicatorLogic, IporAmmV1);
+    await deployer.link(SpreadIndicatorLogic, IporAmmV1);
     await deployer.link(DerivativeLogic, IporAmmV1);
     await deployer.link(DerivativesView, IporAmmV1);
 
@@ -82,6 +85,7 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(IporLogic, TestIporOracleProxy);
         await deployer.link(DerivativeLogic, TestIporAmmV1Proxy);
         await deployer.link(SoapIndicatorLogic, TestIporAmmV1Proxy);
+        await deployer.link(SpreadIndicatorLogic, TestIporAmmV1Proxy);
         await deployer.link(TotalSoapIndicatorLogic, TestIporAmmV1Proxy);
         await deployer.link(DerivativesView, TestIporAmmV1Proxy);
         await deployer.link(AmmMath, TestIporAmmV1Proxy);

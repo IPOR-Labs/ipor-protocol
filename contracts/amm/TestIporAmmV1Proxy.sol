@@ -31,4 +31,10 @@ contract TestIporAmmV1Proxy is IporAmmV1 {
         uint256 calculateTimestamp) public view returns (int256 soapPf, int256 soapRf, int256 soap){
         return _calculateSoap(asset, calculateTimestamp);
     }
+
+    function test_calculateSpread(
+        string memory asset,
+        uint256 calculateTimestamp) public view returns (uint256 spreadPf, uint256 spreadRf){
+        return _calculateSpread(asset, calculateTimestamp);
+    }
 }
