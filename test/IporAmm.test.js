@@ -257,7 +257,7 @@ contract('IporAmm', (accounts) => {
         //when
         await assertError(
             //when
-            amm.test_closePosition(0, closePositionTimestamp, {from: userTwo}),
+            amm.test_closePosition(1, closePositionTimestamp, {from: userTwo}),
             //then
             'IPOR_14'
         );
@@ -385,7 +385,7 @@ contract('IporAmm', (accounts) => {
         //when
         await assertError(
             //when
-            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -449,7 +449,7 @@ contract('IporAmm', (accounts) => {
         //when
         await assertError(
             //when
-            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -636,7 +636,7 @@ contract('IporAmm', (accounts) => {
         //when
         await assertError(
             //when
-            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -674,7 +674,7 @@ contract('IporAmm', (accounts) => {
         //when
         await assertError(
             //when
-            amm.test_closePosition(0, endTimestamp, {from: userThree}),
+            amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -911,7 +911,7 @@ contract('IporAmm', (accounts) => {
         let endTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(0, endTimestamp, {from: closerUserAddress});
+        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         let expectedSoap = ZERO;
 
@@ -953,7 +953,7 @@ contract('IporAmm', (accounts) => {
         await amm.provideLiquidity(derivativeParams.asset, MILTON_10_000_USD, {from: liquidityProvider})
 
         //when
-        await amm.test_closePosition(0, endTimestamp, {from: closerUserAddress});
+        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
 
         const soapParams = {
@@ -1107,7 +1107,7 @@ contract('IporAmm', (accounts) => {
         let endTimestamp = recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+        await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
         let expectedSoap = BigInt("-270419178082191780821");
@@ -1160,7 +1160,7 @@ contract('IporAmm', (accounts) => {
         let endTimestamp = recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(0, endTimestamp, {from: closerUserAddress});
+        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
         let expectedSoap = BigInt("135209589041095890410");
@@ -1218,7 +1218,7 @@ contract('IporAmm', (accounts) => {
         let endTimestamp = recFixDerivativeUSDCParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+        await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
         let expectedSoap = BigInt("-270419178082191780821");
@@ -1367,6 +1367,9 @@ contract('IporAmm', (accounts) => {
 
     });
 
+    //TODO: dodaj sprawdzenie indeksow na uzytkowniku po zamknieciu pozycji  (MiltonDerivatives)!
+    //TODO: dodaj sprawdzenie indeksow na miltownie po zamknieciu pozycji (MiltonDerivatives)!
+
 
     //TODO: sprawdz czy SoapIndicator podczas inicjalnego uruchomienia hypotheticalInterestCumulative jest równe zero
 
@@ -1479,7 +1482,7 @@ contract('IporAmm', (accounts) => {
         }
 
         //when
-        await amm.test_closePosition(0, endTimestamp, {from: closerUserAddress});
+        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
         await assertExpectedValues(

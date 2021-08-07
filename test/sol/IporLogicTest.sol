@@ -35,7 +35,7 @@ contract IporLogicTest {
         uint256 days25 = 60 * 60 * 24 * 25;
 
         uint256 firstCalculationTimestamp = block.timestamp + days25;
-        uint256 firstIbtPrice = ipor.accrueIbtPrice(firstCalculationTimestamp);
+        ipor.accrueIbtPrice(firstCalculationTimestamp);
 
         uint256 secondCalculationTimestamp = firstCalculationTimestamp + days25;
 

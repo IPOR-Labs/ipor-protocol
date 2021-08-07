@@ -6,6 +6,9 @@ import "../libraries/DerivativeLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
+import "../libraries/types/DataTypes.sol";
+import "../libraries/types/DataTypes.sol";
+import "../libraries/types/DataTypes.sol";
 
 
 contract IporAmmStorage {
@@ -48,12 +51,7 @@ contract IporAmmV1Storage is IporAmmStorage {
     //TODO: when spread is calculated in final way then consider remove this storage (maybe will be not needed)
     mapping(string => DataTypes.TotalSpreadIndicator) public spreadIndicators;
 
-    // @notice list of positions for particular asset, first key is an address of token, second key is an address of trader
-    DataTypes.IporDerivative[] public derivatives;
-
-    // @notice next derivative id (long or short)
-    //TODO: dodac test na 2 pozycje w jednym bloku - czy sie nie naklada
-    uint256 public nextDerivativeId;
+    DataTypes.MiltonDerivatives public derivatives;
 
     uint256 public closingFeePercentage;
 
