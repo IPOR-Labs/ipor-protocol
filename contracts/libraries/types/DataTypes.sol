@@ -117,6 +117,28 @@ library DataTypes {
 
     }
 
+    struct MiltonDerivatives {
+        //TODO: dodac test na 2 pozycje w jednym bloku - czy sie nie naklada
+        uint256 lastDerivativeId;
+
+        mapping(uint256 => DataTypes.MiltonDerivativeItem) items;
+
+        uint256[] ids;
+
+        mapping(address => uint256[]) userDerivativeIds;
+    }
+
+    struct MiltonDerivativeItem {
+
+        DataTypes.IporDerivative item;
+
+        //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
+        uint256 idsIndex;
+
+        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
+        uint256 userDerivativeIdsIndex;
+    }
+
     //@notice IPOR Derivative
     struct IporDerivative {
 

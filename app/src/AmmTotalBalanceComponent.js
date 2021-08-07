@@ -52,7 +52,7 @@ export default ({drizzle, drizzleState}) => (
                     methodArgs={["USDT"]}
                     render={(value) => (
                         <div>
-                            {value / 1000000000000000000}<br/>
+                            {value / 1000000}<br/>
                             <small>{value}</small>
                         </div>
                     )}
@@ -67,7 +67,7 @@ export default ({drizzle, drizzleState}) => (
                     methodArgs={["USDC"]}
                     render={(value) => (
                         <div>
-                            {value / 1000000000000000000}<br/>
+                            {value / 1000000}<br/>
                             <small>{value}</small>
                         </div>
                     )}
@@ -100,7 +100,7 @@ export default ({drizzle, drizzleState}) => (
                     methodArgs={["USDT"]}
                     render={(value) => (
                         <div>
-                            {value / 1000000000000000000}<br/>
+                            {value / 1000000}<br/>
                             <small>{value}</small>
                         </div>
                     )}
@@ -115,7 +115,7 @@ export default ({drizzle, drizzleState}) => (
                     methodArgs={["USDC"]}
                     render={(value) => (
                         <div>
-                            {value / 1000000000000000000}<br/>
+                            {value / 1000000}<br/>
                             <small>{value}</small>
                         </div>
                     )}

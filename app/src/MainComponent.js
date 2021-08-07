@@ -5,6 +5,8 @@ import {Container, Navbar, Tabs} from "react-bootstrap";
 import {Tab} from "bootstrap";
 import IporIndexComponent from "./IporIndexComponent";
 import IporAmmComponent from "./IporAmmComponent";
+import MyPositions from "./MyPositions";
+import MiltonConfiguration from "./MiltonConfiguration";
 
 
 const {AccountData, ContractData, ContractForm} = newContextComponents;
@@ -13,18 +15,18 @@ export default ({drizzle, drizzleState}) => {
     return (
         <div className="App">
             <Container>
-            <Navbar fixed="top" bg="dark" variant="dark">
-                <Navbar.Brand href="#home">
-                    <img
-                        alt=""
-                        src={logo}
-                        width="30"
-                        height="30"
-                        className="d-inline-block align-top ipor-navbar"
-                    />{' '}
-                    IPOR Protocol
-                </Navbar.Brand>
-            </Navbar>
+                <Navbar fixed="top" bg="dark" variant="dark">
+                    <Navbar.Brand href="#home">
+                        <img
+                            alt=""
+                            src={logo}
+                            width="30"
+                            height="30"
+                            className="d-inline-block align-top ipor-navbar"
+                        />{' '}
+                        IPOR Protocol - MILTON Dev Tool
+                    </Navbar.Brand>
+                </Navbar>
             </Container>
 
             <div className="section">
@@ -39,14 +41,26 @@ export default ({drizzle, drizzleState}) => {
             </div>
 
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-                <Tab eventKey="iporIndex" title="Oracle IPOR Index">
+                <Tab eventKey="iporIndex" title="Warren Oracle">
                     <IporIndexComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="iporAmm" title="IPOR AMM">
+                <Tab eventKey="iporAmm" title="Milton Overview">
                     <IporAmmComponent
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
+                <Tab eventKey="miltonConfig" title="Milton Config">
+                    <MiltonConfiguration
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
+                <Tab eventKey="myPositions" title="My positions">
+                    <MyPositions
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
