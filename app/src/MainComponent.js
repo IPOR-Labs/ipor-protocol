@@ -3,10 +3,10 @@ import {newContextComponents} from "@drizzle/react-components";
 import logo from "./logo.png";
 import {Container, Navbar, Tabs} from "react-bootstrap";
 import {Tab} from "bootstrap";
-import IporIndexComponent from "./IporIndexComponent";
-import IporAmmComponent from "./IporAmmComponent";
+import IporIndexComponent from "./WarrenComponent";
+import IporAmmComponent from "./MiltonComponent";
 import MyPositions from "./MyPositions";
-import MiltonConfiguration from "./MiltonConfiguration";
+import MiltonConfiguration from "./MiltonConfigurationComponent";
 
 
 const {AccountData, ContractData, ContractForm} = newContextComponents;
@@ -47,7 +47,7 @@ export default ({drizzle, drizzleState}) => {
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="iporAmm" title="Milton Overview">
+                <Tab eventKey="miltonOverview" title="Milton Overview">
                     <IporAmmComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}

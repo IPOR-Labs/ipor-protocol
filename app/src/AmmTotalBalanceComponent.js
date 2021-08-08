@@ -17,7 +17,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="tokens"
                     methodArgs={["USDT"]}
                 />
@@ -26,7 +26,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="tokens"
                     methodArgs={["USDC"]}
                 />
@@ -35,7 +35,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="tokens"
                     methodArgs={["DAI"]}
                 />
@@ -47,7 +47,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="getTotalSupply"
                     methodArgs={["USDT"]}
                     render={(value) => (
@@ -62,7 +62,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="getTotalSupply"
                     methodArgs={["USDC"]}
                     render={(value) => (
@@ -77,7 +77,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="getTotalSupply"
                     methodArgs={["DAI"]}
                     render={(value) => (
@@ -95,7 +95,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="getMyTotalSupply"
                     methodArgs={["USDT"]}
                     render={(value) => (
@@ -110,7 +110,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="getMyTotalSupply"
                     methodArgs={["USDC"]}
                     render={(value) => (
@@ -125,7 +125,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="getMyTotalSupply"
                     methodArgs={["DAI"]}
                     render={(value) => (

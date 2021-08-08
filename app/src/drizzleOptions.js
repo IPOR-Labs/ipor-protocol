@@ -1,5 +1,6 @@
-import IporOracle from "./contracts/IporOracle.json";
-import IporAmmV1 from "./contracts/IporAmmV1.json";
+import Warren from "./contracts/Warren.json";
+import MiltonV1 from "./contracts/MiltonV1.json";
+import MiltonConfiguration from "./contracts/MiltonConfiguration";
 
 const options = {
     web3: {
@@ -9,9 +10,10 @@ const options = {
         },
     },
 
-    contracts: [IporOracle, IporAmmV1],
+    contracts: [Warren, MiltonV1, MiltonConfiguration],
     events: {
-        IporOracle: ["IporIndexUpdate"],
+        Warren: ["IporIndexUpdate"],
+
     }
 };
 

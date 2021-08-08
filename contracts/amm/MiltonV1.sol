@@ -4,23 +4,26 @@ pragma solidity >=0.8.4 <0.9.0;
 import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+//TODO: clarify if better is to have external libraries in local folder
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
-import "../interfaces/IIporOracle.sol";
-import './IporAmmStorage.sol';
-import './IporAmmEvents.sol';
+import "../interfaces/IWarren.sol";
+import './MiltonStorage.sol';
+import './MiltonEvents.sol';
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
+import "../interfaces/IMiltonConfiguration.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
  * @author IPOR Labs
  */
-contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
+contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
     using DerivativeLogic for DataTypes.IporDerivative;
     using SoapIndicatorLogic for DataTypes.SoapIndicator;
@@ -28,16 +31,19 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
-    IIporOracle public iporOracle;
+    IWarren public warren;
+    IMiltonConfiguration public miltonConfiguration;
 
     //@notice percentage of deposit amount
     uint256 constant SPREAD_FEE_PERCENTAGE = 1e16;
 
-    constructor(address iporOracleAddr, address usdtToken, address usdcToken, address daiToken) {
+    constructor(
+        address miltonConfigurationAddress,
+        address warrenAddr,
+        address usdtToken, address usdcToken, address daiToken) {
 
-        admin = msg.sender;
-
-        iporOracle = IIporOracle(iporOracleAddr);
+        miltonConfiguration = IMiltonConfiguration(miltonConfigurationAddress);
+        warren = IWarren(warrenAddr);
 
         tokens["USDT"] = usdtToken;
         tokens["USDC"] = usdcToken;
@@ -74,7 +80,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         );
 
         //TODO: allow admin to setup it during runtime
-        closingFeePercentage = 0;
         derivatives.lastDerivativeId = 0;
 
     }
@@ -105,7 +110,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     function _calculateSoap(
         string memory asset,
         uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
-        (, uint256 ibtPrice,) = iporOracle.getIndex(asset);
+        (, uint256 ibtPrice,) = warren.getIndex(asset);
         (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateSoap(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
@@ -136,7 +141,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
         require(leverage > 0, Errors.AMM_LEVERAGE_TOO_LOW);
         require(totalAmount > 0, Errors.AMM_TOTAL_AMOUNT_TOO_LOW);
-        require(totalAmount > Constants.LIQUIDATION_DEPOSIT_FEE_AMOUNT + Constants.IPOR_PUBLICATION_FEE_AMOUNT, Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
+        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(), Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
         require(totalAmount <= 1e24, Errors.AMM_TOTAL_AMOUNT_TOO_HIGH);
         require(maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(maximumSlippage <= 1e20, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_HIGH);
@@ -147,14 +152,19 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
         //TODO verify if this opened derivatives is closable based on liquidity pool
         //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
 
-        DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(totalAmount, leverage);
-        require(totalAmount > Constants.LIQUIDATION_DEPOSIT_FEE_AMOUNT + Constants.IPOR_PUBLICATION_FEE_AMOUNT + derivativeAmount.openingFee,
+        DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
+            totalAmount, leverage,
+            miltonConfiguration.getLiquidationDepositFeeAmount(),
+            miltonConfiguration.getIporPublicationFeeAmount(),
+            miltonConfiguration.getOpeningFeePercentage()
+        );
+        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
             Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-            Constants.LIQUIDATION_DEPOSIT_FEE_AMOUNT,
+            miltonConfiguration.getLiquidationDepositFeeAmount(),
             derivativeAmount.openingFee,
-            Constants.IPOR_PUBLICATION_FEE_AMOUNT,
+            miltonConfiguration.getIporPublicationFeeAmount(),
             SPREAD_FEE_PERCENTAGE);
 
         DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(asset, direction, derivativeAmount.notional);
@@ -247,14 +257,14 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     function _updateBalances(string memory asset, DataTypes.IporDerivativeAmount memory derivativeAmount) internal {
         derivativesTotalBalances[asset] = derivativesTotalBalances[asset] + derivativeAmount.deposit;
         openingFeeTotalBalances[asset] = openingFeeTotalBalances[asset] + derivativeAmount.openingFee;
-        liquidationDepositTotalBalances[asset] = liquidationDepositTotalBalances[asset] + Constants.LIQUIDATION_DEPOSIT_FEE_AMOUNT;
-        iporPublicationFeeTotalBalances[asset] = iporPublicationFeeTotalBalances[asset] + Constants.IPOR_PUBLICATION_FEE_AMOUNT;
+        liquidationDepositTotalBalances[asset] = liquidationDepositTotalBalances[asset] + miltonConfiguration.getLiquidationDepositFeeAmount();
+        iporPublicationFeeTotalBalances[asset] = iporPublicationFeeTotalBalances[asset] + miltonConfiguration.getIporPublicationFeeAmount();
         liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + derivativeAmount.openingFee;
     }
 
     function _calculateDerivativeIndicators(string memory asset, uint8 direction, uint256 notionalAmount)
     internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
-        (uint256 iporIndexValue, uint256  ibtPrice,) = iporOracle.getIndex(asset);
+        (uint256 iporIndexValue, uint256  ibtPrice,) = warren.getIndex(asset);
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             iporIndexValue,
             ibtPrice,
@@ -268,7 +278,7 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
 
         _updateMiltonDerivativesWhenClosePosition(derivativeId);
 
-        (, uint256 ibtPrice,) = iporOracle.getIndex(derivatives.items[derivativeId].item.asset);
+        (, uint256 ibtPrice,) = warren.getIndex(derivatives.items[derivativeId].item.asset);
 
         DataTypes.IporDerivativeInterest memory derivativeInterest =
         derivatives.items[derivativeId].item.calculateInterest(closeTimestamp, ibtPrice);
@@ -449,13 +459,6 @@ contract IporAmmV1 is IporAmmV1Storage, IporAmmV1Events {
     }
     modifier onlyActiveDerivative(uint256 derivativeId) {
         require(derivatives.items[derivativeId].item.state == DataTypes.DerivativeState.ACTIVE, Errors.AMM_DERIVATIVE_IS_INACTIVE);
-        _;
-    }
-    /**
-     * @notice Modifier which checks if caller is admin for this contract
-     */
-    modifier onlyAdmin() {
-        require(msg.sender == admin, Errors.CALLER_NOT_IPOR_ORACLE_ADMIN);
         _;
     }
 }

@@ -9,7 +9,7 @@ export default ({drizzle, drizzleState}) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="IporAmmV1"
+            contract="MiltonV1"
             method="getMyPositions"
             render={DerivativeList}
         />

@@ -3,10 +3,10 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 
-contract IporAmmEvents {
+contract MiltonEvents {
 }
 
-contract IporAmmV1Events is IporAmmEvents {
+contract MiltonV1Events is MiltonEvents {
 
     event LogDepositReceived(address _sender);
 
