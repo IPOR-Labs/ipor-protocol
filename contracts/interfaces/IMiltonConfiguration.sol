@@ -15,8 +15,8 @@ interface IMiltonConfiguration {
     event IporPublicationFeeAmountSet(uint256 newIporPublicationFeeAmount);
     event MaxIporPublicationFeeAmountSet(uint256 newMaxIporPublicationFeeAmount);
 
-//    event CharlieTreasurerSet(address newCharlieTreasurer);
-//    event TreasureTreasurerSet(address newTreasureTreasurer);
+    event CharlieTreasurerSet(string asset, address newCharlieTreasurer);
+    event TreasureTreasurerSet(string asset, address newTreasureTreasurer);
     event LiquidityPoolMaxUtilizationPercentageSet(uint256 newLiquidityPoolMaxUtilizationPercentageSet);
 
     function getIncomeTaxPercentage() external view returns (uint256);
@@ -51,13 +51,13 @@ interface IMiltonConfiguration {
 
     function setMaxIporPublicationFeeAmount(uint256 _maxIporPublicationFeeAmount) external;
 
-//    function getCharlieTreasurer() external view returns (address);
-//
-//    function setCharlieTreasurer(address _charlieTreasurer) external;
-//
-//    function getTreasureTreasurer() external view returns (address);
-//
-//    function setTreasureTreasurer(address _treasureTreasurer) external;
+    function getCharlieTreasurer(string memory asset) external view returns (address);
+
+    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external;
+
+    function getTreasureTreasurer(string memory asset) external view returns (address);
+
+    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external;
 
     function getLiquidityPoolMaxUtilizationPercentage() external view returns (uint256);
 

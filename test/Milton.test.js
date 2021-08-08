@@ -1372,6 +1372,8 @@ contract('Milton', (accounts) => {
 
     });
 
+    //TODO: dodać test w którym zmieniamy konfiguracje w MiltonConfiguration i widac zmiany w Milton
+
     //TODO: !!! dodaj testy do MiltonConfiguration
 
     //TODO: dodaj sprawdzenie indeksow na uzytkowniku po zamknieciu pozycji  (MiltonDerivatives)!

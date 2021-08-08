@@ -34,11 +34,11 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 liquidityPoolMaxUtilizationPercentage;
 
-    //this treasurer manage ipor publication fee balance
-//    address charlieTreasurer;
+    //this treasurer manage ipor publication fee balance, key is an asset
+    mapping(string => address) charlieTreasurers;
 
-    //this treasurer manage opening fee balance
-//    address treasureTreasurer;
+    //this treasurer manage opening fee balance, key is an asset
+    mapping(string => address) treasureTreasurers;
 
     constructor() {
         incomeTaxPercentage = 0;
@@ -56,8 +56,6 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
 
-//        charlieTreasurer = _charlieTreasurer;
-//        treasureTreasurer = _treasureTreasurer;
     }
 
     //TODO: dodaj walidacje przy setach
@@ -134,24 +132,23 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         emit MaxIporPublicationFeeAmountSet(_maxIporPublicationFeeAmount);
     }
 
-    //TODO: wyjasnic czy na kazdy asset bedzie oddzielny adres (ale raczej tak)
-//    function getCharlieTreasurer() external override view returns (address) {
-//        return charlieTreasurer;
-//    }
-//
-//    function setCharlieTreasurer(address _charlieTreasurer) external override onlyOwner {
-//        charlieTreasurer = _charlieTreasurer;
-//        emit CharlieTreasurerSet(_charlieTreasurer);
-//    }
-//
-//    function getTreasureTreasurer() external override view returns (address) {
-//        return treasureTreasurer;
-//    }
-//
-//    function setTreasureTreasurer(address _treasureTreasurer) external override onlyOwner {
-//        treasureTreasurer = _treasureTreasurer;
-//        emit TreasureTreasurerSet(_treasureTreasurer);
-//    }
+    function getCharlieTreasurer(string memory asset) external override view returns (address) {
+        return charlieTreasurers[asset];
+    }
+
+    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external override onlyOwner {
+        charlieTreasurers[asset] = _charlieTreasurer;
+        emit CharlieTreasurerSet(asset, _charlieTreasurer);
+    }
+
+    function getTreasureTreasurer(string memory asset) external override view returns (address) {
+        return treasureTreasurers[asset];
+    }
+
+    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external override onlyOwner {
+        treasureTreasurers[asset] = _treasureTreasurer;
+        emit TreasureTreasurerSet(asset, _treasureTreasurer);
+    }
 
     function getLiquidityPoolMaxUtilizationPercentage() external override view returns (uint256) {
         return liquidityPoolMaxUtilizationPercentage;

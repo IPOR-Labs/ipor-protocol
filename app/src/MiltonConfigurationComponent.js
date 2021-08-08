@@ -192,8 +192,103 @@ export default ({drizzle, drizzleState}) => (
                     contract="MiltonConfiguration"
                     method="setLiquidityPoolMaxUtilizationPercentage"/>
             </div>
-            <div className="col-md-6">TBD</div>
+            <div className="col-md-6"></div>
 
+        </div>
+        <hr/>
+        <div className="row">
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Name of treasuers</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Charlie Treasuers</strong>
+                        <br/>
+                        <small>Manage IPOR publication fee balance</small>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonConfiguration"
+                            method="getCharlieTreasurer"
+                            methodArgs={["USDT"]}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonConfiguration"
+                            method="getCharlieTreasurer"
+                            methodArgs={["USDC"]}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonConfiguration"
+                            method="getCharlieTreasurer"
+                            methodArgs={["DAI"]}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Treasure Treasuers</strong>
+                        <br/>
+                        <small>Manage opening fee balance</small>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonConfiguration"
+                            method="getTreasureTreasurer"
+                            methodArgs={["USDT"]}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonConfiguration"
+                            method="getTreasureTreasurer"
+                            methodArgs={["USDC"]}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonConfiguration"
+                            method="getTreasureTreasurer"
+                            methodArgs={["DAI"]}
+                        />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div className="row">
+            <div className="col-md-6">
+                <strong>Charlie Treasuers</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonConfiguration"
+                    method="setCharlieTreasurer"/>
+            </div>
+            <div className="col-md-6">
+                <strong>Treasure Treasuers</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonConfiguration"
+                    method="setTreasureTreasurer"/>
+            </div>
         </div>
     </div>
 );
