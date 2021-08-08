@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-import "./IporAmmV1.sol";
+import "./MiltonV1.sol";
 
-contract TestIporAmmV1Proxy is IporAmmV1 {
+contract TestMiltonV1Proxy is MiltonV1 {
 
     constructor(
-        address iporOracleAddr,
+        address miltonConfigurationAddress,
+        address warrenAddr,
         address usdtToken,
         address usdcToken,
-        address daiToken) IporAmmV1(iporOracleAddr, usdtToken, usdcToken, daiToken) {
+        address daiToken) MiltonV1(miltonConfigurationAddress, warrenAddr, usdtToken, usdcToken, daiToken) {
     }
 
     function test_openPosition(

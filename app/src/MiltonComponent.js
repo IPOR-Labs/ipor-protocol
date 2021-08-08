@@ -25,7 +25,7 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Open Position Form</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="openPosition"/>
             </div>
         </div>
@@ -35,14 +35,14 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Provide Liquidity</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="provideLiquidity"/>
             </div>
             <div className="col-md-5">
                 <strong>Close Position Form</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="IporAmmV1"
+                    contract="MiltonV1"
                     method="closePosition"/>
             </div>
         </div>
@@ -54,7 +54,7 @@ export default ({drizzle, drizzleState}) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="IporAmmV1"
+            contract="MiltonV1"
             method="getPositions"
             render={DerivativeList}
         />

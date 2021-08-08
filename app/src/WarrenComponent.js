@@ -9,22 +9,22 @@ export default ({drizzle, drizzleState}) => (
         <div class="section">
             <p>
                 <strong>Add IPOR Index</strong>
-                <ContractForm drizzle={drizzle} contract="IporOracle" method="updateIndex"/>
+                <ContractForm drizzle={drizzle} contract="Warren" method="updateIndex"/>
             </p>
             <p>
                 <strong>Add updater</strong>
-                <ContractForm drizzle={drizzle} contract="IporOracle" method="addUpdater"/>
+                <ContractForm drizzle={drizzle} contract="Warren" method="addUpdater"/>
             </p>
             <p>
                 <strong>Remove updater</strong>
-                <ContractForm drizzle={drizzle} contract="IporOracle" method="removeUpdater"/>
+                <ContractForm drizzle={drizzle} contract="Warren" method="removeUpdater"/>
             </p>
             <p>
                 <strong>Updaters</strong>
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporOracle"
+                    contract="Warren"
                     method="getUpdaters"
                 />
             </p>
@@ -35,7 +35,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="IporOracle"
+                    contract="Warren"
                     method="getIndexes"
                     render={IporIndexList}
                 />

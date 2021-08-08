@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-import '../../contracts/amm/IporAmmV1.sol';
+import '../../contracts/amm/MiltonV1.sol';
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../../contracts/libraries/IporLogic.sol";

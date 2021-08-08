@@ -1,7 +1,7 @@
-const IporOracle = artifacts.require("IporOracle");
-const IporAmmV1 = artifacts.require("IporAmmV1");
-const TestIporOracleProxy = artifacts.require("TestIporOracleProxy");
-const TestIporAmmV1Proxy = artifacts.require("TestIporAmmV1Proxy");
+const Warren = artifacts.require("Warren");
+const MiltonV1 = artifacts.require("MiltonV1");
+const TestWarrenProxy = artifacts.require("TestWarrenProxy");
+const TestMiltonV1Proxy = artifacts.require("TestMiltonV1Proxy");
 const SimpleToken = artifacts.require('SimpleToken');
 const IporLogic = artifacts.require('IporLogic');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
@@ -9,16 +9,16 @@ const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const SpreadIndicatorLogic = artifacts.require('SpreadIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const DerivativesView = artifacts.require('DerivativesView');
-
+const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const AmmMath = artifacts.require('AmmMath');
 
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
 
     await deployer.deploy(IporLogic);
-    await deployer.link(IporLogic, IporOracle);
-    await deployer.deploy(IporOracle);
-    const iporOracle = await IporOracle.deployed();
+    await deployer.link(IporLogic, Warren);
+    await deployer.deploy(Warren);
+    const warren = await Warren.deployed();
 
     //10 000 000 000 000 USD
     let totalSupply6Decimals = '1000000000000000000000';
@@ -35,6 +35,7 @@ module.exports = async function (deployer, _network, addresses) {
     let usdc = null;
     let dai = null;
     let tusd = null;
+    let miltonConfiguration = null;
 
     await deployer.deploy(DerivativeLogic);
     await deployer.deploy(SoapIndicatorLogic);
@@ -42,14 +43,17 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(SoapIndicatorLogic, TotalSoapIndicatorLogic);
     await deployer.deploy(TotalSoapIndicatorLogic);
     await deployer.deploy(DerivativesView);
-    await deployer.link(SoapIndicatorLogic, IporAmmV1);
-    await deployer.link(SpreadIndicatorLogic, IporAmmV1);
-    await deployer.link(DerivativeLogic, IporAmmV1);
-    await deployer.link(DerivativesView, IporAmmV1);
+    await deployer.link(SoapIndicatorLogic, MiltonV1);
+    await deployer.link(SpreadIndicatorLogic, MiltonV1);
+    await deployer.link(DerivativeLogic, MiltonV1);
+    await deployer.link(DerivativesView, MiltonV1);
 
-    await deployer.link(TotalSoapIndicatorLogic, IporAmmV1);
+    await deployer.link(TotalSoapIndicatorLogic, MiltonV1);
     await deployer.deploy(AmmMath);
-    await deployer.link(AmmMath, IporAmmV1);
+    await deployer.link(AmmMath, MiltonV1);
+
+    await deployer.deploy(MiltonConfiguration);
+    miltonConfiguration = await MiltonConfiguration.deployed();
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
@@ -71,24 +75,24 @@ module.exports = async function (deployer, _network, addresses) {
 
     if (_network == 'develop2' || _network === 'docker') {
         //by default add ADMIN as updater for IPOR Oracle
-        await iporOracle.addUpdater(admin);
-        await iporOracle.updateIndex("DAI", BigInt("30000000000000000"));
-        await iporOracle.updateIndex("USDT", BigInt("30000000000000000"));
-        await iporOracle.updateIndex("USDC", BigInt("30000000000000000"));
+        await warren.addUpdater(admin);
+        await warren.updateIndex("DAI", BigInt("30000000000000000"));
+        await warren.updateIndex("USDT", BigInt("30000000000000000"));
+        await warren.updateIndex("USDC", BigInt("30000000000000000"));
     }
 
-    let iporAmm = null;
+    let milton = null;
 
     if (_network !== 'test') {
-        iporAmm = await deployer.deploy(IporAmmV1, iporOracle.address, usdt.address, usdc.address, dai.address);
+        milton = await deployer.deploy(MiltonV1, miltonConfiguration.address, warren.address, usdt.address, usdc.address, dai.address);
     } else {
-        await deployer.link(IporLogic, TestIporOracleProxy);
-        await deployer.link(DerivativeLogic, TestIporAmmV1Proxy);
-        await deployer.link(SoapIndicatorLogic, TestIporAmmV1Proxy);
-        await deployer.link(SpreadIndicatorLogic, TestIporAmmV1Proxy);
-        await deployer.link(TotalSoapIndicatorLogic, TestIporAmmV1Proxy);
-        await deployer.link(DerivativesView, TestIporAmmV1Proxy);
-        await deployer.link(AmmMath, TestIporAmmV1Proxy);
+        await deployer.link(IporLogic, TestWarrenProxy);
+        await deployer.link(DerivativeLogic, TestMiltonV1Proxy);
+        await deployer.link(SoapIndicatorLogic, TestMiltonV1Proxy);
+        await deployer.link(SpreadIndicatorLogic, TestMiltonV1Proxy);
+        await deployer.link(TotalSoapIndicatorLogic, TestMiltonV1Proxy);
+        await deployer.link(DerivativesView, TestMiltonV1Proxy);
+        await deployer.link(AmmMath, TestMiltonV1Proxy);
     }
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
@@ -102,10 +106,10 @@ module.exports = async function (deployer, _network, addresses) {
 
             //AMM has rights to spend money on behalf of user
             //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
-            usdt.approve(iporAmm.address, totalSupply6Decimals, {from: addresses[i]});
-            usdc.approve(iporAmm.address, totalSupply6Decimals, {from: addresses[i]});
-            dai.approve(iporAmm.address, totalSupply18Decimals, {from: addresses[i]});
-            tusd.approve(iporAmm.address, totalSupply18Decimals, {from: addresses[i]});
+            usdt.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
+            usdc.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
+            dai.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
+            tusd.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
         }
     }
 

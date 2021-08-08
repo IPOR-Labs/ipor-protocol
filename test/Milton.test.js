@@ -1,6 +1,7 @@
 const {time, BN} = require("@openzeppelin/test-helpers");
-const TestIporAmmV1Proxy = artifacts.require('TestIporAmmV1Proxy');
-const TestIporOracleProxy = artifacts.require('TestIporOracleProxy');
+const MiltonConfiguration = artifacts.require('MiltonConfiguration');
+const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
+const TestWarrenProxy = artifacts.require('TestWarrenProxy');
 const SimpleToken = artifacts.require('SimpleToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
@@ -33,7 +34,7 @@ const assertError = async (promise, error) => {
     assert(false);
 }
 
-contract('IporAmm', (accounts) => {
+contract('Milton', (accounts) => {
 
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
@@ -55,17 +56,20 @@ contract('IporAmm', (accounts) => {
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
-    let iporOracle = null;
+    let warren = null;
+    let miltonConfiguration = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
+        miltonConfiguration = await MiltonConfiguration.deployed();
     });
 
     beforeEach(async () => {
 
-        iporOracle = await TestIporOracleProxy.new();
+        warren = await TestWarrenProxy.new();
+
 
         //10 000 000 000 000 USD
         tokenUsdt = await SimpleToken.new('Mocked USDT', 'USDT', totalSupply6Decimals, 6);
@@ -75,10 +79,11 @@ contract('IporAmm', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await SimpleToken.new('Mocked DAI', 'DAI', totalSupply18Decimals, 18);
 
-        amm = await TestIporAmmV1Proxy.new(
-            iporOracle.address, tokenUsdt.address, tokenUsdc.address, tokenDai.address);
+        amm = await TestMiltonV1Proxy.new(
+            miltonConfiguration.address,
+            warren.address, tokenUsdt.address, tokenUsdc.address, tokenDai.address);
 
-        await iporOracle.addUpdater(userOne);
+        await warren.addUpdater(userOne);
 
         for (let i = 1; i < accounts.length - 2; i++) {
             await tokenUsdt.transfer(accounts[i], userSupply6Decimals);
@@ -173,7 +178,7 @@ contract('IporAmm', (accounts) => {
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
-        await iporOracle.updateIndex(params.asset, MILTON_3_PERCENTAGE, {from: userOne});
+        await warren.updateIndex(params.asset, MILTON_3_PERCENTAGE, {from: userOne});
 
         //when
         await amm.openPosition(
@@ -249,10 +254,10 @@ contract('IporAmm', (accounts) => {
 
         let closePositionTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
 
-        await iporOracle.test_updateIndex(params.asset, BigInt("10000000000000000"), params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, BigInt("10000000000000000"), params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
-        await iporOracle.test_updateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp, {from: userOne});
-        await iporOracle.test_updateIndex(params.asset, BigInt("50000000000000000"), closePositionTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, BigInt("50000000000000000"), closePositionTimestamp, {from: userOne});
 
         //when
         await assertError(
@@ -375,11 +380,11 @@ contract('IporAmm', (accounts) => {
             from: userTwo
         }
 
-        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
-        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
         await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
@@ -439,11 +444,11 @@ contract('IporAmm', (accounts) => {
             from: userTwo
         }
 
-        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
-        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
         await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
@@ -626,11 +631,11 @@ contract('IporAmm', (accounts) => {
             from: userTwo
         }
 
-        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
-        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
         await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
@@ -665,11 +670,11 @@ contract('IporAmm', (accounts) => {
             from: userTwo
         }
 
-        await iporOracle.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
-        await iporOracle.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
 
         //when
         await assertError(
@@ -776,7 +781,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let expectedSoap = ZERO;
@@ -809,7 +814,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let expectedSoap = BigInt("-270419178082191780821");
@@ -841,7 +846,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let expectedSoap = ZERO;
@@ -872,7 +877,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let expectedSoap = BigInt("135209589041095890410");
@@ -905,7 +910,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let endTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -943,7 +948,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let expectedSoap = ZERO;
@@ -995,7 +1000,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(firstDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
+        await warren.test_updateIndex(firstDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
 
@@ -1040,8 +1045,8 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(derivativeDAIParams.asset, iporValueBeforOpenPosition, derivativeDAIParams.openTimestamp, {from: userOne});
-        await iporOracle.test_updateIndex(derivativeUSDCParams.asset, iporValueBeforOpenPosition, derivativeUSDCParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeDAIParams.asset, iporValueBeforOpenPosition, derivativeDAIParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeUSDCParams.asset, iporValueBeforOpenPosition, derivativeUSDCParams.openTimestamp, {from: userOne});
 
         //when
         await openPositionFunc(derivativeDAIParams);
@@ -1100,7 +1105,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
+        await warren.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(payFixDerivativeParams);
         await openPositionFunc(recFixDerivativeParams);
 
@@ -1153,7 +1158,7 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
+        await warren.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(payFixDerivativeParams);
         await openPositionFunc(recFixDerivativeParams);
 
@@ -1206,8 +1211,8 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(payFixDerivativeDAIParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
-        await iporOracle.test_updateIndex(recFixDerivativeUSDCParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
+        await warren.test_updateIndex(payFixDerivativeDAIParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
+        await warren.test_updateIndex(recFixDerivativeUSDCParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
 
         await openPositionFunc(payFixDerivativeDAIParams);
         await openPositionFunc(recFixDerivativeUSDCParams);
@@ -1253,10 +1258,10 @@ contract('IporAmm', (accounts) => {
 
         let calculationTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
-        await iporOracle.test_updateIndex(derivativeParams.asset, MILTON_6_PERCENTAGE, calculationTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, MILTON_6_PERCENTAGE, calculationTimestamp, {from: userOne});
 
         let expectedSoap = BigInt("7842156164383561622203");
 
@@ -1293,10 +1298,10 @@ contract('IporAmm', (accounts) => {
         let calculationTimestamp28days = derivativeParams.openTimestamp + PERIOD_28_DAYS_IN_SECONDS;
         let calculationTimestamp50days = derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
-        await iporOracle.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
-        await iporOracle.test_updateIndex(derivativeParams.asset, MILTON_6_PERCENTAGE, calculationTimestamp25days, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, MILTON_6_PERCENTAGE, calculationTimestamp25days, {from: userOne});
 
         let expectedSoap28Days = BigInt("7809705863013698608504");
         let expectedSoap50Days = BigInt("7571736986301369841381");
@@ -1337,7 +1342,7 @@ contract('IporAmm', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await iporOracle.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParamsFirst);
 
         const derivativeParams25days = {
@@ -1367,11 +1372,17 @@ contract('IporAmm', (accounts) => {
 
     });
 
+    //TODO: dodać test w którym zmieniamy konfiguracje w MiltonConfiguration i widac zmiany w Milton
+
+    //TODO: !!! dodaj testy do MiltonConfiguration
+
     //TODO: dodaj sprawdzenie indeksow na uzytkowniku po zamknieciu pozycji  (MiltonDerivatives)!
     //TODO: dodaj sprawdzenie indeksow na miltownie po zamknieciu pozycji (MiltonDerivatives)!
 
+    //TODO: testy na strukturze MiltonDerivatives
+    //TODO: dopisac test probujacy zamykac pozycje ktora nie istnieje
 
-    //TODO: sprawdz czy SoapIndicator podczas inicjalnego uruchomienia hypotheticalInterestCumulative jest równe zero
+    //TODO: napisac test który sprawdza czy SoapIndicator podczas inicjalnego uruchomienia hypotheticalInterestCumulative jest równe zero
 
     //TODO: test when ipor not ready yet
     //TODO: check initial IBT
@@ -1469,12 +1480,12 @@ contract('IporAmm', (accounts) => {
             from: openerUserAddress
         }
 
-        await iporOracle.test_updateIndex(params.asset, iporValueBeforOpenPosition, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, iporValueBeforOpenPosition, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
-        await iporOracle.test_updateIndex(params.asset, iporValueAfterOpenPosition, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, params.openTimestamp, {from: userOne});
 
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
-        await iporOracle.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
 
         if (providedLiquidityAmount != null) {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user

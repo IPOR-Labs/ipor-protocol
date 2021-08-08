@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import {Errors} from '../Errors.sol';
-import './IporOracleStorage.sol';
-import "../interfaces/IIporOracle.sol";
+import './WarrenStorage.sol';
+import "../interfaces/IWarren.sol";
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import {Constants} from '../libraries/Constants.sol';
 import "../libraries/IporLogic.sol";
@@ -13,7 +14,7 @@ import "../libraries/IporLogic.sol";
  *
  * @author IPOR Labs
  */
-contract IporOracle is IporOracleV1Storage, IIporOracle {
+contract Warren is Ownable, WarrenV1Storage, IWarren {
 
     using IporLogic for DataTypes.IPOR;
 
@@ -25,10 +26,6 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
 
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address _updater);
-
-    constructor() {
-        admin = msg.sender;
-    }
 
     /**
      * @notice Returns IPOR Index value for all assets supported by IPOR Oracle
@@ -102,7 +99,7 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
      * @return blockTimestamp date when IPOR Index was calculated for asset
      *
      */
-    function getIndex(string memory _asset) external view override(IIporOracle)
+    function getIndex(string memory _asset) external view override(IWarren)
     returns (uint256 indexValue, uint256 ibtPrice, uint256 blockTimestamp) {
         bytes32 _assetHash = keccak256(abi.encodePacked(_asset));
         DataTypes.IPOR storage _iporIndex = indexes[_assetHash];
@@ -118,7 +115,7 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
      * @param _updater Address of new updater
      *
      */
-    function addUpdater(address _updater) public onlyAdmin {
+    function addUpdater(address _updater) public onlyOwner {
         bool updaterExists = false;
         for (uint256 i; i < updaters.length; i++) {
             if (updaters[i] == _updater) {
@@ -144,7 +141,7 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
      * @notice Remove specific address from list of IPOR Index authorized updaters
      * @param _updater address which will be removed from list of IPOR Index authorized updaters
      */
-    function removeUpdater(address _updater) public onlyAdmin {
+    function removeUpdater(address _updater) public onlyOwner {
 
         for (uint256 i; i < updaters.length; i++) {
             if (updaters[i] == _updater) {
@@ -179,13 +176,4 @@ contract IporOracle is IporOracleV1Storage, IIporOracle {
         require(allowed == true, Errors.CALLER_NOT_IPOR_ORACLE_UPDATER);
         _;
     }
-
-    /**
-     * @notice Modifier which checks if caller is admin for this contract
-     */
-    modifier onlyAdmin() {
-        require(msg.sender == admin, Errors.CALLER_NOT_IPOR_ORACLE_ADMIN);
-        _;
-    }
-
 }
