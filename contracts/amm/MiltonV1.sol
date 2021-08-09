@@ -213,27 +213,36 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
     function _updateMiltonDerivativesWhenOpenPosition(DataTypes.IporDerivative memory derivative) internal {
         derivatives.items[derivative.id].item = derivative;
+        derivatives.items[derivative.id].idsIndex = derivatives.ids.length;
+        derivatives.items[derivative.id].userDerivativeIdsIndex = derivatives.userDerivativeIds[derivative.buyer].length;
         derivatives.ids.push(derivative.id);
         derivatives.userDerivativeIds[derivative.buyer].push(derivative.id);
         derivatives.lastDerivativeId = derivative.id;
     }
 
+    event LogDebug(string name, uint256 value);
+
     function _updateMiltonDerivativesWhenClosePosition(uint256 derivativeId) internal {
-        derivatives.items[derivativeId].item.state = DataTypes.DerivativeState.INACTIVE;
+        require(derivativeId > 0, Errors.AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID);
+        require(derivatives.items[derivativeId].item.state != DataTypes.DerivativeState.INACTIVE, Errors.AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS);
+        uint256 idsIndexToDelete = derivatives.items[derivativeId].idsIndex;
+        emit LogDebug("idsIndexToDelete", idsIndexToDelete);
+        if (idsIndexToDelete < derivatives.ids.length - 1) {
+            uint256 idsDerivativeIdToMove = derivatives.ids[derivatives.ids.length - 1];
+            derivatives.items[idsDerivativeIdToMove].idsIndex = idsIndexToDelete;
+            derivatives.ids[idsIndexToDelete] = idsDerivativeIdToMove;
+        }
+
+        uint256 userDerivativeIdsIndexToDelete = derivatives.items[derivativeId].userDerivativeIdsIndex;
         address buyer = derivatives.items[derivativeId].item.buyer;
 
-        uint256 idsIndexToDelete = derivatives.items[derivativeId].idsIndex;
-        uint256 userDerivativeIdsIndexToDelete = derivatives.items[derivativeId].userDerivativeIdsIndex;
+        if (userDerivativeIdsIndexToDelete < derivatives.userDerivativeIds[buyer].length - 1) {
+            uint256 userDerivativeIdToMove = derivatives.userDerivativeIds[buyer][derivatives.userDerivativeIds[buyer].length - 1];
+            derivatives.items[userDerivativeIdToMove].userDerivativeIdsIndex = userDerivativeIdsIndexToDelete;
+            derivatives.userDerivativeIds[buyer][userDerivativeIdsIndexToDelete] = userDerivativeIdToMove;
+        }
 
-        uint256 idsDerivativeIdToMove = derivatives.ids[derivatives.ids.length - 1];
-        uint256 userDerivativeIdToMove = derivatives.userDerivativeIds[buyer][derivatives.userDerivativeIds[buyer].length - 1];
-
-        derivatives.ids[idsIndexToDelete] = idsDerivativeIdToMove;
-        derivatives.userDerivativeIds[buyer][userDerivativeIdsIndexToDelete] = userDerivativeIdToMove;
-
-        derivatives.items[idsDerivativeIdToMove].idsIndex = idsIndexToDelete;
-        derivatives.items[userDerivativeIdToMove].userDerivativeIdsIndex = userDerivativeIdsIndexToDelete;
-
+        derivatives.items[derivativeId].item.state = DataTypes.DerivativeState.INACTIVE;
         derivatives.ids.pop();
         derivatives.userDerivativeIds[buyer].pop();
     }
@@ -293,8 +302,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
             derivatives.items[derivativeId].item.indicator.fixedInterestRate,
             derivatives.items[derivativeId].item.indicator.ibtQuantity
         );
-        //TODO: implement it
-        //        userDerivatives[derivatives[derivativeId].buyer].
 
         emit ClosePosition(
             derivativeId,
@@ -431,6 +438,12 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         IERC20 token = IERC20(tokens[asset]);
         return token.balanceOf(msg.sender);
     }
+    //@notice FOR FRONTEND
+    function getMyAllowance(string memory asset) external view returns (uint256) {
+        IERC20 token = IERC20(tokens[asset]);
+        return token.allowance(msg.sender, address(this));
+    }
+
     //@notice FOR TEST
     function getOpenPosition(uint256 derivativeId) external view returns (DataTypes.IporDerivative memory) {
         return derivatives.items[derivativeId].item;
@@ -445,6 +458,10 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     //@notice FOR FRONTEND
     function getMyPositions() external view returns (DataTypes.IporDerivative[] memory items) {
         return derivatives.getUserPositions(msg.sender);
+    }
+
+    function getTest() external view returns (uint256[] memory) {
+        return derivatives.ids;
     }
 
 

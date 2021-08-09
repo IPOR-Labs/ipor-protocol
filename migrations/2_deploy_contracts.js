@@ -2,7 +2,10 @@ const Warren = artifacts.require("Warren");
 const MiltonV1 = artifacts.require("MiltonV1");
 const TestWarrenProxy = artifacts.require("TestWarrenProxy");
 const TestMiltonV1Proxy = artifacts.require("TestMiltonV1Proxy");
-const SimpleToken = artifacts.require('SimpleToken');
+const TusdMockedToken = artifacts.require('TusdMockedToken');
+const UsdtMockedToken = artifacts.require('UsdtMockedToken');
+const UsdcMockedToken = artifacts.require('UsdcMockedToken');
+const DaiMockedToken = artifacts.require('DaiMockedToken');
 const IporLogic = artifacts.require('IporLogic');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
@@ -57,20 +60,20 @@ module.exports = async function (deployer, _network, addresses) {
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
-        await deployer.deploy(SimpleToken, 'Mocked USDT', 'USDT', totalSupply6Decimals, 6);
-        usdt = await SimpleToken.deployed();
+        await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
+        usdt = await UsdtMockedToken.deployed();
 
         //10 000 000 000 000 USD
-        await deployer.deploy(SimpleToken, 'Mocked USDC', 'USDC', totalSupply6Decimals, 6);
-        usdc = await SimpleToken.deployed();
+        await deployer.deploy(UsdcMockedToken, totalSupply6Decimals, 6);
+        usdc = await UsdcMockedToken.deployed();
 
         //10 000 000 000 000 USD
-        await deployer.deploy(SimpleToken, 'Mocked DAI', 'DAI', totalSupply18Decimals, 18);
-        dai = await SimpleToken.deployed();
+        await deployer.deploy(DaiMockedToken, totalSupply18Decimals, 18);
+        dai = await DaiMockedToken.deployed();
 
         //10 000 000 000 000 USD
-        await deployer.deploy(SimpleToken, 'Mocked TUSD', 'TUSD', totalSupply18Decimals, 18);
-        tusd = await SimpleToken.deployed();
+        await deployer.deploy(TusdMockedToken, totalSupply18Decimals, 18);
+        tusd = await TusdMockedToken.deployed();
     }
 
     if (_network == 'develop2' || _network === 'docker') {
@@ -98,7 +101,7 @@ module.exports = async function (deployer, _network, addresses) {
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
         //first address is an admin, last two addresses will not have tokens and approves
-        for (let i = 1; i < addresses.length - 2; i++) {
+        for (let i = 0; i < addresses.length - 2; i++) {
             await usdt.transfer(addresses[i], userSupply6Decimals);
             await usdc.transfer(addresses[i], userSupply6Decimals);
             await dai.transfer(addresses[i], userSupply18Decimals);
