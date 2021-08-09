@@ -132,7 +132,11 @@
                         <argument>${contracts.sources}/libraries/SoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/SpreadIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/TotalSoapIndicatorLogic.sol</argument>
-                        <argument>${contracts.sources}/mocks/tokens/SimpleToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/DaiMockedToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/TusdMockedToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/UsdcMockedToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/UsdtMockedToken.sol</argument>
                         <argument>${contracts.sources}/oracles/TestWarrenProxy.sol</argument>
                         <argument>${contracts.sources}/oracles/Warren.sol</argument>
                         <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
