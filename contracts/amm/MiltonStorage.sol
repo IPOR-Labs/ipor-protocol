@@ -10,19 +10,11 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/types/DataTypes.sol";
 
-
-contract MiltonStorage {
-    /**
-    * @notice Administrator for this contract
-    */
-    address public admin;
-}
-
 /**
  * @title Ipor AMM Storage initial version 1
  * @author IPOR Labs
  */
-contract MiltonV1Storage is MiltonStorage {
+contract MiltonV1Storage {
 
     // @notice Map of available Liquidity Pools, key in this map are underlying asset symbol
     mapping(string => address) public tokens;

@@ -38,4 +38,16 @@ contract TestMiltonV1Proxy is MiltonV1 {
         uint256 calculateTimestamp) public view returns (uint256 spreadPf, uint256 spreadRf){
         return _calculateSpread(asset, calculateTimestamp);
     }
+
+    function getUserDerivativeIds(address userAddress) public view returns (uint256[] memory) {
+        return derivatives.userDerivativeIds[userAddress];
+    }
+
+    function getDerivativeIds() public view returns (uint256[] memory) {
+        return derivatives.ids;
+    }
+
+    function getDerivativeItem(uint256 derivativeId) public view returns (DataTypes.MiltonDerivativeItem memory) {
+        return derivatives.items[derivativeId];
+    }
 }
