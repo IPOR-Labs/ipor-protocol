@@ -22,7 +22,6 @@ export default (derivatives) => (
                 <th scope="col">Interest Bearing Token Price</th>
                 <th scope="col">Interest Bearing Token Quantity</th>
                 <th scope="col">Fixed Interest Rate</th>
-                <th scope="col">SOAP</th>
                 <th scope="col">Start Date</th>
                 <th scope="col">End Date</th>
 

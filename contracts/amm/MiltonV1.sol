@@ -219,7 +219,9 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     }
 
     function _updateMiltonDerivativesWhenClosePosition(uint256 derivativeId) internal {
+
         derivatives.items[derivativeId].item.state = DataTypes.DerivativeState.INACTIVE;
+
         address buyer = derivatives.items[derivativeId].item.buyer;
 
         uint256 idsIndexToDelete = derivatives.items[derivativeId].idsIndex;
@@ -293,8 +295,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
             derivatives.items[derivativeId].item.indicator.fixedInterestRate,
             derivatives.items[derivativeId].item.indicator.ibtQuantity
         );
-        //TODO: implement it
-        //        userDerivatives[derivatives[derivativeId].buyer].
 
         emit ClosePosition(
             derivativeId,
@@ -431,6 +431,12 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         IERC20 token = IERC20(tokens[asset]);
         return token.balanceOf(msg.sender);
     }
+    //@notice FOR FRONTEND
+    function getMyAllowance(string memory asset) external view returns (uint256) {
+        IERC20 token = IERC20(tokens[asset]);
+        return token.allowance(msg.sender, address(this));
+    }
+
     //@notice FOR TEST
     function getOpenPosition(uint256 derivativeId) external view returns (DataTypes.IporDerivative memory) {
         return derivatives.items[derivativeId].item;
