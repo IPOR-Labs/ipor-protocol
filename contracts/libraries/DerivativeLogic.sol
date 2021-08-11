@@ -8,12 +8,12 @@ import "./Constants.sol";
 library DerivativeLogic {
 
     function calculateInterestFixed(uint256 notionalAmount, uint256 derivativeFixedInterestRate, uint256 derivativePeriodInSeconds) public pure returns (uint256) {
-        return notionalAmount + (notionalAmount * derivativeFixedInterestRate * derivativePeriodInSeconds / Constants.YEAR_IN_SECONDS) / Constants.MILTON_DECIMALS_FACTOR;
+        return notionalAmount + AmmMath.division(notionalAmount * derivativeFixedInterestRate * derivativePeriodInSeconds, Constants.YEAR_IN_SECONDS_WITH_FACTOR);
     }
 
     function calculateInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice) public pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
-        return ibtQuantity * ibtCurrentPrice / Constants.MILTON_DECIMALS_FACTOR;
+        return AmmMath.division(ibtQuantity * ibtCurrentPrice, Constants.MILTON_DECIMALS_FACTOR);
     }
 
     function calculateInterest(

@@ -220,13 +220,12 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         derivatives.lastDerivativeId = derivative.id;
     }
 
-    event LogDebug(string name, uint256 value);
 
     function _updateMiltonDerivativesWhenClosePosition(uint256 derivativeId) internal {
         require(derivativeId > 0, Errors.AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID);
         require(derivatives.items[derivativeId].item.state != DataTypes.DerivativeState.INACTIVE, Errors.AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS);
         uint256 idsIndexToDelete = derivatives.items[derivativeId].idsIndex;
-        emit LogDebug("idsIndexToDelete", idsIndexToDelete);
+
         if (idsIndexToDelete < derivatives.ids.length - 1) {
             uint256 idsDerivativeIdToMove = derivatives.ids[derivatives.ids.length - 1];
             derivatives.items[idsDerivativeIdToMove].idsIndex = idsIndexToDelete;

@@ -323,10 +323,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 0, userTwo, userTwo,
             MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, MILTON_10_400_USD,
-            BigInt("2802753424657534268208"), //expectedAMMTokenBalance
-            BigInt("10007597246575342465731792"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("10007597246575342465731792"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("2792753424657534268208"), //expectedLiquidityPoolTotalBalance
+            BigInt("2802753424657534268209"), //expectedAMMTokenBalance
+            BigInt("10007597246575342465731791"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10007597246575342465731791"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("2792753424657534268209"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -491,10 +491,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             MILTON_3_PERCENTAGE, MILTON_3_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-            BigInt("177304794520547924925"), //expectedAMMTokenBalance
-            BigInt("9999822695205479452075075"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("9999822695205479452075075"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("167304794520547924925"), //expectedLiquidityPoolTotalBalance
+            BigInt("177304794520547924924"), //expectedAMMTokenBalance
+            BigInt("9999822695205479452075076"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9999822695205479452075076"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("167304794520547924924"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -504,10 +504,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             MILTON_365_PERCENTAGE, MILTON_365_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-            BigInt("177304794520547945206"), //expectedAMMTokenBalance
-            BigInt("9999822695205479452054794"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("9999822695205479452054794"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("167304794520547945206"), //expectedLiquidityPoolTotalBalance
+            BigInt("177304794520547945205"), //expectedAMMTokenBalance
+            BigInt("9999822695205479452054795"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9999822695205479452054795"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("167304794520547945205"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -552,10 +552,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             MILTON_5_PERCENTAGE, MILTON_120_PERCENTAGE, PERIOD_25_DAYS_IN_SECONDS, ZERO,
-            BigInt("7951856164383561622203"), //expectedAMMTokenBalance
-            BigInt("9992048143835616438377797"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("9992048143835616438377797"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("7941856164383561622203"), //expectedLiquidityPoolTotalBalance
+            BigInt("7951856164383561622202"), //expectedAMMTokenBalance
+            BigInt("9992048143835616438377798"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9992048143835616438377798"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("7951856164383561622202"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -819,7 +819,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
-        let expectedSoap = BigInt("-270419178082191780821");
+        let expectedSoap = BigInt("-270419178082191780822");
 
         //when
         const soapParams = {
@@ -882,7 +882,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
-        let expectedSoap = BigInt("135209589041095890410");
+        let expectedSoap = BigInt("135209589041095890411");
 
         //when
         const soapParams = {
@@ -1055,9 +1055,9 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeUSDCParams);
 
         //then
-        let expectedDAISoap = BigInt("-270419178082191780821");
+        let expectedDAISoap = BigInt("-270419178082191780822");
         //TODO: poprawic gdy zmiana na 6 miejsc po przecinku (zmiany w całym kodzie)
-        let expectedUSDCSoap = BigInt("-270419178082191780821");
+        let expectedUSDCSoap = BigInt("-270419178082191780822");
 
         const soapDAIParams = {
             asset: "DAI",
@@ -1117,7 +1117,7 @@ contract('Milton', (accounts) => {
         await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-270419178082191780821");
+        let expectedSoap = BigInt("-270419178082191780822");
 
         const soapParams = {
             asset: "DAI",
@@ -1170,7 +1170,7 @@ contract('Milton', (accounts) => {
         await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("135209589041095890410");
+        let expectedSoap = BigInt("135209589041095890411");
 
         const soapParams = {
             asset: "DAI",
@@ -1228,7 +1228,7 @@ contract('Milton', (accounts) => {
         await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-270419178082191780821");
+        let expectedSoap = BigInt("-270419178082191780822");
 
         const soapParams = {
             asset: "DAI",
@@ -1265,7 +1265,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await warren.test_updateIndex(derivativeParams.asset, MILTON_6_PERCENTAGE, calculationTimestamp, {from: userOne});
 
-        let expectedSoap = BigInt("7842156164383561622203");
+        let expectedSoap = BigInt("7842156164383561622202");
 
         //when
         //then
@@ -1305,8 +1305,8 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await warren.test_updateIndex(derivativeParams.asset, MILTON_6_PERCENTAGE, calculationTimestamp25days, {from: userOne});
 
-        let expectedSoap28Days = BigInt("7809705863013698608504");
-        let expectedSoap50Days = BigInt("7571736986301369841381");
+        let expectedSoap28Days = BigInt("7809705863013698608503");
+        let expectedSoap50Days = BigInt("7571736986301369841380");
 
         //when
         //then
@@ -1360,7 +1360,7 @@ contract('Milton', (accounts) => {
 
         let calculationTimestamp50days = derivativeParams25days.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        let expectedSoap = BigInt("-811257534246575342464");
+        let expectedSoap = BigInt("-811257534246575342466");
 
         //when
         //then
@@ -1742,6 +1742,172 @@ contract('Milton', (accounts) => {
             `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`)
 
         await assertMiltonDerivativeItem(1, 0, 0);
+
+    });
+
+    it('should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1', async () => {
+        //given
+        let direction = 0;
+        let iporValueBeforeOpenPosition = MILTON_3_PERCENTAGE;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: direction,
+            openTimestamp: openTimestamp,
+            from: userThree
+        }
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+
+        let expectedUserDerivativeIdsLengthFirst = 0;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+        let expectedDerivativeIdsLength = 0;
+
+        //position 1, user first
+        await openPositionFunc(derivativeParams);
+
+        //position 2, user second
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await openPositionFunc(derivativeParams);
+
+        //when
+        await amm.test_closePosition(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+        await amm.test_closePosition(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
+
+
+        //then
+        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await amm.getDerivativeIds();
+
+
+        assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
+            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`)
+        assert(expectedUserDerivativeIdsLengthSecond === actualUserDerivativeIdsSecond.length,
+            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`)
+        assert(expectedDerivativeIdsLength === actualDerivativeIds.length,
+            `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`)
+
+
+    });
+
+    it('should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1 with minus 3', async () => {
+        //given
+        let direction = 0;
+        let iporValueBeforeOpenPosition = MILTON_3_PERCENTAGE;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: direction,
+            openTimestamp: openTimestamp,
+            from: userThree
+        }
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+
+        let expectedUserDerivativeIdsLengthFirst = 0;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+        let expectedDerivativeIdsLength = 0;
+
+        //position 1, user first
+        await openPositionFunc(derivativeParams);
+
+        //position 2, user second
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS-3;
+        await openPositionFunc(derivativeParams);
+
+        //when
+        await amm.test_closePosition(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+        await amm.test_closePosition(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
+
+
+        //then
+        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await amm.getDerivativeIds();
+
+
+        assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
+            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`)
+        assert(expectedUserDerivativeIdsLengthSecond === actualUserDerivativeIdsSecond.length,
+            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`)
+        assert(expectedDerivativeIdsLength === actualDerivativeIds.length,
+            `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`)
+
+
+    });
+
+    it('should open two positions and close two positions - Arithmetic overflow - last byte difference - case 1', async () => {
+        //given
+        let direction = 0;
+        let iporValueBeforeOpenPosition = MILTON_3_PERCENTAGE;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: "DAI",
+            totalAmount: MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: direction,
+            openTimestamp: openTimestamp,
+            from: userThree
+        }
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+
+        let expectedUserDerivativeIdsLengthFirst = 0;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+        let expectedDerivativeIdsLength = 0;
+
+        //position 1, user first
+        derivativeParams.from = userThree;
+        derivativeParams.direction = 0;
+        await openPositionFunc(derivativeParams);
+
+        //position 2, user second
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userThree;
+        derivativeParams.direction = 0;
+        await openPositionFunc(derivativeParams);
+
+        await amm.test_closePosition(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+
+        // //position 3, user first
+        // derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        // derivativeParams.from = userTwo;
+        // derivativeParams.direction = 1;
+        // await openPositionFunc(derivativeParams);
+        //
+        // //position 4, user first
+        // derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        // derivativeParams.from = userTwo;
+        // derivativeParams.direction = 1;
+        // await openPositionFunc(derivativeParams);
+
+        //when
+        // await amm.test_closePosition(3, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userTwo});
+        // await amm.test_closePosition(4, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userTwo});
+        await amm.test_closePosition(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
+
+
+        //then
+        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await amm.getDerivativeIds();
+
+
+        assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
+            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`)
+        assert(expectedUserDerivativeIdsLengthSecond === actualUserDerivativeIdsSecond.length,
+            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`)
+        assert(expectedDerivativeIdsLength === actualDerivativeIds.length,
+            `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`)
+
 
     });
 

@@ -18,6 +18,9 @@ const AmmMath = artifacts.require('AmmMath');
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
 
+    await deployer.deploy(AmmMath);
+    await deployer.link(AmmMath, IporLogic);
+
     await deployer.deploy(IporLogic);
     await deployer.link(IporLogic, Warren);
     await deployer.deploy(Warren);
@@ -40,7 +43,9 @@ module.exports = async function (deployer, _network, addresses) {
     let tusd = null;
     let miltonConfiguration = null;
 
+    await deployer.link(AmmMath, DerivativeLogic);
     await deployer.deploy(DerivativeLogic);
+    await deployer.link(AmmMath, SoapIndicatorLogic);
     await deployer.deploy(SoapIndicatorLogic);
     await deployer.deploy(SpreadIndicatorLogic);
     await deployer.link(SoapIndicatorLogic, TotalSoapIndicatorLogic);
@@ -52,7 +57,7 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(DerivativesView, MiltonV1);
 
     await deployer.link(TotalSoapIndicatorLogic, MiltonV1);
-    await deployer.deploy(AmmMath);
+
     await deployer.link(AmmMath, MiltonV1);
 
     await deployer.deploy(MiltonConfiguration);
