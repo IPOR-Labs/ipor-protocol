@@ -23,8 +23,8 @@ library DataTypes {
         uint256 rebalanceTimestamp;
         //leg
         DataTypes.DerivativeDirection direction;
-        //O_0
-        uint256 hypotheticalInterestCumulative;
+        //O_0, value without Constants.YEAR_IN_SECONDS_WITH_FACTOR
+        uint256 hypotheticalInterestCumulativeNumerator;
         //N_0
         uint256 totalNotional;
         //I_0

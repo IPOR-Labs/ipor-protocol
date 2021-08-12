@@ -2,6 +2,7 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import "../../contracts/libraries/types/DataTypes.sol";
+import "../../contracts/libraries/Constants.sol";
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 
@@ -36,12 +37,12 @@ contract TestData {
         uint256 totalNotional = 20000 * 1e18;
         uint256 averageInterestRate = 8 * 1e16;
         uint256 totalIbtQuantity = 100 * 1e18;
-        uint256 hypotheticalInterestCumulative = 500 * 1e18;
+        uint256 hypotheticalInterestCumulativeNumerator = 500 * 1e54 * Constants.YEAR_IN_SECONDS;
 
         DataTypes.SoapIndicator memory soapIndicator = DataTypes.SoapIndicator(
             block.timestamp,
             direction,
-            hypotheticalInterestCumulative,
+            hypotheticalInterestCumulativeNumerator,
             totalNotional,
             averageInterestRate,
             totalIbtQuantity,
@@ -57,12 +58,12 @@ contract TestData {
         uint256 expectedTotalNotional,
         uint256 expectedTotalIbtQuantity,
         uint256 expectedAverageInterestRate,
-        uint256 expectedHypotheticalInterestCumulative
+        uint256 expectedHypotheticalInterestCumulativeNumerator
     ) public {
         Assert.equal(si.rebalanceTimestamp, expectedRebalanceTimestamp, 'Incorrect rebalance timestamp');
         Assert.equal(si.totalNotional, expectedTotalNotional, 'Incorrect total notional');
         Assert.equal(si.totalIbtQuantity, expectedTotalIbtQuantity, 'Incorrect total IBT quantity');
         Assert.equal(si.averageInterestRate, expectedAverageInterestRate, 'Incorrect average weighted interest rate');
-        Assert.equal(si.hypotheticalInterestCumulative, expectedHypotheticalInterestCumulative, 'Incorrect hypothetical interest cumulative');
+        Assert.equal(si.hypotheticalInterestCumulativeNumerator, expectedHypotheticalInterestCumulativeNumerator, 'Incorrect hypothetical interest cumulative numerator');
     }
 }

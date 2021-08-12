@@ -14,7 +14,7 @@ library TotalSoapIndicatorLogic {
         DataTypes.TotalSoapIndicator storage tsi,
         uint256 calculationTimestamp,
         uint256 ibtPrice
-    ) public view returns (int256 soapPf, int256 soapRf) {
+    ) public returns (int256 soapPf, int256 soapRf) {
         return ( soapPf = tsi.pf.calculateSoap(ibtPrice, calculationTimestamp), soapRf = tsi.rf.calculateSoap(ibtPrice, calculationTimestamp));
     }
 

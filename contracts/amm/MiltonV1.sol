@@ -89,7 +89,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         return (spreadPf = _spreadPf, spreadRf = _spreadRf);
     }
 
-    function calculateSoap(string memory asset) public view returns (int256 soapPf, int256 soapRf, int256 soap) {
+    function calculateSoap(string memory asset) public returns (int256 soapPf, int256 soapRf, int256 soap) {
         (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
@@ -109,7 +109,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
     function _calculateSoap(
         string memory asset,
-        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
+        uint256 calculateTimestamp) internal returns (int256 soapPf, int256 soapRf, int256 soap){
         (, uint256 ibtPrice,) = warren.getIndex(asset);
         (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateSoap(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
@@ -202,6 +202,8 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
         //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
         //TODO: Use OpenZeppelin’s SafeERC20 wrappers.
+        //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
+        //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
         IERC20(tokens[asset]).transferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
@@ -387,7 +389,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
                 liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset]
                 = liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] + derivatives.items[derivativeId].item.depositAmount;
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
-
+                //TODO: take into consideration token decimals!!!
                 IERC20(tokens[derivatives.items[derivativeId].item.asset]).transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
             } else {
                 // |I| <= D
@@ -415,15 +417,18 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
             transferAmount = transferAmount + derivatives.items[derivativeId].item.fee.liquidationDepositAmount;
         } else {
             //transfer liquidation deposit to sender
+            //TODO: take into consideration token decimals!!!
             IERC20(tokens[derivatives.items[derivativeId].item.asset]).transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
         }
 
         //transfer from AMM to buyer
+        //TODO: take into consideration token decimals!!!
         IERC20(tokens[derivatives.items[derivativeId].item.asset]).transfer(derivatives.items[derivativeId].item.buyer, transferAmount);
     }
 
     function provideLiquidity(string memory asset, uint256 liquidityAmount) public {
         liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + liquidityAmount;
+        //TODO: take into consideration token decimals!!!
         IERC20(tokens[asset]).transferFrom(msg.sender, address(this), liquidityAmount);
     }
 
@@ -438,6 +443,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         return token.balanceOf(msg.sender);
     }
     //@notice FOR FRONTEND
+    //TODO: use ERC20 directly
     function getMyAllowance(string memory asset) external view returns (uint256) {
         IERC20 token = IERC20(tokens[asset]);
         return token.allowance(msg.sender, address(this));
@@ -458,12 +464,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     function getMyPositions() external view returns (DataTypes.IporDerivative[] memory items) {
         return derivatives.getUserPositions(msg.sender);
     }
-
-    function getTest() external view returns (uint256[] memory) {
-        return derivatives.ids;
-    }
-
-
 
     /**
      * @dev Returns the number of decimals used to get its user representation.

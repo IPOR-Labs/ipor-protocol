@@ -7,6 +7,7 @@ library Constants {
 
     uint256 constant YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
 
+    uint256 constant MD_YEAR_IN_SECONDS = YEAR_IN_SECONDS * MILTON_DECIMALS_FACTOR;
     uint256 constant YEAR_IN_SECONDS_WITH_FACTOR = YEAR_IN_SECONDS * MILTON_DECIMALS_FACTOR;
 
     //@notice By default every derivative takes 28 days, this variable show this value in seconds

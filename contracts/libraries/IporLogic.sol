@@ -10,9 +10,6 @@ library IporLogic {
 
     function accrueIbtPrice(DataTypes.IPOR memory ipor, uint256 accrueTimestamp) public pure returns (uint256){
         return ipor.ibtPrice +
-        AmmMath.division(
-            (ipor.indexValue * ((accrueTimestamp - ipor.blockTimestamp) * Constants.MILTON_DECIMALS_FACTOR)),
-            Constants.YEAR_IN_SECONDS_WITH_FACTOR
-        );
+        AmmMath.division((ipor.indexValue * (accrueTimestamp - ipor.blockTimestamp)), Constants.YEAR_IN_SECONDS);
     }
 }

@@ -29,7 +29,7 @@ contract TestMiltonV1Proxy is MiltonV1 {
 
     function test_calculateSoap(
         string memory asset,
-        uint256 calculateTimestamp) public view returns (int256 soapPf, int256 soapRf, int256 soap){
+        uint256 calculateTimestamp) public returns (int256 soapPf, int256 soapRf, int256 soap){
         return _calculateSoap(asset, calculateTimestamp);
     }
 

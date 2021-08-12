@@ -11,13 +11,16 @@ library SoapIndicatorLogic {
     function calculateSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,
-        uint256 timestamp) public view returns (int256) {
+        uint256 timestamp) public returns (int256) {
         if (si.direction == DataTypes.DerivativeDirection.PayFixedReceiveFloating) {
-            return int256(AmmMath.division(si.totalIbtQuantity * ibtPrice, Constants.MILTON_DECIMALS_FACTOR))
-            - int256(si.totalNotional + si.hypotheticalInterestCumulative + calculateHypotheticalInterestDelta(si, timestamp));
+
+//            emit LogDebug("soap", si.totalNotional + AmmMath.division(calculateHyphoteticalInterestTotalNumerator(si, timestamp), Constants.YEAR_IN_SECONDS_WITH_FACTOR));
+            //TODO: totalNotional pomnozyc 1e18
+            return int256(AmmMath.division(si.totalIbtQuantity * ibtPrice, 1e18))
+            - int256(si.totalNotional + AmmMath.division(calculateHyphoteticalInterestTotalNumerator(si, timestamp), Constants.YEAR_IN_SECONDS * 1e36));
         } else {
-            return int256(si.totalNotional + si.hypotheticalInterestCumulative + calculateHypotheticalInterestDelta(si, timestamp))
-            - int256(AmmMath.division(si.totalIbtQuantity * ibtPrice, Constants.MILTON_DECIMALS_FACTOR));
+            return int256(si.totalNotional + AmmMath.division(calculateHyphoteticalInterestTotalNumerator(si, timestamp), Constants.YEAR_IN_SECONDS * 1e36))
+            - int256(AmmMath.division(si.totalIbtQuantity * ibtPrice, 1e18));
         }
     }
 
@@ -28,14 +31,18 @@ library SoapIndicatorLogic {
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity) public {
 
+        //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(si, derivativeNotional, derivativeFixedInterestRate);
-        uint256 hypotheticalInterestTotal = calculateHyphoteticalInterestTotal(si, rebalanceTimestamp);
+        uint256 hypotheticalInterestTotalNumerator = calculateHyphoteticalInterestTotalNumerator(si, rebalanceTimestamp);
 
         si.rebalanceTimestamp = rebalanceTimestamp;
         si.totalNotional = si.totalNotional + derivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
-        si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
+        si.hypotheticalInterestCumulativeNumerator = hypotheticalInterestTotalNumerator;
+
+        emit LogDebug("hypotheticalInterestCumulativeRaw", AmmMath.division(si.hypotheticalInterestCumulativeNumerator, Constants.YEAR_IN_SECONDS_WITH_FACTOR));
+
     }
 
     event LogDebug(string name, uint256 value);
@@ -48,46 +55,47 @@ library SoapIndicatorLogic {
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity) public {
 
-        uint256 currentHypoteticalInterestTotal = calculateHyphoteticalInterestTotal(si, rebalanceTimestamp);
+        uint256 currentHypoteticalInterestTotalNumerator = calculateHyphoteticalInterestTotalNumerator(si, rebalanceTimestamp);
 
-        uint256 interestPaidOut = calculateInterestPaidOut(
+        uint256 interestPaidOutNumerator = calculateInterestPaidOutNumerator(
             rebalanceTimestamp,
             derivativeOpenTimestamp,
             derivativeNotional,
             derivativeFixedInterestRate);
-        uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - interestPaidOut;
-        si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
-        uint256 averageInterestRate = calculateInterestRateWhenClosePosition(si, derivativeNotional, derivativeFixedInterestRate);
 
+        uint256 hypotheticalInterestTotalNumerator = currentHypoteticalInterestTotalNumerator - interestPaidOutNumerator;
+
+        si.hypotheticalInterestCumulativeNumerator = hypotheticalInterestTotalNumerator;
+
+        uint256 averageInterestRate = calculateInterestRateWhenClosePosition(si, derivativeNotional, derivativeFixedInterestRate);
+        //TODO: here potential re-entrancy
         si.rebalanceTimestamp = rebalanceTimestamp;
         si.totalNotional = si.totalNotional - derivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
 
+        emit LogDebug("hypotheticalInterestCumulativeRaw", AmmMath.division(si.hypotheticalInterestCumulativeNumerator, Constants.YEAR_IN_SECONDS_WITH_FACTOR));
+
+
     }
 
-    function calculateInterestPaidOut(
+    function calculateInterestPaidOutNumerator(
         uint256 calculateTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate) public pure returns (uint256) {
         require(calculateTimestamp >= derivativeOpenTimestamp, Errors.AMM_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP);
-        return AmmMath.division(
-            derivativeNotional * derivativeFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp),
-            Constants.YEAR_IN_SECONDS_WITH_FACTOR
-        );
+        return derivativeNotional * derivativeFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp) * Constants.MILTON_DECIMALS_FACTOR;
     }
 
-    function calculateHyphoteticalInterestTotal(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256){
-        return si.hypotheticalInterestCumulative + calculateHypotheticalInterestDelta(si, timestamp);
+    function calculateHyphoteticalInterestTotalNumerator(DataTypes.SoapIndicator memory si, uint256 timestamp) public returns (uint256){
+        return si.hypotheticalInterestCumulativeNumerator + calculateHypotheticalInterestDeltaNumerator(si, timestamp);
     }
 
-    function calculateHypotheticalInterestDelta(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256) {
+    //division by Constants.YEAR_IN_SECONDS * 1e54 postponed at the end of calculation
+    function calculateHypotheticalInterestDeltaNumerator(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256) {
         require(timestamp >= si.rebalanceTimestamp, Errors.AMM_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP);
-        return AmmMath.division(
-            si.totalNotional * si.averageInterestRate * (timestamp - si.rebalanceTimestamp),
-            Constants.YEAR_IN_SECONDS_WITH_FACTOR
-        );
+        return si.totalNotional * si.averageInterestRate * ((timestamp - si.rebalanceTimestamp) * Constants.MILTON_DECIMALS_FACTOR);
     }
 
     function calculateInterestRateWhenOpenPosition(
@@ -113,13 +121,5 @@ library SoapIndicatorLogic {
                 (si.totalNotional - derivativeNotional)
             );
         }
-    }
-
-    function calculateSoapPayFixed(DataTypes.SoapIndicator memory si, uint256 ibtPrice) public pure returns (uint256){
-        return si.totalIbtQuantity * ibtPrice - (si.totalNotional + si.hypotheticalInterestCumulative);
-    }
-
-    function calculateSoapRecFixed(DataTypes.SoapIndicator memory si, uint256 ibtPrice) public pure returns (uint256){
-        return (si.totalNotional + si.hypotheticalInterestCumulative) - si.totalIbtQuantity * ibtPrice;
     }
 }
