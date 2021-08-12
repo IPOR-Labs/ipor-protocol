@@ -6,7 +6,7 @@
    - `g` - run Ganache blockchain
    - `m` - migrate Smart Contracts to blockchain
    - `b` - build Milton Tool docker
-   - 'r' - run Milton Tool
+   - `r` - run Milton Tool
 4. Application will be available at `http://localhost:4000`
 5. Local blockchain Ganache will be available at `http://localhost:9545` `chainId = 2337`
 6. Before you can open the address `http://localhost:4000` connect to local blockchain Ganache using Metamask

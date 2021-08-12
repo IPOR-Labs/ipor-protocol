@@ -16,9 +16,11 @@ module.exports = {
             network_id: "*"
         },
         docker: {
-            host: "127.0.0.1",
-            port: 9545,
-            network_id: "*"
+            provider: () => {
+                return new HDWalletProvider(process.env.ADMIN_PRIV_KEY, process.env.ETH_BC_URL);
+            },
+            network_id: "5777",
+            skipDryRun: true
         },
         develop: {
             host: "127.0.0.1",

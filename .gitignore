@@ -17,3 +17,5 @@ app/src/contracts
 /.env
 /package-lock.json
 /src/generated/
+/ganache_data/
+/containers/ganache/ganache_data/

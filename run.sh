@@ -58,7 +58,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 
   echo -e "\n\e[32mCompile ipor-protocol Smart Contracts\e[0m\n"
 
-  git pull
+  #git pull
   truffle compile
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ganache Blockchain...\e[0m\n"
@@ -68,6 +68,9 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 fi
 
 if [ $IS_BUILD_DOCKER = "YES" ]; then
+
+  cd "${DIR}"
+  truffle compile
 
   cd "${DIR}/app"
   echo -e "\n\e[32mBuild Milton Tool docker...\e[0m\n"
