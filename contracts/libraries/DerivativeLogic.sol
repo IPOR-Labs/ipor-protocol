@@ -6,29 +6,20 @@ import "./AmmMath.sol";
 import "./Constants.sol";
 
 library DerivativeLogic {
-    event LogDebug(string name, uint256 value);
-    //TODO: odróżniac liczby z 1e18 od tych bez 1e18, tutaj derivativePeriodInSeconds jest bez 1e18
-    function calculateInterestFixed(uint256 mdNotionalAmount, uint256 mdDerivativeFixedInterestRate, uint256 derivativePeriodInSeconds) public returns (uint256) {
-        uint256 oldIfixed = mdNotionalAmount + mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds / Constants.MD_YEAR_IN_SECONDS;
-        uint256 newIfixed = mdNotionalAmount + AmmMath.division(mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds, Constants.MD_YEAR_IN_SECONDS);
-        emit LogDebug("oldIfixed",oldIfixed);
-        emit LogDebug("newIfixed",newIfixed);
+
+    function calculateInterestFixed(uint256 mdNotionalAmount, uint256 mdDerivativeFixedInterestRate, uint256 derivativePeriodInSeconds) public pure returns (uint256) {
         return mdNotionalAmount + AmmMath.division(mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds, Constants.MD_YEAR_IN_SECONDS);
     }
 
-    function calculateInterestFloating(uint256 mdIbtQuantity, uint256 mdIbtCurrentPrice) public returns (uint256) {
-        uint256 oldIFloating = mdIbtQuantity * mdIbtCurrentPrice / Constants.MILTON_DECIMALS_FACTOR;
-        uint256 newIFloating = AmmMath.division(mdIbtQuantity * mdIbtCurrentPrice, Constants.MILTON_DECIMALS_FACTOR);
-        emit LogDebug("oldIFloating",oldIFloating);
-        emit LogDebug("newIFloating",newIFloating);
+    function calculateInterestFloating(uint256 mdIbtQuantity, uint256 mdIbtCurrentPrice) public pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
-        return AmmMath.division(mdIbtQuantity * mdIbtCurrentPrice, Constants.MILTON_DECIMALS_FACTOR);
+        return AmmMath.division(mdIbtQuantity * mdIbtCurrentPrice, Constants.MD);
     }
 
     function calculateInterest(
         DataTypes.IporDerivative memory derivative,
         uint256 closingTimestamp,
-        uint256 mdIbtPrice) public returns (DataTypes.IporDerivativeInterest memory) {
+        uint256 mdIbtPrice) public pure returns (DataTypes.IporDerivativeInterest memory) {
 
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(closingTimestamp >= derivative.startingTimestamp, "Derivative closing timestamp cannot be before derivative starting timestamp");

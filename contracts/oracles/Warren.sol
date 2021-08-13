@@ -152,18 +152,6 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
     }
 
     /**
-    * @notice Mathematical formula which accrue actual Interest Bearing Token Price based on currently valid IPOR Index and current block timestamp
-    * @param lastIPOR last IPOR Index stored in blockchain
-    * @param currentBlockTimestamp current block timestamp
-    */
-    function _accrueInterestBearingTokenPrice(DataTypes.IPOR memory lastIPOR, uint256 currentBlockTimestamp) internal pure returns (uint256){
-        return lastIPOR.ibtPrice
-        + (lastIPOR.indexValue * ((currentBlockTimestamp - lastIPOR.blockTimestamp) * Constants.MILTON_DECIMALS_FACTOR))
-        / Constants.YEAR_IN_SECONDS_WITH_FACTOR;
-    }
-
-
-    /**
      * @notice Modifier which checks if caller is authorized to update IPOR Index
      */
     modifier onlyUpdater() {

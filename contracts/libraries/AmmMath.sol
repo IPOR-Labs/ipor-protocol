@@ -6,13 +6,16 @@ import "./Constants.sol";
 
 library AmmMath {
 
-    //@notice Division with rounding up on last position, x, and y is with MILTON_DECIMALS_FACTOR
+    //@notice Division with rounding up on last position, x, and y is with MD
     function division(uint256 x, uint256 y) public pure returns (uint256 z) {
+        z = (x + (y / 2)) / y;
+    }
+    function divisionInt(int256 x, int256 y) public pure returns (int256 z) {
         z = (x + (y / 2)) / y;
     }
 
     function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice) public pure returns (uint256){
-        return division(notionalAmount * Constants.MILTON_DECIMALS_FACTOR, ibtPrice);
+        return division(notionalAmount * Constants.MD, ibtPrice);
     }
 
     function calculateDerivativeAmount(
@@ -24,7 +27,7 @@ library AmmMath {
     ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
         uint256 openingFeeAmount = division(
             (totalAmount - liquidationDepositFeeAmount - iporPublicationFeeAmount) * openingFeePercentage,
-            Constants.MILTON_DECIMALS_FACTOR
+            Constants.MD
         );
         uint256 depositAmount = totalAmount - liquidationDepositFeeAmount - iporPublicationFeeAmount - openingFeeAmount;
         return DataTypes.IporDerivativeAmount(
@@ -32,5 +35,9 @@ library AmmMath {
             leverage * depositAmount,
             openingFeeAmount
         );
+    }
+
+    function absoluteValue(int256 value) internal pure returns (uint256) {
+        return (uint256)(value < 0 ? - value : value);
     }
 }

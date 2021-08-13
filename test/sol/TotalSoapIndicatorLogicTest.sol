@@ -27,7 +27,7 @@ contract TotalSoapIndicatorLogicTest is TestData {
         (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS, ibtPrice);
         int256 soap = soapPf + soapRf;
         //then
-        int256 expectedSOAP = - 202814383561643835616;
+        int256 expectedSOAP = -202814383561643835615;
         Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
     }
 
@@ -40,8 +40,8 @@ contract TotalSoapIndicatorLogicTest is TestData {
         simulateOpenRecFixPositionCase2(0);
 
         //when
-        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice);
-        int256 soap = soapPf + soapRf;
+        (int256 qSoapPf, int256 qSoapRf) = tsiStorage.calculateQuasiSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice);
+        int256 soap = qSoapPf + qSoapRf;
         //then
         int256 expectedSOAP = 0;
         Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');

@@ -14,8 +14,16 @@ library TotalSoapIndicatorLogic {
         DataTypes.TotalSoapIndicator storage tsi,
         uint256 calculationTimestamp,
         uint256 ibtPrice
-    ) public returns (int256 soapPf, int256 soapRf) {
-        return ( soapPf = tsi.pf.calculateSoap(ibtPrice, calculationTimestamp), soapRf = tsi.rf.calculateSoap(ibtPrice, calculationTimestamp));
+    ) public view returns (int256 soapPf, int256 soapRf) {
+        return (soapPf = tsi.pf.calculateSoap(ibtPrice, calculationTimestamp), soapRf = tsi.rf.calculateSoap(ibtPrice, calculationTimestamp));
+    }
+
+    function calculateQuasiSoap(
+        DataTypes.TotalSoapIndicator storage tsi,
+        uint256 calculationTimestamp,
+        uint256 ibtPrice
+    ) public view returns (int256 soapPf, int256 soapRf) {
+        return (soapPf = tsi.pf.calculateQuasiSoap(ibtPrice, calculationTimestamp), soapRf = tsi.rf.calculateQuasiSoap(ibtPrice, calculationTimestamp));
     }
 
     function rebalanceSoapWhenOpenPosition(

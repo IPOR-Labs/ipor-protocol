@@ -819,7 +819,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
-        let expectedSoap = BigInt("-270419178082191780822");
+        let expectedSoap = BigInt("-270419178082191780821");
 
         //when
         const soapParams = {
@@ -1006,7 +1006,7 @@ contract('Milton', (accounts) => {
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
 
-        let expectedSoap = BigInt("-135209589041095890411");
+        let expectedSoap = BigInt("-135209589041095890410");
 
         //when
         const soapParams = {
@@ -1055,9 +1055,9 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeUSDCParams);
 
         //then
-        let expectedDAISoap = BigInt("-270419178082191780822");
+        let expectedDAISoap = BigInt("-270419178082191780821");
         //TODO: poprawic gdy zmiana na 6 miejsc po przecinku (zmiany w całym kodzie)
-        let expectedUSDCSoap = BigInt("-270419178082191780822");
+        let expectedUSDCSoap = BigInt("-270419178082191780821");
 
         const soapDAIParams = {
             asset: "DAI",
@@ -1117,7 +1117,7 @@ contract('Milton', (accounts) => {
         await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-270419178082191780822");
+        let expectedSoap = BigInt("-270419178082191780821");
 
         const soapParams = {
             asset: "DAI",
@@ -1228,7 +1228,7 @@ contract('Milton', (accounts) => {
         await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-270419178082191780822");
+        let expectedSoap = BigInt("-270419178082191780821");
 
         const soapParams = {
             asset: "DAI",
@@ -1360,7 +1360,7 @@ contract('Milton', (accounts) => {
 
         let calculationTimestamp50days = derivativeParams25days.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        let expectedSoap = BigInt("-811257534246575342466");
+        let expectedSoap = BigInt("-811257534246575342465");
 
         //when
         //then

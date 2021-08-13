@@ -58,12 +58,12 @@ contract TestData {
         uint256 expectedTotalNotional,
         uint256 expectedTotalIbtQuantity,
         uint256 expectedAverageInterestRate,
-        uint256 expectedHypotheticalInterestCumulativeNumerator
+        uint256 expectedQuasiHypotheticalInterestCumulative
     ) public {
         Assert.equal(si.rebalanceTimestamp, expectedRebalanceTimestamp, 'Incorrect rebalance timestamp');
         Assert.equal(si.totalNotional, expectedTotalNotional, 'Incorrect total notional');
         Assert.equal(si.totalIbtQuantity, expectedTotalIbtQuantity, 'Incorrect total IBT quantity');
         Assert.equal(si.averageInterestRate, expectedAverageInterestRate, 'Incorrect average weighted interest rate');
-        Assert.equal(si.hypotheticalInterestCumulativeNumerator, expectedHypotheticalInterestCumulativeNumerator, 'Incorrect hypothetical interest cumulative numerator');
+        Assert.equal(si.quasiHypotheticalInterestCumulative, expectedQuasiHypotheticalInterestCumulative, 'Incorrect quasi hypothetical interest cumulative');
     }
 }

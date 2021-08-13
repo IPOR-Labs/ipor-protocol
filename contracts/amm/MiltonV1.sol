@@ -84,12 +84,12 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
     }
 
-    function calculateSpread(string memory asset) public view returns (uint256 spreadPf, uint256 spreadRf) {
+    function calculateSpread(string memory asset) external view returns (uint256 spreadPf, uint256 spreadRf) {
         (uint256 _spreadPf, uint256 _spreadRf) = _calculateSpread(asset, block.timestamp);
         return (spreadPf = _spreadPf, spreadRf = _spreadRf);
     }
 
-    function calculateSoap(string memory asset) public returns (int256 soapPf, int256 soapRf, int256 soap) {
+    function calculateSoap(string memory asset) external view returns (int256 soapPf, int256 soapRf, int256 soap) {
         (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
@@ -109,9 +109,20 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
     function _calculateSoap(
         string memory asset,
-        uint256 calculateTimestamp) internal returns (int256 soapPf, int256 soapRf, int256 soap){
+        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
+        (int256 qSoapPf, int256 qSoapRf, int256 qSoap) = _calculateQuasiSoap(asset, calculateTimestamp);
+        return (
+        soapPf = AmmMath.divisionInt(qSoapPf, Constants.MD_P2_YEAR_IN_SECONDS_INT),
+        soapRf = AmmMath.divisionInt(qSoapRf, Constants.MD_P2_YEAR_IN_SECONDS_INT),
+        soap = AmmMath.divisionInt(qSoap, Constants.MD_P2_YEAR_IN_SECONDS_INT)
+        );
+    }
+
+    function _calculateQuasiSoap(
+        string memory asset,
+        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
         (, uint256 ibtPrice,) = warren.getIndex(asset);
-        (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateSoap(calculateTimestamp, ibtPrice);
+        (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateQuasiSoap(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
 
@@ -154,7 +165,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
             totalAmount,
-                leverage,
+            leverage,
             miltonConfiguration.getLiquidationDepositFeeAmount(),
             miltonConfiguration.getIporPublicationFeeAmount(),
             miltonConfiguration.getOpeningFeePercentage()
@@ -324,16 +335,9 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         );
     }
 
-    //TODO: [REFACTOR] move to library extend int256
-    function _calculateAbsValue(int256 value) internal pure returns (uint256) {
-        return (uint256)(value < 0 ? - value : value);
-    }
-
-    event LogDebug(string name, int256 value);
-
     function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 _calculationTimestamp) internal {
 
-        uint256 absInterestDifferenceAmount = _calculateAbsValue(interestDifferenceAmount);
+        uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
 
         //decrease from balances the liquidation deposit
         require(liquidationDepositTotalBalances[derivatives.items[derivativeId].item.asset] >=
@@ -347,8 +351,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         = derivativesTotalBalances[derivatives.items[derivativeId].item.asset] - derivatives.items[derivativeId].item.depositAmount;
 
         uint256 transferAmount = derivatives.items[derivativeId].item.depositAmount;
-
-        emit LogDebug("interestDifferenceAmount", interestDifferenceAmount);
 
         if (interestDifferenceAmount > 0) {
 

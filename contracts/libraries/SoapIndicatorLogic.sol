@@ -11,14 +11,21 @@ library SoapIndicatorLogic {
     function calculateSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,
-        uint256 timestamp) public returns (int256) {
+        uint256 timestamp) public view returns (int256) {
+        return AmmMath.divisionInt(calculateQuasiSoap(si, ibtPrice, timestamp), Constants.MD_P2_YEAR_IN_SECONDS_INT);
+    }
+
+    //@notice For highest precision there is no division by Constants.MD_P2_YEAR_IN_SECONDS
+    function calculateQuasiSoap(
+        DataTypes.SoapIndicator storage si,
+        uint256 ibtPrice,
+        uint256 timestamp) public view returns (int256) {
         if (si.direction == DataTypes.DerivativeDirection.PayFixedReceiveFloating) {
-            //TODO: totalNotional pomnozyc 1e18
-            return int256(AmmMath.division(si.totalIbtQuantity * ibtPrice, 1e18))
-            - int256(si.totalNotional + AmmMath.division(calculateHyphoteticalInterestTotalNumerator(si, timestamp), Constants.YEAR_IN_SECONDS * 1e36));
+            return int256(si.totalIbtQuantity * ibtPrice * Constants.MD * Constants.YEAR_IN_SECONDS)
+            - int256(si.totalNotional * Constants.MD * Constants.MD * Constants.YEAR_IN_SECONDS + calculateQuasiHyphoteticalInterestTotal(si, timestamp));
         } else {
-            return int256(si.totalNotional + AmmMath.division(calculateHyphoteticalInterestTotalNumerator(si, timestamp), Constants.YEAR_IN_SECONDS * 1e36))
-            - int256(AmmMath.division(si.totalIbtQuantity * ibtPrice, 1e18));
+            return int256(si.totalNotional * Constants.MD * Constants.MD * Constants.YEAR_IN_SECONDS + calculateQuasiHyphoteticalInterestTotal(si, timestamp))
+            - int256(si.totalIbtQuantity * ibtPrice * Constants.MD * Constants.YEAR_IN_SECONDS);
         }
     }
 
@@ -31,16 +38,14 @@ library SoapIndicatorLogic {
 
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(si, mdDerivativeNotional, mdDerivativeFixedInterestRate);
-        uint256 hypotheticalInterestTotalNumerator = calculateHyphoteticalInterestTotalNumerator(si, rebalanceTimestamp);
+        uint256 quasiHypotheticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(si, rebalanceTimestamp);
 
         si.rebalanceTimestamp = rebalanceTimestamp;
         si.totalNotional = si.totalNotional + mdDerivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity + mdDerivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
-        si.hypotheticalInterestCumulativeNumerator = hypotheticalInterestTotalNumerator;
+        si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
     }
-
-    event LogDebug(string name, uint256 value);
 
     function rebalanceWhenClosePosition(
         DataTypes.SoapIndicator storage si,
@@ -50,17 +55,17 @@ library SoapIndicatorLogic {
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity) public {
 
-        uint256 currentHypoteticalInterestTotalNumerator = calculateHyphoteticalInterestTotalNumerator(si, rebalanceTimestamp);
+        uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(si, rebalanceTimestamp);
 
-        uint256 interestPaidOutNumerator = calculateInterestPaidOutNumerator(
+        uint256 quasiInterestPaidOut = calculateQuasiInterestPaidOut(
             rebalanceTimestamp,
             derivativeOpenTimestamp,
             derivativeNotional,
             derivativeFixedInterestRate);
 
-        uint256 hypotheticalInterestTotalNumerator = currentHypoteticalInterestTotalNumerator - interestPaidOutNumerator;
+        uint256 quasiHypotheticalInterestTotal = currentQuasiHypoteticalInterestTotal - quasiInterestPaidOut;
 
-        si.hypotheticalInterestCumulativeNumerator = hypotheticalInterestTotalNumerator;
+        si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
 
         uint256 averageInterestRate = calculateInterestRateWhenClosePosition(si, derivativeNotional, derivativeFixedInterestRate);
         //TODO: here potential re-entrancy
@@ -71,23 +76,23 @@ library SoapIndicatorLogic {
 
     }
 
-    function calculateInterestPaidOutNumerator(
+    function calculateQuasiInterestPaidOut(
         uint256 calculateTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate) public pure returns (uint256) {
         require(calculateTimestamp >= derivativeOpenTimestamp, Errors.AMM_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP);
-        return derivativeNotional * derivativeFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp) * Constants.MILTON_DECIMALS_FACTOR;
+        return derivativeNotional * derivativeFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp) * Constants.MD;
     }
 
-    function calculateHyphoteticalInterestTotalNumerator(DataTypes.SoapIndicator memory si, uint256 timestamp) public returns (uint256){
-        return si.hypotheticalInterestCumulativeNumerator + calculateHypotheticalInterestDeltaNumerator(si, timestamp);
+    function calculateQuasiHyphoteticalInterestTotal(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256){
+        return si.quasiHypotheticalInterestCumulative + calculateQuasiHypotheticalInterestDelta(si, timestamp);
     }
 
     //division by Constants.YEAR_IN_SECONDS * 1e54 postponed at the end of calculation
-    function calculateHypotheticalInterestDeltaNumerator(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256) {
+    function calculateQuasiHypotheticalInterestDelta(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256) {
         require(timestamp >= si.rebalanceTimestamp, Errors.AMM_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP);
-        return si.totalNotional * si.averageInterestRate * ((timestamp - si.rebalanceTimestamp) * Constants.MILTON_DECIMALS_FACTOR);
+        return si.totalNotional * si.averageInterestRate * ((timestamp - si.rebalanceTimestamp) * Constants.MD);
     }
 
     function calculateInterestRateWhenOpenPosition(
