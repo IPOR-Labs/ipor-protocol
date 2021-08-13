@@ -1,10 +1,76 @@
 version: "3.9"
+
 services:
+
   ipor-protocol-milton-tool:
     container_name: ipor-protocol-milton-tool
     image: io.ipor/ipor-protocol-milton-tool:latest
     restart: always
     ports:
-      - 4000:3000
+      - "4000:3000"
     environment:
       - TZ=${TIMEZONE}
+
+  ipor-protocol-nginx:
+    container_name: ipor-protocol-nginx
+    image: nginx:1.21.1
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./containers/nginx/envs/${ENV_PROFILE}/nginx.conf:/etc/nginx/nginx.conf
+      - ./containers/nginx/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
+      - ./containers/nginx/htpasswd.users:/etc/nginx/htpasswd.users
+      - ./containers/nginx/errors:/usr/share/nginx/html/errors
+      - ./containers/nginx/envs/${ENV_PROFILE}/cert:/etc/nginx/cert
+      - ./containers/logs/nginx:/var/log/nginx
+    environment:
+      - TZ=${TIMEZONE}
+    depends_on:
+      - ipor-protocol-milton-tool
+
+  ipor-protocol-ganache:
+    container_name: ipor-protocol-ganache
+    image: trufflesuite/ganache-cli:v6.12.2
+    restart: always
+    ports:
+      - "9545:8545"
+    volumes:
+      - ./containers/ganache/ganache_data:/ganache_data
+    entrypoint:
+      - node
+      - /app/ganache-core.docker.cli.js
+      - --deterministic
+      - --db=/ganache_data
+      - --mnemonic
+      - ${MNEMONIC}
+      - --networkId
+      - '5777'
+      - --chainId
+      - '1337'
+      - --hostname
+      - '0.0.0.0'
+      - --accounts
+      - ${ETH_ACCOUNTS_NUMBER}
+      - --defaultBalanceEther
+      - ${ETH_INITIAL_BALANCE}
+      - --verbose
+
+  ipor-protocol-nginx-ganache:
+    container_name: ipor-protocol-nginx-ganache
+    image: nginx:1.21.1
+    restart: always
+    ports:
+      - "34555:34555"
+    volumes:
+      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.conf:/etc/nginx/nginx.conf
+      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
+      - ./containers/nginx-ganache/htpasswd.users:/etc/nginx/htpasswd.users
+      - ./containers/nginx-ganache/errors:/usr/share/nginx/html/errors
+      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/cert:/etc/nginx/cert
+      - ./containers/logs/nginx-ganache:/var/log/nginx
+    environment:
+      - TZ=${TIMEZONE}
+    depends_on:
+      - ipor-protocol-ganache
