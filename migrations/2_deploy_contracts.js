@@ -99,7 +99,7 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
-
+        console.log("Start transfer TOKENS to test addresses...");
         //first address is an admin, last two addresses will not have tokens and approves
         for (let i = 0; i < addresses.length - 2; i++) {
             await usdt.transfer(addresses[i], userSupply6Decimals);
@@ -107,12 +107,16 @@ module.exports = async function (deployer, _network, addresses) {
             await dai.transfer(addresses[i], userSupply18Decimals);
             await tusd.transfer(addresses[i], userSupply18Decimals);
 
+            console.log(`Account: ${addresses[i]} - tokens transfered`);
+
             //AMM has rights to spend money on behalf of user
             //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
             usdt.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
             usdc.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
             dai.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
             tusd.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
+
+            console.log(`Account: ${addresses[i]} approve spender ${milton.address} to spend tokens on behalf of user.`);
         }
     }
 
