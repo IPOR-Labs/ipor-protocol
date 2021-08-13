@@ -16,7 +16,8 @@ library AmmMath {
     }
 
     function calculateDerivativeAmount(
-        uint256 totalAmount, uint8 leverage,
+        uint256 totalAmount,
+        uint8 leverage,
         uint256 liquidationDepositFeeAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeePercentage

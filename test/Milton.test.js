@@ -299,10 +299,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 0, userTwo, userTwo,
             MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-            BigInt("8595453808219178149796"), //expectedAMMTokenBalance
-            BigInt("9991404546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("9991404546191780821850204"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
+            BigInt("8595453808219178051094"), //expectedAMMTokenBalance
+            BigInt("9991404546191780821948906"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9991404546191780821948906"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("8585453808219178051094"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -348,10 +348,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 0, userTwo, userTwo,
             MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-            BigInt("4203524767123287755062"), //expectedAMMTokenBalance
-            BigInt("10006196475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("10006196475232876712244938"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
+            BigInt("4203524767123287656360"), //expectedAMMTokenBalance
+            BigInt("10006196475232876712343640"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10006196475232876712343640"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("4193524767123287656360"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -413,10 +413,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 0, userTwo, userThree,
             MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-            BigInt("4203524767123287755062"), //expectedAMMTokenBalance
-            BigInt("10006176475232876712244938"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("4203524767123287656360"), //expectedAMMTokenBalance
+            BigInt("10006176475232876712343640"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("4193524767123287755062"), //expectedLiquidityPoolTotalBalance
+            BigInt("4193524767123287656360"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -466,10 +466,10 @@ contract('Milton', (accounts) => {
             "DAI", 10, 0, userTwo, userThree,
             MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
-            BigInt("8595453808219178149796"), //expectedAMMTokenBalance
-            BigInt("9991384546191780821850204"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("8595453808219178051094"), //expectedAMMTokenBalance
+            BigInt("9991384546191780821948906"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("8585453808219178149796"), //expectedLiquidityPoolTotalBalance
+            BigInt("8585453808219178051094"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -555,7 +555,7 @@ contract('Milton', (accounts) => {
             BigInt("7951856164383561622202"), //expectedAMMTokenBalance
             BigInt("9992048143835616438377798"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("9992048143835616438377798"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("7951856164383561622202"), //expectedLiquidityPoolTotalBalance
+            BigInt("7941856164383561622202"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -577,10 +577,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-            BigInt("2175380931506849247464"), //expectedAMMTokenBalance
-            BigInt("10008224619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("10008224619068493150752536"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
+            BigInt("2175380931506849346167"), //expectedAMMTokenBalance
+            BigInt("10008224619068493150653833"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("10008224619068493150653833"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("2165380931506849346167"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -601,10 +601,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-            BigInt("6567309972602739642198"), //expectedAMMTokenBalance
-            BigInt("9993432690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
-            BigInt("9993432690027397260357802"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
+            BigInt("6567309972602739740900"), //expectedAMMTokenBalance
+            BigInt("9993432690027397260259100"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("9993432690027397260259100"), //expectedCloserUserTokenBalanceAfterPayOut
+            BigInt("6557309972602739740900"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -702,10 +702,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userThree,
             MILTON_120_PERCENTAGE, MILTON_5_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, MILTON_10_400_USD,
-            BigInt("2175380931506849247464"), //expectedAMMTokenBalance
-            BigInt("10008204619068493150752536"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("2175380931506849346167"), //expectedAMMTokenBalance
+            BigInt("10008204619068493150653833"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("2165380931506849247464"), //expectedLiquidityPoolTotalBalance
+            BigInt("2165380931506849346167"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -726,10 +726,10 @@ contract('Milton', (accounts) => {
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userThree,
             MILTON_5_PERCENTAGE, MILTON_50_PERCENTAGE, PERIOD_50_DAYS_IN_SECONDS, ZERO,
-            BigInt("6567309972602739642198"), //expectedAMMTokenBalance
-            BigInt("9993412690027397260357802"), //expectedOpenerUserTokenBalanceAfterPayOut
+            BigInt("6567309972602739740900"), //expectedAMMTokenBalance
+            BigInt("9993412690027397260259100"), //expectedOpenerUserTokenBalanceAfterPayOut
             BigInt("10000020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
-            BigInt("6557309972602739642198"), //expectedLiquidityPoolTotalBalance
+            BigInt("6557309972602739740900"), //expectedLiquidityPoolTotalBalance
             0, ZERO, ZERO, ZERO
         );
     });
@@ -2007,7 +2007,7 @@ contract('Milton', (accounts) => {
         direction,
         openerUserAddress,
         closerUserAddress,
-        iporValueBeforOpenPosition,
+        iporValueBeforeOpenPosition,
         iporValueAfterOpenPosition,
         periodOfTimeElapsedInSeconds,
         providedLiquidityAmount,
@@ -2031,7 +2031,7 @@ contract('Milton', (accounts) => {
             from: openerUserAddress
         }
 
-        await warren.test_updateIndex(params.asset, iporValueBeforOpenPosition, params.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(params.asset, iporValueBeforeOpenPosition, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
         await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, params.openTimestamp, {from: userOne});
 

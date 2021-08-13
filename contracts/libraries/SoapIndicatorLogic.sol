@@ -13,8 +13,6 @@ library SoapIndicatorLogic {
         uint256 ibtPrice,
         uint256 timestamp) public returns (int256) {
         if (si.direction == DataTypes.DerivativeDirection.PayFixedReceiveFloating) {
-
-//            emit LogDebug("soap", si.totalNotional + AmmMath.division(calculateHyphoteticalInterestTotalNumerator(si, timestamp), Constants.YEAR_IN_SECONDS_WITH_FACTOR));
             //TODO: totalNotional pomnozyc 1e18
             return int256(AmmMath.division(si.totalIbtQuantity * ibtPrice, 1e18))
             - int256(si.totalNotional + AmmMath.division(calculateHyphoteticalInterestTotalNumerator(si, timestamp), Constants.YEAR_IN_SECONDS * 1e36));
@@ -27,22 +25,19 @@ library SoapIndicatorLogic {
     function rebalanceWhenOpenPosition(
         DataTypes.SoapIndicator storage si,
         uint256 rebalanceTimestamp,
-        uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
-        uint256 derivativeIbtQuantity) public {
+        uint256 mdDerivativeNotional,
+        uint256 mdDerivativeFixedInterestRate,
+        uint256 mdDerivativeIbtQuantity) public {
 
         //TODO: here potential re-entrancy
-        uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(si, derivativeNotional, derivativeFixedInterestRate);
+        uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(si, mdDerivativeNotional, mdDerivativeFixedInterestRate);
         uint256 hypotheticalInterestTotalNumerator = calculateHyphoteticalInterestTotalNumerator(si, rebalanceTimestamp);
 
         si.rebalanceTimestamp = rebalanceTimestamp;
-        si.totalNotional = si.totalNotional + derivativeNotional;
-        si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
+        si.totalNotional = si.totalNotional + mdDerivativeNotional;
+        si.totalIbtQuantity = si.totalIbtQuantity + mdDerivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.hypotheticalInterestCumulativeNumerator = hypotheticalInterestTotalNumerator;
-
-        emit LogDebug("hypotheticalInterestCumulativeRaw", AmmMath.division(si.hypotheticalInterestCumulativeNumerator, Constants.YEAR_IN_SECONDS_WITH_FACTOR));
-
     }
 
     event LogDebug(string name, uint256 value);
@@ -73,9 +68,6 @@ library SoapIndicatorLogic {
         si.totalNotional = si.totalNotional - derivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
-
-        emit LogDebug("hypotheticalInterestCumulativeRaw", AmmMath.division(si.hypotheticalInterestCumulativeNumerator, Constants.YEAR_IN_SECONDS_WITH_FACTOR));
-
 
     }
 

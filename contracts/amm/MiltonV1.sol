@@ -153,7 +153,8 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
-            totalAmount, leverage,
+            totalAmount,
+                leverage,
             miltonConfiguration.getLiquidationDepositFeeAmount(),
             miltonConfiguration.getIporPublicationFeeAmount(),
             miltonConfiguration.getOpeningFeePercentage()
@@ -328,6 +329,8 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         return (uint256)(value < 0 ? - value : value);
     }
 
+    event LogDebug(string name, int256 value);
+
     function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 _calculationTimestamp) internal {
 
         uint256 absInterestDifferenceAmount = _calculateAbsValue(interestDifferenceAmount);
@@ -344,6 +347,8 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         = derivativesTotalBalances[derivatives.items[derivativeId].item.asset] - derivatives.items[derivativeId].item.depositAmount;
 
         uint256 transferAmount = derivatives.items[derivativeId].item.depositAmount;
+
+        emit LogDebug("interestDifferenceAmount", interestDifferenceAmount);
 
         if (interestDifferenceAmount > 0) {
 
@@ -390,6 +395,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
                 = liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] + derivatives.items[derivativeId].item.depositAmount;
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
                 //TODO: take into consideration token decimals!!!
+
                 IERC20(tokens[derivatives.items[derivativeId].item.asset]).transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
             } else {
                 // |I| <= D
