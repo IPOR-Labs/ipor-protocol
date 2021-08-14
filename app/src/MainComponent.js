@@ -7,6 +7,7 @@ import IporIndexComponent from "./WarrenComponent";
 import IporAmmComponent from "./MiltonComponent";
 import MyPositions from "./MyPositions";
 import MiltonConfiguration from "./MiltonConfigurationComponent";
+import FaucetComponent from "./FaucetComponent";
 
 
 const {AccountData, ContractData, ContractForm} = newContextComponents;
@@ -61,6 +62,12 @@ export default ({drizzle, drizzleState}) => {
                 </Tab>
                 <Tab eventKey="myPositions" title="My positions">
                     <MyPositions
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
+                <Tab eventKey="faucet" title="Faucet">
+                    <FaucetComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />

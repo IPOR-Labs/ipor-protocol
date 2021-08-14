@@ -3,20 +3,11 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 
-contract WarrenStorage {
-
-    /**
-    * @notice Administrator for this contract
-    */
-    address public admin;
-
-}
-
 /**
  * @title Ipor Oracle Storage initial version
  * @author IPOR Labs
  */
-contract WarrenV1Storage is WarrenStorage {
+contract WarrenV1Storage {
 
     /// @notice list of IPOR indexes for particular assets
     mapping(bytes32 => DataTypes.IPOR) public indexes;

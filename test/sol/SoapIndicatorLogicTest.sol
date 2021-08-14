@@ -25,7 +25,7 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 actualInterestRate = soapIndicator.calculateInterestRateWhenOpenPosition(derivativeNotional, derivativeFixedInterestRate);
 
         //then
-        uint256 expectedInterestRate = 66666666666666666;
+        uint256 expectedInterestRate = 66666666666666667;
         Assert.equal(expectedInterestRate, actualInterestRate, "Wrong interest rate when open position");
     }
 
@@ -64,10 +64,10 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 timestamp = soapIndicator.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        uint256 actualInterestRate = soapIndicator.calculateHypotheticalInterestDelta(timestamp);
+        uint256 actualInterestRate = soapIndicator.calculateQuasiHypotheticalInterestDelta(timestamp);
 
         //then
-        uint256 expectedInterestDelta = 109589041095890410958;
+        uint256 expectedInterestDelta = 3456000000 * 1e54;
         Assert.equal(actualInterestRate, expectedInterestDelta, "Incorrect interest in delta time");
     }
 
@@ -77,12 +77,12 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 timestamp = soapIndicator.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        uint256 actualHypotheticalInterestTotal = soapIndicator.calculateHyphoteticalInterestTotal(timestamp);
+        uint256 actualQuasiHypotheticalInterestTotal = soapIndicator.calculateQuasiHyphoteticalInterestTotal(timestamp);
 
         //then
-        uint256 expectedHypotheticalInterestTotal = 609589041095890410958;
+        uint256 expectedQuasiHypotheticalInterestTotal = 19224000000 * 1e54;
 
-        Assert.equal(actualHypotheticalInterestTotal, expectedHypotheticalInterestTotal, "Incorrect hypothetical interest total");
+        Assert.equal(actualQuasiHypotheticalInterestTotal, expectedQuasiHypotheticalInterestTotal, "Incorrect hypothetical interest total quasi");
 
     }
 
@@ -130,14 +130,15 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 expectedTotalNotional = 30000 * 1e18;
         uint256 expectedTotalIbtQuantity = 268 * 1e18;
         uint256 expectedAverageInterestRate = 7 * 1e16;
-        uint256 expectedHypotheticalInterestCumulative = 34246575342465753424;
+        uint256 expectedQuasiHypotheticalInterestCumulative = 1080000000 * 1e54;
+
         assertSoapIndicator(
             siStorage,
             expectedRebalanceTimestamp,
             expectedTotalNotional,
             expectedTotalIbtQuantity,
             expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
+            expectedQuasiHypotheticalInterestCumulative
         );
 
     }
@@ -227,7 +228,7 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 expectedTotalNotional = 10000 * 1e18;
         uint256 expectedTotalIbtQuantity = 95 * 1e18;
         uint256 expectedAverageInterestRate = averageInterestRateAfterFirstOpen;
-        uint256 expectedHypotheticalInterestCumulative = 68493150684931506849;
+        uint256 expectedHypotheticalInterestCumulative = 2160000000 * 1e54;
 
         assertSoapIndicator(
             siStorage,
@@ -311,7 +312,7 @@ contract SoapIndicatorLogicTest is TestData {
         int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp);
 
         //then
-        int256 expectedSoapPf = - 6109589041095890410958;
+        int256 expectedSoapPf = -6109589041095890410958;
         Assert.equal(actualSoapPf, expectedSoapPf, 'Incorrect SOAP for Pay Fixed Derivatives');
     }
 
@@ -325,7 +326,7 @@ contract SoapIndicatorLogicTest is TestData {
         int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp);
 
         //then
-        int256 expectedSoapPf = 6109589041095890410958;
+        int256 expectedSoapPf = 6109589041095890410959;
         Assert.equal(actualSoapPf, expectedSoapPf, 'Incorrect SOAP for Pay Fixed Derivatives');
     }
 

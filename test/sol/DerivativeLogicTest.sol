@@ -35,7 +35,7 @@ contract DerivativeLogicTest {
         uint256 result = DerivativeLogic.calculateInterestFixed(notionalAmount, derivativeFixedInterestRate, derivativePeriodInSeconds);
 
         //then
-        Assert.equal(result, 99005869479452054794520, "Wrong interest fixed");
+        Assert.equal(result, 99005869479452054794521, "Wrong interest fixed");
     }
 
     function testCalculateInterestFixedCase3() public {
@@ -86,7 +86,7 @@ contract DerivativeLogicTest {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp, 100 * Constants.MILTON_DECIMALS_FACTOR);
+            derivative.startingTimestamp, 100 * Constants.MD);
 
         //then
         Assert.equal(derivativeInterest.interestFixed, 98703000000000000000000, "Wrong interest fixed");
@@ -101,7 +101,7 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 125 * Constants.MILTON_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 125 * Constants.MD;
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
             derivative.startingTimestamp, ibtPriceSecond);
@@ -119,16 +119,16 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 100 * Constants.MILTON_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 100 * Constants.MD;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 98973419178082191780821, "Wrong interest fixed");
+        Assert.equal(derivativeInterest.interestFixed, 98973419178082191780822, "Wrong interest fixed");
         Assert.equal(derivativeInterest.interestFloating, 98703000000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, - 270419178082191780821, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.interestDifferenceAmount, -270419178082191780822, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCase25daysLaterIBTPriceChanged() public {
@@ -138,16 +138,16 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 125 * Constants.MILTON_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 125 * Constants.MD;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 98973419178082191780821, "Wrong interest fixed");
+        Assert.equal(derivativeInterest.interestFixed, 98973419178082191780822, "Wrong interest fixed");
         Assert.equal(derivativeInterest.interestFloating, 123378750000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, 24405330821917808219179, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.interestDifferenceAmount, 24405330821917808219178, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCaseHugeIpor25daysLaterIBTPriceChangedUserLoses() public {
@@ -160,7 +160,7 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 125 * Constants.MILTON_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 125 * Constants.MD;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
@@ -179,16 +179,16 @@ contract DerivativeLogicTest {
         DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(fixedInterestRate);
 
 
-        uint256 ibtPriceSecond = 100 * Constants.MILTON_DECIMALS_FACTOR;
+        uint256 ibtPriceSecond = 100 * Constants.MD;
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * 4, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 99005869479452054794520, "Wrong interest fixed");
+        Assert.equal(derivativeInterest.interestFixed, 99005869479452054794521, "Wrong interest fixed");
         Assert.equal(derivativeInterest.interestFloating, 98703000000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, -302869479452054794520, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.interestDifferenceAmount, -302869479452054794521, "Wrong interest difference amount");
     }
 
     /*
@@ -196,7 +196,7 @@ contract DerivativeLogicTest {
     */
     function prepareDerivativeCase1(uint256 fixedInterestRate) internal view returns (DataTypes.IporDerivative memory) {
 
-        uint256 ibtPriceFirst = 100 * Constants.MILTON_DECIMALS_FACTOR;
+        uint256 ibtPriceFirst = 100 * Constants.MD;
         uint256 depositAmount = 9870300000000000000000;
         uint256 leverage = 10;
 
@@ -208,9 +208,9 @@ contract DerivativeLogicTest {
         );
 
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-            20 * Constants.MILTON_DECIMALS_FACTOR, //liquidation deposit amount
+            20 * Constants.MD, //liquidation deposit amount
             99700000000000000000, //opening fee amount
-            10 * Constants.MILTON_DECIMALS_FACTOR, //ipor publication amount
+            10 * Constants.MD, //ipor publication amount
             1e16 // spread percentege
         );
 
