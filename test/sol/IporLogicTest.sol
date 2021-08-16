@@ -14,13 +14,15 @@ contract IporLogicTest {
 
         //given
         uint256 initialTimestamp = block.timestamp;
-        DataTypes.IPOR memory ipor = DataTypes.IPOR("DAI", 30000000000000000, 1000000000000000000, initialTimestamp);
+        uint256 initialQuasiIbtPrice = 1000000000000000000 * Constants.YEAR_IN_SECONDS;
+
+        DataTypes.IPOR memory ipor = DataTypes.IPOR("DAI", 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
         uint256 expectedIbtPrice = 1002054794520547945;
         //when
-        uint256 actualIbtPrice = ipor.accrueIbtPrice(block.timestamp + days25);
-
+        uint256 actualQuasiIbtPrice = ipor.accrueIbtPrice(initialTimestamp + days25);
+        uint256 actualIbtPrice = AmmMath.division(actualQuasiIbtPrice, Constants.YEAR_IN_SECONDS);
         //then
         Assert.equal(actualIbtPrice, expectedIbtPrice, 'Incorrect IBT Price');
 
@@ -30,11 +32,12 @@ contract IporLogicTest {
 
         //given
         uint256 initialTimestamp = block.timestamp;
-        DataTypes.IPOR memory ipor = DataTypes.IPOR("DAI", 30000000000000000, 1000000000000000000, initialTimestamp);
+        uint256 initialQuasiIbtPrice = 1000000000000000000 * Constants.YEAR_IN_SECONDS;
+        DataTypes.IPOR memory ipor = DataTypes.IPOR("DAI", 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
 
-        uint256 firstCalculationTimestamp = block.timestamp + days25;
+        uint256 firstCalculationTimestamp = initialTimestamp + days25;
         ipor.accrueIbtPrice(firstCalculationTimestamp);
 
         uint256 secondCalculationTimestamp = firstCalculationTimestamp + days25;
@@ -42,11 +45,12 @@ contract IporLogicTest {
         uint256 expectedIbtPrice = 1004109589041095890;
 
         //when
-        uint256 secondIbtPrice = ipor.accrueIbtPrice(secondCalculationTimestamp);
+        uint256 secondQuasiIbtPrice = ipor.accrueIbtPrice(secondCalculationTimestamp);
+        uint256 actualIbtPrice = AmmMath.division(secondQuasiIbtPrice, Constants.YEAR_IN_SECONDS);
 
 
         //then
-        Assert.equal(secondIbtPrice, expectedIbtPrice, 'Incorrect IBT Price');
+        Assert.equal(actualIbtPrice, expectedIbtPrice, 'Incorrect IBT Price');
 
     }
 }

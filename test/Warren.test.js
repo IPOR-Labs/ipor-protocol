@@ -155,12 +155,14 @@ contract('Warren', (accounts) => {
         //given
         let asset = "USDT";
         await warren.addUpdater(updaterOne);
-        await warren.updateIndex(asset, WARREN_5_PERCENTAGE, {from: updaterOne});
-        await time.increase(YEAR_IN_SECONDS);
+        let updateDate = Math.floor(Date.now() / 1000);
+        await warren.test_updateIndex(asset, WARREN_5_PERCENTAGE, updateDate, {from: updaterOne});
+        let updateDateSecond = updateDate + YEAR_IN_SECONDS;
+
         let iporIndexSecondValue = BigInt("51000000000000000");
 
         //when
-        await warren.updateIndex(asset, iporIndexSecondValue, {from: updaterOne});
+        await warren.test_updateIndex(asset, iporIndexSecondValue, updateDateSecond, {from: updaterOne});
 
         //then
         const iporIndex = await warren.getIndex(asset);
