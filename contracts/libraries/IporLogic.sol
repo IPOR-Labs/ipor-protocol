@@ -9,7 +9,6 @@ import {AmmMath} from '../libraries/AmmMath.sol';
 library IporLogic {
 
     function accrueIbtPrice(DataTypes.IPOR memory ipor, uint256 accrueTimestamp) public pure returns (uint256){
-        return ipor.ibtPrice +
-        AmmMath.division((ipor.indexValue * (accrueTimestamp - ipor.blockTimestamp)), Constants.YEAR_IN_SECONDS);
+        return ipor.quasiIbtPrice + (ipor.indexValue * (accrueTimestamp - ipor.blockTimestamp));
     }
 }

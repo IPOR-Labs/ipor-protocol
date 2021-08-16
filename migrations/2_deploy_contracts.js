@@ -22,6 +22,7 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(AmmMath, IporLogic);
 
     await deployer.deploy(IporLogic);
+    await deployer.link(AmmMath, Warren);
     await deployer.link(IporLogic, Warren);
     await deployer.deploy(Warren);
     const warren = await Warren.deployed();
@@ -94,6 +95,7 @@ module.exports = async function (deployer, _network, addresses) {
     if (_network !== 'test') {
         milton = await deployer.deploy(MiltonV1, miltonConfiguration.address, warren.address, usdt.address, usdc.address, dai.address);
     } else {
+        await deployer.link(AmmMath, TestWarrenProxy);
         await deployer.link(IporLogic, TestWarrenProxy);
         await deployer.link(DerivativeLogic, TestMiltonV1Proxy);
         await deployer.link(SoapIndicatorLogic, TestMiltonV1Proxy);

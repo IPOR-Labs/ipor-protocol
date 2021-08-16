@@ -46,7 +46,7 @@ library DataTypes {
         uint256 indexValue;
 
         //@notice Interest Bearing Token Price
-        uint256 ibtPrice;
+        uint256 quasiIbtPrice;
 
         //@notice block timestamp
         uint256 blockTimestamp;
