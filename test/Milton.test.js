@@ -26,15 +26,6 @@ const MILTON_120_PERCENTAGE = BigInt("1200000000000000000");
 const MILTON_160_PERCENTAGE = BigInt("1600000000000000000");
 const MILTON_365_PERCENTAGE = BigInt("3650000000000000000");
 
-const assertError = async (promise, error) => {
-    try {
-        await promise;
-    } catch (e) {
-        assert(e.message.includes(error), `Expected exception with message ${error} but actual error message: ${e.message}`)
-        return;
-    }
-    assert(false);
-}
 
 contract('Milton', (accounts) => {
 
@@ -71,7 +62,6 @@ contract('Milton', (accounts) => {
     beforeEach(async () => {
 
         warren = await TestWarrenProxy.new();
-
 
         //10 000 000 000 000 USD
         tokenUsdt = await UsdtMockedToken.new(totalSupply6Decimals, 6);
@@ -1934,6 +1924,8 @@ contract('Milton', (accounts) => {
 
     //TODO: sprawdz w JS czy otworzenie nowej PIERWSZEJ derywatywy poprawnie wylicza SoapIndicator, hypotheticalInterestCumulative powinno być nadal zero
     //TODO: sprawdz w JS czy otworzenej KOLEJNEJ derywatywy poprawnie wylicza SoapIndicator
+
+    //TODO: add test which checks emited events
 
     const calculateSoap = async (params) => {
         return await amm.test_calculateSoap.call(params.asset, params.calculateTimestamp, {from: params.from});
