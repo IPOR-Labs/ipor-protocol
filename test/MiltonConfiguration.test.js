@@ -1,4 +1,4 @@
-const utils = require("./TestUtils.js");
+const testUtils = require("./TestUtils.js");
 
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 
