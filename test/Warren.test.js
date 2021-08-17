@@ -1,4 +1,4 @@
-const utils = require("./TestUtils.js");
+const testUtils = require("./TestUtils.js");
 const {time} = require('@openzeppelin/test-helpers');
 const IporLogic = artifacts.require('IporLogic');
 const TestWarrenProxy = artifacts.require('TestWarrenProxy');
