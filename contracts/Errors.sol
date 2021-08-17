@@ -23,4 +23,5 @@ library Errors {
     string public constant AMM_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP = 'IPOR_21'; //'Calculation timestamp is lower than last rebalance in soap indicator timestamp, but should be higher or equal`
     string public constant AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID = 'IPOR_22'; //derivative id used in input has incorrect value (like 0)
     string public constant AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS = 'IPOR_23'; //derivative has incorrect status
+    string public constant AMM_CONFIG_MAX_VALUE_EXCEEDED = 'IPOR_24'; //general error, max value exceeded
 }

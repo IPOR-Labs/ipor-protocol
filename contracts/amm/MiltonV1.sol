@@ -473,14 +473,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         return derivatives.getUserPositions(msg.sender);
     }
 
-    /**
-     * @dev Returns the number of decimals used to get its user representation.
-     * For example, if `decimals` equals `3`, a balance of `707` tokens should
-     * be displayed to a user as `0,707` (`707 / 10 ** 3`).
-     */
-    function decimals() public pure virtual returns (uint8) {
-        return 18;
-    }
     modifier onlyActiveDerivative(uint256 derivativeId) {
         require(derivatives.items[derivativeId].item.state == DataTypes.DerivativeState.ACTIVE, Errors.AMM_DERIVATIVE_IS_INACTIVE);
         _;

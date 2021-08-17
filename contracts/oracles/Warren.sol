@@ -8,6 +8,7 @@ import "../interfaces/IWarren.sol";
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import {Constants} from '../libraries/Constants.sol';
 import "../libraries/IporLogic.sol";
+import {AmmMath} from '../libraries/AmmMath.sol';
 
 /**
  * @title IPOR Index Oracle Contract
@@ -38,7 +39,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
             _indexes[i] = DataTypes.IPOR(
                 indexes[assets[i]].asset,
                 indexes[assets[i]].indexValue,
-                indexes[assets[i]].ibtPrice,
+                AmmMath.division(indexes[assets[i]].quasiIbtPrice, Constants.YEAR_IN_SECONDS),
                 indexes[assets[i]].blockTimestamp
             );
         }
@@ -67,28 +68,28 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
         }
     }
 
-    function _updateIndex(string memory _asset, uint256 _indexValue, uint256 updateTimestamp) internal onlyUpdater {
+    function _updateIndex(string memory asset, uint256 indexValue, uint256 updateTimestamp) internal onlyUpdater {
         bool assetExists = false;
-        bytes32 _assetHash = keccak256(abi.encodePacked(_asset));
+        bytes32 assetHash = keccak256(abi.encodePacked(asset));
 
         for (uint256 i = 0; i < assets.length; i++) {
-            if (assets[i] == _assetHash) {
+            if (assets[i] == assetHash) {
                 assetExists = true;
             }
         }
 
-        uint256 _ibtNewPrice;
+        uint256 newQuasiIbtPrice;
 
         if (assetExists == false) {
-            assets.push(_assetHash);
-            _ibtNewPrice = 1e18;
+            assets.push(assetHash);
+            newQuasiIbtPrice = 1e18 * Constants.YEAR_IN_SECONDS;
         } else {
-            _ibtNewPrice = indexes[_assetHash].accrueIbtPrice(updateTimestamp);
+            newQuasiIbtPrice = indexes[assetHash].accrueIbtPrice(updateTimestamp);
         }
 
-        indexes[_assetHash] = DataTypes.IPOR(_asset, _indexValue, _ibtNewPrice, updateTimestamp);
+        indexes[assetHash] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
 
-        emit IporIndexUpdate(_asset, _indexValue, _ibtNewPrice, updateTimestamp);
+        emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
     }
 
     /**
@@ -105,7 +106,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
         DataTypes.IPOR storage _iporIndex = indexes[_assetHash];
         return (
         indexValue = _iporIndex.indexValue,
-        ibtPrice = _iporIndex.ibtPrice,
+        ibtPrice = AmmMath.division(_iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
         blockTimestamp = _iporIndex.blockTimestamp
         );
     }

@@ -1,3 +1,4 @@
+const testUtils = require("./TestUtils.js");
 const {time} = require('@openzeppelin/test-helpers');
 const IporLogic = artifacts.require('IporLogic');
 const TestWarrenProxy = artifacts.require('TestWarrenProxy');
@@ -5,16 +6,6 @@ const WARREN_5_PERCENTAGE = BigInt("50000000000000000");
 const WARREN_6_PERCENTAGE = BigInt("60000000000000000");
 const WARREN_7_PERCENTAGE = BigInt("70000000000000000");
 const WARREN_8_PERCENTAGE = BigInt("80000000000000000");
-
-const assertError = async (promise, error) => {
-    try {
-        await promise;
-    } catch (e) {
-        assert(e.message.includes(error), `Expected exception with message ${error} but actual error message: ${e.message}`);
-        return;
-    }
-    assert(false);
-}
 
 contract('Warren', (accounts) => {
 
@@ -31,14 +22,14 @@ contract('Warren', (accounts) => {
     });
 
     it('should NOT update IPOR Index', async () => {
-        await assertError(
+        await testUtils.assertError(
             warren.updateIndex("ASSET_SYMBOL", 123, {from: updaterOne}),
             'IPOR_2'
         );
     });
 
     it('should NOT update IPOR Index because input value is too low', async () => {
-        await assertError(
+        await testUtils.assertError(
             warren.updateIndex("USDT", 123, {from: updaterOne}),
             'IPOR_2'
         );
@@ -71,7 +62,7 @@ contract('Warren', (accounts) => {
     });
 
     it('should NOT add IPOR Index Updater', async () => {
-        await assertError(
+        await testUtils.assertError(
             warren.addUpdater(updaterTwo, {from: user}),
             'Ownable: caller is not the owner'
         );
@@ -85,7 +76,7 @@ contract('Warren', (accounts) => {
     });
 
     it('should NOT remove IPOR Index Updater', async () => {
-        await assertError(
+        await testUtils.assertError(
             warren.removeUpdater(updaterTwo, {from: user}),
             'Ownable: caller is not the owner'
         );
@@ -155,12 +146,14 @@ contract('Warren', (accounts) => {
         //given
         let asset = "USDT";
         await warren.addUpdater(updaterOne);
-        await warren.updateIndex(asset, WARREN_5_PERCENTAGE, {from: updaterOne});
-        await time.increase(YEAR_IN_SECONDS);
+        let updateDate = Math.floor(Date.now() / 1000);
+        await warren.test_updateIndex(asset, WARREN_5_PERCENTAGE, updateDate, {from: updaterOne});
+        let updateDateSecond = updateDate + YEAR_IN_SECONDS;
+
         let iporIndexSecondValue = BigInt("51000000000000000");
 
         //when
-        await warren.updateIndex(asset, iporIndexSecondValue, {from: updaterOne});
+        await warren.test_updateIndex(asset, iporIndexSecondValue, updateDateSecond, {from: updaterOne});
 
         //then
         const iporIndex = await warren.getIndex(asset);
@@ -235,7 +228,7 @@ contract('Warren', (accounts) => {
         let assets = ["USDC", "DAI"];
         let indexValues = [BigInt("50000000000000000")];
 
-        await assertError(
+        await testUtils.assertError(
             //when
             warren.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne}),
             //then
