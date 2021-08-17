@@ -1,15 +1,6 @@
+const utils = require("./TestUtils.js");
+
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
-
-const assertError = async (promise, error) => {
-    try {
-        await promise;
-    } catch (e) {
-        assert(e.message.includes(error), `Expected exception with message ${error} but actual error message: ${e.message}`)
-        return;
-    }
-    assert(false);
-}
-
 
 contract('MiltonConfiguration', (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
@@ -27,7 +18,7 @@ contract('MiltonConfiguration', (accounts) => {
         //given
         let incomeTaxPercentage = BigInt("200000000000000001");
 
-        await assertError(
+        await testUtils.assertError(
             //when
             miltonConfiguration.setIncomeTaxPercentage(incomeTaxPercentage),
             //then
@@ -39,7 +30,7 @@ contract('MiltonConfiguration', (accounts) => {
         //given
         let maxIncomeTaxPercentage = BigInt("1000000000000000001");
 
-        await assertError(
+        await testUtils.assertError(
             //when
             miltonConfiguration.setMaxIncomeTaxPercentage(maxIncomeTaxPercentage),
             //then
@@ -102,7 +93,7 @@ contract('MiltonConfiguration', (accounts) => {
         //given
         let liquidationDepositFeeAmount = BigInt("101000000000000000000");
 
-        await assertError(
+        await testUtils.assertError(
             //when
             miltonConfiguration.setLiquidationDepositFeeAmount(liquidationDepositFeeAmount),
             //then
@@ -165,7 +156,7 @@ contract('MiltonConfiguration', (accounts) => {
         //given
         let openingFeePercentage = BigInt("1000000000000000001");
 
-        await assertError(
+        await testUtils.assertError(
             //when
             miltonConfiguration.setOpeningFeePercentage(openingFeePercentage),
             //then
@@ -177,7 +168,7 @@ contract('MiltonConfiguration', (accounts) => {
         //given
         let maxOpeningFeePercentage = BigInt("1000000000000000001");
 
-        await assertError(
+        await testUtils.assertError(
             //when
             miltonConfiguration.setMaxOpeningFeePercentage(maxOpeningFeePercentage),
             //then
@@ -239,7 +230,7 @@ contract('MiltonConfiguration', (accounts) => {
         //given
         let iporPublicationFeeAmount = BigInt("1001000000000000000000");
 
-        await assertError(
+        await testUtils.assertError(
             //when
             miltonConfiguration.setIporPublicationFeeAmount(iporPublicationFeeAmount),
             //then
@@ -302,7 +293,7 @@ contract('MiltonConfiguration', (accounts) => {
         //given
         let liquidityPoolMaxUtilizationPercentage = BigInt("1000000000000000001");
 
-        await assertError(
+        await testUtils.assertError(
             //when
             miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage),
             //then

@@ -1,3 +1,4 @@
+const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
@@ -100,7 +101,7 @@ contract('Milton', (accounts) => {
         let direction = 0;
         let leverage = 10;
 
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
@@ -117,7 +118,7 @@ contract('Milton', (accounts) => {
         let direction = 0;
         let leverage = 10;
 
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
@@ -135,7 +136,7 @@ contract('Milton', (accounts) => {
         let direction = 0;
         let leverage = 10;
 
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
@@ -151,7 +152,7 @@ contract('Milton', (accounts) => {
         let direction = 0;
         let leverage = 10;
 
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
@@ -252,7 +253,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, BigInt("50000000000000000"), closePositionTimestamp, {from: userOne});
 
         //when
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.test_closePosition(1, closePositionTimestamp, {from: userTwo}),
             //then
@@ -380,7 +381,7 @@ contract('Milton', (accounts) => {
         await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
@@ -444,7 +445,7 @@ contract('Milton', (accounts) => {
         await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
@@ -631,7 +632,7 @@ contract('Milton', (accounts) => {
         await amm.provideLiquidity(params.asset, MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
@@ -669,7 +670,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
 
         //when
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
@@ -1384,7 +1385,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParamsFirst);
 
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.test_closePosition(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: closerUserAddress}),
             //then
@@ -1427,7 +1428,7 @@ contract('Milton', (accounts) => {
 
         await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress})
 
-        await assertError(
+        await testUtils.assertError(
             //when
             amm.test_closePosition(1, endTimestamp, {from: closerUserAddress}),
             //then
@@ -1833,7 +1834,7 @@ contract('Milton', (accounts) => {
 
     });
 
-    it('should open two positions and close two positions - Arithmetic overflow - last byte difference - case 1', async () => {
+    it('should open two positions and close one position - Arithmetic overflow - last byte difference - case 1', async () => {
         //given
         let direction = 0;
         let iporValueBeforeOpenPosition = MILTON_3_PERCENTAGE;
@@ -1867,21 +1868,7 @@ contract('Milton', (accounts) => {
 
         await amm.test_closePosition(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
 
-        // //position 3, user first
-        // derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        // derivativeParams.from = userTwo;
-        // derivativeParams.direction = 1;
-        // await openPositionFunc(derivativeParams);
-        //
-        // //position 4, user first
-        // derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        // derivativeParams.from = userTwo;
-        // derivativeParams.direction = 1;
-        // await openPositionFunc(derivativeParams);
-
         //when
-        // await amm.test_closePosition(3, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userTwo});
-        // await amm.test_closePosition(4, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS, {from: userTwo});
         await amm.test_closePosition(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
 
 
@@ -1897,7 +1884,6 @@ contract('Milton', (accounts) => {
             `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`)
         assert(expectedDerivativeIdsLength === actualDerivativeIds.length,
             `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`)
-
 
     });
 
