@@ -1,6 +1,5 @@
 import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
-import AmmTotalBalanceComponent from "./AmmTotalBalanceComponent";
 import SpreadComponent from "./SpreadComponent";
 import SoapComponent from "./SoapComponent";
 
