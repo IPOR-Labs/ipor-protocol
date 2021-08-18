@@ -1,7 +1,7 @@
-import React from "react";
+import React, {Component} from "react";
 import {newContextComponents} from "@drizzle/react-components";
 
-const {ContractData, ContractForm} = newContextComponents;
+const { ContractData, ContractForm} = newContextComponents;
 
 export default ({drizzle, drizzleState}) => (
     <div>
@@ -128,15 +128,27 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
         </table>
+        <div className="row">
+            <div className="col-md-6">
+                <strong>Transfer ETH to specific address</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonFaucet"
+                    method="transferEth"
+                />
+            </div>
+            <div className="col-md-6">
+                <strong>Transfer TOKENS to your wallet</strong>
+                <br/>
+                <label>Max allowed value 1 000 000 USD</label>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonFaucet"
+                    method="transfer"
+                />
+            </div>
 
-        <strong>Transfer TOKENS to your wallet</strong>
-        <br/>
-        <label>Max allowed value 1 000 000 USD</label>
-        <ContractForm
-            drizzle={drizzle}
-            contract="MiltonFaucet"
-            method="transfer"
-        />
+        </div>
 
 
     </div>

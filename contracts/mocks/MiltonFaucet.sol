@@ -25,6 +25,10 @@ contract MiltonFaucet {
     receive() external payable {
     }
 
+    function transferEth(address payable recipient, uint256 value) external payable {
+        recipient.transfer(value);
+    }
+
     function transfer(string memory asset, uint256 value) external {
         //no more than 1 000 000 USD at once
         if (keccak256(abi.encodePacked(asset)) == keccak256(abi.encodePacked("USDT"))) {
