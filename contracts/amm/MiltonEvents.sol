@@ -29,9 +29,7 @@ contract MiltonV1Events is MiltonEvents {
     event ClosePosition(
         uint256 indexed derivativeId,
         string asset,
-        uint256 date,
-        uint256 interestFixed,
-        uint256 interestFloating
+        uint256 date
     //TODO: figure out what we need in this event
     );
 

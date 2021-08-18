@@ -7,13 +7,15 @@ import "./Constants.sol";
 
 library DerivativeLogic {
 
-    function calculateInterestFixed(uint256 mdNotionalAmount, uint256 mdDerivativeFixedInterestRate, uint256 derivativePeriodInSeconds) public pure returns (uint256) {
-        return mdNotionalAmount + AmmMath.division(mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds, Constants.MD_YEAR_IN_SECONDS);
+    //@notice for final value divide by Constants.MD_YEAR_IN_SECONDS
+    function calculateQuasiInterestFixed(uint256 mdNotionalAmount, uint256 mdDerivativeFixedInterestRate, uint256 derivativePeriodInSeconds) public pure returns (uint256) {
+        return mdNotionalAmount * Constants.MD_YEAR_IN_SECONDS + mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds;
     }
 
-    function calculateInterestFloating(uint256 mdIbtQuantity, uint256 mdIbtCurrentPrice) public pure returns (uint256) {
+    //@notice for final value divide by Constants.MD_YEAR_IN_SECONDS
+    function calculateQuasiInterestFloating(uint256 mdIbtQuantity, uint256 mdIbtCurrentPrice) public pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
-        return AmmMath.division(mdIbtQuantity * mdIbtCurrentPrice, Constants.MD);
+        return mdIbtQuantity * mdIbtCurrentPrice * Constants.YEAR_IN_SECONDS;
     }
 
     function calculateInterest(
@@ -33,12 +35,12 @@ library DerivativeLogic {
             calculatedPeriodInSeconds = closingTimestamp - derivative.startingTimestamp;
         }
 
-        uint256 iFixed = calculateInterestFixed(derivative.notionalAmount, derivative.indicator.fixedInterestRate, calculatedPeriodInSeconds);
-        uint256 iFloating = calculateInterestFloating(derivative.indicator.ibtQuantity, mdIbtPrice);
+        uint256 quasiIFixed = calculateQuasiInterestFixed(derivative.notionalAmount, derivative.indicator.fixedInterestRate, calculatedPeriodInSeconds);
+        uint256 quasiIFloating = calculateQuasiInterestFloating(derivative.indicator.ibtQuantity, mdIbtPrice);
 
-        int256 interestDifferenceAmount = uint8(derivative.direction) == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
-        ? int256(iFloating) - int256(iFixed) : int256(iFixed) - int256(iFloating);
+        int256 interestDifferenceAmount = AmmMath.divisionInt(uint8(derivative.direction) == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
+            ? int256(quasiIFloating) - int256(quasiIFixed) : int256(quasiIFixed) - int256(quasiIFloating), int256(Constants.MD_YEAR_IN_SECONDS));
 
-        return DataTypes.IporDerivativeInterest(iFixed, iFloating, interestDifferenceAmount);
+        return DataTypes.IporDerivativeInterest(quasiIFixed, quasiIFloating, interestDifferenceAmount);
     }
 }

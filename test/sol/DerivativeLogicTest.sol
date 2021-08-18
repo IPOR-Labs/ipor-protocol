@@ -18,10 +18,10 @@ contract DerivativeLogicTest {
         uint256 derivativePeriodInSeconds = 0;
 
         //when
-        uint256 result = DerivativeLogic.calculateInterestFixed(notionalAmount, derivativeFixedInterestRate, derivativePeriodInSeconds);
+        uint256 result = DerivativeLogic.calculateQuasiInterestFixed(notionalAmount, derivativeFixedInterestRate, derivativePeriodInSeconds);
 
         //then
-        Assert.equal(result, notionalAmount, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(result, Constants.MD_YEAR_IN_SECONDS), notionalAmount, "Wrong interest fixed");
     }
 
     function testCalculateInterestFixedCase2() public {
@@ -32,10 +32,10 @@ contract DerivativeLogicTest {
         uint256 derivativePeriodInSeconds = Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS;
 
         //when
-        uint256 result = DerivativeLogic.calculateInterestFixed(notionalAmount, derivativeFixedInterestRate, derivativePeriodInSeconds);
+        uint256 result = DerivativeLogic.calculateQuasiInterestFixed(notionalAmount, derivativeFixedInterestRate, derivativePeriodInSeconds);
 
         //then
-        Assert.equal(result, 99005869479452054794521, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(result, Constants.MD_YEAR_IN_SECONDS), 99005869479452054794521, "Wrong interest fixed");
     }
 
     function testCalculateInterestFixedCase3() public {
@@ -46,10 +46,10 @@ contract DerivativeLogicTest {
         uint256 derivativePeriodInSeconds = Constants.YEAR_IN_SECONDS;
 
         //when
-        uint256 result = DerivativeLogic.calculateInterestFixed(notionalAmount, derivativeFixedInterestRate, derivativePeriodInSeconds);
+        uint256 result = DerivativeLogic.calculateQuasiInterestFixed(notionalAmount, derivativeFixedInterestRate, derivativePeriodInSeconds);
 
         //then
-        Assert.equal(result, 102651120000000000000000, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(result, Constants.MD_YEAR_IN_SECONDS), 102651120000000000000000, "Wrong interest fixed");
     }
 
     function testCalculateInterestFloatingCase1() public {
@@ -59,10 +59,10 @@ contract DerivativeLogicTest {
         uint256 ibtCurrentPrice = 100000000000000000000;
 
         //when
-        uint256 result = DerivativeLogic.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
+        uint256 result = DerivativeLogic.calculateQuasiInterestFloating(ibtQuantity, ibtCurrentPrice);
 
         //then
-        Assert.equal(result, 98703000000000000000000, "Wrong interest floating");
+        Assert.equal(AmmMath.division(result, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest floating");
     }
 
     function testCalculateInterestFloatingCase2() public {
@@ -72,10 +72,10 @@ contract DerivativeLogicTest {
         uint256 ibtCurrentPrice = 150000000000000000000;
 
         //when
-        uint256 result = DerivativeLogic.calculateInterestFloating(ibtQuantity, ibtCurrentPrice);
+        uint256 result = DerivativeLogic.calculateQuasiInterestFloating(ibtQuantity, ibtCurrentPrice);
 
         //then
-        Assert.equal(result, 148054500000000000000000, "Wrong interest floating");
+        Assert.equal(AmmMath.division(result, Constants.MD_YEAR_IN_SECONDS), 148054500000000000000000, "Wrong interest floating");
     }
 
     function testCalculateInterestCase1() public {
@@ -89,8 +89,8 @@ contract DerivativeLogicTest {
             derivative.startingTimestamp, 100 * Constants.MD);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 98703000000000000000000, "Wrong interest fixed");
-        Assert.equal(derivativeInterest.interestFloating, 98703000000000000000000, "Wrong interest floating");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest floating");
         Assert.equal(derivativeInterest.interestDifferenceAmount, 0, "Wrong interest difference amount");
     }
 
@@ -107,8 +107,8 @@ contract DerivativeLogicTest {
             derivative.startingTimestamp, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 98703000000000000000000, "Wrong interest fixed");
-        Assert.equal(derivativeInterest.interestFloating, 123378750000000000000000, "Wrong interest floating");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 123378750000000000000000, "Wrong interest floating");
         Assert.equal(derivativeInterest.interestDifferenceAmount, 24675750000000000000000, "Wrong interest difference amount");
     }
 
@@ -126,9 +126,9 @@ contract DerivativeLogicTest {
             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 98973419178082191780822, "Wrong interest fixed");
-        Assert.equal(derivativeInterest.interestFloating, 98703000000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, -270419178082191780822, "Wrong interest difference amount");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98973419178082191780822, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest floating");
+        Assert.equal(derivativeInterest.interestDifferenceAmount, - 270419178082191780821, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCase25daysLaterIBTPriceChanged() public {
@@ -145,8 +145,8 @@ contract DerivativeLogicTest {
             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 98973419178082191780822, "Wrong interest fixed");
-        Assert.equal(derivativeInterest.interestFloating, 123378750000000000000000, "Wrong interest floating");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98973419178082191780822, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 123378750000000000000000, "Wrong interest floating");
         Assert.equal(derivativeInterest.interestDifferenceAmount, 24405330821917808219178, "Wrong interest difference amount");
     }
 
@@ -167,9 +167,9 @@ contract DerivativeLogicTest {
             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 123446354794520547945205, "Wrong interest fixed");
-        Assert.equal(derivativeInterest.interestFloating, 123378750000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, -67604794520547945205, "Wrong interest difference amount");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 123446354794520547945205, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 123378750000000000000000, "Wrong interest floating");
+        Assert.equal(derivativeInterest.interestDifferenceAmount, - 67604794520547945204, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCase100daysLaterIBTPriceNotChanged() public {
@@ -186,9 +186,9 @@ contract DerivativeLogicTest {
             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * 4, ibtPriceSecond);
 
         //then
-        Assert.equal(derivativeInterest.interestFixed, 99005869479452054794521, "Wrong interest fixed");
-        Assert.equal(derivativeInterest.interestFloating, 98703000000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, -302869479452054794521, "Wrong interest difference amount");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 99005869479452054794521, "Wrong interest fixed");
+        Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest floating");
+        Assert.equal(derivativeInterest.interestDifferenceAmount, - 302869479452054794520, "Wrong interest difference amount");
     }
 
     /*

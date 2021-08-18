@@ -67,8 +67,8 @@ library DataTypes {
     }
 
     struct IporDerivativeInterest {
-        uint256 interestFixed;
-        uint256 interestFloating;
+        uint256 quasiInterestFixed;
+        uint256 quasiInterestFloating;
         int256 interestDifferenceAmount;
     }
 

@@ -319,9 +319,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         emit ClosePosition(
             derivativeId,
             derivatives.items[derivativeId].item.asset,
-            closeTimestamp,
-            derivativeInterest.interestFixed,
-            derivativeInterest.interestFloating
+            closeTimestamp
         );
 
         emit TotalBalances(
