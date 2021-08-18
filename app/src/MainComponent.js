@@ -38,6 +38,7 @@ export default ({drizzle, drizzleState}) => {
                     accountIndex={0}
                     units="ether"
                     precision={3}
+
                 />
             </div>
 

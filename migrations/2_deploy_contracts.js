@@ -1,5 +1,6 @@
 const Warren = artifacts.require("Warren");
 const MiltonV1 = artifacts.require("MiltonV1");
+const MiltonFaucet = artifacts.require("MiltonFaucet");
 const TestWarrenProxy = artifacts.require("TestWarrenProxy");
 const TestMiltonV1Proxy = artifacts.require("TestMiltonV1Proxy");
 const TusdMockedToken = artifacts.require('TusdMockedToken');
@@ -27,10 +28,11 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(Warren);
     const warren = await Warren.deployed();
 
-    //10 000 000 000 000 USD
-    let totalSupply6Decimals = '1000000000000000000000';
-    //10 000 000 000 000 USD
-    let totalSupply18Decimals = '10000000000000000000000000000000000';
+    let faucetSupply6Decimals = '1000000000000000000000000';
+    let totalSupply6Decimals = '1000000000000000000000000000';
+
+    let faucetSupply18Decimals = '10000000000000000000000000000000000000';
+    let totalSupply18Decimals = '10000000000000000000000000000000000000000';
 
     //10 000 000 USD
     let userSupply6Decimals = '10000000000000';
@@ -38,10 +40,11 @@ module.exports = async function (deployer, _network, addresses) {
     //10 000 000 USD
     let userSupply18Decimals = '10000000000000000000000000';
 
-    let usdt = null;
-    let usdc = null;
-    let dai = null;
-    let tusd = null;
+    let mockedUsdt = null;
+    let mockedUsdc = null;
+    let mockedDai = null;
+    let mockedTusd = null;
+    let miltonFaucet = null;
     let miltonConfiguration = null;
 
     await deployer.link(AmmMath, DerivativeLogic);
@@ -67,19 +70,25 @@ module.exports = async function (deployer, _network, addresses) {
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
         await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
-        usdt = await UsdtMockedToken.deployed();
+        mockedUsdt = await UsdtMockedToken.deployed();
 
-        //10 000 000 000 000 USD
         await deployer.deploy(UsdcMockedToken, totalSupply6Decimals, 6);
-        usdc = await UsdcMockedToken.deployed();
+        mockedUsdc = await UsdcMockedToken.deployed();
 
-        //10 000 000 000 000 USD
         await deployer.deploy(DaiMockedToken, totalSupply18Decimals, 18);
-        dai = await DaiMockedToken.deployed();
+        mockedDai = await DaiMockedToken.deployed();
 
-        //10 000 000 000 000 USD
         await deployer.deploy(TusdMockedToken, totalSupply18Decimals, 18);
-        tusd = await TusdMockedToken.deployed();
+        mockedTusd = await TusdMockedToken.deployed();
+
+        await deployer.deploy(MiltonFaucet,
+            mockedUsdt.address,
+            mockedUsdc.address,
+            mockedDai.address,
+            mockedTusd.address);
+        miltonFaucet = await MiltonFaucet.deployed();
+
+        miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"})
     }
 
     if (_network == 'develop2' || _network === 'docker') {
@@ -93,7 +102,7 @@ module.exports = async function (deployer, _network, addresses) {
     let milton = null;
 
     if (_network !== 'test') {
-        milton = await deployer.deploy(MiltonV1, miltonConfiguration.address, warren.address, usdt.address, usdc.address, dai.address);
+        milton = await deployer.deploy(MiltonV1, miltonConfiguration.address, warren.address, mockedUsdt.address, mockedUsdc.address, mockedDai.address);
     } else {
         await deployer.link(AmmMath, TestWarrenProxy);
         await deployer.link(IporLogic, TestWarrenProxy);
@@ -106,22 +115,29 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
+        console.log("Setup Faucet...");
+        await mockedUsdt.transfer(miltonFaucet.address, faucetSupply6Decimals);
+        await mockedUsdc.transfer(miltonFaucet.address, faucetSupply6Decimals);
+        await mockedDai.transfer(miltonFaucet.address, faucetSupply18Decimals);
+        await mockedTusd.transfer(miltonFaucet.address, faucetSupply18Decimals);
+        console.log("Setup Faucet finished.");
+
         console.log("Start transfer TOKENS to test addresses...");
         //first address is an admin, last two addresses will not have tokens and approves
         for (let i = 0; i < addresses.length - 2; i++) {
-            await usdt.transfer(addresses[i], userSupply6Decimals);
-            await usdc.transfer(addresses[i], userSupply6Decimals);
-            await dai.transfer(addresses[i], userSupply18Decimals);
-            await tusd.transfer(addresses[i], userSupply18Decimals);
+            await mockedUsdt.transfer(addresses[i], userSupply6Decimals);
+            await mockedUsdc.transfer(addresses[i], userSupply6Decimals);
+            await mockedDai.transfer(addresses[i], userSupply18Decimals);
+            await mockedTusd.transfer(addresses[i], userSupply18Decimals);
 
-            console.log(`Account: ${addresses[i]} - tokens transfered`);
+            console.log(`Account: ${addresses[i]} - tokens transferred`);
 
             //AMM has rights to spend money on behalf of user
             //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
-            usdt.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
-            usdc.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
-            dai.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
-            tusd.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
+            mockedUsdt.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedUsdc.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedDai.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
+            mockedTusd.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
 
             console.log(`Account: ${addresses[i]} approve spender ${milton.address} to spend tokens on behalf of user.`);
         }

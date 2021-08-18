@@ -1,5 +1,6 @@
 import Warren from "./contracts/Warren.json";
 import MiltonV1 from "./contracts/MiltonV1.json";
+import MiltonFaucet from "./contracts/MiltonFaucet.json";
 import MiltonConfiguration from "./contracts/MiltonConfiguration";
 import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
@@ -13,7 +14,7 @@ const options = {
         },
     },
 
-    contracts: [Warren, MiltonV1, MiltonConfiguration, DaiMockedToken, UsdtMockedToken, UsdcMockedToken],
+    contracts: [Warren, MiltonV1, MiltonConfiguration, DaiMockedToken, UsdtMockedToken, UsdcMockedToken, MiltonFaucet],
     events: {
         Warren: ["IporIndexUpdate"],
 
