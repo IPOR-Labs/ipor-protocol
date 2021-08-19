@@ -9,13 +9,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 //milton admin,
 contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
 
-    mapping(string => address) private _addresses;
+    mapping(bytes32 => address) private _addresses;
 
-    string private constant WARREN = "WARREN";
-    string private constant MILTON = "MILTON";
-    string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
+    bytes32 private constant WARREN = 'WARREN';
+    bytes32 private constant MILTON = 'MILTON';
+    bytes32 private constant MILTON_CONFIGURATION = 'MILTON_CONFIGURATION';
 
-    function setAddressAsProxy(string memory id, address implementationAddress)
+    function setAddressAsProxy(bytes32 id, address implementationAddress)
     external
     override
     onlyOwner
@@ -24,12 +24,12 @@ contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
         emit AddressSet(id, implementationAddress, true);
     }
 
-    function setAddress(string memory id, address newAddress) external override onlyOwner {
+    function setAddress(bytes32 id, address newAddress) external override onlyOwner {
         _addresses[id] = newAddress;
         emit AddressSet(id, newAddress, false);
     }
 
-    function getAddress(string memory id) public view override returns (address) {
+    function getAddress(bytes32 id) public view override returns (address) {
         return _addresses[id];
     }
 
@@ -64,7 +64,7 @@ contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
     }
 
     //TODO: verify it, inspired by Aave
-    function _updateImpl(string memory id, address newAddress) internal {
+    function _updateImpl(bytes32 id, address newAddress) internal {
         //TODO: tailor to ipor solution (immutable admin maybe not needed)
         //TODO: implement proxy, upgradable contracts
         //        address payable proxyAddress = payable(_addresses[id]);

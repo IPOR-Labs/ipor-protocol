@@ -43,7 +43,7 @@ contract('Milton', (accounts) => {
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
         miltonAddressesManager = await MiltonAddressesManager.deployed();
-        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfiguration.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON_CONFIGURATION"), miltonConfiguration.address);
 
     });
 
@@ -77,12 +77,12 @@ contract('Milton', (accounts) => {
             await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
         }
 
-        await miltonAddressesManager.setAddress("WARREN", warren.address);
-        await miltonAddressesManager.setAddress("MILTON", milton.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("WARREN"), warren.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON"), milton.address);
 
-        await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
-        await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
-        await miltonAddressesManager.setAddress("DAI", tokenDai.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDT"), tokenUsdt.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDC"), tokenUsdc.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("DAI"), tokenDai.address);
 
     });
 
@@ -190,7 +190,7 @@ contract('Milton', (accounts) => {
             BigInt("0")
         );
 
-        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(params.asset));
+        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(web3.utils.fromAscii(params.asset)));
 
         assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
             `Incorrect derivatives total balance for ${params.asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
@@ -609,7 +609,7 @@ contract('Milton', (accounts) => {
         //given
         const params = {
             asset: "DAI",
-            totalAmount: MILTON_10_000_USD,
+            totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             leverage: 10,
             direction: 1,
@@ -1505,17 +1505,18 @@ contract('Milton', (accounts) => {
 
         let actualOpenerUserTokenBalance = null;
         let actualCloserUserTokenBalance = null;
+        let assetBytes32 = web3.utils.fromAscii(asset);
         if (asset === "DAI") {
             actualOpenerUserTokenBalance = BigInt(await tokenDai.balanceOf(openerUserAddress));
             actualCloserUserTokenBalance = BigInt(await tokenDai.balanceOf(closerUserAddress));
         }
 
         const actualAMMTokenBalance = BigInt(await milton.getTotalSupply(asset));
-        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(asset));
-        const actualOpeningFeeTotalBalance = BigInt(await milton.openingFeeTotalBalances(asset));
-        const actualLiquidationDepositFeeTotalBalance = BigInt(await milton.liquidationDepositTotalBalances(asset));
-        const actualPublicationFeeTotalBalance = BigInt(await milton.iporPublicationFeeTotalBalances(asset));
-        const actualLiquidityPoolTotalBalance = BigInt(await milton.liquidityPoolTotalBalances(asset));
+        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(assetBytes32));
+        const actualOpeningFeeTotalBalance = BigInt(await milton.openingFeeTotalBalances(assetBytes32));
+        const actualLiquidationDepositFeeTotalBalance = BigInt(await milton.liquidationDepositTotalBalances(assetBytes32));
+        const actualPublicationFeeTotalBalance = BigInt(await milton.iporPublicationFeeTotalBalances(assetBytes32));
+        const actualLiquidityPoolTotalBalance = BigInt(await milton.liquidityPoolTotalBalances(assetBytes32));
 
         if (expectedAMMTokenBalance !== null) {
             assert(actualAMMTokenBalance === expectedAMMTokenBalance,

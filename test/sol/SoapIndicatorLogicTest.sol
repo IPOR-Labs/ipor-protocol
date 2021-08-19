@@ -9,8 +9,6 @@ import "./TestData.sol";
 
 contract SoapIndicatorLogicTest is TestData {
 
-    event Log(string name, uint256 value);
-
     using SoapIndicatorLogic  for DataTypes.SoapIndicator;
 
     DataTypes.SoapIndicator public siStorage;

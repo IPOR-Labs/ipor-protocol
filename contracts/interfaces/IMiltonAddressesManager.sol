@@ -6,14 +6,14 @@ interface IMiltonAddressesManager {
     event MiltonAddressUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event MiltonConfigurationAddressUpdated(address indexed newAddress);
-    event ProxyCreated(string id, address indexed newAddress);
-    event AddressSet(string id, address indexed newAddress, bool hasProxy);
+    event ProxyCreated(bytes32 id, address indexed newAddress);
+    event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
 
-    function setAddress(string memory id, address newAddress) external;
+    function setAddress(bytes32 id, address newAddress) external;
 
-    function setAddressAsProxy(string memory id, address impl) external;
+    function setAddressAsProxy(bytes32 id, address impl) external;
 
-    function getAddress(string memory id) external view returns (address);
+    function getAddress(bytes32 id) external view returns (address);
 
     function getMilton() external view returns (address);
 

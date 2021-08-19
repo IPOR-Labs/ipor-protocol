@@ -20,26 +20,26 @@ contract MiltonV1Storage {
     IMiltonAddressesManager internal _addressesManager;
 
     // @notice total derivative balances for every asset
-    mapping(string => uint256) public derivativesTotalBalances;
+    mapping(bytes32 => uint256) public derivativesTotalBalances;
 
     //@notice Opening Fee total balances for every asset;
-    mapping(string => uint256) public openingFeeTotalBalances;
+    mapping(bytes32 => uint256) public openingFeeTotalBalances;
 
     //@notice Liquidation Deposit total balances for every asset
-    mapping(string => uint256) public liquidationDepositTotalBalances;
+    mapping(bytes32 => uint256) public liquidationDepositTotalBalances;
 
     //@notice IPOR Publication Fee total balances for every asset
-    mapping(string => uint256) public iporPublicationFeeTotalBalances;
+    mapping(bytes32 => uint256) public iporPublicationFeeTotalBalances;
 
     //@notice Liquidity Pool total balances for every asset
-    mapping(string => uint256) public liquidityPoolTotalBalances;
+    mapping(bytes32 => uint256) public liquidityPoolTotalBalances;
 
     //TODO: treasury balance - tam trafia income tax
 
-    mapping(string => DataTypes.TotalSoapIndicator) public soapIndicators;
+    mapping(bytes32 => DataTypes.TotalSoapIndicator) public soapIndicators;
 
     //TODO: when spread is calculated in final way then consider remove this storage (maybe will be not needed)
-    mapping(string => DataTypes.TotalSpreadIndicator) public spreadIndicators;
+    mapping(bytes32 => DataTypes.TotalSpreadIndicator) public spreadIndicators;
 
     DataTypes.MiltonDerivatives public derivatives;
 

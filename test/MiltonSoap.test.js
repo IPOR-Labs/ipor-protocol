@@ -9,8 +9,9 @@ const UsdcMockedToken = artifacts.require('UsdcMockedToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
+const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
 
-contract('Milton', (accounts) => {
+contract('MiltonSoap', (accounts) => {
 
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
@@ -25,7 +26,7 @@ contract('Milton', (accounts) => {
     //10 000 000 USD
     let userSupply18Decimals = '10000000000000000000000000';
 
-    let amm = null;
+    let milton = null;
     let derivativeLogic = null;
     let soapIndicatorLogic = null;
     let totalSoapIndicatorLogic = null;
@@ -34,12 +35,15 @@ contract('Milton', (accounts) => {
     let tokenUsdc = null;
     let warren = null;
     let miltonConfiguration = null;
+    let miltonAddressesManager = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
+        miltonAddressesManager = await MiltonAddressesManager.deployed();
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON_CONFIGURATION"), miltonConfiguration.address);
     });
 
     beforeEach(async () => {
@@ -54,9 +58,7 @@ contract('Milton', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
-        amm = await TestMiltonV1Proxy.new(
-            miltonConfiguration.address,
-            warren.address, tokenUsdt.address, tokenUsdc.address, tokenDai.address);
+        milton = await TestMiltonV1Proxy.new(miltonAddressesManager.address);
 
         await warren.addUpdater(userOne);
 
@@ -67,11 +69,18 @@ contract('Milton', (accounts) => {
             await tokenDai.transfer(accounts[i], userSupply18Decimals);
 
             //AMM has rights to spend money on behalf of user
-            await tokenUsdt.approve(amm.address, totalSupply6Decimals, {from: accounts[i]});
+            await tokenUsdt.approve(milton.address, totalSupply6Decimals, {from: accounts[i]});
             //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
-            await tokenUsdc.approve(amm.address, totalSupply18Decimals, {from: accounts[i]});
-            await tokenDai.approve(amm.address, totalSupply18Decimals, {from: accounts[i]});
+            await tokenUsdc.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
+            await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
         }
+
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("WARREN"), warren.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON"), milton.address);
+
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDT"), tokenUsdt.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDC"), tokenUsdc.address);
+        await miltonAddressesManager.setAddress(web3.utils.fromAscii("DAI"), tokenDai.address);
 
     });
 
@@ -246,7 +255,7 @@ contract('Milton', (accounts) => {
         let endTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         let expectedSoap = testUtils.ZERO;
 
@@ -285,10 +294,10 @@ contract('Milton', (accounts) => {
         let endTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await amm.provideLiquidity(derivativeParams.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
+        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
 
         //when
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
 
         const soapParams = {
@@ -442,7 +451,7 @@ contract('Milton', (accounts) => {
         let endTimestamp = recFixDerivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
         let expectedSoap = BigInt("-270419178082191780821");
@@ -495,7 +504,7 @@ contract('Milton', (accounts) => {
         let endTimestamp = recFixDerivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
         let expectedSoap = BigInt("135209589041095890411");
@@ -548,12 +557,12 @@ contract('Milton', (accounts) => {
         await openPositionFunc(recFixDerivativeUSDCParams);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await amm.provideLiquidity(recFixDerivativeUSDCParams.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
+        await milton.provideLiquidity(recFixDerivativeUSDCParams.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
 
         let endTimestamp = recFixDerivativeUSDCParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
         let expectedSoap = BigInt("-270419178082191780821");
@@ -703,7 +712,7 @@ contract('Milton', (accounts) => {
     });
 
     const openPositionFunc = async (params) => {
-        await amm.test_openPosition(
+        await milton.test_openPosition(
             params.openTimestamp,
             params.asset,
             params.totalAmount,
@@ -722,7 +731,7 @@ contract('Milton', (accounts) => {
     }
 
     const calculateSoap = async (params) => {
-        return await amm.test_calculateSoap.call(params.asset, params.calculateTimestamp, {from: params.from});
+        return await milton.test_calculateSoap.call(params.asset, params.calculateTimestamp, {from: params.from});
     }
 
 });
