@@ -9,6 +9,7 @@ const UsdcMockedToken = artifacts.require('UsdcMockedToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
+const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
 
 contract('Milton', (accounts) => {
 
@@ -25,7 +26,7 @@ contract('Milton', (accounts) => {
     //10 000 000 USD
     let userSupply18Decimals = '10000000000000000000000000';
 
-    let amm = null;
+    let milton = null;
     let derivativeLogic = null;
     let soapIndicatorLogic = null;
     let totalSoapIndicatorLogic = null;
@@ -34,12 +35,16 @@ contract('Milton', (accounts) => {
     let tokenUsdc = null;
     let warren = null;
     let miltonConfiguration = null;
+    let miltonAddressesManager = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
+        miltonAddressesManager = await MiltonAddressesManager.deployed();
+        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfiguration.address);
+
     });
 
     beforeEach(async () => {
@@ -54,9 +59,8 @@ contract('Milton', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
-        amm = await TestMiltonV1Proxy.new(
-            miltonConfiguration.address,
-            warren.address, tokenUsdt.address, tokenUsdc.address, tokenDai.address);
+
+        milton = await TestMiltonV1Proxy.new(miltonAddressesManager.address);
 
         await warren.addUpdater(userOne);
 
@@ -67,11 +71,18 @@ contract('Milton', (accounts) => {
             await tokenDai.transfer(accounts[i], userSupply18Decimals);
 
             //AMM has rights to spend money on behalf of user
-            await tokenUsdt.approve(amm.address, totalSupply6Decimals, {from: accounts[i]});
+            await tokenUsdt.approve(milton.address, totalSupply6Decimals, {from: accounts[i]});
             //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
-            await tokenUsdc.approve(amm.address, totalSupply18Decimals, {from: accounts[i]});
-            await tokenDai.approve(amm.address, totalSupply18Decimals, {from: accounts[i]});
+            await tokenUsdc.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
+            await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
         }
+
+        await miltonAddressesManager.setAddress("WARREN", warren.address);
+        await miltonAddressesManager.setAddress("MILTON", milton.address);
+
+        await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
+        await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
+        await miltonAddressesManager.setAddress("DAI", tokenDai.address);
 
     });
 
@@ -85,7 +96,7 @@ contract('Milton', (accounts) => {
 
         await testUtils.assertError(
             //when
-            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+            milton.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'IPOR_4'
         );
@@ -102,7 +113,7 @@ contract('Milton', (accounts) => {
 
         await testUtils.assertError(
             //when
-            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+            milton.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'IPOR_5'
         );
@@ -120,7 +131,7 @@ contract('Milton', (accounts) => {
 
         await testUtils.assertError(
             //when
-            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+            milton.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'IPOR_9'
         );
@@ -136,7 +147,7 @@ contract('Milton', (accounts) => {
 
         await testUtils.assertError(
             //when
-            amm.openPosition(asset, depositAmount, slippageValue, leverage, direction),
+            milton.openPosition(asset, depositAmount, slippageValue, leverage, direction),
             //then
             'IPOR_10'
         );
@@ -156,7 +167,7 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
         //when
-        await amm.openPosition(
+        await milton.openPosition(
             params.asset, params.totalAmount,
             params.slippageValue, params.leverage,
             params.direction, {from: userTwo});
@@ -179,7 +190,7 @@ contract('Milton', (accounts) => {
             BigInt("0")
         );
 
-        const actualDerivativesTotalBalance = BigInt(await amm.derivativesTotalBalances(params.asset));
+        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(params.asset));
 
         assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
             `Incorrect derivatives total balance for ${params.asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
@@ -237,7 +248,7 @@ contract('Milton', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            amm.test_closePosition(1, closePositionTimestamp, {from: userTwo}),
+            milton.test_closePosition(1, closePositionTimestamp, {from: userTwo}),
             //then
             'IPOR_14'
         );
@@ -360,12 +371,12 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, testUtils.MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
         let endTimestamp = params.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
         await warren.test_updateIndex(params.asset, testUtils.MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
-        await amm.provideLiquidity(params.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider})
+        await milton.provideLiquidity(params.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
         await testUtils.assertError(
             //when
-            amm.test_closePosition(1, endTimestamp, {from: userThree}),
+            milton.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -424,12 +435,12 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, testUtils.MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         let endTimestamp = params.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
         await warren.test_updateIndex(params.asset, testUtils.MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
-        await amm.provideLiquidity(params.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider})
+        await milton.provideLiquidity(params.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
         await testUtils.assertError(
             //when
-            amm.test_closePosition(1, endTimestamp, {from: userThree}),
+            milton.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -598,7 +609,7 @@ contract('Milton', (accounts) => {
         //given
         const params = {
             asset: "DAI",
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: MILTON_10_000_USD,
             slippageValue: 3,
             leverage: 10,
             direction: 1,
@@ -611,12 +622,12 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, testUtils.MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         let endTimestamp = params.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
         await warren.test_updateIndex(params.asset, testUtils.MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
-        await amm.provideLiquidity(params.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider})
+        await milton.provideLiquidity(params.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider})
 
         //when
         await testUtils.assertError(
             //when
-            amm.test_closePosition(1, endTimestamp, {from: userThree}),
+            milton.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -654,7 +665,7 @@ contract('Milton', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            amm.test_closePosition(1, endTimestamp, {from: userThree}),
+            milton.test_closePosition(1, endTimestamp, {from: userThree}),
             //then
             'IPOR_16');
     });
@@ -721,7 +732,6 @@ contract('Milton', (accounts) => {
     });
 
 
-
     it('should NOT close position, because incorrect derivative Id', async () => {
         //given
         let direction = 0;
@@ -744,7 +754,7 @@ contract('Milton', (accounts) => {
 
         await testUtils.assertError(
             //when
-            amm.test_closePosition(0, openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: closerUserAddress}),
+            milton.test_closePosition(0, openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: closerUserAddress}),
             //then
             'IPOR_22'
         );
@@ -783,11 +793,11 @@ contract('Milton', (accounts) => {
 
         let endTimestamp = openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS
 
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress})
+        await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress})
 
         await testUtils.assertError(
             //when
-            amm.test_closePosition(1, endTimestamp, {from: closerUserAddress}),
+            milton.test_closePosition(1, endTimestamp, {from: closerUserAddress}),
             //then
             'IPOR_23'
         );
@@ -829,10 +839,10 @@ contract('Milton', (accounts) => {
         let expectedDerivativeId = BigInt(2);
 
         //when
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
-        let actualDerivatives = await amm.getPositions();
+        let actualDerivatives = await milton.getPositions();
         let actualOpenedPositionsVol = countOpenPositions(actualDerivatives);
 
         assert(expectedOpenedPositionsVol === actualOpenedPositionsVol,
@@ -879,10 +889,10 @@ contract('Milton', (accounts) => {
         let expectedDerivativeId = BigInt(1);
 
         //when
-        await amm.test_closePosition(2, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let actualDerivatives = await amm.getPositions();
+        let actualDerivatives = await milton.getPositions();
         let actualOpenedPositionsVol = countOpenPositions(actualDerivatives);
 
         assert(expectedOpenedPositionsVol === actualOpenedPositionsVol,
@@ -925,8 +935,8 @@ contract('Milton', (accounts) => {
 
 
         //then
-        let actualUserDerivativeIds = await amm.getUserDerivativeIds(openerUserAddress);
-        let actualDerivativeIds = await amm.getDerivativeIds();
+        let actualUserDerivativeIds = await milton.getUserDerivativeIds(openerUserAddress);
+        let actualDerivativeIds = await milton.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLength === actualUserDerivativeIds.length,
@@ -972,9 +982,9 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParams);
 
         //then
-        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userThree);
-        let actualDerivativeIds = await amm.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userThree);
+        let actualDerivativeIds = await milton.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1022,12 +1032,12 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParams);
 
         //when
-        await amm.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
 
         //then
-        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userThree);
-        let actualDerivativeIds = await amm.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userThree);
+        let actualDerivativeIds = await milton.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1073,13 +1083,13 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParams);
 
         //when
-        await amm.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
-        await amm.test_closePosition(3, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userTwo});
+        await milton.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(3, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userTwo});
 
         //then
-        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userThree);
-        let actualDerivativeIds = await amm.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userThree);
+        let actualDerivativeIds = await milton.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1122,14 +1132,14 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParams);
 
         //when
-        await amm.test_closePosition(1, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
-        await amm.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(1, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
 
 
         //then
-        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userTwo);
-        let actualDerivativeIds = await amm.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await milton.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1167,18 +1177,18 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParams);
 
         //position 2, user second
-        derivativeParams.openTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS-3;
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS - 3;
         await openPositionFunc(derivativeParams);
 
         //when
-        await amm.test_closePosition(1, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
-        await amm.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(1, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
 
 
         //then
-        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userTwo);
-        let actualDerivativeIds = await amm.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await milton.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1223,16 +1233,16 @@ contract('Milton', (accounts) => {
         derivativeParams.direction = 0;
         await openPositionFunc(derivativeParams);
 
-        await amm.test_closePosition(1, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(1, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
 
         //when
-        await amm.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
+        await milton.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS, {from: userThree});
 
 
         //then
-        let actualUserDerivativeIdsFirst = await amm.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await amm.getUserDerivativeIds(userTwo);
-        let actualDerivativeIds = await amm.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await milton.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1268,14 +1278,17 @@ contract('Milton', (accounts) => {
     //TODO: sprawdz w JS czy otworzenie nowej PIERWSZEJ derywatywy poprawnie wylicza SoapIndicator, hypotheticalInterestCumulative powinno być nadal testUtils.ZERO
     //TODO: sprawdz w JS czy otworzenej KOLEJNEJ derywatywy poprawnie wylicza SoapIndicator
 
-    //TODO: add test which checks emited events
+    //TODO: add test which checks emited events!!!
+    //TODO: dopisać test zmiany na przykład adresu warrena i sprawdzenia czy widzi to milton
+    //TODO: dopisac test zmiany adresu usdt i sprawdzenia czy widzi to milton
+
 
     const calculateSoap = async (params) => {
-        return await amm.test_calculateSoap.call(params.asset, params.calculateTimestamp, {from: params.from});
+        return await milton.test_calculateSoap.call(params.asset, params.calculateTimestamp, {from: params.from});
     }
 
     const openPositionFunc = async (params) => {
-        await amm.test_openPosition(
+        await milton.test_openPosition(
             params.openTimestamp,
             params.asset,
             params.totalAmount,
@@ -1299,7 +1312,7 @@ contract('Milton', (accounts) => {
         expectedIdsIndex,
         expectedUserDerivativeIdsIndex
     ) => {
-        let actualDerivativeItem = await amm.getDerivativeItem(derivativeId);
+        let actualDerivativeItem = await milton.getDerivativeItem(derivativeId);
         assert(BigInt(expectedIdsIndex) === BigInt(actualDerivativeItem.idsIndex),
             `Incorrect idsIndex for derivative id ${actualDerivativeItem.item.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedIdsIndex}`);
         assert(BigInt(expectedUserDerivativeIdsIndex) === BigInt(actualDerivativeItem.userDerivativeIdsIndex),
@@ -1312,7 +1325,7 @@ contract('Milton', (accounts) => {
         expectedDerivative
     ) => {
 
-        let actualDerivative = await amm.getOpenPosition(derivativeId);
+        let actualDerivative = await milton.getOpenPosition(derivativeId);
 
         assertDerivativeItem('ID', expectedDerivative.id, actualDerivative.id);
         assertDerivativeItem('State', expectedDerivative.state, actualDerivative.state);
@@ -1357,7 +1370,7 @@ contract('Milton', (accounts) => {
     ) {
         //given
         const params = {
-            asset: "DAI",
+            asset: asset,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             leverage: 10,
@@ -1375,11 +1388,11 @@ contract('Milton', (accounts) => {
 
         if (providedLiquidityAmount != null) {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
-            await amm.provideLiquidity(params.asset, providedLiquidityAmount, {from: liquidityProvider})
+            await milton.provideLiquidity(params.asset, providedLiquidityAmount, {from: liquidityProvider})
         }
 
         //when
-        await amm.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+        await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
         await assertExpectedValues(
@@ -1418,7 +1431,7 @@ contract('Milton', (accounts) => {
         expectedDerivativesTotalBalance,
         expectedLiquidationDepositFeeTotalBalance
     ) {
-        let actualDerivatives = await amm.getPositions();
+        let actualDerivatives = await milton.getPositions();
         let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
         assert(expectedOpenedPositions === actualOpenPositionsVol,
             `Incorrect number of opened derivatives ${actualOpenPositionsVol}, expected ${expectedOpenedPositions}`)
@@ -1444,7 +1457,7 @@ contract('Milton', (accounts) => {
         let closerUserTokenBalanceBeforePayout = testUtils.MILTON_10_000_000_USD;
 
 
-        const ammTokenBalanceAfterPayout = BigInt(await tokenDai.balanceOf(amm.address));
+        const ammTokenBalanceAfterPayout = BigInt(await tokenDai.balanceOf(milton.address));
         const openerUserTokenBalanceAfterPayout = BigInt(await tokenDai.balanceOf(openerUserAddress));
         const closerUserTokenBalanceAfterPayout = BigInt(await tokenDai.balanceOf(closerUserAddress));
 
@@ -1497,12 +1510,12 @@ contract('Milton', (accounts) => {
             actualCloserUserTokenBalance = BigInt(await tokenDai.balanceOf(closerUserAddress));
         }
 
-        const actualAMMTokenBalance = BigInt(await amm.getTotalSupply(asset));
-        const actualDerivativesTotalBalance = BigInt(await amm.derivativesTotalBalances(asset));
-        const actualOpeningFeeTotalBalance = BigInt(await amm.openingFeeTotalBalances(asset));
-        const actualLiquidationDepositFeeTotalBalance = BigInt(await amm.liquidationDepositTotalBalances(asset));
-        const actualPublicationFeeTotalBalance = BigInt(await amm.iporPublicationFeeTotalBalances(asset));
-        const actualLiquidityPoolTotalBalance = BigInt(await amm.liquidityPoolTotalBalances(asset));
+        const actualAMMTokenBalance = BigInt(await milton.getTotalSupply(asset));
+        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(asset));
+        const actualOpeningFeeTotalBalance = BigInt(await milton.openingFeeTotalBalances(asset));
+        const actualLiquidationDepositFeeTotalBalance = BigInt(await milton.liquidationDepositTotalBalances(asset));
+        const actualPublicationFeeTotalBalance = BigInt(await milton.iporPublicationFeeTotalBalances(asset));
+        const actualLiquidityPoolTotalBalance = BigInt(await milton.liquidityPoolTotalBalances(asset));
 
         if (expectedAMMTokenBalance !== null) {
             assert(actualAMMTokenBalance === expectedAMMTokenBalance,

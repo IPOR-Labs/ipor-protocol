@@ -136,7 +136,7 @@ contract('Milton', (accounts) => {
 
         const derivativeParams = {
             asset: "DAI",
-            totalAmount: MILTON_10_000_USD,
+            totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             leverage: 10,
             direction: direction,

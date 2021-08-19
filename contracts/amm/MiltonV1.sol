@@ -31,23 +31,15 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
-    IWarren public warren;
     IMiltonConfiguration public miltonConfiguration;
 
     //@notice percentage of deposit amount
     uint256 constant SPREAD_FEE_PERCENTAGE = 1e16;
 
     constructor(
-        address miltonConfigurationAddress,
-        address warrenAddr,
-        address usdtToken, address usdcToken, address daiToken) {
-
-        miltonConfiguration = IMiltonConfiguration(miltonConfigurationAddress);
-        warren = IWarren(warrenAddr);
-
-        tokens["USDT"] = usdtToken;
-        tokens["USDC"] = usdcToken;
-        tokens["DAI"] = daiToken;
+        IMiltonAddressesManager addressesManager) {
+        _addressesManager = addressesManager;
+        miltonConfiguration = IMiltonConfiguration(addressesManager.getMiltonConfiguration());
 
         uint256 blockTimestamp = block.timestamp;
 
@@ -121,7 +113,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     function _calculateQuasiSoap(
         string memory asset,
         uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
-        (, uint256 ibtPrice,) = warren.getIndex(asset);
+        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(asset);
         (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateQuasiSoap(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
@@ -156,9 +148,9 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         require(totalAmount <= 1e24, Errors.AMM_TOTAL_AMOUNT_TOO_HIGH);
         require(maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(maximumSlippage <= 1e20, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_HIGH);
-        require(tokens[asset] != address(0), Errors.AMM_LIQUIDITY_POOL_NOT_EXISTS);
+        require(_addressesManager.getAddress(asset) != address(0), Errors.AMM_LIQUIDITY_POOL_NOT_EXISTS);
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.AMM_DERIVATIVE_DIRECTION_NOT_EXISTS);
-        require(IERC20(tokens[asset]).balanceOf(msg.sender) >= totalAmount, Errors.AMM_ASSET_BALANCE_OF_TOO_LOW);
+        require(IERC20(_addressesManager.getAddress(asset)).balanceOf(msg.sender) >= totalAmount, Errors.AMM_ASSET_BALANCE_OF_TOO_LOW);
 
         //TODO verify if this opened derivatives is closable based on liquidity pool
         //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
@@ -216,7 +208,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         //TODO: Use OpenZeppelin’s SafeERC20 wrappers.
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        IERC20(tokens[asset]).transferFrom(msg.sender, address(this), totalAmount);
+        IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
 
@@ -286,7 +278,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
     function _calculateDerivativeIndicators(string memory asset, uint8 direction, uint256 notionalAmount)
     internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
-        (uint256 iporIndexValue, uint256  ibtPrice,) = warren.getIndex(asset);
+        (uint256 iporIndexValue, uint256  ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(asset);
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             iporIndexValue,
             ibtPrice,
@@ -300,7 +292,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
         _updateMiltonDerivativesWhenClosePosition(derivativeId);
 
-        (, uint256 ibtPrice,) = warren.getIndex(derivatives.items[derivativeId].item.asset);
+        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(derivatives.items[derivativeId].item.asset);
 
         DataTypes.IporDerivativeInterest memory derivativeInterest =
         derivatives.items[derivativeId].item.calculateInterest(closeTimestamp, ibtPrice);
@@ -324,7 +316,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
         emit TotalBalances(
             derivatives.items[derivativeId].item.asset,
-            IERC20(tokens[derivatives.items[derivativeId].item.asset]).balanceOf(address(this)),
+            IERC20(_addressesManager.getAddress(derivatives.items[derivativeId].item.asset)).balanceOf(address(this)),
             derivativesTotalBalances[derivatives.items[derivativeId].item.asset],
             openingFeeTotalBalances[derivatives.items[derivativeId].item.asset],
             liquidationDepositTotalBalances[derivatives.items[derivativeId].item.asset],
@@ -396,7 +388,8 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
                 //TODO: take into consideration token decimals!!!
 
-                IERC20(tokens[derivatives.items[derivativeId].item.asset]).transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
+                IERC20(_addressesManager.getAddress(derivatives.items[derivativeId].item.asset))
+                .transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
             } else {
                 // |I| <= D
 
@@ -424,34 +417,34 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         } else {
             //transfer liquidation deposit to sender
             //TODO: take into consideration token decimals!!!
-            IERC20(tokens[derivatives.items[derivativeId].item.asset]).transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
+            IERC20(_addressesManager.getAddress(derivatives.items[derivativeId].item.asset)).transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
         }
 
         //transfer from AMM to buyer
         //TODO: take into consideration token decimals!!!
-        IERC20(tokens[derivatives.items[derivativeId].item.asset]).transfer(derivatives.items[derivativeId].item.buyer, transferAmount);
+        IERC20(_addressesManager.getAddress(derivatives.items[derivativeId].item.asset)).transfer(derivatives.items[derivativeId].item.buyer, transferAmount);
     }
 
     function provideLiquidity(string memory asset, uint256 liquidityAmount) public {
         liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + liquidityAmount;
         //TODO: take into consideration token decimals!!!
-        IERC20(tokens[asset]).transferFrom(msg.sender, address(this), liquidityAmount);
+        IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), liquidityAmount);
     }
 
     //@notice FOR FRONTEND
     function getTotalSupply(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(tokens[asset]);
+        IERC20 token = IERC20(_addressesManager.getAddress(asset));
         return token.balanceOf(address(this));
     }
     //@notice FOR FRONTEND
     function getMyTotalSupply(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(tokens[asset]);
+        IERC20 token = IERC20(_addressesManager.getAddress(asset));
         return token.balanceOf(msg.sender);
     }
     //@notice FOR FRONTEND
     //TODO: use ERC20 directly
     function getMyAllowance(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(tokens[asset]);
+        IERC20 token = IERC20(_addressesManager.getAddress(asset));
         return token.allowance(msg.sender, address(this));
     }
 
@@ -474,5 +467,17 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     modifier onlyActiveDerivative(uint256 derivativeId) {
         require(derivatives.items[derivativeId].item.state == DataTypes.DerivativeState.ACTIVE, Errors.AMM_DERIVATIVE_IS_INACTIVE);
         _;
+    }
+
+    //TODO: temporary solution
+    function stringToBytes32(string memory source) public pure returns (bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+
+        assembly {
+            result := mload(add(source, 32))
+        }
     }
 }

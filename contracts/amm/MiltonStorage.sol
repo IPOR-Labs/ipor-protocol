@@ -9,6 +9,7 @@ import "../libraries/DerivativesView.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/types/DataTypes.sol";
+import "../interfaces/IMiltonAddressesManager.sol";
 
 /**
  * @title Ipor AMM Storage initial version 1
@@ -16,8 +17,7 @@ import "../libraries/types/DataTypes.sol";
  */
 contract MiltonV1Storage {
 
-    // @notice Map of available Liquidity Pools, key in this map are underlying asset symbol
-    mapping(string => address) public tokens;
+    IMiltonAddressesManager internal _addressesManager;
 
     // @notice total derivative balances for every asset
     mapping(string => uint256) public derivativesTotalBalances;

@@ -5,7 +5,7 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-//TODO: clarify if better is to have external libraries in local folder
+//TODO: clarify if better is to have external libraries in local folder - pros for local folder - can execute Mythril and Karl static analisys
 import '@openzeppelin/contracts/access/Ownable.sol';
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
@@ -18,6 +18,7 @@ import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 
+//TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
 contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 incomeTaxPercentage;
@@ -57,8 +58,6 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
 
     }
-
-    //TODO: dodaj walidacje przy setach
 
     function getIncomeTaxPercentage() external override view returns (uint256) {
         return incomeTaxPercentage;

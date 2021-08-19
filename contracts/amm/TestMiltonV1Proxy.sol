@@ -5,13 +5,7 @@ import "./MiltonV1.sol";
 
 contract TestMiltonV1Proxy is MiltonV1 {
 
-    constructor(
-        address miltonConfigurationAddress,
-        address warrenAddr,
-        address usdtToken,
-        address usdcToken,
-        address daiToken) MiltonV1(miltonConfigurationAddress, warrenAddr, usdtToken, usdcToken, daiToken) {
-    }
+    constructor(IMiltonAddressesManager addressesManager) MiltonV1(addressesManager) {}
 
     function test_openPosition(
         uint256 openTimestamp,

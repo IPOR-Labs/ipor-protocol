@@ -15,6 +15,8 @@ const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const DerivativesView = artifacts.require('DerivativesView');
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const AmmMath = artifacts.require('AmmMath');
+const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
+
 
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
@@ -46,6 +48,7 @@ module.exports = async function (deployer, _network, addresses) {
     let mockedTusd = null;
     let miltonFaucet = null;
     let miltonConfiguration = null;
+    let miltonAddressesManager = null;
 
     await deployer.link(AmmMath, DerivativeLogic);
     await deployer.deploy(DerivativeLogic);
@@ -66,6 +69,14 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(MiltonConfiguration);
     miltonConfiguration = await MiltonConfiguration.deployed();
+
+    await deployer.deploy(MiltonAddressesManager);
+    miltonAddressesManager = await MiltonAddressesManager.deployed();
+
+
+
+
+
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
@@ -102,7 +113,17 @@ module.exports = async function (deployer, _network, addresses) {
     let milton = null;
 
     if (_network !== 'test') {
-        milton = await deployer.deploy(MiltonV1, miltonConfiguration.address, warren.address, mockedUsdt.address, mockedUsdc.address, mockedDai.address);
+        milton = await deployer.deploy(MiltonV1, miltonAddressesManager.address);
+        milton = await MiltonV1.deployed();
+
+        //initial addresses setup
+        miltonAddressesManager.setAddress('WARREN', warren.address);
+        miltonAddressesManager.setAddress('MILTON', milton.address);
+        miltonAddressesManager.setAddress('MILTON_CONFIGURATION', miltonConfiguration.address);
+
+        miltonAddressesManager.setAddress('USDT', mockedUsdt.address);
+        miltonAddressesManager.setAddress('USDC', mockedUsdc.address);
+        miltonAddressesManager.setAddress('DAI', mockedDai.address);
     } else {
         await deployer.link(AmmMath, TestWarrenProxy);
         await deployer.link(IporLogic, TestWarrenProxy);
