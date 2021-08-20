@@ -49,7 +49,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getTotalSupply"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -64,7 +64,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getTotalSupply"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -79,7 +79,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getTotalSupply"
                         methodArgs={["DAI"]}
                         render={(value) => (
@@ -106,7 +106,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getMyAllowance"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -128,7 +128,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getMyAllowance"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -150,7 +150,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getMyAllowance"
                         methodArgs={["DAI"]}
                         render={(value) => (
@@ -184,7 +184,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -199,7 +199,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -214,7 +214,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
                         methodArgs={["DAI"]}
                         render={(value) => (

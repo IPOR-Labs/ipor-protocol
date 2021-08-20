@@ -15,6 +15,7 @@ contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
     bytes32 private constant MILTON = 'MILTON';
     bytes32 private constant MILTON_CONFIGURATION = 'MILTON_CONFIGURATION';
 
+
     function setAddressAsProxy(bytes32 id, address implementationAddress)
     external
     override

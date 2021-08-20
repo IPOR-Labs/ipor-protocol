@@ -16,6 +16,7 @@ const DerivativesView = artifacts.require('DerivativesView');
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const AmmMath = artifacts.require('AmmMath');
 const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
+const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 
 
 module.exports = async function (deployer, _network, addresses) {
@@ -74,10 +75,6 @@ module.exports = async function (deployer, _network, addresses) {
     miltonAddressesManager = await MiltonAddressesManager.deployed();
 
 
-
-
-
-
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
         await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
@@ -99,7 +96,10 @@ module.exports = async function (deployer, _network, addresses) {
             mockedTusd.address);
         miltonFaucet = await MiltonFaucet.deployed();
 
-        miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"})
+        miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
+
+
+        await deployer.deploy(MiltonDevToolDataProvider);
     }
 
     if (_network == 'develop2' || _network === 'docker') {

@@ -5,6 +5,7 @@ import MiltonConfiguration from "./contracts/MiltonConfiguration";
 import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
+import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 
 const options = {
     web3: {
@@ -14,7 +15,15 @@ const options = {
         },
     },
 
-    contracts: [Warren, MiltonV1, MiltonConfiguration, DaiMockedToken, UsdtMockedToken, UsdcMockedToken, MiltonFaucet],
+    contracts: [
+        MiltonDevToolDataProvider,
+        Warren,
+        MiltonV1,
+        MiltonConfiguration,
+        DaiMockedToken,
+        UsdtMockedToken,
+        UsdcMockedToken,
+        MiltonFaucet],
     events: {
         Warren: ["IporIndexUpdate"],
 

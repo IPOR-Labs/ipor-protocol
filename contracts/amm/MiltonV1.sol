@@ -17,13 +17,14 @@ import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IMilton.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
  * @author IPOR Labs
  */
-contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
+contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
 
     using DerivativeLogic for DataTypes.IporDerivative;
     using SoapIndicatorLogic for DataTypes.SoapIndicator;
@@ -113,7 +114,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     function _calculateQuasiSoap(
         bytes32 asset,
         uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
-        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(bytes32ToString(asset));
+        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(DataTypes.bytes32ToString(asset));
         (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateQuasiSoap(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
@@ -124,7 +125,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         uint256 maximumSlippage,
         uint8 leverage,
         uint8 direction) public returns (uint256){
-        return _openPosition(block.timestamp, stringToBytes32(asset), totalAmount, maximumSlippage, leverage, direction);
+        return _openPosition(block.timestamp, DataTypes.stringToBytes32(asset), totalAmount, maximumSlippage, leverage, direction);
     }
 
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) public {
@@ -256,7 +257,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         emit OpenPosition(
             iporDerivative.id,
             iporDerivative.buyer,
-                bytes32ToString(iporDerivative.asset),
+            DataTypes.bytes32ToString(iporDerivative.asset),
             DataTypes.DerivativeDirection(iporDerivative.direction),
             iporDerivative.depositAmount,
             iporDerivative.fee,
@@ -278,7 +279,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
     function _calculateDerivativeIndicators(bytes32 asset, uint8 direction, uint256 notionalAmount)
     internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
-        (uint256 iporIndexValue, uint256  ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(bytes32ToString(asset));
+        (uint256 iporIndexValue, uint256  ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(DataTypes.bytes32ToString(asset));
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             iporIndexValue,
             ibtPrice,
@@ -292,7 +293,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
 
         _updateMiltonDerivativesWhenClosePosition(derivativeId);
 
-        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(bytes32ToString(derivatives.items[derivativeId].item.asset));
+        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(DataTypes.bytes32ToString(derivatives.items[derivativeId].item.asset));
 
         DataTypes.IporDerivativeInterest memory derivativeInterest =
         derivatives.items[derivativeId].item.calculateInterest(closeTimestamp, ibtPrice);
@@ -426,42 +427,17 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
     }
 
     function provideLiquidity(string memory asset, uint256 liquidityAmount) public {
-        liquidityPoolTotalBalances[stringToBytes32(asset)] = liquidityPoolTotalBalances[stringToBytes32(asset)] + liquidityAmount;
+        liquidityPoolTotalBalances[DataTypes.stringToBytes32(asset)] = liquidityPoolTotalBalances[DataTypes.stringToBytes32(asset)] + liquidityAmount;
         //TODO: take into consideration token decimals!!!
-        IERC20(_addressesManager.getAddress(stringToBytes32(asset))).transferFrom(msg.sender, address(this), liquidityAmount);
+        IERC20(_addressesManager.getAddress(DataTypes.stringToBytes32(asset))).transferFrom(msg.sender, address(this), liquidityAmount);
     }
 
-    //@notice FOR FRONTEND
-    function getTotalSupply(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(_addressesManager.getAddress(stringToBytes32(asset)));
-        return token.balanceOf(address(this));
-    }
-    //@notice FOR FRONTEND
-    function getMyTotalSupply(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(_addressesManager.getAddress(stringToBytes32(asset)));
-        return token.balanceOf(msg.sender);
-    }
-    //@notice FOR FRONTEND
-    //TODO: use ERC20 directly
-    function getMyAllowance(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(_addressesManager.getAddress(stringToBytes32(asset)));
-        return token.allowance(msg.sender, address(this));
-    }
-
-    //@notice FOR TEST
-    function getOpenPosition(uint256 derivativeId) external view returns (DataTypes.IporDerivative memory) {
-        return derivatives.items[derivativeId].item;
-    }
-
-    //@notice FOR FRONTEND
-    function getPositions() external view returns (DataTypes.IporDerivative[] memory) {
-        //TODO: fix it, looks bad, DoS, possible out of gas
+    function getPositions() external view override returns (DataTypes.IporDerivative[] memory) {
         return derivatives.getPositions();
     }
 
-    //@notice FOR FRONTEND
-    function getMyPositions() external view returns (DataTypes.IporDerivative[] memory items) {
-        return derivatives.getUserPositions(msg.sender);
+    function getUserPositions(address user) external view override returns (DataTypes.IporDerivative[] memory) {
+        return derivatives.getUserPositions(user);
     }
 
     modifier onlyActiveDerivative(uint256 derivativeId) {
@@ -469,27 +445,4 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events {
         _;
     }
 
-    //TODO: temporary solution
-    function stringToBytes32(string memory source) public pure returns (bytes32 result) {
-        bytes memory tempEmptyStringTest = bytes(source);
-        if (tempEmptyStringTest.length == 0) {
-            return 0x0;
-        }
-
-        assembly {
-            result := mload(add(source, 32))
-        }
-    }
-
-    function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
-        uint8 i = 0;
-        while(i < 32 && _bytes32[i] != 0) {
-            i++;
-        }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
-            bytesArray[i] = _bytes32[i];
-        }
-        return string(bytesArray);
-    }
 }
