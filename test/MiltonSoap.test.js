@@ -43,7 +43,7 @@ contract('MiltonSoap', (accounts) => {
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
         miltonAddressesManager = await MiltonAddressesManager.deployed();
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON_CONFIGURATION"), miltonConfiguration.address);
+        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfiguration.address);
     });
 
     beforeEach(async () => {
@@ -75,12 +75,12 @@ contract('MiltonSoap', (accounts) => {
             await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
         }
 
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("WARREN"), warren.address);
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON"), milton.address);
+        await miltonAddressesManager.setAddress("WARREN", warren.address);
+        await miltonAddressesManager.setAddress("MILTON", milton.address);
 
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDT"), tokenUsdt.address);
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDC"), tokenUsdc.address);
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("DAI"), tokenDai.address);
+        await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
+        await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
+        await miltonAddressesManager.setAddress("DAI", tokenDai.address);
 
     });
 

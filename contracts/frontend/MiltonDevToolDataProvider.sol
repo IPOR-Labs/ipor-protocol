@@ -6,43 +6,40 @@ import "../interfaces/IMiltonAddressesManager.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
 
-//dostarczyciel danych dla frontu
 contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 
     IMiltonAddressesManager public immutable ADDRESSES_MANAGER;
-    IMilton internal milton;
 
     constructor(IMiltonAddressesManager addressesManager) {
         ADDRESSES_MANAGER = addressesManager;
-        milton = IMilton(addressesManager.getMilton());
     }
 
-    //@notice FOR FRONTEND
-    function getTotalSupply(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(DataTypes.stringToBytes32(asset)));
-        return token.balanceOf(address(this));
+    function getTokenAddress(string memory asset) external override view returns(address) {
+        return ADDRESSES_MANAGER.getAddress(asset);
     }
-    //@notice FOR FRONTEND
-    function getMyTotalSupply(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(DataTypes.stringToBytes32(asset)));
+
+    function getMiltonTotalSupply(string memory asset) external override view returns (uint256) {
+        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(asset));
+        return token.balanceOf(ADDRESSES_MANAGER.getMilton());
+    }
+
+    function getMyTotalSupply(string memory asset) external override view returns (uint256) {
+        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(asset));
         return token.balanceOf(msg.sender);
     }
-    //@notice FOR FRONTEND
-    //TODO: use ERC20 directly
-    function getMyAllowance(string memory asset) external view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(DataTypes.stringToBytes32(asset)));
-        return token.allowance(msg.sender, address(this));
+
+    function getMyAllowance(string memory asset) external override view returns (uint256) {
+        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(asset));
+        return token.allowance(msg.sender, ADDRESSES_MANAGER.getMilton());
     }
 
-    //@notice FOR FRONTEND
-    function getPositions() external view returns (DataTypes.IporDerivative[] memory) {
+    function getPositions() external override view returns (DataTypes.IporDerivative[] memory) {
         //TODO: fix it, looks bad, DoS, possible out of gas
-        return milton.getPositions();
+        return IMilton(ADDRESSES_MANAGER.getMilton()).getPositions();
     }
 
-    //@notice FOR FRONTEND
-    function getMyPositions() external view returns (DataTypes.IporDerivative[] memory items) {
-        return milton.getUserPositions(msg.sender);
+    function getMyPositions() external override view returns (DataTypes.IporDerivative[] memory items) {
+        return IMilton(ADDRESSES_MANAGER.getMilton()).getUserPositions(msg.sender);
     }
 
     //@notice FOR TEST ONLY

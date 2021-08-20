@@ -14,7 +14,7 @@ contract TestMiltonV1Proxy is MiltonV1 {
         uint256 maximumSlippage,
         uint8 leverage,
         uint8 direction) public returns (uint256) {
-        return _openPosition(openTimestamp, DataTypes.stringToBytes32(asset), totalAmount, maximumSlippage, leverage, direction);
+        return _openPosition(openTimestamp, asset, totalAmount, maximumSlippage, leverage, direction);
     }
 
     function test_closePosition(uint256 derivativeId, uint256 closeTimestamp) public {
@@ -24,13 +24,13 @@ contract TestMiltonV1Proxy is MiltonV1 {
     function test_calculateSoap(
         string memory asset,
         uint256 calculateTimestamp) public view returns (int256 soapPf, int256 soapRf, int256 soap){
-        return _calculateSoap(DataTypes.stringToBytes32(asset), calculateTimestamp);
+        return _calculateSoap(asset, calculateTimestamp);
     }
 
     function test_calculateSpread(
         string memory asset,
         uint256 calculateTimestamp) public view returns (uint256 spreadPf, uint256 spreadRf){
-        return _calculateSpread(DataTypes.stringToBytes32(asset), calculateTimestamp);
+        return _calculateSpread(asset, calculateTimestamp);
     }
 
     function getUserDerivativeIds(address userAddress) public view returns (uint256[] memory) {

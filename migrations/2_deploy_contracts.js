@@ -94,12 +94,13 @@ module.exports = async function (deployer, _network, addresses) {
             mockedUsdc.address,
             mockedDai.address,
             mockedTusd.address);
+
         miltonFaucet = await MiltonFaucet.deployed();
 
         miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
 
 
-        await deployer.deploy(MiltonDevToolDataProvider);
+        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManager.address);
     }
 
     if (_network == 'develop2' || _network === 'docker') {
@@ -133,6 +134,7 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(TotalSoapIndicatorLogic, TestMiltonV1Proxy);
         await deployer.link(DerivativesView, TestMiltonV1Proxy);
         await deployer.link(AmmMath, TestMiltonV1Proxy);
+        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManager.address);
     }
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {

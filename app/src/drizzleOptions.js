@@ -6,6 +6,7 @@ import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
+import MiltonAddressesManager from "./contracts/MiltonAddressesManager";
 
 const options = {
     web3: {
@@ -17,6 +18,7 @@ const options = {
 
     contracts: [
         MiltonDevToolDataProvider,
+        MiltonAddressesManager,
         Warren,
         MiltonV1,
         MiltonConfiguration,

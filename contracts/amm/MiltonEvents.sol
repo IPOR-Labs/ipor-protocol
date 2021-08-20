@@ -28,13 +28,13 @@ contract MiltonV1Events is MiltonEvents {
     // @notice Close derivative position
     event ClosePosition(
         uint256 indexed derivativeId,
-        bytes32 asset,
+        string asset,
         uint256 date
     //TODO: figure out what we need in this event
     );
 
     event TotalBalances (
-        bytes32 asset,
+        string asset,
         uint256 token,
         uint256 derivative,
         uint256 openingFee,

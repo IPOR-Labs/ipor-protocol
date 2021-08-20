@@ -19,8 +19,8 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="tokens"
+                        contract="MiltonDevToolDataProvider"
+                        method="getTokenAddress"
                         methodArgs={["USDT"]}
                     />
                 </td>
@@ -28,8 +28,8 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="tokens"
+                        contract="MiltonDevToolDataProvider"
+                        method="getTokenAddress"
                         methodArgs={["USDC"]}
                     />
                 </td>
@@ -37,8 +37,8 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="tokens"
+                        contract="MiltonDevToolDataProvider"
+                        method="getTokenAddress"
                         methodArgs={["DAI"]}
                     />
                 </td>
@@ -50,7 +50,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
-                        method="getTotalSupply"
+                        method="getMiltonTotalSupply"
                         methodArgs={["USDT"]}
                         render={(value) => (
                             <div>
@@ -65,7 +65,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
-                        method="getTotalSupply"
+                        method="getMiltonTotalSupply"
                         methodArgs={["USDC"]}
                         render={(value) => (
                             <div>
@@ -80,7 +80,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
-                        method="getTotalSupply"
+                        method="getMiltonTotalSupply"
                         methodArgs={["DAI"]}
                         render={(value) => (
                             <div>

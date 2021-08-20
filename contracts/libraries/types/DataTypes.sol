@@ -52,6 +52,21 @@ library DataTypes {
         uint256 blockTimestamp;
     }
 
+    struct IporFront {
+
+        //@notice Asset Symbol like USDT, USDC, DAI etc.
+        string asset;
+
+        //@notice IPOR Index Value
+        uint256 indexValue;
+
+        //@notice Interest Bearing Token Price
+        uint256 iIbtPrice;
+
+        //@notice block timestamp
+        uint256 blockTimestamp;
+    }
+
     //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum DerivativeDirection {
 
@@ -79,6 +94,7 @@ library DataTypes {
     }
 
     struct IporDerivativeIndicator {
+
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
 
@@ -137,7 +153,7 @@ library DataTypes {
         address buyer;
 
         //@notice the name of the asset to which the derivative relates
-        bytes32 asset;
+        string asset;
 
         //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
         uint8 direction;
@@ -162,28 +178,4 @@ library DataTypes {
 
     }
 
-    //TODO: temporary solution
-    function stringToBytes32(string memory source) public pure returns (bytes32 result) {
-        bytes memory tempEmptyStringTest = bytes(source);
-        if (tempEmptyStringTest.length == 0) {
-            return 0x0;
-        }
-
-        assembly {
-            result := mload(add(source, 32))
-        }
-    }
-
-    //TODO: temporary solution
-    function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
-        uint8 i = 0;
-        while(i < 32 && _bytes32[i] != 0) {
-            i++;
-        }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
-            bytesArray[i] = _bytes32[i];
-        }
-        return string(bytesArray);
-    }
 }

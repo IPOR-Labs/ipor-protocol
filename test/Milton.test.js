@@ -10,6 +10,7 @@ const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
+const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 
 contract('Milton', (accounts) => {
 
@@ -36,6 +37,7 @@ contract('Milton', (accounts) => {
     let warren = null;
     let miltonConfiguration = null;
     let miltonAddressesManager = null;
+    let miltonDevToolDataProvider = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
@@ -43,7 +45,8 @@ contract('Milton', (accounts) => {
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
         miltonAddressesManager = await MiltonAddressesManager.deployed();
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON_CONFIGURATION"), miltonConfiguration.address);
+        miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
+        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfiguration.address);
 
     });
 
@@ -77,12 +80,12 @@ contract('Milton', (accounts) => {
             await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
         }
 
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("WARREN"), warren.address);
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("MILTON"), milton.address);
+        await miltonAddressesManager.setAddress("WARREN", warren.address);
+        await miltonAddressesManager.setAddress("MILTON", milton.address);
 
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDT"), tokenUsdt.address);
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("USDC"), tokenUsdc.address);
-        await miltonAddressesManager.setAddress(web3.utils.fromAscii("DAI"), tokenDai.address);
+        await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
+        await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
+        await miltonAddressesManager.setAddress("DAI", tokenDai.address);
 
     });
 
@@ -190,7 +193,7 @@ contract('Milton', (accounts) => {
             BigInt("0")
         );
 
-        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(web3.utils.fromAscii(params.asset)));
+        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(params.asset));
 
         assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
             `Incorrect derivatives total balance for ${params.asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
@@ -1434,7 +1437,7 @@ contract('Milton', (accounts) => {
         let actualDerivatives = await milton.getPositions();
         let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
         assert(expectedOpenedPositions === actualOpenPositionsVol,
-            `Incorrect number of opened derivatives ${actualOpenPositionsVol}, expected ${expectedOpenedPositions}`)
+            `Incorrect number of opened derivatives, actual:  ${actualOpenPositionsVol}, expected: ${expectedOpenedPositions}`)
 
         let expectedOpeningFeeTotalBalance = testUtils.MILTON_99__7_USD;
         let expectedPublicationFeeTotalBalance = testUtils.MILTON_10_USD;
@@ -1473,7 +1476,7 @@ contract('Milton', (accounts) => {
         }
 
         assert(expectedSumOfBalancesBeforePayout === actualSumOfBalances,
-            `Incorrect balance between AMM Balance and Users Balance for asset ${asset}, ${actualSumOfBalances}, expected ${expectedSumOfBalancesBeforePayout}`);
+            `Incorrect balance between AMM Balance and Users Balance for asset ${asset}, actual: ${actualSumOfBalances}, expected ${expectedSumOfBalancesBeforePayout}`);
 
     }
 
@@ -1505,57 +1508,56 @@ contract('Milton', (accounts) => {
 
         let actualOpenerUserTokenBalance = null;
         let actualCloserUserTokenBalance = null;
-        let assetBytes32 = web3.utils.fromAscii(asset);
         if (asset === "DAI") {
             actualOpenerUserTokenBalance = BigInt(await tokenDai.balanceOf(openerUserAddress));
             actualCloserUserTokenBalance = BigInt(await tokenDai.balanceOf(closerUserAddress));
         }
 
-        const actualAMMTokenBalance = BigInt(await milton.getTotalSupply(asset));
-        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(assetBytes32));
-        const actualOpeningFeeTotalBalance = BigInt(await milton.openingFeeTotalBalances(assetBytes32));
-        const actualLiquidationDepositFeeTotalBalance = BigInt(await milton.liquidationDepositTotalBalances(assetBytes32));
-        const actualPublicationFeeTotalBalance = BigInt(await milton.iporPublicationFeeTotalBalances(assetBytes32));
-        const actualLiquidityPoolTotalBalance = BigInt(await milton.liquidityPoolTotalBalances(assetBytes32));
+        const actualAMMTokenBalance = BigInt(await miltonDevToolDataProvider.getMiltonTotalSupply(asset));
+        const actualDerivativesTotalBalance = BigInt(await milton.derivativesTotalBalances(asset));
+        const actualOpeningFeeTotalBalance = BigInt(await milton.openingFeeTotalBalances(asset));
+        const actualLiquidationDepositFeeTotalBalance = BigInt(await milton.liquidationDepositTotalBalances(asset));
+        const actualPublicationFeeTotalBalance = BigInt(await milton.iporPublicationFeeTotalBalances(asset));
+        const actualLiquidityPoolTotalBalance = BigInt(await milton.liquidityPoolTotalBalances(asset));
 
         if (expectedAMMTokenBalance !== null) {
             assert(actualAMMTokenBalance === expectedAMMTokenBalance,
-                `Incorrect token balance for ${asset} in AMM address ${actualAMMTokenBalance}, expected ${expectedAMMTokenBalance}`);
+                `Incorrect token balance for ${asset} in AMM address, actual: ${actualAMMTokenBalance}, expected: ${expectedAMMTokenBalance}`);
         }
 
         if (expectedOpenerUserTokenBalance != null) {
             assert(actualOpenerUserTokenBalance === expectedOpenerUserTokenBalance,
-                `Incorrect token balance for ${asset} in Opener User address ${actualOpenerUserTokenBalance}, expected ${expectedOpenerUserTokenBalance}`);
+                `Incorrect token balance for ${asset} in Opener User address, actual: ${actualOpenerUserTokenBalance}, expected: ${expectedOpenerUserTokenBalance}`);
         }
 
         if (expectedCloserUserTokenBalance != null) {
             assert(actualCloserUserTokenBalance === expectedCloserUserTokenBalance,
-                `Incorrect token balance for ${asset} in Closer User address ${actualCloserUserTokenBalance}, expected ${expectedCloserUserTokenBalance}`);
+                `Incorrect token balance for ${asset} in Closer User address, actual: ${actualCloserUserTokenBalance}, expected: ${expectedCloserUserTokenBalance}`);
         }
 
         if (expectedDerivativesTotalBalance != null) {
             assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
-                `Incorrect derivatives total balance for ${asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
+                `Incorrect derivatives total balance for ${asset}, actual:  ${actualDerivativesTotalBalance}, expected: ${expectedDerivativesTotalBalance}`)
         }
 
         if (expectedOpeningFeeTotalBalance != null) {
             assert(expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
-                `Incorrect opening fee total balance for ${asset} ${actualOpeningFeeTotalBalance}, expected ${expectedOpeningFeeTotalBalance}`)
+                `Incorrect opening fee total balance for ${asset}, actual:  ${actualOpeningFeeTotalBalance}, expected: ${expectedOpeningFeeTotalBalance}`)
         }
 
         if (expectedLiquidationDepositFeeTotalBalance !== null) {
             assert(expectedLiquidationDepositFeeTotalBalance === actualLiquidationDepositFeeTotalBalance,
-                `Incorrect liquidation deposit fee total balance for ${asset} ${actualLiquidationDepositFeeTotalBalance}, expected ${expectedLiquidationDepositFeeTotalBalance}`)
+                `Incorrect liquidation deposit fee total balance for ${asset}, actual:  ${actualLiquidationDepositFeeTotalBalance}, expected: ${expectedLiquidationDepositFeeTotalBalance}`)
         }
 
         if (expectedPublicationFeeTotalBalance != null) {
             assert(expectedPublicationFeeTotalBalance === actualPublicationFeeTotalBalance,
-                `Incorrect ipor publication fee total balance for ${asset} ${actualPublicationFeeTotalBalance}, expected ${expectedPublicationFeeTotalBalance}`)
+                `Incorrect ipor publication fee total balance for ${asset}, actual: ${actualPublicationFeeTotalBalance}, expected: ${expectedPublicationFeeTotalBalance}`)
         }
 
         if (expectedLiquidityPoolTotalBalance != null) {
             assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
-                `Incorrect Liquidity Pool total balance for ${asset} ${actualLiquidityPoolTotalBalance}, expected ${expectedLiquidityPoolTotalBalance}`)
+                `Incorrect Liquidity Pool total balance for ${asset}, actual:  ${actualLiquidityPoolTotalBalance}, expected: ${expectedLiquidityPoolTotalBalance}`)
         }
     }
 });

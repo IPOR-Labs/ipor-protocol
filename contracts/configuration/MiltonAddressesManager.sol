@@ -5,18 +5,21 @@ import "../interfaces/IMiltonAddressesManager.sol";
 //TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-//konfiguracja wszystkich waznych adresow, milton core, milton configuration, warren,
-//milton admin,
 contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
 
-    mapping(bytes32 => address) private _addresses;
+    mapping(string => address) private _addresses;
 
-    bytes32 private constant WARREN = 'WARREN';
-    bytes32 private constant MILTON = 'MILTON';
-    bytes32 private constant MILTON_CONFIGURATION = 'MILTON_CONFIGURATION';
+    //this treasurer manage ipor publication fee balance, key is an asset
+    mapping(string => address) charlieTreasurers;
+    //this treasurer manage opening fee balance, key is an asset
+    mapping(string => address) treasureTreasurers;
+
+    string private constant WARREN = "WARREN";
+    string private constant MILTON = "MILTON";
+    string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
 
 
-    function setAddressAsProxy(bytes32 id, address implementationAddress)
+    function setAddressAsProxy(string memory id, address implementationAddress)
     external
     override
     onlyOwner
@@ -25,12 +28,12 @@ contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
         emit AddressSet(id, implementationAddress, true);
     }
 
-    function setAddress(bytes32 id, address newAddress) external override onlyOwner {
+    function setAddress(string memory id, address newAddress) external override onlyOwner {
         _addresses[id] = newAddress;
         emit AddressSet(id, newAddress, false);
     }
 
-    function getAddress(bytes32 id) public view override returns (address) {
+    function getAddress(string memory id) public view override returns (address) {
         return _addresses[id];
     }
 
@@ -64,8 +67,26 @@ contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
         emit WarrenAddressUpdated(warrenImpl);
     }
 
+    function getCharlieTreasurer(string memory asset) external override view returns (address) {
+        return charlieTreasurers[asset];
+    }
+
+    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external override onlyOwner {
+        charlieTreasurers[asset] = _charlieTreasurer;
+        emit CharlieTreasurerUpdated(asset, _charlieTreasurer);
+    }
+
+    function getTreasureTreasurer(string memory asset) external override view returns (address) {
+        return treasureTreasurers[asset];
+    }
+
+    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external override onlyOwner {
+        treasureTreasurers[asset] = _treasureTreasurer;
+        emit TreasureTreasurerUpdated(asset, _treasureTreasurer);
+    }
+
     //TODO: verify it, inspired by Aave
-    function _updateImpl(bytes32 id, address newAddress) internal {
+    function _updateImpl(string memory id, address newAddress) internal {
         //TODO: tailor to ipor solution (immutable admin maybe not needed)
         //TODO: implement proxy, upgradable contracts
         //        address payable proxyAddress = payable(_addresses[id]);

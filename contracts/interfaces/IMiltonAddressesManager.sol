@@ -6,14 +6,16 @@ interface IMiltonAddressesManager {
     event MiltonAddressUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event MiltonConfigurationAddressUpdated(address indexed newAddress);
-    event ProxyCreated(bytes32 id, address indexed newAddress);
-    event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
+    event CharlieTreasurerUpdated(string asset, address indexed newCharlieTreasurer);
+    event TreasureTreasurerUpdated(string asset, address indexed newTreasureTreasurer);
+    event ProxyCreated(string id, address indexed newAddress);
+    event AddressSet(string id, address indexed newAddress, bool hasProxy);
 
-    function setAddress(bytes32 id, address newAddress) external;
+    function setAddress(string memory id, address newAddress) external;
 
-    function setAddressAsProxy(bytes32 id, address impl) external;
+    function setAddressAsProxy(string memory id, address impl) external;
 
-    function getAddress(bytes32 id) external view returns (address);
+    function getAddress(string memory id) external view returns (address);
 
     function getMilton() external view returns (address);
 
@@ -26,4 +28,12 @@ interface IMiltonAddressesManager {
     function getWarren() external view returns (address);
 
     function setWarrenImpl(address warrenImpl) external;
+
+    function getCharlieTreasurer(string memory asset) external view returns (address);
+
+    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external;
+
+    function getTreasureTreasurer(string memory asset) external view returns (address);
+
+    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external;
 }
