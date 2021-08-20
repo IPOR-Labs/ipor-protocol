@@ -38,6 +38,7 @@ done
 if [ $IS_BUILD_DOCKER = "YES" ]; then
 
   cd "${DIR}"
+  npm install
   truffle compile
 
   cd "${DIR}/app"
