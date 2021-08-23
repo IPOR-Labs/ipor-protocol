@@ -8,8 +8,6 @@ contract MiltonEvents {
 
 contract MiltonV1Events is MiltonEvents {
 
-    event LogDepositReceived(address _sender);
-
     // @notice Open derivative position
     event OpenPosition(
         uint256 indexed derivativeId,
@@ -29,7 +27,8 @@ contract MiltonV1Events is MiltonEvents {
     event ClosePosition(
         uint256 indexed derivativeId,
         string asset,
-        uint256 date
+        uint256 date,
+        int256 interest
     //TODO: figure out what we need in this event
     );
 

@@ -333,7 +333,7 @@ contract('MiltonConfiguration', (accounts) => {
 
     it('should get initial incomeTaxPercentage', async () => {
         //given
-        let expectedIncomeTaxPercentage = BigInt("0");
+        let expectedIncomeTaxPercentage = BigInt("100000000000000000");
 
         //when
         let actualIncomeTaxPercentage = await miltonConfiguration.getIncomeTaxPercentage();

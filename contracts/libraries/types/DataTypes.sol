@@ -3,6 +3,16 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library DataTypes {
 
+    struct MiltonTotalBalance {
+        uint256 derivatives;
+        uint256 openingFee;
+        uint256 liquidationDeposit;
+        uint256 iporPublicationFee;
+        uint256 liquidityPool;
+        //@notice income tax goes here
+        uint256 treasury;
+    }
+
     struct TotalSoapIndicator {
         SoapIndicator pf;
         SoapIndicator rf;

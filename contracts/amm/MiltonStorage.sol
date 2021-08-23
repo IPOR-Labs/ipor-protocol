@@ -10,6 +10,8 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonAddressesManager.sol";
+import "../libraries/types/DataTypes.sol";
+import "../libraries/types/DataTypes.sol";
 
 /**
  * @title Ipor AMM Storage initial version 1
@@ -19,22 +21,7 @@ contract MiltonV1Storage {
 
     IMiltonAddressesManager internal _addressesManager;
 
-    // @notice total derivative balances for every asset
-    mapping(string => uint256) public derivativesTotalBalances;
-
-    //@notice Opening Fee total balances for every asset;
-    mapping(string => uint256) public openingFeeTotalBalances;
-
-    //@notice Liquidation Deposit total balances for every asset
-    mapping(string => uint256) public liquidationDepositTotalBalances;
-
-    //@notice IPOR Publication Fee total balances for every asset
-    mapping(string => uint256) public iporPublicationFeeTotalBalances;
-
-    //@notice Liquidity Pool total balances for every asset
-    mapping(string => uint256) public liquidityPoolTotalBalances;
-
-    //TODO: treasury balance - tam trafia income tax
+    mapping(string => DataTypes.MiltonTotalBalance) public balances;
 
     mapping(string => DataTypes.TotalSoapIndicator) public soapIndicators;
 

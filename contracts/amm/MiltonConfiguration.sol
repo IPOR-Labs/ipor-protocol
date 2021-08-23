@@ -36,7 +36,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     uint256 liquidityPoolMaxUtilizationPercentage;
 
     constructor() {
-        incomeTaxPercentage = 0;
+        incomeTaxPercentage = 1e17;
         maxIncomeTaxPercentage = 2e17;
 
         liquidationDepositFeeAmount = 20 * 1e18;

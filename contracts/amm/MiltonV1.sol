@@ -270,11 +270,11 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
     }
 
     function _updateBalances(string memory asset, DataTypes.IporDerivativeAmount memory derivativeAmount) internal {
-        derivativesTotalBalances[asset] = derivativesTotalBalances[asset] + derivativeAmount.deposit;
-        openingFeeTotalBalances[asset] = openingFeeTotalBalances[asset] + derivativeAmount.openingFee;
-        liquidationDepositTotalBalances[asset] = liquidationDepositTotalBalances[asset] + miltonConfiguration.getLiquidationDepositFeeAmount();
-        iporPublicationFeeTotalBalances[asset] = iporPublicationFeeTotalBalances[asset] + miltonConfiguration.getIporPublicationFeeAmount();
-        liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + derivativeAmount.openingFee;
+        balances[asset].derivatives = balances[asset].derivatives + derivativeAmount.deposit;
+        balances[asset].openingFee = balances[asset].openingFee + derivativeAmount.openingFee;
+        balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + miltonConfiguration.getLiquidationDepositFeeAmount();
+        balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + miltonConfiguration.getIporPublicationFeeAmount();
+        balances[asset].liquidityPool = balances[asset].liquidityPool + derivativeAmount.openingFee;
     }
 
     function _calculateDerivativeIndicators(string memory asset, uint8 direction, uint256 notionalAmount)
@@ -287,6 +287,10 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
             direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE)
         );
         return indicator;
+    }
+
+    function _calculateIncomeTax(uint256 derivativeProfit) view internal returns(uint256) {
+        return AmmMath.division(derivativeProfit * miltonConfiguration.getIncomeTaxPercentage(), Constants.MD);
     }
 
     function _closePosition(uint256 derivativeId, uint256 closeTimestamp) internal {
@@ -312,57 +316,67 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
         emit ClosePosition(
             derivativeId,
             derivatives.items[derivativeId].item.asset,
-            closeTimestamp
+            closeTimestamp,
+            derivativeInterest.interestDifferenceAmount
         );
 
         emit TotalBalances(
             derivatives.items[derivativeId].item.asset,
             IERC20(_addressesManager.getAddress(derivatives.items[derivativeId].item.asset)).balanceOf(address(this)),
-            derivativesTotalBalances[derivatives.items[derivativeId].item.asset],
-            openingFeeTotalBalances[derivatives.items[derivativeId].item.asset],
-            liquidationDepositTotalBalances[derivatives.items[derivativeId].item.asset],
-            iporPublicationFeeTotalBalances[derivatives.items[derivativeId].item.asset],
-            liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset]
+            balances[derivatives.items[derivativeId].item.asset].derivatives,
+            balances[derivatives.items[derivativeId].item.asset].openingFee,
+            balances[derivatives.items[derivativeId].item.asset].liquidationDeposit,
+            balances[derivatives.items[derivativeId].item.asset].iporPublicationFee,
+            balances[derivatives.items[derivativeId].item.asset].liquidityPool
         );
     }
+
+    event LogDebug(string name, uint256 value);
 
     function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 _calculationTimestamp) internal {
 
         uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
 
         //decrease from balances the liquidation deposit
-        require(liquidationDepositTotalBalances[derivatives.items[derivativeId].item.asset] >=
+        require(balances[derivatives.items[derivativeId].item.asset].liquidationDeposit >=
             derivatives.items[derivativeId].item.fee.liquidationDepositAmount,
             Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW);
 
-        liquidationDepositTotalBalances[derivatives.items[derivativeId].item.asset]
-        = liquidationDepositTotalBalances[derivatives.items[derivativeId].item.asset] - derivatives.items[derivativeId].item.fee.liquidationDepositAmount;
+        balances[derivatives.items[derivativeId].item.asset].liquidationDeposit
+        = balances[derivatives.items[derivativeId].item.asset].liquidationDeposit - derivatives.items[derivativeId].item.fee.liquidationDepositAmount;
 
-        derivativesTotalBalances[derivatives.items[derivativeId].item.asset]
-        = derivativesTotalBalances[derivatives.items[derivativeId].item.asset] - derivatives.items[derivativeId].item.depositAmount;
+        balances[derivatives.items[derivativeId].item.asset].derivatives
+        = balances[derivatives.items[derivativeId].item.asset].derivatives - derivatives.items[derivativeId].item.depositAmount;
 
         uint256 transferAmount = derivatives.items[derivativeId].item.depositAmount;
 
         if (interestDifferenceAmount > 0) {
 
-            //tokens transfered outsite AMM
+            //tokens transfered from AMM
             if (absInterestDifferenceAmount > derivatives.items[derivativeId].item.depositAmount) {
                 // |I| > D
 
-                require(liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] >= derivatives.items[derivativeId].item.depositAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool >= derivatives.items[derivativeId].item.depositAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
                 //fetch "D" amount from Liquidity Pool
-                liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset]
-                = liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] - derivatives.items[derivativeId].item.depositAmount;
+                balances[derivatives.items[derivativeId].item.asset].liquidityPool
+                = balances[derivatives.items[derivativeId].item.asset].liquidityPool - derivatives.items[derivativeId].item.depositAmount;
 
-                //transfer D+D to user's address
-                transferAmount = transferAmount + derivatives.items[derivativeId].item.depositAmount;
+                uint256 incomeTax = _calculateIncomeTax(derivatives.items[derivativeId].item.depositAmount);
+                emit LogDebug("incomeTax_milton_looses_I_higher_than_D", incomeTax);
+
+                balances[derivatives.items[derivativeId].item.asset].treasury
+                = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
+
+                //transfer D+D-incomeTax to user's address
+                transferAmount = transferAmount + derivatives.items[derivativeId].item.depositAmount - incomeTax;
+
                 _transferDerivativeAmount(derivativeId, transferAmount);
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
 
             } else {
                 // |I| <= D
 
-                require(liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] >= absInterestDifferenceAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool >= absInterestDifferenceAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 if (msg.sender != derivatives.items[derivativeId].item.buyer) {
@@ -370,22 +384,36 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
                 }
 
                 //fetch "I" amount from Liquidity Pool
-                liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] = liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] - absInterestDifferenceAmount;
+                balances[derivatives.items[derivativeId].item.asset].liquidityPool = balances[derivatives.items[derivativeId].item.asset].liquidityPool - absInterestDifferenceAmount;
 
-                //transfer P=D+I to user's address
-                transferAmount = transferAmount + absInterestDifferenceAmount;
+                uint256 incomeTax = _calculateIncomeTax(absInterestDifferenceAmount);
+                emit LogDebug("incomeTax_milton_looses_I_lower_than_D", incomeTax);
+
+                balances[derivatives.items[derivativeId].item.asset].treasury
+                = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
+
+                //transfer P=D+I-incomeTax to user's address
+                transferAmount = transferAmount + absInterestDifferenceAmount - incomeTax;
 
                 _transferDerivativeAmount(derivativeId, transferAmount);
             }
 
         } else {
-            //tokens transfered inside AMM, updates on balances
+            //tokens transfered to AMM, updates on balances
             if (absInterestDifferenceAmount > derivatives.items[derivativeId].item.depositAmount) {
                 // |I| > D
 
-                //transfer D  to Liquidity Pool
-                liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset]
-                = liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] + derivatives.items[derivativeId].item.depositAmount;
+                uint256 incomeTax = _calculateIncomeTax(derivatives.items[derivativeId].item.depositAmount);
+                emit LogDebug("incomeTax_milton_earns_I_higher_than_D", incomeTax);
+
+                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool + derivatives.items[derivativeId].item.depositAmount >= incomeTax, Errors.AMM_CANNOT_CLOSE_DERIVATE_LP_AND_DEPOSIT_IS_LOWER_THAN_INCOME_TAX);
+
+                balances[derivatives.items[derivativeId].item.asset].treasury
+                = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
+
+                //transfer D - incomeTax  to Liquidity Pool
+                balances[derivatives.items[derivativeId].item.asset].liquidityPool
+                = balances[derivatives.items[derivativeId].item.asset].liquidityPool + derivatives.items[derivativeId].item.depositAmount - incomeTax;
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
                 //TODO: take into consideration token decimals!!!
 
@@ -399,9 +427,19 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
                     require(_calculationTimestamp >= derivatives.items[derivativeId].item.endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
-                //transfer I to Liquidity Pool
-                liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset]
-                = liquidityPoolTotalBalances[derivatives.items[derivativeId].item.asset] + absInterestDifferenceAmount;
+                uint256 incomeTax = _calculateIncomeTax(absInterestDifferenceAmount);
+                emit LogDebug("incomeTax_milton_earns_I_lower_than_D", incomeTax);
+
+                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool
+                + absInterestDifferenceAmount >= incomeTax, Errors.AMM_CANNOT_CLOSE_DERIVATE_LP_AND_INTEREST_IS_LOWER_THAN_INCOME_TAX);
+
+                balances[derivatives.items[derivativeId].item.asset].treasury
+                = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
+
+                //transfer I-incomeTax to Liquidity Pool
+                balances[derivatives.items[derivativeId].item.asset].liquidityPool
+                = balances[derivatives.items[derivativeId].item.asset].liquidityPool + absInterestDifferenceAmount - incomeTax;
+
 
                 //transfer D-I to user's address
                 transferAmount = transferAmount - absInterestDifferenceAmount;
@@ -410,14 +448,20 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
         }
     }
 
+    function _transferIncomeTax(uint256 incomeTaxValue) internal {
+
+    }
+
     //Depends on condition transfer only to sender (when sender == buyer) or to sender and buyer
     function _transferDerivativeAmount(uint256 derivativeId, uint256 transferAmount) internal {
+        //TODO: take into consideration state "PENDING_WITHDRAWAL"
 
         if (msg.sender == derivatives.items[derivativeId].item.buyer) {
             transferAmount = transferAmount + derivatives.items[derivativeId].item.fee.liquidationDepositAmount;
         } else {
             //transfer liquidation deposit to sender
             //TODO: take into consideration token decimals!!!
+            //TODO: don't use transer but call
             IERC20(_addressesManager.getAddress(derivatives.items[derivativeId].item.asset)).transfer(msg.sender, derivatives.items[derivativeId].item.fee.liquidationDepositAmount);
         }
 
@@ -427,7 +471,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
     }
 
     function provideLiquidity(string memory asset, uint256 liquidityAmount) public {
-        liquidityPoolTotalBalances[asset] = liquidityPoolTotalBalances[asset] + liquidityAmount;
+        balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
         //TODO: take into consideration token decimals!!!
         IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), liquidityAmount);
     }

@@ -4,6 +4,7 @@ pragma solidity >=0.8.4 <0.9.0;
 import "./types/DataTypes.sol";
 import "./AmmMath.sol";
 import "./Constants.sol";
+import {Errors} from '../Errors.sol';
 
 library DerivativeLogic {
 
@@ -24,7 +25,7 @@ library DerivativeLogic {
         uint256 mdIbtPrice) public pure returns (DataTypes.IporDerivativeInterest memory) {
 
         //iFixed = fixed interest rate * notional amount * T / Ty
-        require(closingTimestamp >= derivative.startingTimestamp, "Derivative closing timestamp cannot be before derivative starting timestamp");
+        require(closingTimestamp >= derivative.startingTimestamp, Errors.AMM_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP);
 
         uint256 calculatedPeriodInSeconds = 0;
 
