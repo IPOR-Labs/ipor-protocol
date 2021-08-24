@@ -77,59 +77,46 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
 
     }
 
-    function calculateSpread(string memory asset) external view returns (uint256 spreadPf, uint256 spreadRf) {
-        (uint256 _spreadPf, uint256 _spreadRf) = _calculateSpread(asset, block.timestamp);
-        return (spreadPf = _spreadPf, spreadRf = _spreadRf);
-    }
-
-    function calculateSoap(string memory asset) external view returns (int256 soapPf, int256 soapRf, int256 soap) {
-        (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
-        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
-    }
-
     //    fallback() external payable  {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
-
-    function _calculateSpread(
-        string memory asset,
-        uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
-        return (
-        spreadPf = spreadIndicators[asset].pf.calculateSpread(calculateTimestamp),
-        spreadRf = spreadIndicators[asset].rf.calculateSpread(calculateTimestamp)
-        );
-    }
-
-    function _calculateSoap(
-        string memory asset,
-        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
-        (int256 qSoapPf, int256 qSoapRf, int256 qSoap) = _calculateQuasiSoap(asset, calculateTimestamp);
-        return (
-        soapPf = AmmMath.divisionInt(qSoapPf, Constants.MD_P2_YEAR_IN_SECONDS_INT),
-        soapRf = AmmMath.divisionInt(qSoapRf, Constants.MD_P2_YEAR_IN_SECONDS_INT),
-        soap = AmmMath.divisionInt(qSoap, Constants.MD_P2_YEAR_IN_SECONDS_INT)
-        );
-    }
-
-    function _calculateQuasiSoap(
-        string memory asset,
-        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
-        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(asset);
-        (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateQuasiSoap(calculateTimestamp, ibtPrice);
-        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
-    }
 
     function openPosition(
         string memory asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint8 leverage,
-        uint8 direction) public returns (uint256){
+        uint8 direction) external override returns (uint256){
         return _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
     }
 
-    function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) public {
+    function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) external override {
         _closePosition(derivativeId, block.timestamp);
+    }
+
+
+    function provideLiquidity(string memory asset, uint256 liquidityAmount) external override {
+        balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
+        //TODO: take into consideration token decimals!!!
+        IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), liquidityAmount);
+    }
+
+    function calculateSpread(string memory asset) external override view returns (uint256 spreadPf, uint256 spreadRf) {
+        (uint256 _spreadPf, uint256 _spreadRf) = _calculateSpread(asset, block.timestamp);
+        return (spreadPf = _spreadPf, spreadRf = _spreadRf);
+    }
+
+    function calculateSoap(string memory asset) external override view returns (int256 soapPf, int256 soapRf, int256 soap) {
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
+        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
+    }
+
+    function getPositions() external view override returns (DataTypes.IporDerivative[] memory) {
+        return derivatives.getPositions();
+    }
+
+    function getUserPositions(address user) external view override returns (DataTypes.IporDerivative[] memory) {
+        return derivatives.getUserPositions(user);
     }
 
     function _openPosition(
@@ -218,6 +205,34 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
         return iporDerivative.id;
     }
 
+    function _calculateSpread(
+        string memory asset,
+        uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
+        return (
+        spreadPf = spreadIndicators[asset].pf.calculateSpread(calculateTimestamp),
+        spreadRf = spreadIndicators[asset].rf.calculateSpread(calculateTimestamp)
+        );
+    }
+
+    function _calculateSoap(
+        string memory asset,
+        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
+        (int256 qSoapPf, int256 qSoapRf, int256 qSoap) = _calculateQuasiSoap(asset, calculateTimestamp);
+        return (
+        soapPf = AmmMath.divisionInt(qSoapPf, Constants.MD_P2_YEAR_IN_SECONDS_INT),
+        soapRf = AmmMath.divisionInt(qSoapRf, Constants.MD_P2_YEAR_IN_SECONDS_INT),
+        soap = AmmMath.divisionInt(qSoap, Constants.MD_P2_YEAR_IN_SECONDS_INT)
+        );
+    }
+
+    function _calculateQuasiSoap(
+        string memory asset,
+        uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
+        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(asset);
+        (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateQuasiSoap(calculateTimestamp, ibtPrice);
+        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
+    }
+
     function _updateMiltonDerivativesWhenOpenPosition(DataTypes.IporDerivative memory derivative) internal {
         derivatives.items[derivative.id].item = derivative;
         derivatives.items[derivative.id].idsIndex = derivatives.ids.length;
@@ -289,10 +304,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
         return indicator;
     }
 
-    function _calculateIncomeTax(uint256 derivativeProfit) view internal returns(uint256) {
-        return AmmMath.division(derivativeProfit * miltonConfiguration.getIncomeTaxPercentage(), Constants.MD);
-    }
-
     function _closePosition(uint256 derivativeId, uint256 closeTimestamp) internal {
 
         _updateMiltonDerivativesWhenClosePosition(derivativeId);
@@ -331,8 +342,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
         );
     }
 
-    event LogDebug(string name, uint256 value);
-
     function _rebalanceBasedOnInterestDifferenceAmount(uint256 derivativeId, int256 interestDifferenceAmount, uint256 _calculationTimestamp) internal {
 
         uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
@@ -356,13 +365,14 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
             if (absInterestDifferenceAmount > derivatives.items[derivativeId].item.depositAmount) {
                 // |I| > D
 
-                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool >= derivatives.items[derivativeId].item.depositAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool >= derivatives.items[derivativeId].item.depositAmount,
+                    Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+
                 //fetch "D" amount from Liquidity Pool
                 balances[derivatives.items[derivativeId].item.asset].liquidityPool
                 = balances[derivatives.items[derivativeId].item.asset].liquidityPool - derivatives.items[derivativeId].item.depositAmount;
 
-                uint256 incomeTax = _calculateIncomeTax(derivatives.items[derivativeId].item.depositAmount);
-                emit LogDebug("incomeTax_milton_looses_I_higher_than_D", incomeTax);
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivatives.items[derivativeId].item.depositAmount, miltonConfiguration.getIncomeTaxPercentage());
 
                 balances[derivatives.items[derivativeId].item.asset].treasury
                 = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
@@ -376,18 +386,19 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
             } else {
                 // |I| <= D
 
-                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool >= absInterestDifferenceAmount, Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool >= absInterestDifferenceAmount,
+                    Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 if (msg.sender != derivatives.items[derivativeId].item.buyer) {
-                    require(_calculationTimestamp >= derivatives.items[derivativeId].item.endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                    require(_calculationTimestamp >= derivatives.items[derivativeId].item.endingTimestamp,
+                        Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
                 //fetch "I" amount from Liquidity Pool
                 balances[derivatives.items[derivativeId].item.asset].liquidityPool = balances[derivatives.items[derivativeId].item.asset].liquidityPool - absInterestDifferenceAmount;
 
-                uint256 incomeTax = _calculateIncomeTax(absInterestDifferenceAmount);
-                emit LogDebug("incomeTax_milton_looses_I_lower_than_D", incomeTax);
+                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, miltonConfiguration.getIncomeTaxPercentage());
 
                 balances[derivatives.items[derivativeId].item.asset].treasury
                 = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
@@ -403,10 +414,7 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
             if (absInterestDifferenceAmount > derivatives.items[derivativeId].item.depositAmount) {
                 // |I| > D
 
-                uint256 incomeTax = _calculateIncomeTax(derivatives.items[derivativeId].item.depositAmount);
-                emit LogDebug("incomeTax_milton_earns_I_higher_than_D", incomeTax);
-
-                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool + derivatives.items[derivativeId].item.depositAmount >= incomeTax, Errors.AMM_CANNOT_CLOSE_DERIVATE_LP_AND_DEPOSIT_IS_LOWER_THAN_INCOME_TAX);
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivatives.items[derivativeId].item.depositAmount, miltonConfiguration.getIncomeTaxPercentage());
 
                 balances[derivatives.items[derivativeId].item.asset].treasury
                 = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
@@ -424,14 +432,11 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 if (msg.sender != derivatives.items[derivativeId].item.buyer) {
-                    require(_calculationTimestamp >= derivatives.items[derivativeId].item.endingTimestamp, Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                    require(_calculationTimestamp >= derivatives.items[derivativeId].item.endingTimestamp,
+                        Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
-                uint256 incomeTax = _calculateIncomeTax(absInterestDifferenceAmount);
-                emit LogDebug("incomeTax_milton_earns_I_lower_than_D", incomeTax);
-
-                require(balances[derivatives.items[derivativeId].item.asset].liquidityPool
-                + absInterestDifferenceAmount >= incomeTax, Errors.AMM_CANNOT_CLOSE_DERIVATE_LP_AND_INTEREST_IS_LOWER_THAN_INCOME_TAX);
+                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, miltonConfiguration.getIncomeTaxPercentage());
 
                 balances[derivatives.items[derivativeId].item.asset].treasury
                 = balances[derivatives.items[derivativeId].item.asset].treasury + incomeTax;
@@ -446,10 +451,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
                 _transferDerivativeAmount(derivativeId, transferAmount);
             }
         }
-    }
-
-    function _transferIncomeTax(uint256 incomeTaxValue) internal {
-
     }
 
     //Depends on condition transfer only to sender (when sender == buyer) or to sender and buyer
@@ -468,20 +469,6 @@ contract MiltonV1 is Ownable, MiltonV1Storage, MiltonV1Events, IMilton {
         //transfer from AMM to buyer
         //TODO: take into consideration token decimals!!!
         IERC20(_addressesManager.getAddress(derivatives.items[derivativeId].item.asset)).transfer(derivatives.items[derivativeId].item.buyer, transferAmount);
-    }
-
-    function provideLiquidity(string memory asset, uint256 liquidityAmount) public {
-        balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
-        //TODO: take into consideration token decimals!!!
-        IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), liquidityAmount);
-    }
-
-    function getPositions() external view override returns (DataTypes.IporDerivative[] memory) {
-        return derivatives.getPositions();
-    }
-
-    function getUserPositions(address user) external view override returns (DataTypes.IporDerivative[] memory) {
-        return derivatives.getUserPositions(user);
     }
 
     modifier onlyActiveDerivative(uint256 derivativeId) {

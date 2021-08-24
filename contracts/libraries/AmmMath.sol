@@ -10,8 +10,13 @@ library AmmMath {
     function division(uint256 x, uint256 y) public pure returns (uint256 z) {
         z = (x + (y / 2)) / y;
     }
+
     function divisionInt(int256 x, int256 y) public pure returns (int256 z) {
         z = (x + (y / 2)) / y;
+    }
+
+    function calculateIncomeTax(uint256 derivativeProfit, uint256 incomeTaxPercentage) public pure returns (uint256) {
+        return division(derivativeProfit * incomeTaxPercentage, Constants.MD);
     }
 
     function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice) public pure returns (uint256){
