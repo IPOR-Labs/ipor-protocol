@@ -1,5 +1,6 @@
 const Warren = artifacts.require("Warren");
 const MiltonV1 = artifacts.require("MiltonV1");
+const MiltonV1Storage= artifacts.require("MiltonV1Storage");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 const TestWarrenProxy = artifacts.require("TestWarrenProxy");
 const TestMiltonV1Proxy = artifacts.require("TestMiltonV1Proxy");
@@ -44,10 +45,20 @@ module.exports = async function (deployer, _network, addresses) {
     let userSupply18Decimals = '10000000000000000000000000';
 
     let mockedUsdt = null;
+    let mockedUsdtAddr = null;
     let mockedUsdc = null;
+    let mockedUsdcAddr = null;
     let mockedDai = null;
+    let mockedDaiAddr = null;
     let mockedTusd = null;
+    let mockedTusdAddr = null;
+    let warrenAddr = null;
+    let milton = null;
+    let miltonAddr = null;
+    let miltonStorage = null;
+    let miltonStorageAddr = null;
     let miltonFaucet = null;
+    let miltonFaucetAddr = null;
     let miltonConfiguration = null;
     let miltonAddressesManager = null;
 
@@ -59,48 +70,53 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(SoapIndicatorLogic, TotalSoapIndicatorLogic);
     await deployer.deploy(TotalSoapIndicatorLogic);
     await deployer.deploy(DerivativesView);
-    await deployer.link(SoapIndicatorLogic, MiltonV1);
-    await deployer.link(SpreadIndicatorLogic, MiltonV1);
+
+    await deployer.link(SoapIndicatorLogic, MiltonV1Storage);
+    await deployer.link(SpreadIndicatorLogic, MiltonV1Storage);
+    await deployer.link(DerivativeLogic, MiltonV1Storage);
+    await deployer.link(TotalSoapIndicatorLogic, MiltonV1Storage);
+    await deployer.link(DerivativesView, MiltonV1Storage);
+
     await deployer.link(DerivativeLogic, MiltonV1);
-    await deployer.link(DerivativesView, MiltonV1);
-
-    await deployer.link(TotalSoapIndicatorLogic, MiltonV1);
-
-    await deployer.link(AmmMath, MiltonV1);
+    await deployer.link(AmmMath, MiltonV1Storage);
 
     await deployer.deploy(MiltonConfiguration);
     miltonConfiguration = await MiltonConfiguration.deployed();
 
     await deployer.deploy(MiltonAddressesManager);
     miltonAddressesManager = await MiltonAddressesManager.deployed();
-
+    let miltonAddressesManagerAddr = await miltonAddressesManager.address;
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
         await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
         mockedUsdt = await UsdtMockedToken.deployed();
+        mockedUsdtAddr = await mockedUsdt.address;
 
         await deployer.deploy(UsdcMockedToken, totalSupply6Decimals, 6);
         mockedUsdc = await UsdcMockedToken.deployed();
+        mockedUsdcAddr = await mockedUsdc.address;
 
         await deployer.deploy(DaiMockedToken, totalSupply18Decimals, 18);
         mockedDai = await DaiMockedToken.deployed();
+        mockedDaiAddr = await mockedDai.address;
 
         await deployer.deploy(TusdMockedToken, totalSupply18Decimals, 18);
         mockedTusd = await TusdMockedToken.deployed();
+        mockedTusdAddr = await mockedTusd.address;
 
         await deployer.deploy(MiltonFaucet,
-            mockedUsdt.address,
-            mockedUsdc.address,
-            mockedDai.address,
-            mockedTusd.address);
+            mockedUsdtAddr,
+            mockedUsdcAddr,
+            mockedDaiAddr,
+            mockedTusdAddr);
 
         miltonFaucet = await MiltonFaucet.deployed();
-
+        miltonFaucetAddr = await miltonFaucet.address;
         miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
 
 
-        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManager.address);
+        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManagerAddr);
     }
 
     if (_network == 'develop2' || _network === 'docker') {
@@ -111,38 +127,42 @@ module.exports = async function (deployer, _network, addresses) {
         await warren.updateIndex("USDC", BigInt("30000000000000000"));
     }
 
-    let milton = null;
-
     if (_network !== 'test') {
-        milton = await deployer.deploy(MiltonV1, miltonAddressesManager.address);
+        await deployer.deploy(MiltonV1);
         milton = await MiltonV1.deployed();
+        await deployer.deploy(MiltonV1Storage);
+        miltonStorage = await MiltonV1Storage.deployed();
+        warrenAddr = await warren.address;
+        miltonAddr = await milton.address;
+        miltonStorageAddr = await miltonStorage.address;
+        const miltonConfigurationAddr = await miltonConfiguration.address;
 
         //initial addresses setup
-        miltonAddressesManager.setAddress('WARREN', warren.address);
-        miltonAddressesManager.setAddress('MILTON', milton.address);
-        miltonAddressesManager.setAddress('MILTON_CONFIGURATION', miltonConfiguration.address);
+        await miltonAddressesManager.setAddress("WARREN", warrenAddr );
+        await miltonAddressesManager.setAddress("MILTON", miltonAddr);
+        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
+        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfigurationAddr);
 
-        miltonAddressesManager.setAddress('USDT', mockedUsdt.address);
-        miltonAddressesManager.setAddress('USDC', mockedUsdc.address);
-        miltonAddressesManager.setAddress('DAI', mockedDai.address);
+        await miltonAddressesManager.setAddress("USDT", mockedUsdtAddr);
+        await miltonAddressesManager.setAddress("USDC", mockedUsdcAddr);
+        await miltonAddressesManager.setAddress("DAI", mockedDaiAddr);
+
+        await milton.initialize(miltonAddressesManagerAddr);
+        await miltonStorage.initialize(miltonAddressesManagerAddr);
     } else {
         await deployer.link(AmmMath, TestWarrenProxy);
         await deployer.link(IporLogic, TestWarrenProxy);
         await deployer.link(DerivativeLogic, TestMiltonV1Proxy);
-        await deployer.link(SoapIndicatorLogic, TestMiltonV1Proxy);
-        await deployer.link(SpreadIndicatorLogic, TestMiltonV1Proxy);
-        await deployer.link(TotalSoapIndicatorLogic, TestMiltonV1Proxy);
-        await deployer.link(DerivativesView, TestMiltonV1Proxy);
         await deployer.link(AmmMath, TestMiltonV1Proxy);
-        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManager.address);
+        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManagerAddr);
     }
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
         console.log("Setup Faucet...");
-        await mockedUsdt.transfer(miltonFaucet.address, faucetSupply6Decimals);
-        await mockedUsdc.transfer(miltonFaucet.address, faucetSupply6Decimals);
-        await mockedDai.transfer(miltonFaucet.address, faucetSupply18Decimals);
-        await mockedTusd.transfer(miltonFaucet.address, faucetSupply18Decimals);
+        await mockedUsdt.transfer(miltonFaucetAddr, faucetSupply6Decimals);
+        await mockedUsdc.transfer(miltonFaucetAddr, faucetSupply6Decimals);
+        await mockedDai.transfer(miltonFaucetAddr, faucetSupply18Decimals);
+        await mockedTusd.transfer(miltonFaucetAddr, faucetSupply18Decimals);
         console.log("Setup Faucet finished.");
 
         console.log("Start transfer TOKENS to test addresses...");
@@ -157,12 +177,12 @@ module.exports = async function (deployer, _network, addresses) {
 
             //AMM has rights to spend money on behalf of user
             //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
-            mockedUsdt.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
-            mockedUsdc.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
-            mockedDai.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
-            mockedTusd.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
+            mockedUsdt.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
+            mockedUsdc.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
+            mockedDai.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
+            mockedTusd.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
 
-            console.log(`Account: ${addresses[i]} approve spender ${milton.address} to spend tokens on behalf of user.`);
+            console.log(`Account: ${addresses[i]} approve spender ${miltonAddr} to spend tokens on behalf of user.`);
         }
     }
 

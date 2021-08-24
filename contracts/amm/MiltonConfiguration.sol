@@ -35,6 +35,9 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 liquidityPoolMaxUtilizationPercentage;
 
+    //@notice max total amount used when opening position
+    uint256 maxPositionTotalAmount;
+
     constructor() {
         incomeTaxPercentage = 1e17;
         maxIncomeTaxPercentage = 2e17;
@@ -50,6 +53,8 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         maxIporPublicationFeeAmount = 1000 * 1e18;
 
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
+
+        maxPositionTotalAmount = 1e23;
 
     }
 
@@ -139,5 +144,14 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         require(_liquidityPoolMaxUtilizationPercentage <= 1e18, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
         liquidityPoolMaxUtilizationPercentage = _liquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(_liquidityPoolMaxUtilizationPercentage);
+    }
+
+    function getMaxPositionTotalAmount() external override view returns (uint256) {
+        return maxPositionTotalAmount;
+    }
+
+    function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external override onlyOwner {
+        maxPositionTotalAmount = _maxPositionTotalAmount;
+        emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
     }
 }

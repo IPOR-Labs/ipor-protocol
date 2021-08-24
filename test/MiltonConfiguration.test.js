@@ -381,6 +381,8 @@ contract('MiltonConfiguration', (accounts) => {
 
     //TODO: move to MiltonAddressesManager.test.js
 
+    //TODO: test na max position total amount
+
     // it('should set charlieTreasurers', async () => {
     //     //given
     //     let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";

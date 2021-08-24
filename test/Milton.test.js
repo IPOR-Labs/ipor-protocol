@@ -2,6 +2,7 @@ const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
+const MiltonV1Storage = artifacts.require('MiltonV1Storage');
 const TestWarrenProxy = artifacts.require('TestWarrenProxy');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
@@ -28,6 +29,7 @@ contract('Milton', (accounts) => {
     let userSupply18Decimals = '10000000000000000000000000';
 
     let milton = null;
+    let miltonStorage = null;
     let derivativeLogic = null;
     let soapIndicatorLogic = null;
     let totalSoapIndicatorLogic = null;
@@ -62,8 +64,8 @@ contract('Milton', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
-
-        milton = await TestMiltonV1Proxy.new(miltonAddressesManager.address);
+        milton = await TestMiltonV1Proxy.new();
+        miltonStorage = await MiltonV1Storage.new();
 
         await warren.addUpdater(userOne);
 
@@ -82,10 +84,14 @@ contract('Milton', (accounts) => {
 
         await miltonAddressesManager.setAddress("WARREN", warren.address);
         await miltonAddressesManager.setAddress("MILTON", milton.address);
+        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
 
         await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
         await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
         await miltonAddressesManager.setAddress("DAI", tokenDai.address);
+
+        await milton.initialize(miltonAddressesManager.address);
+        await miltonStorage.initialize(miltonAddressesManager.address);
 
     });
 
@@ -193,7 +199,7 @@ contract('Milton', (accounts) => {
             BigInt("0")
         );
 
-        const actualDerivativesTotalBalance = BigInt((await milton.balances(params.asset)).derivatives);
+        const actualDerivativesTotalBalance = BigInt(await (await miltonStorage.balances(params.asset)).derivatives);
 
         assert(expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
             `Incorrect derivatives total balance for ${params.asset} ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`)
@@ -622,8 +628,8 @@ contract('Milton', (accounts) => {
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("9980000000000000000000");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9990020000000000000000000");
-        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("9990020000000000000000000") ;
-        let expectedLiquidityPoolTotalBalance = BigInt("9970000000000000000000")- incomeTax;
+        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("9990020000000000000000000");
+        let expectedLiquidityPoolTotalBalance = BigInt("9970000000000000000000") - incomeTax;
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS, testUtils.ZERO,
@@ -639,8 +645,8 @@ contract('Milton', (accounts) => {
         let incomeTax = BigInt("784215616438356162220");
         let expectedAMMTokenBalance = BigInt("7951856164383561622201");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9992048143835616438377799");
-        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("9992048143835616438377799") ;
-        let expectedLiquidityPoolTotalBalance = BigInt("7941856164383561622201")- incomeTax;
+        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("9992048143835616438377799");
+        let expectedLiquidityPoolTotalBalance = BigInt("7941856164383561622201") - incomeTax;
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_120_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS, testUtils.ZERO,
@@ -673,11 +679,11 @@ contract('Milton', (accounts) => {
 
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
-            let incomeTax = BigInt("833431906849315065383");
-            let expectedAMMTokenBalance = BigInt("2175380931506849346167") + incomeTax;
-            let expectedLiquidityPoolTotalBalance = BigInt("2165380931506849346167");
-            let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10008224619068493150653833") - incomeTax;
-            let expectedCloserUserTokenBalanceAfterPayOut = BigInt("10008224619068493150653833") - incomeTax;
+        let incomeTax = BigInt("833431906849315065383");
+        let expectedAMMTokenBalance = BigInt("2175380931506849346167") + incomeTax;
+        let expectedLiquidityPoolTotalBalance = BigInt("2165380931506849346167");
+        let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10008224619068493150653833") - incomeTax;
+        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("10008224619068493150653833") - incomeTax;
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userTwo,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS, testUtils.MILTON_10_400_USD,
@@ -729,7 +735,7 @@ contract('Milton', (accounts) => {
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
-        let expectedLiquidityPoolTotalBalance = BigInt("629400000000000000000") ;
+        let expectedLiquidityPoolTotalBalance = BigInt("629400000000000000000");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009740600000000000000000") - incomeTax;
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userThree,
@@ -1007,7 +1013,7 @@ contract('Milton', (accounts) => {
         await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
-        let actualDerivatives = await milton.getPositions();
+        let actualDerivatives = await miltonStorage.getPositions();
         let actualOpenedPositionsVol = countOpenPositions(actualDerivatives);
 
         assert(expectedOpenedPositionsVol === actualOpenedPositionsVol,
@@ -1057,7 +1063,7 @@ contract('Milton', (accounts) => {
         await milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let actualDerivatives = await milton.getPositions();
+        let actualDerivatives = await miltonStorage.getPositions();
         let actualOpenedPositionsVol = countOpenPositions(actualDerivatives);
 
         assert(expectedOpenedPositionsVol === actualOpenedPositionsVol,
@@ -1100,8 +1106,8 @@ contract('Milton', (accounts) => {
 
 
         //then
-        let actualUserDerivativeIds = await milton.getUserDerivativeIds(openerUserAddress);
-        let actualDerivativeIds = await milton.getDerivativeIds();
+        let actualUserDerivativeIds = await miltonStorage.getUserDerivativeIds(openerUserAddress);
+        let actualDerivativeIds = await miltonStorage.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLength === actualUserDerivativeIds.length,
@@ -1147,9 +1153,9 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParams);
 
         //then
-        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userThree);
-        let actualDerivativeIds = await milton.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await miltonStorage.getUserDerivativeIds(userThree);
+        let actualDerivativeIds = await miltonStorage.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1200,9 +1206,9 @@ contract('Milton', (accounts) => {
         await milton.test_closePosition(2, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userThree});
 
         //then
-        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userThree);
-        let actualDerivativeIds = await milton.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await miltonStorage.getUserDerivativeIds(userThree);
+        let actualDerivativeIds = await miltonStorage.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1252,9 +1258,9 @@ contract('Milton', (accounts) => {
         await milton.test_closePosition(3, derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: userTwo});
 
         //then
-        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userThree);
-        let actualDerivativeIds = await milton.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await miltonStorage.getUserDerivativeIds(userThree);
+        let actualDerivativeIds = await miltonStorage.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1302,9 +1308,9 @@ contract('Milton', (accounts) => {
 
 
         //then
-        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userTwo);
-        let actualDerivativeIds = await milton.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await miltonStorage.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1351,9 +1357,9 @@ contract('Milton', (accounts) => {
 
 
         //then
-        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userTwo);
-        let actualDerivativeIds = await milton.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await miltonStorage.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1405,9 +1411,9 @@ contract('Milton', (accounts) => {
 
 
         //then
-        let actualUserDerivativeIdsFirst = await milton.getUserDerivativeIds(userTwo);
-        let actualUserDerivativeIdsSecond = await milton.getUserDerivativeIds(userTwo);
-        let actualDerivativeIds = await milton.getDerivativeIds();
+        let actualUserDerivativeIdsFirst = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualUserDerivativeIdsSecond = await miltonStorage.getUserDerivativeIds(userTwo);
+        let actualDerivativeIds = await miltonStorage.getDerivativeIds();
 
 
         assert(expectedUserDerivativeIdsLengthFirst === actualUserDerivativeIdsFirst.length,
@@ -1425,8 +1431,8 @@ contract('Milton', (accounts) => {
         let incomeTax = BigInt("416715953424657532692");
         let expectedAMMTokenBalance = BigInt("2175380931506849346167") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10008204619068493150653833") - incomeTax;
-    let expectedCloserUserTokenBalanceAfterPayOut = BigInt("10000020000000000000000000");
-    let expectedLiquidityPoolTotalBalance = BigInt("2165380931506849346167");
+        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("10000020000000000000000000");
+        let expectedLiquidityPoolTotalBalance = BigInt("2165380931506849346167");
         await exetuceClosePositionTestCase(
             "DAI", 10, 1, userTwo, userThree,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS, testUtils.MILTON_10_400_USD,
@@ -1550,7 +1556,7 @@ contract('Milton', (accounts) => {
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool', async () => {
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
-            await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
+        await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("7842156164383561677637");
         let expectedAMMTokenBalance = BigInt("7951856164383561677637");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9992048143835616438322363");
@@ -1570,7 +1576,7 @@ contract('Milton', (accounts) => {
             incomeTax, testUtils.ZERO
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
-            await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
+        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
 
@@ -1654,7 +1660,7 @@ contract('Milton', (accounts) => {
         expectedIdsIndex,
         expectedUserDerivativeIdsIndex
     ) => {
-        let actualDerivativeItem = await milton.getDerivativeItem(derivativeId);
+        let actualDerivativeItem = await miltonStorage.getDerivativeItem(derivativeId);
         assert(BigInt(expectedIdsIndex) === BigInt(actualDerivativeItem.idsIndex),
             `Incorrect idsIndex for derivative id ${actualDerivativeItem.item.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedIdsIndex}`);
         assert(BigInt(expectedUserDerivativeIdsIndex) === BigInt(actualDerivativeItem.userDerivativeIdsIndex),
@@ -1776,7 +1782,7 @@ contract('Milton', (accounts) => {
         expectedLiquidationDepositFeeTotalBalance,
         expectedTreasuryTotalBalance
     ) {
-        let actualDerivatives = await milton.getPositions();
+        let actualDerivatives = await miltonStorage.getPositions();
         let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
         assert(expectedOpenedPositions === actualOpenPositionsVol,
             `Incorrect number of opened derivatives, actual:  ${actualOpenPositionsVol}, expected: ${expectedOpenedPositions}`)
@@ -1857,7 +1863,7 @@ contract('Milton', (accounts) => {
             actualCloserUserTokenBalance = BigInt(await tokenDai.balanceOf(closerUserAddress));
         }
 
-        let balance = await milton.balances(asset);
+        let balance = await miltonStorage.balances(asset);
 
         const actualAMMTokenBalance = BigInt(await miltonDevToolDataProvider.getMiltonTotalSupply(asset));
         const actualDerivativesTotalBalance = BigInt(balance.derivatives);

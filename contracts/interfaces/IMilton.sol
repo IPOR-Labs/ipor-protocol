@@ -16,7 +16,4 @@ interface IMilton {
     //TODO: final implementation
     function calculateSpread(string memory asset) external view returns (uint256 spreadPf, uint256 spreadRf);
 
-    function getPositions() external view returns (DataTypes.IporDerivative[] memory);
-
-    function getUserPositions(address user) external view returns (DataTypes.IporDerivative[] memory);
 }

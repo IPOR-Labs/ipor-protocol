@@ -16,6 +16,7 @@ interface IMiltonConfiguration {
     event MaxIporPublicationFeeAmountSet(uint256 newMaxIporPublicationFeeAmount);
 
     event LiquidityPoolMaxUtilizationPercentageSet(uint256 newLiquidityPoolMaxUtilizationPercentageSet);
+    event MaxPositionTotalAmountSet(uint256 newMaxPositionTotalAmount);
 
     function getIncomeTaxPercentage() external view returns (uint256);
 
@@ -52,4 +53,9 @@ interface IMiltonConfiguration {
     function getLiquidityPoolMaxUtilizationPercentage() external view returns (uint256);
 
     function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external;
+
+    function getMaxPositionTotalAmount() external view returns (uint256);
+
+    function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external;
+
 }

@@ -29,13 +29,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="derivativesTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.derivatives / 1000000000000000000}<br/>
+                                <small>{value.derivatives}</small>
                             </div>
                         )}
                     />
@@ -44,13 +44,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="derivativesTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.derivatives / 1000000000000000000}<br/>
+                                <small>{value.derivatives}</small>
                             </div>
                         )}
                     />
@@ -59,13 +59,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="derivativesTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.derivatives / 1000000000000000000}<br/>
+                                <small>{value.derivatives}</small>
                             </div>
                         )}
                     />
@@ -77,13 +77,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="liquidityPoolTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.liquidityPool / 1000000000000000000}<br/>
+                                <small>{value.liquidityPool}</small>
                             </div>
                         )}
                     />
@@ -92,13 +92,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="liquidityPoolTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.liquidityPool / 1000000000000000000}<br/>
+                                <small>{value.liquidityPool}</small>
                             </div>
                         )}
                     />
@@ -107,13 +107,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="liquidityPoolTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.liquidityPool / 1000000000000000000}<br/>
+                                <small>{value.liquidityPool}</small>
                             </div>
                         )}
                     />
@@ -125,13 +125,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="openingFeeTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.openingFee / 1000000000000000000}<br/>
+                                <small>{value.openingFee}</small>
                             </div>
                         )}
                     />
@@ -140,13 +140,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="openingFeeTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.openingFee / 1000000000000000000}<br/>
+                                <small>{value.openingFee}</small>
                             </div>
                         )}
                     />
@@ -155,13 +155,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="openingFeeTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.openingFee / 1000000000000000000}<br/>
+                                <small>{value.openingFee}</small>
                             </div>
                         )}
                     />
@@ -173,13 +173,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="liquidationDepositTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.liquidationDeposit / 1000000000000000000}<br/>
+                                <small>{value.liquidationDeposit}</small>
                             </div>
                         )}
                     />
@@ -188,13 +188,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="liquidationDepositTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.liquidationDeposit / 1000000000000000000}<br/>
+                                <small>{value.liquidationDeposit}</small>
                             </div>
                         )}
                     />
@@ -203,13 +203,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="liquidationDepositTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.liquidationDeposit / 1000000000000000000}<br/>
+                                <small>{value.liquidationDeposit}</small>
                             </div>
                         )}
                     />
@@ -221,13 +221,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="iporPublicationFeeTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.iporPublicationFee / 1000000000000000000}<br/>
+                                <small>{value.iporPublicationFee}</small>
                             </div>
                         )}
                     />
@@ -236,13 +236,13 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="iporPublicationFeeTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.iporPublicationFee / 1000000000000000000}<br/>
+                                <small>{value.iporPublicationFee}</small>
                             </div>
                         )}
                     />
@@ -251,13 +251,61 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
-                        method="iporPublicationFeeTotalBalances"
+                        contract="MiltonV1Storage"
+                        method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
-                                <small>{value}</small>
+                                {value.iporPublicationFee / 1000000000000000000}<br/>
+                                <small>{value.iporPublicationFee}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>TREASURY</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonV1Storage"
+                        method="balances"
+                        methodArgs={["USDT"]}
+                        render={(value) => (
+                            <div>
+                                {value.treasury / 1000000000000000000}<br/>
+                                <small>{value.treasury}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonV1Storage"
+                        method="balances"
+                        methodArgs={["USDC"]}
+                        render={(value) => (
+                            <div>
+                                {value.treasury / 1000000000000000000}<br/>
+                                <small>{value.treasury}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonV1Storage"
+                        method="balances"
+                        methodArgs={["DAI"]}
+                        render={(value) => (
+                            <div>
+                                {value.treasury / 1000000000000000000}<br/>
+                                <small>{value.treasury}</small>
                             </div>
                         )}
                     />

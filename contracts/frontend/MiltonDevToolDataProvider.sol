@@ -3,7 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IMiltonAddressesManager.sol";
-import "../interfaces/IMilton.sol";
+import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
 
 contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
@@ -35,11 +35,11 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 
     function getPositions() external override view returns (DataTypes.IporDerivative[] memory) {
         //TODO: fix it, looks bad, DoS, possible out of gas
-        return IMilton(ADDRESSES_MANAGER.getMilton()).getPositions();
+        return IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage()).getPositions();
     }
 
     function getMyPositions() external override view returns (DataTypes.IporDerivative[] memory items) {
-        return IMilton(ADDRESSES_MANAGER.getMilton()).getUserPositions(msg.sender);
+        return IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage()).getUserPositions(msg.sender);
     }
 
     //@notice FOR TEST ONLY

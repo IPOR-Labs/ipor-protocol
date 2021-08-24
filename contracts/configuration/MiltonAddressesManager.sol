@@ -16,6 +16,7 @@ contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
 
     string private constant WARREN = "WARREN";
     string private constant MILTON = "MILTON";
+    string private constant MILTON_STORAGE = "MILTON_STORAGE";
     string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
 
 
@@ -45,6 +46,15 @@ contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
     function setMiltonImpl(address miltonImpl) external override onlyOwner {
         _updateImpl(MILTON, miltonImpl);
         emit MiltonAddressUpdated(miltonImpl);
+    }
+
+    function getMiltonStorage() external view override returns (address) {
+        return getAddress(MILTON_STORAGE);
+    }
+
+    function setMiltonStorageImpl(address miltonStorageImpl) external override onlyOwner {
+        _updateImpl(MILTON_STORAGE, miltonStorageImpl);
+        emit MiltonStorageAddressUpdated(miltonStorageImpl);
     }
 
     function getMiltonConfiguration() external view override returns (address) {

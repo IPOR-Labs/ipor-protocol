@@ -3,6 +3,7 @@ import {newContextComponents} from "@drizzle/react-components";
 import DerivativeList from "./DerivativeList";
 import AmmBalanceComponent from "./AmmBalanceComponent";
 import AmmTotalBalanceComponent from "./AmmTotalBalanceComponent";
+import MiltonV1Storage from "./contracts/MiltonV1Storage.json";
 
 const {ContractData, ContractForm} = newContextComponents;
 
@@ -54,7 +55,7 @@ export default ({drizzle, drizzleState}) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonV1"
+            contract="MiltonV1Storage"
             method="getPositions"
             render={DerivativeList}
         />

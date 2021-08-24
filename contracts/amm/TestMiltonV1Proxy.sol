@@ -5,8 +5,6 @@ import "./MiltonV1.sol";
 
 contract TestMiltonV1Proxy is MiltonV1 {
 
-    constructor(IMiltonAddressesManager addressesManager) MiltonV1(addressesManager) {}
-
     function test_openPosition(
         uint256 openTimestamp,
         string memory asset,
@@ -33,15 +31,4 @@ contract TestMiltonV1Proxy is MiltonV1 {
         return _calculateSpread(asset, calculateTimestamp);
     }
 
-    function getUserDerivativeIds(address userAddress) public view returns (uint256[] memory) {
-        return derivatives.userDerivativeIds[userAddress];
-    }
-
-    function getDerivativeIds() public view returns (uint256[] memory) {
-        return derivatives.ids;
-    }
-
-    function getDerivativeItem(uint256 derivativeId) public view returns (DataTypes.MiltonDerivativeItem memory) {
-        return derivatives.items[derivativeId];
-    }
 }

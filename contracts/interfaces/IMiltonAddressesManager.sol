@@ -4,6 +4,7 @@ pragma solidity >=0.8.4 <0.9.0;
 interface IMiltonAddressesManager {
 
     event MiltonAddressUpdated(address indexed newAddress);
+    event MiltonStorageAddressUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event MiltonConfigurationAddressUpdated(address indexed newAddress);
     event CharlieTreasurerUpdated(string asset, address indexed newCharlieTreasurer);
@@ -20,6 +21,10 @@ interface IMiltonAddressesManager {
     function getMilton() external view returns (address);
 
     function setMiltonImpl(address miltonImpl) external;
+
+    function getMiltonStorage() external view returns (address);
+
+    function setMiltonStorageImpl(address miltonStorageImpl) external;
 
     function getMiltonConfiguration() external view returns (address);
 

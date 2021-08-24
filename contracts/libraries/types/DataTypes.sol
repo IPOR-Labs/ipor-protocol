@@ -55,7 +55,7 @@ library DataTypes {
         //@notice IPOR Index Value
         uint256 indexValue;
 
-        //@notice Interest Bearing Token Price
+        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds
         uint256 quasiIbtPrice;
 
         //@notice block timestamp
@@ -71,7 +71,7 @@ library DataTypes {
         uint256 indexValue;
 
         //@notice Interest Bearing Token Price
-        uint256 iIbtPrice;
+        uint256 ibtPrice;
 
         //@notice block timestamp
         uint256 blockTimestamp;
@@ -92,6 +92,7 @@ library DataTypes {
     }
 
     struct IporDerivativeInterest {
+        //TODO: reduce to one field the last one;
         uint256 quasiInterestFixed;
         uint256 quasiInterestFloating;
         int256 interestDifferenceAmount;

@@ -2,6 +2,7 @@ const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
+const MiltonV1Storage = artifacts.require('MiltonV1Storage');
 const TestWarrenProxy = artifacts.require('TestWarrenProxy');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
@@ -27,6 +28,7 @@ contract('MiltonSoap', (accounts) => {
     let userSupply18Decimals = '10000000000000000000000000';
 
     let milton = null;
+    let miltonStorage = null;
     let derivativeLogic = null;
     let soapIndicatorLogic = null;
     let totalSoapIndicatorLogic = null;
@@ -58,7 +60,8 @@ contract('MiltonSoap', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
-        milton = await TestMiltonV1Proxy.new(miltonAddressesManager.address);
+        milton = await TestMiltonV1Proxy.new();
+        miltonStorage = await MiltonV1Storage.new();
 
         await warren.addUpdater(userOne);
 
@@ -77,10 +80,14 @@ contract('MiltonSoap', (accounts) => {
 
         await miltonAddressesManager.setAddress("WARREN", warren.address);
         await miltonAddressesManager.setAddress("MILTON", milton.address);
+        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
 
         await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
         await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
         await miltonAddressesManager.setAddress("DAI", tokenDai.address);
+
+        await milton.initialize(miltonAddressesManager.address);
+        await miltonStorage.initialize(miltonAddressesManager.address);
 
     });
 
