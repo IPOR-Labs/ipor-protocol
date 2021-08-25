@@ -3,6 +3,16 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library DataTypes {
 
+    struct MiltonTotalBalance {
+        uint256 derivatives;
+        uint256 openingFee;
+        uint256 liquidationDeposit;
+        uint256 iporPublicationFee;
+        uint256 liquidityPool;
+        //@notice income tax goes here
+        uint256 treasury;
+    }
+
     struct TotalSoapIndicator {
         SoapIndicator pf;
         SoapIndicator rf;
@@ -45,8 +55,23 @@ library DataTypes {
         //@notice IPOR Index Value
         uint256 indexValue;
 
-        //@notice Interest Bearing Token Price
+        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds
         uint256 quasiIbtPrice;
+
+        //@notice block timestamp
+        uint256 blockTimestamp;
+    }
+
+    struct IporFront {
+
+        //@notice Asset Symbol like USDT, USDC, DAI etc.
+        string asset;
+
+        //@notice IPOR Index Value
+        uint256 indexValue;
+
+        //@notice Interest Bearing Token Price
+        uint256 ibtPrice;
 
         //@notice block timestamp
         uint256 blockTimestamp;
@@ -67,8 +92,9 @@ library DataTypes {
     }
 
     struct IporDerivativeInterest {
-        uint256 interestFixed;
-        uint256 interestFloating;
+        //TODO: reduce to one field the last one;
+        uint256 quasiInterestFixed;
+        uint256 quasiInterestFloating;
         int256 interestDifferenceAmount;
     }
 
@@ -79,6 +105,7 @@ library DataTypes {
     }
 
     struct IporDerivativeIndicator {
+
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
 
@@ -161,4 +188,5 @@ library DataTypes {
         IporDerivativeIndicator indicator;
 
     }
+
 }

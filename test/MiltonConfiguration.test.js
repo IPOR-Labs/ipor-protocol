@@ -333,7 +333,7 @@ contract('MiltonConfiguration', (accounts) => {
 
     it('should get initial incomeTaxPercentage', async () => {
         //given
-        let expectedIncomeTaxPercentage = BigInt("0");
+        let expectedIncomeTaxPercentage = BigInt("100000000000000000");
 
         //when
         let actualIncomeTaxPercentage = await miltonConfiguration.getIncomeTaxPercentage();
@@ -379,35 +379,38 @@ contract('MiltonConfiguration', (accounts) => {
             `Incorrect initial iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${expectedIporPublicationFeeAmount}`)
     });
 
+    //TODO: move to MiltonAddressesManager.test.js
 
-    it('should set charlieTreasurers', async () => {
-        //given
-        let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = "DAI";
+    //TODO: test na max position total amount
 
-        //when
-        await miltonConfiguration.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
-
-        //then
-        let actualCharlieTreasurerDaiAddress = await miltonConfiguration.getCharlieTreasurer(asset);
-
-        assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
-            `Incorrect  Charlie Treasurer address for ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
-    });
-
-    it('should set treasureTreasurers', async () => {
-        //given
-        let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = "DAI";
-
-        //when
-        await miltonConfiguration.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
-
-        //then
-        let actualTreasureTreasurerDaiAddress = await miltonConfiguration.getTreasureTreasurer(asset);
-
-        assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
-            `Incorrect  Trasure Treasurer address for ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
-    });
+    // it('should set charlieTreasurers', async () => {
+    //     //given
+    //     let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+    //     let asset = "DAI";
+    //
+    //     //when
+    //     await miltonConfiguration.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
+    //
+    //     //then
+    //     let actualCharlieTreasurerDaiAddress = await miltonConfiguration.getCharlieTreasurer(asset);
+    //
+    //     assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
+    //         `Incorrect  Charlie Treasurer address for ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
+    // });
+    //
+    // it('should set treasureTreasurers', async () => {
+    //     //given
+    //     let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+    //     let asset = "DAI";
+    //
+    //     //when
+    //     await miltonConfiguration.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
+    //
+    //     //then
+    //     let actualTreasureTreasurerDaiAddress = await miltonConfiguration.getTreasureTreasurer(asset);
+    //
+    //     assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
+    //         `Incorrect  Trasure Treasurer address for ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
+    // });
 
 });

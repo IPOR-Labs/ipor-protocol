@@ -19,4 +19,17 @@ contract AmmMathTest {
         //then
         Assert.equal(ibtQuantity, 987030000000000000000, "Wrong IBT Quantity");
     }
+
+    function testCalculateIncomeTaxCase1() public {
+        //given
+        uint256 profit = 500 * Constants.MD;
+        uint256 percentage = 6 * Constants.MD / 100;
+
+        //when
+        uint256 actualIncomeTaxValue = AmmMath.calculateIncomeTax(profit, percentage);
+
+        //then
+        Assert.equal(actualIncomeTaxValue, 30000000000000000000, "Wrong Income Tax");
+    }
+
 }

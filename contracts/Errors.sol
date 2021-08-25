@@ -24,4 +24,6 @@ library Errors {
     string public constant AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID = 'IPOR_22'; //derivative id used in input has incorrect value (like 0)
     string public constant AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS = 'IPOR_23'; //derivative has incorrect status
     string public constant AMM_CONFIG_MAX_VALUE_EXCEEDED = 'IPOR_24'; //general error, max value exceeded
+    string public constant AMM_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP = 'IPOR_25'; //'Derivative closing timestamp cannot be before derivative starting timestamp`
+
 }

@@ -33,10 +33,10 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
      * @return List of assets with calculated IPOR Index in current moment.
      *
      */
-    function getIndexes() external view returns (DataTypes.IPOR[] memory) {
-        DataTypes.IPOR[] memory _indexes = new DataTypes.IPOR[](assets.length);
+    function getIndexes() external view returns (DataTypes.IporFront[] memory) {
+        DataTypes.IporFront[] memory _indexes = new DataTypes.IporFront[](assets.length);
         for (uint256 i = 0; i < assets.length; i++) {
-            _indexes[i] = DataTypes.IPOR(
+            _indexes[i] = DataTypes.IporFront(
                 indexes[assets[i]].asset,
                 indexes[assets[i]].indexValue,
                 AmmMath.division(indexes[assets[i]].quasiIbtPrice, Constants.YEAR_IN_SECONDS),
