@@ -1,5 +1,6 @@
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
+const {ZERO} = require("./TestUtils");
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
 const MiltonV1Storage = artifacts.require('MiltonV1Storage');
@@ -48,13 +49,7 @@ contract('Milton', (accounts) => {
         miltonConfiguration = await MiltonConfiguration.deployed();
         miltonAddressesManager = await MiltonAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
-        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfiguration.address);
 
-    });
-
-    beforeEach(async () => {
-
-        warren = await TestWarrenProxy.new();
 
         //10 000 000 000 000 USD
         tokenUsdt = await UsdtMockedToken.new(totalSupply6Decimals, 6);
@@ -64,17 +59,10 @@ contract('Milton', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
+        warren = await TestWarrenProxy.new();
         milton = await TestMiltonV1Proxy.new();
-        miltonStorage = await MiltonV1Storage.new();
-
-        await warren.addUpdater(userOne);
 
         for (let i = 1; i < accounts.length - 2; i++) {
-            await tokenUsdt.transfer(accounts[i], userSupply6Decimals);
-            //TODO: zrobic obsługę 6 miejsc po przecinku! - userSupply18Decimals
-            await tokenUsdc.transfer(accounts[i], userSupply18Decimals);
-            await tokenDai.transfer(accounts[i], userSupply18Decimals);
-
             //AMM has rights to spend money on behalf of user
             await tokenUsdt.approve(milton.address, totalSupply6Decimals, {from: accounts[i]});
             //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
@@ -83,14 +71,35 @@ contract('Milton', (accounts) => {
         }
 
         await miltonAddressesManager.setAddress("WARREN", warren.address);
+        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await miltonAddressesManager.setAddress("MILTON", milton.address);
-        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
 
         await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
         await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
         await miltonAddressesManager.setAddress("DAI", tokenDai.address);
 
         await milton.initialize(miltonAddressesManager.address);
+
+    });
+
+    beforeEach(async () => {
+
+        await warren.setupInitialValues(userOne);
+
+        miltonStorage = await MiltonV1Storage.new();
+
+        // await warren.addUpdater(userOne);
+        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
+        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
+        await tokenDai.setupInitialAmount(await milton.address, ZERO);
+
+        for (let i = 1; i < accounts.length - 2; i++) {
+            await tokenUsdt.setupInitialAmount(accounts[i], userSupply6Decimals);
+            await tokenUsdc.setupInitialAmount(accounts[i], userSupply18Decimals);
+            await tokenDai.setupInitialAmount(accounts[i], userSupply18Decimals);
+        }
+
+        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(miltonAddressesManager.address);
 
     });
@@ -1629,6 +1638,7 @@ contract('Milton', (accounts) => {
     //TODO: dopisać test zmiany na przykład adresu warrena i sprawdzenia czy widzi to milton
     //TODO: dopisac test zmiany adresu usdt i sprawdzenia czy widzi to milton
     //TODO: test sprawdzajacy wykonaniue przxelewu eth na miltona
+    //TODO: test na podmianke miltonStorage - czy pokazuje nowy balance??
 
 
     const calculateSoap = async (params) => {

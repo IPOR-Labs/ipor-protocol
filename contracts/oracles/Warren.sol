@@ -82,7 +82,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
 
         if (assetExists == false) {
             assets.push(assetHash);
-            newQuasiIbtPrice = 1e18 * Constants.YEAR_IN_SECONDS;
+            newQuasiIbtPrice = Constants.MD * Constants.YEAR_IN_SECONDS;
         } else {
             newQuasiIbtPrice = indexes[assetHash].accrueIbtPrice(updateTimestamp);
         }

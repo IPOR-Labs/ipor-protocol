@@ -25,8 +25,6 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
     using DerivativeLogic for DataTypes.IporDerivative;
 
     IMiltonAddressesManager internal _addressesManager;
-    IMiltonStorage public miltonStorage;
-
     IMiltonConfiguration public miltonConfiguration;
 
     //@notice percentage of deposit amount
@@ -34,9 +32,8 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
 
     function initialize(IMiltonAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
-        miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        //TODO: nie ustawiac jako pole
         miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
-
     }
 
     //    fallback() external payable  {
@@ -58,7 +55,7 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
 
 
     function provideLiquidity(string memory asset, uint256 liquidityAmount) external override {
-        miltonStorage.addLiquidity(asset, liquidityAmount);
+        IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
         //TODO: take into consideration token decimals!!!
         IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), liquidityAmount);
     }
@@ -74,13 +71,13 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
     }
 
     function _calculateSpread(string memory asset, uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
-        (uint256 _spreadPf, uint256 _spreadRf) = miltonStorage.calculateSpread(asset, calculateTimestamp);
+        (uint256 _spreadPf, uint256 _spreadRf) = IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSpread(asset, calculateTimestamp);
         return (spreadPf = _spreadPf, spreadRf = _spreadRf);
     }
 
     function _calculateSoap(string memory asset, uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap) {
         (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(asset);
-        (int256 _soapPf, int256 _soapRf, int256 _soap) = miltonStorage.calculateSoap(asset, ibtPrice, calculateTimestamp);
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSoap(asset, ibtPrice, calculateTimestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
@@ -91,6 +88,8 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
         uint256 maximumSlippage,
         uint8 leverage,
         uint8 direction) internal returns (uint256) {
+
+        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
@@ -193,6 +192,7 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
     }
 
     function _closePosition(uint256 derivativeId, uint256 closeTimestamp) internal {
+        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
         DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(derivativeId);
 
@@ -295,7 +295,7 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
     }
 
     modifier onlyActiveDerivative(uint256 derivativeId) {
-        require(miltonStorage.getDerivativeItem(derivativeId).item.state == DataTypes.DerivativeState.ACTIVE, Errors.AMM_DERIVATIVE_IS_INACTIVE);
+        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getDerivativeItem(derivativeId).item.state == DataTypes.DerivativeState.ACTIVE, Errors.AMM_DERIVATIVE_IS_INACTIVE);
         _;
     }
 

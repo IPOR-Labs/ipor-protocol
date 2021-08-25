@@ -19,4 +19,10 @@ contract MockedToken is ERC20 {
     function decimals() public view virtual override returns (uint8) {
         return _customDecimals;
     }
+
+    function setupInitialAmount(address user, uint256 initialAmount) external {
+        _burn(user, balanceOf(user));
+        _mint(user, initialAmount);
+    }
+
 }
