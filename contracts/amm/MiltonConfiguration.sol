@@ -5,7 +5,7 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-//TODO: clarify if better is to have external libraries in local folder
+//TODO: clarify if better is to have external libraries in local folder - pros for local folder - can execute Mythril and Karl static analisys
 import '@openzeppelin/contracts/access/Ownable.sol';
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
@@ -18,6 +18,7 @@ import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 
+//TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
 contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 incomeTaxPercentage;
@@ -34,14 +35,11 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 liquidityPoolMaxUtilizationPercentage;
 
-    //this treasurer manage ipor publication fee balance, key is an asset
-    mapping(string => address) charlieTreasurers;
-
-    //this treasurer manage opening fee balance, key is an asset
-    mapping(string => address) treasureTreasurers;
+    //@notice max total amount used when opening position
+    uint256 maxPositionTotalAmount;
 
     constructor() {
-        incomeTaxPercentage = 0;
+        incomeTaxPercentage = 1e17;
         maxIncomeTaxPercentage = 2e17;
 
         liquidationDepositFeeAmount = 20 * 1e18;
@@ -56,9 +54,9 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
 
-    }
+        maxPositionTotalAmount = 1e23;
 
-    //TODO: dodaj walidacje przy setach
+    }
 
     function getIncomeTaxPercentage() external override view returns (uint256) {
         return incomeTaxPercentage;
@@ -138,24 +136,6 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         emit MaxIporPublicationFeeAmountSet(_maxIporPublicationFeeAmount);
     }
 
-    function getCharlieTreasurer(string memory asset) external override view returns (address) {
-        return charlieTreasurers[asset];
-    }
-
-    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external override onlyOwner {
-        charlieTreasurers[asset] = _charlieTreasurer;
-        emit CharlieTreasurerSet(asset, _charlieTreasurer);
-    }
-
-    function getTreasureTreasurer(string memory asset) external override view returns (address) {
-        return treasureTreasurers[asset];
-    }
-
-    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external override onlyOwner {
-        treasureTreasurers[asset] = _treasureTreasurer;
-        emit TreasureTreasurerSet(asset, _treasureTreasurer);
-    }
-
     function getLiquidityPoolMaxUtilizationPercentage() external override view returns (uint256) {
         return liquidityPoolMaxUtilizationPercentage;
     }
@@ -164,5 +144,14 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         require(_liquidityPoolMaxUtilizationPercentage <= 1e18, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
         liquidityPoolMaxUtilizationPercentage = _liquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(_liquidityPoolMaxUtilizationPercentage);
+    }
+
+    function getMaxPositionTotalAmount() external override view returns (uint256) {
+        return maxPositionTotalAmount;
+    }
+
+    function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external override onlyOwner {
+        maxPositionTotalAmount = _maxPositionTotalAmount;
+        emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
     }
 }
