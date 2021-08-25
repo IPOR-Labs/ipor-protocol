@@ -31,6 +31,8 @@
   },
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.11",
+    "buidler-gas-reporter": "^0.1.4",
+    "eth-gas-reporter": "^0.2.22",
     "solidity-coverage": "^0.7.16"
   }
 }
