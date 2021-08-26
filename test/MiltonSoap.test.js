@@ -1,5 +1,6 @@
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
+const {ZERO} = require("./TestUtils");
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
 const MiltonV1Storage = artifacts.require('MiltonV1Storage');
@@ -45,12 +46,6 @@ contract('MiltonSoap', (accounts) => {
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
         miltonAddressesManager = await MiltonAddressesManager.deployed();
-        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfiguration.address);
-    });
-
-    beforeEach(async () => {
-
-        warren = await TestWarrenProxy.new();
 
         //10 000 000 000 000 USD
         tokenUsdt = await UsdtMockedToken.new(totalSupply6Decimals, 6);
@@ -60,17 +55,10 @@ contract('MiltonSoap', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
+        warren = await TestWarrenProxy.new();
         milton = await TestMiltonV1Proxy.new();
-        miltonStorage = await MiltonV1Storage.new();
-
-        await warren.addUpdater(userOne);
 
         for (let i = 1; i < accounts.length - 2; i++) {
-            await tokenUsdt.transfer(accounts[i], userSupply6Decimals);
-            //TODO: zrobic obsługę 6 miejsc po przecinku! - userSupply18Decimals
-            await tokenUsdc.transfer(accounts[i], userSupply18Decimals);
-            await tokenDai.transfer(accounts[i], userSupply18Decimals);
-
             //AMM has rights to spend money on behalf of user
             await tokenUsdt.approve(milton.address, totalSupply6Decimals, {from: accounts[i]});
             //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
@@ -79,14 +67,49 @@ contract('MiltonSoap', (accounts) => {
         }
 
         await miltonAddressesManager.setAddress("WARREN", warren.address);
+        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await miltonAddressesManager.setAddress("MILTON", milton.address);
-        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
 
         await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
         await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
         await miltonAddressesManager.setAddress("DAI", tokenDai.address);
 
         await milton.initialize(miltonAddressesManager.address);
+
+    });
+
+    beforeEach(async () => {
+
+        await warren.setupInitialValues(userOne);
+
+        miltonStorage = await MiltonV1Storage.new();
+
+        // await warren.addUpdater(userOne);
+        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
+        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
+        await tokenDai.setupInitialAmount(await milton.address, ZERO);
+
+        await tokenUsdt.setupInitialAmount(admin, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(admin, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(admin, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(userOne, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(userOne, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userOne, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(userTwo, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(userTwo, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userTwo, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(userThree, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(userThree, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userThree, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(liquidityProvider, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(liquidityProvider, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(liquidityProvider, userSupply18Decimals);
+
+        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(miltonAddressesManager.address);
 
     });
@@ -115,7 +138,7 @@ contract('MiltonSoap', (accounts) => {
         //given
         let direction = 0;
         let openerUserAddress = userTwo;
-        let iporValueBeforOpenPosition = testUtils.MILTON_5_PERCENTAGE;
+        let iporValueBeforeOpenPosition = testUtils.MILTON_5_PERCENTAGE;
 
         const derivativeParams = {
             asset: "DAI",
@@ -127,7 +150,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let expectedSoap = testUtils.ZERO;
@@ -148,7 +171,7 @@ contract('MiltonSoap', (accounts) => {
         //given
         let direction = 0;
         let openerUserAddress = userTwo;
-        let iporValueBeforOpenPosition = testUtils.MILTON_3_PERCENTAGE;
+        let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
 
         const derivativeParams = {
             asset: "DAI",
@@ -160,10 +183,10 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
-        let expectedSoap = BigInt("-270419178082191780821");
+        let expectedSoap = BigInt("-67604794520547965486");
 
         //when
         const soapParams = {
@@ -180,7 +203,7 @@ contract('MiltonSoap', (accounts) => {
         //given
         let direction = 1;
         let openerUserAddress = userTwo;
-        let iporValueBeforOpenPosition = testUtils.MILTON_3_PERCENTAGE;
+        let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
 
         const derivativeParams = {
             asset: "DAI",
@@ -192,7 +215,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
         let expectedSoap = testUtils.ZERO;
@@ -226,7 +249,7 @@ contract('MiltonSoap', (accounts) => {
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
-        let expectedSoap = BigInt("135209589041095890411");
+        let expectedSoap = BigInt("-67604794520547924923");
 
         //when
         const soapParams = {
@@ -399,9 +422,9 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(derivativeUSDCParams);
 
         //then
-        let expectedDAISoap = BigInt("-270419178082191780821");
+        let expectedDAISoap = BigInt("-67604794520547965486");
         //TODO: poprawic gdy zmiana na 6 miejsc po przecinku (zmiany w całym kodzie)
-        let expectedUSDCSoap = BigInt("-270419178082191780821");
+        let expectedUSDCSoap = BigInt("-67604794520547965486");
 
         const soapDAIParams = {
             asset: "DAI",
@@ -461,7 +484,7 @@ contract('MiltonSoap', (accounts) => {
         await milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-270419178082191780821");
+        let expectedSoap = BigInt("-67604794520547965486");
 
         const soapParams = {
             asset: "DAI",
@@ -514,7 +537,7 @@ contract('MiltonSoap', (accounts) => {
         await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("135209589041095890411");
+        let expectedSoap = BigInt("-67604794520547924923");
 
         const soapParams = {
             asset: "DAI",
@@ -527,7 +550,7 @@ contract('MiltonSoap', (accounts) => {
     });
 
 
-    it('should calculate soap, DAI add pay fixed, USDC add rec fixed, remove DAI rec fixed position after 25 days', async () => {
+    it('should calculate soap, DAI add pay fixed, USDC add rec fixed, remove rec fixed position after 25 days', async () => {
         //given
         let payFixDerivativeDAIDirection = 0;
         let recFixDerivativeUSDCDirection = 1;
@@ -572,7 +595,7 @@ contract('MiltonSoap', (accounts) => {
         await milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-270419178082191780821");
+        let expectedSoap = BigInt("-67604794520547965486");
 
         const soapParams = {
             asset: "DAI",
@@ -649,8 +672,8 @@ contract('MiltonSoap', (accounts) => {
         await warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_6_PERCENTAGE, calculationTimestamp25days, {from: userOne});
 
-        let expectedSoap28Days = BigInt("7809705863013698608503");
-        let expectedSoap50Days = BigInt("7571736986301369841380");
+        let expectedSoap28Days = BigInt("7858381315068493143924");
+        let expectedSoap50Days = BigInt("7977365753424657570753");
 
         //when
         //then
@@ -688,9 +711,6 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
-        await openPositionFunc(derivativeParamsFirst);
-
         const derivativeParams25days = {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
@@ -700,14 +720,16 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
         }
-        await openPositionFunc(derivativeParams25days);
-
         let calculationTimestamp50days = derivativeParams25days.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
-        let expectedSoap = BigInt("-811257534246575342465");
-
         //when
+        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
+        await openPositionFunc(derivativeParamsFirst);
+        await openPositionFunc(derivativeParams25days);
+
         //then
+        let expectedSoap = BigInt("-203230270882686228234");
+
         const soapParams = {
             asset: "DAI",
             calculateTimestamp: calculationTimestamp50days,
@@ -715,6 +737,152 @@ contract('MiltonSoap', (accounts) => {
             from: userTwo
         }
         await assertSoap(soapParams);
+
+    });
+
+    it('should calculate soap, DAI add pay fixed, wait 25 days, update IPOR and DAI add pay fixed, wait 25 days update IPOR and then calculate soap', async () => {
+        //given
+        let direction = 0;
+        let openerUserAddress = userTwo;
+        let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParamsFirst = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: direction,
+            openTimestamp: openTimestamp,
+            from: openerUserAddress
+        }
+        const derivativeParams25days = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: direction,
+            openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
+            from: openerUserAddress
+        }
+        let calculationTimestamp50days = derivativeParams25days.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+
+        //when
+        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
+        await openPositionFunc(derivativeParamsFirst);
+        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParams25days.openTimestamp, {from: userOne});
+        await openPositionFunc(derivativeParams25days);
+        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, calculationTimestamp50days, {from: userOne});
+
+        //then
+        let expectedSoap = BigInt("-203230270882686228234");
+
+        const soapParams = {
+            asset: "DAI",
+            calculateTimestamp: calculationTimestamp50days,
+            expectedSoap: expectedSoap,
+            from: userTwo
+        }
+        await assertSoap(soapParams);
+
+    });
+
+
+    it('should calculate EXACTLY the same SOAP with and without update IPOR Index with the same indexValue, DAI add pay fixed, 25 and 50 days period', async () => {
+        //given
+        let direction = 0;
+        let openerUserAddress = userTwo;
+        let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: direction,
+            openTimestamp: openTimestamp,
+            from: openerUserAddress
+        }
+
+        let calculationTimestamp25days = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+        let calculationTimestamp50days = derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS;
+        let soapBeforeUpdateIndex = null;
+
+        const soapParams = {
+            asset: "DAI",
+            calculateTimestamp: calculationTimestamp50days,
+            from: userTwo
+        }
+
+        //when
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await openPositionFunc(derivativeParams);
+
+        let soapBeforeUpdateIndexStruct = await calculateSoap(soapParams);
+        soapBeforeUpdateIndex = BigInt(soapBeforeUpdateIndexStruct.soap);
+
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, calculationTimestamp25days, {from: userOne});
+        let soapUpdateIndexAfter25DaysStruct = await calculateSoap(soapParams);
+        let soapUpdateIndexAfter25Days = BigInt(soapUpdateIndexAfter25DaysStruct.soap);
+
+        await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, calculationTimestamp50days, {from: userOne});
+        let soapUpdateIndexAfter50DaysStruct = await calculateSoap(soapParams);
+        let soapUpdateIndexAfter50Days = BigInt(soapUpdateIndexAfter50DaysStruct.soap);
+
+
+        //then
+        let expectedSoap = BigInt("-135209589041095930973");
+
+        assert(expectedSoap === soapBeforeUpdateIndex,
+            `Incorrect SOAP before update index for asset ${soapParams.asset} actual: ${soapBeforeUpdateIndex}, expected: ${expectedSoap}`);
+        assert(expectedSoap === soapUpdateIndexAfter25Days,
+            `Incorrect SOAP update index after 25 days for asset ${soapParams.asset} actual: ${soapUpdateIndexAfter25Days}, expected: ${expectedSoap}`);
+        assert(expectedSoap === soapUpdateIndexAfter50Days,
+            `Incorrect SOAP update index after 50 days for asset ${soapParams.asset} actual: ${soapUpdateIndexAfter50Days}, expected: ${expectedSoap}`);
+    });
+
+
+    it('should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after derivative opened, soap should be negative right after opened position and updated ibtPrice', async () => {
+        //given
+        let direction = 0;
+        let openerUserAddress = userTwo;
+        let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
+        let iporValueAfterOpenPosition = testUtils.MILTON_3_PERCENTAGE;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        let firstUpdateIndexTimestamp = openTimestamp;
+        let secondUpdateIndexTimestamp = firstUpdateIndexTimestamp + testUtils.PERIOD_1_DAY_IN_SECONDS;
+
+        const derivativeParamsFirst = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: direction,
+            openTimestamp: secondUpdateIndexTimestamp,
+            from: openerUserAddress
+        }
+        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, firstUpdateIndexTimestamp, {from: userOne});
+        await openPositionFunc(derivativeParamsFirst);
+
+        //when
+        await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueAfterOpenPosition, secondUpdateIndexTimestamp, {from: userOne});
+
+        let rightAfterOpenedPositionTimestamp = secondUpdateIndexTimestamp + 100;
+
+        const soapParams = {
+            asset: "DAI",
+            calculateTimestamp: rightAfterOpenedPositionTimestamp,
+            expectedSoap: 0,
+            from: userTwo
+        }
+        let actualSoapStruct = await calculateSoap(soapParams);
+        let actualSoap = BigInt(actualSoapStruct.soap);
+
+
+        //then
+        assert(actualSoap < 0, `SOAP is positive but should be negative, actual: ${actualSoap}`);
 
     });
 

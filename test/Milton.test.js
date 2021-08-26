@@ -93,11 +93,25 @@ contract('Milton', (accounts) => {
         await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
         await tokenDai.setupInitialAmount(await milton.address, ZERO);
 
-        for (let i = 1; i < accounts.length - 2; i++) {
-            await tokenUsdt.setupInitialAmount(accounts[i], userSupply6Decimals);
-            await tokenUsdc.setupInitialAmount(accounts[i], userSupply18Decimals);
-            await tokenDai.setupInitialAmount(accounts[i], userSupply18Decimals);
-        }
+        await tokenUsdt.setupInitialAmount(admin, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(admin, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(admin, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(userOne, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(userOne, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userOne, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(userTwo, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(userTwo, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userTwo, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(userThree, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(userThree, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userThree, userSupply18Decimals);
+
+        await tokenUsdt.setupInitialAmount(liquidityProvider, userSupply6Decimals);
+        await tokenUsdc.setupInitialAmount(liquidityProvider, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(liquidityProvider, userSupply18Decimals);
 
         await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(miltonAddressesManager.address);

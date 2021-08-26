@@ -8,7 +8,11 @@ import {AmmMath} from '../libraries/AmmMath.sol';
 
 library IporLogic {
 
-    function accrueIbtPrice(DataTypes.IPOR memory ipor, uint256 accrueTimestamp) public pure returns (uint256){
-        return ipor.quasiIbtPrice + (ipor.indexValue * (accrueTimestamp - ipor.blockTimestamp));
+    function accrueQuasiIbtPrice(DataTypes.IPOR memory ipor, uint256 accrueTimestamp) public pure returns (uint256){
+        return accrueQuasiIbtPrice(ipor.indexValue, ipor.quasiIbtPrice, ipor.blockTimestamp, accrueTimestamp);
+    }
+
+    function accrueQuasiIbtPrice(uint256 indexValue, uint256 quasiIbtPrice, uint256 indexTimestamp, uint256 accrueTimestamp) public pure returns (uint256){
+        return quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
     }
 }

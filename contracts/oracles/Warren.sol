@@ -20,7 +20,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
     using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
-    event IporIndexUpdate(string asset, uint256 indexValue, uint256 ibtPrice, uint256 date);
+    event IporIndexUpdate(string asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 date);
 
     /// @notice event emitted when IPOR Index Updater is added by Admin
     event IporIndexUpdaterAdd(address _updater);
@@ -33,7 +33,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
      * @return List of assets with calculated IPOR Index in current moment.
      *
      */
-    function getIndexes() external view returns (DataTypes.IporFront[] memory) {
+    function getIndexes() external override view returns (DataTypes.IporFront[] memory) {
         DataTypes.IporFront[] memory _indexes = new DataTypes.IporFront[](assets.length);
         for (uint256 i = 0; i < assets.length; i++) {
             _indexes[i] = DataTypes.IporFront(
@@ -46,7 +46,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
         return _indexes;
     }
 
-    function updateIndexes(string[] memory _assets, uint256[] memory _indexValues) public onlyUpdater {
+    function updateIndexes(string[] memory _assets, uint256[] memory _indexValues) external override onlyUpdater {
         _updateIndexes(_assets, _indexValues, block.timestamp);
     }
 
@@ -56,7 +56,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
      * @param _indexValue The index value of IPOR for particular asset, Smart Contract assume that _indexValue has 18 decimals
      *
      */
-    function updateIndex(string memory _asset, uint256 _indexValue) public onlyUpdater {
+    function updateIndex(string memory _asset, uint256 _indexValue) external override onlyUpdater {
         _updateIndex(_asset, _indexValue, block.timestamp);
 
     }
@@ -66,6 +66,10 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
         for (uint256 i = 0; i < _assets.length; i++) {
             _updateIndex(_assets[i], _indexValues[i], updateTimestamp);
         }
+    }
+
+    function calculateAccruedIbtPrice(string memory asset, uint256 calculateTimestamp) external view override returns (uint256) {
+        return AmmMath.division(indexes[keccak256(abi.encodePacked(asset))].accrueQuasiIbtPrice(calculateTimestamp), Constants.YEAR_IN_SECONDS);
     }
 
     function _updateIndex(string memory asset, uint256 indexValue, uint256 updateTimestamp) internal onlyUpdater {
@@ -84,7 +88,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
             assets.push(assetHash);
             newQuasiIbtPrice = Constants.MD * Constants.YEAR_IN_SECONDS;
         } else {
-            newQuasiIbtPrice = indexes[assetHash].accrueIbtPrice(updateTimestamp);
+            newQuasiIbtPrice = indexes[assetHash].accrueQuasiIbtPrice(updateTimestamp);
         }
 
         indexes[assetHash] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
@@ -134,7 +138,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
      * @return list of updater addresses who are authorized to actualize IPOR Index in Oracle
      *
      */
-    function getUpdaters() external view returns (address[] memory) {
+    function getUpdaters() external override view returns (address[] memory) {
         return updaters;
     }
 
@@ -142,7 +146,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
      * @notice Remove specific address from list of IPOR Index authorized updaters
      * @param _updater address which will be removed from list of IPOR Index authorized updaters
      */
-    function removeUpdater(address _updater) public onlyOwner {
+    function removeUpdater(address _updater) external override onlyOwner {
 
         for (uint256 i; i < updaters.length; i++) {
             if (updaters[i] == _updater) {

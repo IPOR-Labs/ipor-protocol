@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
+import '../oracles/WarrenStorage.sol';
 import './MiltonStorage.sol';
 import './MiltonEvents.sol';
 
@@ -76,8 +77,9 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
     }
 
     function _calculateSoap(string memory asset, uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap) {
-        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(asset);
-        (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSoap(asset, ibtPrice, calculateTimestamp);
+        IWarren warren = IWarren(_addressesManager.getWarren());
+        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSoap(asset, accruedIbtPrice, calculateTimestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
@@ -126,7 +128,7 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
             miltonConfiguration.getIporPublicationFeeAmount(),
             SPREAD_FEE_PERCENTAGE);
 
-        DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(asset, direction, derivativeAmount.notional);
+        DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional);
 
 
         DataTypes.IporDerivative memory iporDerivative = DataTypes.IporDerivative(
@@ -145,8 +147,6 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
         );
 
         miltonStorage.updateStorageWhenOpenPosition(iporDerivative);
-
-        //        userDerivatives[msg.sender].push(iporDerivative.id);
 
         //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
         //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
@@ -179,14 +179,17 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
         );
     }
 
-    function _calculateDerivativeIndicators(string memory asset, uint8 direction, uint256 notionalAmount)
+    function _calculateDerivativeIndicators(uint256 calculateTimestamp, string memory asset, uint8 direction, uint256 notionalAmount)
     internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
-        (uint256 iporIndexValue, uint256  ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(asset);
+        IWarren warren = IWarren(_addressesManager.getWarren());
+        (uint256 indexValue, ,) = warren.getIndex(asset);
+        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
+
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
-            iporIndexValue,
-            ibtPrice,
-            AmmMath.calculateIbtQuantity(notionalAmount, ibtPrice),
-            direction == 0 ? (iporIndexValue + SPREAD_FEE_PERCENTAGE) : (iporIndexValue - SPREAD_FEE_PERCENTAGE)
+            indexValue,
+            accruedIbtPrice,
+            AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
+            direction == 0 ? (indexValue + SPREAD_FEE_PERCENTAGE) : (indexValue - SPREAD_FEE_PERCENTAGE)
         );
         return indicator;
     }
