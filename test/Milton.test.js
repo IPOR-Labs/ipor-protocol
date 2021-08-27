@@ -229,11 +229,6 @@ contract('Milton', (accounts) => {
 
     });
 
-    // TODO: implement it
-    // it('should open receive fixed position - simple case DAI', async () => {
-    //
-    // });
-
     it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
         let incomeTax = BigInt("0");
         let expectedAMMTokenBalance = BigInt("109700000000000000000");
@@ -997,6 +992,19 @@ contract('Milton', (accounts) => {
         );
     });
 
+    it('should NOT close position, because derivative not exists', async () => {
+        //given
+        let closerUserAddress = userTwo;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        await testUtils.assertError(
+            //when
+            milton.test_closePosition(0, openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS, {from: closerUserAddress}),
+            //then
+            'IPOR_22'
+        );
+    });
+
 
     it('should close only one position - close first position', async () => {
         //given
@@ -1096,6 +1104,65 @@ contract('Milton', (accounts) => {
 
         assert(expectedDerivativeId === BigInt(oneDerivative.id),
             `Incorrect derivative id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`)
+
+    });
+
+    it('should close position with appropriate balance, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity, last IPOR index calculation 50 days before', async () => {
+        //NOTICE: IPOR index update 50 days before on in day of closing position should be the same
+
+        let incomeTax = BigInt("630617523287671234364");
+        let expectedAMMTokenBalance = BigInt("4203524767123287656360") + incomeTax;
+        let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10006196475232876712343640") - incomeTax;
+        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("10006196475232876712343640") - incomeTax;
+        let expectedLiquidityPoolTotalBalance = BigInt("4193524767123287656360");
+
+        //given
+        let closerUserAddress = userTwo;
+        let iporValueBeforeOpenPosition = testUtils.MILTON_5_PERCENTAGE;
+        let iporValueAfterOpenPosition = testUtils.MILTON_50_PERCENTAGE;
+        let periodOfTimeElapsedInSeconds = testUtils.PERIOD_50_DAYS_IN_SECONDS;
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
+
+        await milton.provideLiquidity(params.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider});
+        await warren.test_updateIndex(params.asset, iporValueBeforeOpenPosition, params.openTimestamp, {from: userOne});
+        await openPositionFunc(params);
+        await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, params.openTimestamp, {from: userOne});
+
+        //when
+        await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
+
+        //then
+        await assertExpectedValues(
+            params.asset,
+            params.from,
+            closerUserAddress,
+            testUtils.MILTON_10_400_USD,
+            expectedAMMTokenBalance,
+            expectedOpenerUserTokenBalanceAfterPayOut,
+            expectedCloserUserTokenBalanceAfterPayOut,
+            expectedLiquidityPoolTotalBalance,
+            0,
+            testUtils.ZERO,
+            testUtils.ZERO,
+            incomeTax
+        );
+
+        const soapParams = {
+            asset: params.asset,
+            calculateTimestamp: endTimestamp,
+            expectedSoap: testUtils.ZERO,
+            from: params.from
+        }
+        await assertSoap(soapParams);
 
     });
 
@@ -1312,6 +1379,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: userThree
         }
+        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider});
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
 
         let expectedUserDerivativeIdsLengthFirst = 0;
@@ -1361,6 +1429,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: userThree
         }
+        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider});
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
 
         let expectedUserDerivativeIdsLengthFirst = 0;
@@ -1410,6 +1479,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: userThree
         }
+        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_10_400_USD, {from: liquidityProvider});
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
 
         let expectedUserDerivativeIdsLengthFirst = 0;
@@ -1628,13 +1698,7 @@ contract('Milton', (accounts) => {
 
     //TODO: dodać test w którym zmieniamy konfiguracje w MiltonConfiguration i widac zmiany w Milton
 
-    //TODO: !!! dodaj testy do MiltonConfiguration
-
-
     //TODO: testy na strukturze MiltonDerivatives
-    //TODO: dopisac test probujacy zamykac pozycje ktora nie istnieje
-
-    //TODO: napisac test który sprawdza czy SoapIndicator podczas inicjalnego uruchomienia hypotheticalInterestCumulative jest równe testUtils.ZERO
 
     //TODO: test when ipor not ready yet
     //TODO: check initial IBT
@@ -1643,10 +1707,6 @@ contract('Milton', (accounts) => {
     //TODO: test na 1 sprwdzenie czy totalAmount wiekszy od fee
     //TODO: test na 2 sprwdzenie czy totalAmount wiekszy od fee (po przeliczeniu openingFeeAmount)
     //TODO: test na wysłanie USDT które ma 6 miejsc po przecinku i weryfikacja liczb
-
-
-    //TODO: sprawdz w JS czy otworzenie nowej PIERWSZEJ derywatywy poprawnie wylicza SoapIndicator, hypotheticalInterestCumulative powinno być nadal testUtils.ZERO
-    //TODO: sprawdz w JS czy otworzenej KOLEJNEJ derywatywy poprawnie wylicza SoapIndicator
 
     //TODO: add test which checks emited events!!!
     //TODO: dopisać test zmiany na przykład adresu warrena i sprawdzenia czy widzi to milton

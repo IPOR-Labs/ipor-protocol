@@ -199,10 +199,10 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
 
         DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(derivativeId);
 
-        (, uint256 ibtPrice,) = IWarren(_addressesManager.getWarren()).getIndex(derivativeItem.item.asset);
+        uint256 accruedIbtPrice = IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivativeItem.item.asset, closeTimestamp);
 
         DataTypes.IporDerivativeInterest memory derivativeInterest =
-        derivativeItem.item.calculateInterest(closeTimestamp, ibtPrice);
+        derivativeItem.item.calculateInterest(closeTimestamp, accruedIbtPrice);
 
         miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, derivativeInterest.interestDifferenceAmount, closeTimestamp);
 
