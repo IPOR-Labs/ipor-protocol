@@ -19,3 +19,4 @@ app/src/contracts
 /src/generated/
 /ganache_data/
 /containers/ganache/ganache_data/
+/test-eth-gas-report.log

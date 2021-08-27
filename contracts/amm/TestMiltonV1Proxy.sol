@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-import "./MiltonV1.sol";
+import "./Milton.sol";
 
 contract TestMiltonV1Proxy is MiltonV1 {
 

@@ -13,4 +13,14 @@ contract TestWarrenProxy is Warren {
         _updateIndexes(_assets, indexValues, updateTimestamp);
     }
 
+    function setupInitialValues(address updater) external {
+        delete updaters;
+        delete assets;
+
+        delete indexes[keccak256(abi.encodePacked("DAI"))];
+        delete indexes[keccak256(abi.encodePacked("USDT"))];
+        delete indexes[keccak256(abi.encodePacked("USDC"))];
+
+        addUpdater(updater);
+    }
 }

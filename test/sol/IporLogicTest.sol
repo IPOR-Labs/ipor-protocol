@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-import '../../contracts/amm/MiltonV1.sol';
+import '../../contracts/amm/Milton.sol';
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../../contracts/libraries/IporLogic.sol";
@@ -21,7 +21,7 @@ contract IporLogicTest {
         uint256 days25 = 60 * 60 * 24 * 25;
         uint256 expectedIbtPrice = 1002054794520547945;
         //when
-        uint256 actualQuasiIbtPrice = ipor.accrueIbtPrice(initialTimestamp + days25);
+        uint256 actualQuasiIbtPrice = ipor.accrueQuasiIbtPrice(initialTimestamp + days25);
         uint256 actualIbtPrice = AmmMath.division(actualQuasiIbtPrice, Constants.YEAR_IN_SECONDS);
         //then
         Assert.equal(actualIbtPrice, expectedIbtPrice, 'Incorrect IBT Price');
@@ -38,14 +38,14 @@ contract IporLogicTest {
         uint256 days25 = 60 * 60 * 24 * 25;
 
         uint256 firstCalculationTimestamp = initialTimestamp + days25;
-        ipor.accrueIbtPrice(firstCalculationTimestamp);
+        ipor.accrueQuasiIbtPrice(firstCalculationTimestamp);
 
         uint256 secondCalculationTimestamp = firstCalculationTimestamp + days25;
 
         uint256 expectedIbtPrice = 1004109589041095890;
 
         //when
-        uint256 secondQuasiIbtPrice = ipor.accrueIbtPrice(secondCalculationTimestamp);
+        uint256 secondQuasiIbtPrice = ipor.accrueQuasiIbtPrice(secondCalculationTimestamp);
         uint256 actualIbtPrice = AmmMath.division(secondQuasiIbtPrice, Constants.YEAR_IN_SECONDS);
 
 

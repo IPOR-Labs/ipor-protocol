@@ -3,7 +3,10 @@ require('dotenv').config()
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
-    plugins: ["solidity-coverage", "truffle-contract-size"],
+    plugins: [
+        "solidity-coverage",
+        "truffle-contract-size",
+        "buidler-gas-reporter"],
     contracts_build_directory: path.join(__dirname, "app/src/contracts"),
     networks: {
         // test: {
@@ -57,7 +60,12 @@ module.exports = {
 
     },
     mocha: {
-        useColors: true
+        useColors: true,
+        reporter: 'eth-gas-reporter',
+        reporterOptions : {
+            showTimeSpent : true,
+            outputFile: "test-eth-gas-report.log"
+        }
     },
     compilers: {
         solc: {

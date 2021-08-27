@@ -76,7 +76,6 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(DerivativeLogic, MiltonV1Storage);
     await deployer.link(TotalSoapIndicatorLogic, MiltonV1Storage);
     await deployer.link(DerivativesView, MiltonV1Storage);
-
     await deployer.link(DerivativeLogic, MiltonV1);
     await deployer.link(AmmMath, MiltonV1Storage);
 
