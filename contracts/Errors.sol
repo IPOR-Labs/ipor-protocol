@@ -2,8 +2,8 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 library Errors {
-    string public constant CALLER_NOT_IPOR_ORACLE_ADMIN = 'IPOR_1'; // 'The caller must be the admin'
-    string public constant CALLER_NOT_IPOR_ORACLE_UPDATER = 'IPOR_2'; // 'The caller must be the updater'
+    string public constant CALLER_NOT_MILTON = 'IPOR_1'; // 'The caller must be the Milton smart contract'
+    string public constant CALLER_NOT_WARREN_UPDATER = 'IPOR_2'; // 'The caller must be the Warren updater'
     string public constant AMM_TOTAL_AMOUNT_LOWER_THAN_FEE = 'IPOR_3'; // 'Deposit Amount when creating derivative position is lower than fee'
     string public constant AMM_TOTAL_AMOUNT_TOO_LOW = 'IPOR_4'; // 'Deposit Amount when creating derivative position is too low'
     string public constant AMM_MAXIMUM_SLIPPAGE_TOO_LOW = 'IPOR_5'; // 'Maximum Slippage is too low'
@@ -25,5 +25,7 @@ library Errors {
     string public constant AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS = 'IPOR_23'; //derivative has incorrect status
     string public constant AMM_CONFIG_MAX_VALUE_EXCEEDED = 'IPOR_24'; //general error, max value exceeded
     string public constant AMM_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP = 'IPOR_25'; //'Derivative closing timestamp cannot be before derivative starting timestamp`
+    string public constant MILTON_IBT_PRICE_CANNOT_BE_ZERO = 'IPOR_26'; //'ibtPrice has to be higher than 0`
+
 
 }

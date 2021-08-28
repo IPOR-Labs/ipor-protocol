@@ -83,36 +83,8 @@ contract('Milton', (accounts) => {
     });
 
     beforeEach(async () => {
-
         await warren.setupInitialValues(userOne);
-
         miltonStorage = await MiltonV1Storage.new();
-
-        // await warren.addUpdater(userOne);
-        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
-        await tokenDai.setupInitialAmount(await milton.address, ZERO);
-
-        await tokenUsdt.setupInitialAmount(admin, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(admin, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(admin, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(userOne, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(userOne, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userOne, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(userTwo, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(userTwo, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userTwo, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(userThree, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(userThree, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userThree, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(liquidityProvider, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(liquidityProvider, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(liquidityProvider, userSupply18Decimals);
-
         await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(miltonAddressesManager.address);
 
@@ -120,6 +92,7 @@ contract('Milton', (accounts) => {
 
     it('should NOT open position because deposit amount too low', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let asset = "DAI";
         let depositAmount = 0;
         let slippageValue = 3;
@@ -137,6 +110,7 @@ contract('Milton', (accounts) => {
 
     it('should NOT open position because slippage too low', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let asset = "DAI";
         let depositAmount = BigInt("30000000000000000001");
         let slippageValue = 0;
@@ -153,6 +127,7 @@ contract('Milton', (accounts) => {
 
     it('should NOT open position because slippage too high', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let asset = "DAI";
         let depositAmount = BigInt("30000000000000000001");
         let slippageValue = web3.utils.toBN(1e20);
@@ -171,6 +146,7 @@ contract('Milton', (accounts) => {
 
     it('should NOT open position because deposit amount too high', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let asset = "DAI";
         let depositAmount = BigInt("1000000000000000000000001")
         let slippageValue = 3;
@@ -187,6 +163,7 @@ contract('Milton', (accounts) => {
 
     it('should open pay fixed position - simple case DAI', async () => {
         //given
+        await setupTokenDaiInitialValues();
         const params = {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
@@ -230,6 +207,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("0");
         let expectedAMMTokenBalance = BigInt("109700000000000000000");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9999890300000000000000000");
@@ -247,6 +225,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("6760479452054794520");
         let expectedAMMTokenBalance = BigInt("177304794520547945204");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9999822695205479452054796");
@@ -265,6 +244,7 @@ contract('Milton', (accounts) => {
 
     it('should NOT open position because Liquidity Pool is to low', async () => {
         //given
+        await setupTokenDaiInitialValues();
         const params = {
             asset: "DAI",
             totalAmount: BigInt("10000000000000000000000"), //10 000 USD
@@ -293,6 +273,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("9980000000000000000000");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9990020000000000000000000");
@@ -310,6 +291,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("784215616438356167764");
         let expectedAMMTokenBalance = BigInt("7951856164383561677637");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9992048143835616438322363");
@@ -327,6 +309,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("848575380821917805109");
         let expectedAMMTokenBalance = BigInt("8595453808219178051093");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9991404546191780821948907");
@@ -344,6 +327,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009760600000000000000000") - incomeTax;
@@ -361,6 +345,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("770694657534246573179");
         let expectedAMMTokenBalance = BigInt("2802753424657534268209") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10007597246575342465731791") - incomeTax;
@@ -378,6 +363,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009760600000000000000000") - incomeTax;
@@ -396,6 +382,7 @@ contract('Milton', (accounts) => {
 
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("630617523287671234364");
         let expectedAMMTokenBalance = BigInt("4203524767123287656360") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10006196475232876712343640") - incomeTax;
@@ -414,6 +401,7 @@ contract('Milton', (accounts) => {
 
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009740600000000000000000") - incomeTax;
@@ -433,6 +421,7 @@ contract('Milton', (accounts) => {
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
         //given
+        await setupTokenDaiInitialValues();
         const params = {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
@@ -459,6 +448,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009740600000000000000000") - incomeTax;
@@ -476,6 +466,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("630617523287671234364");
         let expectedAMMTokenBalance = BigInt("4203524767123287656360") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10006176475232876712343640") - incomeTax;
@@ -493,6 +484,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("9980000000000000000000");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9990000000000000000000000");
@@ -512,6 +504,7 @@ contract('Milton', (accounts) => {
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
         //given
+        await setupTokenDaiInitialValues();
         const params = {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
@@ -538,6 +531,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("848575380821917805109");
         let expectedAMMTokenBalance = BigInt("8595453808219178051093");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9991384546191780821948907");
@@ -556,6 +550,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, pay fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("9980000000000000000000");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9990000000000000000000000");
@@ -574,6 +569,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, IPOR not changed, IBT price not changed, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("6760479452054792492");
         let expectedAMMTokenBalance = BigInt("177304794520547924923");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9999822695205479452075077");
@@ -592,6 +588,7 @@ contract('Milton', (accounts) => {
 
 
     it('should close position, DAI, owner, receive fixed, IPOR not changed, IBT price changed 25%, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("6760479452054794520");
         let expectedAMMTokenBalance = BigInt("177304794520547945204");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9999822695205479452054796");
@@ -609,6 +606,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009760600000000000000000") - incomeTax;
@@ -626,6 +624,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("770694657534246578723");
         let expectedAMMTokenBalance = BigInt("2802753424657534212773") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10007597246575342465787227") - incomeTax;
@@ -643,6 +642,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("9980000000000000000000");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9990020000000000000000000");
@@ -660,6 +660,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("784215616438356162220");
         let expectedAMMTokenBalance = BigInt("7951856164383561622201");
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9992048143835616438377799");
@@ -677,6 +678,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009760600000000000000000") - incomeTax;
@@ -697,6 +699,7 @@ contract('Milton', (accounts) => {
 
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("833431906849315065383");
         let expectedAMMTokenBalance = BigInt("2175380931506849346167") + incomeTax;
         let expectedLiquidityPoolTotalBalance = BigInt("2165380931506849346167");
@@ -715,6 +718,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let depositAmount = BigInt("9870300000000000000000");
         let expectedAMMTokenBalance = BigInt("9980000000000000000000");
@@ -733,6 +737,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("645760997260273974090");
         let expectedAMMTokenBalance = BigInt("6567309972602739740899");
         let expectedLiquidityPoolTotalBalance = BigInt("6557309972602739740899") - incomeTax;
@@ -751,6 +756,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedLiquidityPoolTotalBalance = BigInt("629400000000000000000");
@@ -770,6 +776,7 @@ contract('Milton', (accounts) => {
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity', async () => {
         //given
+        await setupTokenDaiInitialValues();
         const params = {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
@@ -796,6 +803,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost > Deposit, before maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("9980000000000000000000");
         let expectedLiquidityPoolTotalBalance = BigInt("9970000000000000000000") - incomeTax;
@@ -814,6 +822,7 @@ contract('Milton', (accounts) => {
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity', async () => {
         //given
+        await setupTokenDaiInitialValues();
         const params = {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
@@ -839,6 +848,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10009740600000000000000000") - incomeTax;
@@ -856,6 +866,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("833431906849315065383");
         let expectedAMMTokenBalance = BigInt("2175380931506849346167") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10008204619068493150653833") - incomeTax;
@@ -873,6 +884,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedLiquidityPoolTotalBalance = BigInt("9970000000000000000000") - incomeTax;
         await exetuceClosePositionTestCase(
@@ -889,6 +901,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("645760997260273974090");
         let expectedLiquidityPoolTotalBalance = BigInt("6557309972602739740899") - incomeTax;
         await exetuceClosePositionTestCase(
@@ -905,6 +918,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should close position, DAI, owner, pay fixed, Liquidity Pool earned, User lost > Deposit, after maturity', async () => {
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("987030000000000000000");
         let expectedLiquidityPoolTotalBalance = BigInt("9970000000000000000000") - incomeTax;
         await exetuceClosePositionTestCase(
@@ -923,6 +937,7 @@ contract('Milton', (accounts) => {
 
     it('should NOT close position, because incorrect derivative Id', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
@@ -951,6 +966,7 @@ contract('Milton', (accounts) => {
 
     it('should NOT close position, because derivative has incorrect status', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
@@ -1008,6 +1024,7 @@ contract('Milton', (accounts) => {
 
     it('should close only one position - close first position', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
@@ -1058,6 +1075,7 @@ contract('Milton', (accounts) => {
 
     it('should close only one position - close last position', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
@@ -1109,7 +1127,7 @@ contract('Milton', (accounts) => {
 
     it('should close position with appropriate balance, DAI, owner, pay fixed, Liquidity Pool lost, User earned < Deposit, after maturity, last IPOR index calculation 50 days before', async () => {
         //NOTICE: IPOR index update 50 days before on in day of closing position should be the same
-
+        await setupTokenDaiInitialValues();
         let incomeTax = BigInt("630617523287671234364");
         let expectedAMMTokenBalance = BigInt("4203524767123287656360") + incomeTax;
         let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("10006196475232876712343640") - incomeTax;
@@ -1168,6 +1186,7 @@ contract('Milton', (accounts) => {
 
     it('should open many positions and arrays with ids have correct state, one user', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -1212,6 +1231,7 @@ contract('Milton', (accounts) => {
 
     it('should open many positions and arrays with ids have correct state, two users', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1263,6 +1283,7 @@ contract('Milton', (accounts) => {
 
     it('should open many positions and close one position and arrays with ids have correct state, two users', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1314,6 +1335,7 @@ contract('Milton', (accounts) => {
 
     it('should open many positions and close two positions and arrays with ids have correct state, two users', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1366,6 +1388,7 @@ contract('Milton', (accounts) => {
 
     it('should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1416,6 +1439,7 @@ contract('Milton', (accounts) => {
 
     it('should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1 with minus 3', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1466,6 +1490,7 @@ contract('Milton', (accounts) => {
 
     it('should open two positions and close one position - Arithmetic overflow - last byte difference - case 1', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1520,6 +1545,7 @@ contract('Milton', (accounts) => {
 
 
     it('should calculate income tax, 5%, not owner, Milton loses, user earns, |I| < D', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_5_PERCENTAGE);
         let incomeTax = BigInt("416715953424657532692");
         let expectedAMMTokenBalance = BigInt("2175380931506849346167") + incomeTax;
@@ -1541,6 +1567,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should calculate income tax, 5%, Milton loses, user earns, |I| > D', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_5_PERCENTAGE);
         let incomeTax = BigInt("493515000000000000000");
         let expectedAMMTokenBalance = BigInt("639400000000000000000") + incomeTax;
@@ -1560,6 +1587,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should calculate income tax, 5%, Milton earns, user loses, |I| < D', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_5_PERCENTAGE);
         let incomeTax = BigInt("392107808219178083882");
         let expectedAMMTokenBalance = BigInt("7951856164383561677637");
@@ -1584,6 +1612,7 @@ contract('Milton', (accounts) => {
 
 
     it('should calculate income tax, 5%, Milton earns, user loses, |I| > D', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_5_PERCENTAGE);
         let incomeTax = BigInt("493515000000000000000");
         let expectedLiquidityPoolTotalBalance = BigInt("9970000000000000000000") - incomeTax;
@@ -1602,6 +1631,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should calculate income tax, 100%, Milton loses, user earns, |I| < D', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("8334319068493150653833");
@@ -1627,6 +1657,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should calculate income tax, 100%, Milton loses, user earns, |I| > D', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("9870300000000000000000");
@@ -1648,6 +1679,7 @@ contract('Milton', (accounts) => {
     });
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("7842156164383561677637");
@@ -1674,6 +1706,7 @@ contract('Milton', (accounts) => {
 
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool', async () => {
+        await setupTokenDaiInitialValues();
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("9870300000000000000000");
@@ -1817,7 +1850,6 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, params.openTimestamp, {from: userOne});
 
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
-        await warren.test_updateIndex(params.asset, testUtils.MILTON_6_PERCENTAGE, endTimestamp, {from: userOne});
 
         if (providedLiquidityAmount != null) {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
@@ -1911,6 +1943,32 @@ contract('Milton', (accounts) => {
         assert(expectedSumOfBalancesBeforePayout === actualSumOfBalances,
             `Incorrect balance between AMM Balance and Users Balance for asset ${asset}, actual: ${actualSumOfBalances}, expected ${expectedSumOfBalancesBeforePayout}`);
 
+    }
+
+    const setupTokenUsdtInitialValues = async () => {
+        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
+        await tokenUsdt.setupInitialAmount(admin, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(userOne, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(userTwo, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(userThree, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(liquidityProvider, userSupply6Decimals);
+    }
+    const setupTokenUsdcInitialValues = async () => {
+        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
+        await tokenUsdc.setupInitialAmount(admin, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(userOne, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(userTwo, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(userThree, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(liquidityProvider, userSupply18Decimals);
+    }
+
+    const setupTokenDaiInitialValues = async () => {
+        await tokenDai.setupInitialAmount(await milton.address, ZERO);
+        await tokenDai.setupInitialAmount(admin, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userOne, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userTwo, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userThree, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(liquidityProvider, userSupply18Decimals);
     }
 
     const assertSoap = async (params) => {

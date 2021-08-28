@@ -166,7 +166,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
                 allowed = true;
             }
         }
-        require(allowed == true, Errors.CALLER_NOT_IPOR_ORACLE_UPDATER);
+        require(allowed == true, Errors.CALLER_NOT_WARREN_UPDATER);
         _;
     }
 }

@@ -7,6 +7,7 @@ import {Constants} from '../libraries/Constants.sol';
 
 library DerivativesView {
     //@notice FOR FRONTEND
+    //TODO: fix it, looks bad, DoS, possible out of gas
     function getPositions(DataTypes.MiltonDerivatives storage miltonDerivatives
     ) external view returns (DataTypes.IporDerivative[] memory) {
         DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](miltonDerivatives.ids.length);

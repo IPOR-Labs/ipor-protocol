@@ -154,6 +154,7 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(DerivativeLogic, TestMiltonV1Proxy);
         await deployer.link(AmmMath, TestMiltonV1Proxy);
         await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManagerAddr);
+
     }
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
