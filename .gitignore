@@ -1,22 +1,35 @@
-node_modules
-build
-app/src/contracts
-.idea
-.DS_Store
-/src/java/generated/
-/src/abi/generated/
-/src/bin/generated/
-/ipor-oracle.iml
+### Environment ###
+/.env
+
+### Java build artifacts ###
+/src/generated/
 /target/
+
+### Node build artifacts ###
+/node_modules
+/package-lock.json
+
+### Smart Contracts build artifacts ###
+/app/src/contracts/
 /contracts/oracles/artifacts/
 /contracts/amm/artifacts/
 /contracts/artifacts/
 /contracts/interfaces/artifacts/
 /contracts/libraries/types/artifacts/
-/ipor-protocol.iml
-/.env
-/package-lock.json
-/src/generated/
-/ganache_data/
-/containers/ganache/ganache_data/
 /test-eth-gas-report.log
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### Ganache data ###
+/containers/ganache/ganache_data/
+
+### macOS system files ###
+.DS_Store
+
+### Ansible build artifacts ###
+/contracts.zip
+
