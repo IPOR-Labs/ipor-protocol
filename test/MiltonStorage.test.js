@@ -55,7 +55,7 @@ contract('MiltonStorage', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
-        warren = await TestWarrenProxy.new();
+        warren = await TestWarren.new();
         milton = await TestMilton.new();
 
 

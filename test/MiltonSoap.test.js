@@ -55,7 +55,7 @@ contract('MiltonSoap', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
-        warren = await TestWarrenProxy.new();
+        warren = await TestWarren.new();
         milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
