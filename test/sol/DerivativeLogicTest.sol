@@ -4,11 +4,10 @@ pragma solidity >=0.8.4 <0.9.0;
 import '../../contracts/amm/Milton.sol';
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-
-contract DerivativeLogicTest {
+import "./TestData.sol";
+contract DerivativeLogicTest is TestData {
 
     using DerivativeLogic  for DataTypes.IporDerivative;
-    uint256 constant PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;
 
     function testCalculateInterestFixedCase1() public {
 
@@ -191,45 +190,4 @@ contract DerivativeLogicTest {
         Assert.equal(derivativeInterest.interestDifferenceAmount, - 302869479452054794520, "Wrong interest difference amount");
     }
 
-    /*
-    * @param fixedInterestRate is a spread with IPOR index
-    */
-    function prepareDerivativeCase1(uint256 fixedInterestRate) internal view returns (DataTypes.IporDerivative memory) {
-
-        uint256 ibtPriceFirst = 100 * Constants.MD;
-        uint256 depositAmount = 9870300000000000000000;
-        uint256 leverage = 10;
-
-        DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
-            3 * 1e16, //ipor index value
-            ibtPriceFirst,
-            987030000000000000000, //ibtQuantity
-            fixedInterestRate
-        );
-
-        DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-            20 * Constants.MD, //liquidation deposit amount
-            99700000000000000000, //opening fee amount
-            10 * Constants.MD, //ipor publication amount
-            1e16 // spread percentege
-        );
-
-        DataTypes.IporDerivative memory derivative = DataTypes.IporDerivative(
-            0,
-            DataTypes.DerivativeState.ACTIVE,
-            msg.sender,
-            "DAI",
-            0, //Pay Fixed, Receive Floating (long position)
-            depositAmount,
-            fee,
-            leverage,
-            depositAmount * leverage,
-            block.timestamp,
-            block.timestamp + 60 * 60 * 24 * 28,
-            indicator
-        );
-
-        return derivative;
-
-    }
 }

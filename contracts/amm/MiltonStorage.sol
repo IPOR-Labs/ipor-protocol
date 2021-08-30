@@ -13,7 +13,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 
 
-contract MiltonV1Storage is IMiltonStorage {
+contract MiltonStorage is IMiltonStorage {
 
     using DerivativeLogic for DataTypes.IporDerivative;
     using SoapIndicatorLogic for DataTypes.SoapIndicator;
@@ -22,7 +22,6 @@ contract MiltonV1Storage is IMiltonStorage {
     using DerivativesView for DataTypes.MiltonDerivatives;
 
     IMiltonAddressesManager internal _addressesManager;
-    IMiltonConfiguration public miltonConfiguration;
 
     mapping(string => DataTypes.MiltonTotalBalance) public balances;
 
@@ -35,7 +34,6 @@ contract MiltonV1Storage is IMiltonStorage {
 
     function initialize(IMiltonAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
-        miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
 
         uint256 blockTimestamp = block.timestamp;
 
@@ -83,8 +81,7 @@ contract MiltonV1Storage is IMiltonStorage {
         return derivatives.items[derivativeId];
     }
 
-    //TODO: access only for Milton
-    function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external override {
+    function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external override onlyMilton {
 
         _updateMiltonDerivativesWhenOpenPosition(iporDerivative);
         _updateBalancesWhenOpenPosition(iporDerivative.asset, iporDerivative.depositAmount, iporDerivative.fee.openingAmount);
@@ -96,7 +93,7 @@ contract MiltonV1Storage is IMiltonStorage {
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 interestDifferenceAmount,
-        uint256 closingTimestamp) external override {
+        uint256 closingTimestamp) external override onlyMilton {
 
         _updateMiltonDerivativesWhenClosePosition(derivativeItem);
         _updateBalancesWhenClosePosition(user, derivativeItem, interestDifferenceAmount, closingTimestamp);
@@ -150,6 +147,7 @@ contract MiltonV1Storage is IMiltonStorage {
     }
 
     function _updateBalancesWhenOpenPosition(string memory asset, uint256 depositAmount, uint256 openingFeeAmount) internal {
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
         balances[asset].derivatives = balances[asset].derivatives + depositAmount;
         balances[asset].openingFee = balances[asset].openingFee + openingFeeAmount;
         balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + miltonConfiguration.getLiquidationDepositFeeAmount();
@@ -189,7 +187,8 @@ contract MiltonV1Storage is IMiltonStorage {
                 balances[derivativeItem.item.asset].liquidityPool
                 = balances[derivativeItem.item.asset].liquidityPool - derivativeItem.item.depositAmount;
 
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount,
+                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -209,7 +208,8 @@ contract MiltonV1Storage is IMiltonStorage {
                 //fetch "I" amount from Liquidity Pool
                 balances[derivativeItem.item.asset].liquidityPool = balances[derivativeItem.item.asset].liquidityPool - absInterestDifferenceAmount;
 
-                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount,
+                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -221,7 +221,8 @@ contract MiltonV1Storage is IMiltonStorage {
             if (absInterestDifferenceAmount > derivativeItem.item.depositAmount) {
                 // |I| > D
 
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount,
+                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -240,7 +241,8 @@ contract MiltonV1Storage is IMiltonStorage {
                         Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
-                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount,
+                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -308,6 +310,11 @@ contract MiltonV1Storage is IMiltonStorage {
             derivativeItem.item.indicator.fixedInterestRate,
             derivativeItem.item.indicator.ibtQuantity
         );
+    }
+
+    modifier onlyMilton() {
+        require(msg.sender == _addressesManager.getMilton(), Errors.CALLER_NOT_MILTON);
+        _;
     }
 
 }

@@ -18,7 +18,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSpread"
                         methodArgs={["USDT"]}
                         render={(item) => (
@@ -33,7 +33,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSpread"
                         methodArgs={["USDC"]}
                         render={(item) => (
@@ -48,7 +48,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSpread"
                         methodArgs={["DAI"]}
                         render={(item) => (
@@ -66,7 +66,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSpread"
                         methodArgs={["USDT"]}
                         render={(item) => (
@@ -81,7 +81,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSpread"
                         methodArgs={["USDC"]}
                         render={(item) => (
@@ -96,7 +96,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSpread"
                         methodArgs={["DAI"]}
                         render={(item) => (

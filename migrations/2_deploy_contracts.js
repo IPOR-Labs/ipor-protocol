@@ -1,9 +1,9 @@
 const Warren = artifacts.require("Warren");
-const MiltonV1 = artifacts.require("MiltonV1");
-const MiltonV1Storage= artifacts.require("MiltonV1Storage");
+const Milton = artifacts.require("Milton");
+const MiltonStorage= artifacts.require("MiltonStorage");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
-const TestWarrenProxy = artifacts.require("TestWarrenProxy");
-const TestMiltonV1Proxy = artifacts.require("TestMiltonV1Proxy");
+const TestWarren = artifacts.require("TestWarren");
+const TestMilton = artifacts.require("TestMilton");
 const TusdMockedToken = artifacts.require('TusdMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
@@ -64,20 +64,23 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.link(AmmMath, DerivativeLogic);
     await deployer.deploy(DerivativeLogic);
+
     await deployer.link(AmmMath, SoapIndicatorLogic);
     await deployer.deploy(SoapIndicatorLogic);
     await deployer.deploy(SpreadIndicatorLogic);
+
     await deployer.link(SoapIndicatorLogic, TotalSoapIndicatorLogic);
     await deployer.deploy(TotalSoapIndicatorLogic);
+
     await deployer.deploy(DerivativesView);
 
-    await deployer.link(SoapIndicatorLogic, MiltonV1Storage);
-    await deployer.link(SpreadIndicatorLogic, MiltonV1Storage);
-    await deployer.link(DerivativeLogic, MiltonV1Storage);
-    await deployer.link(TotalSoapIndicatorLogic, MiltonV1Storage);
-    await deployer.link(DerivativesView, MiltonV1Storage);
-    await deployer.link(DerivativeLogic, MiltonV1);
-    await deployer.link(AmmMath, MiltonV1Storage);
+    await deployer.link(SoapIndicatorLogic, MiltonStorage);
+    await deployer.link(SpreadIndicatorLogic, MiltonStorage);
+    await deployer.link(DerivativeLogic, MiltonStorage);
+    await deployer.link(TotalSoapIndicatorLogic, MiltonStorage);
+    await deployer.link(DerivativesView, MiltonStorage);
+    await deployer.link(DerivativeLogic, Milton);
+    await deployer.link(AmmMath, MiltonStorage);
 
     await deployer.deploy(MiltonConfiguration);
     miltonConfiguration = await MiltonConfiguration.deployed();
@@ -116,6 +119,7 @@ module.exports = async function (deployer, _network, addresses) {
 
 
         await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManagerAddr);
+
     }
 
     if (_network == 'develop2' || _network === 'docker') {
@@ -127,10 +131,13 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     if (_network !== 'test') {
-        await deployer.deploy(MiltonV1);
-        milton = await MiltonV1.deployed();
-        await deployer.deploy(MiltonV1Storage);
-        miltonStorage = await MiltonV1Storage.deployed();
+        await deployer.link(AmmMath, Milton);
+        await deployer.deploy(Milton);
+        milton = await Milton.deployed();
+
+        await deployer.deploy(MiltonStorage);
+        miltonStorage = await MiltonStorage.deployed();
+
         warrenAddr = await warren.address;
         miltonAddr = await milton.address;
         miltonStorageAddr = await miltonStorage.address;
@@ -148,14 +155,25 @@ module.exports = async function (deployer, _network, addresses) {
 
         await milton.initialize(miltonAddressesManagerAddr);
         await miltonStorage.initialize(miltonAddressesManagerAddr);
+
+        await deployer.link(AmmMath, TestWarren);
+        await deployer.link(IporLogic, TestWarren);
+        await deployer.deploy(TestWarren);
+
+        await deployer.link(AmmMath, TestMilton);
+        await deployer.link(DerivativeLogic, TestMilton);
+        await deployer.deploy(TestMilton);
+
     } else {
-        await deployer.link(AmmMath, TestWarrenProxy);
-        await deployer.link(IporLogic, TestWarrenProxy);
-        await deployer.link(DerivativeLogic, TestMiltonV1Proxy);
-        await deployer.link(AmmMath, TestMiltonV1Proxy);
+        await deployer.link(AmmMath, TestWarren);
+        await deployer.link(IporLogic, TestWarren);
+        await deployer.link(DerivativeLogic, TestMilton);
+        await deployer.link(AmmMath, TestMilton);
         await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManagerAddr);
+
     }
 
+    //Prepare tokens for initial accounts...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
         console.log("Setup Faucet...");
         await mockedUsdt.transfer(miltonFaucetAddr, faucetSupply6Decimals);

@@ -3,7 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "./Warren.sol";
 
-contract TestWarrenProxy is Warren {
+contract TestWarren is Warren {
 
     function test_updateIndex(string memory asset, uint256 indexValue, uint256 updateTimestamp) public {
         _updateIndex(asset, indexValue, updateTimestamp);

@@ -2,9 +2,9 @@ const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
-const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
-const MiltonV1Storage = artifacts.require('MiltonV1Storage');
-const TestWarrenProxy = artifacts.require('TestWarrenProxy');
+const TestMilton = artifacts.require('TestMilton');
+const MiltonStorage = artifacts.require('MiltonStorage');
+const TestWarren = artifacts.require('TestWarren');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
@@ -55,8 +55,8 @@ contract('MiltonSoap', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
-        warren = await TestWarrenProxy.new();
-        milton = await TestMiltonV1Proxy.new();
+        warren = await TestWarren.new();
+        milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
             //AMM has rights to spend money on behalf of user
@@ -81,34 +81,7 @@ contract('MiltonSoap', (accounts) => {
     beforeEach(async () => {
 
         await warren.setupInitialValues(userOne);
-
-        miltonStorage = await MiltonV1Storage.new();
-
-        // await warren.addUpdater(userOne);
-        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
-        await tokenDai.setupInitialAmount(await milton.address, ZERO);
-
-        await tokenUsdt.setupInitialAmount(admin, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(admin, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(admin, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(userOne, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(userOne, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userOne, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(userTwo, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(userTwo, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userTwo, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(userThree, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(userThree, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userThree, userSupply18Decimals);
-
-        await tokenUsdt.setupInitialAmount(liquidityProvider, userSupply6Decimals);
-        await tokenUsdc.setupInitialAmount(liquidityProvider, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(liquidityProvider, userSupply18Decimals);
-
+        miltonStorage = await MiltonStorage.new();
         await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(miltonAddressesManager.address);
 
@@ -136,6 +109,7 @@ contract('MiltonSoap', (accounts) => {
     it('should calculate soap, DAI, pay fixed, add position, calculate now', async () => {
 
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_5_PERCENTAGE;
@@ -169,6 +143,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, pay fixed, add position, calculate after 25 days', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -201,6 +176,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, rec fixed, add position, calculate now', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 1;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -232,6 +208,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, rec fixed, add position, calculate after 25 days', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 1;
         let openerUserAddress = userTwo;
         let iporValueBeforOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -264,6 +241,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, pay fixed, add and remove position', async () => {
         // given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
@@ -302,6 +280,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, rec fixed, add and remove position', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 1;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
@@ -342,6 +321,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, DAI add rec fixed', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let firstDerivativeDirection = 0;
         let secondDerivativeDirection = 1;
 
@@ -389,6 +369,8 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, USDC add pay fixed', async () => {
         //given
+        await setupTokenDaiInitialValues();
+        await setupTokenUsdcInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -446,6 +428,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, DAI add rec fixed, close rec fixed position', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let payFixDerivativeDirection = 0;
         let recFixDerivativeDirection = 1;
 
@@ -499,6 +482,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, DAI add rec fixed, remove pay fixed position after 25 days', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let payFixDerivativeDirection = 0;
         let recFixDerivativeDirection = 1;
 
@@ -552,6 +536,8 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, USDC add rec fixed, remove rec fixed position after 25 days', async () => {
         //given
+        await setupTokenDaiInitialValues();
+        await setupTokenUsdcInitialValues();
         let payFixDerivativeDAIDirection = 0;
         let recFixDerivativeUSDCDirection = 1;
 
@@ -609,6 +595,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, change ibtPrice, wait 25 days and then calculate soap', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -647,6 +634,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, change ibtPrice, calculate soap after 28 days and after 50 days and compare', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -697,6 +685,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, wait 25 days, DAI add pay fixed, wait 25 days and then calculate soap', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -742,6 +731,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, wait 25 days, update IPOR and DAI add pay fixed, wait 25 days update IPOR and then calculate soap', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -790,6 +780,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate EXACTLY the same SOAP with and without update IPOR Index with the same indexValue, DAI add pay fixed, 25 and 50 days period', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -845,6 +836,7 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after derivative opened, soap should be negative right after opened position and updated ibtPrice', async () => {
         //given
+        await setupTokenDaiInitialValues();
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.MILTON_3_PERCENTAGE;
@@ -907,6 +899,32 @@ contract('MiltonSoap', (accounts) => {
 
     const calculateSoap = async (params) => {
         return await milton.test_calculateSoap.call(params.asset, params.calculateTimestamp, {from: params.from});
+    }
+
+    const setupTokenUsdtInitialValues = async () => {
+        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
+        await tokenUsdt.setupInitialAmount(admin, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(userOne, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(userTwo, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(userThree, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(liquidityProvider, userSupply6Decimals);
+    }
+    const setupTokenUsdcInitialValues = async () => {
+        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
+        await tokenUsdc.setupInitialAmount(admin, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(userOne, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(userTwo, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(userThree, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(liquidityProvider, userSupply18Decimals);
+    }
+
+    const setupTokenDaiInitialValues = async () => {
+        await tokenDai.setupInitialAmount(await milton.address, ZERO);
+        await tokenDai.setupInitialAmount(admin, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userOne, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userTwo, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(userThree, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(liquidityProvider, userSupply18Decimals);
     }
 
 });

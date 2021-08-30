@@ -34,7 +34,6 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
     }
 
     function getPositions() external override view returns (DataTypes.IporDerivative[] memory) {
-        //TODO: fix it, looks bad, DoS, possible out of gas
         return IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage()).getPositions();
     }
 

@@ -66,4 +66,46 @@ contract TestData {
         Assert.equal(si.averageInterestRate, expectedAverageInterestRate, 'Incorrect average weighted interest rate');
         Assert.equal(si.quasiHypotheticalInterestCumulative, expectedQuasiHypotheticalInterestCumulative, 'Incorrect quasi hypothetical interest cumulative');
     }
+
+    /*
+    * @param fixedInterestRate is a spread with IPOR index
+    */
+    function prepareDerivativeCase1(uint256 fixedInterestRate) public view returns (DataTypes.IporDerivative memory) {
+
+        uint256 ibtPriceFirst = 100 * Constants.MD;
+        uint256 depositAmount = 9870300000000000000000;
+        uint256 leverage = 10;
+
+        DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
+            3 * 1e16, //ipor index value
+            ibtPriceFirst,
+            987030000000000000000, //ibtQuantity
+            fixedInterestRate
+        );
+
+        DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
+            20 * Constants.MD, //liquidation deposit amount
+            99700000000000000000, //opening fee amount
+            10 * Constants.MD, //ipor publication amount
+            1e16 // spread percentege
+        );
+
+        DataTypes.IporDerivative memory derivative = DataTypes.IporDerivative(
+            0,
+            DataTypes.DerivativeState.ACTIVE,
+            msg.sender,
+            "DAI",
+            0, //Pay Fixed, Receive Floating (long position)
+            depositAmount,
+            fee,
+            leverage,
+            depositAmount * leverage,
+            block.timestamp,
+            block.timestamp + 60 * 60 * 24 * 28,
+            indicator
+        );
+
+        return derivative;
+
+    }
 }

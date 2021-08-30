@@ -120,7 +120,7 @@
                         <argument>${contracts.sources}/amm/MiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonV1.sol</argument>
-                        <argument>${contracts.sources}/amm/TestMiltonV1Proxy.sol</argument>
+                        <argument>${contracts.sources}/amm/TestMiltonV1.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
@@ -137,7 +137,7 @@
                         <argument>${contracts.sources}/mocks/tokens/TusdMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/UsdcMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/UsdtMockedToken.sol</argument>
-                        <argument>${contracts.sources}/oracles/TestWarrenProxy.sol</argument>
+                        <argument>${contracts.sources}/oracles/TestWarren.sol</argument>
                         <argument>${contracts.sources}/oracles/Warren.sol</argument>
                         <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
                         <argument>${contracts.sources}/Errors.sol</argument>

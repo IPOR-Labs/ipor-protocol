@@ -3,7 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "./Milton.sol";
 
-contract TestMiltonV1Proxy is MiltonV1 {
+contract TestMilton is Milton {
 
     function test_openPosition(
         uint256 openTimestamp,

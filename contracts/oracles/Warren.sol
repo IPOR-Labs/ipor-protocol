@@ -15,7 +15,7 @@ import {AmmMath} from '../libraries/AmmMath.sol';
  *
  * @author IPOR Labs
  */
-contract Warren is Ownable, WarrenV1Storage, IWarren {
+contract Warren is Ownable, WarrenStorage, IWarren {
 
     using IporLogic for DataTypes.IPOR;
 
@@ -166,7 +166,7 @@ contract Warren is Ownable, WarrenV1Storage, IWarren {
                 allowed = true;
             }
         }
-        require(allowed == true, Errors.CALLER_NOT_IPOR_ORACLE_UPDATER);
+        require(allowed == true, Errors.CALLER_NOT_WARREN_UPDATER);
         _;
     }
 }

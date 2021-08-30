@@ -21,7 +21,7 @@ import "../interfaces/IMilton.sol";
  *
  * @author IPOR Labs
  */
-contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
+contract Milton is Ownable, MiltonEvents, IMilton {
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
@@ -184,6 +184,7 @@ contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
         IWarren warren = IWarren(_addressesManager.getWarren());
         (uint256 indexValue, ,) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
+        require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
 
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             indexValue,

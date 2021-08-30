@@ -1,7 +1,7 @@
 const testUtils = require("./TestUtils.js");
 const {time} = require('@openzeppelin/test-helpers');
 const IporLogic = artifacts.require('IporLogic');
-const TestWarrenProxy = artifacts.require('TestWarrenProxy');
+const TestWarren = artifacts.require('TestWarren');
 const WARREN_5_PERCENTAGE = BigInt("50000000000000000");
 const WARREN_6_PERCENTAGE = BigInt("60000000000000000");
 const WARREN_7_PERCENTAGE = BigInt("70000000000000000");
@@ -18,7 +18,7 @@ contract('Warren', (accounts) => {
     let warren = null;
 
     beforeEach(async () => {
-        warren = await TestWarrenProxy.new();
+        warren = await TestWarren.new();
     });
 
     it('should NOT update IPOR Index', async () => {
