@@ -15,7 +15,7 @@ import {AmmMath} from '../libraries/AmmMath.sol';
  *
  * @author IPOR Labs
  */
-contract Warren is Ownable, WarrenV1Storage, IWarren {
+contract Warren is Ownable, WarrenStorage, IWarren {
 
     using IporLogic for DataTypes.IPOR;
 

@@ -13,7 +13,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 
 
-contract MiltonV1Storage is IMiltonStorage {
+contract MiltonStorage is IMiltonStorage {
 
     using DerivativeLogic for DataTypes.IporDerivative;
     using SoapIndicatorLogic for DataTypes.SoapIndicator;

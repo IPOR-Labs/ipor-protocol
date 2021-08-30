@@ -2,9 +2,9 @@ const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
-const TestMiltonV1Proxy = artifacts.require('TestMiltonV1Proxy');
-const MiltonV1Storage = artifacts.require('MiltonV1Storage');
-const TestWarrenProxy = artifacts.require('TestWarrenProxy');
+const TestMilton = artifacts.require('TestMilton');
+const MiltonStorage = artifacts.require('MiltonStorage');
+const TestWarren = artifacts.require('TestWarren');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
@@ -60,7 +60,7 @@ contract('Milton', (accounts) => {
         tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
 
         warren = await TestWarrenProxy.new();
-        milton = await TestMiltonV1Proxy.new();
+        milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
             //AMM has rights to spend money on behalf of user
@@ -84,7 +84,7 @@ contract('Milton', (accounts) => {
 
     beforeEach(async () => {
         await warren.setupInitialValues(userOne);
-        miltonStorage = await MiltonV1Storage.new();
+        miltonStorage = await MiltonStorage.new();
         await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(miltonAddressesManager.address);
 

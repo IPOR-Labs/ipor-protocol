@@ -21,7 +21,7 @@ import "../interfaces/IMilton.sol";
  *
  * @author IPOR Labs
  */
-contract MiltonV1 is Ownable, MiltonV1Events, IMilton {
+contract Milton is Ownable, MiltonEvents, IMilton {
 
     using DerivativeLogic for DataTypes.IporDerivative;
 

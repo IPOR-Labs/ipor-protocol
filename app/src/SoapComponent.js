@@ -18,7 +18,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["USDT"]}
                         render={(soap) => (
@@ -33,7 +33,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["USDC"]}
                         render={(soap) => (
@@ -48,7 +48,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["DAI"]}
                         render={(soap) => (
@@ -66,7 +66,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["USDT"]}
                         render={(soap) => (
@@ -81,7 +81,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["USDC"]}
                         render={(soap) => (
@@ -96,7 +96,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["DAI"]}
                         render={(soap) => (
@@ -114,7 +114,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["USDT"]}
                         render={(soap) => (
@@ -129,7 +129,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["USDC"]}
                         render={(soap) => (
@@ -144,7 +144,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1"
+                        contract="Milton"
                         method="calculateSoap"
                         methodArgs={["DAI"]}
                         render={(soap) => (

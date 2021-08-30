@@ -7,7 +7,7 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
  * @title Ipor Oracle Storage initial version
  * @author IPOR Labs
  */
-contract WarrenV1Storage {
+contract WarrenStorage {
 
     /// @notice list of IPOR indexes for particular assets
     mapping(bytes32 => DataTypes.IPOR) public indexes;

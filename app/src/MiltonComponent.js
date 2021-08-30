@@ -3,7 +3,7 @@ import {newContextComponents} from "@drizzle/react-components";
 import DerivativeList from "./DerivativeList";
 import AmmBalanceComponent from "./AmmBalanceComponent";
 import AmmTotalBalanceComponent from "./AmmTotalBalanceComponent";
-import MiltonV1Storage from "./contracts/MiltonV1Storage.json";
+import MiltonStorage from "./contracts/MiltonStorage.json";
 
 const {ContractData, ContractForm} = newContextComponents;
 
@@ -26,7 +26,7 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Open Position Form</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonV1"
+                    contract="Milton"
                     method="openPosition"/>
             </div>
         </div>
@@ -36,14 +36,14 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Provide Liquidity</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonV1"
+                    contract="Milton"
                     method="provideLiquidity"/>
             </div>
             <div className="col-md-5">
                 <strong>Close Position Form</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonV1"
+                    contract="Milton"
                     method="closePosition"/>
             </div>
         </div>
@@ -55,7 +55,7 @@ export default ({drizzle, drizzleState}) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonV1Storage"
+            contract="MiltonStorage"
             method="getPositions"
             render={DerivativeList}
         />

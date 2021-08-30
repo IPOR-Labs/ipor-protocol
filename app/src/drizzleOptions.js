@@ -1,6 +1,6 @@
 import Warren from "./contracts/Warren.json";
-import MiltonV1 from "./contracts/MiltonV1.json";
-import MiltonV1Storage from "./contracts/MiltonV1Storage.json";
+import Milton from "./contracts/Milton.json";
+import MiltonStorage from "./contracts/MiltonStorage.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
 import MiltonConfiguration from "./contracts/MiltonConfiguration";
 import DaiMockedToken from "./contracts/DaiMockedToken";
@@ -21,8 +21,8 @@ const options = {
         MiltonDevToolDataProvider,
         MiltonAddressesManager,
         Warren,
-        MiltonV1,
-        MiltonV1Storage,
+        Milton,
+        MiltonStorage,
         MiltonConfiguration,
         DaiMockedToken,
         UsdtMockedToken,
@@ -30,7 +30,7 @@ const options = {
         MiltonFaucet],
     events: {
         Warren: ["IporIndexUpdate"],
-        MiltonV1: ["OpenPosition", "ClosePosition"]
+        Milton: ["OpenPosition", "ClosePosition"]
     }
 };
 

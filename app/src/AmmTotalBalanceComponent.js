@@ -117,7 +117,7 @@ export default ({drizzle, drizzleState}) => (
                         )}
                     />
 
-                    Milton Address: <strong>{drizzle.contracts.MiltonV1.address}</strong>
+                    Milton Address: <strong>{drizzle.contracts.Milton.address}</strong>
                     <ContractForm
                         drizzle={drizzle}
                         contract="UsdtMockedToken"
@@ -139,7 +139,7 @@ export default ({drizzle, drizzleState}) => (
                         )}
                     />
 
-                    Milton Address: <strong>{drizzle.contracts.MiltonV1.address}</strong>
+                    Milton Address: <strong>{drizzle.contracts.Milton.address}</strong>
                     <ContractForm
                         drizzle={drizzle}
                         contract="UsdcMockedToken"
@@ -161,7 +161,7 @@ export default ({drizzle, drizzleState}) => (
                         )}
                     />
 
-                    Milton Address: <strong>{drizzle.contracts.MiltonV1.address}</strong>
+                    Milton Address: <strong>{drizzle.contracts.Milton.address}</strong>
                     <ContractForm
                         drizzle={drizzle}
                         contract="DaiMockedToken"

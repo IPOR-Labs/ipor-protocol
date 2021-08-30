@@ -29,7 +29,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -44,7 +44,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -59,7 +59,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
@@ -77,7 +77,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -92,7 +92,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -107,7 +107,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
@@ -125,7 +125,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -140,7 +140,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -155,7 +155,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
@@ -173,7 +173,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -188,7 +188,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -203,7 +203,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
@@ -221,7 +221,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -236,7 +236,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -251,7 +251,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
@@ -269,7 +269,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDT"]}
                         render={(value) => (
@@ -284,7 +284,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["USDC"]}
                         render={(value) => (
@@ -299,7 +299,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonV1Storage"
+                        contract="MiltonStorage"
                         method="balances"
                         methodArgs={["DAI"]}
                         render={(value) => (
