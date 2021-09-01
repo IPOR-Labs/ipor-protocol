@@ -52,9 +52,9 @@ contract Warren is Ownable, IWarren {
     }
 
     function updateIndex(string memory _asset, uint256 _indexValue) external override {
-        uint256[] memory indexes;
-        indexes[0] = _indexValue;
-        string[] memory assets;
+        uint256[] memory indexes = new uint256[](1);
+        indexes[0]= _indexValue;
+        string[] memory assets = new string[](1);
         assets[0] = _asset;
         warrenStorage.updateIndexes(assets, indexes, block.timestamp);
     }
