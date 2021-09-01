@@ -160,10 +160,14 @@ module.exports = async function (deployer, _network, addresses) {
         await milton.initialize(miltonAddressesManagerAddr);
         await miltonStorage.initialize(miltonAddressesManagerAddr);
 
+        //TestWarren
         await deployer.link(AmmMath, TestWarren);
         await deployer.link(IporLogic, TestWarren);
         await deployer.deploy(TestWarren);
+        let testWarren = await TestWarren.deployed();
+        await testWarren.addUpdater(admin);
 
+        //TestMilton
         await deployer.link(AmmMath, TestMilton);
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.deploy(TestMilton);
