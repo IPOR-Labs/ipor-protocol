@@ -126,6 +126,7 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     if (_network == 'develop2' || _network === 'docker') {
+        console.log("Setup initial IPOR Index...")
         //by default add ADMIN as updater for IPOR Oracle
         await warren.addUpdater(admin);
         await warren.updateIndex("DAI", BigInt("30000000000000000"));
@@ -166,6 +167,9 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(AmmMath, TestMilton);
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.deploy(TestMilton);
+        let testMilton = await TestMilton.deployed();
+        await testMilton.initialize(miltonAddressesManagerAddr);
+
 
     } else {
         await deployer.link(AmmMath, TestWarren);

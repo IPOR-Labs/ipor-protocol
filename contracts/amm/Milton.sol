@@ -26,15 +26,12 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     using DerivativeLogic for DataTypes.IporDerivative;
 
     IMiltonAddressesManager internal _addressesManager;
-    IMiltonConfiguration public miltonConfiguration;
 
     //@notice percentage of deposit amount
     uint256 constant SPREAD_FEE_PERCENTAGE = 1e16;
 
     function initialize(IMiltonAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
-        //TODO: nie ustawiac jako pole
-        miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
     }
 
     //    fallback() external payable  {
@@ -92,6 +89,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         uint8 direction) internal returns (uint256) {
 
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
 
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
@@ -220,7 +218,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 interestDifferenceAmount,
         uint256 _calculationTimestamp) internal {
-
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
         uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
 
         uint256 transferAmount = derivativeItem.item.depositAmount;
