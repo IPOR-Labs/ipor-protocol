@@ -18,6 +18,7 @@ const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const AmmMath = artifacts.require('AmmMath');
 const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
+const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
 
 
 module.exports = async function (deployer, _network, addresses) {
@@ -88,6 +89,8 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(MiltonAddressesManager);
     miltonAddressesManager = await MiltonAddressesManager.deployed();
     let miltonAddressesManagerAddr = await miltonAddressesManager.address;
+
+    await deployer.deploy(MiltonFrontendDataProvider, miltonAddressesManagerAddr);
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
