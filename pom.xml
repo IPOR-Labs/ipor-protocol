@@ -29,13 +29,14 @@
         <contracts.sources>contracts</contracts.sources>
 
         <!-- LIBS VERSION -->
-        <web3j.version>4.8.6</web3j.version>
+        <web3j.version>4.8.7</web3j.version>
         <gitexe.version>1.11.2</gitexe.version>
 
         <!-- PLUGINS VERSION -->
         <exec-plugin.version>3.0.0</exec-plugin.version>
         <web3j-plugin.version>4.8.2</web3j-plugin.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <clean-plugin.version>3.1.0</clean-plugin.version>
         <build-helper-plugin.version>3.2.0</build-helper-plugin.version>
         <source-plugin.version>3.2.1</source-plugin.version>
         <javadoc-plugin.version>3.3.0</javadoc-plugin.version>
@@ -96,6 +97,29 @@
         <plugins>
 
             <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${clean-plugin.version}</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${generated.sources.java}</directory>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${generated.sources.abi}</directory>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>${exec-plugin.version}</version>
@@ -116,22 +140,30 @@
                         <argument>${generated.sources.abi}</argument>
                         <argument>@openzeppelin/contracts=${PWD}/node_modules/@openzeppelin/contracts</argument>
                         <!-- INFO: wildcards not working here :( -->
+                        <argument>${contracts.sources}/Errors.sol</argument>
+                        <argument>${contracts.sources}/amm/Milton.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
-                        <argument>${contracts.sources}/amm/MiltonV1.sol</argument>
-                        <argument>${contracts.sources}/amm/TestMiltonV1.sol</argument>
+                        <argument>${contracts.sources}/amm/TestMilton.sol</argument>
+                        <argument>${contracts.sources}/configuration/MiltonAddressesManager.sol</argument>
+                        <argument>${contracts.sources}/frontend/MiltonDevToolDataProvider.sol</argument>
+                        <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonAddressesManager.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
-                        <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
                         <argument>${contracts.sources}/libraries/AmmMath.sol</argument>
-                        <argument>${contracts.sources}/libraries/Constants.sol</argument>
                         <argument>${contracts.sources}/libraries/DerivativeLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/DerivativesView.sol</argument>
                         <argument>${contracts.sources}/libraries/IporLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/SoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/SpreadIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/TotalSoapIndicatorLogic.sol</argument>
+                        <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/DaiMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/TusdMockedToken.sol</argument>
@@ -140,8 +172,6 @@
                         <argument>${contracts.sources}/oracles/TestWarren.sol</argument>
                         <argument>${contracts.sources}/oracles/Warren.sol</argument>
                         <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
-                        <argument>${contracts.sources}/Errors.sol</argument>
-                        <argument>${contracts.sources}/Migrations.sol</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -166,8 +196,12 @@
                     <abiSourceFiles>
                         <directory>${generated.sources.abi}</directory>
                         <includes>
-                            <include>MiltonV1.abi</include>
+                            <include>Milton.abi</include>
+                            <include>MiltonDevToolDataProvider.abi</include>
                             <include>MiltonEvents.abi</include>
+                            <include>MiltonFrontendDataProvider.abi</include>
+                            <include>TestMilton.abi</include>
+                            <include>TestWarren.abi</include>
                             <include>Warren.abi</include>
                         </includes>
                     </abiSourceFiles>
