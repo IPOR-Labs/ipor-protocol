@@ -11,7 +11,7 @@ const UsdcMockedToken = artifacts.require('UsdcMockedToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
-const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
+const IporAddressesManager = artifacts.require('IporAddressesManager');
 
 contract('MiltonSoap', (accounts) => {
 
@@ -38,14 +38,14 @@ contract('MiltonSoap', (accounts) => {
     let tokenUsdc = null;
     let warren = null;
     let miltonConfiguration = null;
-    let miltonAddressesManager = null;
+    let iporAddressesManager = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
-        miltonAddressesManager = await MiltonAddressesManager.deployed();
+        iporAddressesManager = await IporAddressesManager.deployed();
 
         //10 000 000 000 000 USD
         tokenUsdt = await UsdtMockedToken.new(totalSupply6Decimals, 6);
@@ -66,15 +66,15 @@ contract('MiltonSoap', (accounts) => {
             await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
         }
 
-        await miltonAddressesManager.setAddress("WARREN", warren.address);
-        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
-        await miltonAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress("WARREN", warren.address);
+        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("MILTON", milton.address);
 
-        await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
-        await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
-        await miltonAddressesManager.setAddress("DAI", tokenDai.address);
+        await iporAddressesManager.setAddress("USDT", tokenUsdt.address);
+        await iporAddressesManager.setAddress("USDC", tokenUsdc.address);
+        await iporAddressesManager.setAddress("DAI", tokenDai.address);
 
-        await milton.initialize(miltonAddressesManager.address);
+        await milton.initialize(iporAddressesManager.address);
 
     });
 
@@ -82,8 +82,8 @@ contract('MiltonSoap', (accounts) => {
 
         await warren.setupInitialValues(userOne);
         miltonStorage = await MiltonStorage.new();
-        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
-        await miltonStorage.initialize(miltonAddressesManager.address);
+        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await miltonStorage.initialize(iporAddressesManager.address);
 
     });
 

@@ -13,18 +13,18 @@ export default ({drizzle, drizzleState}) => (
             </p>
             <p>
                 <strong>Add updater</strong>
-                <ContractForm drizzle={drizzle} contract="Warren" method="addUpdater"/>
+                <ContractForm drizzle={drizzle} contract="WarrenStorage" method="addUpdater"/>
             </p>
             <p>
                 <strong>Remove updater</strong>
-                <ContractForm drizzle={drizzle} contract="Warren" method="removeUpdater"/>
+                <ContractForm drizzle={drizzle} contract="WarrenStorage" method="removeUpdater"/>
             </p>
             <p>
                 <strong>Updaters</strong>
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="Warren"
+                    contract="WarrenStorage"
                     method="getUpdaters"
                 />
             </p>

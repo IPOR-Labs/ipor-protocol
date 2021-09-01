@@ -25,12 +25,12 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
-    IMiltonAddressesManager internal _addressesManager;
+    IIporAddressesManager internal _addressesManager;
 
     //@notice percentage of deposit amount
     uint256 constant SPREAD_FEE_PERCENTAGE = 1e16;
 
-    function initialize(IMiltonAddressesManager addressesManager) public {
+    function initialize(IIporAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
     }
 

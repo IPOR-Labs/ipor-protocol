@@ -11,7 +11,7 @@ const UsdcMockedToken = artifacts.require('UsdcMockedToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
-const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
+const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 
 contract('Milton', (accounts) => {
@@ -39,7 +39,7 @@ contract('Milton', (accounts) => {
     let tokenUsdc = null;
     let warren = null;
     let miltonConfiguration = null;
-    let miltonAddressesManager = null;
+    let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
 
     before(async () => {
@@ -47,7 +47,7 @@ contract('Milton', (accounts) => {
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
-        miltonAddressesManager = await MiltonAddressesManager.deployed();
+        iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
 
 
@@ -70,23 +70,23 @@ contract('Milton', (accounts) => {
             await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
         }
 
-        await miltonAddressesManager.setAddress("WARREN", warren.address);
-        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
-        await miltonAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress("WARREN", warren.address);
+        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("MILTON", milton.address);
 
-        await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
-        await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
-        await miltonAddressesManager.setAddress("DAI", tokenDai.address);
+        await iporAddressesManager.setAddress("USDT", tokenUsdt.address);
+        await iporAddressesManager.setAddress("USDC", tokenUsdc.address);
+        await iporAddressesManager.setAddress("DAI", tokenDai.address);
 
-        await milton.initialize(miltonAddressesManager.address);
+        await milton.initialize(iporAddressesManager.address);
 
     });
 
     beforeEach(async () => {
         await warren.setupInitialValues(userOne);
         miltonStorage = await MiltonStorage.new();
-        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
-        await miltonStorage.initialize(miltonAddressesManager.address);
+        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await miltonStorage.initialize(iporAddressesManager.address);
 
     });
 
@@ -1726,7 +1726,7 @@ contract('Milton', (accounts) => {
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
-
+    //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
     //TODO: dodac test 1 otwarta long, zmiana indeksu, 2 otwarta short, zmiana indeksu, zamykamy 1 i 2, soap = 0
 
     //TODO: dodać test w którym zmieniamy konfiguracje w MiltonConfiguration i widac zmiany w Milton

@@ -1,6 +1,7 @@
 const Warren = artifacts.require("Warren");
+const WarrenStorage = artifacts.require("WarrenStorage");
 const Milton = artifacts.require("Milton");
-const MiltonStorage= artifacts.require("MiltonStorage");
+const MiltonStorage = artifacts.require("MiltonStorage");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 const TestWarren = artifacts.require("TestWarren");
 const TestMilton = artifacts.require("TestMilton");
@@ -16,7 +17,7 @@ const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const DerivativesView = artifacts.require('DerivativesView');
 const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const AmmMath = artifacts.require('AmmMath');
-const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
+const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
 
@@ -30,7 +31,18 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(IporLogic);
     await deployer.link(AmmMath, Warren);
     await deployer.link(IporLogic, Warren);
-    await deployer.deploy(Warren);
+
+    let isTestEnvironment = 1;
+    if (_network === "mainnet") {
+        isTestEnvironment = 0;
+    }
+
+    await deployer.link(IporLogic, WarrenStorage);
+    await deployer.deploy(WarrenStorage, isTestEnvironment);
+    let warrenStorage = await WarrenStorage.deployed();
+    let warrenStorageAddr = warrenStorage.address;
+
+    await deployer.deploy(Warren, warrenStorageAddr);
     const warren = await Warren.deployed();
 
     let faucetSupply6Decimals = '1000000000000000000000000';
@@ -61,7 +73,7 @@ module.exports = async function (deployer, _network, addresses) {
     let miltonFaucet = null;
     let miltonFaucetAddr = null;
     let miltonConfiguration = null;
-    let miltonAddressesManager = null;
+    let iporAddressesManager = null;
 
     await deployer.link(AmmMath, DerivativeLogic);
     await deployer.deploy(DerivativeLogic);
@@ -86,11 +98,11 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(MiltonConfiguration);
     miltonConfiguration = await MiltonConfiguration.deployed();
 
-    await deployer.deploy(MiltonAddressesManager);
-    miltonAddressesManager = await MiltonAddressesManager.deployed();
-    let miltonAddressesManagerAddr = await miltonAddressesManager.address;
+    await deployer.deploy(IporAddressesManager);
+    iporAddressesManager = await IporAddressesManager.deployed();
+    let iporAddressesManagerAddr = await iporAddressesManager.address;
 
-    await deployer.deploy(MiltonFrontendDataProvider, miltonAddressesManagerAddr);
+    await deployer.deploy(MiltonFrontendDataProvider, iporAddressesManagerAddr);
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
@@ -121,17 +133,18 @@ module.exports = async function (deployer, _network, addresses) {
         miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
 
 
-        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManagerAddr);
+        await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
 
     }
 
     if (_network == 'develop2' || _network === 'docker') {
         console.log("Setup initial IPOR Index...")
         //by default add ADMIN as updater for IPOR Oracle
-        await warren.addUpdater(admin);
-        await warren.updateIndex("DAI", BigInt("30000000000000000"));
-        await warren.updateIndex("USDT", BigInt("30000000000000000"));
-        await warren.updateIndex("USDC", BigInt("30000000000000000"));
+        await warrenStorage.addUpdater(admin);
+        await warrenStorage.addUpdater(warren.address);
+        await warren.updateIndexes(["DAI","USDT","USDC"], [BigInt("30000000000000000"),BigInt("30000000000000000"),BigInt("30000000000000000")]);
+        // await warren.updateIndex("USDT", BigInt("30000000000000000"));
+        // await warren.updateIndex("USDC", BigInt("30000000000000000"));
     }
 
     if (_network !== 'test') {
@@ -148,39 +161,38 @@ module.exports = async function (deployer, _network, addresses) {
         const miltonConfigurationAddr = await miltonConfiguration.address;
 
         //initial addresses setup
-        await miltonAddressesManager.setAddress("WARREN", warrenAddr );
-        await miltonAddressesManager.setAddress("MILTON", miltonAddr);
-        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
-        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfigurationAddr);
+        await iporAddressesManager.setAddress("WARREN", warrenAddr);
+        await iporAddressesManager.setAddress("MILTON", miltonAddr);
+        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
+        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfigurationAddr);
 
-        await miltonAddressesManager.setAddress("USDT", mockedUsdtAddr);
-        await miltonAddressesManager.setAddress("USDC", mockedUsdcAddr);
-        await miltonAddressesManager.setAddress("DAI", mockedDaiAddr);
+        await iporAddressesManager.setAddress("USDT", mockedUsdtAddr);
+        await iporAddressesManager.setAddress("USDC", mockedUsdcAddr);
+        await iporAddressesManager.setAddress("DAI", mockedDaiAddr);
 
-        await milton.initialize(miltonAddressesManagerAddr);
-        await miltonStorage.initialize(miltonAddressesManagerAddr);
+        await milton.initialize(iporAddressesManagerAddr);
+        await miltonStorage.initialize(iporAddressesManagerAddr);
 
         //TestWarren
         await deployer.link(AmmMath, TestWarren);
         await deployer.link(IporLogic, TestWarren);
-        await deployer.deploy(TestWarren);
+        await deployer.deploy(TestWarren, warrenStorageAddr);
         let testWarren = await TestWarren.deployed();
-        await testWarren.addUpdater(admin);
+        await warrenStorage.addUpdater(testWarren.address);
 
         //TestMilton
         await deployer.link(AmmMath, TestMilton);
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.deploy(TestMilton);
         let testMilton = await TestMilton.deployed();
-        await testMilton.initialize(miltonAddressesManagerAddr);
-
+        await testMilton.initialize(iporAddressesManagerAddr);
 
     } else {
         await deployer.link(AmmMath, TestWarren);
         await deployer.link(IporLogic, TestWarren);
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.link(AmmMath, TestMilton);
-        await deployer.deploy(MiltonDevToolDataProvider, miltonAddressesManagerAddr);
+        await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
 
     }
 

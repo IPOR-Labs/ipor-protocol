@@ -214,7 +214,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonAddressesManager"
+                            contract="IporAddressesManager"
                             method="getCharlieTreasurer"
                             methodArgs={["USDT"]}
                         />
@@ -223,7 +223,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonAddressesManager"
+                            contract="IporAddressesManager"
                             method="getCharlieTreasurer"
                             methodArgs={["USDC"]}
                         />
@@ -232,7 +232,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonAddressesManager"
+                            contract="IporAddressesManager"
                             method="getCharlieTreasurer"
                             methodArgs={["DAI"]}
                         />
@@ -248,7 +248,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonAddressesManager"
+                            contract="IporAddressesManager"
                             method="getTreasureTreasurer"
                             methodArgs={["USDT"]}
                         />
@@ -257,7 +257,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonAddressesManager"
+                            contract="IporAddressesManager"
                             method="getTreasureTreasurer"
                             methodArgs={["USDC"]}
                         />
@@ -266,7 +266,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonAddressesManager"
+                            contract="IporAddressesManager"
                             method="getTreasureTreasurer"
                             methodArgs={["DAI"]}
                         />
@@ -279,14 +279,14 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Charlie Treasuers</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonAddressesManager"
+                    contract="IporAddressesManager"
                     method="setCharlieTreasurer"/>
             </div>
             <div className="col-md-6">
                 <strong>Treasure Treasuers</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonAddressesManager"
+                    contract="IporAddressesManager"
                     method="setTreasureTreasurer"/>
             </div>
         </div>
