@@ -1,4 +1,5 @@
 import Warren from "./contracts/Warren.json";
+import WarrenStorage from "./contracts/WarrenStorage.json";
 import Milton from "./contracts/Milton.json";
 import MiltonStorage from "./contracts/MiltonStorage.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
@@ -7,7 +8,7 @@ import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
-import MiltonAddressesManager from "./contracts/MiltonAddressesManager";
+import IporAddressesManager from "./contracts/IporAddressesManager";
 
 const options = {
     web3: {
@@ -19,8 +20,9 @@ const options = {
 
     contracts: [
         MiltonDevToolDataProvider,
-        MiltonAddressesManager,
+        IporAddressesManager,
         Warren,
+        WarrenStorage,
         Milton,
         MiltonStorage,
         MiltonConfiguration,
@@ -29,7 +31,7 @@ const options = {
         UsdcMockedToken,
         MiltonFaucet],
     events: {
-        Warren: ["IporIndexUpdate"],
+        WarrenStorage: ["IporIndexUpdate"],
         Milton: ["OpenPosition", "ClosePosition"]
     }
 };

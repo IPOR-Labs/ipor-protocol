@@ -5,29 +5,19 @@ const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const TestMilton = artifacts.require('TestMilton');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
+const WarrenStorage = artifacts.require('WarrenStorage');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
 const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
-const MiltonAddressesManager = artifacts.require('MiltonAddressesManager');
+const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 
 contract('Milton', (accounts) => {
 
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
-
-    //10 000 000 000 000 USD
-    let totalSupply6Decimals = '1000000000000000000000';
-    //10 000 000 000 000 USD
-    let totalSupply18Decimals = '10000000000000000000000000000000000';
-
-    //10 000 000 USD
-    let userSupply6Decimals = '10000000000000';
-
-    //10 000 000 USD
-    let userSupply18Decimals = '10000000000000000000000000';
 
     let milton = null;
     let miltonStorage = null;
@@ -38,8 +28,9 @@ contract('Milton', (accounts) => {
     let tokenUsdt = null;
     let tokenUsdc = null;
     let warren = null;
+    let warrenStorage = null;
     let miltonConfiguration = null;
-    let miltonAddressesManager = null;
+    let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
 
     before(async () => {
@@ -47,46 +38,48 @@ contract('Milton', (accounts) => {
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         miltonConfiguration = await MiltonConfiguration.deployed();
-        miltonAddressesManager = await MiltonAddressesManager.deployed();
+        iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
 
 
         //10 000 000 000 000 USD
-        tokenUsdt = await UsdtMockedToken.new(totalSupply6Decimals, 6);
+        tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
         //10 000 000 000 000 USD
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
-        tokenUsdc = await UsdcMockedToken.new(totalSupply18Decimals, 18);
+        tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
         //10 000 000 000 000 USD
-        tokenDai = await DaiMockedToken.new(totalSupply18Decimals, 18);
+        tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
 
-        warren = await TestWarren.new();
+        warrenStorage = await WarrenStorage.new(1);
+        warren = await TestWarren.new(warrenStorage.address);
         milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
             //AMM has rights to spend money on behalf of user
-            await tokenUsdt.approve(milton.address, totalSupply6Decimals, {from: accounts[i]});
+            await tokenUsdt.approve(milton.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
             //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
-            await tokenUsdc.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
-            await tokenDai.approve(milton.address, totalSupply18Decimals, {from: accounts[i]});
+            await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+            await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await miltonAddressesManager.setAddress("WARREN", warren.address);
-        await miltonAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
-        await miltonAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress("WARREN", warren.address);
+        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("MILTON", milton.address);
 
-        await miltonAddressesManager.setAddress("USDT", tokenUsdt.address);
-        await miltonAddressesManager.setAddress("USDC", tokenUsdc.address);
-        await miltonAddressesManager.setAddress("DAI", tokenDai.address);
+        await iporAddressesManager.setAddress("USDT", tokenUsdt.address);
+        await iporAddressesManager.setAddress("USDC", tokenUsdc.address);
+        await iporAddressesManager.setAddress("DAI", tokenDai.address);
 
-        await milton.initialize(miltonAddressesManager.address);
+        await milton.initialize(iporAddressesManager.address);
 
     });
 
     beforeEach(async () => {
-        await warren.setupInitialValues(userOne);
+        await warrenStorage.setupInitialValues(warren.address);
+        await warrenStorage.addUpdater(userOne);
         miltonStorage = await MiltonStorage.new();
-        await miltonAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
-        await miltonStorage.initialize(miltonAddressesManager.address);
+        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await miltonStorage.initialize(iporAddressesManager.address);
 
     });
 
@@ -1726,7 +1719,7 @@ contract('Milton', (accounts) => {
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
-
+    //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
     //TODO: dodac test 1 otwarta long, zmiana indeksu, 2 otwarta short, zmiana indeksu, zamykamy 1 i 2, soap = 0
 
     //TODO: dodać test w którym zmieniamy konfiguracje w MiltonConfiguration i widac zmiany w Milton
@@ -1947,28 +1940,28 @@ contract('Milton', (accounts) => {
 
     const setupTokenUsdtInitialValues = async () => {
         await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdt.setupInitialAmount(admin, userSupply6Decimals);
-        await tokenUsdt.setupInitialAmount(userOne, userSupply6Decimals);
-        await tokenUsdt.setupInitialAmount(userTwo, userSupply6Decimals);
-        await tokenUsdt.setupInitialAmount(userThree, userSupply6Decimals);
-        await tokenUsdt.setupInitialAmount(liquidityProvider, userSupply6Decimals);
+        await tokenUsdt.setupInitialAmount(admin, testUtils.USER_SUPPLY_6_DECIMALS);
+        await tokenUsdt.setupInitialAmount(userOne, testUtils.USER_SUPPLY_6_DECIMALS);
+        await tokenUsdt.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_6_DECIMALS);
+        await tokenUsdt.setupInitialAmount(userThree, testUtils.USER_SUPPLY_6_DECIMALS);
+        await tokenUsdt.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_6_DECIMALS);
     }
     const setupTokenUsdcInitialValues = async () => {
         await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdc.setupInitialAmount(admin, userSupply18Decimals);
-        await tokenUsdc.setupInitialAmount(userOne, userSupply18Decimals);
-        await tokenUsdc.setupInitialAmount(userTwo, userSupply18Decimals);
-        await tokenUsdc.setupInitialAmount(userThree, userSupply18Decimals);
-        await tokenUsdc.setupInitialAmount(liquidityProvider, userSupply18Decimals);
+        await tokenUsdc.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenUsdc.setupInitialAmount(userOne, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenUsdc.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenUsdc.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenUsdc.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
 
     const setupTokenDaiInitialValues = async () => {
         await tokenDai.setupInitialAmount(await milton.address, ZERO);
-        await tokenDai.setupInitialAmount(admin, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userOne, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userTwo, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(userThree, userSupply18Decimals);
-        await tokenDai.setupInitialAmount(liquidityProvider, userSupply18Decimals);
+        await tokenDai.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenDai.setupInitialAmount(userOne, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenDai.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenDai.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
+        await tokenDai.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
 
     const assertSoap = async (params) => {

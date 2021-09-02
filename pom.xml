@@ -146,11 +146,11 @@
                         <argument>${contracts.sources}/amm/MiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/amm/TestMilton.sol</argument>
-                        <argument>${contracts.sources}/configuration/MiltonAddressesManager.sol</argument>
+                        <argument>${contracts.sources}/configuration/IporAddressesManager.sol</argument>
                         <argument>${contracts.sources}/frontend/MiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonAddressesManager.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IIporAddressesManager.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>

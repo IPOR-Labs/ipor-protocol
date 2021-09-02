@@ -5,22 +5,21 @@ import "./Warren.sol";
 
 contract TestWarren is Warren {
 
-    function test_updateIndex(string memory asset, uint256 indexValue, uint256 updateTimestamp) public {
-        _updateIndex(asset, indexValue, updateTimestamp);
+    constructor(address warrenStorageAddr) Warren(warrenStorageAddr){}
+
+    function test_updateIndex(string memory asset, uint256 indexValue, uint256 updateTimestamp) public onlyUpdater {
+        uint256[] memory indexes = new uint256[](1);
+        indexes[0] = indexValue;
+        string[] memory assets = new string[](1);
+        assets[0] = asset;
+        warrenStorage.updateIndexes(assets, indexes, updateTimestamp);
     }
 
-    function test_updateIndexes(string[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) public {
-        _updateIndexes(_assets, indexValues, updateTimestamp);
+    function test_updateIndexes(string[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) public onlyUpdater {
+        warrenStorage.updateIndexes(assets, indexValues, updateTimestamp);
     }
 
-    function setupInitialValues(address updater) external {
-        delete updaters;
-        delete assets;
-
-        delete indexes[keccak256(abi.encodePacked("DAI"))];
-        delete indexes[keccak256(abi.encodePacked("USDT"))];
-        delete indexes[keccak256(abi.encodePacked("USDC"))];
-
-        addUpdater(updater);
+    function setupInitialValues(address updater) public {
+        warrenStorage.setupInitialValues(updater);
     }
 }

@@ -379,7 +379,7 @@ contract('MiltonConfiguration', (accounts) => {
             `Incorrect initial iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${expectedIporPublicationFeeAmount}`)
     });
 
-    //TODO: move to MiltonAddressesManager.test.js
+    //TODO: move to IporAddressesManager.test.js
 
     //TODO: test na max position total amount
 

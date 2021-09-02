@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-import "../interfaces/IMiltonAddressesManager.sol";
+import "../interfaces/IIporAddressesManager.sol";
 //TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MiltonAddressesManager is Ownable, IMiltonAddressesManager {
+contract IporAddressesManager is Ownable, IIporAddressesManager {
 
     mapping(string => address) private _addresses;
 
