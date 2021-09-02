@@ -2,6 +2,7 @@ const testUtils = require("./TestUtils.js");
 const {time} = require('@openzeppelin/test-helpers');
 const IporLogic = artifacts.require('IporLogic');
 const TestWarren = artifacts.require('TestWarren');
+const WarrenStorage = artifacts.require('WarrenStorage');
 const WARREN_5_PERCENTAGE = BigInt("50000000000000000");
 const WARREN_6_PERCENTAGE = BigInt("60000000000000000");
 const WARREN_7_PERCENTAGE = BigInt("70000000000000000");
@@ -16,9 +17,11 @@ contract('Warren', (accounts) => {
     const MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
 
     let warren = null;
+    let warrenStorage = null;
 
     beforeEach(async () => {
-        warren = await TestWarren.new();
+        warrenStorage = await WarrenStorage.new(1);
+        warren = await TestWarren.new(warrenStorage.address);
     });
 
     it('should NOT update IPOR Index', async () => {
@@ -39,7 +42,8 @@ contract('Warren', (accounts) => {
         //given
         let asset = "USDT";
         let expectedIndexValue = BigInt(1e20);
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
 
         //when
         await warren.updateIndex(asset, expectedIndexValue, {from: updaterOne})
@@ -56,28 +60,29 @@ contract('Warren', (accounts) => {
     });
 
     it('should add IPOR Index Updater', async () => {
-        await warren.addUpdater(updaterOne);
-        const updaters = await warren.getUpdaters();
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
+        const updaters = await warrenStorage.getUpdaters();
         assert(updaters.includes(updaterOne), `Updater ${updaterOne} should exist in list of updaters in IPOR Oracle, but not exists`);
     });
 
     it('should NOT add IPOR Index Updater', async () => {
         await testUtils.assertError(
-            warren.addUpdater(updaterTwo, {from: user}),
+            warrenStorage.addUpdater(updaterTwo, {from: user}),
             'Ownable: caller is not the owner'
         );
     });
 
     it('should remove IPOR Index Updater', async () => {
-        await warren.addUpdater(updaterOne);
-        await warren.removeUpdater(updaterOne);
-        const updaters = await warren.getUpdaters();
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.removeUpdater(updaterOne);
+        const updaters = await warrenStorage.getUpdaters();
         assert(!updaters.includes(updaterOne), `Updater ${updaterOne} should not exist in list of updaters in IPOR Oracle, but exists`);
     });
 
     it('should NOT remove IPOR Index Updater', async () => {
         await testUtils.assertError(
-            warren.removeUpdater(updaterTwo, {from: user}),
+            warrenStorage.removeUpdater(updaterTwo, {from: user}),
             'Ownable: caller is not the owner'
         );
     });
@@ -87,7 +92,8 @@ contract('Warren', (accounts) => {
         let expectedAssetOne = "USDT";
         let expectedAssetTwo = "DAI";
         let expectedIporIndexesSize = 2;
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
         await warren.updateIndex(expectedAssetOne, BigInt(1e20), {from: updaterOne});
         await warren.updateIndex(expectedAssetTwo, BigInt(1e20), {from: updaterOne});
 
@@ -109,7 +115,8 @@ contract('Warren', (accounts) => {
         let asset = "USDT";
         let expectedIndexValueOne = BigInt("123000000000000000000");
         let expectedIndexValueTwo = BigInt("321000000000000000000");
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
 
         //when
         await warren.updateIndex(asset, expectedIndexValueOne, {from: updaterOne});
@@ -125,7 +132,8 @@ contract('Warren', (accounts) => {
     it('should calculate initial Interest Bearing Token Price', async () => {
         //given
         let asset = "USDT";
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
         let iporIndexValue = BigInt("500000000000000000000");
 
         //when
@@ -145,7 +153,8 @@ contract('Warren', (accounts) => {
     it('should calculate next Interest Bearing Token Price - one year period', async () => {
         //given
         let asset = "USDT";
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
         let updateDate = Math.floor(Date.now() / 1000);
         await warren.test_updateIndex(asset, WARREN_5_PERCENTAGE, updateDate, {from: updaterOne});
         let updateDateSecond = updateDate + YEAR_IN_SECONDS;
@@ -170,7 +179,8 @@ contract('Warren', (accounts) => {
         //given
         let asset = "USDT";
         let updateDate = Math.floor(Date.now() / 1000);
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
         await warren.test_updateIndex(asset, WARREN_5_PERCENTAGE, updateDate, {from: updaterOne});
         updateDate = updateDate + MONTH_IN_SECONDS;
         let iporIndexSecondValue = WARREN_6_PERCENTAGE;
@@ -196,7 +206,8 @@ contract('Warren', (accounts) => {
     it('should calculate next after next Interest Bearing Token Price - half year and three months snapshots', async () => {
         //given
         let asset = "USDT";
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
         let updateDate = Math.floor(Date.now() / 1000);
         await warren.test_updateIndex(asset, WARREN_5_PERCENTAGE, updateDate, {from: updaterOne});
         updateDate = updateDate + YEAR_IN_SECONDS / 2;
@@ -224,7 +235,8 @@ contract('Warren', (accounts) => {
     it('should NOT update IPOR Index - wrong input arrays', async () => {
         //given
         let updateDate = Math.floor(Date.now() / 1000);
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
         let assets = ["USDC", "DAI"];
         let indexValues = [BigInt("50000000000000000")];
 
@@ -239,7 +251,8 @@ contract('Warren', (accounts) => {
     it('should update IPOR Index - correct input arrays', async () => {
         //given
         let updateDate = Math.floor(Date.now() / 1000);
-        await warren.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
         let assets = ["USDC", "DAI"];
         let indexValues = [WARREN_8_PERCENTAGE, WARREN_7_PERCENTAGE];
 
