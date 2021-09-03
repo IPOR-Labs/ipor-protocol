@@ -61,6 +61,7 @@ contract('MiltonSoap', (accounts) => {
         await iporAddressesManager.setAddress("WARREN", warren.address);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress("TEST_MILTON", milton.address);
 
         await iporAddressesManager.setAddress("USDT", tokenUsdt.address);
         await iporAddressesManager.setAddress("USDC", tokenUsdc.address);
@@ -73,7 +74,7 @@ contract('MiltonSoap', (accounts) => {
     beforeEach(async () => {
         await warrenStorage.setupInitialValues(warren.address);
         await warrenStorage.addUpdater(userOne);
-        miltonStorage = await MiltonStorage.new();
+        miltonStorage = await MiltonStorage.new(1);
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(iporAddressesManager.address);
 
