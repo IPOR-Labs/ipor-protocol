@@ -7,7 +7,6 @@ interface IMiltonStorage {
 
     function getLastDerivativeId() external view returns (uint256);
 
-    //TODO: restricted access
     function addLiquidity(string memory asset, uint256 liquidityAmount) external;
 
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external;

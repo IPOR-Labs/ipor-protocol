@@ -21,6 +21,8 @@ contract MiltonStorage is IMiltonStorage {
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
+    uint256 isTestEnvironment;
+
     IIporAddressesManager internal _addressesManager;
 
     mapping(string => DataTypes.MiltonTotalBalance) public balances;
@@ -31,6 +33,10 @@ contract MiltonStorage is IMiltonStorage {
     mapping(string => DataTypes.TotalSpreadIndicator) public spreadIndicators;
 
     DataTypes.MiltonDerivatives public derivatives;
+
+    constructor(uint256 _isTestEnvironment) {
+        isTestEnvironment = _isTestEnvironment;
+    }
 
     function initialize(IIporAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
@@ -73,7 +79,7 @@ contract MiltonStorage is IMiltonStorage {
         return derivatives.lastDerivativeId;
     }
 
-    function addLiquidity(string memory asset, uint256 liquidityAmount) external override {
+    function addLiquidity(string memory asset, uint256 liquidityAmount) external override onlyMilton {
         balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
     }
 
@@ -313,7 +319,12 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     modifier onlyMilton() {
-        require(msg.sender == _addressesManager.getMilton(), Errors.CALLER_NOT_MILTON);
+        if (isTestEnvironment != 1) {
+            require(msg.sender == _addressesManager.getMilton(), Errors.CALLER_NOT_MILTON);
+        } else {
+            require(msg.sender == _addressesManager.getMilton() || msg.sender == _addressesManager.getTestMilton(),
+                Errors.CALLER_NOT_MILTON);
+        }
         _;
     }
 

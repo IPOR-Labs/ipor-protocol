@@ -38,6 +38,8 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     //@notice max total amount used when opening position
     uint256 maxPositionTotalAmount;
 
+    uint256 spread;
+
     constructor() {
         incomeTaxPercentage = 1e17;
         maxIncomeTaxPercentage = 2e17;
@@ -153,5 +155,14 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external override onlyOwner {
         maxPositionTotalAmount = _maxPositionTotalAmount;
         emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
+    }
+
+    function getSpread() external override view returns (uint256) {
+        return spread;
+    }
+
+    function setSpread(uint256 _spread) external override {
+        spread = _spread;
+        emit SpreadSet(_spread);
     }
 }

@@ -27,9 +27,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
     IIporAddressesManager internal _addressesManager;
 
-    //@notice percentage of deposit amount
-    uint256 constant SPREAD_FEE_PERCENTAGE = 1e16;
-
     function initialize(IIporAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
     }
@@ -124,7 +121,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             miltonConfiguration.getLiquidationDepositFeeAmount(),
             derivativeAmount.openingFee,
             miltonConfiguration.getIporPublicationFeeAmount(),
-            SPREAD_FEE_PERCENTAGE);
+            miltonConfiguration.getSpread());
 
         DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional);
 
@@ -183,12 +180,12 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         (uint256 indexValue, ,) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
         require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
-
+        uint256 spread = IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getSpread();
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             indexValue,
             accruedIbtPrice,
             AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
-            direction == 0 ? (indexValue + SPREAD_FEE_PERCENTAGE) : (indexValue - SPREAD_FEE_PERCENTAGE)
+            direction == 0 ? (indexValue + spread) : (indexValue - spread)
         );
         return indicator;
     }

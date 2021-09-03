@@ -20,6 +20,8 @@ interface IIporAddressesManager {
 
     function getMilton() external view returns (address);
 
+    function getTestMilton() external view returns (address);
+
     function setMiltonImpl(address miltonImpl) external;
 
     function getMiltonStorage() external view returns (address);

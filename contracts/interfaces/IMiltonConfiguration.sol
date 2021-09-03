@@ -18,6 +18,8 @@ interface IMiltonConfiguration {
     event LiquidityPoolMaxUtilizationPercentageSet(uint256 newLiquidityPoolMaxUtilizationPercentageSet);
     event MaxPositionTotalAmountSet(uint256 newMaxPositionTotalAmount);
 
+    event SpreadSet(uint256 newSpread);
+
     function getIncomeTaxPercentage() external view returns (uint256);
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external;
@@ -57,5 +59,9 @@ interface IMiltonConfiguration {
     function getMaxPositionTotalAmount() external view returns (uint256);
 
     function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external;
+
+    function getSpread() external view returns (uint256);
+
+    function setSpread(uint256 _spread) external;
 
 }

@@ -11,11 +11,13 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
 
     //this treasurer manage ipor publication fee balance, key is an asset
     mapping(string => address) charlieTreasurers;
+
     //this treasurer manage opening fee balance, key is an asset
     mapping(string => address) treasureTreasurers;
 
     string private constant WARREN = "WARREN";
     string private constant MILTON = "MILTON";
+    string private constant TEST_MILTON = "TEST_MILTON";
     string private constant MILTON_STORAGE = "MILTON_STORAGE";
     string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
 
@@ -40,6 +42,10 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
 
     function getMilton() external view override returns (address) {
         return getAddress(MILTON);
+    }
+
+    function getTestMilton() external view override returns (address) {
+        return getAddress(TEST_MILTON);
     }
 
     //TODO: implement _updateImpl and then use this method

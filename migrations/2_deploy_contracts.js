@@ -67,6 +67,7 @@ module.exports = async function (deployer, _network, addresses) {
     let mockedTusdAddr = null;
     let warrenAddr = null;
     let milton = null;
+    let testMilton = null;
     let miltonAddr = null;
     let miltonStorage = null;
     let miltonStorageAddr = null;
@@ -152,7 +153,7 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(Milton);
         milton = await Milton.deployed();
 
-        await deployer.deploy(MiltonStorage);
+        await deployer.deploy(MiltonStorage, isTestEnvironment);
         miltonStorage = await MiltonStorage.deployed();
 
         warrenAddr = await warren.address;
@@ -170,9 +171,6 @@ module.exports = async function (deployer, _network, addresses) {
         await iporAddressesManager.setAddress("USDC", mockedUsdcAddr);
         await iporAddressesManager.setAddress("DAI", mockedDaiAddr);
 
-        await milton.initialize(iporAddressesManagerAddr);
-        await miltonStorage.initialize(iporAddressesManagerAddr);
-
         //TestWarren
         await deployer.link(AmmMath, TestWarren);
         await deployer.link(IporLogic, TestWarren);
@@ -184,8 +182,13 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(AmmMath, TestMilton);
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.deploy(TestMilton);
-        let testMilton = await TestMilton.deployed();
+        testMilton = await TestMilton.deployed();
         await testMilton.initialize(iporAddressesManagerAddr);
+
+        await iporAddressesManager.setAddress("TEST_MILTON", testMilton.address);
+
+        await milton.initialize(iporAddressesManagerAddr);
+        await miltonStorage.initialize(iporAddressesManagerAddr);
 
     } else {
         await deployer.link(AmmMath, TestWarren);
@@ -221,6 +224,14 @@ module.exports = async function (deployer, _network, addresses) {
             mockedUsdc.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
             mockedDai.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
             mockedTusd.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
+
+            if (isTestEnvironment) {
+                mockedUsdt.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
+                mockedUsdc.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
+                mockedDai.approve(testMilton.address, totalSupply18Decimals, {from: addresses[i]});
+                mockedTusd.approve(testMilton.address, totalSupply18Decimals, {from: addresses[i]});
+            }
+
 
             console.log(`Account: ${addresses[i]} approve spender ${miltonAddr} to spend tokens on behalf of user.`);
         }
