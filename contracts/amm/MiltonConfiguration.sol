@@ -58,6 +58,8 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
         maxPositionTotalAmount = 1e23;
 
+        spread = 1e16;
+
     }
 
     function getIncomeTaxPercentage() external override view returns (uint256) {

@@ -37,6 +37,22 @@ contract MiltonStorage is IMiltonStorage {
     constructor(uint256 _isTestEnvironment) {
         isTestEnvironment = _isTestEnvironment;
     }
+//
+//    function setupInitialValues(address updater) external override onlyMilton isTestEnv {
+//        delete balances["DAI"];
+//        delete balances["USDT"];
+//        delete balances["USDC"];
+//
+//        delete soapIndicators["DAI"];
+//        delete soapIndicators["USDC"];
+//        delete soapIndicators["USDT"];
+//
+//        delete spreadIndicators["DAI"];
+//        delete spreadIndicators["USDC"];
+//        delete spreadIndicators["USDT"];
+//
+//        delete derivatives;
+//    }
 
     function initialize(IIporAddressesManager addressesManager) public {
         _addressesManager = addressesManager;

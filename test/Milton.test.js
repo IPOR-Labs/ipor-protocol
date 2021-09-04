@@ -77,7 +77,7 @@ contract('Milton', (accounts) => {
     beforeEach(async () => {
         await warrenStorage.setupInitialValues(warren.address);
         await warrenStorage.addUpdater(userOne);
-        miltonStorage = await MiltonStorage.new();
+        miltonStorage = await MiltonStorage.new(1);
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(iporAddressesManager.address);
 
