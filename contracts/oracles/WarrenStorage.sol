@@ -25,8 +25,6 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address _updater);
 
-    uint256 isTestEnvironment;
-
     /// @notice list of IPOR indexes for particular assets
     mapping(bytes32 => DataTypes.IPOR) public indexes;
 
@@ -35,21 +33,6 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
-
-    constructor(uint256 _isTestEnvironment) {
-        isTestEnvironment = _isTestEnvironment;
-    }
-
-    function setupInitialValues(address updater) external override onlyOwner isTestEnv {
-        delete updaters;
-        delete assets;
-
-        delete indexes[keccak256(abi.encodePacked("DAI"))];
-        delete indexes[keccak256(abi.encodePacked("USDT"))];
-        delete indexes[keccak256(abi.encodePacked("USDC"))];
-
-        _addUpdater(updater);
-    }
 
     function getAssets() external override view returns (bytes32[] memory) {
         return assets;
@@ -116,11 +99,6 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
         indexes[assetHash] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
         emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
-    }
-
-    modifier isTestEnv() {
-        require(isTestEnvironment == 1, Errors.NOT_TEST_ENVIRONMENT);
-        _;
     }
 
     modifier onlyUpdater() {

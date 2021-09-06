@@ -50,8 +50,6 @@ contract('Milton', (accounts) => {
         //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
 
-        warrenStorage = await WarrenStorage.new(1);
-        warren = await TestWarren.new(warrenStorage.address);
         milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
@@ -62,7 +60,6 @@ contract('Milton', (accounts) => {
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await iporAddressesManager.setAddress("WARREN", warren.address);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
@@ -75,10 +72,17 @@ contract('Milton', (accounts) => {
     });
 
     beforeEach(async () => {
-        await warrenStorage.setupInitialValues(warren.address);
-        await warrenStorage.addUpdater(userOne);
-        miltonStorage = await MiltonStorage.new(1);
+        miltonStorage = await MiltonStorage.new();
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+
+        warrenStorage = await WarrenStorage.new();
+
+        warren = await TestWarren.new(warrenStorage.address);
+        await iporAddressesManager.setAddress("WARREN", warren.address);
+
+        await warrenStorage.addUpdater(userOne);
+        await warrenStorage.addUpdater(warren.address);
+
         await miltonStorage.initialize(iporAddressesManager.address);
 
     });
@@ -99,7 +103,6 @@ contract('Milton', (accounts) => {
             'IPOR_4'
         );
     });
-
 
     it('should NOT open position because slippage too low', async () => {
         //given

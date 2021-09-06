@@ -21,8 +21,6 @@ contract MiltonStorage is IMiltonStorage {
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
-    uint256 isTestEnvironment;
-
     IIporAddressesManager internal _addressesManager;
 
     mapping(string => DataTypes.MiltonTotalBalance) public balances;
@@ -33,26 +31,6 @@ contract MiltonStorage is IMiltonStorage {
     mapping(string => DataTypes.TotalSpreadIndicator) public spreadIndicators;
 
     DataTypes.MiltonDerivatives public derivatives;
-
-    constructor(uint256 _isTestEnvironment) {
-        isTestEnvironment = _isTestEnvironment;
-    }
-//
-//    function setupInitialValues(address updater) external override onlyMilton isTestEnv {
-//        delete balances["DAI"];
-//        delete balances["USDT"];
-//        delete balances["USDC"];
-//
-//        delete soapIndicators["DAI"];
-//        delete soapIndicators["USDC"];
-//        delete soapIndicators["USDT"];
-//
-//        delete spreadIndicators["DAI"];
-//        delete spreadIndicators["USDC"];
-//        delete spreadIndicators["USDT"];
-//
-//        delete derivatives;
-//    }
 
     function initialize(IIporAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
@@ -335,12 +313,7 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     modifier onlyMilton() {
-        if (isTestEnvironment != 1) {
-            require(msg.sender == _addressesManager.getMilton(), Errors.CALLER_NOT_MILTON);
-        } else {
-            require(msg.sender == _addressesManager.getMilton() || msg.sender == _addressesManager.getTestMilton(),
-                Errors.CALLER_NOT_MILTON);
-        }
+        require(msg.sender == _addressesManager.getMilton(), Errors.CALLER_NOT_MILTON);
         _;
     }
 

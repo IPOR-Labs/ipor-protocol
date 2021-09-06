@@ -5,8 +5,6 @@ import "../libraries/types/DataTypes.sol";
 
 interface IWarrenStorage {
 
-    function setupInitialValues(address updater) external;
-
     function getAssets() external view returns (bytes32[] memory);
 
     function getIndex(bytes32 asset) external view returns (DataTypes.IPOR memory);

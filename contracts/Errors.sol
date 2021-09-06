@@ -2,7 +2,6 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 library Errors {
-    string public constant NOT_TEST_ENVIRONMENT = 'IPOR_0'; // 'Environment is not test environment'
     string public constant CALLER_NOT_MILTON = 'IPOR_1'; // 'The caller must be the Milton smart contract'
     string public constant CALLER_NOT_WARREN_UPDATER = 'IPOR_2'; // 'The caller must be the Warren updater'
     string public constant AMM_TOTAL_AMOUNT_LOWER_THAN_FEE = 'IPOR_3'; // 'Deposit Amount when creating derivative position is lower than fee'

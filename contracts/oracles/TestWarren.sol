@@ -19,7 +19,4 @@ contract TestWarren is Warren {
         warrenStorage.updateIndexes(assets, indexValues, updateTimestamp);
     }
 
-    function setupInitialValues(address updater) public onlyUpdater {
-        warrenStorage.setupInitialValues(updater);
-    }
 }

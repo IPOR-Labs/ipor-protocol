@@ -38,7 +38,7 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     await deployer.link(IporLogic, WarrenStorage);
-    await deployer.deploy(WarrenStorage, isTestEnvironment);
+    await deployer.deploy(WarrenStorage);
     let warrenStorage = await WarrenStorage.deployed();
     let warrenStorageAddr = warrenStorage.address;
 
@@ -153,7 +153,7 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(Milton);
         milton = await Milton.deployed();
 
-        await deployer.deploy(MiltonStorage, isTestEnvironment);
+        await deployer.deploy(MiltonStorage);
         miltonStorage = await MiltonStorage.deployed();
 
         warrenAddr = await warren.address;
@@ -184,8 +184,6 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(TestMilton);
         testMilton = await TestMilton.deployed();
         await testMilton.initialize(iporAddressesManagerAddr);
-
-        await iporAddressesManager.setAddress("TEST_MILTON", testMilton.address);
 
         await milton.initialize(iporAddressesManagerAddr);
         await miltonStorage.initialize(iporAddressesManagerAddr);
@@ -231,7 +229,6 @@ module.exports = async function (deployer, _network, addresses) {
                 mockedDai.approve(testMilton.address, totalSupply18Decimals, {from: addresses[i]});
                 mockedTusd.approve(testMilton.address, totalSupply18Decimals, {from: addresses[i]});
             }
-
 
             console.log(`Account: ${addresses[i]} approve spender ${miltonAddr} to spend tokens on behalf of user.`);
         }
