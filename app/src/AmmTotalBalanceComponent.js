@@ -117,7 +117,15 @@ export default ({drizzle, drizzleState}) => (
                         )}
                     />
 
-                    Milton Address: <strong>{drizzle.contracts.Milton.address}</strong>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAddressesManager"
+                        method="getMilton"
+                        render={(value) => (
+                            <div>Milton: <strong>{value}</strong></div>
+                        )}
+                    />
                     <ContractForm
                         drizzle={drizzle}
                         contract="UsdtMockedToken"
@@ -139,7 +147,15 @@ export default ({drizzle, drizzleState}) => (
                         )}
                     />
 
-                    Milton Address: <strong>{drizzle.contracts.Milton.address}</strong>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAddressesManager"
+                        method="getMilton"
+                        render={(value) => (
+                            <div>Milton: <strong>{value}</strong></div>
+                        )}
+                    />
                     <ContractForm
                         drizzle={drizzle}
                         contract="UsdcMockedToken"
@@ -161,7 +177,15 @@ export default ({drizzle, drizzleState}) => (
                         )}
                     />
 
-                    Milton Address: <strong>{drizzle.contracts.Milton.address}</strong>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAddressesManager"
+                        method="getMilton"
+                        render={(value) => (
+                            <div>Milton: <strong>{value}</strong></div>
+                        )}
+                    />
                     <ContractForm
                         drizzle={drizzle}
                         contract="DaiMockedToken"

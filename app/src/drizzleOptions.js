@@ -1,6 +1,7 @@
 import Warren from "./contracts/Warren.json";
 import WarrenStorage from "./contracts/WarrenStorage.json";
 import Milton from "./contracts/Milton.json";
+import TestMilton from "./contracts/TestMilton.json";
 import MiltonStorage from "./contracts/MiltonStorage.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
 import MiltonConfiguration from "./contracts/MiltonConfiguration";
@@ -23,6 +24,7 @@ const options = {
         IporAddressesManager,
         Warren,
         WarrenStorage,
+        TestMilton,
         Milton,
         MiltonStorage,
         MiltonConfiguration,

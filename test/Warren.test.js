@@ -248,6 +248,26 @@ contract('Warren', (accounts) => {
         );
     });
 
+    it('should NOT update IPOR Index - Accrue timestamp lower than current ipor index timestamp', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await warrenStorage.addUpdater(updaterOne);
+        await warrenStorage.addUpdater(warren.address);
+        let assets = ["USDC", "DAI"];
+        let indexValues = [BigInt("50000000000000000"), BigInt("50000000000000000")];
+        await warren.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne})
+
+        let wrongUpdateDate = updateDate - 1;
+
+        //when
+        await testUtils.assertError(
+            //when
+            warren.test_updateIndexes(assets, indexValues, wrongUpdateDate, {from: updaterOne}),
+            //then
+            'IPOR_27'
+        );
+    });
+
     it('should update IPOR Index - correct input arrays', async () => {
         //given
         let updateDate = Math.floor(Date.now() / 1000);

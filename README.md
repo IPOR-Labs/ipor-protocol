@@ -19,18 +19,3 @@
 #### How to check contract size?
 
 Run in command line: `truffle run contract-size`
-
-
-#### Configure your local `.env` using sample in file `.env-sample`
-
-#### Deploy Smart Contract on Kovan Testnet
-
-In project root folder execute in command line:
-
-`truffle migrate --network kovan`
-
-#### Deploy Smart Contract on Testnet which contains Smart Contract Upgrade
-
-In project root folder execute in command line:
-
-`truffle migrate --network kovan --skip-dry-run`

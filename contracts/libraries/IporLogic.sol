@@ -13,6 +13,7 @@ library IporLogic {
     }
 
     function accrueQuasiIbtPrice(uint256 indexValue, uint256 quasiIbtPrice, uint256 indexTimestamp, uint256 accrueTimestamp) public pure returns (uint256){
+        require(accrueTimestamp >= indexTimestamp, Errors.WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP);
         return quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
     }
 }

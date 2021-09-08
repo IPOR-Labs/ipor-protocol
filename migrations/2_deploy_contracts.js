@@ -1,3 +1,5 @@
+require('dotenv').config({path: '../.env'})
+
 const Warren = artifacts.require("Warren");
 const WarrenStorage = artifacts.require("WarrenStorage");
 const Milton = artifacts.require("Milton");
@@ -133,19 +135,20 @@ module.exports = async function (deployer, _network, addresses) {
         miltonFaucetAddr = await miltonFaucet.address;
         miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
 
-
         await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
 
     }
 
-    if (_network == 'develop2' || _network === 'docker') {
-        console.log("Setup initial IPOR Index...")
+    if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
+        console.log("Setup Warren...")
         //by default add ADMIN as updater for IPOR Oracle
         await warrenStorage.addUpdater(admin);
         await warrenStorage.addUpdater(warren.address);
-        await warren.updateIndexes(["DAI","USDT","USDC"], [BigInt("30000000000000000"),BigInt("30000000000000000"),BigInt("30000000000000000")]);
-        // await warren.updateIndex("USDT", BigInt("30000000000000000"));
-        // await warren.updateIndex("USDC", BigInt("30000000000000000"));
+
+        if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
+            console.log("Prepare initial IPOR migration...")
+            await warren.updateIndexes(["DAI", "USDT", "USDC"], [BigInt("30000000000000000"), BigInt("30000000000000000"), BigInt("30000000000000000")]);
+        }
     }
 
     if (_network !== 'test') {
@@ -163,7 +166,7 @@ module.exports = async function (deployer, _network, addresses) {
 
         //initial addresses setup
         await iporAddressesManager.setAddress("WARREN", warrenAddr);
-        await iporAddressesManager.setAddress("MILTON", miltonAddr);
+
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfigurationAddr);
 
@@ -183,6 +186,13 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.deploy(TestMilton);
         testMilton = await TestMilton.deployed();
+
+        if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
+            await iporAddressesManager.setAddress("MILTON", testMilton.address);
+        } else {
+            await iporAddressesManager.setAddress("MILTON", miltonAddr);
+        }
+
         await testMilton.initialize(iporAddressesManagerAddr);
 
         await milton.initialize(iporAddressesManagerAddr);

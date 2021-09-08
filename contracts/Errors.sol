@@ -26,6 +26,7 @@ library Errors {
     string public constant AMM_CONFIG_MAX_VALUE_EXCEEDED = 'IPOR_24'; //general error, max value exceeded
     string public constant AMM_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP = 'IPOR_25'; //'Derivative closing timestamp cannot be before derivative starting timestamp`
     string public constant MILTON_IBT_PRICE_CANNOT_BE_ZERO = 'IPOR_26'; //'ibtPrice has to be higher than 0`
+    string public constant WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP = 'IPOR_27'; //Actual IPOR Index timestamp is higher than accrue timestamp
 
 
 }
