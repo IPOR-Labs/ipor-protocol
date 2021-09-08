@@ -59,18 +59,21 @@ services:
 
   ipor-protocol-nginx-ganache:
     container_name: ipor-protocol-nginx-ganache
-    image: nginx:1.21.1
+    image: openresty/openresty:1.19.9.1-0-focal
     restart: always
     ports:
       - "34555:34555"
     volumes:
-      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.conf:/etc/nginx/nginx.conf
+      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
       - ./containers/nginx-ganache/htpasswd.users:/etc/nginx/htpasswd.users
       - ./containers/nginx-ganache/errors:/usr/share/nginx/html/errors
       - ./containers/nginx-ganache/envs/${ENV_PROFILE}/cert:/etc/nginx/cert
+      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/keys:/etc/nginx/keys
       - ./containers/logs/nginx-ganache:/var/log/nginx
     environment:
       - TZ=${TIMEZONE}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - ipor-protocol-ganache

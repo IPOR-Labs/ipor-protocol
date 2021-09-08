@@ -11,12 +11,14 @@
 
 ### Smart Contracts build artifacts ###
 /app/src/contracts/
+/app/src/contracts.zip
 /contracts/oracles/artifacts/
 /contracts/amm/artifacts/
 /contracts/artifacts/
 /contracts/interfaces/artifacts/
 /contracts/libraries/types/artifacts/
 /test-eth-gas-report.log
+/smart-contract-address.yaml
 
 ### IntelliJ IDEA ###
 .idea
@@ -32,4 +34,3 @@
 
 ### Ansible build artifacts ###
 /contracts.zip
-
