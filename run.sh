@@ -4,10 +4,12 @@ set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-ENV_FILE=".env"
+ENV_FILE="${DIR}/.env"
 
 if [ -f "${ENV_FILE}" ]; then
+  set -a
   source "${ENV_FILE}"
+  set +a
   echo -e "\n\e[32m${ENV_FILE} file was read\e[0m\n"
 fi
 
@@ -135,14 +137,9 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}/../ipor-protocol"
 
-  echo -e "\n\e[32mCompile ipor-protocol Smart Contracts\e[0m\n"
-
-  truffle compile
-
   echo -e "\n\e[32mMigrate Smart Contracts to Ganache Blockchain...\e[0m\n"
 
-  truffle migrate --network docker --reset
-
+  truffle migrate --network docker --reset --compile-none
 fi
 
 
