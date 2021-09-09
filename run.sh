@@ -125,12 +125,12 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
   echo -e "\n\e[32mBuild nginx-ganche docker...\e[0m\n"
 
   docker build -t io.ipor/nginx-ganche:latest .
-
-  cd ..
 fi
 
 
 if [ $IS_RUN = "YES" ]; then
+  cd "${DIR}"
+
   echo -e "\n\e[32mStopping Milton Tool docker...\e[0m\n"
   docker-compose -f docker-compose.yml rm -s -v -f
 
@@ -140,7 +140,7 @@ fi
 
 
 if [ $IS_MIGRATE_SC = "YES" ]; then
-  cd "${DIR}/../ipor-protocol"
+  cd "${DIR}"
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ganache Blockchain...\e[0m\n"
 
@@ -149,7 +149,7 @@ fi
 
 
 if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
-  cd "${DIR}/../ipor-protocol"
+  cd "${DIR}"
 
   echo -e "\n\e[32mPublish artifacts to S3 bucket: ${ENV_CONFIG_BUCKET}/${ENV_PROFILE}\e[0m\n"
 
