@@ -35,6 +35,16 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
+    //@notice transfer publication fee to configured charlie treasurer address
+    function transferPublicationFee(string memory asset, uint256 amount) external {
+
+        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        require(amount <= miltonStorage.getBalance(asset).openingFee, Errors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE);
+        require(address(0) != _addressesManager.getCharlieTreasurer(asset), Errors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS);
+        //sprawdzic czy jest adres skonfigurowany
+        //
+    }
+
     function openPosition(
         string memory asset,
         uint256 totalAmount,

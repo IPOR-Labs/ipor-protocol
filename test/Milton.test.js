@@ -1722,6 +1722,96 @@ contract('Milton', (accounts) => {
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
+    it('should open pay fixed position, DAI, custom Opening Fee for Treasury 50%', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(BigInt("50000000000000000"))
+
+        let expectedOpeningFeeTotalBalance = testUtils.MILTON_99__7_USD;
+        let expectedTreasuryTotalBalance = BigInt("4985000000000000000");
+        let expectedLiquidityPoolTotalBalance = BigInt("94715000000000000000");
+
+        //when
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        //then
+        let balance = await miltonStorage.balances(params.asset);
+
+        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
+        const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalance = BigInt(balance.treasury);
+
+        assert(expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
+            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance}, 
+            expected: ${expectedOpeningFeeTotalBalance}`)
+        assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalance}, 
+            expected: ${expectedLiquidityPoolTotalBalance}`)
+        assert(expectedTreasuryTotalBalance === actualTreasuryTotalBalance,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance}, 
+            expected: ${expectedTreasuryTotalBalance}`)
+
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(ZERO);
+    });
+
+    it('should open pay fixed position, DAI, custom Opening Fee for Treasury 25%', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(BigInt("25000000000000000"))
+
+        let expectedOpeningFeeTotalBalance = testUtils.MILTON_99__7_USD;
+        let expectedTreasuryTotalBalance = BigInt("2492500000000000000");
+        let expectedLiquidityPoolTotalBalance = BigInt("97207500000000000000");
+
+        //when
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        //then
+        let balance = await miltonStorage.balances(params.asset);
+
+        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
+        const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalance = BigInt(balance.treasury);
+
+        assert(expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
+            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance}, 
+            expected: ${expectedOpeningFeeTotalBalance}`)
+        assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalance}, 
+            expected: ${expectedLiquidityPoolTotalBalance}`)
+        assert(expectedTreasuryTotalBalance === actualTreasuryTotalBalance,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance}, 
+            expected: ${expectedTreasuryTotalBalance}`)
+
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(ZERO);
+    });
+
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
     //TODO: dodac test 1 otwarta long, zmiana indeksu, 2 otwarta short, zmiana indeksu, zamykamy 1 i 2, soap = 0
 

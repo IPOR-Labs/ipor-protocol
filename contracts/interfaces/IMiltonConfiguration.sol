@@ -11,6 +11,7 @@ interface IMiltonConfiguration {
 
     event OpeningFeePercentageSet(uint256 newOpeningFeePercentage);
     event MaxOpeningFeePercentageSet(uint256 newMaxOpeningFeePercentage);
+    event OpeningFeeForTreasuryPercentageSet(uint256 newOpeningFeeForTreasuryPercentage);
 
     event IporPublicationFeeAmountSet(uint256 newIporPublicationFeeAmount);
     event MaxIporPublicationFeeAmountSet(uint256 newMaxIporPublicationFeeAmount);
@@ -43,6 +44,10 @@ interface IMiltonConfiguration {
     function getMaxOpeningFeePercentage() external view returns (uint256);
 
     function setMaxOpeningFeePercentage(uint256 _maxOpeningFeePercentage) external;
+
+    function getOpeningFeeForTreasuryPercentage() external view returns (uint256);
+
+    function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external;
 
     function getIporPublicationFeeAmount() external view returns (uint256);
 
