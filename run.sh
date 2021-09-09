@@ -121,6 +121,11 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
 
   docker build -t io.ipor/ipor-protocol-milton-tool .
 
+  cd "${DIR}/containers/nginx-ganache"
+  echo -e "\n\e[32mBuild nginx-ganche docker...\e[0m\n"
+
+  docker build -t io.ipor/nginx-ganche:latest .
+
   cd ..
 fi
 

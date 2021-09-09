@@ -59,7 +59,7 @@ services:
 
   ipor-protocol-nginx-ganache:
     container_name: ipor-protocol-nginx-ganache
-    image: openresty/openresty:1.19.9.1-0-focal
+    image: io.ipor/nginx-ganche:latest
     restart: always
     ports:
       - "34555:34555"
