@@ -81,7 +81,7 @@ library SoapIndicatorLogic {
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate) public pure returns (uint256) {
-        require(calculateTimestamp >= derivativeOpenTimestamp, Errors.AMM_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP);
+        require(calculateTimestamp >= derivativeOpenTimestamp, Errors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP);
         return derivativeNotional * derivativeFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp) * Constants.MD;
     }
 
@@ -91,7 +91,7 @@ library SoapIndicatorLogic {
 
     //division by Constants.YEAR_IN_SECONDS * 1e54 postponed at the end of calculation
     function calculateQuasiHypotheticalInterestDelta(DataTypes.SoapIndicator memory si, uint256 timestamp) public pure returns (uint256) {
-        require(timestamp >= si.rebalanceTimestamp, Errors.AMM_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP);
+        require(timestamp >= si.rebalanceTimestamp, Errors.MILTON_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP);
         return si.totalNotional * si.averageInterestRate * ((timestamp - si.rebalanceTimestamp) * Constants.MD);
     }
 
@@ -109,7 +109,7 @@ library SoapIndicatorLogic {
         DataTypes.SoapIndicator memory si,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate) public pure returns (uint256) {
-        require(derivativeNotional <= si.totalNotional, Errors.AMM_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
+        require(derivativeNotional <= si.totalNotional, Errors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
         if (derivativeNotional == si.totalNotional) {
             return 0;
         } else {

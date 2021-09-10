@@ -74,7 +74,7 @@ contract TestData {
 
         uint256 ibtPriceFirst = 100 * Constants.MD;
         uint256 depositAmount = 9870300000000000000000;
-        uint256 leverage = 10;
+        uint256 collateralization = 10;
 
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             3 * 1e16, //ipor index value
@@ -97,9 +97,8 @@ contract TestData {
             "DAI",
             0, //Pay Fixed, Receive Floating (long position)
             depositAmount,
-            fee,
-            leverage,
-            depositAmount * leverage,
+            fee, collateralization,
+            depositAmount * collateralization,
             block.timestamp,
             block.timestamp + 60 * 60 * 24 * 28,
             indicator

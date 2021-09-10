@@ -13,7 +13,7 @@ contract MiltonEvents {
         DataTypes.DerivativeDirection direction,
         uint256 depositAmount,
         DataTypes.IporDerivativeFee fee,
-        uint256 leverage,
+        uint256 collateralization,
         uint256 notionalAmount,
         uint256 startingTimestamp,
         uint256 endingTimestamp,

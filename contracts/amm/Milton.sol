@@ -50,9 +50,9 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         string memory asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint8 leverage,
+        uint256 collateralization,
         uint8 direction) external override returns (uint256){
-        return _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, leverage, direction);
+        return _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, collateralization, direction);
     }
 
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) external override {
@@ -93,7 +93,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         string memory asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint8 leverage,
+        uint256 collateralization,
         uint8 direction) internal returns (uint256) {
 
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
@@ -102,31 +102,31 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
 
-        require(leverage > 0, Errors.AMM_LEVERAGE_TOO_LOW);
-        require(totalAmount > 0, Errors.AMM_TOTAL_AMOUNT_TOO_LOW);
-        require(address(miltonConfiguration) != address(0), "MiltonConfiguration address not configured");
-        require(address(_addressesManager) != address(0), "_addressesManager address not configured");
-        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(), Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
-        require(totalAmount <= miltonConfiguration.getMaxPositionTotalAmount(), Errors.AMM_TOTAL_AMOUNT_TOO_HIGH);
-        require(maximumSlippage > 0, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_LOW);
+        require(collateralization >= miltonConfiguration.getMinCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_LOW);
+        require(collateralization <= miltonConfiguration.getMaxCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_HIGH);
+        require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
+        require(address(miltonConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
+        require(address(_addressesManager) != address(0), Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS);
+        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(), Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
+        require(totalAmount <= miltonConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
+        require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         //TODO: setup max slippage in milton configuration
-        require(maximumSlippage <= 1e20, Errors.AMM_MAXIMUM_SLIPPAGE_TOO_HIGH);
-        require(_addressesManager.getAddress(asset) != address(0), Errors.AMM_LIQUIDITY_POOL_NOT_EXISTS);
-        require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.AMM_DERIVATIVE_DIRECTION_NOT_EXISTS);
-        require(IERC20(_addressesManager.getAddress(asset)).balanceOf(msg.sender) >= totalAmount, Errors.AMM_ASSET_BALANCE_OF_TOO_LOW);
+        require(maximumSlippage <= 1e20, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
+        require(_addressesManager.getAddress(asset) != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
+        require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS);
+        require(IERC20(_addressesManager.getAddress(asset)).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
 
         //TODO verify if this opened derivatives is closable based on liquidity pool
         //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
-            totalAmount,
-            leverage,
+            totalAmount, collateralization,
             miltonConfiguration.getLiquidationDepositFeeAmount(),
             miltonConfiguration.getIporPublicationFeeAmount(),
             miltonConfiguration.getOpeningFeePercentage()
         );
         require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
-            Errors.AMM_TOTAL_AMOUNT_LOWER_THAN_FEE);
+            Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
             miltonConfiguration.getLiquidationDepositFeeAmount(),
@@ -144,8 +144,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             asset,
             direction,
             derivativeAmount.deposit,
-            fee,
-            leverage,
+            fee, collateralization,
             derivativeAmount.notional,
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
@@ -177,7 +176,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             DataTypes.DerivativeDirection(iporDerivative.direction),
             iporDerivative.depositAmount,
             iporDerivative.fee,
-            iporDerivative.leverage,
+            iporDerivative.collateralization,
             iporDerivative.notionalAmount,
             iporDerivative.startingTimestamp,
             iporDerivative.endingTimestamp,
@@ -250,7 +249,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 if (msg.sender != derivativeItem.item.buyer) {
                     require(_calculationTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
                 uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, miltonConfiguration.getIncomeTaxPercentage());
@@ -276,7 +275,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 if (msg.sender != derivativeItem.item.buyer) {
                     require(_calculationTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
                 //transfer D-I to user's address
@@ -305,7 +304,8 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     }
 
     modifier onlyActiveDerivative(uint256 derivativeId) {
-        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getDerivativeItem(derivativeId).item.state == DataTypes.DerivativeState.ACTIVE, Errors.AMM_DERIVATIVE_IS_INACTIVE);
+        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getDerivativeItem(derivativeId).item.state == DataTypes.DerivativeState.ACTIVE,
+            Errors.MILTON_DERIVATIVE_IS_INACTIVE);
         _;
     }
 

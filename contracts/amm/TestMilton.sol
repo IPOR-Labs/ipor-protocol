@@ -10,9 +10,9 @@ contract TestMilton is Milton {
         string memory asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint8 leverage,
+        uint256 collateralization,
         uint8 direction) public returns (uint256) {
-        return _openPosition(openTimestamp, asset, totalAmount, maximumSlippage, leverage, direction);
+        return _openPosition(openTimestamp, asset, totalAmount, maximumSlippage, collateralization, direction);
     }
 
     function test_closePosition(uint256 derivativeId, uint256 closeTimestamp) public {

@@ -175,7 +175,7 @@ library DataTypes {
 
         IporDerivativeFee fee;
 
-        uint256 leverage;
+        uint256 collateralization;
 
         //@notice Notional Principal Amount
         uint256 notionalAmount;

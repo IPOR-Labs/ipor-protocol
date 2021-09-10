@@ -5,7 +5,7 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
 
-    function openPosition(string memory asset, uint256 totalAmount, uint256 maximumSlippage, uint8 leverage, uint8 direction) external returns (uint256);
+    function openPosition(string memory asset, uint256 totalAmount, uint256 maximumSlippage, uint256 collateralization, uint8 direction) external returns (uint256);
 
     function closePosition(uint256 derivativeId) external;
 

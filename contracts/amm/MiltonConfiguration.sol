@@ -21,6 +21,9 @@ import "../interfaces/IMiltonConfiguration.sol";
 //TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
 contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
+    uint256 minCollateralizationValue;
+    uint256 maxCollateralizationValue;
+
     uint256 incomeTaxPercentage;
     uint256 maxIncomeTaxPercentage;
 
@@ -44,28 +47,29 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 spread;
 
-
-
     constructor() {
         incomeTaxPercentage = 1e17;
         maxIncomeTaxPercentage = 2e17;
 
-        liquidationDepositFeeAmount = 20 * 1e18;
+        liquidationDepositFeeAmount = 20 * Constants.MD;
         //TODO: clarify this value:
-        maxLiquidationDepositFeeAmount = 100 * 1e18;
+        maxLiquidationDepositFeeAmount = 100 * Constants.MD;
 
         openingFeePercentage = 1e16;
-        maxOpeningFeePercentage = 1e18;
+        maxOpeningFeePercentage = Constants.MD;
         openingFeeForTreasuryPercentage = 0;
 
-        iporPublicationFeeAmount = 10 * 1e18;
-        maxIporPublicationFeeAmount = 1000 * 1e18;
+        iporPublicationFeeAmount = 10 * Constants.MD;
+        maxIporPublicationFeeAmount = 1000 * Constants.MD;
 
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
 
-        maxPositionTotalAmount = 1e23;
+        maxPositionTotalAmount = 100000 * Constants.MD;
 
         spread = 1e16;
+
+        minCollateralizationValue = 10 * Constants.MD;
+        maxCollateralizationValue = 50 * Constants.MD;
 
     }
 
@@ -74,7 +78,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyOwner {
-        require(_incomeTaxPercentage <= maxIncomeTaxPercentage, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_incomeTaxPercentage <= maxIncomeTaxPercentage, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         incomeTaxPercentage = _incomeTaxPercentage;
         emit IncomeTaxPercentageSet(_incomeTaxPercentage);
     }
@@ -84,7 +88,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setMaxIncomeTaxPercentage(uint256 _maxIncomeTaxPercentage) external override onlyOwner {
-        require(_maxIncomeTaxPercentage <= 1e18, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_maxIncomeTaxPercentage <= 1e18, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         maxIncomeTaxPercentage = _maxIncomeTaxPercentage;
         emit MaxIncomeTaxPercentageSet(_maxIncomeTaxPercentage);
     }
@@ -94,7 +98,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external override onlyOwner {
-        require(_openingFeeForTreasuryPercentage <= Constants.MD, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeeForTreasuryPercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeeForTreasuryPercentage = _openingFeeForTreasuryPercentage;
         emit OpeningFeeForTreasuryPercentageSet(_openingFeeForTreasuryPercentage);
     }
@@ -104,7 +108,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setLiquidationDepositFeeAmount(uint256 _liquidationDepositFeeAmount) external override onlyOwner {
-        require(_liquidationDepositFeeAmount <= maxLiquidationDepositFeeAmount, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_liquidationDepositFeeAmount <= maxLiquidationDepositFeeAmount, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         liquidationDepositFeeAmount = _liquidationDepositFeeAmount;
         emit LiquidationDepositFeeAmountSet(_liquidationDepositFeeAmount);
     }
@@ -123,7 +127,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyOwner {
-        require(_openingFeePercentage <= maxOpeningFeePercentage, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeePercentage <= maxOpeningFeePercentage, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeePercentage = _openingFeePercentage;
         emit OpeningFeePercentageSet(_openingFeePercentage);
     }
@@ -133,7 +137,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setMaxOpeningFeePercentage(uint256 _maxOpeningFeePercentage) external override onlyOwner {
-        require(_maxOpeningFeePercentage <= 1e18, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_maxOpeningFeePercentage <= 1e18, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         maxOpeningFeePercentage = _maxOpeningFeePercentage;
         emit MaxOpeningFeePercentageSet(_maxOpeningFeePercentage);
     }
@@ -143,7 +147,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount) external override onlyOwner {
-        require(_iporPublicationFeeAmount <= maxIporPublicationFeeAmount, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_iporPublicationFeeAmount <= maxIporPublicationFeeAmount, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         iporPublicationFeeAmount = _iporPublicationFeeAmount;
         emit IporPublicationFeeAmountSet(_iporPublicationFeeAmount);
     }
@@ -162,7 +166,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external override onlyOwner {
-        require(_liquidityPoolMaxUtilizationPercentage <= 1e18, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_liquidityPoolMaxUtilizationPercentage <= 1e18, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         liquidityPoolMaxUtilizationPercentage = _liquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(_liquidityPoolMaxUtilizationPercentage);
     }
@@ -183,5 +187,23 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     function setSpread(uint256 _spread) external override {
         spread = _spread;
         emit SpreadSet(_spread);
+    }
+
+    function getMaxCollateralizationValue() external override view returns (uint256) {
+        return maxCollateralizationValue;
+    }
+
+    function setMaxCollateralizationValue(uint256 _maxCollateralizationValue) external override onlyOwner {
+        maxCollateralizationValue = _maxCollateralizationValue;
+        emit MaxCollateralizationValueSet(_maxCollateralizationValue);
+    }
+
+    function getMinCollateralizationValue() external override view returns (uint256) {
+        return minCollateralizationValue;
+    }
+
+    function setMinCollateralizationValue(uint256 _minCollateralizationValue) external override onlyOwner {
+        minCollateralizationValue = _minCollateralizationValue;
+        emit MinCollateralizationValueSet(_minCollateralizationValue);
     }
 }

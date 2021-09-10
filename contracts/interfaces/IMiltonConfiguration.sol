@@ -21,6 +21,9 @@ interface IMiltonConfiguration {
 
     event SpreadSet(uint256 newSpread);
 
+    event MaxCollateralizationValueSet(uint256 newMaxCollateralizationValue);
+    event MinCollateralizationValueSet(uint256 newMinCollateralizationValue);
+
     function getIncomeTaxPercentage() external view returns (uint256);
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external;
@@ -68,5 +71,13 @@ interface IMiltonConfiguration {
     function getSpread() external view returns (uint256);
 
     function setSpread(uint256 _spread) external;
+
+    function getMaxCollateralizationValue() external view returns (uint256);
+
+    function setMaxCollateralizationValue(uint256 _maxCollateralizationValue) external;
+
+    function getMinCollateralizationValue() external view returns (uint256);
+
+    function setMinCollateralizationValue(uint256 _minCollateralizationValue) external;
 
 }

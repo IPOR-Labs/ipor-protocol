@@ -25,7 +25,7 @@ library DerivativeLogic {
         uint256 mdIbtPrice) public pure returns (DataTypes.IporDerivativeInterest memory) {
 
         //iFixed = fixed interest rate * notional amount * T / Ty
-        require(closingTimestamp >= derivative.startingTimestamp, Errors.AMM_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP);
+        require(closingTimestamp >= derivative.startingTimestamp, Errors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP);
 
         uint256 calculatedPeriodInSeconds = 0;
 
