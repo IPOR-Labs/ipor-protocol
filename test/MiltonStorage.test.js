@@ -109,7 +109,7 @@ contract('MiltonStorage', (accounts) => {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            leverage: 10,
+            collateralization: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -135,7 +135,7 @@ contract('MiltonStorage', (accounts) => {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            leverage: 10,
+            collateralization: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -163,7 +163,7 @@ contract('MiltonStorage', (accounts) => {
             params.asset,
             params.totalAmount,
             params.slippageValue,
-            params.leverage,
+            params.collateralization,
             params.direction, {from: params.from});
     }
 
@@ -217,7 +217,7 @@ contract('MiltonStorage', (accounts) => {
                 iporPublicationAmount: 123,
                 spreadPercentage: 123
             },
-            leverage: 10,
+            collateralization: BigInt(10000000000000000000),
             notionalAmount: 123,
             startingTimestamp: openingTimestamp,
             endingTimestamp: closePositionTimestamp,

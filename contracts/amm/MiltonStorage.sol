@@ -185,7 +185,7 @@ contract MiltonStorage is IMiltonStorage {
         //decrease from balances the liquidation deposit
         require(balances[derivativeItem.item.asset].liquidationDeposit >=
             derivativeItem.item.fee.liquidationDepositAmount,
-            Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW);
+            Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW);
 
         balances[derivativeItem.item.asset].liquidationDeposit
         = balances[derivativeItem.item.asset].liquidationDeposit - derivativeItem.item.fee.liquidationDepositAmount;
@@ -200,7 +200,7 @@ contract MiltonStorage is IMiltonStorage {
                 // |I| > D
 
                 require(balances[derivativeItem.item.asset].liquidityPool >= derivativeItem.item.depositAmount,
-                    Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+                    Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
 
                 //fetch "D" amount from Liquidity Pool
                 balances[derivativeItem.item.asset].liquidityPool
@@ -216,12 +216,12 @@ contract MiltonStorage is IMiltonStorage {
                 // |I| <= D
 
                 require(balances[derivativeItem.item.asset].liquidityPool >= absInterestDifferenceAmount,
-                    Errors.AMM_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+                    Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
 
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 if (user != derivativeItem.item.buyer) {
                     require(closingTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
                 //fetch "I" amount from Liquidity Pool
@@ -257,7 +257,7 @@ contract MiltonStorage is IMiltonStorage {
                 //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
                 if (user != derivativeItem.item.buyer) {
                     require(closingTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.AMM_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
+                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
                 uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount,
@@ -284,8 +284,8 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     function _updateMiltonDerivativesWhenClosePosition(DataTypes.MiltonDerivativeItem memory derivativeItem) internal {
-        require(derivativeItem.item.id > 0, Errors.AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID);
-        require(derivativeItem.item.state != DataTypes.DerivativeState.INACTIVE, Errors.AMM_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS);
+        require(derivativeItem.item.id > 0, Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID);
+        require(derivativeItem.item.state != DataTypes.DerivativeState.INACTIVE, Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS);
         uint256 idsIndexToDelete = derivativeItem.idsIndex;
 
         if (idsIndexToDelete < derivatives.ids.length - 1) {
@@ -332,7 +332,7 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     modifier onlyMilton() {
-        require(msg.sender == _addressesManager.getMilton(), Errors.CALLER_NOT_MILTON);
+        require(msg.sender == _addressesManager.getMilton(), Errors.MILTON_CALLER_NOT_MILTON);
         _;
     }
 

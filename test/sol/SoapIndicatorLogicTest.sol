@@ -52,7 +52,7 @@ contract SoapIndicatorLogicTest is TestData {
         try soapIndicator.calculateInterestRateWhenClosePosition(derivativeNotional, derivativeFixedInterestRate) returns (uint256) {
         } catch Error(string memory actualReason) {
             //then
-            Assert.equal(actualReason, Errors.AMM_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL, "Wrong reason");
+            Assert.equal(actualReason, Errors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL, "Wrong reason");
         }
     }
 

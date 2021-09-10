@@ -43,7 +43,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     }
 
     function updateIndexes(string[] memory _assets, uint256[] memory _indexValues, uint256 updateTimestamp) external override onlyUpdater {
-        require(_assets.length == _indexValues.length, Errors.IPOR_ORACLE_INPUT_ARRAYS_LENGTH_MISMATCH);
+        require(_assets.length == _indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i = 0; i < _assets.length; i++) {
             _updateIndex(_assets[i], _indexValues[i], updateTimestamp);
         }
@@ -109,7 +109,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
                 break;
             }
         }
-        require(allowed == true, Errors.CALLER_NOT_WARREN_UPDATER);
+        require(allowed == true, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
         _;
     }
 
