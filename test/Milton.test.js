@@ -1929,7 +1929,7 @@ contract('Milton', (accounts) => {
             asset: "DAI",
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(9999999999999999999),
+            collateralization: BigInt(500),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -1937,15 +1937,15 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
         //when
-            await testUtils.assertError(
-                //when
-                milton.openPosition(
-                    params.asset, params.totalAmount,
-                    params.slippageValue, params.collateralization,
-                    params.direction, {from: userTwo}),
-                //then
-                'IPOR_12'
-            );
+        await testUtils.assertError(
+            //when
+            milton.openPosition(
+                params.asset, params.totalAmount,
+                params.slippageValue, params.collateralization,
+                params.direction, {from: userTwo}),
+            //then
+            'IPOR_12'
+        );
     });
 
     it('should NOT open pay fixed position, DAI, collateralization too high', async () => {
