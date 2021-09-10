@@ -18,6 +18,10 @@ interface IIporAddressesManager {
 
     function getAddress(string memory id) external view returns (address);
 
+    function getPublicationFeeTransferer() external view returns (address);
+
+    function setPublicationFeeTransferer(address publicationFeeTransferer) external;
+
     function getMilton() external view returns (address);
 
     function setMiltonImpl(address miltonImpl) external;

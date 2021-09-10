@@ -15,6 +15,8 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     //this treasurer manage opening fee balance, key is an asset
     mapping(string => address) treasureTreasurers;
 
+    //@notice the user who can transfer publication fee to Charlie Treasurer
+    string private constant PUBLICATION_FEE_TRANSFERER = "PUBLICATION_FEE_TRANSFERER";
     string private constant WARREN = "WARREN";
     string private constant MILTON = "MILTON";
     string private constant MILTON_STORAGE = "MILTON_STORAGE";
@@ -37,6 +39,15 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
 
     function getAddress(string memory id) public view override returns (address) {
         return _addresses[id];
+    }
+
+    function getPublicationFeeTransferer() external view override returns (address) {
+        return getAddress(PUBLICATION_FEE_TRANSFERER);
+    }
+
+    function setPublicationFeeTransferer(address publicationFeeTransferer) external override {
+        _addresses[PUBLICATION_FEE_TRANSFERER] = publicationFeeTransferer;
+        emit AddressSet(PUBLICATION_FEE_TRANSFERER, publicationFeeTransferer, false);
     }
 
     function getMilton() external view override returns (address) {
@@ -77,6 +88,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         _updateImpl(WARREN, warrenImpl);
         emit WarrenAddressUpdated(warrenImpl);
     }
+
 
     function getCharlieTreasurer(string memory asset) external override view returns (address) {
         return charlieTreasurers[asset];

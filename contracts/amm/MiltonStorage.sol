@@ -85,6 +85,10 @@ contract MiltonStorage is IMiltonStorage {
         return derivatives.items[derivativeId];
     }
 
+    function updateStorageWhenTransferPublicationFee(string memory asset, uint256 transferedAmount) external override onlyMilton {
+        balances[asset].iporPublicationFee = balances[asset].iporPublicationFee - transferedAmount;
+    }
+
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external override onlyMilton {
 
         _updateMiltonDerivativesWhenOpenPosition(iporDerivative);
