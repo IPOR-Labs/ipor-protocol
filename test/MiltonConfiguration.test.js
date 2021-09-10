@@ -416,6 +416,30 @@ contract('MiltonConfiguration', (accounts) => {
             `Incorrect initial iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${expectedIporPublicationFeeAmount}`)
     });
 
+    it('should get initial minCollateralizationValue', async () => {
+        //given
+        let expectedMinCollateralizationValue = BigInt("10000000000000000000");
+
+        //when
+        let actualMinCollateralizationValue = await miltonConfiguration.getMinCollateralizationValue();
+
+        //then
+        assert(expectedMinCollateralizationValue === BigInt(actualMinCollateralizationValue),
+            `Incorrect initial MinCollateralizationValue actual: ${actualMinCollateralizationValue}, expected: ${expectedMinCollateralizationValue}`)
+    });
+
+    it('should get initial maxCollateralizationValue', async () => {
+        //given
+        let expectedMaxCollateralizationValue = BigInt("50000000000000000000");
+
+        //when
+        let actualMaxCollateralizationValue = await miltonConfiguration.getMaxCollateralizationValue();
+
+        //then
+        assert(expectedMaxCollateralizationValue === BigInt(actualMaxCollateralizationValue),
+            `Incorrect initial MaxCollateralizationValue actual: ${actualMaxCollateralizationValue}, expected: ${expectedMaxCollateralizationValue}`)
+    });
+
     //TODO: move to IporAddressesManager.test.js
 
     //TODO: test na max position total amount
