@@ -5,9 +5,13 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
 
+    function getBalance(string memory asset) external view returns(DataTypes.MiltonTotalBalance memory);
+
     function getLastDerivativeId() external view returns (uint256);
 
     function addLiquidity(string memory asset, uint256 liquidityAmount) external;
+
+    function updateStorageWhenTransferPublicationFee(string memory asset, uint256 transferedAmount) external;
 
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external;
 

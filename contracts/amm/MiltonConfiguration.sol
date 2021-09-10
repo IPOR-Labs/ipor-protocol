@@ -30,6 +30,10 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     uint256 openingFeePercentage;
     uint256 maxOpeningFeePercentage;
 
+    //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big
+    //pie going to Treasury Balance
+    uint256 openingFeeForTreasuryPercentage;
+
     uint256 iporPublicationFeeAmount;
     uint256 maxIporPublicationFeeAmount;
 
@@ -39,6 +43,8 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     uint256 maxPositionTotalAmount;
 
     uint256 spread;
+
+
 
     constructor() {
         incomeTaxPercentage = 1e17;
@@ -50,6 +56,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
         openingFeePercentage = 1e16;
         maxOpeningFeePercentage = 1e18;
+        openingFeeForTreasuryPercentage = 0;
 
         iporPublicationFeeAmount = 10 * 1e18;
         maxIporPublicationFeeAmount = 1000 * 1e18;
@@ -80,6 +87,16 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         require(_maxIncomeTaxPercentage <= 1e18, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
         maxIncomeTaxPercentage = _maxIncomeTaxPercentage;
         emit MaxIncomeTaxPercentageSet(_maxIncomeTaxPercentage);
+    }
+
+    function getOpeningFeeForTreasuryPercentage() external override view returns (uint256) {
+        return openingFeeForTreasuryPercentage;
+    }
+
+    function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external override onlyOwner {
+        require(_openingFeeForTreasuryPercentage <= Constants.MD, Errors.AMM_CONFIG_MAX_VALUE_EXCEEDED);
+        openingFeeForTreasuryPercentage = _openingFeeForTreasuryPercentage;
+        emit OpeningFeeForTreasuryPercentageSet(_openingFeeForTreasuryPercentage);
     }
 
     function getLiquidationDepositFeeAmount() external override view returns (uint256) {

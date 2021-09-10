@@ -172,7 +172,7 @@ export default ({drizzle, drizzleState}) => (
         </div>
         <hr/>
         <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-3">
                 <strong>Liquidity Pool Max Utilization Percentage</strong>
                 <ContractData
                     drizzle={drizzle}
@@ -192,7 +192,28 @@ export default ({drizzle, drizzleState}) => (
                     contract="MiltonConfiguration"
                     method="setLiquidityPoolMaxUtilizationPercentage"/>
             </div>
-            <div className="col-md-6"></div>
+            <div className="col-md-3"></div>
+            <div className="col-md-3">
+                <strong>Opening Fee for Treasure Percentage</strong>
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="MiltonConfiguration"
+                    method="getOpeningFeeForTreasurePercentage"
+                    render={(value) => (
+                        <div>
+                            {value / 1000000000000000000}<br/>
+                            <small>{value}</small>
+                        </div>
+                    )}
+                />
+                <hr/>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonConfiguration"
+                    method="setOpeningFeeForTreasurePercentage"/>
+            </div>
+            <div className="col-md-3"></div>
 
         </div>
         <hr/>

@@ -53,7 +53,7 @@ contract('Milton', (accounts) => {
         milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
-            //AMM has rights to spend money on behalf of user
+            //Milton has rights to spend money on behalf of user accounts[i]
             await tokenUsdt.approve(milton.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
             //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
             await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
@@ -1720,6 +1720,206 @@ contract('Milton', (accounts) => {
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
+    });
+
+    it('should open pay fixed position, DAI, custom Opening Fee for Treasury 50%', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(BigInt("50000000000000000"))
+
+        let expectedOpeningFeeTotalBalance = testUtils.MILTON_99__7_USD;
+        let expectedTreasuryTotalBalance = BigInt("4985000000000000000");
+        let expectedLiquidityPoolTotalBalance = BigInt("94715000000000000000");
+
+        //when
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        //then
+        let balance = await miltonStorage.balances(params.asset);
+
+        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
+        const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalance = BigInt(balance.treasury);
+
+        assert(expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
+            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
+            expected: ${expectedOpeningFeeTotalBalance}`)
+        assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalance},
+            expected: ${expectedLiquidityPoolTotalBalance}`)
+        assert(expectedTreasuryTotalBalance === actualTreasuryTotalBalance,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance},
+            expected: ${expectedTreasuryTotalBalance}`)
+
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(ZERO);
+    });
+
+    it('should open pay fixed position, DAI, custom Opening Fee for Treasury 25%', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(BigInt("25000000000000000"))
+
+        let expectedOpeningFeeTotalBalance = testUtils.MILTON_99__7_USD;
+        let expectedTreasuryTotalBalance = BigInt("2492500000000000000");
+        let expectedLiquidityPoolTotalBalance = BigInt("97207500000000000000");
+
+        //when
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        //then
+        let balance = await miltonStorage.balances(params.asset);
+
+        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
+        const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalance = BigInt(balance.treasury);
+
+        assert(expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
+            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
+            expected: ${expectedOpeningFeeTotalBalance}`)
+        assert(expectedLiquidityPoolTotalBalance === actualLiquidityPoolTotalBalance,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalance},
+            expected: ${expectedLiquidityPoolTotalBalance}`)
+        assert(expectedTreasuryTotalBalance === actualTreasuryTotalBalance,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance},
+            expected: ${expectedTreasuryTotalBalance}`)
+
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(ZERO);
+    });
+
+    it('should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.transferPublicationFee("DAI", BigInt("100")),
+            //then
+            'IPOR_31'
+        );
+    });
+
+    it('should NOT transfer Publication Fee to Charlie Treasury - Charlie Treasury address incorrect', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        await iporAddressesManager.setAddress("PUBLICATION_FEE_TRANSFERER", admin);
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.transferPublicationFee("DAI", BigInt("100")),
+            //then
+            'IPOR_29'
+        );
+    });
+
+    it('should transfer Publication Fee to Charlie Treasury ', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = {
+            asset: "DAI",
+            totalAmount: testUtils.MILTON_10_000_USD,
+            slippageValue: 3,
+            leverage: 10,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.leverage,
+            params.direction, {from: userTwo});
+
+        await iporAddressesManager.setAddress("PUBLICATION_FEE_TRANSFERER", admin);
+        await iporAddressesManager.setCharlieTreasurer(params.asset, userThree);
+
+        const transferedAmount = BigInt("100");
+
+        //when
+        await milton.transferPublicationFee("DAI", transferedAmount);
+
+        //then
+        let balance = await miltonStorage.balances(params.asset);
+
+        let expectedErc20BalanceCharlieTreasurer = testUtils.USER_SUPPLY_18_DECIMALS + transferedAmount;
+        let actualErc20BalanceCharlieTreasurer = BigInt(await tokenDai.balanceOf(userThree));
+
+        let expectedErc20BalanceMilton = testUtils.MILTON_10_000_USD - transferedAmount;
+        let actualErc20BalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
+
+        let expectedPublicationFeeBalanceMilton = testUtils.MILTON_10_USD - transferedAmount;
+        const actualPublicationFeeBalanceMilton = BigInt(balance.iporPublicationFee);
+
+        assert(expectedErc20BalanceCharlieTreasurer === actualErc20BalanceCharlieTreasurer,
+            `Incorrect ERC20 Charlie Treasurer balance for ${params.asset}, actual:  ${actualErc20BalanceCharlieTreasurer},
+                expected: ${expectedErc20BalanceCharlieTreasurer}`)
+
+        assert(expectedErc20BalanceMilton === actualErc20BalanceMilton,
+            `Incorrect ERC20 Milton balance for ${params.asset}, actual:  ${actualErc20BalanceMilton},
+                expected: ${expectedErc20BalanceMilton}`)
+
+        assert(expectedPublicationFeeBalanceMilton === actualPublicationFeeBalanceMilton,
+            `Incorrect Milton balance for ${params.asset}, actual:  ${actualPublicationFeeBalanceMilton},
+                expected: ${expectedPublicationFeeBalanceMilton}`)
     });
 
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe

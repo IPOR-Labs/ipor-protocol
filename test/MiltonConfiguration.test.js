@@ -14,6 +14,43 @@ contract('MiltonConfiguration', (accounts) => {
         miltonConfiguration = await MiltonConfiguration.new();
     });
 
+    it('should set default openingFeeForTreasuryPercentage', async () => {
+        //given
+        let expectedOpeningFeeForTreasuryPercentage = BigInt("0");
+
+        //when
+        let actualOpeningFeeForTreasuryPercentage = await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+
+        //then
+        assert(expectedOpeningFeeForTreasuryPercentage === BigInt(actualOpeningFeeForTreasuryPercentage),
+            `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`)
+    });
+
+    it('should set openingFeeForTreasuryPercentage', async () => {
+        //given
+        let expectedOpeningFeeForTreasuryPercentage = BigInt("1000000000000000000");
+        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage);
+
+        //when
+        let actualOpeningFeeForTreasuryPercentage = await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+
+        //then
+        assert(expectedOpeningFeeForTreasuryPercentage === BigInt(actualOpeningFeeForTreasuryPercentage),
+            `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`)
+    });
+
+    it('should NOT set openingFeeForTreasuryPercentage', async () => {
+        //given
+        let openingFeeForTreasuryPercentage = BigInt("1000000000000000001");
+
+        await testUtils.assertError(
+            //when
+            miltonConfiguration.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage),
+            //then
+            'IPOR_24'
+        );
+    });
+
     it('should NOT set incomeTaxPercentage', async () => {
         //given
         let incomeTaxPercentage = BigInt("200000000000000001");

@@ -72,7 +72,7 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
             <tr>
-                <td>Liquidity Pool (including Opening Fee)</td>
+                <td>Liquidity Pool (including part of Opening Fee)</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
@@ -264,7 +264,7 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
             <tr>
-                <td>TREASURY</td>
+                <td>TREASURY (including part of Opening Fee, including Income Tax)</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}

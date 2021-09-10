@@ -69,6 +69,10 @@ contract MiltonStorage is IMiltonStorage {
         derivatives.lastDerivativeId = 0;
     }
 
+    function getBalance(string memory asset) external override view returns(DataTypes.MiltonTotalBalance memory) {
+        return balances[asset];
+    }
+
     function getLastDerivativeId() external override view returns (uint256) {
         return derivatives.lastDerivativeId;
     }
@@ -79,6 +83,10 @@ contract MiltonStorage is IMiltonStorage {
 
     function getDerivativeItem(uint256 derivativeId) external override view returns (DataTypes.MiltonDerivativeItem memory) {
         return derivatives.items[derivativeId];
+    }
+
+    function updateStorageWhenTransferPublicationFee(string memory asset, uint256 transferedAmount) external override onlyMilton {
+        balances[asset].iporPublicationFee = balances[asset].iporPublicationFee - transferedAmount;
     }
 
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external override onlyMilton {
@@ -147,12 +155,23 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     function _updateBalancesWhenOpenPosition(string memory asset, uint256 depositAmount, uint256 openingFeeAmount) internal {
+
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+
         balances[asset].derivatives = balances[asset].derivatives + depositAmount;
         balances[asset].openingFee = balances[asset].openingFee + openingFeeAmount;
         balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + miltonConfiguration.getLiquidationDepositFeeAmount();
         balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + miltonConfiguration.getIporPublicationFeeAmount();
-        balances[asset].liquidityPool = balances[asset].liquidityPool + openingFeeAmount;
+
+        uint256 openingFeeForTreasurePercentage = miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        (uint256 openingFeeLPValue, uint256 openingFeeTreasuryValue) = _splitOpeningFeeAmount(openingFeeAmount, openingFeeForTreasurePercentage);
+        balances[asset].liquidityPool = balances[asset].liquidityPool + openingFeeLPValue;
+        balances[asset].treasury = balances[asset].treasury + openingFeeTreasuryValue;
+    }
+
+    function _splitOpeningFeeAmount(uint256 openingFeeAmount, uint256 openingFeeForTreasurePercentage) internal pure returns (uint256 liquidityPoolValue, uint256 treasuryValue) {
+        treasuryValue = AmmMath.division(openingFeeAmount * openingFeeForTreasurePercentage, Constants.MD);
+        liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
 
     function _updateBalancesWhenClosePosition(

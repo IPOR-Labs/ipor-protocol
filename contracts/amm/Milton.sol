@@ -35,6 +35,17 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
+    //@notice transfer publication fee to configured charlie treasurer address
+    function transferPublicationFee(string memory asset, uint256 amount) external onlyPublicationFeeTransferer {
+
+        require(amount > 0, Errors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        require(amount <= miltonStorage.getBalance(asset).openingFee, Errors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE);
+        require(address(0) != _addressesManager.getCharlieTreasurer(asset), Errors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS);
+        miltonStorage.updateStorageWhenTransferPublicationFee(asset, amount);
+        IERC20(_addressesManager.getAddress(asset)).transfer(_addressesManager.getCharlieTreasurer(asset), amount);
+    }
+
     function openPosition(
         string memory asset,
         uint256 totalAmount,
@@ -295,6 +306,11 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
     modifier onlyActiveDerivative(uint256 derivativeId) {
         require(IMiltonStorage(_addressesManager.getMiltonStorage()).getDerivativeItem(derivativeId).item.state == DataTypes.DerivativeState.ACTIVE, Errors.AMM_DERIVATIVE_IS_INACTIVE);
+        _;
+    }
+
+    modifier onlyPublicationFeeTransferer() {
+        require(msg.sender == _addressesManager.getPublicationFeeTransferer(), Errors.MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
         _;
     }
 

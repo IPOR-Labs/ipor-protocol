@@ -27,6 +27,11 @@ library Errors {
     string public constant AMM_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP = 'IPOR_25'; //'Derivative closing timestamp cannot be before derivative starting timestamp`
     string public constant MILTON_IBT_PRICE_CANNOT_BE_ZERO = 'IPOR_26'; //'ibtPrice has to be higher than 0`
     string public constant WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP = 'IPOR_27'; //Actual IPOR Index timestamp is higher than accrue timestamp
+    string public constant MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE = 'IPOR_28'; // Opening Fee Balance is too low`
+    string public constant MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS = 'IPOR_29'; // Charlie Treasurer address is incorrect
+    string public constant MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER = 'IPOR_30'; // Amount is too low to transfer
+    string public constant MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER = 'IPOR_31'; // Sender is not a publication fee transferer, not match address defined in IporAddressesManager in key PUBLICATION_FEE_TRANSFERER
+
 
 
 }
