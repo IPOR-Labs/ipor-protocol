@@ -151,17 +151,6 @@ if [ $IS_RUN = "YES" ]; then
 fi
 
 
-if [ $IS_RUN = "YES" ]; then
-  cd "${DIR}"
-
-  echo -e "\n\e[32mStopping Milton Tool docker...\e[0m\n"
-  docker-compose -f docker-compose.yml rm -s -v -f
-
-  echo -e "\n\e[32mStarting Milton Tool docker..\e[0m\n"
-  docker-compose -f docker-compose.yml up -d --remove-orphans
-fi
-
-
 if [ $IS_CLEAN_BC = "YES" ]; then
   cd "${DIR}"
 
