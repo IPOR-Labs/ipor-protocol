@@ -37,7 +37,7 @@ services:
     ports:
       - "9545:8545"
     volumes:
-      - ./containers/ganache/ganache_data:/ganache_data
+      - ipor-protocol-ganache-data:/ganache_data
     entrypoint:
       - node
       - /app/ganache-core.docker.cli.js
@@ -77,3 +77,8 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - ipor-protocol-ganache
+
+volumes:
+  ipor-protocol-ganache-data:
+    name: ipor-protocol-ganache-data
+    driver: local

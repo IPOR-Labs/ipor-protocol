@@ -24,14 +24,20 @@ ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
 ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/contracts.zip"
 ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/contracts.zip"
 
+GANACHE_CONTAINER="ipor-protocol-ganache"
+GANACHE_DATA_VOLUME="ipor-protocol-ganache-data"
+
+NGINX_GANACHE_CONTAINER="ipor-protocol-nginx-ganache"
+
 AWS_REGION="eu-central-1"
 
 IS_MIGRATE_SC="NO"
 IS_BUILD_DOCKER="NO"
+IS_CLEAN_BC="NO"
 IS_RUN="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
-
+IS_NGINX_GANACHE_RESTART="NO"
 
 if [ $# -eq 0 ]; then
     IS_RUN="YES"
@@ -51,6 +57,12 @@ do
         ;;
         publish|p)
             IS_PUBLISH_ARTIFACTS="YES"
+        ;;
+        clean|c)
+            IS_CLEAN_BC="YES"
+        ;;
+        nginx|n)
+            IS_NGINX_GANACHE_RESTART="YES"
         ;;
         help|h|?)
             IS_HELP="YES"
@@ -139,10 +151,44 @@ if [ $IS_RUN = "YES" ]; then
 fi
 
 
+if [ $IS_RUN = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mStopping Milton Tool docker...\e[0m\n"
+  docker-compose -f docker-compose.yml rm -s -v -f
+
+  echo -e "\n\e[32mStarting Milton Tool docker..\e[0m\n"
+  docker-compose -f docker-compose.yml up -d --remove-orphans
+fi
+
+
+if [ $IS_CLEAN_BC = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mClean Ganache blockchain...\e[0m\n"
+
+  EXISTS=$(docker ps -a -q -f name="${GANACHE_CONTAINER}")
+  if [ -n "$EXISTS" ]; then
+      echo -e "Remove container: ${GANACHE_CONTAINER}\n"
+      docker stop "${GANACHE_CONTAINER}"
+      docker rm -v -f "${GANACHE_CONTAINER}"
+  fi
+
+  EXISTS=$(docker volume ls -q -f name="${GANACHE_DATA_VOLUME}")
+  if [ -n "$EXISTS" ]; then
+      echo -e "Remove volume: ${GANACHE_DATA_VOLUME}\n"
+      docker volume rm "${GANACHE_DATA_VOLUME}"
+  fi
+
+  echo -e "Start cleaned container: ${GANACHE_CONTAINER}\n"
+  docker-compose -f docker-compose.yml up -d
+fi
+
+
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mMigrate Smart Contracts to Ganache Blockchain...\e[0m\n"
+  echo -e "\n\e[32mMigrate Smart Contracts to Ganache blockchain...\e[0m\n"
 
   truffle migrate --network docker --reset --compile-none
 fi
@@ -161,16 +207,37 @@ if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
 fi
 
 
+if [ $IS_NGINX_GANACHE_RESTART = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mRestart NGINX Ganache...\e[0m\n"
+
+  EXISTS=$(docker ps -a -q -f name="${NGINX_GANACHE_CONTAINER}")
+  if [ -n "$EXISTS" ]; then
+      echo -e "Remove container: ${NGINX_GANACHE_CONTAINER}\n"
+      docker stop "${NGINX_GANACHE_CONTAINER}"
+      docker rm -v -f "${NGINX_GANACHE_CONTAINER}"
+  fi
+
+  echo -e "Start cleaned container: ${NGINX_GANACHE_CONTAINER}\n"
+  docker-compose -f docker-compose.yml up -d
+fi
+
+
+
 if [ $IS_HELP = "YES" ]; then
     echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
     echo -e ""
     echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
     echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m       Build Milton Tool docker"
     echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m         Run / restart Milton Tool"
-    echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m     Compile and migrate Smart Contracts to Blockchain"
+    echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m     Compile and migrate Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m     Publish build artifacts to S3 bucket"
+    echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m       Clean Ganache blockchain"
+    echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m       Restart nginx Ganache container"
     echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m      Show help"
     echo -e "   \e[34mwithout any command\e[0m - the same as Run"
     echo -e ""
     exit 0
 fi
+
