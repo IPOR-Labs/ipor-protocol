@@ -69,6 +69,7 @@ contract('Milton', (accounts) => {
 
         await milton.initialize(iporAddressesManager.address);
 
+
     });
 
     beforeEach(async () => {

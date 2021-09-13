@@ -34,7 +34,7 @@ library Errors {
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = 'IPOR_32'; // Incorrect Milton Configuration address
     string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS = 'IPOR_33'; // Incorrect Milton Configuration address
     string public constant MILTON_COLLATERALIZATION_TOO_HIGH = 'IPOR_34';
-
+    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, MiltonConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
 
 
 }

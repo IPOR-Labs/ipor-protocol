@@ -15,6 +15,7 @@ import './MiltonEvents.sol';
 
 import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IMilton.sol";
+import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
@@ -96,25 +97,31 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         uint256 collateralization,
         uint8 direction) internal returns (uint256) {
 
-        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        require(address(_addressesManager) != address(0), Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS);
+        require(_addressesManager.getAddress(asset) != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
+
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        require(address(miltonConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
 
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
 
         require(collateralization >= miltonConfiguration.getMinCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_LOW);
         require(collateralization <= miltonConfiguration.getMaxCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_HIGH);
+
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
-        require(address(miltonConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
-        require(address(_addressesManager) != address(0), Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS);
         require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(), Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
         require(totalAmount <= miltonConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
+        require(IERC20(_addressesManager.getAddress(asset)).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
+
         require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         //TODO: setup max slippage in milton configuration
         require(maximumSlippage <= 1e20, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
-        require(_addressesManager.getAddress(asset) != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
+
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS);
-        require(IERC20(_addressesManager.getAddress(asset)).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
+
+        require(IMiltonLPUtilizationStrategy(_addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset) <= miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
+            Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         //TODO verify if this opened derivatives is closable based on liquidity pool
         //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
@@ -136,6 +143,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional);
 
+        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
         DataTypes.IporDerivative memory iporDerivative = DataTypes.IporDerivative(
             miltonStorage.getLastDerivativeId() + 1,
