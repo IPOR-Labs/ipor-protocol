@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
+import "../libraries/Constants.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IIporAddressesManager.sol";
@@ -18,11 +19,12 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         _addressesManager = addressesManager;
     }
 
-    function calculateUtilization(string memory asset) external override view returns (uint256) {
+    function calculateUtilization(string memory asset, uint256 deposit, uint256 openingFee) external override view returns (uint256) {
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(asset);
-        if (balance.liquidityPool != 0) {
-            return AmmMath.division(balance.derivatives, balance.liquidityPool);
+
+        if ((balance.liquidityPool + openingFee) != 0) {
+            return AmmMath.division((balance.derivatives + deposit) * Constants.ONE_PERCENTAGE, balance.liquidityPool + openingFee);
         } else {
             return 0;
         }

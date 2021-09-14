@@ -11,6 +11,8 @@ interface IMiltonStorage {
 
     function addLiquidity(string memory asset, uint256 liquidityAmount) external;
 
+    function subtractLiquidity(string memory asset, uint256 liquidityAmount) external;
+
     function updateStorageWhenTransferPublicationFee(string memory asset, uint256 transferedAmount) external;
 
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external;

@@ -24,6 +24,8 @@ import "../interfaces/IMiltonLPUtilisationStrategy.sol";
  */
 contract Milton is Ownable, MiltonEvents, IMilton {
 
+    event LogDebug (string name, uint256 value);
+
     using DerivativeLogic for DataTypes.IporDerivative;
 
     IIporAddressesManager internal _addressesManager;
@@ -110,7 +112,8 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(collateralization <= miltonConfiguration.getMaxCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_HIGH);
 
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
-        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(), Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
+        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(),
+            Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
         require(totalAmount <= miltonConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
         require(IERC20(_addressesManager.getAddress(asset)).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
 
@@ -119,9 +122,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(maximumSlippage <= 1e20, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
 
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS);
-
-        require(IMiltonLPUtilizationStrategy(_addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset) <= miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
-            Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         //TODO verify if this opened derivatives is closable based on liquidity pool
         //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
@@ -132,8 +132,17 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             miltonConfiguration.getIporPublicationFeeAmount(),
             miltonConfiguration.getOpeningFeePercentage()
         );
+
         require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
+
+        emit LogDebug("LiquidityPoolMaxUtilizationPercentage", miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage());
+        emit LogDebug("ActualUtilization",
+            IMiltonLPUtilizationStrategy(_addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee));
+
+        require(IMiltonLPUtilizationStrategy(
+            _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee) <= miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
+            Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
             miltonConfiguration.getLiquidationDepositFeeAmount(),
@@ -144,6 +153,8 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional);
 
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+
+        emit LogDebug("ActualLiquidityPool", miltonStorage.getBalance(asset).liquidityPool);
 
         DataTypes.IporDerivative memory iporDerivative = DataTypes.IporDerivative(
             miltonStorage.getLastDerivativeId() + 1,

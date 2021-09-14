@@ -36,5 +36,4 @@ library Errors {
     string public constant MILTON_COLLATERALIZATION_TOO_HIGH = 'IPOR_34';
     string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, MiltonConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
 
-
 }

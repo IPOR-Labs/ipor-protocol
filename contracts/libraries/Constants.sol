@@ -3,6 +3,8 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library Constants {
 
+    uint256 constant ONE_PERCENTAGE = 1e16;
+
     //@notice Milton Decimals
     uint256 constant MD = 1e18;
     uint256 constant MD_P2 = 1e36;

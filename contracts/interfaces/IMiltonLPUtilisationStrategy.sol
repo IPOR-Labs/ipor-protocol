@@ -5,5 +5,6 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonLPUtilizationStrategy {
 
-    function calculateUtilization(string memory asset) external view returns (uint256);
+    //@notice deposit and openingFee is for this particular derivative
+    function calculateUtilization(string memory asset, uint256 deposit, uint256 openingFee) external view returns (uint256);
 }
