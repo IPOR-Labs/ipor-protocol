@@ -37,7 +37,7 @@ services:
     ports:
       - "9545:8545"
     volumes:
-      - ./containers/ganache/ganache_data:/ganache_data
+      - ipor-protocol-ganache-data:/ganache_data
     entrypoint:
       - node
       - /app/ganache-core.docker.cli.js
@@ -59,18 +59,26 @@ services:
 
   ipor-protocol-nginx-ganache:
     container_name: ipor-protocol-nginx-ganache
-    image: nginx:1.21.1
+    image: io.ipor/nginx-ganche:latest
     restart: always
     ports:
       - "34555:34555"
     volumes:
-      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.conf:/etc/nginx/nginx.conf
+      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
       - ./containers/nginx-ganache/htpasswd.users:/etc/nginx/htpasswd.users
       - ./containers/nginx-ganache/errors:/usr/share/nginx/html/errors
       - ./containers/nginx-ganache/envs/${ENV_PROFILE}/cert:/etc/nginx/cert
+      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/keys:/etc/nginx/keys
       - ./containers/logs/nginx-ganache:/var/log/nginx
     environment:
       - TZ=${TIMEZONE}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - ipor-protocol-ganache
+
+volumes:
+  ipor-protocol-ganache-data:
+    name: ipor-protocol-ganache-data
+    driver: local
