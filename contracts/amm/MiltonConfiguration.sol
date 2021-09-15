@@ -166,7 +166,6 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external override onlyOwner {
-        require(_liquidityPoolMaxUtilizationPercentage <= 1e18, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         liquidityPoolMaxUtilizationPercentage = _liquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(_liquidityPoolMaxUtilizationPercentage);
     }

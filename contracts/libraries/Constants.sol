@@ -3,6 +3,8 @@ pragma solidity >=0.8.4 <0.9.0;
 
 library Constants {
 
+    uint256 constant MAX_VALUE = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+
     //@notice Milton Decimals
     uint256 constant MD = 1e18;
     uint256 constant MD_P2 = 1e36;

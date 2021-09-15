@@ -326,16 +326,19 @@ contract('MiltonConfiguration', (accounts) => {
 
     });
 
-    it('should NOT set liquidityPoolMaxUtilizationPercentage', async () => {
+    it('should set liquidityPoolMaxUtilizationPercentage higher than 100%', async () => {
         //given
-        let liquidityPoolMaxUtilizationPercentage = BigInt("1000000000000000001");
+        let liquidityPoolMaxUtilizationPercentage = BigInt("99000000000000000000");
 
-        await testUtils.assertError(
-            //when
-            miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage),
-            //then
-            'IPOR_24'
-        );
+        //when
+        await miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
+
+        //then
+        let actualLPMaxUtilizationPercentage = await miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage();
+
+        assert(liquidityPoolMaxUtilizationPercentage === BigInt(actualLPMaxUtilizationPercentage),
+            `Incorrect LiquidityPoolMaxUtilizationPercentage actual: ${actualLPMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
+
     });
 
 

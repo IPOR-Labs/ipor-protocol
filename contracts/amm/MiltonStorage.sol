@@ -81,6 +81,10 @@ contract MiltonStorage is IMiltonStorage {
         balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
     }
 
+    function subtractLiquidity(string memory asset, uint256 liquidityAmount) external override onlyMilton {
+        balances[asset].liquidityPool = balances[asset].liquidityPool - liquidityAmount;
+    }
+
     function getDerivativeItem(uint256 derivativeId) external override view returns (DataTypes.MiltonDerivativeItem memory) {
         return derivatives.items[derivativeId];
     }

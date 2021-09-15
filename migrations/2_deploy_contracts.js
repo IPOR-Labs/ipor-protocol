@@ -22,6 +22,7 @@ const AmmMath = artifacts.require('AmmMath');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
+const MiltonLPUtilizationStrategyCollateral = artifacts.require('MiltonLPUtilizationStrategyCollateral');
 
 
 module.exports = async function (deployer, _network, addresses) {
@@ -106,6 +107,11 @@ module.exports = async function (deployer, _network, addresses) {
     let iporAddressesManagerAddr = await iporAddressesManager.address;
 
     await deployer.deploy(MiltonFrontendDataProvider, iporAddressesManagerAddr);
+
+    await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
+    await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
+    let miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deployed();
+    await iporAddressesManager.setAddress("MILTON_UTILIZATION_STRATEGY", miltonLPUtilizationStrategyCollateral.address);
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 
@@ -206,6 +212,8 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
 
     }
+
+    await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
 
     //Prepare tokens for initial accounts...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
