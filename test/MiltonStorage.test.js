@@ -114,8 +114,11 @@ contract('MiltonStorage', (accounts) => {
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
+
         await warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
         await iporAddressesManager.setAddress("MILTON", milton.address);
+        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+
         await openPositionFunc(derivativeParams);
         let derivativeItem = await miltonStorage.getDerivativeItem(1);
         let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
@@ -140,8 +143,11 @@ contract('MiltonStorage', (accounts) => {
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
+
         await warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
         await iporAddressesManager.setAddress("MILTON", milton.address);
+        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+
         await openPositionFunc(derivativeParams);
         let derivativeItem = await miltonStorage.getDerivativeItem(1);
         let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;

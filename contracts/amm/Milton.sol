@@ -154,7 +154,8 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
-        emit LogDebug("ActualLiquidityPool", miltonStorage.getBalance(asset).liquidityPool);
+        emit LogDebug("ActualLiquidityPoolBalance", miltonStorage.getBalance(asset).liquidityPool);
+        emit LogDebug("ActualDerivativesBalance", miltonStorage.getBalance(asset).derivatives);
 
         DataTypes.IporDerivative memory iporDerivative = DataTypes.IporDerivative(
             miltonStorage.getLastDerivativeId() + 1,

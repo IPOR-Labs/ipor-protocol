@@ -24,9 +24,9 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(asset);
 
         if ((balance.liquidityPool + openingFee) != 0) {
-            return AmmMath.division((balance.derivatives + deposit) * Constants.ONE_PERCENTAGE, balance.liquidityPool + openingFee);
+            return AmmMath.division((balance.derivatives + deposit) * Constants.MD, balance.liquidityPool + openingFee);
         } else {
-            return 0;
+            return Constants.MAX_VALUE;
         }
     }
 }
