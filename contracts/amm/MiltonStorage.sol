@@ -35,7 +35,7 @@ contract MiltonStorage is IMiltonStorage {
     function initialize(IIporAddressesManager addressesManager) public {
         _addressesManager = addressesManager;
 
-        uint256 blockTimestamp = block.timestamp;
+        uint256 blockTimestamp = 0;
 
         soapIndicators["USDT"] = DataTypes.TotalSoapIndicator(
             DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
