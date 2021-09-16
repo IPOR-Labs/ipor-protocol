@@ -15,9 +15,9 @@ fi
 
 ENV_CONFIG_BUCKET="ipor-env"
 
-ENV_CONFIG_FILE_SRC="smart-contract-address.yaml.j2"
-ENV_CONFIG_FILE_DEST="smart-contract-address.yaml"
-ENV_CONFIG_FILE_RMT="${ENV_PROFILE}/smart-contract-address.yaml"
+ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
+ENV_CONFIG_FILE_DEST="smart-contract-addresses.yaml"
+ENV_CONFIG_FILE_RMT="${ENV_PROFILE}/${ENV_CONFIG_FILE_DEST}"
 
 ENV_CONTRACTS_ROOT_DIR="app/src"
 ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
@@ -96,6 +96,10 @@ function create_env_config_file(){
   set_smart_contract_address "DaiMockedToken.json" "dai_mocked_address"
   set_smart_contract_address "UsdcMockedToken.json" "usdc_mocked_address"
   set_smart_contract_address "UsdtMockedToken.json" "usdt_mocked_address"
+  set_smart_contract_address "MiltonStorage.json" "milton_storage_address"
+  set_smart_contract_address "WarrenStorage.json" "warren_storage_address"
+  set_smart_contract_address "MiltonFaucet.json" "milton_faucet_address"
+  set_smart_contract_address "IporAddressesManager.json" "ipor_addresses_manager"
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }
