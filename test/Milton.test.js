@@ -228,7 +228,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -249,7 +249,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -306,7 +306,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -328,7 +328,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -350,7 +350,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -372,7 +372,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -394,7 +394,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -416,7 +416,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -438,7 +438,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -460,7 +460,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -511,7 +511,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -533,7 +533,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -555,7 +555,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -606,7 +606,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -628,7 +628,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -650,7 +650,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -672,7 +672,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -694,7 +694,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -716,7 +716,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -738,7 +738,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -760,7 +760,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -784,7 +784,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -807,7 +807,7 @@ contract('Milton', (accounts) => {
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
-            incomeTax, testUtils.ZERO
+            incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -829,7 +829,7 @@ contract('Milton', (accounts) => {
             BigInt("9990020000000000000000000"), //expectedCloserUserTokenBalanceAfterPayOut
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
-            incomeTax, testUtils.ZERO
+            incomeTax, testUtils.ZERO, null
         );
     });
 
@@ -852,7 +852,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance, //expectedLiquidityPoolTotalBalance
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -875,7 +875,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance, //expectedLiquidityPoolTotalBalance
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -925,7 +925,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -975,7 +975,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -998,7 +998,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -1020,7 +1020,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -1042,7 +1042,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax, //treasury total balance
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -1064,7 +1064,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance, //expectedLiquidityPoolTotalBalance
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax, //treasury total balance
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
     });
 
@@ -1702,7 +1702,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
     });
@@ -1722,7 +1722,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
     });
@@ -1750,7 +1750,7 @@ contract('Milton', (accounts) => {
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
-            incomeTax, testUtils.ZERO
+            incomeTax, testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
     });
@@ -1775,7 +1775,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
     });
@@ -1800,7 +1800,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
@@ -1827,7 +1827,7 @@ contract('Milton', (accounts) => {
             expectedOpenerUserTokenBalanceAfterPayOut,
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
-            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
@@ -1857,7 +1857,7 @@ contract('Milton', (accounts) => {
             expectedCloserUserTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
-            incomeTax, testUtils.ZERO
+            incomeTax, testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
@@ -1884,7 +1884,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             0, testUtils.ZERO, testUtils.ZERO,
             incomeTax,
-            testUtils.ZERO
+            testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
         await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
@@ -2293,6 +2293,34 @@ contract('Milton', (accounts) => {
         await miltonConfiguration.setOpeningFeePercentage(oldOpeningFeePercentage);
     });
 
+    it('should open pay fixed position - when open timestamp is long time ago', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
+        let incomeTax = BigInt("0");
+
+        let expectedOpenerUserTokenBalanceAfterPayOut = BigInt("9999890300000000000000000");
+        let expectedCloserUserTokenBalanceAfterPayOut = BigInt("9999890300000000000000000");
+
+
+        let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
+        let expectedMiltonTokenBalance = miltonBalanceBeforePayout + BigInt("109700000000000000000");
+        let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("99700000000000000000") - incomeTax;
+
+        await exetuceClosePositionTestCase(
+            "DAI", 10, 0, userTwo, userTwo,
+            testUtils.MILTON_3_PERCENTAGE, testUtils.MILTON_3_PERCENTAGE, 0,
+            miltonBalanceBeforePayout,
+            expectedMiltonTokenBalance,
+            expectedOpenerUserTokenBalanceAfterPayOut,
+            expectedCloserUserTokenBalanceAfterPayOut,
+            expectedLiquidityPoolTotalBalance,
+            0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, veryLongTimeAgoTimestamp
+        );
+
+    });
+    //TODO: check initial IBT
+
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
     //TODO: dodac test 1 otwarta long, zmiana indeksu, 2 otwarta short, zmiana indeksu, zamykamy 1 i 2, soap = 0
 
@@ -2301,7 +2329,7 @@ contract('Milton', (accounts) => {
     //TODO: testy na strukturze MiltonDerivatives
 
     //TODO: test when ipor not ready yet
-    //TODO: check initial IBT
+
     //TODO: create test when ipor index not yet created for specific asset
 
     //TODO: test na 1 sprwdzenie czy totalAmount wiekszy od fee
@@ -2399,16 +2427,23 @@ contract('Milton', (accounts) => {
         expectedDerivativesTotalBalance,
         expectedLiquidationDepositFeeTotalBalance,
         expectedTreasuryTotalBalance,
-        expectedSoap
+        expectedSoap,
+        openTimestamp
     ) {
         //given
+        let localOpenTimestamp = null;
+        if (openTimestamp != null) {
+            localOpenTimestamp = openTimestamp;
+        } else {
+            localOpenTimestamp = Math.floor(Date.now() / 1000);
+        }
         const params = {
             asset: asset,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
             direction: direction,
-            openTimestamp: Math.floor(Date.now() / 1000),
+            openTimestamp: localOpenTimestamp,
             from: openerUserAddress
         }
 
