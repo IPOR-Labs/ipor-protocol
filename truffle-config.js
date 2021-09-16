@@ -22,7 +22,7 @@ module.exports = {
             provider: () => {
                 return new HDWalletProvider(process.env.ADMIN_PRIV_KEY, process.env.ETH_BC_URL);
             },
-            network_id: "1337",
+            network_id: "5777",
             skipDryRun: true
         },
         develop: {

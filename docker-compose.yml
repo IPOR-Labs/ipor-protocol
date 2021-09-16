@@ -48,7 +48,7 @@ services:
       - --networkId
       - '5777'
       - --chainId
-      - '1337'
+      - '5777'
       - --hostname
       - '0.0.0.0'
       - --accounts
