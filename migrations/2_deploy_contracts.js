@@ -194,7 +194,11 @@ module.exports = async function (deployer, _network, addresses) {
         testMilton = await TestMilton.deployed();
 
         if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
-            await iporAddressesManager.setAddress("MILTON", testMilton.address);
+            if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
+                await iporAddressesManager.setAddress("MILTON", testMilton.address);
+            } else {
+                await iporAddressesManager.setAddress("MILTON", miltonAddr);
+            }
         } else {
             await iporAddressesManager.setAddress("MILTON", miltonAddr);
         }
