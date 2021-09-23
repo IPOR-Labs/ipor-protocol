@@ -8,10 +8,12 @@ interface IIporAddressesManager {
     event MiltonUtilizationStrategyUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event MiltonConfigurationAddressUpdated(address indexed newAddress);
-    event CharlieTreasurerUpdated(string asset, address indexed newCharlieTreasurer);
-    event TreasureTreasurerUpdated(string asset, address indexed newTreasureTreasurer);
+    event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
+    event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
     event ProxyCreated(string id, address indexed newAddress);
     event AddressSet(string id, address indexed newAddress, bool hasProxy);
+    event AssetAddressRemoved(address indexed asset);
+    event AssetAddressAdd(address newAddress);
 
     function setAddress(string memory id, address newAddress) external;
 
@@ -43,11 +45,17 @@ interface IIporAddressesManager {
 
     function setWarrenImpl(address warrenImpl) external;
 
-    function getCharlieTreasurer(string memory asset) external view returns (address);
+    function getCharlieTreasurer(address asset) external view returns (address);
 
-    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external;
+    function setCharlieTreasurer(address asset, address _charlieTreasurer) external;
 
-    function getTreasureTreasurer(string memory asset) external view returns (address);
+    function getTreasureTreasurer(address asset) external view returns (address);
 
-    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external;
+    function setTreasureTreasurer(address asset, address _treasureTreasurer) external;
+
+    function getAssets() external view returns (address[] memory);
+
+    function addAsset(address asset) external;
+
+    function removeAsset(address asset) external;
 }

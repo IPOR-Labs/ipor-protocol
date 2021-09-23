@@ -24,13 +24,11 @@ import "../interfaces/IMiltonLPUtilisationStrategy.sol";
  */
 contract Milton is Ownable, MiltonEvents, IMilton {
 
-    event LogDebug (string name, uint256 value);
-
     using DerivativeLogic for DataTypes.IporDerivative;
 
     IIporAddressesManager internal _addressesManager;
 
-    function initialize(IIporAddressesManager addressesManager) public {
+    function initialize(IIporAddressesManager addressesManager) public  onlyOwner {
         _addressesManager = addressesManager;
     }
 
@@ -39,18 +37,18 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //    }
 
     //@notice transfer publication fee to configured charlie treasurer address
-    function transferPublicationFee(string memory asset, uint256 amount) external onlyPublicationFeeTransferer {
+    function transferPublicationFee(address asset, uint256 amount) external onlyPublicationFeeTransferer {
 
         require(amount > 0, Errors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
         require(amount <= miltonStorage.getBalance(asset).openingFee, Errors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE);
         require(address(0) != _addressesManager.getCharlieTreasurer(asset), Errors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS);
         miltonStorage.updateStorageWhenTransferPublicationFee(asset, amount);
-        IERC20(_addressesManager.getAddress(asset)).transfer(_addressesManager.getCharlieTreasurer(asset), amount);
+        IERC20(asset).transfer(_addressesManager.getCharlieTreasurer(asset), amount);
     }
 
     function openPosition(
-        string memory asset,
+        address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralization,
@@ -63,28 +61,28 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     }
 
 
-    function provideLiquidity(string memory asset, uint256 liquidityAmount) external override {
+    function provideLiquidity(address asset, uint256 liquidityAmount) external override {
         IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
         //TODO: take into consideration token decimals!!!
-        IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), liquidityAmount);
+        IERC20(asset).transferFrom(msg.sender, address(this), liquidityAmount);
     }
 
-    function calculateSpread(string memory asset) external override view returns (uint256 spreadPf, uint256 spreadRf) {
+    function calculateSpread(address asset) external override view returns (uint256 spreadPf, uint256 spreadRf) {
         (uint256 _spreadPf, uint256 _spreadRf) = _calculateSpread(asset, block.timestamp);
         return (spreadPf = _spreadPf, spreadRf = _spreadRf);
     }
 
-    function calculateSoap(string memory asset) external override view returns (int256 soapPf, int256 soapRf, int256 soap) {
+    function calculateSoap(address asset) external override view returns (int256 soapPf, int256 soapRf, int256 soap) {
         (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function _calculateSpread(string memory asset, uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
+    function _calculateSpread(address asset, uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
         (uint256 _spreadPf, uint256 _spreadRf) = IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSpread(asset, calculateTimestamp);
         return (spreadPf = _spreadPf, spreadRf = _spreadRf);
     }
 
-    function _calculateSoap(string memory asset, uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap) {
+    function _calculateSoap(address asset, uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap) {
         IWarren warren = IWarren(_addressesManager.getWarren());
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
         (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSoap(asset, accruedIbtPrice, calculateTimestamp);
@@ -93,14 +91,14 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
     function _openPosition(
         uint256 openTimestamp,
-        string memory asset,
+        address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralization,
         uint8 direction) internal returns (uint256) {
 
         require(address(_addressesManager) != address(0), Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS);
-        require(_addressesManager.getAddress(asset) != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
+        require(asset != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
 
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
         require(address(miltonConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
@@ -115,7 +113,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(),
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
         require(totalAmount <= miltonConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
-        require(IERC20(_addressesManager.getAddress(asset)).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
+        require(IERC20(asset).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
 
         require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         //TODO: setup max slippage in milton configuration
@@ -136,10 +134,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
-        emit LogDebug("LiquidityPoolMaxUtilizationPercentage", miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage());
-        emit LogDebug("ActualUtilization",
-            IMiltonLPUtilizationStrategy(_addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee));
-
         require(IMiltonLPUtilizationStrategy(
             _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee) <= miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
@@ -153,9 +147,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional);
 
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
-
-        emit LogDebug("ActualLiquidityPoolBalance", miltonStorage.getBalance(asset).liquidityPool);
-        emit LogDebug("ActualDerivativesBalance", miltonStorage.getBalance(asset).derivatives);
 
         DataTypes.IporDerivative memory iporDerivative = DataTypes.IporDerivative(
             miltonStorage.getLastDerivativeId() + 1,
@@ -178,7 +169,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         //TODO: Use OpenZeppelin’s SafeERC20 wrappers.
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        IERC20(_addressesManager.getAddress(asset)).transferFrom(msg.sender, address(this), totalAmount);
+        IERC20(asset).transferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
 
@@ -204,7 +195,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         );
     }
 
-    function _calculateDerivativeIndicators(uint256 calculateTimestamp, string memory asset, uint8 direction, uint256 notionalAmount)
+    function _calculateDerivativeIndicators(uint256 calculateTimestamp, address asset, uint8 direction, uint256 notionalAmount)
     internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
         IWarren warren = IWarren(_addressesManager.getWarren());
         (uint256 indexValue, ,) = warren.getIndex(asset);
@@ -287,7 +278,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
                 //TODO: take into consideration token decimals!!!
-                IERC20(_addressesManager.getAddress(derivativeItem.item.asset))
+                IERC20(derivativeItem.item.asset)
                 .transfer(msg.sender, derivativeItem.item.fee.liquidationDepositAmount);
             } else {
                 // |I| <= D
@@ -315,12 +306,12 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             //transfer liquidation deposit to sender
             //TODO: take into consideration token decimals!!!
             //TODO: don't use transer but call
-            IERC20(_addressesManager.getAddress(derivativeItem.item.asset)).transfer(msg.sender, derivativeItem.item.fee.liquidationDepositAmount);
+            IERC20(derivativeItem.item.asset).transfer(msg.sender, derivativeItem.item.fee.liquidationDepositAmount);
         }
 
         //transfer from AMM to buyer
         //TODO: take into consideration token decimals!!!
-        IERC20(_addressesManager.getAddress(derivativeItem.item.asset)).transfer(derivativeItem.item.buyer, transferAmount);
+        IERC20(derivativeItem.item.asset).transfer(derivativeItem.item.buyer, transferAmount);
     }
 
     modifier onlyActiveDerivative(uint256 derivativeId) {

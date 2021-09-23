@@ -62,11 +62,6 @@ contract('MiltonStorage', (accounts) => {
         await iporAddressesManager.setAddress("WARREN", warren.address);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
-
-        await iporAddressesManager.setAddress("USDT", tokenUsdt.address);
-        await iporAddressesManager.setAddress("USDC", tokenUsdc.address);
-        await iporAddressesManager.setAddress("DAI", tokenDai.address);
-
         await milton.initialize(iporAddressesManager.address);
 
     });
@@ -77,6 +72,9 @@ contract('MiltonStorage', (accounts) => {
         await warrenStorage.addUpdater(warren.address);
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
         await miltonStorage.initialize(iporAddressesManager.address);
+        await miltonStorage.addAsset(tokenDai.address);
+        await miltonStorage.addAsset(tokenUsdc.address);
+        await miltonStorage.addAsset(tokenUsdt.address);
 
     });
 
@@ -106,7 +104,7 @@ contract('MiltonStorage', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -135,7 +133,7 @@ contract('MiltonStorage', (accounts) => {
         // given
         await setupTokenDaiInitialValues();
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -214,7 +212,7 @@ contract('MiltonStorage', (accounts) => {
             id: 1,
             state: 0,
             buyer: userTwo,
-            asset: "DAI",
+            asset: tokenDai.address,
             direction: 0,
             depositAmount: BigInt("1000000000000000000000"),
             fee: {

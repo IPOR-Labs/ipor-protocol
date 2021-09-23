@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
@@ -13,7 +14,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 
 
-contract MiltonStorage is IMiltonStorage {
+contract MiltonStorage is Ownable, IMiltonStorage {
 
     using DerivativeLogic for DataTypes.IporDerivative;
     using SoapIndicatorLogic for DataTypes.SoapIndicator;
@@ -23,53 +24,41 @@ contract MiltonStorage is IMiltonStorage {
 
     IIporAddressesManager internal _addressesManager;
 
-    mapping(string => DataTypes.MiltonTotalBalance) public balances;
+    mapping(address => DataTypes.MiltonTotalBalance) public balances;
 
-    mapping(string => DataTypes.TotalSoapIndicator) public soapIndicators;
+    mapping(address => DataTypes.TotalSoapIndicator) public soapIndicators;
 
     //TODO: when spread is calculated in final way then consider remove this storage (maybe will be not needed)
-    mapping(string => DataTypes.TotalSpreadIndicator) public spreadIndicators;
+    mapping(address => DataTypes.TotalSpreadIndicator) public spreadIndicators;
 
     DataTypes.MiltonDerivatives public derivatives;
 
-    function initialize(IIporAddressesManager addressesManager) public {
+    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
-
-        uint256 blockTimestamp = 0;
-
-        soapIndicators["USDT"] = DataTypes.TotalSoapIndicator(
-            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
-            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
-        );
-
-        soapIndicators["USDC"] = DataTypes.TotalSoapIndicator(
-            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
-            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
-        );
-
-        soapIndicators["DAI"] = DataTypes.TotalSoapIndicator(
-            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
-            DataTypes.SoapIndicator(blockTimestamp, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
-        );
-
-        //TODO: clarify what is default value for spread when spread is calculated in final way
-        spreadIndicators["USDT"] = DataTypes.TotalSpreadIndicator(
-            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
-        );
-
-        spreadIndicators["USDC"] = DataTypes.TotalSpreadIndicator(
-            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
-        );
-
-        spreadIndicators["DAI"] = DataTypes.TotalSpreadIndicator(
-            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
-        );
-
         //TODO: allow admin to setup it during runtime
         derivatives.lastDerivativeId = 0;
     }
 
-    function getBalance(string memory asset) external override view returns(DataTypes.MiltonTotalBalance memory) {
+    //@notice add asset address to MiltonStorage structures
+    function addAsset(address asset) external override onlyOwner {
+        address[] memory assets = _addressesManager.getAssets();
+
+        for (uint256 i = 0; i < assets.length; i++) {
+            require(asset != assets[i], Errors.MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS);
+        }
+
+        soapIndicators[asset] = DataTypes.TotalSoapIndicator(
+            DataTypes.SoapIndicator(0, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
+            DataTypes.SoapIndicator(0, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
+        );
+
+        //TODO: clarify what is default value for spread when spread is calculated in final way
+        spreadIndicators[asset] = DataTypes.TotalSpreadIndicator(
+            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
+        );
+    }
+
+    function getBalance(address asset) external override view returns (DataTypes.MiltonTotalBalance memory) {
         return balances[asset];
     }
 
@@ -77,11 +66,11 @@ contract MiltonStorage is IMiltonStorage {
         return derivatives.lastDerivativeId;
     }
 
-    function addLiquidity(string memory asset, uint256 liquidityAmount) external override onlyMilton {
+    function addLiquidity(address asset, uint256 liquidityAmount) external override onlyMilton {
         balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
     }
 
-    function subtractLiquidity(string memory asset, uint256 liquidityAmount) external override onlyMilton {
+    function subtractLiquidity(address asset, uint256 liquidityAmount) external override onlyMilton {
         balances[asset].liquidityPool = balances[asset].liquidityPool - liquidityAmount;
     }
 
@@ -89,7 +78,7 @@ contract MiltonStorage is IMiltonStorage {
         return derivatives.items[derivativeId];
     }
 
-    function updateStorageWhenTransferPublicationFee(string memory asset, uint256 transferedAmount) external override onlyMilton {
+    function updateStorageWhenTransferPublicationFee(address asset, uint256 transferedAmount) external override onlyMilton {
         balances[asset].iporPublicationFee = balances[asset].iporPublicationFee - transferedAmount;
     }
 
@@ -130,7 +119,7 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     function calculateSpread(
-        string memory asset,
+        address asset,
         uint256 calculateTimestamp) external override view returns (uint256 spreadPf, uint256 spreadRf) {
         return (
         spreadPf = spreadIndicators[asset].pf.calculateSpread(calculateTimestamp),
@@ -139,7 +128,7 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     function calculateSoap(
-        string memory asset,
+        address asset,
         uint256 ibtPrice,
         uint256 calculateTimestamp) external override view returns (int256 soapPf, int256 soapRf, int256 soap) {
         (int256 qSoapPf, int256 qSoapRf, int256 qSoap) = _calculateQuasiSoap(asset, ibtPrice, calculateTimestamp);
@@ -151,14 +140,14 @@ contract MiltonStorage is IMiltonStorage {
     }
 
     function _calculateQuasiSoap(
-        string memory asset,
+        address asset,
         uint256 ibtPrice,
         uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap){
         (int256 _soapPf, int256 _soapRf) = soapIndicators[asset].calculateQuasiSoap(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
 
-    function _updateBalancesWhenOpenPosition(string memory asset, uint256 depositAmount, uint256 openingFeeAmount) internal {
+    function _updateBalancesWhenOpenPosition(address asset, uint256 depositAmount, uint256 openingFeeAmount) internal {
 
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
 

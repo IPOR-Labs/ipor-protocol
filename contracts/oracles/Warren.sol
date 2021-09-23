@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import {Errors} from '../Errors.sol';
 import "../interfaces/IWarren.sol";
@@ -25,10 +26,9 @@ contract Warren is Ownable, IWarren {
         warrenStorage = IWarrenStorage(warrenStorageAddr);
     }
 
-    function getIndex(string memory _asset) external view override
+    function getIndex(address asset) external view override
     returns (uint256 indexValue, uint256 ibtPrice, uint256 blockTimestamp) {
-        bytes32 _assetHash = keccak256(abi.encodePacked(_asset));
-        DataTypes.IPOR memory _iporIndex = warrenStorage.getIndex(_assetHash);
+        DataTypes.IPOR memory _iporIndex = warrenStorage.getIndex(asset);
         return (
         indexValue = _iporIndex.indexValue,
         ibtPrice = AmmMath.division(_iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
@@ -36,13 +36,14 @@ contract Warren is Ownable, IWarren {
         );
     }
 
+    //TODO: move front struct to WarrenFrontendDataProvider adn WarrenDevToolDataProvider
     function getIndexes() external override view returns (DataTypes.IporFront[] memory) {
-        bytes32[] memory assets = warrenStorage.getAssets();
+        address[] memory assets = warrenStorage.getAssets();
         DataTypes.IporFront[] memory _indexes = new DataTypes.IporFront[](assets.length);
         for (uint256 i = 0; i < assets.length; i++) {
             DataTypes.IPOR memory iporIndex = warrenStorage.getIndex(assets[i]);
             _indexes[i] = DataTypes.IporFront(
-                iporIndex.asset,
+                IERC20Metadata(iporIndex.asset).symbol(),
                 iporIndex.indexValue,
                 AmmMath.division(iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
                 iporIndex.blockTimestamp
@@ -51,20 +52,20 @@ contract Warren is Ownable, IWarren {
         return _indexes;
     }
 
-    function updateIndex(string memory _asset, uint256 _indexValue) external override {
+    function updateIndex(address _asset, uint256 _indexValue) external override {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = _indexValue;
-        string[] memory assets = new string[](1);
+        address[] memory assets = new address[](1);
         assets[0] = _asset;
         warrenStorage.updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateIndexes(string[] memory _assets, uint256[] memory _indexValues) external override {
+    function updateIndexes(address[] memory _assets, uint256[] memory _indexValues) external override {
         warrenStorage.updateIndexes(_assets, _indexValues, block.timestamp);
     }
 
-    function calculateAccruedIbtPrice(string memory asset, uint256 calculateTimestamp) external view override returns (uint256) {
-        return AmmMath.division(warrenStorage.getIndex(keccak256(abi.encodePacked(asset)))
+    function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view override returns (uint256) {
+        return AmmMath.division(warrenStorage.getIndex(asset)
         .accrueQuasiIbtPrice(calculateTimestamp), Constants.YEAR_IN_SECONDS);
     }
 

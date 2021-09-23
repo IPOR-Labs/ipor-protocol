@@ -5,15 +5,15 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
 
-    function getBalance(string memory asset) external view returns(DataTypes.MiltonTotalBalance memory);
+    function getBalance(address asset) external view returns(DataTypes.MiltonTotalBalance memory);
 
     function getLastDerivativeId() external view returns (uint256);
 
-    function addLiquidity(string memory asset, uint256 liquidityAmount) external;
+    function addLiquidity(address asset, uint256 liquidityAmount) external;
 
-    function subtractLiquidity(string memory asset, uint256 liquidityAmount) external;
+    function subtractLiquidity(address asset, uint256 liquidityAmount) external;
 
-    function updateStorageWhenTransferPublicationFee(string memory asset, uint256 transferedAmount) external;
+    function updateStorageWhenTransferPublicationFee(address asset, uint256 transferedAmount) external;
 
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external;
 
@@ -33,7 +33,9 @@ interface IMiltonStorage {
 
     function getUserDerivativeIds(address userAddress) external view returns (uint256[] memory);
 
-    function calculateSpread(string memory asset, uint256 calculateTimestamp) external view returns (uint256 spreadPf, uint256 spreadRf);
+    function calculateSpread(address asset, uint256 calculateTimestamp) external view returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculateSoap(string memory asset, uint256 ibtPrice, uint256 calculateTimestamp) external view returns (int256 soapPf, int256 soapRf, int256 soap);
+    function calculateSoap(address asset, uint256 ibtPrice, uint256 calculateTimestamp) external view returns (int256 soapPf, int256 soapRf, int256 soap);
+
+    function addAsset(address asset) external;
 }

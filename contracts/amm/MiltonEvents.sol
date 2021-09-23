@@ -9,7 +9,7 @@ contract MiltonEvents {
     event OpenPosition(
         uint256 indexed derivativeId,
         address indexed buyer,
-        string asset,
+        address asset,
         DataTypes.DerivativeDirection direction,
         uint256 depositAmount,
         DataTypes.IporDerivativeFee fee,
@@ -23,7 +23,7 @@ contract MiltonEvents {
     // @notice Close derivative position
     event ClosePosition(
         uint256 indexed derivativeId,
-        string asset,
+        address asset,
         uint256 date
     //TODO: figure out what we need in this event
     );

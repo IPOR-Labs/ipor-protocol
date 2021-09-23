@@ -16,7 +16,7 @@ contract IporLogicTest {
         uint256 initialTimestamp = block.timestamp;
         uint256 initialQuasiIbtPrice = 1000000000000000000 * Constants.YEAR_IN_SECONDS;
 
-        DataTypes.IPOR memory ipor = DataTypes.IPOR("DAI", 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
+        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
         uint256 expectedIbtPrice = 1002054794520547945;
@@ -33,7 +33,7 @@ contract IporLogicTest {
         //given
         uint256 initialTimestamp = block.timestamp;
         uint256 initialQuasiIbtPrice = 1000000000000000000 * Constants.YEAR_IN_SECONDS;
-        DataTypes.IPOR memory ipor = DataTypes.IPOR("DAI", 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
+        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
 
