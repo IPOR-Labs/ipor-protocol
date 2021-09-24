@@ -22,6 +22,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     //@notice the user who can transfer publication fee to Charlie Treasurer
     string private constant PUBLICATION_FEE_TRANSFERER = "PUBLICATION_FEE_TRANSFERER";
     string private constant WARREN = "WARREN";
+    string private constant WARREN_STORAGE = "WARREN_STORAGE";
     string private constant MILTON = "MILTON";
     string private constant MILTON_STORAGE = "MILTON_STORAGE";
     string private constant MILTON_UTILIZATION_STRATEGY = "MILTON_UTILIZATION_STRATEGY";
@@ -148,6 +149,15 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
                 emit AssetAddressRemoved(asset);
             }
         }
+    }
+
+    function setWarrenStorageImpl(address warrenStorageImpl) external override onlyOwner {
+        _updateImpl(WARREN_STORAGE, warrenStorageImpl);
+        emit WarrenStorageAddressUpdated(warrenStorageImpl);
+    }
+
+    function getWarrenStorage() external override view returns (address) {
+        return getAddress(WARREN_STORAGE);
     }
 
     //TODO: verify it, inspired by Aave

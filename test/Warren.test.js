@@ -6,6 +6,9 @@ const WarrenStorage = artifacts.require('WarrenStorage');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
+const WarrenDevToolDataProvider = artifacts.require('WarrenDevToolDataProvider');
+const IporAddressesManager = artifacts.require('IporAddressesManager');
+
 const WARREN_5_PERCENTAGE = BigInt("50000000000000000");
 const WARREN_6_PERCENTAGE = BigInt("60000000000000000");
 const WARREN_7_PERCENTAGE = BigInt("70000000000000000");
@@ -19,23 +22,28 @@ contract('Warren', (accounts) => {
     const YEAR_IN_SECONDS = 31536000;
     const MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
 
+    let iporAddressesManager = null;
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
     let warren = null;
     let warrenStorage = null;
+    let warrenDevToolDataProvider = null;
 
     before(async () => {
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
         tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
+        iporAddressesManager = await IporAddressesManager.deployed();
 
     });
 
     beforeEach(async () => {
         warrenStorage = await WarrenStorage.new(1);
+        await iporAddressesManager.setAddress("WARREN_STORAGE", warrenStorage.address);
         warren = await TestWarren.new(warrenStorage.address);
+        warrenDevToolDataProvider = await WarrenDevToolDataProvider.new(iporAddressesManager.address);
     });
 
     it('should NOT update IPOR Index', async () => {
@@ -114,7 +122,7 @@ contract('Warren', (accounts) => {
         await warren.updateIndex(expectedAssetTwo, BigInt(1e20), {from: updaterOne});
 
         //when
-        const iporIndexes = await warren.getIndexes();
+        const iporIndexes = await warrenDevToolDataProvider.getIndexes();
 
         //then
         assert(expectedIporIndexesSize === iporIndexes.length,

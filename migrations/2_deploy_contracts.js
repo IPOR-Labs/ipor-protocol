@@ -21,6 +21,7 @@ const MiltonConfiguration = artifacts.require('MiltonConfiguration');
 const AmmMath = artifacts.require('AmmMath');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
+const WarrenDevToolDataProvider = artifacts.require('WarrenDevToolDataProvider');
 const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
 const MiltonLPUtilizationStrategyCollateral = artifacts.require('MiltonLPUtilizationStrategyCollateral');
 
@@ -143,6 +144,9 @@ module.exports = async function (deployer, _network, addresses) {
 
         await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
 
+        await deployer.link(AmmMath, WarrenDevToolDataProvider);
+        await deployer.deploy(WarrenDevToolDataProvider, iporAddressesManagerAddr);
+
     }
 
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
@@ -153,7 +157,9 @@ module.exports = async function (deployer, _network, addresses) {
 
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Prepare initial IPOR migration...")
-            await warren.updateIndexes(["DAI", "USDT", "USDC"], [BigInt("30000000000000000"), BigInt("30000000000000000"), BigInt("30000000000000000")]);
+            await warren.updateIndexes(
+                [mockedDaiAddr, mockedUsdtAddr, mockedUsdcAddr],
+                [BigInt("30000000000000000"), BigInt("30000000000000000"), BigInt("30000000000000000")]);
         }
     }
 
@@ -172,13 +178,9 @@ module.exports = async function (deployer, _network, addresses) {
 
         //initial addresses setup
         await iporAddressesManager.setAddress("WARREN", warrenAddr);
-
+        await iporAddressesManager.setAddress("WARREN_STORAGE", warrenStorageAddr);
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfigurationAddr);
-
-        await iporAddressesManager.setAddress("USDT", mockedUsdtAddr);
-        await iporAddressesManager.setAddress("USDC", mockedUsdcAddr);
-        await iporAddressesManager.setAddress("DAI", mockedDaiAddr);
 
         //TestWarren
         await deployer.link(AmmMath, TestWarren);
@@ -193,7 +195,7 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(TestMilton);
         testMilton = await TestMilton.deployed();
 
-        if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
+        if (_network === 'develop' || _network === 'dev' || _network === 'docker') {
             if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
                 await iporAddressesManager.setAddress("MILTON", testMilton.address);
             } else {
@@ -214,6 +216,8 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.link(AmmMath, TestMilton);
         await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
+        await deployer.link(AmmMath, WarrenDevToolDataProvider);
+        await deployer.deploy(WarrenDevToolDataProvider, iporAddressesManagerAddr);
 
     }
 

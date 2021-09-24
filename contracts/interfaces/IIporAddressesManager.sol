@@ -7,6 +7,7 @@ interface IIporAddressesManager {
     event MiltonStorageAddressUpdated(address indexed newAddress);
     event MiltonUtilizationStrategyUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
+    event WarrenStorageAddressUpdated(address indexed newAddress);
     event MiltonConfigurationAddressUpdated(address indexed newAddress);
     event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
     event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
@@ -44,6 +45,10 @@ interface IIporAddressesManager {
     function getWarren() external view returns (address);
 
     function setWarrenImpl(address warrenImpl) external;
+
+    function setWarrenStorageImpl(address warrenStorageImpl) external;
+
+    function getWarrenStorage() external view returns (address);
 
     function getCharlieTreasurer(address asset) external view returns (address);
 

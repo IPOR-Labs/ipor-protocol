@@ -7,8 +7,6 @@ interface IWarren {
 
     function getIndex(address asset) external view returns (uint256 value, uint256 ibtPrice, uint256 date);
 
-    function getIndexes() external view returns (DataTypes.IporFront[] memory);
-
     function updateIndex(address asset, uint256 indexValue) external;
 
     function updateIndexes(address[] memory assets, uint256[] memory indexValues) external;

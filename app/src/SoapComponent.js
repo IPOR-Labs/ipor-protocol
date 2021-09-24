@@ -20,7 +20,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soapPf / 1000000000000000000}<br/>
@@ -35,7 +35,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soapPf / 1000000000000000000}<br/>
@@ -50,7 +50,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soapPf / 1000000000000000000}<br/>
@@ -68,7 +68,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soapRf / 1000000000000000000}<br/>
@@ -83,7 +83,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soapRf / 1000000000000000000}<br/>
@@ -98,7 +98,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soapRf / 1000000000000000000}<br/>
@@ -116,7 +116,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soap / 1000000000000000000}<br/>
@@ -131,7 +131,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soap / 1000000000000000000}<br/>
@@ -146,7 +146,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSoap"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(soap) => (
                             <div>
                                 {soap.soap / 1000000000000000000}<br/>
