@@ -7,6 +7,7 @@ const MiltonStorage = artifacts.require("MiltonStorage");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 const TestWarren = artifacts.require("TestWarren");
 const TestMilton = artifacts.require("TestMilton");
+const IporToken = artifacts.require('IporToken');
 const TusdMockedToken = artifacts.require('TusdMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
@@ -55,11 +56,12 @@ module.exports = async function (deployer, _network, addresses) {
     let faucetSupply18Decimals = '10000000000000000000000000000000000000';
     let totalSupply18Decimals = '10000000000000000000000000000000000000000';
 
-    //10 000 000 USD
     let userSupply6Decimals = '10000000000000';
-
-    //10 000 000 USD
     let userSupply18Decimals = '10000000000000000000000000';
+
+    let ipUsdtToken = null;
+    let ipUsdcToken = null;
+    let ipDaiToken = null;
 
     let mockedUsdt = null;
     let mockedUsdtAddr = null;
@@ -146,6 +148,30 @@ module.exports = async function (deployer, _network, addresses) {
 
         await deployer.link(AmmMath, WarrenDevToolDataProvider);
         await deployer.deploy(WarrenDevToolDataProvider, iporAddressesManagerAddr);
+
+        await deployer.deploy(IporToken, mockedUsdtAddr, 6, "IPOR USDT", "ipUSDT");
+        ipUsdtToken = await IporToken.deployed();
+        await iporAddressesManager.setIporToken(mockedUsdtAddr, ipUsdtToken.address);
+        await deployer.deploy(IporToken, mockedUsdcAddr, 6, "IPOR USDC", "ipUSDC");
+        ipUsdcToken = await IporToken.deployed();
+        await iporAddressesManager.setIporToken(mockedUsdcAddr, ipUsdcToken.address);
+        await deployer.deploy(IporToken, mockedDaiAddr, 18, "IPOR DAI", "ipDAI");
+        ipDaiToken = await IporToken.deployed();
+        await iporAddressesManager.setIporToken(mockedDaiAddr, ipDaiToken.address);
+
+    } else {
+        if (_network !== 'test') {
+            await deployer.deploy(IporToken, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, 6, "IPOR USDT", "ipUSDT");
+            ipUsdtToken = await IporToken.deployed();
+            await iporAddressesManager.setIporToken(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
+            await deployer.deploy(IporToken, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, 6, "IPOR USDC", "ipUSDC");
+            ipUsdcToken = await IporToken.deployed();
+            await iporAddressesManager.setIporToken(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
+            await deployer.deploy(IporToken, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, 18, "IPOR DAI", "ipDAI");
+            ipDaiToken = await IporToken.deployed();
+            await iporAddressesManager.setIporToken(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
+        }
+
 
     }
 

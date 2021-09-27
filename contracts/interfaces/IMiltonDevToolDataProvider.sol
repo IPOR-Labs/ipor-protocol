@@ -9,6 +9,8 @@ interface IMiltonDevToolDataProvider {
 
     function getMyTotalSupply(address asset) external view returns (uint256);
 
+    function getMyIporTokenBalance(address asset) external view returns (uint256);
+
     function getMyAllowance(address asset) external view returns (uint256);
 
     function getPositions() external view returns (DataTypes.IporDerivative[] memory);

@@ -9,7 +9,13 @@ import {Errors} from '../Errors.sol';
 contract IporAddressesManager is Ownable, IIporAddressesManager {
 
     //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC
-    address [] assets;
+    address [] public assets;
+
+    //@notice value - flag 1 - is supported, 0 - is not supported
+    mapping(address => uint256) public supportedAssets;
+
+    //@notice mapping underlying asset address to ipor token address
+    mapping(address => address) public iporTokens;
 
     mapping(string => address) private _addresses;
 
@@ -137,6 +143,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         }
         if (assetExists == false) {
             assets.push(asset);
+            supportedAssets[asset] = 1;
             emit AssetAddressAdd(asset);
         }
     }
@@ -146,9 +153,24 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         for (uint256 i; i < assets.length; i++) {
             if (assets[i] == asset) {
                 delete assets[i];
+                supportedAssets[asset] = 0;
                 emit AssetAddressRemoved(asset);
+                break;
             }
         }
+    }
+
+    function getIporToken(address unserlyingAsset) external override view returns (address){
+        return iporTokens[unserlyingAsset];
+    }
+
+    function setIporToken(address underlyingAssetAddress, address iporTokenAddress) external override onlyOwner {
+        iporTokens[underlyingAssetAddress] = iporTokenAddress;
+        emit IporTokenAddressUpdated(underlyingAssetAddress, iporTokenAddress);
+    }
+
+    function assetSupported(address asset) external override view returns (uint256) {
+        return supportedAssets[asset];
     }
 
     function setWarrenStorageImpl(address warrenStorageImpl) external override onlyOwner {

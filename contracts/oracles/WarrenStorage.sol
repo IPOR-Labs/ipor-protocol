@@ -93,6 +93,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 newQuasiIbtPrice;
 
         if (assetExists == false) {
+            //TODO: consider asset support configured in IporAddressesManager
             assets.push(asset);
             newQuasiIbtPrice = Constants.MD_YEAR_IN_SECONDS;
         } else {

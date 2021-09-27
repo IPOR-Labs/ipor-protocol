@@ -6,6 +6,7 @@ const TestMilton = artifacts.require('TestMilton');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
 const WarrenStorage = artifacts.require('WarrenStorage');
+const IporToken = artifacts.require('IporToken');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
@@ -26,6 +27,9 @@ contract('MiltonStorage', (accounts) => {
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
+    let iporTokenUsdt = null;
+    let iporTokenUsdc = null;
+    let iporTokenDai = null;
     let warren = null;
     let warrenStorage = null;
     let miltonConfiguration = null;
@@ -38,13 +42,21 @@ contract('MiltonStorage', (accounts) => {
         miltonConfiguration = await MiltonConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
 
-        //10 000 000 000 000 USD
-        tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
-        //10 000 000 000 000 USD
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
+        tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
         tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
-        //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
+
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt.initialize(iporAddressesManager.address);
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
+        iporTokenUsdc.initialize(iporAddressesManager.address);
+        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
+        iporTokenDai.initialize(iporAddressesManager.address);
+
+        await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
+        await iporAddressesManager.setIporToken(tokenUsdc.address, iporTokenUsdc.address);
+        await iporAddressesManager.setIporToken(tokenDai.address, iporTokenDai.address);
 
         warrenStorage = await WarrenStorage.new(1);
         warren = await TestWarren.new(warrenStorage.address);
@@ -63,6 +75,10 @@ contract('MiltonStorage', (accounts) => {
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
         await milton.initialize(iporAddressesManager.address);
+
+        await iporAddressesManager.addAsset(tokenUsdt.address);
+        await iporAddressesManager.addAsset(tokenUsdc.address);
+        await iporAddressesManager.addAsset(tokenDai.address);
 
     });
 

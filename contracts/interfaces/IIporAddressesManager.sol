@@ -15,6 +15,7 @@ interface IIporAddressesManager {
     event AddressSet(string id, address indexed newAddress, bool hasProxy);
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);
+    event IporTokenAddressUpdated(address indexed underlyingAssetAddress, address indexed newIporTokenAddress);
 
     function setAddress(string memory id, address newAddress) external;
 
@@ -62,5 +63,11 @@ interface IIporAddressesManager {
 
     function addAsset(address asset) external;
 
+    function assetSupported(address asset) external view returns (uint256);
+
     function removeAsset(address asset) external;
+
+    function getIporToken(address unserlyingAsset) external view returns (address);
+
+    function setIporToken(address underlyingAsset, address iporToken) external;
 }

@@ -6,12 +6,14 @@ import "../libraries/AmmMath.sol";
 //TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
 import '../oracles/WarrenStorage.sol';
 import './MiltonStorage.sol';
 import './MiltonEvents.sol';
+import '../tokenization/IporToken.sol';
 
 import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IMilton.sol";
@@ -24,11 +26,13 @@ import "../interfaces/IMiltonLPUtilisationStrategy.sol";
  */
 contract Milton is Ownable, MiltonEvents, IMilton {
 
+    using SafeERC20 for IERC20;
+
     using DerivativeLogic for DataTypes.IporDerivative;
 
     IIporAddressesManager internal _addressesManager;
 
-    function initialize(IIporAddressesManager addressesManager) public  onlyOwner {
+    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 
@@ -65,6 +69,17 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
         //TODO: take into consideration token decimals!!!
         IERC20(asset).transferFrom(msg.sender, address(this), liquidityAmount);
+        IporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, liquidityAmount);
+    }
+
+    function withdraw(address asset, uint256 amount) external override {
+        //TODO: do final implementation, will be described in separate task
+        require(IporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= amount, Errors.MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW);
+        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getBalance(asset).liquidityPool > amount, Errors.MILTON_CANNOT_WITHDRAW_LIQUIDITY_POOL_IS_TOO_LOW);
+
+        IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, amount);
+        IporToken(_addressesManager.getIporToken(asset)).burn(msg.sender, msg.sender, amount);
+        IERC20(asset).safeTransfer(msg.sender, amount);
     }
 
     function calculateSpread(address asset) external override view returns (uint256 spreadPf, uint256 spreadRf) {
@@ -99,6 +114,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         require(address(_addressesManager) != address(0), Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS);
         require(asset != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
+        require(_addressesManager.assetSupported(asset) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
 
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
         require(address(miltonConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);

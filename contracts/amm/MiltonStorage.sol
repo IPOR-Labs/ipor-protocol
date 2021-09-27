@@ -41,11 +41,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     //@notice add asset address to MiltonStorage structures
     function addAsset(address asset) external override onlyOwner {
-        address[] memory assets = _addressesManager.getAssets();
 
-        for (uint256 i = 0; i < assets.length; i++) {
-            require(asset != assets[i], Errors.MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS);
-        }
+        require(_addressesManager.assetSupported(asset) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
 
         soapIndicators[asset] = DataTypes.TotalSoapIndicator(
             DataTypes.SoapIndicator(0, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
@@ -67,6 +64,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     function addLiquidity(address asset, uint256 liquidityAmount) external override onlyMilton {
+        require(liquidityAmount > 0, Errors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
         balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
     }
 

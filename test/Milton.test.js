@@ -6,6 +6,7 @@ const TestMilton = artifacts.require('TestMilton');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
 const WarrenStorage = artifacts.require('WarrenStorage');
+const IporToken = artifacts.require('IporToken');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
@@ -27,6 +28,9 @@ contract('Milton', (accounts) => {
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
+    let iporTokenUsdt = null;
+    let iporTokenUsdc = null;
+    let iporTokenDai = null;
     let warren = null;
     let warrenStorage = null;
     let miltonConfiguration = null;
@@ -46,6 +50,17 @@ contract('Milton', (accounts) => {
         tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
 
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt.initialize(iporAddressesManager.address);
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
+        iporTokenUsdc.initialize(iporAddressesManager.address);
+        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
+        iporTokenDai.initialize(iporAddressesManager.address);
+
+        await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
+        await iporAddressesManager.setIporToken(tokenUsdc.address, iporTokenUsdc.address);
+        await iporAddressesManager.setIporToken(tokenDai.address, iporTokenDai.address);
+
         milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
@@ -58,6 +73,10 @@ contract('Milton', (accounts) => {
 
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
+
+        await iporAddressesManager.addAsset(tokenUsdt.address);
+        await iporAddressesManager.addAsset(tokenUsdc.address);
+        await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
 
@@ -2191,7 +2210,7 @@ contract('Milton', (accounts) => {
     });
 
 
-    it('should NOT open pay fixed position - when new position openet then liquidity pool utilisation exceeded, custom utilisation', async () => {
+    it('should NOT open pay fixed position - when new position opened then liquidity pool utilisation exceeded, custom utilisation', async () => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
@@ -2314,6 +2333,114 @@ contract('Milton', (accounts) => {
         );
 
     });
+
+    it('should NOT open pay fixed position - asset address not supported', async () => {
+
+        //given
+
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+
+        let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
+        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.openPosition(
+                liquidityProvider, params.totalAmount,
+                params.slippageValue, params.collateralization,
+                params.direction, {from: userTwo}),
+            //then
+            'IPOR_39'
+        );
+
+    });
+
+
+    it('should provide liquidity and take IPOR token - simple case 1', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        await setupIporTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        let liquidityAmount = testUtils.MILTON_14_000_USD;
+
+        let expectedLiquidityProviderStableBalance = BigInt("9986000000000000000000000");
+
+        //when
+        await milton.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+
+        //then
+        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
+        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
+        //TODO: liquidity balance milton storage
+        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
+
+        assert(liquidityAmount === iporTokenBalanceSender,
+            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${liquidityAmount}`);
+
+        assert(liquidityAmount === stableBalanceMilton,
+            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${liquidityAmount}`);
+
+        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
+            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
+
+    });
+
+    it('should withdraw IPOR Token - simple case 1', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        await setupIporTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        let liquidityAmount = testUtils.MILTON_14_000_USD;
+        let withdrawAmount = testUtils.MILTON_10_000_USD;
+        let expectedIporTokenBalanceSender = BigInt("4000000000000000000000");
+        let expectedStableBalanceMilton = BigInt("4000000000000000000000");
+        let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
+        await milton.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+
+        //when
+        await milton.withdraw(params.asset, withdrawAmount, {from: liquidityProvider})
+
+
+        //then
+        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
+        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
+        //TODO: liquidity balance milton storage
+        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
+
+        assert(expectedIporTokenBalanceSender === iporTokenBalanceSender,
+            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
+
+        assert(expectedStableBalanceMilton === stableBalanceMilton,
+            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
+
+        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
+            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
+
+    });
+
+    it('should NOT withdraw IPOR Token - Liquidity Pool is too low', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await milton.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider})
+        await iporAddressesManager.setAddress("MILTON", userOne);
+        await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne})
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.withdraw(params.asset, params.totalAmount, {from: liquidityProvider}),
+            //then
+            'IPOR_43'
+        );
+        await iporAddressesManager.setAddress("MILTON", milton.address);
+    });
+
+
     //TODO: check initial IBT
 
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
@@ -2570,7 +2697,14 @@ contract('Milton', (accounts) => {
         await tokenUsdc.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
         await tokenUsdc.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
-
+    const setupIporTokenDaiInitialValues = async () => {
+        await iporAddressesManager.setAddress("MILTON", userOne);
+        let lpBalance = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
+        if (lpBalance > 0) {
+            await iporTokenDai.burn(liquidityProvider, accounts[5], lpBalance, {from: userOne});
+        }
+        await iporAddressesManager.setAddress("MILTON", milton.address);
+    }
     const setupTokenDaiInitialValues = async () => {
         await tokenDai.setupInitialAmount(await milton.address, ZERO);
         await tokenDai.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
