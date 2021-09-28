@@ -6,36 +6,33 @@ import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IMiltonStorage.sol";
 
-//TODO: consult with frontend developer and prepare appropriate methods and structure dedicated for frontend website, here is place for it
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
-    IIporAddressesManager public immutable ADDRESSES_MANAGER;
+    IIporAddressesManager public immutable addressesManager;
 
-    constructor(IIporAddressesManager addressesManager) {
-        ADDRESSES_MANAGER = addressesManager;
+    constructor(IIporAddressesManager _addressesManager) {
+        addressesManager = _addressesManager;
     }
 
-    function getMiltonTotalSupply(address asset) external override view returns (uint256) {
-        IERC20 token = IERC20(asset);
-        return token.balanceOf(ADDRESSES_MANAGER.getMilton());
-    }
+    function getMyPositions() external override view returns (IporDerivativeFront[] memory items) {
+        IMiltonStorage miltonStorage = IMiltonStorage(addressesManager.getMiltonStorage());
+        uint256[] memory userDerivativesIds = miltonStorage.getUserDerivativeIds(msg.sender);
+        IporDerivativeFront[] memory iporDerivatives = new IporDerivativeFront[](userDerivativesIds.length);
 
-    function getMyTotalSupply(address asset) external override view returns (uint256) {
-        IERC20 token = IERC20(asset);
-        return token.balanceOf(msg.sender);
-    }
+        for (uint256 i = 0; i < userDerivativesIds.length; i++) {
+            DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(userDerivativesIds[i]);
 
-    function getMyAllowance(address asset) external override view returns (uint256) {
-        IERC20 token = IERC20(asset);
-        return token.allowance(msg.sender, ADDRESSES_MANAGER.getMilton());
-    }
-
-    function getPositions() external override view returns (DataTypes.IporDerivative[] memory) {
-        //TODO: fix it, looks bad, DoS, possible out of gas
-        return IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage()).getPositions();
-    }
-
-    function getMyPositions() external override view returns (DataTypes.IporDerivative[] memory items) {
-        return IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage()).getUserPositions(msg.sender);
+            iporDerivatives[i] = IporDerivativeFront(
+                derivativeItem.item.id,
+                derivativeItem.item.depositAmount,
+                derivativeItem.item.notionalAmount,
+                derivativeItem.item.collateralization,
+                derivativeItem.item.direction,
+                derivativeItem.item.indicator.fixedInterestRate,
+                derivativeItem.item.startingTimestamp,
+                derivativeItem.item.endingTimestamp
+            );
+        }
+        return iporDerivatives;
     }
 }

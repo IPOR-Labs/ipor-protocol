@@ -4,15 +4,16 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonFrontendDataProvider {
 
-    //TODO: prepare specific methods and structures for frontend
+    struct IporDerivativeFront {
+        uint256 id;
+        uint256 depositAmount;
+        uint256 notionalAmount;
+        uint256 collateralization;
+        uint8 direction;
+        uint256 fixedInterestRate;
+        uint256 startingTimestamp;
+        uint256 endingTimestamp;
+    }
 
-    function getMiltonTotalSupply(address asset) external view returns (uint256);
-
-    function getMyTotalSupply(address asset) external view returns (uint256);
-
-    function getMyAllowance(address asset) external view returns (uint256);
-
-    function getPositions() external view returns (DataTypes.IporDerivative[] memory);
-
-    function getMyPositions() external view returns (DataTypes.IporDerivative[] memory items);
+    function getMyPositions() external view returns (IporDerivativeFront[] memory items);
 }

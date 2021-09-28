@@ -63,21 +63,6 @@ library DataTypes {
         uint256 blockTimestamp;
     }
 
-    struct IporFront {
-
-        //@notice Asset Symbol like USDT, USDC, DAI etc.
-        string asset;
-
-        //@notice IPOR Index Value
-        uint256 indexValue;
-
-        //@notice Interest Bearing Token Price
-        uint256 ibtPrice;
-
-        //@notice block timestamp
-        uint256 blockTimestamp;
-    }
-
     //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum DerivativeDirection {
 

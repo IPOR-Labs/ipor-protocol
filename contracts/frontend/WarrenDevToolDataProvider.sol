@@ -17,13 +17,13 @@ contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
         ADDRESSES_MANAGER = addressesManager;
     }
 
-    function getIndexes() external override view returns (DataTypes.IporFront[] memory) {
+    function getIndexes() external override view returns (IporFront[] memory) {
         IWarrenStorage warrenStorage = IWarrenStorage(ADDRESSES_MANAGER.getWarrenStorage());
         address[] memory assets = warrenStorage.getAssets();
-        DataTypes.IporFront[] memory _indexes = new DataTypes.IporFront[](assets.length);
+        IporFront[] memory _indexes = new IporFront[](assets.length);
         for (uint256 i = 0; i < assets.length; i++) {
             DataTypes.IPOR memory iporIndex = warrenStorage.getIndex(assets[i]);
-            _indexes[i] = DataTypes.IporFront(
+            _indexes[i] = IporFront(
                 IERC20Metadata(iporIndex.asset).symbol(),
                 iporIndex.indexValue,
                 AmmMath.division(iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
