@@ -4,6 +4,17 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonFrontendDataProvider {
 
+    struct IporConfiguration {
+        uint256 minCollateralizationValue;
+        uint256 maxCollateralizationValue;
+        uint256 openingFeePercentage;
+        uint256 iporPublicationFeeAmount;
+        uint256 liquidationDepositFeeAmount;
+        uint256 payFixedSpread;
+        uint256 payFloatingSpread;
+        uint256 incomeTaxPercentage;
+    }
+
     struct IporDerivativeFront {
         uint256 id;
         uint256 depositAmount;
@@ -16,4 +27,6 @@ interface IMiltonFrontendDataProvider {
     }
 
     function getMyPositions() external view returns (IporDerivativeFront[] memory items);
+
+    function getConfiguration() external view returns (IporConfiguration memory iporConfiguration);
 }

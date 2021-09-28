@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/IMiltonConfiguration.sol";
 
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
@@ -34,5 +35,19 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             );
         }
         return iporDerivatives;
+    }
+
+    function getConfiguration() external override view returns (IporConfiguration memory iporConfiguration) {
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(addressesManager.getMiltonConfiguration());
+        return IporConfiguration(
+            miltonConfiguration.getMinCollateralizationValue(),
+            miltonConfiguration.getMaxCollateralizationValue(),
+            miltonConfiguration.getOpeningFeePercentage(),
+            miltonConfiguration.getIporPublicationFeeAmount(),
+            miltonConfiguration.getLiquidationDepositFeeAmount(),
+            miltonConfiguration.getSpread(),
+            miltonConfiguration.getSpread(),
+            miltonConfiguration.getIncomeTaxPercentage()
+        );
     }
 }
