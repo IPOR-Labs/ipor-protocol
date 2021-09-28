@@ -18,6 +18,7 @@ import '../tokenization/IporToken.sol';
 import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
+import "../interfaces/IMiltonSpreadStrategy.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
@@ -93,8 +94,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     }
 
     function _calculateSpread(address asset, uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
-        (uint256 _spreadPf, uint256 _spreadRf) = IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSpread(asset, calculateTimestamp);
-        return (spreadPf = _spreadPf, spreadRf = _spreadRf);
+        return IMiltonSpreadStrategy(_addressesManager.getMiltonSpreadStrategy()).calculateSpread(asset, calculateTimestamp);
     }
 
     function _calculateSoap(address asset, uint256 calculateTimestamp) internal view returns (int256 soapPf, int256 soapRf, int256 soap) {

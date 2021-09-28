@@ -25,6 +25,7 @@ const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider')
 const WarrenDevToolDataProvider = artifacts.require('WarrenDevToolDataProvider');
 const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
 const MiltonLPUtilizationStrategyCollateral = artifacts.require('MiltonLPUtilizationStrategyCollateral');
+const MiltonSpreadStrategy = artifacts.require('MiltonSpreadStrategy');
 
 
 module.exports = async function (deployer, _network, addresses) {
@@ -115,6 +116,10 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
     let miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deployed();
     await iporAddressesManager.setAddress("MILTON_UTILIZATION_STRATEGY", miltonLPUtilizationStrategyCollateral.address);
+
+    await deployer.deploy(MiltonSpreadStrategy);
+    let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
+    await iporAddressesManager.setAddress("MILTON_SPREAD_STRATEGY", miltonSpreadStrategy.address);
 
     // prepare ERC20 mocked tokens...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
@@ -268,6 +273,7 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
+    await miltonSpreadStrategy.initialize(iporAddressesManagerAddr);
 
     //Prepare tokens for initial accounts...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {

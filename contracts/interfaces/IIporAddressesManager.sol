@@ -6,6 +6,7 @@ interface IIporAddressesManager {
     event MiltonAddressUpdated(address indexed newAddress);
     event MiltonStorageAddressUpdated(address indexed newAddress);
     event MiltonUtilizationStrategyUpdated(address indexed newAddress);
+    event MiltonSpreadStrategyUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event WarrenStorageAddressUpdated(address indexed newAddress);
     event MiltonConfigurationAddressUpdated(address indexed newAddress);
@@ -38,6 +39,10 @@ interface IIporAddressesManager {
     function getMiltonUtilizationStrategy() external view returns (address);
 
     function setMiltonUtilizationStrategyImpl(address miltonUtilizationStrategyImpl) external;
+
+    function getMiltonSpreadStrategy() external view returns (address);
+
+    function setMiltonSpreadStrategyImpl(address miltonSpreadStrategyImpl) external;
 
     function getMiltonConfiguration() external view returns (address);
 
