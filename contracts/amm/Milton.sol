@@ -6,7 +6,7 @@ import "../libraries/AmmMath.sol";
 //TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+//import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
@@ -27,7 +27,7 @@ import "../interfaces/IMiltonSpreadStrategy.sol";
  */
 contract Milton is Ownable, MiltonEvents, IMilton {
 
-    using SafeERC20 for IERC20;
+//    using SafeERC20 for IERC20;
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
@@ -80,7 +80,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, amount);
         IporToken(_addressesManager.getIporToken(asset)).burn(msg.sender, msg.sender, amount);
-        IERC20(asset).safeTransfer(msg.sender, amount);
+        IERC20(asset).transfer(msg.sender, amount);
     }
 
     function calculateSpread(address asset) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
