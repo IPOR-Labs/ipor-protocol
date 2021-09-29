@@ -5,11 +5,11 @@ import "../libraries/types/DataTypes.sol";
 
 interface IWarrenStorage {
 
-    function getAssets() external view returns (bytes32[] memory);
+    function getAssets() external view returns (address[] memory);
 
-    function getIndex(bytes32 asset) external view returns (DataTypes.IPOR memory);
+    function getIndex(address asset) external view returns (DataTypes.IPOR memory);
 
-    function updateIndexes(string[] memory _assets, uint256[] memory _indexValues, uint256 updateTimestamp) external;
+    function updateIndexes(address[] memory _assets, uint256[] memory _indexValues, uint256 updateTimestamp) external;
 
     function addUpdater(address updater) external;
 

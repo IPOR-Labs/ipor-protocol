@@ -32,14 +32,21 @@ export default ({drizzle, drizzleState}) => (
         </div>
         <hr/>
         <div class="row">
-            <div className="col-md-7">
+            <div className="col-md-4">
                 <strong>Provide Liquidity</strong>
                 <ContractForm
                     drizzle={drizzle}
                     contract="Milton"
                     method="provideLiquidity"/>
             </div>
-            <div className="col-md-5">
+            <div className="col-md-4">
+                <strong>Withdraw</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="Milton"
+                    method="withdraw"/>
+            </div>
+            <div className="col-md-4">
                 <strong>Close Position Form</strong>
                 <ContractForm
                     drizzle={drizzle}

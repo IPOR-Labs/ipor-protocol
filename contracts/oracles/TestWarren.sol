@@ -7,15 +7,15 @@ contract TestWarren is Warren {
 
     constructor(address warrenStorageAddr) Warren(warrenStorageAddr){}
 
-    function test_updateIndex(string memory asset, uint256 indexValue, uint256 updateTimestamp) public onlyUpdater {
+    function test_updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) public onlyUpdater {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = indexValue;
-        string[] memory assets = new string[](1);
+        address[] memory assets = new address[](1);
         assets[0] = asset;
         warrenStorage.updateIndexes(assets, indexes, updateTimestamp);
     }
 
-    function test_updateIndexes(string[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) public onlyUpdater {
+    function test_updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) public onlyUpdater {
         warrenStorage.updateIndexes(assets, indexValues, updateTimestamp);
     }
 

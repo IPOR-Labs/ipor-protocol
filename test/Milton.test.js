@@ -6,6 +6,7 @@ const TestMilton = artifacts.require('TestMilton');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
 const WarrenStorage = artifacts.require('WarrenStorage');
+const IporToken = artifacts.require('IporToken');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
@@ -27,6 +28,9 @@ contract('Milton', (accounts) => {
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
+    let iporTokenUsdt = null;
+    let iporTokenUsdc = null;
+    let iporTokenDai = null;
     let warren = null;
     let warrenStorage = null;
     let miltonConfiguration = null;
@@ -41,14 +45,21 @@ contract('Milton', (accounts) => {
         iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
 
-
-        //10 000 000 000 000 USD
-        tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
-        //10 000 000 000 000 USD
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
+        tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
         tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
-        //10 000 000 000 000 USD
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
+
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt.initialize(iporAddressesManager.address);
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
+        iporTokenUsdc.initialize(iporAddressesManager.address);
+        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
+        iporTokenDai.initialize(iporAddressesManager.address);
+
+        await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
+        await iporAddressesManager.setIporToken(tokenUsdc.address, iporTokenUsdc.address);
+        await iporAddressesManager.setIporToken(tokenDai.address, iporTokenDai.address);
 
         milton = await TestMilton.new();
 
@@ -63,12 +74,11 @@ contract('Milton', (accounts) => {
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
-        await iporAddressesManager.setAddress("USDT", tokenUsdt.address);
-        await iporAddressesManager.setAddress("USDC", tokenUsdc.address);
-        await iporAddressesManager.setAddress("DAI", tokenDai.address);
+        await iporAddressesManager.addAsset(tokenUsdt.address);
+        await iporAddressesManager.addAsset(tokenUsdc.address);
+        await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
-
 
     });
 
@@ -86,12 +96,16 @@ contract('Milton', (accounts) => {
 
         await miltonStorage.initialize(iporAddressesManager.address);
 
+        await miltonStorage.addAsset(tokenDai.address);
+        await miltonStorage.addAsset(tokenUsdc.address);
+        await miltonStorage.addAsset(tokenUsdt.address);
+
     });
 
     it('should NOT open position because deposit amount too low', async () => {
         //given
         await setupTokenDaiInitialValues();
-        let asset = "DAI";
+        let asset = tokenDai.address;
         let depositAmount = 0;
         let slippageValue = 3;
         let direction = 0;
@@ -108,7 +122,7 @@ contract('Milton', (accounts) => {
     it('should NOT open position because slippage too low', async () => {
         //given
         await setupTokenDaiInitialValues();
-        let asset = "DAI";
+        let asset = tokenDai.address;
         let depositAmount = BigInt("30000000000000000001");
         let slippageValue = 0;
         let direction = 0;
@@ -125,7 +139,7 @@ contract('Milton', (accounts) => {
     it('should NOT open position because slippage too high', async () => {
         //given
         await setupTokenDaiInitialValues();
-        let asset = "DAI";
+        let asset = tokenDai.address;
         let depositAmount = BigInt("30000000000000000001");
         let slippageValue = web3.utils.toBN(1e20);
         let theOne = web3.utils.toBN(1);
@@ -144,7 +158,7 @@ contract('Milton', (accounts) => {
     it('should NOT open position because deposit amount too high', async () => {
         //given
         await setupTokenDaiInitialValues();
-        let asset = "DAI";
+        let asset = tokenDai.address;
         let depositAmount = BigInt("1000000000000000000000001")
         let slippageValue = 3;
         let direction = 0;
@@ -162,7 +176,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -221,7 +235,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("99700000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_3_PERCENTAGE, testUtils.MILTON_3_PERCENTAGE, 0,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -242,7 +256,7 @@ contract('Milton', (accounts) => {
         let expectedMiltonTokenBalance = miltonBalanceBeforePayout + BigInt("177304794520547945204");
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("167304794520547945204") - incomeTax;
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_365_PERCENTAGE, testUtils.MILTON_365_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -257,7 +271,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: BigInt("10000000000000000000000"), //10 000 USD
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -299,7 +313,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -321,7 +335,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("7941856164383561677637") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -343,7 +357,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("8585453808219178051093") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -365,7 +379,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -387,7 +401,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("2792753424657534268209");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_120_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -409,7 +423,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -431,7 +445,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("4193524767123287656360");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_50_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -453,7 +467,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = testUtils.MILTON_10_000_USD + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userThree,
+            tokenDai.address, 10, 0, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -469,7 +483,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -504,7 +518,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userThree,
+            tokenDai.address, 10, 0, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -526,7 +540,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("4193524767123287656360");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userThree,
+            tokenDai.address, 10, 0, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_50_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -548,7 +562,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userThree,
+            tokenDai.address, 10, 0, userTwo, userThree,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -563,7 +577,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -599,7 +613,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("8585453808219178051093") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userThree,
+            tokenDai.address, 10, 0, userTwo, userThree,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -621,7 +635,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userThree,
+            tokenDai.address, 10, 0, userTwo, userThree,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -643,7 +657,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("167304794520547924923") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_3_PERCENTAGE, testUtils.MILTON_3_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -665,7 +679,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("167304794520547945204") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_365_PERCENTAGE, testUtils.MILTON_365_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -687,7 +701,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -709,7 +723,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("2792753424657534212773");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -731,7 +745,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -753,7 +767,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("7941856164383561622201") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_120_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -775,7 +789,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -799,7 +813,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("2165380931506849346167");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -821,7 +835,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_120_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -843,7 +857,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("6557309972602739740899") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userTwo,
+            tokenDai.address, 10, 1, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_50_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -866,7 +880,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance, //expectedMiltonTokenBalance
@@ -883,7 +897,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -916,7 +930,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -933,7 +947,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -966,7 +980,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("629400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance, //expectedMiltonTokenBalance
@@ -989,7 +1003,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("2165380931506849346167");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout + testUtils.MILTON_10_400_USD,
             expectedMiltonTokenBalance,
@@ -1011,7 +1025,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -1033,7 +1047,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("6557309972602739740899") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_50_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -1055,7 +1069,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_160_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -1078,7 +1092,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1108,7 +1122,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1121,7 +1135,7 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParamsFirst);
 
         const derivativeParams25days = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1167,7 +1181,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1180,7 +1194,7 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParamsFirst);
 
         const derivativeParams25days = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1219,7 +1233,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1232,7 +1246,7 @@ contract('Milton', (accounts) => {
         await openPositionFunc(derivativeParamsFirst);
 
         const derivativeParams25days = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1323,7 +1337,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1369,7 +1383,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1423,7 +1437,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1477,7 +1491,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1532,7 +1546,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1583,7 +1597,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1634,7 +1648,7 @@ contract('Milton', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -1691,7 +1705,7 @@ contract('Milton', (accounts) => {
         let expectedCloserUserTokenBalanceAfterPayOut = BigInt("10000020000000000000000000");
         let expectedLiquidityPoolTotalBalance = BigInt("5765380931506849346167");
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_120_PERCENTAGE,
             testUtils.MILTON_5_PERCENTAGE,
             testUtils.PERIOD_50_DAYS_IN_SECONDS,
@@ -1716,7 +1730,7 @@ contract('Milton', (accounts) => {
         let expectedCloserUserTokenBalanceAfterPayOut = BigInt("10009760600000000000000000") - incomeTax;
         let expectedLiquidityPoolTotalBalance = BigInt("4229400000000000000000");
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_25_DAYS_IN_SECONDS, testUtils.MILTON_14_000_USD,
             expectedMiltonTokenBalance,
             expectedOpenerUserTokenBalanceAfterPayOut,
@@ -1740,7 +1754,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("7941856164383561677637") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_120_PERCENTAGE,
             testUtils.MILTON_5_PERCENTAGE,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
@@ -1766,7 +1780,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -1791,7 +1805,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = BigInt("5765380931506849346167");
         let providedLiquidityAmount = testUtils.MILTON_14_000_USD;
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_120_PERCENTAGE, testUtils.MILTON_5_PERCENTAGE,
             testUtils.PERIOD_50_DAYS_IN_SECONDS, providedLiquidityAmount,
             expectedMiltonTokenBalance,
@@ -1818,7 +1832,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = BigInt("4229400000000000000000");
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_5_PERCENTAGE,
             testUtils.MILTON_160_PERCENTAGE,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
@@ -1847,7 +1861,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("7941856164383561677637") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_120_PERCENTAGE,
             testUtils.MILTON_5_PERCENTAGE,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
@@ -1875,7 +1889,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("9970000000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 1, userTwo, userThree,
+            tokenDai.address, 10, 1, userTwo, userThree,
             testUtils.MILTON_5_PERCENTAGE, testUtils.MILTON_160_PERCENTAGE, testUtils.PERIOD_50_DAYS_IN_SECONDS,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -1989,7 +2003,7 @@ contract('Milton', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            milton.transferPublicationFee("DAI", BigInt("100")),
+            milton.transferPublicationFee(tokenDai.address, BigInt("100")),
             //then
             'IPOR_31'
         );
@@ -2014,7 +2028,7 @@ contract('Milton', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            milton.transferPublicationFee("DAI", BigInt("100")),
+            milton.transferPublicationFee(tokenDai.address, BigInt("100")),
             //then
             'IPOR_29'
         );
@@ -2040,7 +2054,7 @@ contract('Milton', (accounts) => {
         const transferedAmount = BigInt("100");
 
         //when
-        await milton.transferPublicationFee("DAI", transferedAmount);
+        await milton.transferPublicationFee(tokenDai.address, transferedAmount);
 
         //then
         let balance = await miltonStorage.balances(params.asset);
@@ -2071,7 +2085,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(500),
@@ -2097,7 +2111,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt("50000000000000000001"),
@@ -2124,7 +2138,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt("15125000000000000000"),
@@ -2196,7 +2210,7 @@ contract('Milton', (accounts) => {
     });
 
 
-    it('should NOT open pay fixed position - when new position openet then liquidity pool utilisation exceeded, custom utilisation', async () => {
+    it('should NOT open pay fixed position - when new position opened then liquidity pool utilisation exceeded, custom utilisation', async () => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
@@ -2308,7 +2322,7 @@ contract('Milton', (accounts) => {
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("99700000000000000000") - incomeTax;
 
         await exetuceClosePositionTestCase(
-            "DAI", 10, 0, userTwo, userTwo,
+            tokenDai.address, 10, 0, userTwo, userTwo,
             testUtils.MILTON_3_PERCENTAGE, testUtils.MILTON_3_PERCENTAGE, 0,
             miltonBalanceBeforePayout,
             expectedMiltonTokenBalance,
@@ -2319,6 +2333,114 @@ contract('Milton', (accounts) => {
         );
 
     });
+
+    it('should NOT open pay fixed position - asset address not supported', async () => {
+
+        //given
+
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+
+        let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
+        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.openPosition(
+                liquidityProvider, params.totalAmount,
+                params.slippageValue, params.collateralization,
+                params.direction, {from: userTwo}),
+            //then
+            'IPOR_39'
+        );
+
+    });
+
+
+    it('should provide liquidity and take IPOR token - simple case 1', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        await setupIporTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        let liquidityAmount = testUtils.MILTON_14_000_USD;
+
+        let expectedLiquidityProviderStableBalance = BigInt("9986000000000000000000000");
+
+        //when
+        await milton.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+
+        //then
+        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
+        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
+        //TODO: liquidity balance milton storage
+        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
+
+        assert(liquidityAmount === iporTokenBalanceSender,
+            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${liquidityAmount}`);
+
+        assert(liquidityAmount === stableBalanceMilton,
+            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${liquidityAmount}`);
+
+        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
+            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
+
+    });
+
+    it('should withdraw IPOR Token - simple case 1', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        await setupIporTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        let liquidityAmount = testUtils.MILTON_14_000_USD;
+        let withdrawAmount = testUtils.MILTON_10_000_USD;
+        let expectedIporTokenBalanceSender = BigInt("4000000000000000000000");
+        let expectedStableBalanceMilton = BigInt("4000000000000000000000");
+        let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
+        await milton.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+
+        //when
+        await milton.withdraw(params.asset, withdrawAmount, {from: liquidityProvider})
+
+
+        //then
+        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
+        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
+        //TODO: liquidity balance milton storage
+        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
+
+        assert(expectedIporTokenBalanceSender === iporTokenBalanceSender,
+            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
+
+        assert(expectedStableBalanceMilton === stableBalanceMilton,
+            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
+
+        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
+            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
+
+    });
+
+    it('should NOT withdraw IPOR Token - Liquidity Pool is too low', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await milton.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider})
+        await iporAddressesManager.setAddress("MILTON", userOne);
+        await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne})
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.withdraw(params.asset, params.totalAmount, {from: liquidityProvider}),
+            //then
+            'IPOR_43'
+        );
+        await iporAddressesManager.setAddress("MILTON", milton.address);
+    });
+
+
     //TODO: check initial IBT
 
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
@@ -2549,7 +2671,7 @@ contract('Milton', (accounts) => {
 
     const getStandardDerivativeParams = () => {
         return {
-            asset: "DAI",
+            asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
             collateralization: BigInt(10000000000000000000),
@@ -2575,7 +2697,14 @@ contract('Milton', (accounts) => {
         await tokenUsdc.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
         await tokenUsdc.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
-
+    const setupIporTokenDaiInitialValues = async () => {
+        await iporAddressesManager.setAddress("MILTON", userOne);
+        let lpBalance = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
+        if (lpBalance > 0) {
+            await iporTokenDai.burn(liquidityProvider, accounts[5], lpBalance, {from: userOne});
+        }
+        await iporAddressesManager.setAddress("MILTON", milton.address);
+    }
     const setupTokenDaiInitialValues = async () => {
         await tokenDai.setupInitialAmount(await milton.address, ZERO);
         await tokenDai.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
@@ -2614,7 +2743,7 @@ contract('Milton', (accounts) => {
 
         let actualOpenerUserTokenBalance = null;
         let actualCloserUserTokenBalance = null;
-        if (asset === "DAI") {
+        if (asset === tokenDai.address) {
             actualOpenerUserTokenBalance = BigInt(await tokenDai.balanceOf(openerUserAddress));
             actualCloserUserTokenBalance = BigInt(await tokenDai.balanceOf(closerUserAddress));
         }

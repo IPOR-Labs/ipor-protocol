@@ -16,31 +16,13 @@ export default ({drizzle, drizzleState}) => (
             <tr>
                 <td><strong>ERC20 Token Address</strong></td>
                 <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getTokenAddress"
-                        methodArgs={["USDT"]}
-                    />
+                    {drizzle.contracts.UsdtMockedToken.address}
                 </td>
                 <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getTokenAddress"
-                        methodArgs={["USDC"]}
-                    />
+                    {drizzle.contracts.UsdcMockedToken.address}
                 </td>
                 <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getTokenAddress"
-                        methodArgs={["DAI"]}
-                    />
+                    {drizzle.contracts.DaiMockedToken.address}
                 </td>
             </tr>
             <tr>
@@ -51,7 +33,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMiltonTotalSupply"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -66,7 +48,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMiltonTotalSupply"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -81,7 +63,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMiltonTotalSupply"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}<br/>
@@ -108,7 +90,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyAllowance"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -138,7 +120,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyAllowance"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -168,7 +150,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyAllowance"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}<br/>
@@ -210,7 +192,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -225,7 +207,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -240,7 +222,64 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value / 1000000000000000000}<br/>
+                                <small>{value}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+            </tr>
+        </table>
+        <hr/>
+        <table className="table" align="center">
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">ipUSDT</th>
+                <th scope="col">ipUSDC</th>
+                <th scope="col">ipDAI</th>
+            </tr>
+            <tr>
+                <td><strong>My IPOR Token Balance</strong></td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonDevToolDataProvider"
+                        method="getMyIporTokenBalance"
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value / 1000000}<br/>
+                                <small>{value}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonDevToolDataProvider"
+                        method="getMyIporTokenBalance"
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value / 1000000}<br/>
+                                <small>{value}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonDevToolDataProvider"
+                        method="getMyIporTokenBalance"
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}<br/>

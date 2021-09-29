@@ -6,13 +6,11 @@ interface IMiltonFrontendDataProvider {
 
     //TODO: prepare specific methods and structures for frontend
 
-    function getTokenAddress(string memory asset) external view returns (address);
+    function getMiltonTotalSupply(address asset) external view returns (uint256);
 
-    function getMiltonTotalSupply(string memory asset) external view returns (uint256);
+    function getMyTotalSupply(address asset) external view returns (uint256);
 
-    function getMyTotalSupply(string memory asset) external view returns (uint256);
-
-    function getMyAllowance(string memory asset) external view returns (uint256);
+    function getMyAllowance(address asset) external view returns (uint256);
 
     function getPositions() external view returns (DataTypes.IporDerivative[] memory);
 

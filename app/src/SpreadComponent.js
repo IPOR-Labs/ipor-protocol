@@ -20,7 +20,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSpread"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadPf / 1000000000000000000}<br/>
@@ -35,7 +35,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSpread"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadPf / 1000000000000000000}<br/>
@@ -50,7 +50,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSpread"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadPf / 1000000000000000000}<br/>
@@ -68,7 +68,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSpread"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadRf / 1000000000000000000}<br/>
@@ -83,7 +83,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSpread"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadRf / 1000000000000000000}<br/>
@@ -98,7 +98,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="Milton"
                         method="calculateSpread"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadRf / 1000000000000000000}<br/>

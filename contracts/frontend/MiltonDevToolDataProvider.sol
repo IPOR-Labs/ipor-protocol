@@ -14,22 +14,23 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         ADDRESSES_MANAGER = addressesManager;
     }
 
-    function getTokenAddress(string memory asset) external override view returns(address) {
-        return ADDRESSES_MANAGER.getAddress(asset);
-    }
-
-    function getMiltonTotalSupply(string memory asset) external override view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(asset));
+    function getMiltonTotalSupply(address asset) external override view returns (uint256) {
+        IERC20 token = IERC20(asset);
         return token.balanceOf(ADDRESSES_MANAGER.getMilton());
     }
 
-    function getMyTotalSupply(string memory asset) external override view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(asset));
+    function getMyIporTokenBalance(address asset) external override view returns (uint256) {
+        IERC20 token = IERC20(ADDRESSES_MANAGER.getIporToken(asset));
         return token.balanceOf(msg.sender);
     }
 
-    function getMyAllowance(string memory asset) external override view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getAddress(asset));
+    function getMyTotalSupply(address asset) external override view returns (uint256) {
+        IERC20 token = IERC20(asset);
+        return token.balanceOf(msg.sender);
+    }
+
+    function getMyAllowance(address asset) external override view returns (uint256) {
+        IERC20 token = IERC20(asset);
         return token.allowance(msg.sender, ADDRESSES_MANAGER.getMilton());
     }
 

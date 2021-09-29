@@ -4,20 +4,31 @@ pragma solidity >=0.8.4 <0.9.0;
 import "../interfaces/IIporAddressesManager.sol";
 //TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
+import {Errors} from '../Errors.sol';
 
 contract IporAddressesManager is Ownable, IIporAddressesManager {
+
+    //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC
+    address [] public assets;
+
+    //@notice value - flag 1 - is supported, 0 - is not supported
+    mapping(address => uint256) public supportedAssets;
+
+    //@notice mapping underlying asset address to ipor token address
+    mapping(address => address) public iporTokens;
 
     mapping(string => address) private _addresses;
 
     //this treasurer manage ipor publication fee balance, key is an asset
-    mapping(string => address) charlieTreasurers;
+    mapping(address => address) charlieTreasurers;
 
     //this treasurer manage opening fee balance, key is an asset
-    mapping(string => address) treasureTreasurers;
+    mapping(address => address) treasureTreasurers;
 
     //@notice the user who can transfer publication fee to Charlie Treasurer
     string private constant PUBLICATION_FEE_TRANSFERER = "PUBLICATION_FEE_TRANSFERER";
     string private constant WARREN = "WARREN";
+    string private constant WARREN_STORAGE = "WARREN_STORAGE";
     string private constant MILTON = "MILTON";
     string private constant MILTON_STORAGE = "MILTON_STORAGE";
     string private constant MILTON_UTILIZATION_STRATEGY = "MILTON_UTILIZATION_STRATEGY";
@@ -100,22 +111,75 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
 
-    function getCharlieTreasurer(string memory asset) external override view returns (address) {
+    function getCharlieTreasurer(address asset) external override view returns (address) {
         return charlieTreasurers[asset];
     }
 
-    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external override onlyOwner {
+    function setCharlieTreasurer(address asset, address _charlieTreasurer) external override onlyOwner {
         charlieTreasurers[asset] = _charlieTreasurer;
         emit CharlieTreasurerUpdated(asset, _charlieTreasurer);
     }
 
-    function getTreasureTreasurer(string memory asset) external override view returns (address) {
+    function getTreasureTreasurer(address asset) external override view returns (address) {
         return treasureTreasurers[asset];
     }
 
-    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external override onlyOwner {
+    function setTreasureTreasurer(address asset, address _treasureTreasurer) external override onlyOwner {
         treasureTreasurers[asset] = _treasureTreasurer;
         emit TreasureTreasurerUpdated(asset, _treasureTreasurer);
+    }
+
+    function getAssets() external override view returns (address[] memory){
+        return assets;
+    }
+
+    function addAsset(address asset) external override onlyOwner {
+        require(asset != address(0), Errors.WRONG_ADDRESS);
+        bool assetExists = false;
+        for (uint256 i; i < assets.length; i++) {
+            if (assets[i] == asset) {
+                assetExists = true;
+            }
+        }
+        if (assetExists == false) {
+            assets.push(asset);
+            supportedAssets[asset] = 1;
+            emit AssetAddressAdd(asset);
+        }
+    }
+
+    function removeAsset(address asset) external override onlyOwner {
+        require(asset != address(0), Errors.WRONG_ADDRESS);
+        for (uint256 i; i < assets.length; i++) {
+            if (assets[i] == asset) {
+                delete assets[i];
+                supportedAssets[asset] = 0;
+                emit AssetAddressRemoved(asset);
+                break;
+            }
+        }
+    }
+
+    function getIporToken(address unserlyingAsset) external override view returns (address){
+        return iporTokens[unserlyingAsset];
+    }
+
+    function setIporToken(address underlyingAssetAddress, address iporTokenAddress) external override onlyOwner {
+        iporTokens[underlyingAssetAddress] = iporTokenAddress;
+        emit IporTokenAddressUpdated(underlyingAssetAddress, iporTokenAddress);
+    }
+
+    function assetSupported(address asset) external override view returns (uint256) {
+        return supportedAssets[asset];
+    }
+
+    function setWarrenStorageImpl(address warrenStorageImpl) external override onlyOwner {
+        _updateImpl(WARREN_STORAGE, warrenStorageImpl);
+        emit WarrenStorageAddressUpdated(warrenStorageImpl);
+    }
+
+    function getWarrenStorage() external override view returns (address) {
+        return getAddress(WARREN_STORAGE);
     }
 
     //TODO: verify it, inspired by Aave

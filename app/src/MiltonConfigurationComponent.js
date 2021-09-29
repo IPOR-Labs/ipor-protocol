@@ -275,7 +275,7 @@ export default ({drizzle, drizzleState}) => (
                             drizzleState={drizzleState}
                             contract="IporAddressesManager"
                             method="getCharlieTreasurer"
-                            methodArgs={["USDT"]}
+                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         />
                     </td>
                     <td>
@@ -284,7 +284,7 @@ export default ({drizzle, drizzleState}) => (
                             drizzleState={drizzleState}
                             contract="IporAddressesManager"
                             method="getCharlieTreasurer"
-                            methodArgs={["USDC"]}
+                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         />
                     </td>
                     <td>
@@ -293,7 +293,7 @@ export default ({drizzle, drizzleState}) => (
                             drizzleState={drizzleState}
                             contract="IporAddressesManager"
                             method="getCharlieTreasurer"
-                            methodArgs={["DAI"]}
+                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         />
                     </td>
                 </tr>
@@ -309,7 +309,7 @@ export default ({drizzle, drizzleState}) => (
                             drizzleState={drizzleState}
                             contract="IporAddressesManager"
                             method="getTreasureTreasurer"
-                            methodArgs={["USDT"]}
+                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         />
                     </td>
                     <td>
@@ -318,7 +318,7 @@ export default ({drizzle, drizzleState}) => (
                             drizzleState={drizzleState}
                             contract="IporAddressesManager"
                             method="getTreasureTreasurer"
-                            methodArgs={["USDC"]}
+                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         />
                     </td>
                     <td>
@@ -327,7 +327,7 @@ export default ({drizzle, drizzleState}) => (
                             drizzleState={drizzleState}
                             contract="IporAddressesManager"
                             method="getTreasureTreasurer"
-                            methodArgs={["DAI"]}
+                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         />
                     </td>
                 </tr>

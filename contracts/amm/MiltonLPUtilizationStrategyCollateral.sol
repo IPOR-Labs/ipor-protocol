@@ -19,7 +19,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         _addressesManager = addressesManager;
     }
 
-    function calculateUtilization(string memory asset, uint256 deposit, uint256 openingFee) external override view returns (uint256) {
+    function calculateUtilization(address asset, uint256 deposit, uint256 openingFee) external override view returns (uint256) {
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(asset);
 

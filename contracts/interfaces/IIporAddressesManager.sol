@@ -7,11 +7,15 @@ interface IIporAddressesManager {
     event MiltonStorageAddressUpdated(address indexed newAddress);
     event MiltonUtilizationStrategyUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
+    event WarrenStorageAddressUpdated(address indexed newAddress);
     event MiltonConfigurationAddressUpdated(address indexed newAddress);
-    event CharlieTreasurerUpdated(string asset, address indexed newCharlieTreasurer);
-    event TreasureTreasurerUpdated(string asset, address indexed newTreasureTreasurer);
+    event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
+    event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
     event ProxyCreated(string id, address indexed newAddress);
     event AddressSet(string id, address indexed newAddress, bool hasProxy);
+    event AssetAddressRemoved(address indexed asset);
+    event AssetAddressAdd(address newAddress);
+    event IporTokenAddressUpdated(address indexed underlyingAssetAddress, address indexed newIporTokenAddress);
 
     function setAddress(string memory id, address newAddress) external;
 
@@ -43,11 +47,27 @@ interface IIporAddressesManager {
 
     function setWarrenImpl(address warrenImpl) external;
 
-    function getCharlieTreasurer(string memory asset) external view returns (address);
+    function setWarrenStorageImpl(address warrenStorageImpl) external;
 
-    function setCharlieTreasurer(string memory asset, address _charlieTreasurer) external;
+    function getWarrenStorage() external view returns (address);
 
-    function getTreasureTreasurer(string memory asset) external view returns (address);
+    function getCharlieTreasurer(address asset) external view returns (address);
 
-    function setTreasureTreasurer(string memory asset, address _treasureTreasurer) external;
+    function setCharlieTreasurer(address asset, address _charlieTreasurer) external;
+
+    function getTreasureTreasurer(address asset) external view returns (address);
+
+    function setTreasureTreasurer(address asset, address _treasureTreasurer) external;
+
+    function getAssets() external view returns (address[] memory);
+
+    function addAsset(address asset) external;
+
+    function assetSupported(address asset) external view returns (uint256);
+
+    function removeAsset(address asset) external;
+
+    function getIporToken(address unserlyingAsset) external view returns (address);
+
+    function setIporToken(address underlyingAsset, address iporToken) external;
 }

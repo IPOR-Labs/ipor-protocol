@@ -17,7 +17,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
-    event IporIndexUpdate(string asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 date);
+    event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 date);
 
     /// @notice event emitted when IPOR Index Updater is added by Admin
     event IporIndexUpdaterAdd(address _updater);
@@ -26,26 +26,26 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     event IporIndexUpdaterRemove(address _updater);
 
     /// @notice list of IPOR indexes for particular assets
-    mapping(bytes32 => DataTypes.IPOR) public indexes;
+    mapping(address => DataTypes.IPOR) public indexes;
 
     /// @notice list of assets used in indexes mapping
-    bytes32[] public assets;
+    address[] public assets;
 
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
 
-    function getAssets() external override view returns (bytes32[] memory) {
+    function getAssets() external override view returns (address[] memory) {
         return assets;
     }
 
-    function getIndex(bytes32 asset) external override view returns (DataTypes.IPOR memory) {
+    function getIndex(address asset) external override view returns (DataTypes.IPOR memory) {
         return indexes[asset];
     }
 
-    function updateIndexes(string[] memory _assets, uint256[] memory _indexValues, uint256 updateTimestamp) external override onlyUpdater {
-        require(_assets.length == _indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
+    function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) external override onlyUpdater {
+        require(_assets.length == indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i = 0; i < _assets.length; i++) {
-            _updateIndex(_assets[i], _indexValues[i], updateTimestamp);
+            _updateIndex(_assets[i], indexValues[i], updateTimestamp);
         }
     }
 
@@ -54,6 +54,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     }
 
     function removeUpdater(address updater) external override onlyOwner {
+        require(updater != address(0), Errors.WARREN_WRONG_UPDATER_ADDRESS);
         for (uint256 i; i < updaters.length; i++) {
             if (updaters[i] == updater) {
                 delete updaters[i];
@@ -67,6 +68,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     }
 
     function _addUpdater(address updater) internal {
+        require(updater != address(0), Errors.WARREN_WRONG_UPDATER_ADDRESS);
         bool updaterExists = false;
         for (uint256 i; i < updaters.length; i++) {
             if (updaters[i] == updater) {
@@ -79,12 +81,11 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
     }
 
-    function _updateIndex(string memory asset, uint256 indexValue, uint256 updateTimestamp) internal onlyUpdater {
+    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal onlyUpdater {
 
         bool assetExists = false;
-        bytes32 assetHash = keccak256(abi.encodePacked(asset));
         for (uint256 i = 0; i < assets.length; i++) {
-            if (assets[i] == assetHash) {
+            if (assets[i] == asset) {
                 assetExists = true;
             }
         }
@@ -92,12 +93,13 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 newQuasiIbtPrice;
 
         if (assetExists == false) {
-            assets.push(assetHash);
+            //TODO: consider asset support configured in IporAddressesManager
+            assets.push(asset);
             newQuasiIbtPrice = Constants.MD_YEAR_IN_SECONDS;
         } else {
-            newQuasiIbtPrice = indexes[assetHash].accrueQuasiIbtPrice(updateTimestamp);
+            newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(updateTimestamp);
         }
-        indexes[assetHash] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
+        indexes[asset] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
         emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
     }
 

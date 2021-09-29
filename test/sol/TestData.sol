@@ -5,11 +5,13 @@ import "../../contracts/libraries/types/DataTypes.sol";
 import "../../contracts/libraries/Constants.sol";
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
+import "../../contracts/mocks/tokens/DaiMockedToken.sol";
 
 contract TestData {
 
     uint256 constant PERIOD_1_DAY_IN_SECONDS = 60 * 60 * 24 * 1;
     uint256 constant PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;
+    DaiMockedToken daiMockedToken = new DaiMockedToken(1e18, 18);
 
     function prepareInitialTotalSoapIndicator(uint256 timestamp) public pure returns (DataTypes.TotalSoapIndicator memory) {
         DataTypes.SoapIndicator memory pfSoapIndicator = prepareInitialSoapIndicator(timestamp, DataTypes.DerivativeDirection.PayFixedReceiveFloating);
@@ -90,11 +92,12 @@ contract TestData {
             1e16 // spread percentege
         );
 
+
+
         DataTypes.IporDerivative memory derivative = DataTypes.IporDerivative(
             0,
             DataTypes.DerivativeState.ACTIVE,
-            msg.sender,
-            "DAI",
+            msg.sender, address(daiMockedToken),
             0, //Pay Fixed, Receive Floating (long position)
             depositAmount,
             fee, collateralization,

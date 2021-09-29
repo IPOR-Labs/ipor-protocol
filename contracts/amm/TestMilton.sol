@@ -7,7 +7,7 @@ contract TestMilton is Milton {
 
     function test_openPosition(
         uint256 openTimestamp,
-        string memory asset,
+        address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralization,
@@ -20,13 +20,13 @@ contract TestMilton is Milton {
     }
 
     function test_calculateSoap(
-        string memory asset,
+        address asset,
         uint256 calculateTimestamp) public view returns (int256 soapPf, int256 soapRf, int256 soap){
         return _calculateSoap(asset, calculateTimestamp);
     }
 
     function test_calculateSpread(
-        string memory asset,
+        address asset,
         uint256 calculateTimestamp) public view returns (uint256 spreadPf, uint256 spreadRf){
         return _calculateSpread(asset, calculateTimestamp);
     }

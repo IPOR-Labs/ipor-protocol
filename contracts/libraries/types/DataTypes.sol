@@ -51,7 +51,7 @@ library DataTypes {
     struct IPOR {
 
         //@notice Asset Symbol like USDT, USDC, DAI etc.
-        string asset;
+        address asset;
 
         //@notice IPOR Index Value
         uint256 indexValue;
@@ -165,7 +165,7 @@ library DataTypes {
         address buyer;
 
         //@notice the name of the asset to which the derivative relates
-        string asset;
+        address asset;
 
         //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
         uint8 direction;
