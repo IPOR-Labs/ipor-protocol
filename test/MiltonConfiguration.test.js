@@ -29,7 +29,7 @@ contract('MiltonConfiguration', (accounts) => {
 
     beforeEach(async () => {
         miltonConfiguration = await MiltonConfiguration.new();
-        miltonConfiguration.initialize(iporAddressesManager.address);
+        await miltonConfiguration.initialize(iporAddressesManager.address);
     });
 
     it('should set default openingFeeForTreasuryPercentage', async () => {

@@ -94,6 +94,7 @@ contract('MiltonStorage', (accounts) => {
         await miltonStorage.addAsset(tokenUsdc.address);
         await miltonStorage.addAsset(tokenUsdt.address);
 
+
     });
 
     it('should update Milton Storage when open position, caller has rights to update', async () => {
@@ -237,7 +238,8 @@ contract('MiltonStorage', (accounts) => {
                 liquidationDepositAmount: BigInt("20000000000000000000"),
                 openingAmount: 123,
                 iporPublicationAmount: 123,
-                spreadPercentage: 123
+                spreadPayFixedValue: 123,
+                spreadRecFixedValue: 123
             },
             collateralization: BigInt(10000000000000000000),
             notionalAmount: 123,
