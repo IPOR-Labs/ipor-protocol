@@ -11,7 +11,7 @@ contract MiltonEvents {
         address indexed buyer,
         address asset,
         DataTypes.DerivativeDirection direction,
-        uint256 depositAmount,
+        uint256 collateral,
         DataTypes.IporDerivativeFee fee,
         uint256 collateralization,
         uint256 notionalAmount,

@@ -107,14 +107,14 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         let asset = tokenDai.address;
-        let depositAmount = 0;
+        let collateral = 0;
         let slippageValue = 3;
         let direction = 0;
         let collateralization = BigInt(10000000000000000000);
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, depositAmount, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
             //then
             'IPOR_4'
         );
@@ -124,14 +124,14 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         let asset = tokenDai.address;
-        let depositAmount = BigInt("30000000000000000001");
+        let collateral = BigInt("30000000000000000001");
         let slippageValue = 0;
         let direction = 0;
         let collateralization = BigInt(10000000000000000000);
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, depositAmount, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
             //then
             'IPOR_5'
         );
@@ -141,7 +141,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         let asset = tokenDai.address;
-        let depositAmount = BigInt("30000000000000000001");
+        let collateral = BigInt("30000000000000000001");
         let slippageValue = web3.utils.toBN(1e20);
         let theOne = web3.utils.toBN(1);
         slippageValue = slippageValue.add(theOne);
@@ -150,7 +150,7 @@ contract('Milton', (accounts) => {
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, depositAmount, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
             //then
             'IPOR_9'
         );
@@ -160,14 +160,14 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         let asset = tokenDai.address;
-        let depositAmount = BigInt("1000000000000000000000001")
+        let collateral = BigInt("1000000000000000000000001")
         let slippageValue = 3;
         let direction = 0;
         let collateralization = BigInt(10000000000000000000);
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, depositAmount, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
             //then
             'IPOR_10'
         );

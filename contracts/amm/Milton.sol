@@ -201,7 +201,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             iporDerivative.buyer,
             iporDerivative.asset,
             DataTypes.DerivativeDirection(iporDerivative.direction),
-            iporDerivative.depositAmount,
+            iporDerivative.collateral,
             iporDerivative.fee,
             iporDerivative.collateralization,
             iporDerivative.notionalAmount,
@@ -255,17 +255,17 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
         uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
 
-        uint256 transferAmount = derivativeItem.item.depositAmount;
+        uint256 transferAmount = derivativeItem.item.collateral;
 
         if (interestDifferenceAmount > 0) {
 
             //tokens transfered from AMM
-            if (absInterestDifferenceAmount > derivativeItem.item.depositAmount) {
+            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral, miltonConfiguration.getIncomeTaxPercentage());
 
                 //transfer D+D-incomeTax to user's address
-                transferAmount = transferAmount + derivativeItem.item.depositAmount - incomeTax;
+                transferAmount = transferAmount + derivativeItem.item.collateral - incomeTax;
 
                 _transferDerivativeAmount(derivativeItem, transferAmount);
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
@@ -289,7 +289,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         } else {
             //tokens transfered to AMM, updates on balances
-            if (absInterestDifferenceAmount > derivativeItem.item.depositAmount) {
+            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
 
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount

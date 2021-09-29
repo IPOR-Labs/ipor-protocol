@@ -83,7 +83,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external override onlyMilton {
 
         _updateMiltonDerivativesWhenOpenPosition(iporDerivative);
-        _updateBalancesWhenOpenPosition(iporDerivative.asset, iporDerivative.depositAmount, iporDerivative.fee.openingAmount);
+        _updateBalancesWhenOpenPosition(iporDerivative.asset, iporDerivative.collateral, iporDerivative.fee.openingAmount);
         _updateSoapIndicatorsWhenOpenPosition(iporDerivative);
 
     }
@@ -145,11 +145,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
 
-    function _updateBalancesWhenOpenPosition(address asset, uint256 depositAmount, uint256 openingFeeAmount) internal {
+    function _updateBalancesWhenOpenPosition(address asset, uint256 collateral, uint256 openingFeeAmount) internal {
 
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
 
-        balances[asset].derivatives = balances[asset].derivatives + depositAmount;
+        balances[asset].derivatives = balances[asset].derivatives + collateral;
         balances[asset].openingFee = balances[asset].openingFee + openingFeeAmount;
         balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + miltonConfiguration.getLiquidationDepositAmount();
         balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + miltonConfiguration.getIporPublicationFeeAmount();
@@ -182,22 +182,22 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         = balances[derivativeItem.item.asset].liquidationDeposit - derivativeItem.item.fee.liquidationDepositAmount;
 
         balances[derivativeItem.item.asset].derivatives
-        = balances[derivativeItem.item.asset].derivatives - derivativeItem.item.depositAmount;
+        = balances[derivativeItem.item.asset].derivatives - derivativeItem.item.collateral;
 
         if (interestDifferenceAmount > 0) {
 
             //tokens transfered from AMM
-            if (absInterestDifferenceAmount > derivativeItem.item.depositAmount) {
+            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
 
-                require(balances[derivativeItem.item.asset].liquidityPool >= derivativeItem.item.depositAmount,
+                require(balances[derivativeItem.item.asset].liquidityPool >= derivativeItem.item.collateral,
                     Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
 
                 //fetch "D" amount from Liquidity Pool
                 balances[derivativeItem.item.asset].liquidityPool
-                = balances[derivativeItem.item.asset].liquidityPool - derivativeItem.item.depositAmount;
+                = balances[derivativeItem.item.asset].liquidityPool - derivativeItem.item.collateral;
 
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount,
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral,
                     IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
@@ -228,10 +228,10 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         } else {
             //tokens transfered to AMM, updates on balances
-            if (absInterestDifferenceAmount > derivativeItem.item.depositAmount) {
+            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
 
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount,
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral,
                     IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
@@ -239,7 +239,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
                 //transfer D - incomeTax  to Liquidity Pool
                 balances[derivativeItem.item.asset].liquidityPool
-                = balances[derivativeItem.item.asset].liquidityPool + derivativeItem.item.depositAmount - incomeTax;
+                = balances[derivativeItem.item.asset].liquidityPool + derivativeItem.item.collateral - incomeTax;
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
 
             } else {

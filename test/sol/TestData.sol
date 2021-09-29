@@ -75,7 +75,7 @@ contract TestData {
     function prepareDerivativeCase1(uint256 fixedInterestRate) public view returns (DataTypes.IporDerivative memory) {
 
         uint256 ibtPriceFirst = 100 * Constants.MD;
-        uint256 depositAmount = 9870300000000000000000;
+        uint256 collateral = 9870300000000000000000;
         uint256 collateralization = 10;
 
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
@@ -94,15 +94,14 @@ contract TestData {
         );
 
 
-
         DataTypes.IporDerivative memory derivative = DataTypes.IporDerivative(
             0,
             DataTypes.DerivativeState.ACTIVE,
             msg.sender, address(daiMockedToken),
             0, //Pay Fixed, Receive Floating (long position)
-            depositAmount,
+            collateral,
             fee, collateralization,
-            depositAmount * collateralization,
+            collateral * collateralization,
             block.timestamp,
             block.timestamp + 60 * 60 * 24 * 28,
             indicator

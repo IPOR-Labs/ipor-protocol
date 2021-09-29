@@ -158,8 +158,8 @@ library DataTypes {
         //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
         uint8 direction;
 
-        //@notice Derivative deposit amount
-        uint256 depositAmount;
+        //@notice Collateral
+        uint256 collateral;
 
         IporDerivativeFee fee;
 

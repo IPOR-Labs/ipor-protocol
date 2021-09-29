@@ -233,7 +233,7 @@ contract('MiltonStorage', (accounts) => {
             buyer: userTwo,
             asset: tokenDai.address,
             direction: 0,
-            depositAmount: BigInt("1000000000000000000000"),
+            collateral: BigInt("1000000000000000000000"),
             fee: {
                 liquidationDepositAmount: BigInt("20000000000000000000"),
                 openingAmount: 123,

@@ -26,7 +26,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,
-                derivativeItem.item.depositAmount,
+                derivativeItem.item.collateral,
                 derivativeItem.item.notionalAmount,
                 derivativeItem.item.collateralization,
                 derivativeItem.item.direction,

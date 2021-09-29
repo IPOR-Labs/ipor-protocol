@@ -34,9 +34,9 @@ library AmmMath {
             (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * openingFeePercentage,
             Constants.MD
         );
-        uint256 depositAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount - openingFeeAmount;
+        uint256 collateral = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount - openingFeeAmount;
         return DataTypes.IporDerivativeAmount(
-            depositAmount, division(collateralization * depositAmount, Constants.MD),
+            collateral, division(collateralization * collateral, Constants.MD),
             openingFeeAmount
         );
     }

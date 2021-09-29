@@ -36,14 +36,14 @@ export default (derivatives) => (
                                 <td>{derivative.buyer}</td>
                                 <td>{derivative.asset}</td>
                                 <td>{derivative.direction}</td>
-                                <td>{derivative.depositAmount / 1000000000000000000}<br/><small>{derivative.depositAmount}</small>
+                                <td>{derivative.collateral / 1000000000000000000}<br/><small>{derivative.collateral}</small>
                                 </td>
                                 <td>
                                     {derivative.collateralization}
                                 </td>
                                 <td>
                                     {derivative.notionalAmount / 1000000000000000000}
-                                    <br/><small>{derivative.depositAmount}</small>
+                                    <br/><small>{derivative.notionalAmount}</small>
                                 </td>
                                 <td>
                                     {derivative.fee.liquidationDepositAmount / 1000000000000000000}
