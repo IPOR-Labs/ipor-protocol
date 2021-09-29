@@ -32,6 +32,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     string private constant MILTON = "MILTON";
     string private constant MILTON_STORAGE = "MILTON_STORAGE";
     string private constant MILTON_UTILIZATION_STRATEGY = "MILTON_UTILIZATION_STRATEGY";
+    string private constant MILTON_SPREAD_STRATEGY = "MILTON_SPREAD_STRATEGY";
     string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
 
 
@@ -88,6 +89,15 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     function setMiltonUtilizationStrategyImpl(address miltonUtilizationStrategyImpl) external override onlyOwner {
         _updateImpl(MILTON_UTILIZATION_STRATEGY, miltonUtilizationStrategyImpl);
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategyImpl);
+    }
+
+    function getMiltonSpreadStrategy() external view override returns (address) {
+        return getAddress(MILTON_SPREAD_STRATEGY);
+    }
+
+    function setMiltonSpreadStrategyImpl(address miltonSpreadStrategyImpl) external override onlyOwner {
+        _updateImpl(MILTON_SPREAD_STRATEGY, miltonSpreadStrategyImpl);
+        emit MiltonSpreadStrategyUpdated(miltonSpreadStrategyImpl);
     }
 
     function getMiltonConfiguration() external view override returns (address) {

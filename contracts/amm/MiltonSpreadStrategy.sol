@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: agpl-3.0
+pragma solidity >=0.8.4 <0.9.0;
+
+import "../libraries/Constants.sol";
+import "../libraries/types/DataTypes.sol";
+import "../interfaces/IMiltonLPUtilisationStrategy.sol";
+import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IMiltonStorage.sol";
+import {AmmMath} from '../libraries/AmmMath.sol';
+import "../interfaces/IMiltonSpreadStrategy.sol";
+
+contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
+
+    IIporAddressesManager internal _addressesManager;
+
+    function initialize(IIporAddressesManager addressesManager) public {
+        _addressesManager = addressesManager;
+    }
+
+    function calculateSpread(address asset, uint256 calculateTimestamp) external override view returns (uint256 spreadPf, uint256 spreadRf) {
+        return IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSpread(asset, calculateTimestamp);
+    }
+}
