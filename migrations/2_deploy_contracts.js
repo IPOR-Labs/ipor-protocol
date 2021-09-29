@@ -272,9 +272,6 @@ module.exports = async function (deployer, _network, addresses) {
 
     }
 
-    await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
-    await miltonSpreadStrategy.initialize(iporAddressesManagerAddr);
-
     //Prepare tokens for initial accounts...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
         console.log("Setup Faucet...");
@@ -322,5 +319,9 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonStorage.addAsset(mockedUsdtAddr);
 
     }
+
+    await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
+    await miltonSpreadStrategy.initialize(iporAddressesManagerAddr);
+    await miltonConfiguration.initialize(iporAddressesManagerAddr);
 
 };

@@ -5,5 +5,5 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonSpreadStrategy {
 
-    function calculateSpread(address asset, uint256 calculateTimestamp) external view returns (uint256 spreadPf, uint256 spreadRf);
+    function calculateSpread(address asset, uint256 calculateTimestamp) external view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue);
 }

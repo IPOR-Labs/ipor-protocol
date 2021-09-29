@@ -89,6 +89,7 @@ contract TestData {
             20 * Constants.MD, //liquidation deposit amount
             99700000000000000000, //opening fee amount
             10 * Constants.MD, //ipor publication amount
+            1e16, // spread percentege
             1e16 // spread percentege
         );
 

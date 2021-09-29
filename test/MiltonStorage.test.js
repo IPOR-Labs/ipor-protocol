@@ -74,11 +74,13 @@ contract('MiltonStorage', (accounts) => {
         await iporAddressesManager.setAddress("WARREN", warren.address);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
-        await milton.initialize(iporAddressesManager.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenUsdc.address);
         await iporAddressesManager.addAsset(tokenDai.address);
+
+        await milton.initialize(iporAddressesManager.address);
+        await miltonConfiguration.initialize(iporAddressesManager.address);
 
     });
 

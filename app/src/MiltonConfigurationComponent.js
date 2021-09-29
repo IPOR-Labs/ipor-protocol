@@ -32,7 +32,7 @@ export default ({drizzle, drizzleState}) => (
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="MiltonConfiguration"
-                    method="getLiquidationDepositFeeAmount"
+                    method="getLiquidationDepositAmount"
                     render={(value) => (
                         <div>
                             {value / 1000000000000000000}<br/>
@@ -44,7 +44,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonConfiguration"
-                    method="setLiquidationDepositFeeAmount"/>
+                    method="setLiquidationDepositAmount"/>
             </div>
             <div className="col-md-3">
                 <strong>Open Fee Percentage</strong>
@@ -115,7 +115,7 @@ export default ({drizzle, drizzleState}) => (
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="MiltonConfiguration"
-                    method="getMaxLiquidationDepositFeeAmount"
+                    method="getMaxLiquidationDepositAmount"
                     render={(value) => (
                         <div>
                             {value / 1000000000000000000}<br/>
@@ -127,7 +127,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonConfiguration"
-                    method="setMaxLiquidationDepositFeeAmount"/>
+                    method="setMaxLiquidationDepositAmount"/>
             </div>
             <div className="col-md-3">
                 <strong>Max Open Fee Percentage</strong>

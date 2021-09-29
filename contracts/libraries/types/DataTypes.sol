@@ -112,7 +112,10 @@ library DataTypes {
         //@notice amount calculated based on deposit amount
         uint256 openingAmount;
         uint256 iporPublicationAmount;
-        uint256 spreadPercentage;
+        //@notice value are basis points
+        uint256 spreadPayFixedValue;
+        //@notice value are basis points
+        uint256 spreadRecFixedValue;
 
     }
 

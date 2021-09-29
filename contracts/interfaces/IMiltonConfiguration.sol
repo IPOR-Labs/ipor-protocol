@@ -4,22 +4,15 @@ pragma solidity >=0.8.4 <0.9.0;
 interface IMiltonConfiguration {
 
     event IncomeTaxPercentageSet(uint256 newIncomeTaxPercentage);
-    event MaxIncomeTaxPercentageSet(uint256 newMaxIncomeTaxPercentage);
-
-    event LiquidationDepositFeeAmountSet(uint256 newLiquidationDepositFeeAmount);
-    event MaxLiquidationDepositFeeAmountSet(uint256 newMaxLiquidationDepositFeeAmount);
-
+    event LiquidationDepositAmountSet(uint256 newLiquidationDepositAmount);
     event OpeningFeePercentageSet(uint256 newOpeningFeePercentage);
-    event MaxOpeningFeePercentageSet(uint256 newMaxOpeningFeePercentage);
+
     event OpeningFeeForTreasuryPercentageSet(uint256 newOpeningFeeForTreasuryPercentage);
 
     event IporPublicationFeeAmountSet(uint256 newIporPublicationFeeAmount);
-    event MaxIporPublicationFeeAmountSet(uint256 newMaxIporPublicationFeeAmount);
 
     event LiquidityPoolMaxUtilizationPercentageSet(uint256 newLiquidityPoolMaxUtilizationPercentageSet);
     event MaxPositionTotalAmountSet(uint256 newMaxPositionTotalAmount);
-
-    event SpreadSet(uint256 newSpread);
 
     event MaxCollateralizationValueSet(uint256 newMaxCollateralizationValue);
     event MinCollateralizationValueSet(uint256 newMinCollateralizationValue);
@@ -28,25 +21,13 @@ interface IMiltonConfiguration {
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external;
 
-    function getMaxIncomeTaxPercentage() external view returns (uint256);
+    function getLiquidationDepositAmount() external view returns (uint256);
 
-    function setMaxIncomeTaxPercentage(uint256 _maxIncomeTaxPercentage) external;
-
-    function getLiquidationDepositFeeAmount() external view returns (uint256);
-
-    function setLiquidationDepositFeeAmount(uint256 _liquidationDepositFeeAmount) external;
-
-    function getMaxLiquidationDepositFeeAmount() external view returns (uint256);
-
-    function setMaxLiquidationDepositFeeAmount(uint256 _maxLiquidationDepositFeeAmount) external;
+    function setLiquidationDepositAmount(uint256 _liquidationDepositAmount) external;
 
     function getOpeningFeePercentage() external view returns (uint256);
 
     function setOpeningFeePercentage(uint256 _openingFeePercentage) external;
-
-    function getMaxOpeningFeePercentage() external view returns (uint256);
-
-    function setMaxOpeningFeePercentage(uint256 _maxOpeningFeePercentage) external;
 
     function getOpeningFeeForTreasuryPercentage() external view returns (uint256);
 
@@ -56,10 +37,6 @@ interface IMiltonConfiguration {
 
     function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount) external;
 
-    function getMaxIporPublicationFeeAmount() external view returns (uint256);
-
-    function setMaxIporPublicationFeeAmount(uint256 _maxIporPublicationFeeAmount) external;
-
     function getLiquidityPoolMaxUtilizationPercentage() external view returns (uint256);
 
     function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external;
@@ -68,9 +45,13 @@ interface IMiltonConfiguration {
 
     function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external;
 
-    function getSpread() external view returns (uint256);
+    function getSpreadPayFixedValue(address asset) external view returns (uint256);
 
-    function setSpread(uint256 _spread) external;
+    function setSpreadPayFixedValue(address asset, uint256 _spread) external;
+
+    function getSpreadRecFixedValue(address asset) external view returns (uint256);
+
+    function setSpreadRecFixedValue(address asset, uint256 _spread) external;
 
     function getMaxCollateralizationValue() external view returns (uint256);
 

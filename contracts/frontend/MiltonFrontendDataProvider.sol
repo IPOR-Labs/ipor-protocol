@@ -6,6 +6,7 @@ import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IMiltonSpreadStrategy.sol";
 
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
@@ -37,17 +38,25 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         return iporDerivatives;
     }
 
-    function getConfiguration() external override view returns (IporConfiguration memory iporConfiguration) {
+    function getConfiguration() external override view returns (IporConfigurationFront memory iporConfiguration) {
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(addressesManager.getMiltonConfiguration());
-        return IporConfiguration(
+        address[] memory assets = addressesManager.getAssets();
+        IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(addressesManager.getMiltonSpreadStrategy());
+        IporSpreadFront[] memory spreads = new IporSpreadFront[](assets.length);
+
+        for (uint256 i = 0; i < assets.length; i++) {
+            (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = spreadStrategy.calculateSpread(assets[i], block.timestamp);
+            spreads[i] = IporSpreadFront(assets[i], spreadPayFixedValue, spreadRecFixedValue);
+        }
+
+        return IporConfigurationFront(
             miltonConfiguration.getMinCollateralizationValue(),
             miltonConfiguration.getMaxCollateralizationValue(),
             miltonConfiguration.getOpeningFeePercentage(),
             miltonConfiguration.getIporPublicationFeeAmount(),
-            miltonConfiguration.getLiquidationDepositFeeAmount(),
-            miltonConfiguration.getSpread(),
-            miltonConfiguration.getSpread(),
-            miltonConfiguration.getIncomeTaxPercentage()
+            miltonConfiguration.getLiquidationDepositAmount(),
+            miltonConfiguration.getIncomeTaxPercentage(),
+            spreads
         );
     }
 }

@@ -26,7 +26,7 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
             <tr>
-                <td><strong>AMM Total Balance</strong></td>
+                <td><strong>Milton Total Balance</strong></td>
                 <td>
                     <ContractData
                         drizzle={drizzle}

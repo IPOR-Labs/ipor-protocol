@@ -118,10 +118,10 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function calculateSpread(
         address asset,
-        uint256 calculateTimestamp) external override view returns (uint256 spreadPf, uint256 spreadRf) {
+        uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         return (
-        spreadPf = spreadIndicators[asset].pf.calculateSpread(calculateTimestamp),
-        spreadRf = spreadIndicators[asset].rf.calculateSpread(calculateTimestamp)
+        spreadPayFixedValue = IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getSpreadPayFixedValue(asset),
+        spreadRecFixedValue = IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getSpreadRecFixedValue(asset)
         );
     }
 
@@ -151,7 +151,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         balances[asset].derivatives = balances[asset].derivatives + depositAmount;
         balances[asset].openingFee = balances[asset].openingFee + openingFeeAmount;
-        balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + miltonConfiguration.getLiquidationDepositFeeAmount();
+        balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + miltonConfiguration.getLiquidationDepositAmount();
         balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + miltonConfiguration.getIporPublicationFeeAmount();
 
         uint256 openingFeeForTreasurePercentage = miltonConfiguration.getOpeningFeeForTreasuryPercentage();

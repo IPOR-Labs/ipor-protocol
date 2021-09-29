@@ -79,6 +79,7 @@ contract('Milton', (accounts) => {
         await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
+        await miltonConfiguration.initialize(iporAddressesManager.address);
 
     });
 
@@ -1796,7 +1797,6 @@ contract('Milton', (accounts) => {
 
     it('should calculate income tax, 100%, Milton loses, user earns, |I| < D', async () => {
         await setupTokenDaiInitialValues();
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("8334319068493150653833");
         let expectedMiltonTokenBalance = BigInt("5775380931506849346167") + incomeTax;
@@ -1817,12 +1817,10 @@ contract('Milton', (accounts) => {
             testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
     it('should calculate income tax, 100%, Milton loses, user earns, |I| > D', async () => {
         await setupTokenDaiInitialValues();
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
 
         let incomeTax = BigInt("9870300000000000000000");
@@ -1844,12 +1842,10 @@ contract('Milton', (accounts) => {
             0, testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool', async () => {
         await setupTokenDaiInitialValues();
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("7842156164383561677637");
 
@@ -1874,13 +1870,11 @@ contract('Milton', (accounts) => {
             incomeTax, testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool', async () => {
         await setupTokenDaiInitialValues();
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_100_PERCENTAGE);
         let incomeTax = BigInt("9870300000000000000000");
 
@@ -1901,7 +1895,6 @@ contract('Milton', (accounts) => {
             testUtils.ZERO, null
         );
         await miltonConfiguration.setIncomeTaxPercentage(testUtils.MILTON_10_PERCENTAGE);
-        await miltonConfiguration.setMaxIncomeTaxPercentage(testUtils.MILTON_20_PERCENTAGE);
     });
 
     it('should open pay fixed position, DAI, custom Opening Fee for Treasury 50%', async () => {
@@ -2547,7 +2540,7 @@ contract('Milton', (accounts) => {
         expectedLiquidityPoolTotalBalance,
         expectedOpenedPositions,
         expectedDerivativesTotalBalance,
-        expectedLiquidationDepositFeeTotalBalance,
+        expectedLiquidationDepositTotalBalance,
         expectedTreasuryTotalBalance,
         expectedSoap,
         openTimestamp
@@ -2595,7 +2588,7 @@ contract('Milton', (accounts) => {
             expectedLiquidityPoolTotalBalance,
             expectedOpenedPositions,
             expectedDerivativesTotalBalance,
-            expectedLiquidationDepositFeeTotalBalance,
+            expectedLiquidationDepositTotalBalance,
             expectedTreasuryTotalBalance
         );
 
@@ -2619,7 +2612,7 @@ contract('Milton', (accounts) => {
         expectedLiquidityPoolTotalBalance,
         expectedOpenedPositions,
         expectedDerivativesTotalBalance,
-        expectedLiquidationDepositFeeTotalBalance,
+        expectedLiquidationDepositTotalBalance,
         expectedTreasuryTotalBalance
     ) {
         let actualDerivatives = await miltonStorage.getPositions();
@@ -2639,7 +2632,7 @@ contract('Milton', (accounts) => {
             expectedMiltonTokenBalance,
             expectedDerivativesTotalBalance,
             expectedOpeningFeeTotalBalance,
-            expectedLiquidationDepositFeeTotalBalance,
+            expectedLiquidationDepositTotalBalance,
             expectedPublicationFeeTotalBalance,
             expectedLiquidityPoolTotalBalance,
             expectedTreasuryTotalBalance
@@ -2735,7 +2728,7 @@ contract('Milton', (accounts) => {
         expectedMiltonTokenBalance,
         expectedDerivativesTotalBalance,
         expectedOpeningFeeTotalBalance,
-        expectedLiquidationDepositFeeTotalBalance,
+        expectedLiquidationDepositTotalBalance,
         expectedPublicationFeeTotalBalance,
         expectedLiquidityPoolTotalBalance,
         expectedTreasuryTotalBalance
@@ -2753,7 +2746,7 @@ contract('Milton', (accounts) => {
         const actualMiltonTokenBalance = BigInt(await miltonDevToolDataProvider.getMiltonTotalSupply(asset));
         const actualDerivativesTotalBalance = BigInt(balance.derivatives);
         const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
-        const actualLiquidationDepositFeeTotalBalance = BigInt(balance.liquidationDeposit);
+        const actualLiquidationDepositTotalBalance = BigInt(balance.liquidationDeposit);
         const actualPublicationFeeTotalBalance = BigInt(balance.iporPublicationFee);
         const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
         const actualTreasuryTotalBalance = BigInt(balance.treasury);
@@ -2783,9 +2776,9 @@ contract('Milton', (accounts) => {
                 `Incorrect opening fee total balance for ${asset}, actual:  ${actualOpeningFeeTotalBalance}, expected: ${expectedOpeningFeeTotalBalance}`)
         }
 
-        if (expectedLiquidationDepositFeeTotalBalance !== null) {
-            assert(expectedLiquidationDepositFeeTotalBalance === actualLiquidationDepositFeeTotalBalance,
-                `Incorrect liquidation deposit fee total balance for ${asset}, actual:  ${actualLiquidationDepositFeeTotalBalance}, expected: ${expectedLiquidationDepositFeeTotalBalance}`)
+        if (expectedLiquidationDepositTotalBalance !== null) {
+            assert(expectedLiquidationDepositTotalBalance === actualLiquidationDepositTotalBalance,
+                `Incorrect liquidation deposit fee total balance for ${asset}, actual:  ${actualLiquidationDepositTotalBalance}, expected: ${expectedLiquidationDepositTotalBalance}`)
         }
 
         if (expectedPublicationFeeTotalBalance != null) {

@@ -27,7 +27,7 @@ contract TestMilton is Milton {
 
     function test_calculateSpread(
         address asset,
-        uint256 calculateTimestamp) public view returns (uint256 spreadPf, uint256 spreadRf){
+        uint256 calculateTimestamp) public view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue){
         return _calculateSpread(asset, calculateTimestamp);
     }
 

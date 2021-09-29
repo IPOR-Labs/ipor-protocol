@@ -26,15 +26,15 @@ library AmmMath {
     function calculateDerivativeAmount(
         uint256 totalAmount,
         uint256 collateralization,
-        uint256 liquidationDepositFeeAmount,
+        uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeePercentage
     ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
         uint256 openingFeeAmount = division(
-            (totalAmount - liquidationDepositFeeAmount - iporPublicationFeeAmount) * openingFeePercentage,
+            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * openingFeePercentage,
             Constants.MD
         );
-        uint256 depositAmount = totalAmount - liquidationDepositFeeAmount - iporPublicationFeeAmount - openingFeeAmount;
+        uint256 depositAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount - openingFeeAmount;
         return DataTypes.IporDerivativeAmount(
             depositAmount, division(collateralization * depositAmount, Constants.MD),
             openingFeeAmount
