@@ -5,7 +5,7 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
 
-    function getBalance(address asset) external view returns(DataTypes.MiltonTotalBalance memory);
+    function getBalance(address asset) external view returns (DataTypes.MiltonTotalBalance memory);
 
     function getLastDerivativeId() external view returns (uint256);
 
@@ -33,7 +33,7 @@ interface IMiltonStorage {
 
     function getUserDerivativeIds(address userAddress) external view returns (uint256[] memory);
 
-    function calculateSpread(address asset, uint256 calculateTimestamp) external view returns (uint256 spreadPf, uint256 spreadRf);
+    function calculateSpread(address asset, uint256 calculateTimestamp) external view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue);
 
     function calculateSoap(address asset, uint256 ibtPrice, uint256 calculateTimestamp) external view returns (int256 soapPf, int256 soapRf, int256 soap);
 

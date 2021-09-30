@@ -74,11 +74,13 @@ contract('MiltonStorage', (accounts) => {
         await iporAddressesManager.setAddress("WARREN", warren.address);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
-        await milton.initialize(iporAddressesManager.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenUsdc.address);
         await iporAddressesManager.addAsset(tokenDai.address);
+
+        await milton.initialize(iporAddressesManager.address);
+        await miltonConfiguration.initialize(iporAddressesManager.address);
 
     });
 
@@ -91,6 +93,7 @@ contract('MiltonStorage', (accounts) => {
         await miltonStorage.addAsset(tokenDai.address);
         await miltonStorage.addAsset(tokenUsdc.address);
         await miltonStorage.addAsset(tokenUsdt.address);
+
 
     });
 
@@ -230,12 +233,13 @@ contract('MiltonStorage', (accounts) => {
             buyer: userTwo,
             asset: tokenDai.address,
             direction: 0,
-            depositAmount: BigInt("1000000000000000000000"),
+            collateral: BigInt("1000000000000000000000"),
             fee: {
                 liquidationDepositAmount: BigInt("20000000000000000000"),
                 openingAmount: 123,
                 iporPublicationAmount: 123,
-                spreadPercentage: 123
+                spreadPayFixedValue: 123,
+                spreadRecFixedValue: 123
             },
             collateralization: BigInt(10000000000000000000),
             notionalAmount: 123,

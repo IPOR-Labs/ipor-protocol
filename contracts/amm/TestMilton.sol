@@ -27,8 +27,28 @@ contract TestMilton is Milton {
 
     function test_calculateSpread(
         address asset,
-        uint256 calculateTimestamp) public view returns (uint256 spreadPf, uint256 spreadRf){
+        uint256 calculateTimestamp) public view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue){
         return _calculateSpread(asset, calculateTimestamp);
+    }
+
+    function setSpreadPayFixed(address asset, uint256 value) public {
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        miltonConfiguration.setSpreadPayFixedValue(asset, value);
+    }
+
+    function getSpreadPayFixed(address asset) public view returns (uint256){
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        return miltonConfiguration.getSpreadPayFixedValue(asset);
+    }
+
+    function setSpreadRecFixed(address asset, uint256 value) public {
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        miltonConfiguration.setSpreadRecFixedValue(asset, value);
+    }
+
+    function getSpreadRecFixed(address asset) public view returns (uint256){
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        return miltonConfiguration.getSpreadRecFixedValue(asset);
     }
 
 }

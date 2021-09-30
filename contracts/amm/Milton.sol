@@ -6,7 +6,7 @@ import "../libraries/AmmMath.sol";
 //TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+//import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
@@ -27,7 +27,7 @@ import "../interfaces/IMiltonSpreadStrategy.sol";
  */
 contract Milton is Ownable, MiltonEvents, IMilton {
 
-    using SafeERC20 for IERC20;
+//    using SafeERC20 for IERC20;
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
@@ -80,12 +80,12 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, amount);
         IporToken(_addressesManager.getIporToken(asset)).burn(msg.sender, msg.sender, amount);
-        IERC20(asset).safeTransfer(msg.sender, amount);
+        IERC20(asset).transfer(msg.sender, amount);
     }
 
-    function calculateSpread(address asset) external override view returns (uint256 spreadPf, uint256 spreadRf) {
-        (uint256 _spreadPf, uint256 _spreadRf) = _calculateSpread(asset, block.timestamp);
-        return (spreadPf = _spreadPf, spreadRf = _spreadRf);
+    function calculateSpread(address asset) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
+        (uint256 _spreadPayFixedValue, uint256 _spreadRecFixedValue) = _calculateSpread(asset, block.timestamp);
+        return (spreadPayFixedValue = _spreadPayFixedValue, spreadRecFixedValue = _spreadRecFixedValue);
     }
 
     function calculateSoap(address asset) external override view returns (int256 soapPf, int256 soapRf, int256 soap) {
@@ -93,7 +93,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function _calculateSpread(address asset, uint256 calculateTimestamp) internal view returns (uint256 spreadPf, uint256 spreadRf) {
+    function _calculateSpread(address asset, uint256 calculateTimestamp) internal view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         return IMiltonSpreadStrategy(_addressesManager.getMiltonSpreadStrategy()).calculateSpread(asset, calculateTimestamp);
     }
 
@@ -126,7 +126,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(collateralization <= miltonConfiguration.getMaxCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_HIGH);
 
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
-        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount(),
+        require(totalAmount > miltonConfiguration.getLiquidationDepositAmount() + miltonConfiguration.getIporPublicationFeeAmount(),
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
         require(totalAmount <= miltonConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
         require(IERC20(asset).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
@@ -142,25 +142,19 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
             totalAmount, collateralization,
-            miltonConfiguration.getLiquidationDepositFeeAmount(),
+            miltonConfiguration.getLiquidationDepositAmount(),
             miltonConfiguration.getIporPublicationFeeAmount(),
             miltonConfiguration.getOpeningFeePercentage()
         );
 
-        require(totalAmount > miltonConfiguration.getLiquidationDepositFeeAmount() + miltonConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
+        require(totalAmount > miltonConfiguration.getLiquidationDepositAmount() + miltonConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         require(IMiltonLPUtilizationStrategy(
             _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee) <= miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
-        DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-            miltonConfiguration.getLiquidationDepositFeeAmount(),
-            derivativeAmount.openingFee,
-            miltonConfiguration.getIporPublicationFeeAmount(),
-            miltonConfiguration.getSpread());
-
-        DataTypes.IporDerivativeIndicator memory iporDerivativeIndicator = _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional);
+        (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, openTimestamp);
 
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
@@ -171,11 +165,17 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             asset,
             direction,
             derivativeAmount.deposit,
-            fee, collateralization,
+            DataTypes.IporDerivativeFee(
+                miltonConfiguration.getLiquidationDepositAmount(),
+                derivativeAmount.openingFee,
+                miltonConfiguration.getIporPublicationFeeAmount(),
+                spreadPayFixedValue,
+                spreadRecFixedValue),
+            collateralization,
             derivativeAmount.notional,
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
-            iporDerivativeIndicator
+            _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional)
         );
 
         miltonStorage.updateStorageWhenOpenPosition(iporDerivative);
@@ -201,7 +201,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             iporDerivative.buyer,
             iporDerivative.asset,
             DataTypes.DerivativeDirection(iporDerivative.direction),
-            iporDerivative.depositAmount,
+            iporDerivative.collateral,
             iporDerivative.fee,
             iporDerivative.collateralization,
             iporDerivative.notionalAmount,
@@ -217,12 +217,12 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         (uint256 indexValue, ,) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
         require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
-        uint256 spread = IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getSpread();
+        (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, block.timestamp);
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             indexValue,
             accruedIbtPrice,
             AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
-            direction == 0 ? (indexValue + spread) : (indexValue - spread)
+            direction == 0 ? (indexValue + spreadPayFixedValue) : (indexValue - spreadRecFixedValue)
         );
         return indicator;
     }
@@ -255,17 +255,17 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
         uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
 
-        uint256 transferAmount = derivativeItem.item.depositAmount;
+        uint256 transferAmount = derivativeItem.item.collateral;
 
         if (interestDifferenceAmount > 0) {
 
             //tokens transfered from AMM
-            if (absInterestDifferenceAmount > derivativeItem.item.depositAmount) {
+            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.depositAmount, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral, miltonConfiguration.getIncomeTaxPercentage());
 
                 //transfer D+D-incomeTax to user's address
-                transferAmount = transferAmount + derivativeItem.item.depositAmount - incomeTax;
+                transferAmount = transferAmount + derivativeItem.item.collateral - incomeTax;
 
                 _transferDerivativeAmount(derivativeItem, transferAmount);
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
@@ -289,7 +289,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         } else {
             //tokens transfered to AMM, updates on balances
-            if (absInterestDifferenceAmount > derivativeItem.item.depositAmount) {
+            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
 
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount

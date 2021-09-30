@@ -32,7 +32,7 @@ export default ({drizzle, drizzleState}) => (
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="MiltonConfiguration"
-                    method="getLiquidationDepositFeeAmount"
+                    method="getLiquidationDepositAmount"
                     render={(value) => (
                         <div>
                             {value / 1000000000000000000}<br/>
@@ -44,7 +44,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonConfiguration"
-                    method="setLiquidationDepositFeeAmount"/>
+                    method="setLiquidationDepositAmount"/>
             </div>
             <div className="col-md-3">
                 <strong>Open Fee Percentage</strong>
@@ -85,89 +85,6 @@ export default ({drizzle, drizzleState}) => (
                     drizzle={drizzle}
                     contract="MiltonConfiguration"
                     method="setIporPublicationFeeAmount"/>
-            </div>
-        </div>
-        <hr/>
-        <div className="row">
-            <div className="col-md-3">
-                <strong>Max Income Tax Percentage</strong>
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
-                    method="getMaxIncomeTaxPercentage"
-                    render={(value) => (
-                        <div>
-                            {value / 1000000000000000000}<br/>
-                            <small>{value}</small>
-                        </div>
-                    )}
-                />
-                <hr/>
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonConfiguration"
-                    method="setMaxIncomeTaxPercentage"/>
-            </div>
-            <div className="col-md-3">
-                <strong>Max Liquidation Deposit Fee Amount</strong>
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
-                    method="getMaxLiquidationDepositFeeAmount"
-                    render={(value) => (
-                        <div>
-                            {value / 1000000000000000000}<br/>
-                            <small>{value}</small>
-                        </div>
-                    )}
-                />
-                <hr/>
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonConfiguration"
-                    method="setMaxLiquidationDepositFeeAmount"/>
-            </div>
-            <div className="col-md-3">
-                <strong>Max Open Fee Percentage</strong>
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
-                    method="getMaxOpeningFeePercentage"
-                    render={(value) => (
-                        <div>
-                            {value / 1000000000000000000}<br/>
-                            <small>{value}</small>
-                        </div>
-                    )}
-                />
-                <hr/>
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonConfiguration"
-                    method="setMaxOpeningFeePercentage"/>
-            </div>
-            <div className="col-md-3">
-                <strong>Max IPOR Publication Fee Amount</strong>
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
-                    method="getMaxIporPublicationFeeAmount"
-                    render={(value) => (
-                        <div>
-                            {value / 1000000000000000000}<br/>
-                            <small>{value}</small>
-                        </div>
-                    )}
-                />
-                <hr/>
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonConfiguration"
-                    method="setMaxIporPublicationFeeAmount"/>
             </div>
         </div>
         <hr/>

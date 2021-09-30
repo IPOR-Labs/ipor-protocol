@@ -18,7 +18,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         _addressesManager = addressesManager;
     }
 
-    function calculateSpread(address asset, uint256 calculateTimestamp) external override view returns (uint256 spreadPf, uint256 spreadRf) {
+    function calculateSpread(address asset, uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         return IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSpread(asset, calculateTimestamp);
     }
 }

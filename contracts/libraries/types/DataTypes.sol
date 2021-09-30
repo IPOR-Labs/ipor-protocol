@@ -112,7 +112,10 @@ library DataTypes {
         //@notice amount calculated based on deposit amount
         uint256 openingAmount;
         uint256 iporPublicationAmount;
-        uint256 spreadPercentage;
+        //@notice value are basis points
+        uint256 spreadPayFixedValue;
+        //@notice value are basis points
+        uint256 spreadRecFixedValue;
 
     }
 
@@ -155,8 +158,8 @@ library DataTypes {
         //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
         uint8 direction;
 
-        //@notice Derivative deposit amount
-        uint256 depositAmount;
+        //@notice Collateral
+        uint256 collateral;
 
         IporDerivativeFee fee;
 

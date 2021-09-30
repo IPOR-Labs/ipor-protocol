@@ -76,6 +76,7 @@ contract('MiltonSoap', (accounts) => {
         await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
+        await miltonConfiguration.initialize(iporAddressesManager.address);
 
     });
 

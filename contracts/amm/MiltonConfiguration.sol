@@ -22,55 +22,52 @@ import "../interfaces/IMiltonConfiguration.sol";
 contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 minCollateralizationValue;
+
     uint256 maxCollateralizationValue;
 
     uint256 incomeTaxPercentage;
-    uint256 maxIncomeTaxPercentage;
 
-    uint256 liquidationDepositFeeAmount;
-    uint256 maxLiquidationDepositFeeAmount;
+    uint256 liquidationDepositAmount;
 
     uint256 openingFeePercentage;
-    uint256 maxOpeningFeePercentage;
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big
     //pie going to Treasury Balance
     uint256 openingFeeForTreasuryPercentage;
 
     uint256 iporPublicationFeeAmount;
-    uint256 maxIporPublicationFeeAmount;
 
     uint256 liquidityPoolMaxUtilizationPercentage;
 
     //@notice max total amount used when opening position
     uint256 maxPositionTotalAmount;
 
-    uint256 spread;
+    //TODO: spread from configuration will be deleted, spread will be calculated in runtime
+    mapping(address => uint256) spreadPayFixedValues;
+    mapping(address => uint256) spreadRecFixedValues;
 
-    constructor() {
+    IIporAddressesManager internal _addressesManager;
+
+    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+        _addressesManager = addressesManager;
+
         incomeTaxPercentage = 1e17;
-        maxIncomeTaxPercentage = 2e17;
-
-        liquidationDepositFeeAmount = 20 * Constants.MD;
-        //TODO: clarify this value:
-        maxLiquidationDepositFeeAmount = 100 * Constants.MD;
-
+        liquidationDepositAmount = 20 * Constants.MD;
         openingFeePercentage = 1e16;
-        maxOpeningFeePercentage = Constants.MD;
         openingFeeForTreasuryPercentage = 0;
-
         iporPublicationFeeAmount = 10 * Constants.MD;
-        maxIporPublicationFeeAmount = 1000 * Constants.MD;
-
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
-
         maxPositionTotalAmount = 100000 * Constants.MD;
-
-        spread = 1e16;
 
         minCollateralizationValue = 10 * Constants.MD;
         maxCollateralizationValue = 50 * Constants.MD;
 
+        address[] memory assets = _addressesManager.getAssets();
+
+        for (uint256 i = 0; i < assets.length; i++) {
+            spreadPayFixedValues[assets[i]] = 1e16;
+            spreadRecFixedValues[assets[i]] = 1e16;
+        }
     }
 
     function getIncomeTaxPercentage() external override view returns (uint256) {
@@ -78,19 +75,9 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyOwner {
-        require(_incomeTaxPercentage <= maxIncomeTaxPercentage, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_incomeTaxPercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         incomeTaxPercentage = _incomeTaxPercentage;
         emit IncomeTaxPercentageSet(_incomeTaxPercentage);
-    }
-
-    function getMaxIncomeTaxPercentage() external override view returns (uint256) {
-        return maxIncomeTaxPercentage;
-    }
-
-    function setMaxIncomeTaxPercentage(uint256 _maxIncomeTaxPercentage) external override onlyOwner {
-        require(_maxIncomeTaxPercentage <= 1e18, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
-        maxIncomeTaxPercentage = _maxIncomeTaxPercentage;
-        emit MaxIncomeTaxPercentageSet(_maxIncomeTaxPercentage);
     }
 
     function getOpeningFeeForTreasuryPercentage() external override view returns (uint256) {
@@ -103,23 +90,13 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         emit OpeningFeeForTreasuryPercentageSet(_openingFeeForTreasuryPercentage);
     }
 
-    function getLiquidationDepositFeeAmount() external override view returns (uint256) {
-        return liquidationDepositFeeAmount;
+    function getLiquidationDepositAmount() external override view returns (uint256) {
+        return liquidationDepositAmount;
     }
 
-    function setLiquidationDepositFeeAmount(uint256 _liquidationDepositFeeAmount) external override onlyOwner {
-        require(_liquidationDepositFeeAmount <= maxLiquidationDepositFeeAmount, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
-        liquidationDepositFeeAmount = _liquidationDepositFeeAmount;
-        emit LiquidationDepositFeeAmountSet(_liquidationDepositFeeAmount);
-    }
-
-    function getMaxLiquidationDepositFeeAmount() external override view returns (uint256) {
-        return maxLiquidationDepositFeeAmount;
-    }
-
-    function setMaxLiquidationDepositFeeAmount(uint256 _maxLiquidationDepositFeeAmount) external override onlyOwner {
-        maxLiquidationDepositFeeAmount = _maxLiquidationDepositFeeAmount;
-        emit MaxLiquidationDepositFeeAmountSet(_maxLiquidationDepositFeeAmount);
+    function setLiquidationDepositAmount(uint256 _liquidationDepositAmount) external override onlyOwner {
+        liquidationDepositAmount = _liquidationDepositAmount;
+        emit LiquidationDepositAmountSet(_liquidationDepositAmount);
     }
 
     function getOpeningFeePercentage() external override view returns (uint256) {
@@ -127,19 +104,9 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyOwner {
-        require(_openingFeePercentage <= maxOpeningFeePercentage, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeePercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeePercentage = _openingFeePercentage;
         emit OpeningFeePercentageSet(_openingFeePercentage);
-    }
-
-    function getMaxOpeningFeePercentage() external override view returns (uint256) {
-        return maxOpeningFeePercentage;
-    }
-
-    function setMaxOpeningFeePercentage(uint256 _maxOpeningFeePercentage) external override onlyOwner {
-        require(_maxOpeningFeePercentage <= 1e18, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
-        maxOpeningFeePercentage = _maxOpeningFeePercentage;
-        emit MaxOpeningFeePercentageSet(_maxOpeningFeePercentage);
     }
 
     function getIporPublicationFeeAmount() external override view returns (uint256) {
@@ -147,18 +114,8 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     }
 
     function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount) external override onlyOwner {
-        require(_iporPublicationFeeAmount <= maxIporPublicationFeeAmount, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         iporPublicationFeeAmount = _iporPublicationFeeAmount;
         emit IporPublicationFeeAmountSet(_iporPublicationFeeAmount);
-    }
-
-    function getMaxIporPublicationFeeAmount() external override view returns (uint256) {
-        return maxIporPublicationFeeAmount;
-    }
-
-    function setMaxIporPublicationFeeAmount(uint256 _maxIporPublicationFeeAmount) external override onlyOwner {
-        maxIporPublicationFeeAmount = _maxIporPublicationFeeAmount;
-        emit MaxIporPublicationFeeAmountSet(_maxIporPublicationFeeAmount);
     }
 
     function getLiquidityPoolMaxUtilizationPercentage() external override view returns (uint256) {
@@ -179,13 +136,20 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
     }
 
-    function getSpread() external override view returns (uint256) {
-        return spread;
+    function getSpreadPayFixedValue(address asset) external override view returns (uint256) {
+        return spreadPayFixedValues[asset];
     }
 
-    function setSpread(uint256 _spread) external override {
-        spread = _spread;
-        emit SpreadSet(_spread);
+    function setSpreadPayFixedValue(address asset, uint256 _spread) external override {
+        spreadPayFixedValues[asset] = _spread;
+    }
+
+    function getSpreadRecFixedValue(address asset) external override view returns (uint256) {
+        return spreadRecFixedValues[asset];
+    }
+
+    function setSpreadRecFixedValue(address asset, uint256 _spread) external override {
+        spreadRecFixedValues[asset] = _spread;
     }
 
     function getMaxCollateralizationValue() external override view returns (uint256) {
