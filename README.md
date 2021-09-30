@@ -1,7 +1,7 @@
 ### How to run?
 
 1. Clone `ipor-blockchain` and `ipor-protocol` repositories to the same folder.
-2. In folder `ipor-protocol` configure `.env` file based on `.env-sample`
+2. In folder `ipor-protocol` configure `.env` file based on `.env.j2`
 3. Execute script `./run.sh` with specific commands which can be joined
    - `g` - run Ganache blockchain
    - `m` - migrate Smart Contracts to blockchain

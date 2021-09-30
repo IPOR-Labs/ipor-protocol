@@ -23,6 +23,7 @@ const AmmMath = artifacts.require('AmmMath');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 const WarrenDevToolDataProvider = artifacts.require('WarrenDevToolDataProvider');
+const WarrenFrontendDataProvider = artifacts.require('WarrenFrontendDataProvider');
 const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
 const MiltonLPUtilizationStrategyCollateral = artifacts.require('MiltonLPUtilizationStrategyCollateral');
 const MiltonSpreadStrategy = artifacts.require('MiltonSpreadStrategy');
@@ -111,6 +112,9 @@ module.exports = async function (deployer, _network, addresses) {
     let iporAddressesManagerAddr = await iporAddressesManager.address;
 
     await deployer.deploy(MiltonFrontendDataProvider, iporAddressesManagerAddr);
+
+    await deployer.link(AmmMath, WarrenFrontendDataProvider);
+    await deployer.deploy(WarrenFrontendDataProvider, iporAddressesManagerAddr);
 
     await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
     await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
