@@ -144,19 +144,28 @@
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonEvents.sol</argument>
+                        <argument>${contracts.sources}/amm/MiltonLPUtilizationStrategyCollateral.sol</argument>
+                        <argument>${contracts.sources}/amm/MiltonSpreadStrategy.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/amm/TestMilton.sol</argument>
                         <argument>${contracts.sources}/configuration/IporAddressesManager.sol</argument>
                         <argument>${contracts.sources}/frontend/MiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
+                        <argument>${contracts.sources}/frontend/WarrenDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporAddressesManager.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IIporToken.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonLPUtilisationStrategy.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonSpreadStrategy.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IWarrenDevToolDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IWarrenStorage.sol</argument>
                         <argument>${contracts.sources}/libraries/AmmMath.sol</argument>
+                        <argument>${contracts.sources}/libraries/Constants.sol</argument>
                         <argument>${contracts.sources}/libraries/DerivativeLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/DerivativesView.sol</argument>
                         <argument>${contracts.sources}/libraries/IporLogic.sol</argument>
@@ -164,6 +173,7 @@
                         <argument>${contracts.sources}/libraries/SpreadIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/TotalSoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
+                        <argument>${contracts.sources}/mocks/MiltonFaucet.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/DaiMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/TusdMockedToken.sol</argument>
@@ -172,6 +182,7 @@
                         <argument>${contracts.sources}/oracles/TestWarren.sol</argument>
                         <argument>${contracts.sources}/oracles/Warren.sol</argument>
                         <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
+                        <argument>${contracts.sources}/tokenization/IporToken.sol</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -196,13 +207,16 @@
                     <abiSourceFiles>
                         <directory>${generated.sources.abi}</directory>
                         <includes>
+                            <include>DataTypes.abi</include>
                             <include>Milton.abi</include>
                             <include>MiltonDevToolDataProvider.abi</include>
+                            <include>WarrenDevToolDataProvider.abi</include>
                             <include>MiltonEvents.abi</include>
-                            <include>MiltonFrontendDataProvider.abi</include>
                             <include>TestMilton.abi</include>
                             <include>TestWarren.abi</include>
                             <include>Warren.abi</include>
+                            <!-- TODO: compile problem with MiltonFrontendDataProvider.abi: Unsupported type encountered: tuple -->
+                            <!-- <include>MiltonFrontendDataProvider.abi</include>-->
                         </includes>
                     </abiSourceFiles>
                     <outputDirectory>
