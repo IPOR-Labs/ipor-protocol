@@ -27,6 +27,7 @@ const WarrenFrontendDataProvider = artifacts.require('WarrenFrontendDataProvider
 const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
 const MiltonLPUtilizationStrategyCollateral = artifacts.require('MiltonLPUtilizationStrategyCollateral');
 const MiltonSpreadStrategy = artifacts.require('MiltonSpreadStrategy');
+const IporLiquidityPool = artifacts.require('IporLiquidityPool');
 
 
 module.exports = async function (deployer, _network, addresses) {
@@ -83,6 +84,7 @@ module.exports = async function (deployer, _network, addresses) {
     let miltonFaucetAddr = null;
     let miltonConfiguration = null;
     let iporAddressesManager = null;
+    let iporLiquidityPool = null;
 
     await deployer.link(AmmMath, DerivativeLogic);
     await deployer.deploy(DerivativeLogic);
@@ -124,6 +126,10 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(MiltonSpreadStrategy);
     let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
     await iporAddressesManager.setAddress("MILTON_SPREAD_STRATEGY", miltonSpreadStrategy.address);
+
+    await deployer.link(AmmMath, IporLiquidityPool);
+    await deployer.deploy(IporLiquidityPool);
+    iporLiquidityPool = await IporLiquidityPool.deployed();
 
     // prepare ERC20 mocked tokens...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
@@ -327,5 +333,6 @@ module.exports = async function (deployer, _network, addresses) {
     await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
     await miltonSpreadStrategy.initialize(iporAddressesManagerAddr);
     await miltonConfiguration.initialize(iporAddressesManagerAddr);
+    await iporLiquidityPool.initialize(iporAddressesManagerAddr);
 
 };

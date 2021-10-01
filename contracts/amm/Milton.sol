@@ -66,6 +66,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     }
 
 
+    //TODO: move to LiquidityPool
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
         IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
         //TODO: take into consideration token decimals!!!
@@ -73,6 +74,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         IporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, liquidityAmount);
     }
 
+    //TODO: move to LiquidityPool
     function withdraw(address asset, uint256 amount) external override {
         //TODO: do final implementation, will be described in separate task
         require(IporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= amount, Errors.MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW);
