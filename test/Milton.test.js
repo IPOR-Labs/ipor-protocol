@@ -2424,8 +2424,10 @@ contract('Milton', (accounts) => {
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
         await milton.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider})
+
         await iporAddressesManager.setAddress("MILTON", userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne})
+        await iporAddressesManager.setAddress("MILTON", milton.address);
 
         //when
         await testUtils.assertError(
@@ -2434,7 +2436,7 @@ contract('Milton', (accounts) => {
             //then
             'IPOR_43'
         );
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+
     });
 
 
