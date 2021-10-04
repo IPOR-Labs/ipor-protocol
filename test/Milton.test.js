@@ -15,6 +15,7 @@ const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
+const IporLiquidityPool = artifacts.require('IporLiquidityPool');
 
 contract('Milton', (accounts) => {
 
@@ -36,6 +37,7 @@ contract('Milton', (accounts) => {
     let miltonConfiguration = null;
     let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
+    let iporLiquidityPool = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
@@ -44,22 +46,12 @@ contract('Milton', (accounts) => {
         miltonConfiguration = await MiltonConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
+        iporLiquidityPool = await IporLiquidityPool.deployed();
 
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
         tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
-
-        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
-        iporTokenUsdt.initialize(iporAddressesManager.address);
-        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
-        iporTokenUsdc.initialize(iporAddressesManager.address);
-        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
-        iporTokenDai.initialize(iporAddressesManager.address);
-
-        await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
-        await iporAddressesManager.setIporToken(tokenUsdc.address, iporTokenUsdc.address);
-        await iporAddressesManager.setIporToken(tokenDai.address, iporTokenDai.address);
 
         milton = await TestMilton.new();
 
@@ -80,6 +72,7 @@ contract('Milton', (accounts) => {
 
         await milton.initialize(iporAddressesManager.address);
         await miltonConfiguration.initialize(iporAddressesManager.address);
+        await iporLiquidityPool.initialize(iporAddressesManager.address);
 
     });
 
@@ -100,6 +93,17 @@ contract('Milton', (accounts) => {
         await miltonStorage.addAsset(tokenDai.address);
         await miltonStorage.addAsset(tokenUsdc.address);
         await miltonStorage.addAsset(tokenUsdt.address);
+
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt.initialize(iporAddressesManager.address);
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
+        iporTokenUsdc.initialize(iporAddressesManager.address);
+        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
+        iporTokenDai.initialize(iporAddressesManager.address);
+
+        await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
+        await iporAddressesManager.setIporToken(tokenUsdc.address, iporTokenUsdc.address);
+        await iporAddressesManager.setIporToken(tokenDai.address, iporTokenDai.address);
 
     });
 
