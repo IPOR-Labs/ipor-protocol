@@ -131,6 +131,8 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(IporLiquidityPool);
     iporLiquidityPool = await IporLiquidityPool.deployed();
 
+    await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", iporLiquidityPool.address);
+
     // prepare ERC20 mocked tokens...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
 

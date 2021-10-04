@@ -54,16 +54,6 @@ contract('IporLiquidityPool', (accounts) => {
         tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
 
-        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
-        iporTokenUsdt.initialize(iporAddressesManager.address);
-        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
-        iporTokenUsdc.initialize(iporAddressesManager.address);
-        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
-        iporTokenDai.initialize(iporAddressesManager.address);
-
-        await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
-        await iporAddressesManager.setIporToken(tokenUsdc.address, iporTokenUsdc.address);
-        await iporAddressesManager.setIporToken(tokenDai.address, iporTokenDai.address);
 
         milton = await TestMilton.new();
 
@@ -105,71 +95,82 @@ contract('IporLiquidityPool', (accounts) => {
         await miltonStorage.addAsset(tokenUsdc.address);
         await miltonStorage.addAsset(tokenUsdt.address);
 
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt.initialize(iporAddressesManager.address);
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
+        iporTokenUsdc.initialize(iporAddressesManager.address);
+        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
+        iporTokenDai.initialize(iporAddressesManager.address);
+
+        await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
+        await iporAddressesManager.setIporToken(tokenUsdc.address, iporTokenUsdc.address);
+        await iporAddressesManager.setIporToken(tokenDai.address, iporTokenDai.address);
+
     });
 
-    //
-    // it('should calculate Exchange Rate when Liquidity Pool Balance and Ipor Token Total Supply is zero', async () => {
-    //     //given
-    //     let expectedExchangeRate = BigInt("1000000000000000000");
-    //     //when
-    //     let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate(tokenDai.address));
-    //
-    //     //then
-    //     assert(expectedExchangeRate === actualExchangeRate,
-    //         `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-    //         expected: ${expectedExchangeRate}`)
-    // });
-    //
-    // it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and Ipor Token Total Supply is NOT zero', async () => {
-    //     //given
-    //     await setupTokenDaiInitialValues();
-    //     let expectedExchangeRate = BigInt("1000000000000000000");
-    //     const params = getStandardDerivativeParams();
-    //
-    //     await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
-    //
-    //     //when
-    //     let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate(tokenDai.address));
-    //
-    //     //then
-    //     assert(expectedExchangeRate === actualExchangeRate,
-    //         `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-    //         expected: ${expectedExchangeRate}`)
-    // });
-    //
-    // it('should calculate Exchange Rate when Liquidity Pool Balance is zero and Ipor Token Total Supply is NOT zero', async () => {
-    //     //given
-    //     await setupTokenDaiInitialValues();
-    //     let expectedExchangeRate = BigInt("0");
-    //     const params = getStandardDerivativeParams();
-    //
-    //     await milton.provideLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
-    //
-    //     //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-    //     await iporAddressesManager.setAddress("MILTON", userOne);
-    //     miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: userOne});
-    //
-    //     //when
-    //     let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate(tokenDai.address));
-    //
-    //     //then
-    //     assert(expectedExchangeRate === actualExchangeRate,
-    //         `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-    //         expected: ${expectedExchangeRate}`)
-    //
-    //     await iporAddressesManager.setAddress("MILTON", milton.address);
-    // });
+    it('should calculate Exchange Rate when Liquidity Pool Balance and Ipor Token Total Supply is zero', async () => {
+        //given
+        let expectedExchangeRate = BigInt("1000000000000000000");
+        //when
+        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
 
-    it('should calculate Exchange Rate, Exchange Rate greater than 1', async () => {
+        //then
+        assert(expectedExchangeRate === actualExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+            expected: ${expectedExchangeRate}`)
+    });
+
+    it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and Ipor Token Total Supply is NOT zero', async () => {
         //given
         await setupTokenDaiInitialValues();
         let expectedExchangeRate = BigInt("1000000000000000000");
         const params = getStandardDerivativeParams();
+
+        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+
+        //when
+        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+
+        //then
+        assert(expectedExchangeRate === actualExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+            expected: ${expectedExchangeRate}`)
+    });
+
+    it('should calculate Exchange Rate when Liquidity Pool Balance is zero and Ipor Token Total Supply is NOT zero', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        let expectedExchangeRate = BigInt("0");
+        const params = getStandardDerivativeParams();
+
+        await milton.provideLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
+
+        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+        await iporAddressesManager.setAddress("MILTON", userOne);
+        miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: userOne});
+
+        //when
+        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+
+        //then
+        assert(expectedExchangeRate === actualExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+            expected: ${expectedExchangeRate}`)
+
+        await iporAddressesManager.setAddress("MILTON", milton.address);
+    });
+
+    it('should calculate Exchange Rate, Exchange Rate greater than 1', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        let expectedExchangeRate = BigInt("1002500000000000000");
+        const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
-        await milton.provideLiquidity(params.asset, BigInt("50000000000000000000"), {from: liquidityProvider})
+        await milton.provideLiquidity(params.asset, BigInt("40000000000000000000"), {from: liquidityProvider})
+
         //open position to have something in Liquidity Pool
         await milton.openPosition(
-            params.asset, BigInt("50000000000000000000"),
+            params.asset, BigInt("40000000000000000000"),
             params.slippageValue, params.collateralization,
             params.direction, {from: userTwo});
 
@@ -182,36 +183,160 @@ contract('IporLiquidityPool', (accounts) => {
             expected: ${expectedExchangeRate}`)
     });
 
-    // it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and Ipor Token Total Supply is zero', async () => {
-    //     //given
-    //     await setupTokenDaiInitialValues();
-    //     let expectedExchangeRate = BigInt("1000000000000000000");
-    //     const params = getStandardDerivativeParams();
-    //     await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
-    //     await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
-    //     //open position to have something in Liquidity Pool
-    //     await milton.openPosition(
-    //         params.asset, params.totalAmount,
-    //         params.slippageValue, params.collateralization,
-    //         params.direction, {from: userTwo});
-    //
-    //     //when
-    //     let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate(tokenDai.address));
-    //
-    //     //then
-    //     assert(expectedExchangeRate === actualExchangeRate,
-    //         `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-    //         expected: ${expectedExchangeRate}`)
-    // });
-    //
-    // it('should calculate Exchange Rate two different assets', async () => {
-    // });
-    //
-    // it('should NOT change Exchange Rate when Liquidity Provider provide liquidity, initial Exchange Rate equal to 1.5', async () => {
-    // });
-    //
-    // it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and withdraw, initial Exchange Rate equal to 1.5', async () => {
-    // });
+    it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and Ipor Token Total Supply is zero', async () => {
+        //given
+        let amount = BigInt("40000000000000000000");
+        await setupTokenDaiInitialValues();
+        let expectedExchangeRate = BigInt("1000000000000000000");
+        const params = getStandardDerivativeParams();
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await milton.provideLiquidity(params.asset, amount, {from: liquidityProvider});
+
+        //open position to have something in Liquidity Pool
+        await milton.openPosition(
+            params.asset, amount,
+            params.slippageValue, params.collateralization,
+            params.direction, {from: userTwo});
+
+        await milton.redeem(params.asset, amount, {from: liquidityProvider})
+
+        //when
+        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+
+        //then
+        assert(expectedExchangeRate === actualExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+            expected: ${expectedExchangeRate}`)
+    });
+
+    it('should NOT change Exchange Rate when Liquidity Provider provide liquidity, initial Exchange Rate equal to 1.5', async () => {
+
+        //given
+        let amount = BigInt("180000000000000000000");
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await milton.provideLiquidity(params.asset, amount, {from: liquidityProvider});
+        let oldOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
+        await miltonConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
+
+        //open position to have something in Liquidity Pool
+        await milton.openPosition(
+            params.asset, amount,
+            params.slippageValue, params.collateralization,
+            params.direction, {from: userTwo});
+
+        //after this withdraw initial exchange rate is 1,5
+        let expectedExchangeRate = BigInt("1500000000000000000");
+        let exchangeRateBeforeProvideLiquidity = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+        let expectedIporTokenBalanceForUserThree = BigInt("1000000000000000000000");
+
+        // //when
+        await milton.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
+
+        let actualIporTokenBalanceForUserThree = BigInt(await iporTokenDai.balanceOf.call(userThree));
+        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+
+        //then
+        assert(expectedIporTokenBalanceForUserThree === actualIporTokenBalanceForUserThree,
+            `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIporTokenBalanceForUserThree},
+                 expected: ${expectedIporTokenBalanceForUserThree}`)
+
+        assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
+            `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
+                expected: ${expectedExchangeRate}`)
+
+        assert(expectedExchangeRate === actualExchangeRate,
+            `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
+                expected: ${expectedExchangeRate}`)
+
+        await miltonConfiguration.setOpeningFeePercentage(oldOpeningFeePercentage);
+    });
+
+    it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5', async () => {
+        //given
+        let amount = BigInt("180000000000000000000");
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await milton.provideLiquidity(params.asset, amount, {from: liquidityProvider});
+        let oldOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
+        await miltonConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
+
+        //open position to have something in Liquidity Pool
+        await milton.openPosition(
+            params.asset, amount,
+            params.slippageValue, params.collateralization,
+            params.direction, {from: userTwo});
+
+        //after this withdraw initial exchange rate is 1,5
+        let expectedExchangeRate = BigInt("1500000000000000000");
+        let exchangeRateBeforeProvideLiquidity = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+        let expectedIporTokenBalanceForUserThree = BigInt("0");
+
+        //when
+        await milton.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
+        await milton.redeem(params.asset, BigInt("1000000000000000000000"), {from: userThree})
+
+        let actualIporTokenBalanceForUserThree = BigInt(await iporTokenDai.balanceOf.call(userThree));
+        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+
+        //then
+        assert(expectedIporTokenBalanceForUserThree === actualIporTokenBalanceForUserThree,
+            `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIporTokenBalanceForUserThree},
+                 expected: ${expectedIporTokenBalanceForUserThree}`)
+
+        assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
+            `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
+                expected: ${expectedExchangeRate}`)
+
+        assert(expectedExchangeRate === actualExchangeRate,
+            `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
+                expected: ${expectedExchangeRate}`)
+
+        await miltonConfiguration.setOpeningFeePercentage(oldOpeningFeePercentage);
+    });
+
+
+    it('should NOT redeem Ipor Tokens because of empty Liquidity Pool', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await milton.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
+
+        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+        await iporAddressesManager.setAddress("MILTON", userOne);
+        miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
+        await iporAddressesManager.setAddress("MILTON", milton.address);
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.redeem(params.asset, BigInt("1000000000000000000000"), {from: liquidityProvider}),
+            //then
+            'IPOR_45'
+        );
+    });
+
+    it('should NOT provide liquidity because of empty Liquidity Pool', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await milton.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
+
+        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+        await iporAddressesManager.setAddress("MILTON", userOne);
+        miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
+        await iporAddressesManager.setAddress("MILTON", milton.address);
+
+        //when
+        await testUtils.assertError(
+            //when
+            milton.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider}),
+            //then
+            'IPOR_45'
+        );
+    });
 
     const getStandardDerivativeParams = () => {
         return {

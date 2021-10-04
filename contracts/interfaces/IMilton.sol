@@ -16,6 +16,6 @@ interface IMilton {
     //TODO: final implementation
     function calculateSpread(address asset) external view returns (uint256 spreadPf, uint256 spreadRf);
 
-    function withdraw(address asset, uint256 amount) external;
+    function redeem(address iporTokenAddress, uint256 iporTokenVolume) external;
 
 }

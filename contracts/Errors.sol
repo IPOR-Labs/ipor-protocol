@@ -44,5 +44,6 @@ library Errors {
     string public constant MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW = 'IPOR_42'; //user cannot withdraw underlying tokens because ipor token on his balance is too low
     string public constant MILTON_CANNOT_WITHDRAW_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_43'; //liquidity provider cannot withdraw because liquidity pool is too low
     string public constant MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW = 'IPOR_44'; //Amount which should be burned is too low
+    string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = 'IPOR_45'; //Liquidity Pool balance is equal 0
 
 }
