@@ -147,7 +147,8 @@ contract('IporLiquidityPool', (accounts) => {
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         await iporAddressesManager.setAddress("MILTON", userOne);
-        miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: userOne});
+        await miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: userOne});
+        await iporAddressesManager.setAddress("MILTON", milton.address);
 
         //when
         let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
@@ -155,9 +156,8 @@ contract('IporLiquidityPool', (accounts) => {
         //then
         assert(expectedExchangeRate === actualExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-            expected: ${expectedExchangeRate}`)
+            expected: ${expectedExchangeRate}`);
 
-        await iporAddressesManager.setAddress("MILTON", milton.address);
     });
 
     it('should calculate Exchange Rate, Exchange Rate greater than 1', async () => {
@@ -306,7 +306,7 @@ contract('IporLiquidityPool', (accounts) => {
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         await iporAddressesManager.setAddress("MILTON", userOne);
-        miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
+        await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
         //when
@@ -326,7 +326,7 @@ contract('IporLiquidityPool', (accounts) => {
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         await iporAddressesManager.setAddress("MILTON", userOne);
-        miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
+        await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
         //when

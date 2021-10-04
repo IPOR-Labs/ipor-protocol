@@ -2399,7 +2399,7 @@ contract('Milton', (accounts) => {
         await milton.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
 
         //when
-        await milton.withdraw(params.asset, withdrawAmount, {from: liquidityProvider})
+        await milton.redeem(params.asset, withdrawAmount, {from: liquidityProvider})
 
 
         //then
@@ -2430,7 +2430,7 @@ contract('Milton', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            milton.withdraw(params.asset, params.totalAmount, {from: liquidityProvider}),
+            milton.redeem(params.asset, params.totalAmount, {from: liquidityProvider}),
             //then
             'IPOR_43'
         );
