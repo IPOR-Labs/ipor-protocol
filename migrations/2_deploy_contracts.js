@@ -304,12 +304,22 @@ module.exports = async function (deployer, _network, addresses) {
 
             console.log(`Account: ${addresses[i]} - tokens transferred`);
 
-            //AMM has rights to spend money on behalf of user
+            //Milton has rights to spend money on behalf of user
             //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
             mockedUsdt.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
             mockedUsdc.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
             mockedDai.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
             mockedTusd.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
+
+            mockedUsdt.approve(iporLiquidityPool.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedUsdc.approve(iporLiquidityPool.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedDai.approve(iporLiquidityPool.address, totalSupply18Decimals, {from: addresses[i]});
+            mockedTusd.approve(iporLiquidityPool.address, totalSupply18Decimals, {from: addresses[i]});
+
+            await milton.authorizeLiquidityPool(mockedUsdt.address);
+            await milton.authorizeLiquidityPool(mockedUsdc.address);
+            await milton.authorizeLiquidityPool(mockedDai.address);
+            await milton.authorizeLiquidityPool(mockedTusd.address);
 
             if (isTestEnvironment) {
                 mockedUsdt.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
