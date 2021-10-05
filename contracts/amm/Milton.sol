@@ -19,6 +19,7 @@ import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
+import "../interfaces/IIporLiquidityPool.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
@@ -40,6 +41,10 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //    fallback() external payable  {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
+
+    function authorizeLiquidityPool(address asset) external override onlyOwner {
+        IERC20(asset).approve(_addressesManager.getIporLiquidityPool(), Constants.MAX_VALUE);
+    }
 
     //@notice transfer publication fee to configured charlie treasurer address
     function transferPublicationFee(address asset, uint256 amount) external onlyPublicationFeeTransferer {
@@ -63,24 +68,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) external override {
         _closePosition(derivativeId, block.timestamp);
-    }
-
-
-    function provideLiquidity(address asset, uint256 liquidityAmount) external override {
-        IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
-        //TODO: take into consideration token decimals!!!
-        IERC20(asset).transferFrom(msg.sender, address(this), liquidityAmount);
-        IporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, liquidityAmount);
-    }
-
-    function withdraw(address asset, uint256 amount) external override {
-        //TODO: do final implementation, will be described in separate task
-        require(IporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= amount, Errors.MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW);
-        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getBalance(asset).liquidityPool > amount, Errors.MILTON_CANNOT_WITHDRAW_LIQUIDITY_POOL_IS_TOO_LOW);
-
-        IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, amount);
-        IporToken(_addressesManager.getIporToken(asset)).burn(msg.sender, msg.sender, amount);
-        IERC20(asset).transfer(msg.sender, amount);
     }
 
     function calculateSpread(address asset) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
@@ -138,7 +125,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS);
 
         //TODO verify if this opened derivatives is closable based on liquidity pool
-        //TODO: add configurable parameter which describe utilization rate of liquidity pool (total deposit amount / total liquidity)
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
             totalAmount, collateralization,

@@ -11,6 +11,7 @@ import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 import IporAddressesManager from "./contracts/IporAddressesManager";
+import IporLiquidityPool from "./contracts/IporLiquidityPool";
 
 const options = {
     web3: {
@@ -23,6 +24,7 @@ const options = {
     contracts: [
         MiltonDevToolDataProvider,
         IporAddressesManager,
+        IporLiquidityPool,
         Warren,
         WarrenStorage,
         WarrenDevToolDataProvider,

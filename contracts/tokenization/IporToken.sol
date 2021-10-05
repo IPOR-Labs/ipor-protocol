@@ -10,8 +10,6 @@ import {Errors} from '../Errors.sol';
 
 contract IporToken is Ownable, IIporToken, ERC20 {
 
-    event LogDebug(string key, address value);
-
 //    using SafeERC20 for IERC20;
 
     IIporAddressesManager internal _addressesManager;
@@ -39,11 +37,10 @@ contract IporToken is Ownable, IIporToken, ERC20 {
     function mint(
         address user,
         uint256 amount
-    ) external override onlyMilton returns (bool) {
+    ) external override onlyLiquidityPool returns (bool) {
         uint256 previousBalance = super.balanceOf(user);
         require(amount > 0, Errors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(user, amount);
-        emit LogDebug("sender", msg.sender);
         emit Transfer(address(0), user, amount);
         emit Mint(user, amount);
 
@@ -54,7 +51,7 @@ contract IporToken is Ownable, IIporToken, ERC20 {
         address user,
         address receiverOfUnderlying,
         uint256 amount
-    ) external override onlyMilton {
+    ) external override onlyLiquidityPool {
 
         require(amount > 0, Errors.MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(user, amount);
@@ -67,8 +64,8 @@ contract IporToken is Ownable, IIporToken, ERC20 {
         return _underlyingAsset;
     }
 
-    modifier onlyMilton() {
-        require(msg.sender == _addressesManager.getMilton(), Errors.MILTON_CALLER_NOT_MILTON);
+    modifier onlyLiquidityPool() {
+        require(msg.sender == _addressesManager.getIporLiquidityPool(), Errors.MILTON_CALLER_NOT_IPOR_LIQUIDITY_POOL);
         _;
     }
 }

@@ -63,12 +63,12 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return derivatives.lastDerivativeId;
     }
 
-    function addLiquidity(address asset, uint256 liquidityAmount) external override onlyMilton {
+    function addLiquidity(address asset, uint256 liquidityAmount) external override onlyLiquidityPool {
         require(liquidityAmount > 0, Errors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
         balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
     }
 
-    function subtractLiquidity(address asset, uint256 liquidityAmount) external override onlyMilton {
+    function subtractLiquidity(address asset, uint256 liquidityAmount) external override onlyLiquidityPool {
         balances[asset].liquidityPool = balances[asset].liquidityPool - liquidityAmount;
     }
 
@@ -324,6 +324,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyMilton() {
         require(msg.sender == _addressesManager.getMilton(), Errors.MILTON_CALLER_NOT_MILTON);
+        _;
+    }
+
+    modifier onlyLiquidityPool() {
+        require(msg.sender == _addressesManager.getIporLiquidityPool(), Errors.MILTON_CALLER_NOT_IPOR_LIQUIDITY_POOL);
         _;
     }
 

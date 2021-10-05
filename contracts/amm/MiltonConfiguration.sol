@@ -51,8 +51,13 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
 
+        //@notice taken after close position from actor who take income (trader or Milton)
         incomeTaxPercentage = 1e17;
+
+        //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
         liquidationDepositAmount = 20 * Constants.MD;
+
+        //@notice 
         openingFeePercentage = 1e16;
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * Constants.MD;
