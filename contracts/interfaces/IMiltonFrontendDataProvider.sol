@@ -11,8 +11,8 @@ interface IMiltonFrontendDataProvider {
     }
 
     struct IporConfigurationFront {
-        uint256 minCollateralizationValue;
-        uint256 maxCollateralizationValue;
+        uint256 minCollateralizationFactorValue;
+        uint256 maxCollateralizationFactorValue;
         uint256 openingFeePercentage;
         uint256 iporPublicationFeeAmount;
         uint256 liquidationDepositAmount;
@@ -24,7 +24,7 @@ interface IMiltonFrontendDataProvider {
         uint256 id;
         uint256 collateral;
         uint256 notionalAmount;
-        uint256 collateralization;
+        uint256 collateralizationFactor;
         uint8 direction;
         uint256 fixedInterestRate;
         uint256 startingTimestamp;

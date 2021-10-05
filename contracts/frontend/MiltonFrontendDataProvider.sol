@@ -28,13 +28,14 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 derivativeItem.item.id,
                 derivativeItem.item.collateral,
                 derivativeItem.item.notionalAmount,
-                derivativeItem.item.collateralization,
+                derivativeItem.item.collateralizationFactor,
                 derivativeItem.item.direction,
                 derivativeItem.item.indicator.fixedInterestRate,
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.endingTimestamp
             );
         }
+
         return iporDerivatives;
     }
 
@@ -50,8 +51,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         }
 
         return IporConfigurationFront(
-            miltonConfiguration.getMinCollateralizationValue(),
-            miltonConfiguration.getMaxCollateralizationValue(),
+            miltonConfiguration.getMinCollateralizationFactorValue(),
+            miltonConfiguration.getMaxCollateralizationFactorValue(),
             miltonConfiguration.getOpeningFeePercentage(),
             miltonConfiguration.getIporPublicationFeeAmount(),
             miltonConfiguration.getLiquidationDepositAmount(),

@@ -90,12 +90,12 @@ export default ({drizzle, drizzleState}) => (
         <hr/>
         <div className="row">
             <div className="col-md-3">
-                <strong>Minimum Collateralization Value</strong>
+                <strong>Minimum Collateralization Factor Value</strong>
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="MiltonConfiguration"
-                    method="getMinCollateralizationValue"
+                    method="getMinCollateralizationFactorValue"
                     render={(value) => (
                         <div>
                             {value / 1000000000000000000}<br/>
@@ -107,15 +107,15 @@ export default ({drizzle, drizzleState}) => (
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonConfiguration"
-                    method="setMinCollateralizationValue"/>
+                    method="setMinCollateralizationFactorValue"/>
             </div>
             <div className="col-md-3">
-                <strong>Maximum Collateralization Value</strong>
+                <strong>Maximum Collateralization Factor Value</strong>
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="MiltonConfiguration"
-                    method="getMaxCollateralizationValue"
+                    method="getMaxCollateralizationFactorValue"
                     render={(value) => (
                         <div>
                             {value / 1000000000000000000}<br/>
@@ -127,7 +127,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonConfiguration"
-                    method="setMaxCollateralizationValue"/>
+                    method="setMaxCollateralizationFactorValue"/>
             </div>
             <div className="col-md-3">
                 <strong>Opening Fee for Treasury Percentage</strong>

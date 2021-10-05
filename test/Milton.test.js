@@ -120,11 +120,11 @@ contract('Milton', (accounts) => {
         let collateral = 0;
         let slippageValue = 3;
         let direction = 0;
-        let collateralization = BigInt(10000000000000000000);
+        let collateralizationFactor = BigInt(10000000000000000000);
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralizationFactor, direction),
             //then
             'IPOR_4'
         );
@@ -137,11 +137,11 @@ contract('Milton', (accounts) => {
         let collateral = BigInt("30000000000000000001");
         let slippageValue = 0;
         let direction = 0;
-        let collateralization = BigInt(10000000000000000000);
+        let collateralizationFactor = BigInt(10000000000000000000);
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralizationFactor, direction),
             //then
             'IPOR_5'
         );
@@ -156,11 +156,11 @@ contract('Milton', (accounts) => {
         let theOne = web3.utils.toBN(1);
         slippageValue = slippageValue.add(theOne);
         let direction = 0;
-        let collateralization = BigInt(10000000000000000000);
+        let collateralizationFactor = BigInt(10000000000000000000);
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralizationFactor, direction),
             //then
             'IPOR_9'
         );
@@ -173,11 +173,11 @@ contract('Milton', (accounts) => {
         let collateral = BigInt("1000000000000000000000001")
         let slippageValue = 3;
         let direction = 0;
-        let collateralization = BigInt(10000000000000000000);
+        let collateralizationFactor = BigInt(10000000000000000000);
 
         await testUtils.assertError(
             //when
-            milton.openPosition(asset, collateral, slippageValue, collateralization, direction),
+            milton.openPosition(asset, collateral, slippageValue, collateralizationFactor, direction),
             //then
             'IPOR_10'
         );
@@ -190,7 +190,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -207,7 +207,7 @@ contract('Milton', (accounts) => {
         //when
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //then
@@ -285,7 +285,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: BigInt("10000000000000000000000"), //10 000 USD
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -497,7 +497,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -591,7 +591,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -911,7 +911,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 1,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -961,7 +961,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 1,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -1106,7 +1106,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -1136,7 +1136,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -1149,7 +1149,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
@@ -1195,7 +1195,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -1208,7 +1208,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
@@ -1247,7 +1247,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -1260,7 +1260,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
@@ -1351,7 +1351,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -1397,7 +1397,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: userTwo
@@ -1451,7 +1451,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: userTwo
@@ -1505,7 +1505,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: userTwo
@@ -1560,7 +1560,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: userThree
@@ -1611,7 +1611,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: userThree
@@ -1662,7 +1662,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: userThree
@@ -1925,7 +1925,7 @@ contract('Milton', (accounts) => {
         //when
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //then
@@ -1966,7 +1966,7 @@ contract('Milton', (accounts) => {
         //when
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //then
@@ -2000,7 +2000,7 @@ contract('Milton', (accounts) => {
 
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //when
@@ -2023,7 +2023,7 @@ contract('Milton', (accounts) => {
 
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         await iporAddressesManager.setAddress("PUBLICATION_FEE_TRANSFERER", admin);
@@ -2048,7 +2048,7 @@ contract('Milton', (accounts) => {
 
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         await iporAddressesManager.setAddress("PUBLICATION_FEE_TRANSFERER", admin);
@@ -2084,14 +2084,14 @@ contract('Milton', (accounts) => {
                 expected: ${expectedPublicationFeeBalanceMilton}`)
     });
 
-    it('should NOT open pay fixed position, DAI, collateralization too low', async () => {
+    it('should NOT open pay fixed position, DAI, collateralization factor too low', async () => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(500),
+            collateralizationFactor: BigInt(500),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -2103,21 +2103,21 @@ contract('Milton', (accounts) => {
             //when
             milton.openPosition(
                 params.asset, params.totalAmount,
-                params.slippageValue, params.collateralization,
+                params.slippageValue, params.collateralizationFactor,
                 params.direction, {from: userTwo}),
             //then
             'IPOR_12'
         );
     });
 
-    it('should NOT open pay fixed position, DAI, collateralization too high', async () => {
+    it('should NOT open pay fixed position, DAI, collateralization factor too high', async () => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt("50000000000000000001"),
+            collateralizationFactor: BigInt("50000000000000000001"),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -2129,7 +2129,7 @@ contract('Milton', (accounts) => {
             //when
             milton.openPosition(
                 params.asset, params.totalAmount,
-                params.slippageValue, params.collateralization,
+                params.slippageValue, params.collateralizationFactor,
                 params.direction, {from: userTwo}),
             //then
             'IPOR_34'
@@ -2137,14 +2137,14 @@ contract('Milton', (accounts) => {
     });
 
 
-    it('should open pay fixed position, DAI, custom collateralization - simple case 1', async () => {
+    it('should open pay fixed position, DAI, custom collateralization factor - simple case 1', async () => {
         //given
         await setupTokenDaiInitialValues();
         const params = {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt("15125000000000000000"),
+            collateralizationFactor: BigInt("15125000000000000000"),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -2156,7 +2156,7 @@ contract('Milton', (accounts) => {
         //when
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //then
@@ -2189,7 +2189,7 @@ contract('Milton', (accounts) => {
         //when
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //then
@@ -2235,7 +2235,7 @@ contract('Milton', (accounts) => {
             //when
             milton.openPosition(
                 params.asset, params.totalAmount,
-                params.slippageValue, params.collateralization,
+                params.slippageValue, params.collateralizationFactor,
                 params.direction, {from: userTwo}),
             //then
             'IPOR_35'
@@ -2263,7 +2263,7 @@ contract('Milton', (accounts) => {
         //First open position not exceeded liquidity utilization
         await milton.openPosition(
             params.asset, params.totalAmount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //when
@@ -2272,7 +2272,7 @@ contract('Milton', (accounts) => {
             //when
             milton.openPosition(
                 params.asset, params.totalAmount,
-                params.slippageValue, params.collateralization,
+                params.slippageValue, params.collateralizationFactor,
                 params.direction, {from: userTwo}),
             //then
             'IPOR_35'
@@ -2300,7 +2300,7 @@ contract('Milton', (accounts) => {
             //when
             milton.openPosition(
                 params.asset, params.totalAmount,
-                params.slippageValue, params.collateralization,
+                params.slippageValue, params.collateralizationFactor,
                 params.direction, {from: userTwo}),
             //then
             'IPOR_35'
@@ -2354,7 +2354,7 @@ contract('Milton', (accounts) => {
             //when
             milton.openPosition(
                 liquidityProvider, params.totalAmount,
-                params.slippageValue, params.collateralization,
+                params.slippageValue, params.collateralizationFactor,
                 params.direction, {from: userTwo}),
             //then
             'IPOR_39'
@@ -2396,7 +2396,7 @@ contract('Milton', (accounts) => {
             params.asset,
             params.totalAmount,
             params.slippageValue,
-            params.collateralization,
+            params.collateralizationFactor,
             params.direction, {from: params.from});
     }
 
@@ -2454,7 +2454,7 @@ contract('Milton', (accounts) => {
 
     const exetuceClosePositionTestCase = async function (
         asset,
-        collateralization,
+        collateralizationFactor,
         direction,
         openerUserAddress,
         closerUserAddress,
@@ -2484,7 +2484,7 @@ contract('Milton', (accounts) => {
             asset: asset,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: localOpenTimestamp,
             from: openerUserAddress
@@ -2595,7 +2595,7 @@ contract('Milton', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo

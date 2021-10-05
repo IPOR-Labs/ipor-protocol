@@ -136,7 +136,7 @@ contract('MiltonStorage', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -165,7 +165,7 @@ contract('MiltonStorage', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
@@ -196,7 +196,7 @@ contract('MiltonStorage', (accounts) => {
             params.asset,
             params.totalAmount,
             params.slippageValue,
-            params.collateralization,
+            params.collateralizationFactor,
             params.direction, {from: params.from});
     }
 
@@ -251,7 +251,7 @@ contract('MiltonStorage', (accounts) => {
                 spreadPayFixedValue: 123,
                 spreadRecFixedValue: 123
             },
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             notionalAmount: 123,
             startingTimestamp: openingTimestamp,
             endingTimestamp: closePositionTimestamp,

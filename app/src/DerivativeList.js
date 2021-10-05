@@ -12,7 +12,7 @@ export default (derivatives) => (
                 <th scope="col">Asset</th>
                 <th scope="col">Direction</th>
                 <th scope="col">Deposit Amount</th>
-                <th scope="col">Collateralization</th>
+                <th scope="col">Collateralization Factor</th>
                 <th scope="col">Notional Amount</th>
                 <th scope="col">Fee Liquidation Deposit Amount</th>
                 <th scope="col">Fee Opening Amount</th>
@@ -39,7 +39,7 @@ export default (derivatives) => (
                                 <td>{derivative.collateral / 1000000000000000000}<br/><small>{derivative.collateral}</small>
                                 </td>
                                 <td>
-                                    {derivative.collateralization}
+                                    {derivative.collateralizationFactor}
                                 </td>
                                 <td>
                                     {derivative.notionalAmount / 1000000000000000000}

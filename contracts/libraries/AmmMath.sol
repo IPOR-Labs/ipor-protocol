@@ -25,7 +25,7 @@ library AmmMath {
 
     function calculateDerivativeAmount(
         uint256 totalAmount,
-        uint256 collateralization,
+        uint256 collateralizationFactor,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeePercentage
@@ -36,7 +36,7 @@ library AmmMath {
         );
         uint256 collateral = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount - openingFeeAmount;
         return DataTypes.IporDerivativeAmount(
-            collateral, division(collateralization * collateral, Constants.MD),
+            collateral, division(collateralizationFactor * collateral, Constants.MD),
             openingFeeAmount
         );
     }

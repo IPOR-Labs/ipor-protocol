@@ -61,9 +61,9 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint256 collateralization,
+        uint256 collateralizationFactor,
         uint8 direction) external override returns (uint256){
-        return _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, collateralization, direction);
+        return _openPosition(block.timestamp, asset, totalAmount, maximumSlippage, collateralizationFactor, direction);
     }
 
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) external override {
@@ -96,7 +96,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint256 collateralization,
+        uint256 collateralizationFactor,
         uint8 direction) internal returns (uint256) {
 
         require(address(_addressesManager) != address(0), Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS);
@@ -109,8 +109,8 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
 
-        require(collateralization >= miltonConfiguration.getMinCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_LOW);
-        require(collateralization <= miltonConfiguration.getMaxCollateralizationValue(), Errors.MILTON_COLLATERALIZATION_TOO_HIGH);
+        require(collateralizationFactor >= miltonConfiguration.getMinCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW);
+        require(collateralizationFactor <= miltonConfiguration.getMaxCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH);
 
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
         require(totalAmount > miltonConfiguration.getLiquidationDepositAmount() + miltonConfiguration.getIporPublicationFeeAmount(),
@@ -127,7 +127,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         //TODO verify if this opened derivatives is closable based on liquidity pool
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
-            totalAmount, collateralization,
+            totalAmount, collateralizationFactor,
             miltonConfiguration.getLiquidationDepositAmount(),
             miltonConfiguration.getIporPublicationFeeAmount(),
             miltonConfiguration.getOpeningFeePercentage()
@@ -157,7 +157,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
                 miltonConfiguration.getIporPublicationFeeAmount(),
                 spreadPayFixedValue,
                 spreadRecFixedValue),
-            collateralization,
+                collateralizationFactor,
             derivativeAmount.notional,
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
@@ -189,7 +189,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             DataTypes.DerivativeDirection(iporDerivative.direction),
             iporDerivative.collateral,
             iporDerivative.fee,
-            iporDerivative.collateralization,
+            iporDerivative.collateralizationFactor,
             iporDerivative.notionalAmount,
             iporDerivative.startingTimestamp,
             iporDerivative.endingTimestamp,

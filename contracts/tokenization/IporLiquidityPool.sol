@@ -53,7 +53,7 @@ contract IporLiquidityPool is Ownable, IIporLiquidityPool {
         IERC20(asset).transferFrom(_addressesManager.getMilton(), msg.sender, underlyingAmount);
     }
 
-    function calculateExchangeRate(address asset) external override returns (uint256){
+    function calculateExchangeRate(address asset) external override view returns (uint256){
         IIporToken iporToken = IIporToken(_addressesManager.getIporToken(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
         uint256 iporTokenTotalSupply = iporToken.totalSupply();

@@ -250,28 +250,28 @@ contract('MiltonConfiguration', (accounts) => {
             `Incorrect initial iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${expectedIporPublicationFeeAmount}`)
     });
 
-    it('should get initial minCollateralizationValue', async () => {
+    it('should get initial minCollateralizationFactorValue', async () => {
         //given
-        let expectedMinCollateralizationValue = BigInt("10000000000000000000");
+        let expectedMinCollateralizationFactorValue = BigInt("10000000000000000000");
 
         //when
-        let actualMinCollateralizationValue = await miltonConfiguration.getMinCollateralizationValue();
+        let actualMinCollateralizationFactorValue = await miltonConfiguration.getMinCollateralizationFactorValue();
 
         //then
-        assert(expectedMinCollateralizationValue === BigInt(actualMinCollateralizationValue),
-            `Incorrect initial MinCollateralizationValue actual: ${actualMinCollateralizationValue}, expected: ${expectedMinCollateralizationValue}`)
+        assert(expectedMinCollateralizationFactorValue === BigInt(actualMinCollateralizationFactorValue),
+            `Incorrect initial MinCollateralizationFactorValue actual: ${actualMinCollateralizationFactorValue}, expected: ${expectedMinCollateralizationFactorValue}`)
     });
 
-    it('should get initial maxCollateralizationValue', async () => {
+    it('should get initial maxCollateralizationFactorValue', async () => {
         //given
-        let expectedMaxCollateralizationValue = BigInt("50000000000000000000");
+        let expectedMaxCollateralizationFactorValue = BigInt("50000000000000000000");
 
         //when
-        let actualMaxCollateralizationValue = await miltonConfiguration.getMaxCollateralizationValue();
+        let actualMaxCollateralizationFactorValue = await miltonConfiguration.getMaxCollateralizationFactorValue();
 
         //then
-        assert(expectedMaxCollateralizationValue === BigInt(actualMaxCollateralizationValue),
-            `Incorrect initial MaxCollateralizationValue actual: ${actualMaxCollateralizationValue}, expected: ${expectedMaxCollateralizationValue}`)
+        assert(expectedMaxCollateralizationFactorValue === BigInt(actualMaxCollateralizationFactorValue),
+            `Incorrect initial MaxCollateralizationFactorValue actual: ${actualMaxCollateralizationFactorValue}, expected: ${expectedMaxCollateralizationFactorValue}`)
     });
 
     //TODO: move to IporAddressesManager.test.js

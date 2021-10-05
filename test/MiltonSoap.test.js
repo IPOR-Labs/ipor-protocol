@@ -141,7 +141,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -176,7 +176,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -210,7 +210,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -243,7 +243,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -278,7 +278,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -318,7 +318,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -362,7 +362,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: firstDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -372,7 +372,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: secondDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -409,7 +409,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -419,7 +419,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenUsdc.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -471,7 +471,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -481,7 +481,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -525,7 +525,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -535,7 +535,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -579,7 +579,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: payFixDerivativeDAIDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -589,7 +589,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenUsdc.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: recFixDerivativeUSDCDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -637,7 +637,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -677,7 +677,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -728,7 +728,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -737,7 +737,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
@@ -776,7 +776,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -785,7 +785,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
@@ -826,7 +826,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -888,7 +888,7 @@ contract('MiltonSoap', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUserAddress
@@ -924,7 +924,7 @@ contract('MiltonSoap', (accounts) => {
             params.asset,
             params.totalAmount,
             params.slippageValue,
-            params.collateralization,
+            params.collateralizationFactor,
             params.direction, {from: params.from});
     }
 

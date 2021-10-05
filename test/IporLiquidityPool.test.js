@@ -247,7 +247,7 @@ contract('IporLiquidityPool', (accounts) => {
         //open position to have something in Liquidity Pool
         await milton.openPosition(
             params.asset, BigInt("40000000000000000000"),
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //when
@@ -271,7 +271,7 @@ contract('IporLiquidityPool', (accounts) => {
         //open position to have something in Liquidity Pool
         await milton.openPosition(
             params.asset, amount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         await iporLiquidityPool.redeem(params.asset, amount, {from: liquidityProvider})
@@ -299,7 +299,7 @@ contract('IporLiquidityPool', (accounts) => {
         //open position to have something in Liquidity Pool
         await milton.openPosition(
             params.asset, amount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //after this withdraw initial exchange rate is 1,5
@@ -342,7 +342,7 @@ contract('IporLiquidityPool', (accounts) => {
         //open position to have something in Liquidity Pool
         await milton.openPosition(
             params.asset, amount,
-            params.slippageValue, params.collateralization,
+            params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
         //after this withdraw initial exchange rate is 1,5
@@ -419,7 +419,7 @@ contract('IporLiquidityPool', (accounts) => {
             asset: tokenDai.address,
             totalAmount: testUtils.MILTON_10_000_USD,
             slippageValue: 3,
-            collateralization: BigInt(10000000000000000000),
+            collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo

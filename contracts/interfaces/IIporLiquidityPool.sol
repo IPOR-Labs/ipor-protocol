@@ -7,6 +7,6 @@ interface IIporLiquidityPool {
 
     function redeem(address iporTokenAddress, uint256 iporTokenVolume) external;
 
-    function calculateExchangeRate(address asset) external returns (uint256);
+    function calculateExchangeRate(address asset) external view returns (uint256);
 
 }
