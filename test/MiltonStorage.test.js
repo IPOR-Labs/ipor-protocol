@@ -56,15 +56,20 @@ contract('MiltonStorage', (accounts) => {
 
 
         for (let i = 1; i < accounts.length - 2; i++) {
+            //Liquidity Pool has rights to spend money on behalf of user accounts[i]
+            await tokenUsdt.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
+            await tokenUsdc.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+            await tokenDai.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+
             //AMM has rights to spend money on behalf of user
             await tokenUsdt.approve(milton.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
-            //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
             await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
         await iporAddressesManager.setAddress("WARREN", warren.address);
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", await iporLiquidityPool.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
@@ -74,6 +79,7 @@ contract('MiltonStorage', (accounts) => {
         await milton.initialize(iporAddressesManager.address);
         await miltonConfiguration.initialize(iporAddressesManager.address);
         await iporLiquidityPool.initialize(iporAddressesManager.address);
+        await milton.authorizeLiquidityPool(tokenDai.address);
 
     });
 
@@ -138,7 +144,7 @@ contract('MiltonStorage', (accounts) => {
 
         await warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
         await iporAddressesManager.setAddress("MILTON", milton.address);
-        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await miltonStorage.getDerivativeItem(1);
@@ -167,7 +173,7 @@ contract('MiltonStorage', (accounts) => {
 
         await warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
         await iporAddressesManager.setAddress("MILTON", milton.address);
-        await milton.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await miltonStorage.getDerivativeItem(1);

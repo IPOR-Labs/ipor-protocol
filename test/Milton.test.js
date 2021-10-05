@@ -56,14 +56,19 @@ contract('Milton', (accounts) => {
         milton = await TestMilton.new();
 
         for (let i = 1; i < accounts.length - 2; i++) {
+            //Liquidity Pool has rights to spend money on behalf of user accounts[i]
+            await tokenUsdt.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
+            await tokenUsdc.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+            await tokenDai.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+
             //Milton has rights to spend money on behalf of user accounts[i]
             await tokenUsdt.approve(milton.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
-            //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
             await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", await iporLiquidityPool.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
@@ -73,6 +78,7 @@ contract('Milton', (accounts) => {
         await milton.initialize(iporAddressesManager.address);
         await miltonConfiguration.initialize(iporAddressesManager.address);
         await iporLiquidityPool.initialize(iporAddressesManager.address);
+        await milton.authorizeLiquidityPool(tokenDai.address);
 
     });
 
@@ -192,7 +198,7 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
-        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         let expectedMiltonTokenBalance = miltonBalanceBeforePayout + params.totalAmount;
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("99700000000000000000");
@@ -286,16 +292,16 @@ contract('Milton', (accounts) => {
         }
         let closePositionTimestamp = params.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         await warren.test_updateIndex(params.asset, BigInt("10000000000000000"), params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
         await warren.test_updateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp, {from: userOne});
         await warren.test_updateIndex(params.asset, BigInt("50000000000000000"), closePositionTimestamp, {from: userOne});
 
-        await iporAddressesManager.setAddress("MILTON", userOne);
+        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne})
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", iporLiquidityPool.address);
 
         //when
         await testUtils.assertError(
@@ -496,7 +502,7 @@ contract('Milton', (accounts) => {
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await warren.test_updateIndex(params.asset, testUtils.MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
         await warren.test_updateIndex(params.asset, testUtils.MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
@@ -591,7 +597,7 @@ contract('Milton', (accounts) => {
             from: userTwo
         }
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await warren.test_updateIndex(params.asset, testUtils.MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
         await warren.test_updateIndex(params.asset, testUtils.MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
@@ -911,7 +917,7 @@ contract('Milton', (accounts) => {
             from: userTwo
         }
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await warren.test_updateIndex(params.asset, testUtils.MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
         await warren.test_updateIndex(params.asset, testUtils.MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
@@ -960,7 +966,7 @@ contract('Milton', (accounts) => {
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await warren.test_updateIndex(params.asset, testUtils.MILTON_5_PERCENTAGE, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
         await warren.test_updateIndex(params.asset, testUtils.MILTON_120_PERCENTAGE, params.openTimestamp, {from: userOne});
@@ -1106,7 +1112,7 @@ contract('Milton', (accounts) => {
             from: openerUserAddress
         }
         await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
-        await milton.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await openPositionFunc(derivativeParamsFirst);
 
         await testUtils.assertError(
@@ -1136,7 +1142,7 @@ contract('Milton', (accounts) => {
             from: openerUserAddress
         }
         await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
-        await milton.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD + testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD + testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await openPositionFunc(derivativeParamsFirst);
 
         const derivativeParams25days = {
@@ -1194,7 +1200,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await milton.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD + testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD + testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParamsFirst);
 
@@ -1246,7 +1252,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await milton.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD + testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParamsFirst.asset, testUtils.MILTON_14_000_USD + testUtils.MILTON_14_000_USD, {from: liquidityProvider})
         await warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParamsFirst);
 
@@ -1299,7 +1305,7 @@ contract('Milton', (accounts) => {
 
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
         await warren.test_updateIndex(params.asset, iporValueBeforeOpenPosition, params.openTimestamp, {from: userOne});
         await openPositionFunc(params);
         await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, params.openTimestamp, {from: userOne});
@@ -1355,7 +1361,7 @@ contract('Milton', (accounts) => {
         let expectedUserDerivativeIdsLength = 3
         let expectedDerivativeIdsLength = 3;
 
-        await milton.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         //when
         await openPositionFunc(derivativeParams);
@@ -1402,7 +1408,7 @@ contract('Milton', (accounts) => {
         let expectedUserDerivativeIdsLengthSecond = 1;
         let expectedDerivativeIdsLength = 3;
 
-        await milton.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         //when
         await openPositionFunc(derivativeParams);
@@ -1456,7 +1462,7 @@ contract('Milton', (accounts) => {
         let expectedUserDerivativeIdsLengthSecond = 0;
         let expectedDerivativeIdsLength = 2;
 
-        await milton.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         await openPositionFunc(derivativeParams);
 
@@ -1510,7 +1516,7 @@ contract('Milton', (accounts) => {
         let expectedUserDerivativeIdsLengthSecond = 0;
         let expectedDerivativeIdsLength = 1;
 
-        await milton.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, BigInt(3) * testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         await openPositionFunc(derivativeParams);
 
@@ -1559,7 +1565,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: userThree
         }
-        await milton.provideLiquidity(derivativeParams.asset, BigInt(2) * testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, BigInt(2) * testUtils.MILTON_14_000_USD, {from: liquidityProvider});
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
 
         let expectedUserDerivativeIdsLengthFirst = 0;
@@ -1610,7 +1616,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: userThree
         }
-        await milton.provideLiquidity(derivativeParams.asset, BigInt(2) * testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, BigInt(2) * testUtils.MILTON_14_000_USD, {from: liquidityProvider});
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
 
         let expectedUserDerivativeIdsLengthFirst = 0;
@@ -1661,7 +1667,7 @@ contract('Milton', (accounts) => {
             openTimestamp: openTimestamp,
             from: userThree
         }
-        await milton.provideLiquidity(derivativeParams.asset, BigInt(2) * testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await iporLiquidityPool.provideLiquidity(derivativeParams.asset, BigInt(2) * testUtils.MILTON_14_000_USD, {from: liquidityProvider});
         await warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
 
         let expectedUserDerivativeIdsLengthFirst = 0;
@@ -1914,7 +1920,7 @@ contract('Milton', (accounts) => {
 
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("94715000000000000000");
-        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         //when
         await milton.openPosition(
@@ -1955,7 +1961,7 @@ contract('Milton', (accounts) => {
 
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + BigInt("97207500000000000000");
-        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         //when
         await milton.openPosition(
@@ -1990,7 +1996,7 @@ contract('Milton', (accounts) => {
 
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         await milton.openPosition(
             params.asset, params.totalAmount,
@@ -2013,7 +2019,7 @@ contract('Milton', (accounts) => {
 
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         await milton.openPosition(
             params.asset, params.totalAmount,
@@ -2038,7 +2044,7 @@ contract('Milton', (accounts) => {
 
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         await milton.openPosition(
             params.asset, params.totalAmount,
@@ -2145,7 +2151,7 @@ contract('Milton', (accounts) => {
         }
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
-        await milton.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         //when
         await milton.openPosition(
@@ -2172,7 +2178,7 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
-        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         let liquiditiPoolMaxUtilizationEdge = BigInt(700036170982361327)
         await miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquiditiPoolMaxUtilizationEdge);
@@ -2216,7 +2222,7 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
-        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         let liquiditiPoolMaxUtilizationEdgeExceeded = BigInt(700036170982360000)
         await miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquiditiPoolMaxUtilizationEdgeExceeded);
@@ -2249,7 +2255,7 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
-        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         let liquiditiPoolMaxUtilizationEdge = BigInt(700036170982361327)
         await miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquiditiPoolMaxUtilizationEdge);
@@ -2341,7 +2347,7 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
 
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
-        await milton.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await iporLiquidityPool.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         //when
         await testUtils.assertError(
@@ -2355,90 +2361,6 @@ contract('Milton', (accounts) => {
         );
 
     });
-
-
-    it('should provide liquidity and take IPOR token - simple case 1', async () => {
-        //given
-        await setupTokenDaiInitialValues();
-        await setupIporTokenDaiInitialValues();
-        const params = getStandardDerivativeParams();
-        let liquidityAmount = testUtils.MILTON_14_000_USD;
-
-        let expectedLiquidityProviderStableBalance = BigInt("9986000000000000000000000");
-
-        //when
-        await milton.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
-
-        //then
-        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
-        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
-        //TODO: liquidity balance milton storage
-        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
-
-        assert(liquidityAmount === iporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${liquidityAmount}`);
-
-        assert(liquidityAmount === stableBalanceMilton,
-            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${liquidityAmount}`);
-
-        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
-            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
-
-    });
-
-    it('should withdraw IPOR Token - simple case 1', async () => {
-        //given
-        await setupTokenDaiInitialValues();
-        await setupIporTokenDaiInitialValues();
-        const params = getStandardDerivativeParams();
-        let liquidityAmount = testUtils.MILTON_14_000_USD;
-        let withdrawAmount = testUtils.MILTON_10_000_USD;
-        let expectedIporTokenBalanceSender = BigInt("4000000000000000000000");
-        let expectedStableBalanceMilton = BigInt("4000000000000000000000");
-        let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
-        await milton.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
-
-        //when
-        await milton.redeem(params.asset, withdrawAmount, {from: liquidityProvider})
-
-
-        //then
-        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
-        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
-        //TODO: liquidity balance milton storage
-        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
-
-        assert(expectedIporTokenBalanceSender === iporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
-
-        assert(expectedStableBalanceMilton === stableBalanceMilton,
-            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
-
-        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
-            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
-
-    });
-
-    it('should NOT withdraw IPOR Token - Liquidity Pool is too low', async () => {
-        //given
-        await setupTokenDaiInitialValues();
-        const params = getStandardDerivativeParams();
-        await milton.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider})
-
-        await iporAddressesManager.setAddress("MILTON", userOne);
-        await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne})
-        await iporAddressesManager.setAddress("MILTON", milton.address);
-
-        //when
-        await testUtils.assertError(
-            //when
-            milton.redeem(params.asset, params.totalAmount, {from: liquidityProvider}),
-            //then
-            'IPOR_43'
-        );
-
-    });
-
 
     //TODO: check initial IBT
 
@@ -2570,7 +2492,7 @@ contract('Milton', (accounts) => {
 
         if (providedLiquidityAmount != null) {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
-            await milton.provideLiquidity(params.asset, providedLiquidityAmount, {from: liquidityProvider})
+            await iporLiquidityPool.provideLiquidity(params.asset, providedLiquidityAmount, {from: liquidityProvider})
         }
 
         await warren.test_updateIndex(params.asset, iporValueBeforeOpenPosition, params.openTimestamp, {from: userOne});

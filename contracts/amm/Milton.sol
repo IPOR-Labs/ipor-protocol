@@ -42,6 +42,10 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
+    function authorizeLiquidityPool(address asset) external override onlyOwner {
+        IERC20(asset).approve(_addressesManager.getIporLiquidityPool(), Constants.MAX_VALUE);
+    }
+
     //@notice transfer publication fee to configured charlie treasurer address
     function transferPublicationFee(address asset, uint256 amount) external onlyPublicationFeeTransferer {
 
@@ -65,24 +69,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     function closePosition(uint256 derivativeId) onlyActiveDerivative(derivativeId) external override {
         _closePosition(derivativeId, block.timestamp);
     }
-
-
-    //TODO: move to LiquidityPool
-    function provideLiquidity(address asset, uint256 liquidityAmount) external override {
-        uint256 exchangeRate = IIporLiquidityPool(_addressesManager.getIporLiquidityPool()).calculateExchangeRate(asset);
-
-        require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
-
-        IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
-
-        //TODO: take into consideration token decimals!!!
-        IERC20(asset).transferFrom(msg.sender, address(this), liquidityAmount);
-
-        if (exchangeRate > 0) {
-            IporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * Constants.MD, exchangeRate));
-        }
-    }
-
 
     function calculateSpread(address asset) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         (uint256 _spreadPayFixedValue, uint256 _spreadRecFixedValue) = _calculateSpread(asset, block.timestamp);
@@ -339,26 +325,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     modifier onlyPublicationFeeTransferer() {
         require(msg.sender == _addressesManager.getPublicationFeeTransferer(), Errors.MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
         _;
-    }
-
-    function redeem(address asset, uint256 iporTokenVolume) external override {
-        //TODO: do final implementation, will be described in separate task
-
-        require(IporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW);
-
-        uint256 exchangeRate = IIporLiquidityPool(_addressesManager.getIporLiquidityPool()).calculateExchangeRate(asset);
-
-        require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
-
-        uint256 underlyingAmount = AmmMath.division(iporTokenVolume * exchangeRate, Constants.MD);
-
-        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getBalance(asset).liquidityPool >= underlyingAmount, Errors.MILTON_CANNOT_WITHDRAW_LIQUIDITY_POOL_IS_TOO_LOW);
-
-        IporToken(_addressesManager.getIporToken(asset)).burn(msg.sender, msg.sender, iporTokenVolume);
-
-        IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, underlyingAmount);
-
-        IERC20(asset).transfer(msg.sender, underlyingAmount);
     }
 
 }

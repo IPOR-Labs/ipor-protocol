@@ -5,17 +5,15 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
 
+    function authorizeLiquidityPool(address asset) external;
+
     function openPosition(address asset, uint256 totalAmount, uint256 maximumSlippage, uint256 collateralization, uint8 direction) external returns (uint256);
 
     function closePosition(uint256 derivativeId) external;
-
-    function provideLiquidity(address asset, uint256 liquidityAmount) external;
 
     function calculateSoap(address asset) external view returns (int256 soapPf, int256 soapRf, int256 soap);
 
     //TODO: final implementation
     function calculateSpread(address asset) external view returns (uint256 spreadPf, uint256 spreadRf);
-
-    function redeem(address iporTokenAddress, uint256 iporTokenVolume) external;
 
 }
