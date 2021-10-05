@@ -121,24 +121,29 @@ contract('IporLiquidityPool', (accounts) => {
         let liquidityAmount = testUtils.MILTON_14_000_USD;
 
         let expectedLiquidityProviderStableBalance = BigInt("9986000000000000000000000");
+        let expectedLiquidityPoolBalanceMilton = testUtils.MILTON_14_000_USD;;
 
         //when
         await iporLiquidityPool.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
 
         //then
-        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
-        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
-        //TODO: liquidity balance milton storage
-        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
+        const actualIporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
+        const actualUnderlyingBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
+        const actualLiquidityPoolBalanceMilton = BigInt(await (await miltonStorage.balances(params.asset)).liquidityPool);
+        const actualUnderlyingBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
 
-        assert(liquidityAmount === iporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${liquidityAmount}`);
 
-        assert(liquidityAmount === stableBalanceMilton,
-            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${liquidityAmount}`);
+        assert(liquidityAmount === actualIporTokenBalanceSender,
+            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${actualIporTokenBalanceSender}, expected: ${liquidityAmount}`);
 
-        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
-            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
+        assert(liquidityAmount === actualUnderlyingBalanceMilton,
+            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${liquidityAmount}`);
+
+        assert(expectedLiquidityPoolBalanceMilton === actualLiquidityPoolBalanceMilton,
+            `Incorrect DAI Liquidity Pool Balance on Milton for asset ${params.asset} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`);
+
+        assert(expectedLiquidityProviderStableBalance === actualUnderlyingBalanceSender,
+            `Incorrect DAI balance on user for asset ${params.asset} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
 
     });
 
@@ -152,26 +157,30 @@ contract('IporLiquidityPool', (accounts) => {
         let expectedIporTokenBalanceSender = BigInt("4000000000000000000000");
         let expectedStableBalanceMilton = BigInt("4000000000000000000000");
         let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
+        let expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
         await iporLiquidityPool.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
 
         //when
-        await iporLiquidityPool.redeem(params.asset, withdrawAmount, {from: liquidityProvider})
-
+        await iporLiquidityPool.redeem(params.asset, withdrawAmount, {from: liquidityProvider});
 
         //then
-        const iporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
-        const stableBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
-        //TODO: liquidity balance milton storage
-        const stableBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
+        const actualIporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
 
-        assert(expectedIporTokenBalanceSender === iporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${iporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
+        const actualUnderlyingBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
+        const actualLiquidityPoolBalanceMilton = BigInt(await (await miltonStorage.balances(params.asset)).liquidityPool);
+        const actualUnderlyingBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
 
-        assert(expectedStableBalanceMilton === stableBalanceMilton,
-            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${stableBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
+        assert(expectedIporTokenBalanceSender === actualIporTokenBalanceSender,
+            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${actualIporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
 
-        assert(expectedLiquidityProviderStableBalance === stableBalanceSender,
-            `Incorrect DAI balance on user for asset ${params.asset} actual: ${stableBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
+        assert(expectedStableBalanceMilton === actualUnderlyingBalanceMilton,
+            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
+
+        assert(expectedLiquidityPoolBalanceMilton === actualLiquidityPoolBalanceMilton,
+            `Incorrect DAI Liquidity Pool Balance on Milton for asset ${params.asset} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`);
+
+        assert(expectedLiquidityProviderStableBalance === actualUnderlyingBalanceSender,
+            `Incorrect DAI balance on Liquidity Provider for asset ${params.asset} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
 
     });
 
