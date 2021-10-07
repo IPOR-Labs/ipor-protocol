@@ -310,7 +310,7 @@ contract SoapIndicatorLogicTest is TestData {
         int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp);
 
         //then
-        int256 expectedSoapPf = -6109589041095890410958;
+        int256 expectedSoapPf = - 6109589041095890410958;
         Assert.equal(actualSoapPf, expectedSoapPf, 'Incorrect SOAP for Pay Fixed Derivatives');
     }
 

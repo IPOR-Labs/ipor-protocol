@@ -32,4 +32,25 @@ contract AmmMathTest {
         Assert.equal(actualIncomeTaxValue, 30000000000000000000, "Wrong Income Tax");
     }
 
+    function testCalculateDerivativeAmountCase1() public {
+        //given
+        uint256 totalAmount = 10180 * Constants.MD;
+        uint256 collateralizationFactor = 50 * Constants.MD;
+        uint256 liquidationDepositAmount = 20 * Constants.MD;
+        uint256 iporPublicationFeeAmount = 10 * Constants.MD;
+        uint256 openingFeePercentage = 3 * 1e14;
+
+        //when
+        DataTypes.IporDerivativeAmount memory result = AmmMath.calculateDerivativeAmount(
+            totalAmount,
+            collateralizationFactor,
+            liquidationDepositAmount,
+            iporPublicationFeeAmount,
+            openingFeePercentage);
+
+        //then
+        Assert.equal(result.notional, 500000 * Constants.MD, "Wrong Notional");
+        Assert.equal(result.openingFee, 150 * Constants.MD, "Wrong Opening Fee Amount");
+        Assert.equal(result.deposit, 10000 * Constants.MD, "Wrong Collateral");
+    }
 }

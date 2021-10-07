@@ -30,15 +30,13 @@ library AmmMath {
         uint256 iporPublicationFeeAmount,
         uint256 openingFeePercentage
     ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
-        uint256 openingFeeAmount = division(
-            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * openingFeePercentage,
-            Constants.MD
+        uint256 collateral = division(
+            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * Constants.MD,
+            Constants.MD + division(collateralizationFactor * openingFeePercentage, Constants.MD)
         );
-        uint256 collateral = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount - openingFeeAmount;
-        return DataTypes.IporDerivativeAmount(
-            collateral, division(collateralizationFactor * collateral, Constants.MD),
-            openingFeeAmount
-        );
+        uint256 notional = division(collateralizationFactor * collateral, Constants.MD);
+        uint256 openingFeeAmount = division(notional * openingFeePercentage, Constants.MD);
+        return DataTypes.IporDerivativeAmount(collateral, notional, openingFeeAmount);
     }
 
     function absoluteValue(int256 value) internal pure returns (uint256) {
