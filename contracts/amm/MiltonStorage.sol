@@ -164,6 +164,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         treasuryValue = AmmMath.division(openingFeeAmount * openingFeeForTreasurePercentage, Constants.MD);
         liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
+    event LogDebugUint(string name, uint256 value);
 
     function _updateBalancesWhenClosePosition(
         address user,
@@ -203,6 +204,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
 
+                emit LogDebugUint("incomeTax", incomeTax);
+
             } else {
                 // |I| <= D
 
@@ -224,6 +227,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
 
+                emit LogDebugUint("incomeTax", incomeTax);
+
             }
 
         } else {
@@ -241,6 +246,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 balances[derivativeItem.item.asset].liquidityPool
                 = balances[derivativeItem.item.asset].liquidityPool + derivativeItem.item.collateral - incomeTax;
                 //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
+
+                emit LogDebugUint("incomeTax", incomeTax);
 
             } else {
                 // |I| <= D
@@ -261,6 +268,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 balances[derivativeItem.item.asset].liquidityPool
                 = balances[derivativeItem.item.asset].liquidityPool + absInterestDifferenceAmount - incomeTax;
 
+                emit LogDebugUint("incomeTax", incomeTax);
             }
         }
     }

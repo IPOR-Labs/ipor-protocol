@@ -212,7 +212,8 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         );
         return indicator;
     }
-
+    event LogDebug(string name, int256 value);
+    event LogDebugUint(string name, uint256 value);
     function _closePosition(uint256 derivativeId, uint256 closeTimestamp) internal {
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
@@ -222,6 +223,11 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         DataTypes.IporDerivativeInterest memory derivativeInterest =
         derivativeItem.item.calculateInterest(closeTimestamp, accruedIbtPrice);
+        emit LogDebug("interestDifferenceAmount", derivativeInterest.interestDifferenceAmount);
+        emit LogDebugUint("InterestFixed", AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS));
+        emit LogDebugUint("InterestFloating", AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS));
+        emit LogDebugUint("accruedIbtPrice",accruedIbtPrice);
+
 
         miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, derivativeInterest.interestDifferenceAmount, closeTimestamp);
 
@@ -244,11 +250,13 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         uint256 transferAmount = derivativeItem.item.collateral;
 
         if (interestDifferenceAmount > 0) {
+            //Trader earn, Milton loose
 
-            //tokens transfered from AMM
+            //tokens transfered from Milton
             if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
                 uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral, miltonConfiguration.getIncomeTaxPercentage());
+                emit LogDebugUint("incomeTax", incomeTax);
 
                 //transfer D+D-incomeTax to user's address
                 transferAmount = transferAmount + derivativeItem.item.collateral - incomeTax;
@@ -266,6 +274,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
                 }
 
                 uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, miltonConfiguration.getIncomeTaxPercentage());
+                emit LogDebugUint("incomeTax", incomeTax);
 
                 //transfer P=D+I-incomeTax to user's address
                 transferAmount = transferAmount + absInterestDifferenceAmount - incomeTax;
@@ -274,7 +283,9 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             }
 
         } else {
-            //tokens transfered to AMM, updates on balances
+            //Milton earn, Trader loose
+
+            //tokens transfered to Milton, updates on balances
             if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
 

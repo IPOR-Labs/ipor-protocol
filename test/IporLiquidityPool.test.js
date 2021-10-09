@@ -239,7 +239,7 @@ contract('IporLiquidityPool', (accounts) => {
     it('should calculate Exchange Rate, Exchange Rate greater than 1', async () => {
         //given
         await setupTokenDaiInitialValues();
-        let expectedExchangeRate = BigInt("1002500000000000000");
+        let expectedExchangeRate = BigInt("1022727272727272727");
         const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
         await iporLiquidityPool.provideLiquidity(params.asset, BigInt("40000000000000000000"), {from: liquidityProvider})
@@ -303,9 +303,9 @@ contract('IporLiquidityPool', (accounts) => {
             params.direction, {from: userTwo});
 
         //after this withdraw initial exchange rate is 1,5
-        let expectedExchangeRate = BigInt("1500000000000000000");
+        let expectedExchangeRate = BigInt("1714285714285714286");
         let exchangeRateBeforeProvideLiquidity = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
-        let expectedIporTokenBalanceForUserThree = BigInt("1000000000000000000000");
+        let expectedIporTokenBalanceForUserThree = BigInt("874999999999999999854");
 
         // //when
         await iporLiquidityPool.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
@@ -346,13 +346,13 @@ contract('IporLiquidityPool', (accounts) => {
             params.direction, {from: userTwo});
 
         //after this withdraw initial exchange rate is 1,5
-        let expectedExchangeRate = BigInt("1500000000000000000");
+        let expectedExchangeRate = BigInt("1714285714285714286");
         let exchangeRateBeforeProvideLiquidity = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
         let expectedIporTokenBalanceForUserThree = BigInt("0");
 
         //when
         await iporLiquidityPool.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
-        await iporLiquidityPool.redeem(params.asset, BigInt("1000000000000000000000"), {from: userThree})
+        await iporLiquidityPool.redeem(params.asset, BigInt("874999999999999999854"), {from: userThree})
 
         let actualIporTokenBalanceForUserThree = BigInt(await iporTokenDai.balanceOf.call(userThree));
         let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
