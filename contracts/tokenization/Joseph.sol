@@ -23,7 +23,7 @@ contract Joseph is Ownable, IJoseph {
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
-        require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
 
@@ -38,11 +38,13 @@ contract Joseph is Ownable, IJoseph {
     function redeem(address asset, uint256 iporTokenVolume) external override {
         //TODO: do final implementation, will be described in separate task
 
-        require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW);
+        require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW);
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
-        require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+
+        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getBalance(asset).liquidityPool > iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW);
 
         uint256 underlyingAmount = AmmMath.division(iporTokenVolume * exchangeRate, Constants.MD);
 

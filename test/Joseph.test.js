@@ -121,7 +121,8 @@ contract('Joseph', (accounts) => {
         let liquidityAmount = testUtils.MILTON_14_000_USD;
 
         let expectedLiquidityProviderStableBalance = BigInt("9986000000000000000000000");
-        let expectedLiquidityPoolBalanceMilton = testUtils.MILTON_14_000_USD;;
+        let expectedLiquidityPoolBalanceMilton = testUtils.MILTON_14_000_USD;
+        ;
 
         //when
         await joseph.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
@@ -414,8 +415,24 @@ contract('Joseph', (accounts) => {
         );
     });
 
-    it('should NOT redeem liquidity because of empty Liquidity Pool', async () => {
+    it('should NOT redeem liquidity because redeem value higher than Liquidity Pool Balance', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
+        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_USD, {from: userOne});
+        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+
+        //when
+        await testUtils.assertError(
+            //when
+            joseph.redeem(params.asset, params.totalAmount, {from: liquidityProvider}),
+            //then
+            'IPOR_43'
+        );
     });
 
     const getStandardDerivativeParams = () => {
