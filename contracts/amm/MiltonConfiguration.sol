@@ -21,9 +21,9 @@ import "../interfaces/IMiltonConfiguration.sol";
 //TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
 contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
-    uint256 minCollateralizationValue;
+    uint256 minCollateralizationFactorValue;
 
-    uint256 maxCollateralizationValue;
+    uint256 maxCollateralizationFactorValue;
 
     uint256 incomeTaxPercentage;
 
@@ -51,7 +51,7 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
 
-        //@notice taken after close position from actor who take income (trader or Milton)
+        //@notice taken after close position from participant who take income (trader or Milton)
         incomeTaxPercentage = 1e17;
 
         //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
@@ -64,8 +64,8 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
         maxPositionTotalAmount = 100000 * Constants.MD;
 
-        minCollateralizationValue = 10 * Constants.MD;
-        maxCollateralizationValue = 50 * Constants.MD;
+        minCollateralizationFactorValue = 10 * Constants.MD;
+        maxCollateralizationFactorValue = 50 * Constants.MD;
 
         address[] memory assets = _addressesManager.getAssets();
 
@@ -157,21 +157,21 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
         spreadRecFixedValues[asset] = _spread;
     }
 
-    function getMaxCollateralizationValue() external override view returns (uint256) {
-        return maxCollateralizationValue;
+    function getMaxCollateralizationFactorValue() external override view returns (uint256) {
+        return maxCollateralizationFactorValue;
     }
 
-    function setMaxCollateralizationValue(uint256 _maxCollateralizationValue) external override onlyOwner {
-        maxCollateralizationValue = _maxCollateralizationValue;
-        emit MaxCollateralizationValueSet(_maxCollateralizationValue);
+    function setMaxCollateralizationFactorValue(uint256 _maxCollateralizationFactorValue) external override onlyOwner {
+        maxCollateralizationFactorValue = _maxCollateralizationFactorValue;
+        emit MaxCollateralizationFactorValueSet(_maxCollateralizationFactorValue);
     }
 
-    function getMinCollateralizationValue() external override view returns (uint256) {
-        return minCollateralizationValue;
+    function getMinCollateralizationFactorValue() external override view returns (uint256) {
+        return minCollateralizationFactorValue;
     }
 
-    function setMinCollateralizationValue(uint256 _minCollateralizationValue) external override onlyOwner {
-        minCollateralizationValue = _minCollateralizationValue;
-        emit MinCollateralizationValueSet(_minCollateralizationValue);
+    function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external override onlyOwner {
+        minCollateralizationFactorValue = _minCollateralizationFactorValue;
+        emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
     }
 }

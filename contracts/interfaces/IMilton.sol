@@ -7,7 +7,7 @@ interface IMilton {
 
     function authorizeLiquidityPool(address asset) external;
 
-    function openPosition(address asset, uint256 totalAmount, uint256 maximumSlippage, uint256 collateralization, uint8 direction) external returns (uint256);
+    function openPosition(address asset, uint256 totalAmount, uint256 maximumSlippage, uint256 collateralizationFactor, uint8 direction) external returns (uint256);
 
     function closePosition(uint256 derivativeId) external;
 

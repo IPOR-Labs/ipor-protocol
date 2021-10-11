@@ -11,7 +11,7 @@ library Errors {
     string public constant MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS = 'IPOR_8'; // 'Derivative direction not exists'
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = 'IPOR_9'; // 'Maximum Slippage is too high'
     string public constant MILTON_TOTAL_AMOUNT_TOO_HIGH = 'IPOR_10'; // 'Deposit Amount when creating derivative position is too high'
-    string public constant MILTON_COLLATERALIZATION_TOO_LOW = 'IPOR_12'; //'Deposit amount to notional amount collateralization is too low'
+    string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_LOW = 'IPOR_12'; //'Deposit amount to notional amount collateralization factor is too low'
     string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW = 'IPOR_13'; //'Trader doesnt have enought tokens to execute transaction'
     string public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_14'; //'Derivative cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent'
     string public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = 'IPOR_15'; //'Derivative cannot be closed because liquidation deposit balance is to low to pay sender for liquidation.'
@@ -33,7 +33,7 @@ library Errors {
     string public constant MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER = 'IPOR_31'; // Sender is not a publication fee transferer, not match address defined in IporAddressesManager in key PUBLICATION_FEE_TRANSFERER
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = 'IPOR_32'; // Incorrect Milton Configuration address
     string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS = 'IPOR_33'; // Incorrect Milton Configuration address
-    string public constant MILTON_COLLATERALIZATION_TOO_HIGH = 'IPOR_34';
+    string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = 'IPOR_34';
     string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, MiltonConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
     string public constant WARREN_WRONG_UPDATER_ADDRESS = 'IPOR_36'; // Updater address is wrong
     string public constant WRONG_ADDRESS = 'IPOR_37'; // General problem, address is wrong
@@ -41,7 +41,7 @@ library Errors {
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = 'IPOR_39'; //Asset address not supported
     string public constant MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW = 'IPOR_40'; //Amount which should be minted is too low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = 'IPOR_41'; //liquidity provider can deposit amount of stable, errors appeared when amount is to low
-    string public constant MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW = 'IPOR_42'; //user cannot withdraw underlying tokens because ipor token on his balance is too low
+    string public constant MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW = 'IPOR_42'; //user cannot redeem underlying tokens because ipor token on his balance is too low
     string public constant MILTON_CANNOT_WITHDRAW_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_43'; //liquidity provider cannot withdraw because liquidity pool is too low
     string public constant MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW = 'IPOR_44'; //Amount which should be burned is too low
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = 'IPOR_45'; //Liquidity Pool balance is equal 0

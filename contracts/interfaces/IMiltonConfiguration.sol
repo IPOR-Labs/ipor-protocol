@@ -14,8 +14,8 @@ interface IMiltonConfiguration {
     event LiquidityPoolMaxUtilizationPercentageSet(uint256 newLiquidityPoolMaxUtilizationPercentageSet);
     event MaxPositionTotalAmountSet(uint256 newMaxPositionTotalAmount);
 
-    event MaxCollateralizationValueSet(uint256 newMaxCollateralizationValue);
-    event MinCollateralizationValueSet(uint256 newMinCollateralizationValue);
+    event MaxCollateralizationFactorValueSet(uint256 newMaxCollateralizationFactorValue);
+    event MinCollateralizationFactorValueSet(uint256 newMinCollateralizationFactorValue);
 
     function getIncomeTaxPercentage() external view returns (uint256);
 
@@ -53,12 +53,12 @@ interface IMiltonConfiguration {
 
     function setSpreadRecFixedValue(address asset, uint256 _spread) external;
 
-    function getMaxCollateralizationValue() external view returns (uint256);
+    function getMaxCollateralizationFactorValue() external view returns (uint256);
 
-    function setMaxCollateralizationValue(uint256 _maxCollateralizationValue) external;
+    function setMaxCollateralizationFactorValue(uint256 _maxCollateralizationFactorValue) external;
 
-    function getMinCollateralizationValue() external view returns (uint256);
+    function getMinCollateralizationFactorValue() external view returns (uint256);
 
-    function setMinCollateralizationValue(uint256 _minCollateralizationValue) external;
+    function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external;
 
 }

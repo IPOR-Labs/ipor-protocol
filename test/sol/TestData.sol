@@ -76,7 +76,7 @@ contract TestData {
 
         uint256 ibtPriceFirst = 100 * Constants.MD;
         uint256 collateral = 9870300000000000000000;
-        uint256 collateralization = 10;
+        uint256 collateralizationFactor = 10;
 
         DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
             3 * 1e16, //ipor index value
@@ -100,8 +100,8 @@ contract TestData {
             msg.sender, address(daiMockedToken),
             0, //Pay Fixed, Receive Floating (long position)
             collateral,
-            fee, collateralization,
-            collateral * collateralization,
+            fee, collateralizationFactor,
+            collateral * collateralizationFactor,
             block.timestamp,
             block.timestamp + 60 * 60 * 24 * 28,
             indicator
