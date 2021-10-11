@@ -17,7 +17,7 @@ interface IIporAddressesManager {
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);
     event IporTokenAddressUpdated(address indexed underlyingAssetAddress, address indexed newIporTokenAddress);
-    event IporLiquidityPoolAddressUpdated(address indexed newIporLiquidityPoolAddress);
+    event JosephAddressUpdated(address indexed newJosephAddress);
 
     function setAddress(string memory id, address newAddress) external;
 
@@ -77,7 +77,7 @@ interface IIporAddressesManager {
 
     function setIporToken(address underlyingAsset, address iporToken) external;
 
-    function getIporLiquidityPool() external view returns (address);
+    function getJoseph() external view returns (address);
 
-    function setIporLiquidityPool(address newIporLiquidityPool) external;
+    function setJoseph(address newJoseph) external;
 }

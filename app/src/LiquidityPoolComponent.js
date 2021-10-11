@@ -4,7 +4,7 @@ import SpreadComponent from "./SpreadComponent";
 import SoapComponent from "./SoapComponent";
 import DaiMockedToken from "./contracts/DaiMockedToken.json";
 import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
-import IporLiquidityPool from "./contracts/IporLiquidityPool.json";
+import Joseph from "./contracts/Joseph.json";
 
 const {ContractData} = newContextComponents;
 
@@ -25,7 +25,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporLiquidityPool"
+                        contract="Joseph"
                         method="calculateExchangeRate"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
@@ -40,7 +40,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporLiquidityPool"
+                        contract="Joseph"
                         method="calculateExchangeRate"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
@@ -55,7 +55,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporLiquidityPool"
+                        contract="Joseph"
                         method="calculateExchangeRate"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (

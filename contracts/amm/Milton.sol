@@ -19,7 +19,7 @@ import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
-import "../interfaces/IIporLiquidityPool.sol";
+import "../interfaces/IJoseph.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
@@ -43,7 +43,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //    }
 
     function authorizeLiquidityPool(address asset) external override onlyOwner {
-        IERC20(asset).approve(_addressesManager.getIporLiquidityPool(), Constants.MAX_VALUE);
+        IERC20(asset).approve(_addressesManager.getJoseph(), Constants.MAX_VALUE);
     }
 
     //@notice transfer publication fee to configured charlie treasurer address

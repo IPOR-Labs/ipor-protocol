@@ -16,9 +16,9 @@ const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
-const IporLiquidityPool = artifacts.require('IporLiquidityPool');
+const Joseph = artifacts.require('Joseph');
 
-contract('IporLiquidityPool', (accounts) => {
+contract('Joseph', (accounts) => {
 
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
@@ -38,7 +38,7 @@ contract('IporLiquidityPool', (accounts) => {
     let miltonConfiguration = null;
     let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
-    let iporLiquidityPool = null;
+    let joseph = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
@@ -47,7 +47,7 @@ contract('IporLiquidityPool', (accounts) => {
         miltonConfiguration = await MiltonConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
-        iporLiquidityPool = await IporLiquidityPool.deployed();
+        joseph = await Joseph.deployed();
 
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
@@ -60,16 +60,16 @@ contract('IporLiquidityPool', (accounts) => {
         for (let i = 1; i < accounts.length - 2; i++) {
             //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
             //Liquidity Pool has rights to spend money on behalf of user accounts[i]
-            await tokenUsdt.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
-            await tokenUsdc.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
-            await tokenDai.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+            await tokenUsdt.approve(joseph.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
+            await tokenUsdc.approve(joseph.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+            await tokenDai.approve(joseph.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
             //Milton has rights to spend money on behalf of user accounts[i]
             await tokenUsdt.approve(milton.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
             await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", await iporLiquidityPool.address);
+        await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
@@ -77,7 +77,7 @@ contract('IporLiquidityPool', (accounts) => {
         await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
-        await iporLiquidityPool.initialize(iporAddressesManager.address);
+        await joseph.initialize(iporAddressesManager.address);
         await milton.authorizeLiquidityPool(tokenDai.address);
 
     });
@@ -124,7 +124,7 @@ contract('IporLiquidityPool', (accounts) => {
         let expectedLiquidityPoolBalanceMilton = testUtils.MILTON_14_000_USD;;
 
         //when
-        await iporLiquidityPool.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+        await joseph.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
 
         //then
         const actualIporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
@@ -158,10 +158,10 @@ contract('IporLiquidityPool', (accounts) => {
         let expectedStableBalanceMilton = BigInt("4000000000000000000000");
         let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
         let expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
-        await iporLiquidityPool.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+        await joseph.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
 
         //when
-        await iporLiquidityPool.redeem(params.asset, withdrawAmount, {from: liquidityProvider});
+        await joseph.redeem(params.asset, withdrawAmount, {from: liquidityProvider});
 
         //then
         const actualIporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
@@ -188,7 +188,7 @@ contract('IporLiquidityPool', (accounts) => {
         //given
         let expectedExchangeRate = BigInt("1000000000000000000");
         //when
-        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+        let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
 
         //then
         assert(expectedExchangeRate === actualExchangeRate,
@@ -202,10 +202,10 @@ contract('IporLiquidityPool', (accounts) => {
         let expectedExchangeRate = BigInt("1000000000000000000");
         const params = getStandardDerivativeParams();
 
-        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
+        await joseph.provideLiquidity(params.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         //when
-        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+        let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
 
         //then
         assert(expectedExchangeRate === actualExchangeRate,
@@ -219,15 +219,15 @@ contract('IporLiquidityPool', (accounts) => {
         let expectedExchangeRate = BigInt("0");
         const params = getStandardDerivativeParams();
 
-        await iporLiquidityPool.provideLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
+        await joseph.provideLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", userOne);
+        await iporAddressesManager.setAddress("JOSEPH", userOne);
         await miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: userOne});
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", iporLiquidityPool.address);
+        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
 
         //when
-        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+        let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
 
         //then
         assert(expectedExchangeRate === actualExchangeRate,
@@ -242,7 +242,7 @@ contract('IporLiquidityPool', (accounts) => {
         let expectedExchangeRate = BigInt("1022727272727272727");
         const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
-        await iporLiquidityPool.provideLiquidity(params.asset, BigInt("40000000000000000000"), {from: liquidityProvider})
+        await joseph.provideLiquidity(params.asset, BigInt("40000000000000000000"), {from: liquidityProvider})
 
         //open position to have something in Liquidity Pool
         await milton.openPosition(
@@ -251,7 +251,7 @@ contract('IporLiquidityPool', (accounts) => {
             params.direction, {from: userTwo});
 
         //when
-        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+        let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
 
         //then
         assert(expectedExchangeRate === actualExchangeRate,
@@ -266,7 +266,7 @@ contract('IporLiquidityPool', (accounts) => {
         let expectedExchangeRate = BigInt("1000000000000000000");
         const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
-        await iporLiquidityPool.provideLiquidity(params.asset, amount, {from: liquidityProvider});
+        await joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
 
         //open position to have something in Liquidity Pool
         await milton.openPosition(
@@ -274,10 +274,10 @@ contract('IporLiquidityPool', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await iporLiquidityPool.redeem(params.asset, amount, {from: liquidityProvider})
+        await joseph.redeem(params.asset, amount, {from: liquidityProvider})
 
         //when
-        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(tokenDai.address));
+        let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
 
         //then
         assert(expectedExchangeRate === actualExchangeRate,
@@ -292,7 +292,7 @@ contract('IporLiquidityPool', (accounts) => {
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
-        await iporLiquidityPool.provideLiquidity(params.asset, amount, {from: liquidityProvider});
+        await joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
         let oldOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
         await miltonConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
 
@@ -304,14 +304,14 @@ contract('IporLiquidityPool', (accounts) => {
 
         //after this withdraw initial exchange rate is 1,5
         let expectedExchangeRate = BigInt("1714285714285714286");
-        let exchangeRateBeforeProvideLiquidity = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+        let exchangeRateBeforeProvideLiquidity = BigInt(await joseph.calculateExchangeRate.call(params.asset));
         let expectedIporTokenBalanceForUserThree = BigInt("874999999999999999854");
 
         // //when
-        await iporLiquidityPool.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
+        await joseph.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
 
         let actualIporTokenBalanceForUserThree = BigInt(await iporTokenDai.balanceOf.call(userThree));
-        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+        let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(params.asset));
 
         //then
         assert(expectedIporTokenBalanceForUserThree === actualIporTokenBalanceForUserThree,
@@ -335,7 +335,7 @@ contract('IporLiquidityPool', (accounts) => {
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
-        await iporLiquidityPool.provideLiquidity(params.asset, amount, {from: liquidityProvider});
+        await joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
         let oldOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
         await miltonConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
 
@@ -347,15 +347,15 @@ contract('IporLiquidityPool', (accounts) => {
 
         //after this withdraw initial exchange rate is 1,5
         let expectedExchangeRate = BigInt("1714285714285714286");
-        let exchangeRateBeforeProvideLiquidity = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+        let exchangeRateBeforeProvideLiquidity = BigInt(await joseph.calculateExchangeRate.call(params.asset));
         let expectedIporTokenBalanceForUserThree = BigInt("0");
 
         //when
-        await iporLiquidityPool.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
-        await iporLiquidityPool.redeem(params.asset, BigInt("874999999999999999854"), {from: userThree})
+        await joseph.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
+        await joseph.redeem(params.asset, BigInt("874999999999999999854"), {from: userThree})
 
         let actualIporTokenBalanceForUserThree = BigInt(await iporTokenDai.balanceOf.call(userThree));
-        let actualExchangeRate = BigInt(await iporLiquidityPool.calculateExchangeRate.call(params.asset));
+        let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(params.asset));
 
         //then
         assert(expectedIporTokenBalanceForUserThree === actualIporTokenBalanceForUserThree,
@@ -378,17 +378,17 @@ contract('IporLiquidityPool', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
-        await iporLiquidityPool.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
+        await joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", userOne);
+        await iporAddressesManager.setAddress("JOSEPH", userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", iporLiquidityPool.address);
+        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
 
         //when
         await testUtils.assertError(
             //when
-            iporLiquidityPool.redeem(params.asset, BigInt("1000000000000000000000"), {from: liquidityProvider}),
+            joseph.redeem(params.asset, BigInt("1000000000000000000000"), {from: liquidityProvider}),
             //then
             'IPOR_45'
         );
@@ -398,20 +398,24 @@ contract('IporLiquidityPool', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
-        await iporLiquidityPool.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
+        await joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", userOne);
+        await iporAddressesManager.setAddress("JOSEPH", userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", iporLiquidityPool.address);
+        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
 
         //when
         await testUtils.assertError(
             //when
-            iporLiquidityPool.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider}),
+            joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider}),
             //then
             'IPOR_45'
         );
+    });
+
+    it('should NOT redeem liquidity because of empty Liquidity Pool', async () => {
+
     });
 
     const getStandardDerivativeParams = () => {

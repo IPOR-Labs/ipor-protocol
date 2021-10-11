@@ -15,7 +15,7 @@ const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
-const IporLiquidityPool = artifacts.require('IporLiquidityPool');
+const Joseph = artifacts.require('Joseph');
 
 contract('IporToken', (accounts) => {
 
@@ -37,7 +37,7 @@ contract('IporToken', (accounts) => {
     let miltonConfiguration = null;
     let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
-    let iporLiquidityPool = null;
+    let joseph = null;
 
     before(async () => {
         derivativeLogic = await DerivativeLogic.deployed();
@@ -46,7 +46,7 @@ contract('IporToken', (accounts) => {
         miltonConfiguration = await MiltonConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
-        iporLiquidityPool = await IporLiquidityPool.deployed();
+        joseph = await Joseph.deployed();
 
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
@@ -68,9 +68,9 @@ contract('IporToken', (accounts) => {
 
         for (let i = 1; i < accounts.length - 2; i++) {
             //Liquidity Pool has rights to spend money on behalf of user accounts[i]
-            await tokenUsdt.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
-            await tokenUsdc.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
-            await tokenDai.approve(iporLiquidityPool.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+            await tokenUsdt.approve(joseph.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
+            await tokenUsdc.approve(joseph.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+            await tokenDai.approve(joseph.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
 
             //Milton has rights to spend money on behalf of user accounts[i]
             await tokenUsdt.approve(milton.address, testUtils.TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
@@ -79,7 +79,7 @@ contract('IporToken', (accounts) => {
         }
 
         await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
-        await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", await iporLiquidityPool.address);
+        await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
@@ -87,7 +87,7 @@ contract('IporToken', (accounts) => {
         await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
-        await iporLiquidityPool.initialize(iporAddressesManager.address);
+        await joseph.initialize(iporAddressesManager.address);
         await milton.authorizeLiquidityPool(tokenDai.address);
 
     });

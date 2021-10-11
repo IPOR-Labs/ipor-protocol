@@ -5,13 +5,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIporToken.sol";
 import "../interfaces/IIporAddressesManager.sol";
-import "../interfaces/IIporLiquidityPool.sol";
+import "../interfaces/IJoseph.sol";
 import {Errors} from '../Errors.sol';
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../libraries/Constants.sol";
 
-contract IporLiquidityPool is Ownable, IIporLiquidityPool {
+contract Joseph is Ownable, IJoseph {
 
     IIporAddressesManager internal _addressesManager;
 
@@ -21,7 +21,7 @@ contract IporLiquidityPool is Ownable, IIporLiquidityPool {
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
 
-        uint256 exchangeRate = IIporLiquidityPool(_addressesManager.getIporLiquidityPool()).calculateExchangeRate(asset);
+        uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
         require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
@@ -40,7 +40,7 @@ contract IporLiquidityPool is Ownable, IIporLiquidityPool {
 
         require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW);
 
-        uint256 exchangeRate = IIporLiquidityPool(_addressesManager.getIporLiquidityPool()).calculateExchangeRate(asset);
+        uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
         require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 

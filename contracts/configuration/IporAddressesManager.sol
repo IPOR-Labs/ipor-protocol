@@ -34,7 +34,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     string private constant MILTON_UTILIZATION_STRATEGY = "MILTON_UTILIZATION_STRATEGY";
     string private constant MILTON_SPREAD_STRATEGY = "MILTON_SPREAD_STRATEGY";
     string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
-    string private constant IPOR_LIQUIDITY_POOL = "IPOR_LIQUIDITY_POOL";
+    string private constant JOSEPH = "JOSEPH";
 
 
     function setAddressAsProxy(string memory id, address implementationAddress)
@@ -180,13 +180,13 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         emit IporTokenAddressUpdated(underlyingAssetAddress, iporTokenAddress);
     }
 
-    function getIporLiquidityPool() external override view returns (address){
-        return _addresses[IPOR_LIQUIDITY_POOL];
+    function getJoseph() external override view returns (address){
+        return _addresses[JOSEPH];
     }
 
-    function setIporLiquidityPool(address newIporLiquidityPool) external override onlyOwner {
-        _addresses[IPOR_LIQUIDITY_POOL] = newIporLiquidityPool;
-        emit IporLiquidityPoolAddressUpdated(newIporLiquidityPool);
+    function setJoseph(address newJoseph) external override onlyOwner {
+        _addresses[JOSEPH] = newJoseph;
+        emit JosephAddressUpdated(newJoseph);
     }
 
     function assetSupported(address asset) external override view returns (uint256) {

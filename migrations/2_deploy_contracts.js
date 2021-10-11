@@ -27,7 +27,7 @@ const WarrenFrontendDataProvider = artifacts.require('WarrenFrontendDataProvider
 const MiltonFrontendDataProvider = artifacts.require('MiltonFrontendDataProvider');
 const MiltonLPUtilizationStrategyCollateral = artifacts.require('MiltonLPUtilizationStrategyCollateral');
 const MiltonSpreadStrategy = artifacts.require('MiltonSpreadStrategy');
-const IporLiquidityPool = artifacts.require('IporLiquidityPool');
+const Joseph = artifacts.require('Joseph');
 
 
 module.exports = async function (deployer, _network, addresses) {
@@ -84,7 +84,7 @@ module.exports = async function (deployer, _network, addresses) {
     let miltonFaucetAddr = null;
     let miltonConfiguration = null;
     let iporAddressesManager = null;
-    let iporLiquidityPool = null;
+    let joseph = null;
 
     await deployer.link(AmmMath, DerivativeLogic);
     await deployer.deploy(DerivativeLogic);
@@ -127,11 +127,11 @@ module.exports = async function (deployer, _network, addresses) {
     let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
     await iporAddressesManager.setAddress("MILTON_SPREAD_STRATEGY", miltonSpreadStrategy.address);
 
-    await deployer.link(AmmMath, IporLiquidityPool);
-    await deployer.deploy(IporLiquidityPool);
-    iporLiquidityPool = await IporLiquidityPool.deployed();
+    await deployer.link(AmmMath, Joseph);
+    await deployer.deploy(Joseph);
+    joseph = await Joseph.deployed();
 
-    await iporAddressesManager.setAddress("IPOR_LIQUIDITY_POOL", iporLiquidityPool.address);
+    await iporAddressesManager.setAddress("JOSEPH", joseph.address);
 
     // prepare ERC20 mocked tokens...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
@@ -311,10 +311,10 @@ module.exports = async function (deployer, _network, addresses) {
             mockedDai.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
             mockedTusd.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
 
-            mockedUsdt.approve(iporLiquidityPool.address, totalSupply6Decimals, {from: addresses[i]});
-            mockedUsdc.approve(iporLiquidityPool.address, totalSupply6Decimals, {from: addresses[i]});
-            mockedDai.approve(iporLiquidityPool.address, totalSupply18Decimals, {from: addresses[i]});
-            mockedTusd.approve(iporLiquidityPool.address, totalSupply18Decimals, {from: addresses[i]});
+            mockedUsdt.approve(joseph.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedUsdc.approve(joseph.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedDai.approve(joseph.address, totalSupply18Decimals, {from: addresses[i]});
+            mockedTusd.approve(joseph.address, totalSupply18Decimals, {from: addresses[i]});
 
             await milton.authorizeLiquidityPool(mockedUsdt.address);
             await milton.authorizeLiquidityPool(mockedUsdc.address);
@@ -345,6 +345,6 @@ module.exports = async function (deployer, _network, addresses) {
     await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
     await miltonSpreadStrategy.initialize(iporAddressesManagerAddr);
     await miltonConfiguration.initialize(iporAddressesManagerAddr);
-    await iporLiquidityPool.initialize(iporAddressesManagerAddr);
+    await joseph.initialize(iporAddressesManagerAddr);
 
 };
