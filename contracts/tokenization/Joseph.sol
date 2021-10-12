@@ -10,16 +10,23 @@ import {Errors} from '../Errors.sol';
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../libraries/Constants.sol";
+import "../interfaces/IMiltonConfiguration.sol";
 
 contract Joseph is Ownable, IJoseph {
 
     IIporAddressesManager internal _addressesManager;
+
+    mapping(address => mapping(address => uint256)) public assetDepositTimestamp;
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
+        _provideLiquidity(asset, liquidityAmount, block.timestamp);
+    }
+
+    function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 timestamp) internal {
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
@@ -33,12 +40,17 @@ contract Joseph is Ownable, IJoseph {
         if (exchangeRate > 0) {
             IIporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * Constants.MD, exchangeRate));
         }
+        assetDepositTimestamp[asset][msg.sender] = timestamp;
     }
 
     function redeem(address asset, uint256 iporTokenVolume) external override {
-        //TODO: do final implementation, will be described in separate task
+        _redeem(asset, iporTokenVolume, block.timestamp);
+    }
 
+    function _redeem(address asset, uint256 iporTokenVolume, uint256 timestamp) internal {
         require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW);
+        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        require(timestamp >= assetDepositTimestamp[asset][msg.sender] + miltonConfiguration.getCoolOffPeriodInSec(), Errors.MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED);
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 

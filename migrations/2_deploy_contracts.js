@@ -7,6 +7,7 @@ const MiltonStorage = artifacts.require("MiltonStorage");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 const TestWarren = artifacts.require("TestWarren");
 const TestMilton = artifacts.require("TestMilton");
+const TestJoseph = artifacts.require("TestJoseph");
 const IporToken = artifacts.require('IporToken');
 const TusdMockedToken = artifacts.require('TusdMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
@@ -77,6 +78,7 @@ module.exports = async function (deployer, _network, addresses) {
     let warrenAddr = null;
     let milton = null;
     let testMilton = null;
+    let testJoseph = null;
     let miltonAddr = null;
     let miltonStorage = null;
     let miltonStorageAddr = null;
@@ -126,12 +128,6 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(MiltonSpreadStrategy);
     let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
     await iporAddressesManager.setAddress("MILTON_SPREAD_STRATEGY", miltonSpreadStrategy.address);
-
-    await deployer.link(AmmMath, Joseph);
-    await deployer.deploy(Joseph);
-    joseph = await Joseph.deployed();
-
-    await iporAddressesManager.setAddress("JOSEPH", joseph.address);
 
     // prepare ERC20 mocked tokens...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
@@ -224,6 +220,10 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(Milton);
         milton = await Milton.deployed();
 
+        await deployer.link(AmmMath, Joseph);
+        await deployer.deploy(Joseph);
+        joseph = await Joseph.deployed();
+
         await deployer.deploy(MiltonStorage);
         miltonStorage = await MiltonStorage.deployed();
 
@@ -252,16 +252,30 @@ module.exports = async function (deployer, _network, addresses) {
             await deployer.deploy(TestMilton);
             testMilton = await TestMilton.deployed();
 
+            //TestJoseph
+            await deployer.link(AmmMath, TestJoseph);
+            await deployer.deploy(TestJoseph);
+            testJoseph = await TestJoseph.deployed();
+
             if (_network === 'develop' || _network === 'dev' || _network === 'docker') {
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
                     //For IPOR Test Framework purposes
                     await iporAddressesManager.setAddress("MILTON", testMilton.address);
                 } else {
-                    //Web application, Milton Dev Tool
+                    //Web application, IPOR Dev Tool
                     await iporAddressesManager.setAddress("MILTON", miltonAddr);
+                }
+
+                if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
+                    //For IPOR Test Framework purposes
+                    await iporAddressesManager.setAddress("JOSEPH", testJoseph.address);
+                } else {
+                    //Web application, IPOR Dev Tool
+                    await iporAddressesManager.setAddress("JOSEPH", joseph.address);
                 }
             } else {
                 await iporAddressesManager.setAddress("MILTON", miltonAddr);
+                await iporAddressesManager.setAddress("JOSEPH", joseph.address);
             }
 
             await testMilton.initialize(iporAddressesManagerAddr);
@@ -272,12 +286,14 @@ module.exports = async function (deployer, _network, addresses) {
 
         await milton.initialize(iporAddressesManagerAddr);
         await miltonStorage.initialize(iporAddressesManagerAddr);
+        await joseph.initialize(iporAddressesManagerAddr);
 
     } else {
         await deployer.link(AmmMath, TestWarren);
         await deployer.link(IporLogic, TestWarren);
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.link(AmmMath, TestMilton);
+        await deployer.link(AmmMath, TestJoseph);
         await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
         await deployer.link(AmmMath, WarrenDevToolDataProvider);
         await deployer.deploy(WarrenDevToolDataProvider, iporAddressesManagerAddr);
@@ -345,6 +361,4 @@ module.exports = async function (deployer, _network, addresses) {
     await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
     await miltonSpreadStrategy.initialize(iporAddressesManagerAddr);
     await miltonConfiguration.initialize(iporAddressesManagerAddr);
-    await joseph.initialize(iporAddressesManagerAddr);
-
 };

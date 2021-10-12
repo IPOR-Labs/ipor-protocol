@@ -169,7 +169,24 @@ export default ({drizzle, drizzleState}) => (
                     contract="MiltonConfiguration"
                     method="setLiquidityPoolMaxUtilizationPercentage"/>
             </div>
-
+        </div>
+        <hr/>
+        <div className="row">
+            <div className="col-md-3">
+                <strong>Cool Off period (in seconds)</strong>
+                <br/>
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="MiltonConfiguration"
+                    method="getCoolOffPeriodInSec"
+                />
+                <hr/>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonConfiguration"
+                    method="setCoolOffPeriodInSec"/>
+            </div>
         </div>
         <hr/>
         <div className="row">

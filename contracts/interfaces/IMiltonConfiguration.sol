@@ -17,6 +17,8 @@ interface IMiltonConfiguration {
     event MaxCollateralizationFactorValueSet(uint256 newMaxCollateralizationFactorValue);
     event MinCollateralizationFactorValueSet(uint256 newMinCollateralizationFactorValue);
 
+    event CoolOffPeriodInSecSet(uint256 newCoolOffPeriodInSecSet);
+
     function getIncomeTaxPercentage() external view returns (uint256);
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external;
@@ -60,5 +62,9 @@ interface IMiltonConfiguration {
     function getMinCollateralizationFactorValue() external view returns (uint256);
 
     function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external;
+
+    function getCoolOffPeriodInSec() external view returns (uint256);
+
+    function setCoolOffPeriodInSec(uint256 _coolOffPeriodInSec) external;
 
 }

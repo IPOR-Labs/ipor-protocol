@@ -19,6 +19,7 @@ import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 
 //TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
+//TODO: rename to IporConfiguration
 contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     uint256 minCollateralizationFactorValue;
@@ -41,6 +42,8 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
     //@notice max total amount used when opening position
     uint256 maxPositionTotalAmount;
+
+    uint256 coolOffPeriodInSec;
 
     //TODO: spread from configuration will be deleted, spread will be calculated in runtime
     mapping(address => uint256) spreadPayFixedValues;
@@ -66,6 +69,9 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
 
         minCollateralizationFactorValue = 10 * Constants.MD;
         maxCollateralizationFactorValue = 50 * Constants.MD;
+
+        //@notice 14 days
+        coolOffPeriodInSec = 1209600;
 
         address[] memory assets = _addressesManager.getAssets();
 
@@ -173,5 +179,14 @@ contract MiltonConfiguration is Ownable, IMiltonConfiguration {
     function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external override onlyOwner {
         minCollateralizationFactorValue = _minCollateralizationFactorValue;
         emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
+    }
+
+    function getCoolOffPeriodInSec() external override view returns (uint256) {
+        return coolOffPeriodInSec;
+    }
+
+    function setCoolOffPeriodInSec(uint256 _coolOffPeriodInSec) external override onlyOwner {
+        coolOffPeriodInSec = _coolOffPeriodInSec;
+        emit CoolOffPeriodInSecSet(_coolOffPeriodInSec);
     }
 }
