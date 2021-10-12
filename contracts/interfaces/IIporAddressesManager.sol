@@ -9,7 +9,7 @@ interface IIporAddressesManager {
     event MiltonSpreadStrategyUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event WarrenStorageAddressUpdated(address indexed newAddress);
-    event MiltonConfigurationAddressUpdated(address indexed newAddress);
+    event IporConfigurationAddressUpdated(address indexed newAddress);
     event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
     event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
     event ProxyCreated(string id, address indexed newAddress);
@@ -17,7 +17,7 @@ interface IIporAddressesManager {
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);
     event IporTokenAddressUpdated(address indexed underlyingAssetAddress, address indexed newIporTokenAddress);
-    event IporLiquidityPoolAddressUpdated(address indexed newIporLiquidityPoolAddress);
+    event JosephAddressUpdated(address indexed newJosephAddress);
 
     function setAddress(string memory id, address newAddress) external;
 
@@ -45,9 +45,9 @@ interface IIporAddressesManager {
 
     function setMiltonSpreadStrategyImpl(address miltonSpreadStrategyImpl) external;
 
-    function getMiltonConfiguration() external view returns (address);
+    function getIporConfiguration() external view returns (address);
 
-    function setMiltonConfigurationImpl(address miltonConfigImpl) external;
+    function setIporConfigurationImpl(address iporConfigImpl) external;
 
     function getWarren() external view returns (address);
 
@@ -77,7 +77,7 @@ interface IIporAddressesManager {
 
     function setIporToken(address underlyingAsset, address iporToken) external;
 
-    function getIporLiquidityPool() external view returns (address);
+    function getJoseph() external view returns (address);
 
-    function setIporLiquidityPool(address newIporLiquidityPool) external;
+    function setJoseph(address newJoseph) external;
 }

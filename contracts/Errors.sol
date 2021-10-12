@@ -31,20 +31,21 @@ library Errors {
     string public constant MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS = 'IPOR_29'; // Charlie Treasurer address is incorrect
     string public constant MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER = 'IPOR_30'; // Amount is too low to transfer
     string public constant MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER = 'IPOR_31'; // Sender is not a publication fee transferer, not match address defined in IporAddressesManager in key PUBLICATION_FEE_TRANSFERER
-    string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = 'IPOR_32'; // Incorrect Milton Configuration address
-    string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS = 'IPOR_33'; // Incorrect Milton Configuration address
+    string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = 'IPOR_32'; // Incorrect IPOR Configuration address
+    string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS = 'IPOR_33'; // Incorrect IPOR Configuration address
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = 'IPOR_34';
-    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, MiltonConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
+    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, IporConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
     string public constant WARREN_WRONG_UPDATER_ADDRESS = 'IPOR_36'; // Updater address is wrong
     string public constant WRONG_ADDRESS = 'IPOR_37'; // General problem, address is wrong
     string public constant MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS = 'IPOR_38'; //Cannot add new asset to asset list, because already exists
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = 'IPOR_39'; //Asset address not supported
     string public constant MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW = 'IPOR_40'; //Amount which should be minted is too low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = 'IPOR_41'; //liquidity provider can deposit amount of stable, errors appeared when amount is to low
-    string public constant MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW = 'IPOR_42'; //user cannot redeem underlying tokens because ipor token on his balance is too low
-    string public constant MILTON_CANNOT_WITHDRAW_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_43'; //liquidity provider cannot withdraw because liquidity pool is too low
+    string public constant MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW = 'IPOR_42'; //user cannot redeem underlying tokens because ipor token on his balance is too low
+    string public constant MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_43'; //liquidity provider cannot withdraw because liquidity pool is too low
     string public constant MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW = 'IPOR_44'; //Amount which should be burned is too low
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = 'IPOR_45'; //Liquidity Pool balance is equal 0
-    string public constant MILTON_CALLER_NOT_IPOR_LIQUIDITY_POOL = 'IPOR_46'; // 'The caller must be the Ipor Liquidity Pool'
+    string public constant MILTON_CALLER_NOT_JOSEPH = 'IPOR_46'; // 'The caller must be the Ipor Liquidity Pool'
+    string public constant MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED = 'IPOR_47'; //Cannot redeem because cool off period not passed for msg.sender and asset
 
 }

@@ -18,6 +18,7 @@ module.exports.assertError = async (promise, error) => {
 
 module.exports.ZERO = BigInt("0");
 module.exports.PERIOD_1_DAY_IN_SECONDS = 60 * 60 * 24 * 1;
+module.exports.PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
 module.exports.PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;
 module.exports.PERIOD_28_DAYS_IN_SECONDS = 60 * 60 * 24 * 28;
 module.exports.PERIOD_50_DAYS_IN_SECONDS = 60 * 60 * 24 * 50;

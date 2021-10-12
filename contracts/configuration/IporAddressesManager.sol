@@ -33,8 +33,8 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     string private constant MILTON_STORAGE = "MILTON_STORAGE";
     string private constant MILTON_UTILIZATION_STRATEGY = "MILTON_UTILIZATION_STRATEGY";
     string private constant MILTON_SPREAD_STRATEGY = "MILTON_SPREAD_STRATEGY";
-    string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
-    string private constant IPOR_LIQUIDITY_POOL = "IPOR_LIQUIDITY_POOL";
+    string private constant IPOR_CONFIGURATION = "IPOR_CONFIGURATION";
+    string private constant JOSEPH = "JOSEPH";
 
 
     function setAddressAsProxy(string memory id, address implementationAddress)
@@ -101,14 +101,14 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         emit MiltonSpreadStrategyUpdated(miltonSpreadStrategyImpl);
     }
 
-    function getMiltonConfiguration() external view override returns (address) {
-        return getAddress(MILTON_CONFIGURATION);
+    function getIporConfiguration() external view override returns (address) {
+        return getAddress(IPOR_CONFIGURATION);
     }
 
     //TODO: implement _updateImpl and then use this method
-    function setMiltonConfigurationImpl(address miltonConfigImpl) external override onlyOwner {
-        _updateImpl(MILTON_CONFIGURATION, miltonConfigImpl);
-        emit MiltonConfigurationAddressUpdated(miltonConfigImpl);
+    function setIporConfigurationImpl(address iporConfigImpl) external override onlyOwner {
+        _updateImpl(IPOR_CONFIGURATION, iporConfigImpl);
+        emit IporConfigurationAddressUpdated(iporConfigImpl);
     }
 
     function getWarren() external view override returns (address) {
@@ -180,13 +180,13 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         emit IporTokenAddressUpdated(underlyingAssetAddress, iporTokenAddress);
     }
 
-    function getIporLiquidityPool() external override view returns (address){
-        return _addresses[IPOR_LIQUIDITY_POOL];
+    function getJoseph() external override view returns (address){
+        return _addresses[JOSEPH];
     }
 
-    function setIporLiquidityPool(address newIporLiquidityPool) external override onlyOwner {
-        _addresses[IPOR_LIQUIDITY_POOL] = newIporLiquidityPool;
-        emit IporLiquidityPoolAddressUpdated(newIporLiquidityPool);
+    function setJoseph(address newJoseph) external override onlyOwner {
+        _addresses[JOSEPH] = newJoseph;
+        emit JosephAddressUpdated(newJoseph);
     }
 
     function assetSupported(address asset) external override view returns (uint256) {

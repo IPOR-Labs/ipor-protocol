@@ -9,11 +9,11 @@ library DataTypes {
         uint256 liquidationDeposit;
         uint256 iporPublicationFee;
 
-        //@notice Liquidity Pool Balance includes part of Opening Fee, how many of Opening Fee goes here is defined by param MiltonConfiguration.openingFeeForTreasurePercentage
+        //@notice Liquidity Pool Balance includes part of Opening Fee, how many of Opening Fee goes here is defined by param IporConfiguration.openingFeeForTreasurePercentage
         uint256 liquidityPool;
 
         //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
-        //configured here MiltonConfiguration.openingFeeForTreasurePercentage
+        //configured here IporConfiguration.openingFeeForTreasurePercentage
         uint256 treasury;
     }
 

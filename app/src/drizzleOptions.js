@@ -5,13 +5,13 @@ import Milton from "./contracts/Milton.json";
 import TestMilton from "./contracts/TestMilton.json";
 import MiltonStorage from "./contracts/MiltonStorage.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
-import MiltonConfiguration from "./contracts/MiltonConfiguration";
+import IporConfiguration from "./contracts/IporConfiguration";
 import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 import IporAddressesManager from "./contracts/IporAddressesManager";
-import IporLiquidityPool from "./contracts/IporLiquidityPool";
+import Joseph from "./contracts/Joseph";
 
 const options = {
     web3: {
@@ -24,14 +24,14 @@ const options = {
     contracts: [
         MiltonDevToolDataProvider,
         IporAddressesManager,
-        IporLiquidityPool,
+        Joseph,
         Warren,
         WarrenStorage,
         WarrenDevToolDataProvider,
         TestMilton,
         Milton,
         MiltonStorage,
-        MiltonConfiguration,
+        IporConfiguration,
         DaiMockedToken,
         UsdtMockedToken,
         UsdcMockedToken,

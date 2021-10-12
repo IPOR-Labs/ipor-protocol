@@ -15,11 +15,11 @@ import './MiltonStorage.sol';
 import './MiltonEvents.sol';
 import '../tokenization/IporToken.sol';
 
-import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
-import "../interfaces/IIporLiquidityPool.sol";
+import "../interfaces/IJoseph.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
@@ -43,7 +43,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //    }
 
     function authorizeLiquidityPool(address asset) external override onlyOwner {
-        IERC20(asset).approve(_addressesManager.getIporLiquidityPool(), Constants.MAX_VALUE);
+        IERC20(asset).approve(_addressesManager.getJoseph(), Constants.MAX_VALUE);
     }
 
     //@notice transfer publication fee to configured charlie treasurer address
@@ -103,19 +103,19 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(asset != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
         require(_addressesManager.assetSupported(asset) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
 
-        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
-        require(address(miltonConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        require(address(iporConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
 
         //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
         //TODO: _totalAmount multiply if required based on _asset
 
-        require(collateralizationFactor >= miltonConfiguration.getMinCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW);
-        require(collateralizationFactor <= miltonConfiguration.getMaxCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH);
+        require(collateralizationFactor >= iporConfiguration.getMinCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW);
+        require(collateralizationFactor <= iporConfiguration.getMaxCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH);
 
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
-        require(totalAmount > miltonConfiguration.getLiquidationDepositAmount() + miltonConfiguration.getIporPublicationFeeAmount(),
+        require(totalAmount > iporConfiguration.getLiquidationDepositAmount() + iporConfiguration.getIporPublicationFeeAmount(),
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
-        require(totalAmount <= miltonConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
+        require(totalAmount <= iporConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
         require(IERC20(asset).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
 
         require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
@@ -128,16 +128,16 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
             totalAmount, collateralizationFactor,
-            miltonConfiguration.getLiquidationDepositAmount(),
-            miltonConfiguration.getIporPublicationFeeAmount(),
-            miltonConfiguration.getOpeningFeePercentage()
+            iporConfiguration.getLiquidationDepositAmount(),
+            iporConfiguration.getIporPublicationFeeAmount(),
+            iporConfiguration.getOpeningFeePercentage()
         );
 
-        require(totalAmount > miltonConfiguration.getLiquidationDepositAmount() + miltonConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
+        require(totalAmount > iporConfiguration.getLiquidationDepositAmount() + iporConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         require(IMiltonLPUtilizationStrategy(
-            _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee) <= miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
+            _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee) <= iporConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, openTimestamp);
@@ -152,9 +152,9 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             direction,
             derivativeAmount.deposit,
             DataTypes.IporDerivativeFee(
-                miltonConfiguration.getLiquidationDepositAmount(),
+                iporConfiguration.getLiquidationDepositAmount(),
                 derivativeAmount.openingFee,
-                miltonConfiguration.getIporPublicationFeeAmount(),
+                iporConfiguration.getIporPublicationFeeAmount(),
                 spreadPayFixedValue,
                 spreadRecFixedValue),
                 collateralizationFactor,
@@ -238,7 +238,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 interestDifferenceAmount,
         uint256 _calculationTimestamp) internal {
-        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
         uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
 
         uint256 transferAmount = derivativeItem.item.collateral;
@@ -249,7 +249,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             //tokens transfered from Milton
             if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
                 // |I| > D
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral, iporConfiguration.getIncomeTaxPercentage());
 
                 //transfer D+D-incomeTax to user's address
                 transferAmount = transferAmount + derivativeItem.item.collateral - incomeTax;
@@ -266,7 +266,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
                         Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
                 }
 
-                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, miltonConfiguration.getIncomeTaxPercentage());
+                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, iporConfiguration.getIncomeTaxPercentage());
 
                 //transfer P=D+I-incomeTax to user's address
                 transferAmount = transferAmount + absInterestDifferenceAmount - incomeTax;

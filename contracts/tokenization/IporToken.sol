@@ -65,7 +65,7 @@ contract IporToken is Ownable, IIporToken, ERC20 {
     }
 
     modifier onlyLiquidityPool() {
-        require(msg.sender == _addressesManager.getIporLiquidityPool(), Errors.MILTON_CALLER_NOT_IPOR_LIQUIDITY_POOL);
+        require(msg.sender == _addressesManager.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }
 }

@@ -5,25 +5,32 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIporToken.sol";
 import "../interfaces/IIporAddressesManager.sol";
-import "../interfaces/IIporLiquidityPool.sol";
+import "../interfaces/IJoseph.sol";
 import {Errors} from '../Errors.sol';
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../libraries/Constants.sol";
+import "../interfaces/IIporConfiguration.sol";
 
-contract IporLiquidityPool is Ownable, IIporLiquidityPool {
+contract Joseph is Ownable, IJoseph {
 
     IIporAddressesManager internal _addressesManager;
+
+    mapping(address => mapping(address => uint256)) public assetDepositTimestamp;
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
+        _provideLiquidity(asset, liquidityAmount, block.timestamp);
+    }
 
-        uint256 exchangeRate = IIporLiquidityPool(_addressesManager.getIporLiquidityPool()).calculateExchangeRate(asset);
+    function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 timestamp) internal {
 
-        require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
+
+        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
 
@@ -33,16 +40,23 @@ contract IporLiquidityPool is Ownable, IIporLiquidityPool {
         if (exchangeRate > 0) {
             IIporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * Constants.MD, exchangeRate));
         }
+        assetDepositTimestamp[asset][msg.sender] = timestamp;
     }
 
     function redeem(address asset, uint256 iporTokenVolume) external override {
-        //TODO: do final implementation, will be described in separate task
+        _redeem(asset, iporTokenVolume, block.timestamp);
+    }
 
-        require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_WITHDRAW_IPOR_TOKEN_TOO_LOW);
+    function _redeem(address asset, uint256 iporTokenVolume, uint256 timestamp) internal {
+        require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW);
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        require(timestamp >= assetDepositTimestamp[asset][msg.sender] + iporConfiguration.getCoolOffPeriodInSec(), Errors.MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED);
 
-        uint256 exchangeRate = IIporLiquidityPool(_addressesManager.getIporLiquidityPool()).calculateExchangeRate(asset);
+        uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
-        require (exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+
+        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getBalance(asset).liquidityPool > iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW);
 
         uint256 underlyingAmount = AmmMath.division(iporTokenVolume * exchangeRate, Constants.MD);
 
