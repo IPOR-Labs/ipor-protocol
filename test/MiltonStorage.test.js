@@ -43,7 +43,7 @@ contract('MiltonStorage', (accounts) => {
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
         iporConfiguration = await IporConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
-        joseph = await Joseph.new();
+        joseph = await TestJoseph.new();
 
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);

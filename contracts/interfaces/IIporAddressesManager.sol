@@ -47,7 +47,7 @@ interface IIporAddressesManager {
 
     function getIporConfiguration() external view returns (address);
 
-    function setIporConfigurationImpl(address miltonConfigImpl) external;
+    function setIporConfigurationImpl(address iporConfigImpl) external;
 
     function getWarren() external view returns (address);
 

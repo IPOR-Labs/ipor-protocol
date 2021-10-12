@@ -55,7 +55,7 @@ export default ({drizzle, drizzleState}) => {
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="miltonConfig" title="Milton Config">
+                <Tab eventKey="miltonConfig" title="IPOR Config">
                     <IporConfiguration
                         drizzle={drizzle}
                         drizzleState={drizzleState}

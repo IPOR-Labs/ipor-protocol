@@ -236,7 +236,7 @@ module.exports = async function (deployer, _network, addresses) {
         await iporAddressesManager.setAddress("WARREN", warrenAddr);
         await iporAddressesManager.setAddress("WARREN_STORAGE", warrenStorageAddr);
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
-        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", iporConfigurationAddr);
+        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", iporConfigurationAddr);
 
         if (isTestEnvironment == 1) {
             //TestWarren

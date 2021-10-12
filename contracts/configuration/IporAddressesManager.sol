@@ -33,7 +33,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     string private constant MILTON_STORAGE = "MILTON_STORAGE";
     string private constant MILTON_UTILIZATION_STRATEGY = "MILTON_UTILIZATION_STRATEGY";
     string private constant MILTON_SPREAD_STRATEGY = "MILTON_SPREAD_STRATEGY";
-    string private constant MILTON_CONFIGURATION = "MILTON_CONFIGURATION";
+    string private constant IPOR_CONFIGURATION = "IPOR_CONFIGURATION";
     string private constant JOSEPH = "JOSEPH";
 
 
@@ -102,13 +102,13 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     function getIporConfiguration() external view override returns (address) {
-        return getAddress(MILTON_CONFIGURATION);
+        return getAddress(IPOR_CONFIGURATION);
     }
 
     //TODO: implement _updateImpl and then use this method
-    function setIporConfigurationImpl(address miltonConfigImpl) external override onlyOwner {
-        _updateImpl(MILTON_CONFIGURATION, miltonConfigImpl);
-        emit IporConfigurationAddressUpdated(miltonConfigImpl);
+    function setIporConfigurationImpl(address iporConfigImpl) external override onlyOwner {
+        _updateImpl(IPOR_CONFIGURATION, iporConfigImpl);
+        emit IporConfigurationAddressUpdated(iporConfigImpl);
     }
 
     function getWarren() external view override returns (address) {
