@@ -2,7 +2,7 @@ const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
 const TestUtils = require("./TestUtils");
-const MiltonConfiguration = artifacts.require('MiltonConfiguration');
+const IporConfiguration = artifacts.require('IporConfiguration');
 const TestMilton = artifacts.require('TestMilton');
 const TestJoseph = artifacts.require('TestJoseph');
 const MiltonStorage = artifacts.require('MiltonStorage');
@@ -36,7 +36,7 @@ contract('Joseph', (accounts) => {
     let iporTokenDai = null;
     let warren = null;
     let warrenStorage = null;
-    let miltonConfiguration = null;
+    let iporConfiguration = null;
     let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
     let joseph = null;
@@ -45,7 +45,7 @@ contract('Joseph', (accounts) => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
-        miltonConfiguration = await MiltonConfiguration.deployed();
+        iporConfiguration = await iporConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
         joseph = await TestJoseph.new();
@@ -69,7 +69,7 @@ contract('Joseph', (accounts) => {
             await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
-        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", await iporConfiguration.address);
         await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
@@ -281,7 +281,7 @@ contract('Joseph', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await joseph.test_redeem(params.asset, amount, actionTimestamp  + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider})
+        await joseph.test_redeem(params.asset, amount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider})
 
         //when
         let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
@@ -300,8 +300,8 @@ contract('Joseph', (accounts) => {
         const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
         await joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
-        await miltonConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
+        let oldOpeningFeePercentage = await iporConfiguration.getOpeningFeePercentage();
+        await iporConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
 
         //open position to have something in Liquidity Pool
         await milton.openPosition(
@@ -333,7 +333,7 @@ contract('Joseph', (accounts) => {
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
                 expected: ${expectedExchangeRate}`)
 
-        await miltonConfiguration.setOpeningFeePercentage(oldOpeningFeePercentage);
+        await iporConfiguration.setOpeningFeePercentage(oldOpeningFeePercentage);
     });
 
     it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5', async () => {
@@ -343,8 +343,8 @@ contract('Joseph', (accounts) => {
         const params = getStandardDerivativeParams();
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
         await joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
-        await miltonConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
+        let oldOpeningFeePercentage = await iporConfiguration.getOpeningFeePercentage();
+        await iporConfiguration.setOpeningFeePercentage(BigInt("600000000000000000"));
 
         //open position to have something in Liquidity Pool
         await milton.openPosition(
@@ -360,7 +360,7 @@ contract('Joseph', (accounts) => {
 
         //when
         await joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), actionTimestamp, {from: userThree});
-        await joseph.test_redeem(params.asset, BigInt("874999999999999999854"), actionTimestamp  + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: userThree})
+        await joseph.test_redeem(params.asset, BigInt("874999999999999999854"), actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: userThree})
 
         let actualIporTokenBalanceForUserThree = BigInt(await iporTokenDai.balanceOf.call(userThree));
         let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(params.asset));
@@ -378,7 +378,7 @@ contract('Joseph', (accounts) => {
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
                 expected: ${expectedExchangeRate}`)
 
-        await miltonConfiguration.setOpeningFeePercentage(oldOpeningFeePercentage);
+        await iporConfiguration.setOpeningFeePercentage(oldOpeningFeePercentage);
     });
 
 
@@ -397,7 +397,7 @@ contract('Joseph', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            joseph.test_redeem(params.asset, BigInt("1000000000000000000000"), actionTimestamp  + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
+            joseph.test_redeem(params.asset, BigInt("1000000000000000000000"), actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
             //then
             'IPOR_45'
         );
@@ -438,7 +438,7 @@ contract('Joseph', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            joseph.test_redeem(params.asset, params.totalAmount, actionTimestamp  + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
+            joseph.test_redeem(params.asset, params.totalAmount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
             //then
             'IPOR_43'
         );

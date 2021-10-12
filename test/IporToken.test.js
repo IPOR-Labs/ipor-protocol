@@ -1,8 +1,9 @@
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
-const MiltonConfiguration = artifacts.require('MiltonConfiguration');
+const IporConfiguration = artifacts.require('IporConfiguration');
 const TestMilton = artifacts.require('TestMilton');
+const TestJoseph = artifacts.require('TestJoseph');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
 const WarrenStorage = artifacts.require('WarrenStorage');
@@ -34,7 +35,7 @@ contract('IporToken', (accounts) => {
     let iporTokenDai = null;
     let warren = null;
     let warrenStorage = null;
-    let miltonConfiguration = null;
+    let iporConfiguration = null;
     let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
     let joseph = null;
@@ -43,10 +44,10 @@ contract('IporToken', (accounts) => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
-        miltonConfiguration = await MiltonConfiguration.deployed();
+        iporConfiguration = await iporConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
-        joseph = await Joseph.deployed();
+        joseph = await TestJoseph.new();
 
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
@@ -78,7 +79,7 @@ contract('IporToken', (accounts) => {
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await iporConfiguration.address);
         await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 

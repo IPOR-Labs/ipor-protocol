@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
 
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
@@ -39,8 +39,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         return iporDerivatives;
     }
 
-    function getConfiguration() external override view returns (IporConfigurationFront memory iporConfiguration) {
-        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(addressesManager.getMiltonConfiguration());
+    function getConfiguration() external override view returns (IporConfigurationFront memory iporConfigurationFront) {
+        IIporConfiguration iporConfiguration = IIporConfiguration(addressesManager.getIporConfiguration());
         address[] memory assets = addressesManager.getAssets();
         IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(addressesManager.getMiltonSpreadStrategy());
         IporSpreadFront[] memory spreads = new IporSpreadFront[](assets.length);
@@ -51,12 +51,12 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         }
 
         return IporConfigurationFront(
-            miltonConfiguration.getMinCollateralizationFactorValue(),
-            miltonConfiguration.getMaxCollateralizationFactorValue(),
-            miltonConfiguration.getOpeningFeePercentage(),
-            miltonConfiguration.getIporPublicationFeeAmount(),
-            miltonConfiguration.getLiquidationDepositAmount(),
-            miltonConfiguration.getIncomeTaxPercentage(),
+            iporConfiguration.getMinCollateralizationFactorValue(),
+            iporConfiguration.getMaxCollateralizationFactorValue(),
+            iporConfiguration.getOpeningFeePercentage(),
+            iporConfiguration.getIporPublicationFeeAmount(),
+            iporConfiguration.getLiquidationDepositAmount(),
+            iporConfiguration.getIncomeTaxPercentage(),
             spreads
         );
     }

@@ -3,16 +3,16 @@ const testUtils = require("./TestUtils.js");
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
-const MiltonConfiguration = artifacts.require('MiltonConfiguration');
+const IporConfiguration = artifacts.require('IporConfiguration');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 
-contract('MiltonConfiguration', (accounts) => {
+contract('IporConfiguration', (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
-    let miltonConfiguration = null;
+    let iporConfiguration = null;
     let iporAddressesManager = null;
 
     before(async () => {
@@ -28,8 +28,8 @@ contract('MiltonConfiguration', (accounts) => {
     });
 
     beforeEach(async () => {
-        miltonConfiguration = await MiltonConfiguration.new();
-        await miltonConfiguration.initialize(iporAddressesManager.address);
+        iporConfiguration = await iporConfiguration.new();
+        await iporConfiguration.initialize(iporAddressesManager.address);
     });
 
     it('should set default openingFeeForTreasuryPercentage', async () => {
@@ -37,7 +37,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedOpeningFeeForTreasuryPercentage = BigInt("0");
 
         //when
-        let actualOpeningFeeForTreasuryPercentage = await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        let actualOpeningFeeForTreasuryPercentage = await iporConfiguration.getOpeningFeeForTreasuryPercentage();
 
         //then
         assert(expectedOpeningFeeForTreasuryPercentage === BigInt(actualOpeningFeeForTreasuryPercentage),
@@ -47,10 +47,10 @@ contract('MiltonConfiguration', (accounts) => {
     it('should set openingFeeForTreasuryPercentage', async () => {
         //given
         let expectedOpeningFeeForTreasuryPercentage = BigInt("1000000000000000000");
-        await miltonConfiguration.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage);
+        await iporConfiguration.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage);
 
         //when
-        let actualOpeningFeeForTreasuryPercentage = await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        let actualOpeningFeeForTreasuryPercentage = await iporConfiguration.getOpeningFeeForTreasuryPercentage();
 
         //then
         assert(expectedOpeningFeeForTreasuryPercentage === BigInt(actualOpeningFeeForTreasuryPercentage),
@@ -63,7 +63,7 @@ contract('MiltonConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            miltonConfiguration.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage),
+            iporConfiguration.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage),
             //then
             'IPOR_24'
         );
@@ -75,7 +75,7 @@ contract('MiltonConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            miltonConfiguration.setIncomeTaxPercentage(incomeTaxPercentage),
+            iporConfiguration.setIncomeTaxPercentage(incomeTaxPercentage),
             //then
             'IPOR_24'
         );
@@ -87,10 +87,10 @@ contract('MiltonConfiguration', (accounts) => {
         let incomeTaxPercentage = BigInt("150000000000000000");
 
         //when
-        await miltonConfiguration.setIncomeTaxPercentage(incomeTaxPercentage);
+        await iporConfiguration.setIncomeTaxPercentage(incomeTaxPercentage);
 
         //then
-        let actualIncomeTaxPercentage = await miltonConfiguration.getIncomeTaxPercentage();
+        let actualIncomeTaxPercentage = await iporConfiguration.getIncomeTaxPercentage();
 
         assert(incomeTaxPercentage === BigInt(actualIncomeTaxPercentage),
             `Incorrect incomeTaxPercentage actual: ${actualIncomeTaxPercentage}, expected: ${incomeTaxPercentage}`)
@@ -103,10 +103,10 @@ contract('MiltonConfiguration', (accounts) => {
         let liquidationDepositAmount = BigInt("50000000000000000000");
 
         //when
-        await miltonConfiguration.setLiquidationDepositAmount(liquidationDepositAmount);
+        await iporConfiguration.setLiquidationDepositAmount(liquidationDepositAmount);
 
         //then
-        let actualLiquidationDepositAmount = await miltonConfiguration.getLiquidationDepositAmount();
+        let actualLiquidationDepositAmount = await iporConfiguration.getLiquidationDepositAmount();
 
         assert(liquidationDepositAmount === BigInt(actualLiquidationDepositAmount),
             `Incorrect liquidationDepositAmount actual: ${actualLiquidationDepositAmount}, expected: ${liquidationDepositAmount}`)
@@ -119,7 +119,7 @@ contract('MiltonConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            miltonConfiguration.setOpeningFeePercentage(openingFeePercentage),
+            iporConfiguration.setOpeningFeePercentage(openingFeePercentage),
             //then
             'IPOR_24'
         );
@@ -131,10 +131,10 @@ contract('MiltonConfiguration', (accounts) => {
         let openingFeePercentage = BigInt("150000000000000000");
 
         //when
-        await miltonConfiguration.setOpeningFeePercentage(openingFeePercentage);
+        await iporConfiguration.setOpeningFeePercentage(openingFeePercentage);
 
         //then
-        let actualOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
+        let actualOpeningFeePercentage = await iporConfiguration.getOpeningFeePercentage();
 
         assert(openingFeePercentage === BigInt(actualOpeningFeePercentage),
             `Incorrect openingFeePercentage actual: ${actualOpeningFeePercentage}, expected: ${openingFeePercentage}`)
@@ -147,10 +147,10 @@ contract('MiltonConfiguration', (accounts) => {
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
 
         //when
-        await miltonConfiguration.setIporPublicationFeeAmount(iporPublicationFeeAmount);
+        await iporConfiguration.setIporPublicationFeeAmount(iporPublicationFeeAmount);
 
         //then
-        let actualIporPublicationFeeAmount = await miltonConfiguration.getIporPublicationFeeAmount();
+        let actualIporPublicationFeeAmount = await iporConfiguration.getIporPublicationFeeAmount();
 
         assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
             `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
@@ -162,10 +162,10 @@ contract('MiltonConfiguration', (accounts) => {
         let liquidityPoolMaxUtilizationPercentage = BigInt("99000000000000000000");
 
         //when
-        await miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
+        await iporConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
 
         //then
-        let actualLPMaxUtilizationPercentage = await miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage();
+        let actualLPMaxUtilizationPercentage = await iporConfiguration.getLiquidityPoolMaxUtilizationPercentage();
 
         assert(liquidityPoolMaxUtilizationPercentage === BigInt(actualLPMaxUtilizationPercentage),
             `Incorrect LiquidityPoolMaxUtilizationPercentage actual: ${actualLPMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
@@ -178,7 +178,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedLiquidityPoolMaxUtilizationPercentage = BigInt("800000000000000000");
 
         //when
-        let actualLiquidityPoolMaxUtilizationPercentage = await miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage();
+        let actualLiquidityPoolMaxUtilizationPercentage = await iporConfiguration.getLiquidityPoolMaxUtilizationPercentage();
 
         //then
         assert(expectedLiquidityPoolMaxUtilizationPercentage === BigInt(actualLiquidityPoolMaxUtilizationPercentage),
@@ -192,10 +192,10 @@ contract('MiltonConfiguration', (accounts) => {
         let liquidityPoolMaxUtilizationPercentage = BigInt("90000000000000000");
 
         //when
-        await miltonConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
+        await iporConfiguration.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
 
         //then
-        let actualLiquidityPoolMaxUtilizationPercentage = await miltonConfiguration.getLiquidityPoolMaxUtilizationPercentage();
+        let actualLiquidityPoolMaxUtilizationPercentage = await iporConfiguration.getLiquidityPoolMaxUtilizationPercentage();
 
         assert(liquidityPoolMaxUtilizationPercentage === BigInt(actualLiquidityPoolMaxUtilizationPercentage),
             `Incorrect liquidityPoolMaxUtilizationPercentage actual: ${actualLiquidityPoolMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
@@ -207,7 +207,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedIncomeTaxPercentage = BigInt("100000000000000000");
 
         //when
-        let actualIncomeTaxPercentage = await miltonConfiguration.getIncomeTaxPercentage();
+        let actualIncomeTaxPercentage = await iporConfiguration.getIncomeTaxPercentage();
 
         //then
         assert(expectedIncomeTaxPercentage === BigInt(actualIncomeTaxPercentage),
@@ -219,7 +219,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedLiquidationDepositAmount = BigInt("20000000000000000000");
 
         //when
-        let actualLiquidationDepositAmount = await miltonConfiguration.getLiquidationDepositAmount();
+        let actualLiquidationDepositAmount = await iporConfiguration.getLiquidationDepositAmount();
 
         //then
         assert(expectedLiquidationDepositAmount === BigInt(actualLiquidationDepositAmount),
@@ -231,7 +231,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedOpeningFeePercentage = BigInt("10000000000000000");
 
         //when
-        let actualOpeningFeePercentage = await miltonConfiguration.getOpeningFeePercentage();
+        let actualOpeningFeePercentage = await iporConfiguration.getOpeningFeePercentage();
 
         //then
         assert(expectedOpeningFeePercentage === BigInt(actualOpeningFeePercentage),
@@ -243,7 +243,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedIporPublicationFeeAmount = BigInt("10000000000000000000");
 
         //when
-        let actualIporPublicationFeeAmount = await miltonConfiguration.getIporPublicationFeeAmount();
+        let actualIporPublicationFeeAmount = await iporConfiguration.getIporPublicationFeeAmount();
 
         //then
         assert(expectedIporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
@@ -255,7 +255,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedMinCollateralizationFactorValue = BigInt("10000000000000000000");
 
         //when
-        let actualMinCollateralizationFactorValue = await miltonConfiguration.getMinCollateralizationFactorValue();
+        let actualMinCollateralizationFactorValue = await iporConfiguration.getMinCollateralizationFactorValue();
 
         //then
         assert(expectedMinCollateralizationFactorValue === BigInt(actualMinCollateralizationFactorValue),
@@ -267,7 +267,7 @@ contract('MiltonConfiguration', (accounts) => {
         let expectedMaxCollateralizationFactorValue = BigInt("50000000000000000000");
 
         //when
-        let actualMaxCollateralizationFactorValue = await miltonConfiguration.getMaxCollateralizationFactorValue();
+        let actualMaxCollateralizationFactorValue = await iporConfiguration.getMaxCollateralizationFactorValue();
 
         //then
         assert(expectedMaxCollateralizationFactorValue === BigInt(actualMaxCollateralizationFactorValue),
@@ -284,10 +284,10 @@ contract('MiltonConfiguration', (accounts) => {
     //     let asset = "DAI";
     //
     //     //when
-    //     await miltonConfiguration.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
+    //     await iporConfiguration.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
     //
     //     //then
-    //     let actualCharlieTreasurerDaiAddress = await miltonConfiguration.getCharlieTreasurer(asset);
+    //     let actualCharlieTreasurerDaiAddress = await iporConfiguration.getCharlieTreasurer(asset);
     //
     //     assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
     //         `Incorrect  Charlie Treasurer address for ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
@@ -299,10 +299,10 @@ contract('MiltonConfiguration', (accounts) => {
     //     let asset = "DAI";
     //
     //     //when
-    //     await miltonConfiguration.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
+    //     await iporConfiguration.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
     //
     //     //then
-    //     let actualTreasureTreasurerDaiAddress = await miltonConfiguration.getTreasureTreasurer(asset);
+    //     let actualTreasureTreasurerDaiAddress = await iporConfiguration.getTreasureTreasurer(asset);
     //
     //     assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
     //         `Incorrect  Trasure Treasurer address for ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)

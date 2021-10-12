@@ -34,7 +34,7 @@ library Errors {
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = 'IPOR_32'; // Incorrect Milton Configuration address
     string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS = 'IPOR_33'; // Incorrect Milton Configuration address
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = 'IPOR_34';
-    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, MiltonConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
+    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, IporConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
     string public constant WARREN_WRONG_UPDATER_ADDRESS = 'IPOR_36'; // Updater address is wrong
     string public constant WRONG_ADDRESS = 'IPOR_37'; // General problem, address is wrong
     string public constant MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS = 'IPOR_38'; //Cannot add new asset to asset list, because already exists

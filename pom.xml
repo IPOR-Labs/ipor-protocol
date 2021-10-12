@@ -142,7 +142,7 @@
                         <!-- INFO: wildcards not working here :( -->
                         <argument>${contracts.sources}/Errors.sol</argument>
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
-                        <argument>${contracts.sources}/amm/MiltonConfiguration.sol</argument>
+                        <argument>${contracts.sources}/amm/IporConfiguration.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonLPUtilizationStrategyCollateral.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonSpreadStrategy.sol</argument>
@@ -155,7 +155,7 @@
                         <argument>${contracts.sources}/interfaces/IIporAddressesManager.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IIporConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonLPUtilisationStrategy.sol</argument>

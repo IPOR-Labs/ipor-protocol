@@ -16,11 +16,11 @@ import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
-import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IIporConfiguration.sol";
 
 //TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
 //TODO: rename to IporConfiguration
-contract MiltonConfiguration is Ownable, IMiltonConfiguration {
+contract IporConfiguration is Ownable, IIporConfiguration {
 
     uint256 minCollateralizationFactorValue;
 

@@ -101,14 +101,14 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         emit MiltonSpreadStrategyUpdated(miltonSpreadStrategyImpl);
     }
 
-    function getMiltonConfiguration() external view override returns (address) {
+    function getIporConfiguration() external view override returns (address) {
         return getAddress(MILTON_CONFIGURATION);
     }
 
     //TODO: implement _updateImpl and then use this method
-    function setMiltonConfigurationImpl(address miltonConfigImpl) external override onlyOwner {
+    function setIporConfigurationImpl(address miltonConfigImpl) external override onlyOwner {
         _updateImpl(MILTON_CONFIGURATION, miltonConfigImpl);
-        emit MiltonConfigurationAddressUpdated(miltonConfigImpl);
+        emit IporConfigurationAddressUpdated(miltonConfigImpl);
     }
 
     function getWarren() external view override returns (address) {

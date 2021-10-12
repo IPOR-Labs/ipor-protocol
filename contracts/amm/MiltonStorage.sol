@@ -11,7 +11,7 @@ import "../interfaces/IIporAddressesManager.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IIporConfiguration.sol";
 
 
 contract MiltonStorage is Ownable, IMiltonStorage {
@@ -120,8 +120,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address asset,
         uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         return (
-        spreadPayFixedValue = IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getSpreadPayFixedValue(asset),
-        spreadRecFixedValue = IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getSpreadRecFixedValue(asset)
+        spreadPayFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration()).getSpreadPayFixedValue(asset),
+        spreadRecFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration()).getSpreadRecFixedValue(asset)
         );
     }
 
@@ -147,14 +147,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _updateBalancesWhenOpenPosition(address asset, uint256 collateral, uint256 openingFeeAmount) internal {
 
-        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
 
         balances[asset].derivatives = balances[asset].derivatives + collateral;
         balances[asset].openingFee = balances[asset].openingFee + openingFeeAmount;
-        balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + miltonConfiguration.getLiquidationDepositAmount();
-        balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + miltonConfiguration.getIporPublicationFeeAmount();
+        balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + iporConfiguration.getLiquidationDepositAmount();
+        balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + iporConfiguration.getIporPublicationFeeAmount();
 
-        uint256 openingFeeForTreasurePercentage = miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        uint256 openingFeeForTreasurePercentage = iporConfiguration.getOpeningFeeForTreasuryPercentage();
         (uint256 openingFeeLPValue, uint256 openingFeeTreasuryValue) = _splitOpeningFeeAmount(openingFeeAmount, openingFeeForTreasurePercentage);
         balances[asset].liquidityPool = balances[asset].liquidityPool + openingFeeLPValue;
         balances[asset].treasury = balances[asset].treasury + openingFeeTreasuryValue;
@@ -199,7 +199,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 = balances[derivativeItem.item.asset].liquidityPool - derivativeItem.item.collateral;
 
                 uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral,
-                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
+                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -222,7 +222,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 balances[derivativeItem.item.asset].liquidityPool = balances[derivativeItem.item.asset].liquidityPool - absInterestDifferenceAmount;
 
                 uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount,
-                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
+                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -237,7 +237,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 // |I| > D
 
                 uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral,
-                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
+                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -259,7 +259,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 }
 
                 uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount,
-                    IMiltonConfiguration(_addressesManager.getMiltonConfiguration()).getIncomeTaxPercentage());
+                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
 
                 balances[derivativeItem.item.asset].treasury
                 = balances[derivativeItem.item.asset].treasury + incomeTax;

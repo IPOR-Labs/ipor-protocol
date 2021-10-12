@@ -1,7 +1,7 @@
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
-const MiltonConfiguration = artifacts.require('MiltonConfiguration');
+const IporConfiguration = artifacts.require('IporConfiguration');
 const TestMilton = artifacts.require('TestMilton');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
@@ -14,7 +14,7 @@ const DerivativeLogic = artifacts.require('DerivativeLogic');
 const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
-const Joseph = artifacts.require('Joseph');
+const TestJoseph = artifacts.require('TestJoseph');
 
 contract('MiltonSoap', (accounts) => {
 
@@ -33,7 +33,7 @@ contract('MiltonSoap', (accounts) => {
     let iporTokenDai = null;
     let warren = null;
     let warrenStorage = null;
-    let miltonConfiguration = null;
+    let iporConfiguration = null;
     let iporAddressesManager = null;
     let joseph = null;
 
@@ -41,9 +41,9 @@ contract('MiltonSoap', (accounts) => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
-        miltonConfiguration = await MiltonConfiguration.deployed();
+        iporConfiguration = await iporConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
-        joseph = await Joseph.deployed();
+        joseph = await Joseph.new();
 
         //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
@@ -64,7 +64,7 @@ contract('MiltonSoap', (accounts) => {
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await miltonConfiguration.address);
+        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", await iporConfiguration.address);
         await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
         await iporAddressesManager.setAddress("MILTON", milton.address);
 
@@ -73,7 +73,7 @@ contract('MiltonSoap', (accounts) => {
         await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
-        await miltonConfiguration.initialize(iporAddressesManager.address);
+        await iporConfiguration.initialize(iporAddressesManager.address);
         await joseph.initialize(iporAddressesManager.address);
         await milton.authorizeLiquidityPool(tokenDai.address);
 

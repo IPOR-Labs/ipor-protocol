@@ -19,7 +19,7 @@ const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const SpreadIndicatorLogic = artifacts.require('SpreadIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const DerivativesView = artifacts.require('DerivativesView');
-const MiltonConfiguration = artifacts.require('MiltonConfiguration');
+const IporConfiguration = artifacts.require('IporConfiguration');
 const AmmMath = artifacts.require('AmmMath');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
@@ -84,7 +84,7 @@ module.exports = async function (deployer, _network, addresses) {
     let miltonStorageAddr = null;
     let miltonFaucet = null;
     let miltonFaucetAddr = null;
-    let miltonConfiguration = null;
+    let iporConfiguration = null;
     let iporAddressesManager = null;
     let joseph = null;
 
@@ -108,8 +108,8 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(DerivativeLogic, Milton);
     await deployer.link(AmmMath, MiltonStorage);
 
-    await deployer.deploy(MiltonConfiguration);
-    miltonConfiguration = await MiltonConfiguration.deployed();
+    await deployer.deploy(IporConfiguration);
+    iporConfiguration = await iporConfiguration.deployed();
 
     await deployer.deploy(IporAddressesManager);
     iporAddressesManager = await IporAddressesManager.deployed();
@@ -230,13 +230,13 @@ module.exports = async function (deployer, _network, addresses) {
         warrenAddr = await warren.address;
         miltonAddr = await milton.address;
         miltonStorageAddr = await miltonStorage.address;
-        const miltonConfigurationAddr = await miltonConfiguration.address;
+        const iporConfigurationAddr = await iporConfiguration.address;
 
         //initial addresses setup
         await iporAddressesManager.setAddress("WARREN", warrenAddr);
         await iporAddressesManager.setAddress("WARREN_STORAGE", warrenStorageAddr);
         await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
-        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", miltonConfigurationAddr);
+        await iporAddressesManager.setAddress("MILTON_CONFIGURATION", iporConfigurationAddr);
 
         if (isTestEnvironment == 1) {
             //TestWarren
@@ -360,5 +360,5 @@ module.exports = async function (deployer, _network, addresses) {
 
     await miltonLPUtilizationStrategyCollateral.initialize(iporAddressesManagerAddr);
     await miltonSpreadStrategy.initialize(iporAddressesManagerAddr);
-    await miltonConfiguration.initialize(iporAddressesManagerAddr);
+    await iporConfiguration.initialize(iporAddressesManagerAddr);
 };

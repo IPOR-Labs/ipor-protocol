@@ -10,7 +10,7 @@ import {Errors} from '../Errors.sol';
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../libraries/Constants.sol";
-import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IIporConfiguration.sol";
 
 contract Joseph is Ownable, IJoseph {
 
@@ -49,8 +49,8 @@ contract Joseph is Ownable, IJoseph {
 
     function _redeem(address asset, uint256 iporTokenVolume, uint256 timestamp) internal {
         require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW);
-        IMiltonConfiguration miltonConfiguration = IMiltonConfiguration(_addressesManager.getMiltonConfiguration());
-        require(timestamp >= assetDepositTimestamp[asset][msg.sender] + miltonConfiguration.getCoolOffPeriodInSec(), Errors.MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED);
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        require(timestamp >= assetDepositTimestamp[asset][msg.sender] + iporConfiguration.getCoolOffPeriodInSec(), Errors.MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED);
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 

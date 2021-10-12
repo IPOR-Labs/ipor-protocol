@@ -11,7 +11,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getIncomeTaxPercentage"
                     render={(value) => (
                         <div>
@@ -23,7 +23,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setIncomeTaxPercentage"/>
             </div>
             <div className="col-md-3">
@@ -31,7 +31,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getLiquidationDepositAmount"
                     render={(value) => (
                         <div>
@@ -43,7 +43,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setLiquidationDepositAmount"/>
             </div>
             <div className="col-md-3">
@@ -51,7 +51,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getOpeningFeePercentage"
                     render={(value) => (
                         <div>
@@ -63,7 +63,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setOpeningFeePercentage"/>
             </div>
             <div className="col-md-3">
@@ -71,7 +71,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getIporPublicationFeeAmount"
                     render={(value) => (
                         <div>
@@ -83,7 +83,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setIporPublicationFeeAmount"/>
             </div>
         </div>
@@ -94,7 +94,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getMinCollateralizationFactorValue"
                     render={(value) => (
                         <div>
@@ -106,7 +106,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setMinCollateralizationFactorValue"/>
             </div>
             <div className="col-md-3">
@@ -114,7 +114,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getMaxCollateralizationFactorValue"
                     render={(value) => (
                         <div>
@@ -126,7 +126,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setMaxCollateralizationFactorValue"/>
             </div>
             <div className="col-md-3">
@@ -134,7 +134,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getOpeningFeeForTreasuryPercentage"
                     render={(value) => (
                         <div>
@@ -146,7 +146,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setOpeningFeeForTreasuryPercentage"/>
             </div>
             <div className="col-md-3">
@@ -154,7 +154,7 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getLiquidityPoolMaxUtilizationPercentage"
                     render={(value) => (
                         <div>
@@ -166,7 +166,7 @@ export default ({drizzle, drizzleState}) => (
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setLiquidityPoolMaxUtilizationPercentage"/>
             </div>
         </div>
@@ -178,13 +178,13 @@ export default ({drizzle, drizzleState}) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="getCoolOffPeriodInSec"
                 />
                 <hr/>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="MiltonConfiguration"
+                    contract="IporConfiguration"
                     method="setCoolOffPeriodInSec"/>
             </div>
         </div>
