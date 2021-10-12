@@ -476,6 +476,23 @@ contract('Joseph', (accounts) => {
         );
     });
 
+    it('should NOT redeem Ipor Tokens because after second providing liquidity cool off period not passed', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        let actionTimestamp = Math.floor(Date.now() / 1000);
+
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp + testUtils.PERIOD_1_DAY_IN_SECONDS, {from: liquidityProvider});
+
+        //when
+        await testUtils.assertError(
+            //when
+            joseph.test_redeem(tokenDai.address, testUtils.MILTON_9063__63_USD, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
+            //then
+            'IPOR_47'
+        );
+    });
+
     it('should NOT redeem ipDAI, should redeem ipUSDC, cool off period not passed for ipDAI, cool off period passed for ipUSDC, one user', async () => {
         //given
         await setupTokenDaiInitialValues();
