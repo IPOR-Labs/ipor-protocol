@@ -109,7 +109,7 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(AmmMath, MiltonStorage);
 
     await deployer.deploy(IporConfiguration);
-    iporConfiguration = await iporConfiguration.deployed();
+    iporConfiguration = await IporConfiguration.deployed();
 
     await deployer.deploy(IporAddressesManager);
     iporAddressesManager = await IporAddressesManager.deployed();
