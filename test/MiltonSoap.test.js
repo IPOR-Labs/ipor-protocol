@@ -41,7 +41,7 @@ contract('MiltonSoap', (accounts) => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
-        iporConfiguration = await iporConfiguration.deployed();
+        iporConfiguration = await IporConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
         joseph = await Joseph.new();
 

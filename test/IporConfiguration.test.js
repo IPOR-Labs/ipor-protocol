@@ -28,7 +28,7 @@ contract('IporConfiguration', (accounts) => {
     });
 
     beforeEach(async () => {
-        iporConfiguration = await iporConfiguration.new();
+        iporConfiguration = await IporConfiguration.new();
         await iporConfiguration.initialize(iporAddressesManager.address);
     });
 
