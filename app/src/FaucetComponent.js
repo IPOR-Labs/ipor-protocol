@@ -9,9 +9,21 @@ export default ({drizzle, drizzleState}) => (
             <tr>
                 <th scope="col"></th>
                 <th scope="col">ETH</th>
-                <th scope="col">USDT</th>
-                <th scope="col">USDC</th>
-                <th scope="col">DAI</th>
+                <th scope="col">
+                    USDT
+                    <br/>
+                    {drizzle.contracts.UsdtMockedToken.address}
+                </th>
+                <th scope="col">
+                    USDC
+                    <br/>
+                    {drizzle.contracts.UsdcMockedToken.address}
+                </th>
+                <th scope="col">
+                    DAI
+                    <br/>
+                    {drizzle.contracts.DaiMockedToken.address}
+                </th>
             </tr>
             <tr>
                 <td><strong>Available Faucet balance</strong></td>
@@ -20,8 +32,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonFaucet"
-                        method="balanceOf"
-                        methodArgs={["ETH"]}
+                        method="balanceOfEth"
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}<br/>
@@ -36,7 +47,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonFaucet"
                         method="balanceOf"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -51,7 +62,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonFaucet"
                         method="balanceOf"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -66,7 +77,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonFaucet"
                         method="balanceOf"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}<br/>
@@ -87,7 +98,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={["USDT"]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -102,7 +113,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={["USDC"]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}<br/>
@@ -117,7 +128,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={["DAI"]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}<br/>
@@ -147,9 +158,6 @@ export default ({drizzle, drizzleState}) => (
                     method="transfer"
                 />
             </div>
-
         </div>
-
-
     </div>
 );
