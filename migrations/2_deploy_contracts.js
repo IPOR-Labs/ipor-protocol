@@ -148,11 +148,7 @@ module.exports = async function (deployer, _network, addresses) {
         mockedTusd = await TusdMockedToken.deployed();
         mockedTusdAddr = await mockedTusd.address;
 
-        await deployer.deploy(MiltonFaucet,
-            mockedUsdtAddr,
-            mockedUsdcAddr,
-            mockedDaiAddr,
-            mockedTusdAddr);
+        await deployer.deploy(MiltonFaucet);
 
         miltonFaucet = await MiltonFaucet.deployed();
         miltonFaucetAddr = await miltonFaucet.address;

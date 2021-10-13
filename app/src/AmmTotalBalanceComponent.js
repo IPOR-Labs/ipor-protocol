@@ -83,7 +83,7 @@ export default ({drizzle, drizzleState}) => (
                 <th scope="col">DAI</th>
             </tr>
             <tr>
-                <td><strong>My allowance for Milton</strong></td>
+                <td><strong>My allowances</strong></td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
@@ -106,6 +106,15 @@ export default ({drizzle, drizzleState}) => (
                         method="getMilton"
                         render={(value) => (
                             <div>Milton: <strong>{value}</strong></div>
+                        )}
+                    />
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAddressesManager"
+                        method="getJoseph"
+                        render={(value) => (
+                            <div>Joseph: <strong>{value}</strong></div>
                         )}
                     />
                     <ContractForm
@@ -138,6 +147,15 @@ export default ({drizzle, drizzleState}) => (
                             <div>Milton: <strong>{value}</strong></div>
                         )}
                     />
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAddressesManager"
+                        method="getJoseph"
+                        render={(value) => (
+                            <div>Joseph: <strong>{value}</strong></div>
+                        )}
+                    />
                     <ContractForm
                         drizzle={drizzle}
                         contract="UsdcMockedToken"
@@ -166,6 +184,15 @@ export default ({drizzle, drizzleState}) => (
                         method="getMilton"
                         render={(value) => (
                             <div>Milton: <strong>{value}</strong></div>
+                        )}
+                    />
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporAddressesManager"
+                        method="getJoseph"
+                        render={(value) => (
+                            <div>Joseph: <strong>{value}</strong></div>
                         )}
                     />
                     <ContractForm
