@@ -17,6 +17,9 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     //@notice mapping underlying asset address to ipor token address
     mapping(address => address) public iporTokens;
 
+    //@notice mapping underlying asset address to Asset Management Vault
+    mapping(address => address) public assetManagementVaults;
+
     mapping(string => address) private _addresses;
 
     //this treasurer manage ipor publication fee balance, key is an asset
@@ -187,6 +190,15 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     function setJoseph(address newJoseph) external override onlyOwner {
         _addresses[JOSEPH] = newJoseph;
         emit JosephAddressUpdated(newJoseph);
+    }
+
+    function getAssetManagementVault(address asset) external override view returns (address){
+        return assetManagementVaults[asset];
+    }
+
+    function setAssetManagementVault(address asset, address newAssetManagementVaultAddress) external override onlyOwner {
+        assetManagementVaults[asset] = newAssetManagementVaultAddress;
+        emit AssetManagementVaultUpdated(asset, newAssetManagementVaultAddress);
     }
 
     function assetSupported(address asset) external override view returns (uint256) {
