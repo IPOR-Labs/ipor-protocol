@@ -18,6 +18,7 @@ interface IIporAddressesManager {
     event AssetAddressAdd(address newAddress);
     event IporTokenAddressUpdated(address indexed underlyingAssetAddress, address indexed newIporTokenAddress);
     event JosephAddressUpdated(address indexed newJosephAddress);
+    event AssetManagementVaultUpdated(address indexed asset, address indexed newAssetManagementVaultAddress);
 
     function setAddress(string memory id, address newAddress) external;
 
@@ -80,4 +81,9 @@ interface IIporAddressesManager {
     function getJoseph() external view returns (address);
 
     function setJoseph(address newJoseph) external;
+
+    function getAssetManagementVault(address asset) external view returns (address);
+
+    function setAssetManagementVault(address asset, address newAssetManagementVaultAddress) external;
+
 }

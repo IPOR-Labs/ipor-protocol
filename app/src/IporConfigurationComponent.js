@@ -193,9 +193,21 @@ export default ({drizzle, drizzleState}) => (
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Name of treasuers</th>
-                    <th scope="col">USDT</th>
-                    <th scope="col">USDC</th>
-                    <th scope="col">DAI</th>
+                    <th scope="col">
+                        USDT
+                        <br/>
+                        {drizzle.contracts.UsdtMockedToken.address}
+                    </th>
+                    <th scope="col">
+                        USDC
+                        <br/>
+                        {drizzle.contracts.UsdcMockedToken.address}
+                    </th>
+                    <th scope="col">
+                        DAI
+                        <br/>
+                        {drizzle.contracts.DaiMockedToken.address}
+                    </th>
                 </tr>
                 <tr>
                     <td>
@@ -265,22 +277,65 @@ export default ({drizzle, drizzleState}) => (
                         />
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <strong>Asset Management Vault</strong>
+                        <br/>
+                        <small>Manage LP balance in external portals like AAVE & Compound</small>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAddressesManager"
+                            method="getAssetManagementVault"
+                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAddressesManager"
+                            method="getAssetManagementVault"
+                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAddressesManager"
+                            method="getAssetManagementVault"
+                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        />
+                    </td>
+                </tr>
             </table>
         </div>
         <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-4">
                 <strong>Charlie Treasuers</strong>
                 <ContractForm
                     drizzle={drizzle}
                     contract="IporAddressesManager"
                     method="setCharlieTreasurer"/>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-4">
                 <strong>Treasure Treasuers</strong>
                 <ContractForm
                     drizzle={drizzle}
                     contract="IporAddressesManager"
                     method="setTreasureTreasurer"/>
+            </div>
+
+
+            <div className="col-md-4">
+                <strong>Asset Management Vault</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporAddressesManager"
+                    method="setAssetManagementVault"/>
             </div>
         </div>
     </div>
