@@ -7,7 +7,8 @@ interface IMilton {
 
     function authorizeLiquidityPool(address asset) external;
 
-    function openPosition(address asset, uint256 totalAmount, uint256 maximumSlippage, uint256 collateralizationFactor, uint8 direction) external returns (uint256);
+    function openPosition(address asset, uint256 totalAmount, uint256 maximumSlippage,
+        uint256 collateralizationFactor, uint8 direction) external returns (uint256);
 
     function closePosition(uint256 derivativeId) external;
 
@@ -15,5 +16,7 @@ interface IMilton {
 
     //TODO: final implementation
     function calculateSpread(address asset) external view returns (uint256 spreadPf, uint256 spreadRf);
+
+    function calculatePositionValue(DataTypes.IporDerivative memory derivative) external view returns(int256);
 
 }

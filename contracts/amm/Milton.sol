@@ -28,7 +28,7 @@ import "../interfaces/IJoseph.sol";
  */
 contract Milton is Ownable, MiltonEvents, IMilton {
 
-//    using SafeERC20 for IERC20;
+    //    using SafeERC20 for IERC20;
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
@@ -78,6 +78,29 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     function calculateSoap(address asset) external override view returns (int256 soapPf, int256 soapRf, int256 soap) {
         (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(asset, block.timestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
+    }
+
+    function calculatePositionValue(DataTypes.IporDerivative memory derivative) external override view returns (int256) {
+        return _calculatePositionValue(block.timestamp, derivative);
+    }
+
+    function _calculatePositionValue(uint256 timestamp, DataTypes.IporDerivative memory derivative) internal view returns (int256) {
+        DataTypes.IporDerivativeInterest memory derivativeInterest =
+        derivative.calculateInterest(timestamp, IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivative.asset, timestamp));
+
+        if (derivativeInterest.interestDifferenceAmount > 0) {
+            if (derivativeInterest.interestDifferenceAmount < int256(derivative.collateral)) {
+                return derivativeInterest.interestDifferenceAmount;
+            } else {
+                return int256(derivative.collateral);
+            }
+        } else {
+            if (derivativeInterest.interestDifferenceAmount < - int256(derivative.collateral)) {
+                return -int256(derivative.collateral);
+            } else {
+                return derivativeInterest.interestDifferenceAmount;
+            }
+        }
     }
 
     function _calculateSpread(address asset, uint256 calculateTimestamp) internal view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
@@ -157,7 +180,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
                 iporConfiguration.getIporPublicationFeeAmount(),
                 spreadPayFixedValue,
                 spreadRecFixedValue),
-                collateralizationFactor,
+            collateralizationFactor,
             derivativeAmount.notional,
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
@@ -218,14 +241,11 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(derivativeId);
 
-        uint256 accruedIbtPrice = IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivativeItem.item.asset, closeTimestamp);
+        int256 interestDifferenceAmount = _calculatePositionValue(closeTimestamp, derivativeItem.item);
 
-        DataTypes.IporDerivativeInterest memory derivativeInterest =
-        derivativeItem.item.calculateInterest(closeTimestamp, accruedIbtPrice);
+        miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, interestDifferenceAmount, closeTimestamp);
 
-        miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, derivativeInterest.interestDifferenceAmount, closeTimestamp);
-
-        _transferTokensBasedOnInterestDifferenceAmount(derivativeItem, derivativeInterest.interestDifferenceAmount, closeTimestamp);
+        _transferTokensBasedOnInterestDifferenceAmount(derivativeItem, interestDifferenceAmount, closeTimestamp);
 
         emit ClosePosition(
             derivativeId,

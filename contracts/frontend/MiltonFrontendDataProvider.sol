@@ -7,6 +7,7 @@ import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
+import "../interfaces/IMilton.sol";
 
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
@@ -20,7 +21,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMiltonStorage miltonStorage = IMiltonStorage(addressesManager.getMiltonStorage());
         uint256[] memory userDerivativesIds = miltonStorage.getUserDerivativeIds(msg.sender);
         IporDerivativeFront[] memory iporDerivatives = new IporDerivativeFront[](userDerivativesIds.length);
-
+        IMilton milton = IMilton(addressesManager.getMilton());
         for (uint256 i = 0; i < userDerivativesIds.length; i++) {
             DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(userDerivativesIds[i]);
 
@@ -32,6 +33,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 derivativeItem.item.collateralizationFactor,
                 derivativeItem.item.direction,
                 derivativeItem.item.indicator.fixedInterestRate,
+                milton.calculatePositionValue(derivativeItem.item),
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.endingTimestamp
             );

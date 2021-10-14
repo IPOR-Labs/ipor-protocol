@@ -28,6 +28,7 @@ interface IMiltonFrontendDataProvider {
         uint256 collateralizationFactor;
         uint8 direction;
         uint256 fixedInterestRate;
+        int256 interestAmount;
         uint256 startingTimestamp;
         uint256 endingTimestamp;
     }
