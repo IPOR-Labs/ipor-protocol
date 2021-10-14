@@ -22,6 +22,7 @@ interface IMiltonFrontendDataProvider {
 
     struct IporDerivativeFront {
         uint256 id;
+        address asset;
         uint256 collateral;
         uint256 notionalAmount;
         uint256 collateralizationFactor;
