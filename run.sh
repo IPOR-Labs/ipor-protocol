@@ -89,8 +89,10 @@ function create_env_config_file(){
 
   set_smart_contract_address "Milton.json" "milton_address"
   set_smart_contract_address "Warren.json" "warren_address"
+  set_smart_contract_address "Joseph.json" "joseph_address"
   set_smart_contract_address "TestMilton.json" "milton_test_address"
   set_smart_contract_address "TestWarren.json" "warren_test_address"
+  set_smart_contract_address "TestJoseph.json" "joseph_test_address"
   set_smart_contract_address "MiltonDevToolDataProvider.json" "milton_dev_tool_data_provider_address"
   set_smart_contract_address "MiltonFrontendDataProvider.json" "milton_frontend_data_provider_address"
   set_smart_contract_address "DaiMockedToken.json" "dai_mocked_address"
