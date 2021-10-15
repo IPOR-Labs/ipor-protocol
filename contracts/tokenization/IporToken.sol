@@ -37,7 +37,7 @@ contract IporToken is Ownable, IIporToken, ERC20 {
     function mint(
         address user,
         uint256 amount
-    ) external override onlyLiquidityPool returns (bool) {
+    ) external override onlyJoseph returns (bool) {
         uint256 previousBalance = super.balanceOf(user);
         require(amount > 0, Errors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(user, amount);
@@ -51,7 +51,7 @@ contract IporToken is Ownable, IIporToken, ERC20 {
         address user,
         address receiverOfUnderlying,
         uint256 amount
-    ) external override onlyLiquidityPool {
+    ) external override onlyJoseph {
 
         require(amount > 0, Errors.MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(user, amount);
@@ -64,7 +64,7 @@ contract IporToken is Ownable, IIporToken, ERC20 {
         return _underlyingAsset;
     }
 
-    modifier onlyLiquidityPool() {
+    modifier onlyJoseph() {
         require(msg.sender == _addressesManager.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }
