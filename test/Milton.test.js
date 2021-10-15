@@ -2178,7 +2178,7 @@ contract('Milton', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
-        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        await warren.test_updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, params.openTimestamp, {from: userOne});
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
         await joseph.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
         await openPositionFunc(params);
