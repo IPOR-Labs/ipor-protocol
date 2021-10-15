@@ -17,6 +17,7 @@ contract Joseph is Ownable, IJoseph {
     IIporAddressesManager internal _addressesManager;
 
     mapping(address => mapping(address => uint256)) public assetDepositTimestamp;
+    mapping(address => mapping(address => uint256)) public userIporTokenVolumes;
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
@@ -41,6 +42,7 @@ contract Joseph is Ownable, IJoseph {
             IIporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * Constants.MD, exchangeRate));
         }
         assetDepositTimestamp[asset][msg.sender] = timestamp;
+        userIporTokenVolumes[asset][msg.sender] = userIporTokenVolumes[asset][msg.sender] + liquidityAmount;
     }
 
     function redeem(address asset, uint256 iporTokenVolume) external override {
@@ -48,6 +50,7 @@ contract Joseph is Ownable, IJoseph {
     }
 
     function _redeem(address asset, uint256 iporTokenVolume, uint256 timestamp) internal {
+        require(userIporTokenVolumes[asset][msg.sender] >= iporTokenVolume, Errors.JOSEPH_CANNOT_REDEEM_TOO_LOW_IPOR_TOKENS_PROVIDED_BY_USER);
         require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW);
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
         require(timestamp >= assetDepositTimestamp[asset][msg.sender] + iporConfiguration.getCoolOffPeriodInSec(), Errors.MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED);

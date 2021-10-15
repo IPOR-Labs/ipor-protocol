@@ -707,6 +707,61 @@ contract('Joseph', (accounts) => {
             `Incorrect USDC balance on Liquidity Provider for asset ${tokenUsdc.address} actual: ${actualUSDCBalanceSender}, expected: ${expectedLiquidityProviderUSDCBalance}`);
     });
 
+    it('should NOT redeem - user doesnt have enough tokens in Joseph book - case 1', async () => {
+        //given
+        let actionTimestamp = Math.floor(Date.now() / 1000);
+
+        let oldJoseph = await iporAddressesManager.getAddress("JOSEPH");
+        await iporAddressesManager.setAddress("JOSEPH", admin);
+        await iporTokenDai.mint(userThree, testUtils.MILTON_10_000_USD);
+        await iporAddressesManager.setAddress("JOSEPH", oldJoseph);
+
+        //when
+        await testUtils.assertError(
+            //when
+            joseph.test_redeem(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: userThree}),
+            //then
+            'IPOR_48'
+        );
+    });
+
+    it('should NOT redeem - user doesnt have enough tokens in Joseph book - transfer Ipor Tokens between users is not enough', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        let actionTimestamp = Math.floor(Date.now() / 1000);
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp, {from: liquidityProvider});
+
+        await iporTokenDai.transfer(userThree, testUtils.MILTON_10_000_USD, {from: liquidityProvider});
+
+        //when
+        await testUtils.assertError(
+            //when
+            joseph.test_redeem(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: userThree}),
+            //then
+            'IPOR_48'
+        );
+    });
+
+    it('should NOT redeem - user doesnt have enough tokens in Joseph book - User has enough Ipor Tokens but not minted by Joseph', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        let actionTimestamp = Math.floor(Date.now() / 1000);
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp, {from: userThree});
+
+        await iporTokenDai.transfer(userThree, testUtils.MILTON_10_000_USD, {from: liquidityProvider});
+
+        //when
+        await testUtils.assertError(
+            //when
+            joseph.test_redeem(tokenDai.address,
+                testUtils.MILTON_10_000_USD + testUtils.MILTON_10_000_USD,
+                actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: userThree}),
+            //then
+            'IPOR_48'
+        );
+    });
+
     const getStandardDerivativeParams = () => {
         return {
             asset: tokenDai.address,
