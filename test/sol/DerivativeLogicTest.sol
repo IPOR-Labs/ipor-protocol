@@ -90,7 +90,7 @@ contract DerivativeLogicTest is TestData {
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest fixed");
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, 0, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.positionValue, 0, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCase2SameTimestampIBTPriceIncrease() public {
@@ -108,7 +108,7 @@ contract DerivativeLogicTest is TestData {
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest fixed");
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 123378750000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, 24675750000000000000000, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.positionValue, 24675750000000000000000, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCase25daysLaterIBTPriceNotChanged() public {
@@ -127,7 +127,7 @@ contract DerivativeLogicTest is TestData {
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98973419178082191780822, "Wrong interest fixed");
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, - 270419178082191780821, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.positionValue, - 270419178082191780821, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCase25daysLaterIBTPriceChanged() public {
@@ -146,7 +146,7 @@ contract DerivativeLogicTest is TestData {
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 98973419178082191780822, "Wrong interest fixed");
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 123378750000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, 24405330821917808219178, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.positionValue, 24405330821917808219178, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCaseHugeIpor25daysLaterIBTPriceChangedUserLoses() public {
@@ -168,7 +168,7 @@ contract DerivativeLogicTest is TestData {
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 123446354794520547945205, "Wrong interest fixed");
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 123378750000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, - 67604794520547945204, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.positionValue, - 67604794520547945204, "Wrong interest difference amount");
     }
 
     function testCalculateInterestCase100daysLaterIBTPriceNotChanged() public {
@@ -187,7 +187,7 @@ contract DerivativeLogicTest is TestData {
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.MD_YEAR_IN_SECONDS), 99005869479452054794521, "Wrong interest fixed");
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFloating, Constants.MD_YEAR_IN_SECONDS), 98703000000000000000000, "Wrong interest floating");
-        Assert.equal(derivativeInterest.interestDifferenceAmount, - 302869479452054794520, "Wrong interest difference amount");
+        Assert.equal(derivativeInterest.positionValue, - 302869479452054794520, "Wrong interest difference amount");
     }
 
 }

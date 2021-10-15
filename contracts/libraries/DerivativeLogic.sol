@@ -39,9 +39,9 @@ library DerivativeLogic {
         uint256 quasiIFixed = calculateQuasiInterestFixed(derivative.notionalAmount, derivative.indicator.fixedInterestRate, calculatedPeriodInSeconds);
         uint256 quasiIFloating = calculateQuasiInterestFloating(derivative.indicator.ibtQuantity, mdIbtPrice);
 
-        int256 interestDifferenceAmount = AmmMath.divisionInt(uint8(derivative.direction) == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
+        int256 positionValue = AmmMath.divisionInt(uint8(derivative.direction) == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
             ? int256(quasiIFloating) - int256(quasiIFixed) : int256(quasiIFixed) - int256(quasiIFloating), int256(Constants.MD_YEAR_IN_SECONDS));
 
-        return DataTypes.IporDerivativeInterest(quasiIFixed, quasiIFloating, interestDifferenceAmount);
+        return DataTypes.IporDerivativeInterest(quasiIFixed, quasiIFloating, positionValue);
     }
 }

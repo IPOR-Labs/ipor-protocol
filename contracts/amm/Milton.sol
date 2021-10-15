@@ -88,17 +88,17 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         DataTypes.IporDerivativeInterest memory derivativeInterest =
         derivative.calculateInterest(timestamp, IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivative.asset, timestamp));
 
-        if (derivativeInterest.interestDifferenceAmount > 0) {
-            if (derivativeInterest.interestDifferenceAmount < int256(derivative.collateral)) {
-                return derivativeInterest.interestDifferenceAmount;
+        if (derivativeInterest.positionValue > 0) {
+            if (derivativeInterest.positionValue < int256(derivative.collateral)) {
+                return derivativeInterest.positionValue;
             } else {
                 return int256(derivative.collateral);
             }
         } else {
-            if (derivativeInterest.interestDifferenceAmount < - int256(derivative.collateral)) {
-                return -int256(derivative.collateral);
+            if (derivativeInterest.positionValue < - int256(derivative.collateral)) {
+                return - int256(derivative.collateral);
             } else {
-                return derivativeInterest.interestDifferenceAmount;
+                return derivativeInterest.positionValue;
             }
         }
     }
@@ -241,11 +241,11 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(derivativeId);
 
-        int256 interestDifferenceAmount = _calculatePositionValue(closeTimestamp, derivativeItem.item);
+        int256 positionValue = _calculatePositionValue(closeTimestamp, derivativeItem.item);
 
-        miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, interestDifferenceAmount, closeTimestamp);
+        miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, positionValue, closeTimestamp);
 
-        _transferTokensBasedOnInterestDifferenceAmount(derivativeItem, interestDifferenceAmount, closeTimestamp);
+        _transferTokensBasedOnpositionValue(derivativeItem, positionValue, closeTimestamp);
 
         emit ClosePosition(
             derivativeId,
@@ -254,70 +254,29 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         );
     }
 
-    function _transferTokensBasedOnInterestDifferenceAmount(
+    function _transferTokensBasedOnpositionValue(
         DataTypes.MiltonDerivativeItem memory derivativeItem,
-        int256 interestDifferenceAmount,
+        int256 positionValue,
         uint256 _calculationTimestamp) internal {
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
-        uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
+        uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
 
-        uint256 transferAmount = derivativeItem.item.collateral;
-
-        if (interestDifferenceAmount > 0) {
-            //Trader earn, Milton loose
-
-            //tokens transfered from Milton
-            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
-                // |I| > D
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral, iporConfiguration.getIncomeTaxPercentage());
-
-                //transfer D+D-incomeTax to user's address
-                transferAmount = transferAmount + derivativeItem.item.collateral - incomeTax;
-
-                _transferDerivativeAmount(derivativeItem, transferAmount);
-                //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
-
-            } else {
-                // |I| <= D
-
-                //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                if (msg.sender != derivativeItem.item.buyer) {
-                    require(_calculationTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
-                }
-
-                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount, iporConfiguration.getIncomeTaxPercentage());
-
-                //transfer P=D+I-incomeTax to user's address
-                transferAmount = transferAmount + absInterestDifferenceAmount - incomeTax;
-
-                _transferDerivativeAmount(derivativeItem, transferAmount);
+        if (abspositionValue < derivativeItem.item.collateral) {
+            //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
+            if (msg.sender != derivativeItem.item.buyer) {
+                require(_calculationTimestamp >= derivativeItem.item.endingTimestamp,
+                    Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
             }
+        }
 
+        if (positionValue > 0) {
+            //Trader earn, Milton loose
+            _transferDerivativeAmount(
+                derivativeItem, derivativeItem.item.collateral + abspositionValue
+                - AmmMath.calculateIncomeTax(abspositionValue, iporConfiguration.getIncomeTaxPercentage()));
         } else {
             //Milton earn, Trader loose
-
-            //tokens transfered to Milton, updates on balances
-            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
-                // |I| > D
-
-                //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
-                //TODO: take into consideration token decimals!!!
-                IERC20(derivativeItem.item.asset)
-                .transfer(msg.sender, derivativeItem.item.fee.liquidationDepositAmount);
-            } else {
-                // |I| <= D
-
-                //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                if (msg.sender != derivativeItem.item.buyer) {
-                    require(_calculationTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
-                }
-
-                //transfer D-I to user's address
-                transferAmount = transferAmount - absInterestDifferenceAmount;
-                _transferDerivativeAmount(derivativeItem, transferAmount);
-            }
+            _transferDerivativeAmount(derivativeItem, derivativeItem.item.collateral - abspositionValue);
         }
     }
 
@@ -336,7 +295,9 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         //transfer from AMM to buyer
         //TODO: take into consideration token decimals!!!
-        IERC20(derivativeItem.item.asset).transfer(derivativeItem.item.buyer, transferAmount);
+        if (transferAmount > 0) {
+            IERC20(derivativeItem.item.asset).transfer(derivativeItem.item.buyer, transferAmount);
+        }
     }
 
     modifier onlyActiveDerivative(uint256 derivativeId) {

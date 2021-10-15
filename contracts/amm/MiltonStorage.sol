@@ -91,11 +91,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     function updateStorageWhenClosePosition(
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
-        int256 interestDifferenceAmount,
+        int256 positionValue,
         uint256 closingTimestamp) external override onlyMilton {
 
         _updateMiltonDerivativesWhenClosePosition(derivativeItem);
-        _updateBalancesWhenClosePosition(user, derivativeItem, interestDifferenceAmount, closingTimestamp);
+        _updateBalancesWhenClosePosition(user, derivativeItem, positionValue, closingTimestamp);
         _updateSoapIndicatorsWhenClosePosition(derivativeItem, closingTimestamp);
 
     }
@@ -164,15 +164,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         treasuryValue = AmmMath.division(openingFeeAmount * openingFeeForTreasurePercentage, Constants.MD);
         liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
-    event LogDebugUint(string name, uint256 value);
 
     function _updateBalancesWhenClosePosition(
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
-        int256 interestDifferenceAmount,
+        int256 positionValue,
         uint256 closingTimestamp) internal {
 
-        uint256 absInterestDifferenceAmount = AmmMath.absoluteValue(interestDifferenceAmount);
+        uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
 
         //decrease from balances the liquidation deposit
         require(balances[derivativeItem.item.asset].liquidationDeposit >=
@@ -185,91 +184,31 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         balances[derivativeItem.item.asset].derivatives
         = balances[derivativeItem.item.asset].derivatives - derivativeItem.item.collateral;
 
-        if (interestDifferenceAmount > 0) {
-
-            //tokens transfered from AMM
-            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
-                // |I| > D
-
-                require(balances[derivativeItem.item.asset].liquidityPool >= derivativeItem.item.collateral,
-                    Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
-
-                //fetch "D" amount from Liquidity Pool
-                balances[derivativeItem.item.asset].liquidityPool
-                = balances[derivativeItem.item.asset].liquidityPool - derivativeItem.item.collateral;
-
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral,
-                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
-
-                balances[derivativeItem.item.asset].treasury
-                = balances[derivativeItem.item.asset].treasury + incomeTax;
-
-                emit LogDebugUint("incomeTax", incomeTax);
-
-            } else {
-                // |I| <= D
-
-                require(balances[derivativeItem.item.asset].liquidityPool >= absInterestDifferenceAmount,
-                    Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
-
-                //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                if (user != derivativeItem.item.buyer) {
-                    require(closingTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
-                }
-
-                //fetch "I" amount from Liquidity Pool
-                balances[derivativeItem.item.asset].liquidityPool = balances[derivativeItem.item.asset].liquidityPool - absInterestDifferenceAmount;
-
-                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount,
-                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
-
-                balances[derivativeItem.item.asset].treasury
-                = balances[derivativeItem.item.asset].treasury + incomeTax;
-
-                emit LogDebugUint("incomeTax", incomeTax);
-
+        if (abspositionValue < derivativeItem.item.collateral) {
+            //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
+            if (user != derivativeItem.item.buyer) {
+                require(closingTimestamp >= derivativeItem.item.endingTimestamp,
+                    Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
             }
+        }
+
+        uint256 incomeTax = AmmMath.calculateIncomeTax(abspositionValue,
+            IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
+
+        balances[derivativeItem.item.asset].treasury
+        = balances[derivativeItem.item.asset].treasury + incomeTax;
+
+        if (positionValue > 0) {
+
+            require(balances[derivativeItem.item.asset].liquidityPool >= abspositionValue,
+                Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW);
+
+            balances[derivativeItem.item.asset].liquidityPool
+            = balances[derivativeItem.item.asset].liquidityPool - abspositionValue;
 
         } else {
-            //tokens transfered to AMM, updates on balances
-            if (absInterestDifferenceAmount > derivativeItem.item.collateral) {
-                // |I| > D
-
-                uint256 incomeTax = AmmMath.calculateIncomeTax(derivativeItem.item.collateral,
-                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
-
-                balances[derivativeItem.item.asset].treasury
-                = balances[derivativeItem.item.asset].treasury + incomeTax;
-
-                //transfer D - incomeTax  to Liquidity Pool
-                balances[derivativeItem.item.asset].liquidityPool
-                = balances[derivativeItem.item.asset].liquidityPool + derivativeItem.item.collateral - incomeTax;
-                //don't have to verify if sender is an owner of derivative, everyone can close derivative when interest rate value higher or equal deposit amount
-
-                emit LogDebugUint("incomeTax", incomeTax);
-
-            } else {
-                // |I| <= D
-
-                //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-                if (user != derivativeItem.item.buyer) {
-                    require(closingTimestamp >= derivativeItem.item.endingTimestamp,
-                        Errors.MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY);
-                }
-
-                uint256 incomeTax = AmmMath.calculateIncomeTax(absInterestDifferenceAmount,
-                    IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
-
-                balances[derivativeItem.item.asset].treasury
-                = balances[derivativeItem.item.asset].treasury + incomeTax;
-
-                //transfer I-incomeTax to Liquidity Pool
-                balances[derivativeItem.item.asset].liquidityPool
-                = balances[derivativeItem.item.asset].liquidityPool + absInterestDifferenceAmount - incomeTax;
-
-                emit LogDebugUint("incomeTax", incomeTax);
-            }
+            balances[derivativeItem.item.asset].liquidityPool
+            = balances[derivativeItem.item.asset].liquidityPool + abspositionValue - incomeTax;
         }
     }
 

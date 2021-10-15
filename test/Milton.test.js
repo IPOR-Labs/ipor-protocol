@@ -1165,7 +1165,7 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, params.openTimestamp, {from: userOne});
 
         //Important difference in opposite to other standard test cases - ipor is calculated right before closing position.
-        await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, endTimestamp-1, {from: userOne});
+        await warren.test_updateIndex(params.asset, iporValueAfterOpenPosition, endTimestamp - 1, {from: userOne});
 
         //when
         await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
@@ -2172,6 +2172,30 @@ contract('Milton', (accounts) => {
             //then
             'IPOR_39'
         );
+    });
+
+    it('should calculate Position Value - simple case 1', async () => {
+        //given
+        await setupTokenDaiInitialValues();
+        const params = getStandardDerivativeParams();
+        await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
+        let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
+        await joseph.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
+        await milton.openPosition(
+            params.asset, params.totalAmount,
+            params.slippageValue, params.collateralizationFactor,
+            params.direction, {from: userTwo});
+
+        let derivativeItem = await miltonStorage.getDerivativeItem(1);
+        let expectedPositionValue = BigInt("-34764632627646354832");
+
+        //when
+        let actualPositionValue = BigInt(await milton.test_calculatePositionValue(params.openTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, derivativeItem.item));
+
+        //then
+        assert(expectedPositionValue === actualPositionValue,
+            `Incorrect position value, actual: ${actualPositionValue}, expected: ${expectedPositionValue}`)
+
     });
 
     //TODO: check initial IBT

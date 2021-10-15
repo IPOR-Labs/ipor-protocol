@@ -20,7 +20,7 @@ interface IMiltonStorage {
     function updateStorageWhenClosePosition(
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
-        int256 interestDifferenceAmount,
+        int256 positionValue,
         uint256 closingTimestamp) external;
 
     function getDerivativeItem(uint256 derivativeId) external view returns (DataTypes.MiltonDerivativeItem memory);

@@ -84,7 +84,7 @@ library DataTypes {
         //TODO: reduce to one field the last one;
         uint256 quasiInterestFixed;
         uint256 quasiInterestFloating;
-        int256 interestDifferenceAmount;
+        int256 positionValue;
     }
 
     struct IporDerivativeAmount {
