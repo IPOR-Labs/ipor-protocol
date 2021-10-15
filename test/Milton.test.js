@@ -2181,11 +2181,7 @@ contract('Milton', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
         let miltonBalanceBeforePayout = testUtils.MILTON_14_000_USD;
         await joseph.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
-        await milton.openPosition(
-            params.asset, params.totalAmount,
-            params.slippageValue, params.collateralizationFactor,
-            params.direction, {from: userTwo});
-
+        await openPositionFunc(params);
         let derivativeItem = await miltonStorage.getDerivativeItem(1);
         let expectedPositionValue = BigInt("-34764632627646354832");
 
