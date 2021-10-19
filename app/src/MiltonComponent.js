@@ -4,7 +4,7 @@ import DerivativeList from "./DerivativeList";
 import AmmBalanceComponent from "./AmmBalanceComponent";
 import AmmTotalBalanceComponent from "./AmmTotalBalanceComponent";
 import MiltonStorage from "./contracts/MiltonStorage.json";
-import Joseph from "./contracts/Joseph.json";
+import TestJoseph from "./contracts/TestJoseph.json";
 import LiquidityPoolComponent from "./LiquidityPoolComponent";
 
 const {ContractData, ContractForm} = newContextComponents;
@@ -32,7 +32,7 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Open Position Form</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="Milton"
+                    contract="TestMilton"
                     method="openPosition"/>
             </div>
         </div>
@@ -42,21 +42,21 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Provide Liquidity</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="Joseph"
+                    contract="TestJoseph"
                     method="provideLiquidity"/>
             </div>
             <div className="col-md-4">
                 <strong>Redeem</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="Joseph"
+                    contract="TestJoseph"
                     method="redeem"/>
             </div>
             <div className="col-md-4">
                 <strong>Close Position Form</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="Milton"
+                    contract="TestMilton"
                     method="closePosition"/>
             </div>
         </div>
