@@ -152,6 +152,8 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Transfer TOKENS to your wallet</strong>
                 <br/>
                 <label>Max allowed value 1 000 000 USD</label>
+                <br/>
+                <small>1000000000000000000000000</small>
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonFaucet"

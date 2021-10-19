@@ -253,7 +253,7 @@ module.exports = async function (deployer, _network, addresses) {
             await deployer.deploy(TestJoseph);
             testJoseph = await TestJoseph.deployed();
 
-            if (_network === 'develop' || _network === 'dev' || _network === 'docker') {
+            if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
                     //For IPOR Test Framework purposes
                     await iporAddressesManager.setAddress("MILTON", testMilton.address);
@@ -275,6 +275,7 @@ module.exports = async function (deployer, _network, addresses) {
             }
 
             await testMilton.initialize(iporAddressesManagerAddr);
+            await testJoseph.initialize(iporAddressesManagerAddr);
 
         } else {
             await iporAddressesManager.setAddress("MILTON", miltonAddr);
@@ -328,20 +329,34 @@ module.exports = async function (deployer, _network, addresses) {
             mockedDai.approve(joseph.address, totalSupply18Decimals, {from: addresses[i]});
             mockedTusd.approve(joseph.address, totalSupply18Decimals, {from: addresses[i]});
 
-            await milton.authorizeLiquidityPool(mockedUsdt.address);
-            await milton.authorizeLiquidityPool(mockedUsdc.address);
-            await milton.authorizeLiquidityPool(mockedDai.address);
-            await milton.authorizeLiquidityPool(mockedTusd.address);
+            console.log(`Account: ${addresses[i]} approve spender Milton ${miltonAddr} to spend tokens on behalf of user.`);
+            console.log(`Account: ${addresses[i]} approve spender Joseph ${joseph.address} to spend tokens on behalf of user.`);
 
             if (isTestEnvironment) {
                 mockedUsdt.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
                 mockedUsdc.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
                 mockedDai.approve(testMilton.address, totalSupply18Decimals, {from: addresses[i]});
                 mockedTusd.approve(testMilton.address, totalSupply18Decimals, {from: addresses[i]});
-            }
 
-            console.log(`Account: ${addresses[i]} approve spender ${miltonAddr} to spend tokens on behalf of user.`);
+                mockedUsdt.approve(testJoseph.address, totalSupply6Decimals, {from: addresses[i]});
+                mockedUsdc.approve(testJoseph.address, totalSupply6Decimals, {from: addresses[i]});
+                mockedDai.approve(testJoseph.address, totalSupply18Decimals, {from: addresses[i]});
+                mockedTusd.approve(testJoseph.address, totalSupply18Decimals, {from: addresses[i]});
+
+                console.log(`Account: ${addresses[i]} approve spender TestMilton ${testMilton} to spend tokens on behalf of user.`);
+                console.log(`Account: ${addresses[i]} approve spender TestJoseph ${testJoseph} to spend tokens on behalf of user.`);
+            }
         }
+
+        await milton.authorizeLiquidityPool(mockedUsdt.address);
+        await milton.authorizeLiquidityPool(mockedUsdc.address);
+        await milton.authorizeLiquidityPool(mockedDai.address);
+        await milton.authorizeLiquidityPool(mockedTusd.address);
+
+        await testMilton.authorizeLiquidityPool(mockedUsdt.address);
+        await testMilton.authorizeLiquidityPool(mockedUsdc.address);
+        await testMilton.authorizeLiquidityPool(mockedDai.address);
+        await testMilton.authorizeLiquidityPool(mockedTusd.address);
 
         console.log("Initialize Milton Storage assets...");
         await iporAddressesManager.addAsset(mockedDaiAddr);

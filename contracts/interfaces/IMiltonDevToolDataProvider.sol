@@ -11,7 +11,9 @@ interface IMiltonDevToolDataProvider {
 
     function getMyIporTokenBalance(address asset) external view returns (uint256);
 
-    function getMyAllowance(address asset) external view returns (uint256);
+    function getMyAllowanceInMilton(address asset) external view returns (uint256);
+
+    function getMyAllowanceInJoseph(address asset) external view returns (uint256);
 
     function getPositions() external view returns (DataTypes.IporDerivative[] memory);
 
