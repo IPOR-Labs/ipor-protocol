@@ -7,13 +7,15 @@
     "@drizzle/react-plugin": "^1.5.1",
     "@drizzle/store": "^1.5.1",
     "bootstrap": "^5.0.2",
+    "dotenv": "^10.0.0",
+    "env-cmd": "^10.1.0",
     "react": "^16.11.0",
     "react-bootstrap": "^1.6.1",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "env-cmd -x -f ../.env react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

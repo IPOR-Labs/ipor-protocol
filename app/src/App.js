@@ -1,10 +1,10 @@
+
 import React from 'react';
 import {DrizzleContext} from "@drizzle/react-plugin";
 import {Drizzle} from "@drizzle/store";
 import drizzleOptions from "./drizzleOptions";
 import MainComponent from "./MainComponent";
 import "./App.css";
-
 const drizzle = new Drizzle(drizzleOptions);
 
 const App = () => {
@@ -17,13 +17,12 @@ const App = () => {
     //         setAccounts(accounts);
     //     });
     // }, []);
-
     return (
         <DrizzleContext.Provider drizzle={drizzle}>
             <DrizzleContext.Consumer>
                 {drizzleContext => {
                     const {drizzle, drizzleState, initialized} = drizzleContext;
-                    console.log(drizzleState);
+
                     if (!initialized) {
                         return "Loading..."
                     }

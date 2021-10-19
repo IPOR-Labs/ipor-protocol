@@ -308,6 +308,7 @@ module.exports = async function (deployer, _network, addresses) {
         console.log("Setup Faucet finished.");
 
         console.log("Start transfer TOKENS to test addresses...");
+
         //first address is an admin, last two addresses will not have tokens and approves
         for (let i = 0; i < addresses.length - 2; i++) {
             await mockedUsdt.transfer(addresses[i], userSupply6Decimals);
@@ -318,7 +319,9 @@ module.exports = async function (deployer, _network, addresses) {
             console.log(`Account: ${addresses[i]} - tokens transferred`);
 
             //Milton has rights to spend money on behalf of user
-            //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
+            //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s
+            // SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
+
             mockedUsdt.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
             mockedUsdc.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
             mockedDai.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
@@ -333,6 +336,7 @@ module.exports = async function (deployer, _network, addresses) {
             console.log(`Account: ${addresses[i]} approve spender Joseph ${joseph.address} to spend tokens on behalf of user.`);
 
             if (isTestEnvironment) {
+
                 mockedUsdt.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
                 mockedUsdc.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
                 mockedDai.approve(testMilton.address, totalSupply18Decimals, {from: addresses[i]});
@@ -343,8 +347,8 @@ module.exports = async function (deployer, _network, addresses) {
                 mockedDai.approve(testJoseph.address, totalSupply18Decimals, {from: addresses[i]});
                 mockedTusd.approve(testJoseph.address, totalSupply18Decimals, {from: addresses[i]});
 
-                console.log(`Account: ${addresses[i]} approve spender TestMilton ${testMilton} to spend tokens on behalf of user.`);
-                console.log(`Account: ${addresses[i]} approve spender TestJoseph ${testJoseph} to spend tokens on behalf of user.`);
+                console.log(`Account: ${addresses[i]} approve spender TestMilton ${testMilton.address} to spend tokens on behalf of user.`);
+                console.log(`Account: ${addresses[i]} approve spender TestJoseph ${testJoseph.address} to spend tokens on behalf of user.`);
             }
         }
 
