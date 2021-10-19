@@ -1,6 +1,7 @@
 import Warren from "./contracts/Warren.json";
 import WarrenStorage from "./contracts/WarrenStorage.json";
 import WarrenDevToolDataProvider from "./contracts/WarrenDevToolDataProvider.json";
+import Milton from "./contracts/Milton.json";
 import TestMilton from "./contracts/TestMilton.json";
 import MiltonStorage from "./contracts/MiltonStorage.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
@@ -10,8 +11,8 @@ import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 import IporAddressesManager from "./contracts/IporAddressesManager";
+import Joseph from "./contracts/Joseph";
 import TestJoseph from "./contracts/TestJoseph";
-
 const options = {
     web3: {
         fallback: {
@@ -23,10 +24,12 @@ const options = {
     contracts: [
         MiltonDevToolDataProvider,
         IporAddressesManager,
+        Joseph,
         TestJoseph,
         Warren,
         WarrenStorage,
         WarrenDevToolDataProvider,
+        Milton,
         TestMilton,
         MiltonStorage,
         IporConfiguration,

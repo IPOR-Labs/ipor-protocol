@@ -4,12 +4,12 @@ import logo from "./logo.png";
 import {Container, Navbar, Tabs} from "react-bootstrap";
 import {Tab} from "bootstrap";
 import IporIndexComponent from "./WarrenComponent";
-import IporAmmComponent from "./MiltonComponent";
+import MiltonComponent from "./MiltonComponent";
 import MyPositions from "./MyPositions";
 import IporConfiguration from "./IporConfigurationComponent";
 import FaucetComponent from "./FaucetComponent";
 
-
+require('dotenv').config({path: '../../.env'});
 const {AccountData, ContractData, ContractForm} = newContextComponents;
 
 export default ({drizzle, drizzleState}) => {
@@ -50,7 +50,7 @@ export default ({drizzle, drizzleState}) => {
                     />
                 </Tab>
                 <Tab eventKey="miltonOverview" title="Milton Overview">
-                    <IporAmmComponent
+                    <MiltonComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
