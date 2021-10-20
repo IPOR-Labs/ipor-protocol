@@ -1,5 +1,6 @@
 ### Environment ###
 /.env
+/containers/dev-tool/.env
 
 ### Java build artifacts ###
 /src/generated/

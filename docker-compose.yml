@@ -8,6 +8,8 @@ services:
     restart: always
     ports:
       - "4000:3000"
+    volumes:
+      - ./containers/dev-tool/.env:/usr/src/.env
     environment:
       - TZ=${TIMEZONE}
 
