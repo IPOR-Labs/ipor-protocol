@@ -8,6 +8,7 @@ import "../interfaces/IIporToken.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import {Errors} from '../Errors.sol';
 
+//TODO: confirm name and symbol of this token, beceuse there will be other types of IPOR Tokens
 contract IporToken is Ownable, IIporToken, ERC20 {
 
 //    using SafeERC20 for IERC20;

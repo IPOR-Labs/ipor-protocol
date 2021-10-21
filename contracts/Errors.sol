@@ -46,6 +46,5 @@ library Errors {
     string public constant MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW = 'IPOR_44'; //Amount which should be burned is too low
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = 'IPOR_45'; //Liquidity Pool balance is equal 0
     string public constant MILTON_CALLER_NOT_JOSEPH = 'IPOR_46'; // 'The caller must be the Ipor Liquidity Pool - Joseph'
-    string public constant MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED = 'IPOR_47'; //Cannot redeem because cool off period not passed for msg.sender and asset
-    string public constant JOSEPH_CANNOT_REDEEM_TOO_LOW_IPOR_TOKENS_PROVIDED_BY_USER = 'IPOR_48'; //number of Ipor Tokens saved in Joseph which was provided by this specific user is too low
+
 }
