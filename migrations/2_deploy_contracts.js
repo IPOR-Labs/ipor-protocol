@@ -352,15 +352,15 @@ module.exports = async function (deployer, _network, addresses) {
             }
         }
 
-        await milton.authorizeLiquidityPool(mockedUsdt.address);
-        await milton.authorizeLiquidityPool(mockedUsdc.address);
-        await milton.authorizeLiquidityPool(mockedDai.address);
-        await milton.authorizeLiquidityPool(mockedTusd.address);
+        await milton.authorizeJoseph(mockedUsdt.address);
+        await milton.authorizeJoseph(mockedUsdc.address);
+        await milton.authorizeJoseph(mockedDai.address);
+        await milton.authorizeJoseph(mockedTusd.address);
 
-        await testMilton.authorizeLiquidityPool(mockedUsdt.address);
-        await testMilton.authorizeLiquidityPool(mockedUsdc.address);
-        await testMilton.authorizeLiquidityPool(mockedDai.address);
-        await testMilton.authorizeLiquidityPool(mockedTusd.address);
+        await testMilton.authorizeJoseph(mockedUsdt.address);
+        await testMilton.authorizeJoseph(mockedUsdc.address);
+        await testMilton.authorizeJoseph(mockedDai.address);
+        await testMilton.authorizeJoseph(mockedTusd.address);
 
         console.log("Initialize Milton Storage assets...");
         await iporAddressesManager.addAsset(mockedDaiAddr);

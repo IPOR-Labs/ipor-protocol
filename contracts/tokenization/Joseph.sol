@@ -16,15 +16,28 @@ contract Joseph is Ownable, IJoseph {
 
     IIporAddressesManager internal _addressesManager;
 
-    mapping(address => mapping(address => uint256)) public assetDepositTimestamp;
-    mapping(address => mapping(address => uint256)) public userIporTokenVolumes;
-
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
         _provideLiquidity(asset, liquidityAmount, block.timestamp);
+    }
+
+    function redeem(address asset, uint256 iporTokenVolume) external override {
+        _redeem(asset, iporTokenVolume, block.timestamp);
+    }
+
+    function calculateExchangeRate(address asset) external override view returns (uint256){
+        IIporToken iporToken = IIporToken(_addressesManager.getIporToken(asset));
+        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        uint256 iporTokenTotalSupply = iporToken.totalSupply();
+        if (iporTokenTotalSupply > 0) {
+            uint256 result = AmmMath.division(miltonStorage.getBalance(asset).liquidityPool * Constants.MD, iporTokenTotalSupply);
+            return result;
+        } else {
+            return Constants.MD;
+        }
     }
 
     function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 timestamp) internal {
@@ -41,19 +54,10 @@ contract Joseph is Ownable, IJoseph {
         if (exchangeRate > 0) {
             IIporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * Constants.MD, exchangeRate));
         }
-        assetDepositTimestamp[asset][msg.sender] = timestamp;
-        userIporTokenVolumes[asset][msg.sender] = userIporTokenVolumes[asset][msg.sender] + liquidityAmount;
-    }
-
-    function redeem(address asset, uint256 iporTokenVolume) external override {
-        _redeem(asset, iporTokenVolume, block.timestamp);
     }
 
     function _redeem(address asset, uint256 iporTokenVolume, uint256 timestamp) internal {
-        require(userIporTokenVolumes[asset][msg.sender] >= iporTokenVolume, Errors.JOSEPH_CANNOT_REDEEM_TOO_LOW_IPOR_TOKENS_PROVIDED_BY_USER);
         require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW);
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
-        require(timestamp >= assetDepositTimestamp[asset][msg.sender] + iporConfiguration.getCoolOffPeriodInSec(), Errors.MILTON_CANNOT_REDEEM_COOL_OFF_PERIOD_NOT_PASSED);
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
@@ -68,18 +72,6 @@ contract Joseph is Ownable, IJoseph {
         IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, underlyingAmount);
 
         IERC20(asset).transferFrom(_addressesManager.getMilton(), msg.sender, underlyingAmount);
-    }
-
-    function calculateExchangeRate(address asset) external override view returns (uint256){
-        IIporToken iporToken = IIporToken(_addressesManager.getIporToken(asset));
-        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
-        uint256 iporTokenTotalSupply = iporToken.totalSupply();
-        if (iporTokenTotalSupply > 0) {
-            uint256 result = AmmMath.division(miltonStorage.getBalance(asset).liquidityPool * Constants.MD, iporTokenTotalSupply);
-            return result;
-        } else {
-            return Constants.MD;
-        }
     }
 
 }

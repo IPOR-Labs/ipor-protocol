@@ -22,6 +22,19 @@ contract Warren is Ownable, IWarren {
 
     IWarrenStorage warrenStorage;
 
+    modifier onlyUpdater() {
+        bool allowed = false;
+        address[] memory updaters = warrenStorage.getUpdaters();
+        for (uint256 i = 0; i < updaters.length; i++) {
+            if (updaters[i] == msg.sender) {
+                allowed = true;
+                break;
+            }
+        }
+        require(allowed == true, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
+        _;
+    }
+
     constructor(address warrenStorageAddr) {
         warrenStorage = IWarrenStorage(warrenStorageAddr);
     }
@@ -51,19 +64,6 @@ contract Warren is Ownable, IWarren {
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view override returns (uint256) {
         return AmmMath.division(warrenStorage.getIndex(asset)
         .accrueQuasiIbtPrice(calculateTimestamp), Constants.YEAR_IN_SECONDS);
-    }
-
-    modifier onlyUpdater() {
-        bool allowed = false;
-        address[] memory updaters = warrenStorage.getUpdaters();
-        for (uint256 i = 0; i < updaters.length; i++) {
-            if (updaters[i] == msg.sender) {
-                allowed = true;
-                break;
-            }
-        }
-        require(allowed == true, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
-        _;
     }
 
 }

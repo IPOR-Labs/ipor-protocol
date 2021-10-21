@@ -88,7 +88,7 @@ contract('IporToken', (accounts) => {
 
         await milton.initialize(iporAddressesManager.address);
         await joseph.initialize(iporAddressesManager.address);
-        await milton.authorizeLiquidityPool(tokenDai.address);
+        await milton.authorizeJoseph(tokenDai.address);
 
     });
 
