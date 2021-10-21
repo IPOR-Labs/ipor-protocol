@@ -17,6 +17,11 @@ contract IporToken is Ownable, IIporToken, ERC20 {
     address internal _underlyingAsset;
     uint8 _decimals;
 
+    modifier onlyJoseph() {
+        require(msg.sender == _addressesManager.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
+        _;
+    }
+
     constructor(
         address underlyingAsset,
         uint8 aTokenDecimals,
@@ -64,8 +69,4 @@ contract IporToken is Ownable, IIporToken, ERC20 {
         return _underlyingAsset;
     }
 
-    modifier onlyJoseph() {
-        require(msg.sender == _addressesManager.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
-        _;
-    }
 }

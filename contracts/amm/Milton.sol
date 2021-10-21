@@ -34,6 +34,18 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
     IIporAddressesManager internal _addressesManager;
 
+
+    modifier onlyActiveDerivative(uint256 derivativeId) {
+        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getDerivativeItem(derivativeId).item.state == DataTypes.DerivativeState.ACTIVE,
+            Errors.MILTON_DERIVATIVE_IS_INACTIVE);
+        _;
+    }
+
+    modifier onlyPublicationFeeTransferer() {
+        require(msg.sender == _addressesManager.getPublicationFeeTransferer(), Errors.MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
+        _;
+    }
+
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
@@ -298,17 +310,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         if (transferAmount > 0) {
             IERC20(derivativeItem.item.asset).transfer(derivativeItem.item.buyer, transferAmount);
         }
-    }
-
-    modifier onlyActiveDerivative(uint256 derivativeId) {
-        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getDerivativeItem(derivativeId).item.state == DataTypes.DerivativeState.ACTIVE,
-            Errors.MILTON_DERIVATIVE_IS_INACTIVE);
-        _;
-    }
-
-    modifier onlyPublicationFeeTransferer() {
-        require(msg.sender == _addressesManager.getPublicationFeeTransferer(), Errors.MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
-        _;
     }
 
 }
