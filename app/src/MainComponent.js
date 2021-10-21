@@ -8,6 +8,7 @@ import MiltonComponent from "./MiltonComponent";
 import MyPositions from "./MyPositions";
 import IporConfiguration from "./IporConfigurationComponent";
 import FaucetComponent from "./FaucetComponent";
+import FrontendComponent from "./FrontendComponent";
 
 require('dotenv').config({path: '../../.env'});
 const {AccountData, ContractData, ContractForm} = newContextComponents;
@@ -69,6 +70,12 @@ export default ({drizzle, drizzleState}) => {
                 </Tab>
                 <Tab eventKey="faucet" title="Faucet">
                     <FaucetComponent
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
+                <Tab eventKey="frontend" title="Frontend Data Provider">
+                    <FrontendComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />

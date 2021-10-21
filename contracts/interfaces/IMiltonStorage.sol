@@ -7,6 +7,8 @@ interface IMiltonStorage {
 
     function getBalance(address asset) external view returns (DataTypes.MiltonTotalBalance memory);
 
+    function getTotalOutstandingNotional(address asset) external view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
+
     function getLastDerivativeId() external view returns (uint256);
 
     function addLiquidity(address asset, uint256 liquidityAmount) external;
