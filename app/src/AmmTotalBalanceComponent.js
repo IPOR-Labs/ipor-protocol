@@ -5,7 +5,7 @@ import {newContextComponents} from "@drizzle/react-components";
 const {ContractData, ContractForm} = newContextComponents;
 
 export default ({drizzle, drizzleState}) => (
-    <div>
+    <div align="left">
         <table className="table" align="center">
             <tr>
                 <th scope="col"></th>

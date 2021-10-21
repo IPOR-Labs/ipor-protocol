@@ -59,6 +59,12 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return balances[asset];
     }
 
+    function getTotalOutstandingNotional(address asset) external override view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional) {
+        DataTypes.TotalSoapIndicator memory totalSoapIndicator = soapIndicators[asset];
+        payFixedTotalNotional = totalSoapIndicator.pf.totalNotional;
+        recFixedTotalNotional = totalSoapIndicator.rf.totalNotional;
+    }
+
     function getLastDerivativeId() external override view returns (uint256) {
         return derivatives.lastDerivativeId;
     }
