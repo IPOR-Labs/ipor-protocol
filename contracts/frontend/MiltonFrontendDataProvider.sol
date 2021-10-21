@@ -8,6 +8,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
 import "../interfaces/IMilton.sol";
+import "../amm/MiltonStorage.sol";
 
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
@@ -15,6 +16,11 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
     constructor(IIporAddressesManager _addressesManager) {
         addressesManager = _addressesManager;
+    }
+
+    function getTotalOutstandingNotional(address asset) external override view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional) {
+        IMiltonStorage miltonStorage = IMiltonStorage(addressesManager.getMiltonStorage());
+        (payFixedTotalNotional, recFixedTotalNotional) = miltonStorage.getTotalOutstandingNotional(asset);
     }
 
     function getMyPositions() external override view returns (IporDerivativeFront[] memory items) {

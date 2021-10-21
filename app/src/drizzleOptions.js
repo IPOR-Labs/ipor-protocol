@@ -10,6 +10,7 @@ import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
+import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider";
 import IporAddressesManager from "./contracts/IporAddressesManager";
 import Joseph from "./contracts/Joseph";
 import TestJoseph from "./contracts/TestJoseph";
@@ -23,6 +24,7 @@ const options = {
 
     contracts: [
         MiltonDevToolDataProvider,
+        MiltonFrontendDataProvider,
         IporAddressesManager,
         Joseph,
         TestJoseph,

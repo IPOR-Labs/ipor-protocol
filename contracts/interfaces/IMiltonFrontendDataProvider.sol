@@ -33,6 +33,8 @@ interface IMiltonFrontendDataProvider {
         uint256 endingTimestamp;
     }
 
+    function getTotalOutstandingNotional(address asset) external view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
+
     function getMyPositions() external view returns (IporDerivativeFront[] memory items);
 
     function getConfiguration() external view returns (IporConfigurationFront memory iporConfiguration);
