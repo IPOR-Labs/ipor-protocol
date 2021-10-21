@@ -5,7 +5,7 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
 
-    function authorizeLiquidityPool(address asset) external;
+    function authorizeJoseph(address asset) external;
 
     function openPosition(address asset, uint256 totalAmount, uint256 maximumSlippage,
         uint256 collateralizationFactor, uint8 direction) external returns (uint256);

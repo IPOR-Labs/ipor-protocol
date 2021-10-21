@@ -79,8 +79,8 @@ contract('Joseph', (accounts) => {
 
         await milton.initialize(iporAddressesManager.address);
         await joseph.initialize(iporAddressesManager.address);
-        await milton.authorizeLiquidityPool(tokenDai.address);
-        await milton.authorizeLiquidityPool(tokenUsdc.address);
+        await milton.authorizeJoseph(tokenDai.address);
+        await milton.authorizeJoseph(tokenUsdc.address);
 
     });
 

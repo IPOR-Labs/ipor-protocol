@@ -54,7 +54,7 @@ contract Milton is Ownable, MiltonEvents, IMilton {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
-    function authorizeLiquidityPool(address asset) external override onlyOwner {
+    function authorizeJoseph(address asset) external override onlyOwner {
         IERC20(asset).approve(_addressesManager.getJoseph(), Constants.MAX_VALUE);
     }
 
