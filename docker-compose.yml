@@ -57,6 +57,8 @@ services:
       - ${ETH_ACCOUNTS_NUMBER}
       - --defaultBalanceEther
       - ${ETH_INITIAL_BALANCE}
+      - ${ETH_AUTO_MINING_CMD}
+      - ${ETH_AUTO_MINING_BLOCK_TIME}
       - --verbose
       - --debug
 
