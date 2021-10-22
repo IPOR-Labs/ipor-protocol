@@ -1,5 +1,6 @@
 import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
+import FrontendPositions from "./FrontendPositions";
 
 const {ContractData, ContractForm} = newContextComponents;
 
@@ -109,5 +110,14 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
         </table>
+        <hr/>
+        <h5>My Positions</h5>
+        <ContractData
+            drizzle={drizzle}
+            drizzleState={drizzleState}
+            contract="MiltonFrontendDataProvider"
+            method="getMyPositions"
+            render={FrontendPositions}
+        />
     </div>
 );
