@@ -13,18 +13,18 @@ interface IIporAddressesManager {
     event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
     event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
     event ProxyCreated(string id, address indexed newAddress);
-    event AddressSet(string id, address indexed newAddress, bool hasProxy);
+    event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);
     event IporTokenAddressUpdated(address indexed underlyingAssetAddress, address indexed newIporTokenAddress);
     event JosephAddressUpdated(address indexed newJosephAddress);
     event AssetManagementVaultUpdated(address indexed asset, address indexed newAssetManagementVaultAddress);
 
-    function setAddress(string memory id, address newAddress) external;
+    function setAddress(bytes32 id, address newAddress) external;
 
-    function setAddressAsProxy(string memory id, address impl) external;
+    function setAddressAsProxy(bytes32 id, address impl) external;
 
-    function getAddress(string memory id) external view returns (address);
+    function getAddress(bytes32 id) external view returns (address);
 
     function getPublicationFeeTransferer() external view returns (address);
 

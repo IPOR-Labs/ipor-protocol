@@ -1,3 +1,4 @@
+const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {time} = require('@openzeppelin/test-helpers');
 const IporLogic = artifacts.require('IporLogic');
@@ -41,7 +42,7 @@ contract('Warren', (accounts) => {
 
     beforeEach(async () => {
         warrenStorage = await WarrenStorage.new(1);
-        await iporAddressesManager.setAddress("WARREN_STORAGE", warrenStorage.address);
+        await iporAddressesManager.setAddress(keccak256("WARREN_STORAGE"), warrenStorage.address);
         warren = await TestWarren.new(warrenStorage.address);
         warrenDevToolDataProvider = await WarrenDevToolDataProvider.new(iporAddressesManager.address);
     });

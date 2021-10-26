@@ -1,3 +1,4 @@
+const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
@@ -67,10 +68,10 @@ contract('MiltonStorage', (accounts) => {
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await iporAddressesManager.setAddress("WARREN", warren.address);
-        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", await iporConfiguration.address);
-        await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("WARREN"), warren.address);
+        await iporAddressesManager.setAddress(keccak256("IPOR_CONFIGURATION"), await iporConfiguration.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenUsdc.address);
@@ -87,7 +88,7 @@ contract('MiltonStorage', (accounts) => {
         miltonStorage = await MiltonStorage.new();
         await warrenStorage.addUpdater(userOne);
         await warrenStorage.addUpdater(warren.address);
-        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
         await miltonStorage.initialize(iporAddressesManager.address);
         await miltonStorage.addAsset(tokenDai.address);
         await miltonStorage.addAsset(tokenUsdc.address);
@@ -111,7 +112,7 @@ contract('MiltonStorage', (accounts) => {
 
         //given
         await setupTokenDaiInitialValues();
-        await iporAddressesManager.setAddress("MILTON", miltonStorageAddress);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), miltonStorageAddress);
 
         //when
         miltonStorage.updateStorageWhenOpenPosition(await preprareDerivativeStructSimpleCase1(), {from: miltonStorageAddress});
@@ -143,13 +144,13 @@ contract('MiltonStorage', (accounts) => {
         }
 
         await warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
         await joseph.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await miltonStorage.getDerivativeItem(1);
         let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
-        await iporAddressesManager.setAddress("MILTON", miltonStorageAddress);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), miltonStorageAddress);
 
         //when
         miltonStorage.updateStorageWhenClosePosition(
@@ -172,13 +173,13 @@ contract('MiltonStorage', (accounts) => {
         }
 
         await warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
         await joseph.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await miltonStorage.getDerivativeItem(1);
         let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
-        await iporAddressesManager.setAddress("MILTON", miltonStorageAddress);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), miltonStorageAddress);
 
         //when
         await testUtils.assertError(

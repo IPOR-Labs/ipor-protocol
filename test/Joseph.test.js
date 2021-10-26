@@ -1,3 +1,4 @@
+const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
@@ -69,9 +70,9 @@ contract('Joseph', (accounts) => {
             await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
-        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", await iporConfiguration.address);
-        await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("IPOR_CONFIGURATION"), await iporConfiguration.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenUsdc.address);
@@ -86,12 +87,12 @@ contract('Joseph', (accounts) => {
 
     beforeEach(async () => {
         miltonStorage = await MiltonStorage.new();
-        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
 
         warrenStorage = await WarrenStorage.new();
 
         warren = await TestWarren.new(warrenStorage.address);
-        await iporAddressesManager.setAddress("WARREN", warren.address);
+        await iporAddressesManager.setAddress(keccak256("WARREN"), warren.address);
 
         await warrenStorage.addUpdater(userOne);
         await warrenStorage.addUpdater(warren.address);
@@ -226,9 +227,9 @@ contract('Joseph', (accounts) => {
         await joseph.provideLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
@@ -390,9 +391,9 @@ contract('Joseph', (accounts) => {
         await joseph.test_provideLiquidity(params.asset, params.totalAmount, actionTimestamp, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         await testUtils.assertError(
@@ -410,9 +411,9 @@ contract('Joseph', (accounts) => {
         await joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         await testUtils.assertError(
@@ -431,9 +432,9 @@ contract('Joseph', (accounts) => {
         await joseph.test_provideLiquidity(params.asset, params.totalAmount, actionTimestamp, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_USD, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         await testUtils.assertError(
@@ -818,20 +819,20 @@ contract('Joseph', (accounts) => {
         await tokenDai.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
     const setupIporTokenDaiInitialValues = async () => {
-        await iporAddressesManager.setAddress("MILTON", userOne);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), userOne);
         let lpBalance = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
         if (lpBalance > 0) {
             await iporTokenDai.burn(liquidityProvider, accounts[5], lpBalance, {from: userOne});
         }
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
     }
 
     const setupIporTokenUsdcInitialValues = async () => {
-        await iporAddressesManager.setAddress("MILTON", userOne);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), userOne);
         let lpBalance = BigInt(await iporTokenUsdc.balanceOf(liquidityProvider));
         if (lpBalance > 0) {
             await iporTokenUsdc.burn(liquidityProvider, accounts[5], lpBalance, {from: userOne});
         }
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
     }
 });
