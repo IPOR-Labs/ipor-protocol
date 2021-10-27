@@ -282,7 +282,7 @@ contract('Joseph', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await joseph.test_redeem(params.asset, amount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider})
+        await joseph.test_redeem(params.asset, amount, {from: liquidityProvider})
 
         //when
         let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
