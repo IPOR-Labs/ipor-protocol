@@ -18,6 +18,7 @@ export default (derivatives) => (
                     <th scope="col">Position Value</th>
                     <th scope="col">Starting Timestamp</th>
                     <th scope="col">Ending Timestamp</th>
+                    <th scope="col">Liquidation Deposit Amount</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -44,6 +45,7 @@ export default (derivatives) => (
                                 </td>
                                 <td>{toDate(derivative.startingTimestamp)}</td>
                                 <td>{toDate(derivative.endingTimestamp)}</td>
+                                <td>{derivative.liquidationDepositAmount}</td>
                             </tr>
                         )
                     }

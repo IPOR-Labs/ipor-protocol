@@ -31,6 +31,7 @@ interface IMiltonFrontendDataProvider {
         int256 positionValue;
         uint256 startingTimestamp;
         uint256 endingTimestamp;
+        uint256 liquidationDepositAmount;
     }
 
     function getTotalOutstandingNotional(address asset) external view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
