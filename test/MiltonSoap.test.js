@@ -1,3 +1,4 @@
+const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
@@ -64,9 +65,9 @@ contract('MiltonSoap', (accounts) => {
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", await iporConfiguration.address);
-        await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("IPOR_CONFIGURATION"), await iporConfiguration.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenUsdc.address);
@@ -81,12 +82,12 @@ contract('MiltonSoap', (accounts) => {
 
     beforeEach(async () => {
         miltonStorage = await MiltonStorage.new();
-        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
 
         warrenStorage = await WarrenStorage.new();
 
         warren = await TestWarren.new(warrenStorage.address);
-        await iporAddressesManager.setAddress("WARREN", warren.address);
+        await iporAddressesManager.setAddress(keccak256("WARREN"), warren.address);
 
         await warrenStorage.addUpdater(userOne);
         await warrenStorage.addUpdater(warren.address);

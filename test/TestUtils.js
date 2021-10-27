@@ -60,3 +60,11 @@ module.exports.TC_OPENING_FEE = BigInt("906363636363636363636");
 //specific data
 module.exports.SPECIFIC_INCOME_TAX_CASE_1 = BigInt("579079452054794521914");
 module.exports.SPECIFIC_INTEREST_AMOUNT_CASE_1 = BigInt("5790794520547945219137");
+
+module.exports.pad32Bytes = (data) => {
+    var s = String(data);
+    while (s.length < (64 || 2)) {
+        s = "0" + s;
+    }
+    return s;
+}

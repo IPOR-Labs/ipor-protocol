@@ -1,5 +1,5 @@
 require('dotenv').config({path: '../.env'})
-
+const keccak256 = require('keccak256')
 const Warren = artifacts.require("Warren");
 const WarrenStorage = artifacts.require("WarrenStorage");
 const Milton = artifacts.require("Milton");
@@ -123,11 +123,11 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
     await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
     let miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deployed();
-    await iporAddressesManager.setAddress("MILTON_UTILIZATION_STRATEGY", miltonLPUtilizationStrategyCollateral.address);
+    await iporAddressesManager.setAddress(keccak256("MILTON_UTILIZATION_STRATEGY"), miltonLPUtilizationStrategyCollateral.address);
 
     await deployer.deploy(MiltonSpreadStrategy);
     let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
-    await iporAddressesManager.setAddress("MILTON_SPREAD_STRATEGY", miltonSpreadStrategy.address);
+    await iporAddressesManager.setAddress(keccak256("MILTON_SPREAD_STRATEGY"), miltonSpreadStrategy.address);
 
     // prepare ERC20 mocked tokens...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
@@ -229,10 +229,10 @@ module.exports = async function (deployer, _network, addresses) {
         const iporConfigurationAddr = await iporConfiguration.address;
 
         //initial addresses setup
-        await iporAddressesManager.setAddress("WARREN", warrenAddr);
-        await iporAddressesManager.setAddress("WARREN_STORAGE", warrenStorageAddr);
-        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorageAddr);
-        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", iporConfigurationAddr);
+        await iporAddressesManager.setAddress(keccak256("WARREN"), warrenAddr);
+        await iporAddressesManager.setAddress(keccak256("WARREN_STORAGE"), warrenStorageAddr);
+        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorageAddr);
+        await iporAddressesManager.setAddress(keccak256("IPOR_CONFIGURATION"), iporConfigurationAddr);
 
         if (isTestEnvironment == 1) {
             //TestWarren
@@ -256,29 +256,29 @@ module.exports = async function (deployer, _network, addresses) {
             if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
                     //For IPOR Test Framework purposes
-                    await iporAddressesManager.setAddress("MILTON", testMilton.address);
+                    await iporAddressesManager.setAddress(keccak256("MILTON"), testMilton.address);
                 } else {
                     //Web application, IPOR Dev Tool
-                    await iporAddressesManager.setAddress("MILTON", miltonAddr);
+                    await iporAddressesManager.setAddress(keccak256("MILTON"), miltonAddr);
                 }
 
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
                     //For IPOR Test Framework purposes
-                    await iporAddressesManager.setAddress("JOSEPH", testJoseph.address);
+                    await iporAddressesManager.setAddress(keccak256("JOSEPH"), testJoseph.address);
                 } else {
                     //Web application, IPOR Dev Tool
-                    await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+                    await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
                 }
             } else {
-                await iporAddressesManager.setAddress("MILTON", miltonAddr);
-                await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+                await iporAddressesManager.setAddress(keccak256("MILTON"), miltonAddr);
+                await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
             }
 
             await testMilton.initialize(iporAddressesManagerAddr);
             await testJoseph.initialize(iporAddressesManagerAddr);
 
         } else {
-            await iporAddressesManager.setAddress("MILTON", miltonAddr);
+            await iporAddressesManager.setAddress(keccak256("MILTON"), miltonAddr);
         }
 
         await milton.initialize(iporAddressesManagerAddr);

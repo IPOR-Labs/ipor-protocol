@@ -20,7 +20,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     //@notice mapping underlying asset address to Asset Management Vault
     mapping(address => address) public assetManagementVaults;
 
-    mapping(string => address) private _addresses;
+    mapping(bytes32 => address) private _addresses;
 
     //this treasurer manage ipor publication fee balance, key is an asset
     mapping(address => address) charlieTreasurers;
@@ -29,18 +29,18 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     mapping(address => address) treasureTreasurers;
 
     //@notice the user who can transfer publication fee to Charlie Treasurer
-    string private constant PUBLICATION_FEE_TRANSFERER = "PUBLICATION_FEE_TRANSFERER";
-    string private constant WARREN = "WARREN";
-    string private constant WARREN_STORAGE = "WARREN_STORAGE";
-    string private constant MILTON = "MILTON";
-    string private constant MILTON_STORAGE = "MILTON_STORAGE";
-    string private constant MILTON_UTILIZATION_STRATEGY = "MILTON_UTILIZATION_STRATEGY";
-    string private constant MILTON_SPREAD_STRATEGY = "MILTON_SPREAD_STRATEGY";
-    string private constant IPOR_CONFIGURATION = "IPOR_CONFIGURATION";
-    string private constant JOSEPH = "JOSEPH";
+    bytes32 private constant PUBLICATION_FEE_TRANSFERER = keccak256("PUBLICATION_FEE_TRANSFERER");
+    bytes32 private constant WARREN = keccak256("WARREN");
+    bytes32 private constant WARREN_STORAGE = keccak256("WARREN_STORAGE");
+    bytes32 private constant MILTON = keccak256("MILTON");
+    bytes32 private constant MILTON_STORAGE = keccak256("MILTON_STORAGE");
+    bytes32 private constant MILTON_UTILIZATION_STRATEGY = keccak256("MILTON_UTILIZATION_STRATEGY");
+    bytes32 private constant MILTON_SPREAD_STRATEGY = keccak256("MILTON_SPREAD_STRATEGY");
+    bytes32 private constant IPOR_CONFIGURATION = keccak256("IPOR_CONFIGURATION");
+    bytes32 private constant JOSEPH = keccak256("JOSEPH");
 
 
-    function setAddressAsProxy(string memory id, address implementationAddress)
+    function setAddressAsProxy(bytes32 id, address implementationAddress)
     external
     override
     onlyOwner
@@ -49,12 +49,12 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         emit AddressSet(id, implementationAddress, true);
     }
 
-    function setAddress(string memory id, address newAddress) external override onlyOwner {
+    function setAddress(bytes32 id, address newAddress) external override onlyOwner {
         _addresses[id] = newAddress;
         emit AddressSet(id, newAddress, false);
     }
 
-    function getAddress(string memory id) public view override returns (address) {
+    function getAddress(bytes32 id) public view override returns (address) {
         return _addresses[id];
     }
 
@@ -215,7 +215,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     //TODO: verify it, inspired by Aave
-    function _updateImpl(string memory id, address newAddress) internal {
+    function _updateImpl(bytes32 id, address newAddress) internal {
         //TODO: tailor to ipor solution (immutable admin maybe not needed)
         //TODO: implement proxy, upgradable contracts
         //        address payable proxyAddress = payable(_addresses[id]);

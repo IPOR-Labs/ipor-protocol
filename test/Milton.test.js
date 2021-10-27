@@ -1,3 +1,4 @@
+const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
@@ -67,9 +68,9 @@ contract('Milton', (accounts) => {
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", await iporConfiguration.address);
-        await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("IPOR_CONFIGURATION"), await iporConfiguration.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenUsdc.address);
@@ -84,12 +85,12 @@ contract('Milton', (accounts) => {
 
     beforeEach(async () => {
         miltonStorage = await MiltonStorage.new();
-        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
 
         warrenStorage = await WarrenStorage.new();
 
         warren = await TestWarren.new(warrenStorage.address);
-        await iporAddressesManager.setAddress("WARREN", warren.address);
+        await iporAddressesManager.setAddress(keccak256("WARREN"), warren.address);
 
         await warrenStorage.addUpdater(userOne);
         await warrenStorage.addUpdater(warren.address);
@@ -306,9 +307,9 @@ contract('Milton', (accounts) => {
         await warren.test_updateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp, {from: userOne});
         await warren.test_updateIndex(params.asset, BigInt("50000000000000000"), closePositionTimestamp, {from: userOne});
 
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne})
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         await testUtils.assertError(
@@ -1834,7 +1835,7 @@ contract('Milton', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await iporAddressesManager.setAddress("PUBLICATION_FEE_TRANSFERER", admin);
+        await iporAddressesManager.setAddress(keccak256("PUBLICATION_FEE_TRANSFERER"), admin);
 
         //when
         await testUtils.assertError(
@@ -1859,7 +1860,7 @@ contract('Milton', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await iporAddressesManager.setAddress("PUBLICATION_FEE_TRANSFERER", admin);
+        await iporAddressesManager.setAddress(keccak256("PUBLICATION_FEE_TRANSFERER"), admin);
         await iporAddressesManager.setCharlieTreasurer(params.asset, userThree);
 
         const transferedAmount = BigInt("100");
@@ -2584,12 +2585,12 @@ contract('Milton', (accounts) => {
         await tokenUsdc.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
     const setupIporTokenDaiInitialValues = async () => {
-        await iporAddressesManager.setAddress("MILTON", userOne);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), userOne);
         let lpBalance = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
         if (lpBalance > 0) {
             await iporTokenDai.burn(liquidityProvider, accounts[5], lpBalance, {from: userOne});
         }
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
     }
     const setupTokenDaiInitialValues = async () => {
         await tokenDai.setupInitialAmount(await milton.address, ZERO);

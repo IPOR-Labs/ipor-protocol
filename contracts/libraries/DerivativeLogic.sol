@@ -35,7 +35,7 @@ library DerivativeLogic {
         } else {
             calculatedPeriodInSeconds = closingTimestamp - derivative.startingTimestamp;
         }
-
+        //TODO: use SafeCast from openzeppelin
         uint256 quasiIFixed = calculateQuasiInterestFixed(derivative.notionalAmount, derivative.indicator.fixedInterestRate, calculatedPeriodInSeconds);
         uint256 quasiIFloating = calculateQuasiInterestFloating(derivative.indicator.ibtQuantity, mdIbtPrice);
 

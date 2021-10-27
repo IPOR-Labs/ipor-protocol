@@ -1,3 +1,4 @@
+const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {time, BN} = require("@openzeppelin/test-helpers");
 const {ZERO} = require("./TestUtils");
@@ -69,9 +70,9 @@ contract('Joseph', (accounts) => {
             await tokenUsdc.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
-        await iporAddressesManager.setAddress("IPOR_CONFIGURATION", await iporConfiguration.address);
-        await iporAddressesManager.setAddress("JOSEPH", await joseph.address);
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("IPOR_CONFIGURATION"), await iporConfiguration.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
 
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenUsdc.address);
@@ -86,12 +87,12 @@ contract('Joseph', (accounts) => {
 
     beforeEach(async () => {
         miltonStorage = await MiltonStorage.new();
-        await iporAddressesManager.setAddress("MILTON_STORAGE", miltonStorage.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
 
         warrenStorage = await WarrenStorage.new();
 
         warren = await TestWarren.new(warrenStorage.address);
-        await iporAddressesManager.setAddress("WARREN", warren.address);
+        await iporAddressesManager.setAddress(keccak256("WARREN"), warren.address);
 
         await warrenStorage.addUpdater(userOne);
         await warrenStorage.addUpdater(warren.address);
@@ -161,11 +162,11 @@ contract('Joseph', (accounts) => {
         let expectedStableBalanceMilton = BigInt("4000000000000000000000");
         let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
         let expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
-        let actionTimestamp = Math.floor(Date.now() / 1000);
-        await joseph.test_provideLiquidity(params.asset, liquidityAmount, actionTimestamp, {from: liquidityProvider})
+
+        await joseph.test_provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
 
         //when
-        await joseph.test_redeem(params.asset, withdrawAmount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider});
+        await joseph.test_redeem(params.asset, withdrawAmount, {from: liquidityProvider});
 
         //then
         const actualIporTokenBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
@@ -226,9 +227,9 @@ contract('Joseph', (accounts) => {
         await joseph.provideLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_000_USD, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
@@ -272,7 +273,7 @@ contract('Joseph', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
         let actionTimestamp = Math.floor(Date.now() / 1000);
 
-        await joseph.test_provideLiquidity(params.asset, amount, actionTimestamp, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(params.asset, amount, {from: liquidityProvider});
 
 
         //open position to have something in Liquidity Pool
@@ -281,7 +282,7 @@ contract('Joseph', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await joseph.test_redeem(params.asset, amount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider})
+        await joseph.test_redeem(params.asset, amount, {from: liquidityProvider})
 
         //when
         let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(tokenDai.address));
@@ -359,8 +360,8 @@ contract('Joseph', (accounts) => {
         let actionTimestamp = Math.floor(Date.now() / 1000);
 
         //when
-        await joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), actionTimestamp, {from: userThree});
-        await joseph.test_redeem(params.asset, BigInt("874999999999999999854"), actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: userThree})
+        await joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
+        await joseph.test_redeem(params.asset, BigInt("874999999999999999854"), {from: userThree})
 
         let actualIporTokenBalanceForUserThree = BigInt(await iporTokenDai.balanceOf.call(userThree));
         let actualExchangeRate = BigInt(await joseph.calculateExchangeRate.call(params.asset));
@@ -386,18 +387,17 @@ contract('Joseph', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
-        let actionTimestamp = Math.floor(Date.now() / 1000);
-        await joseph.test_provideLiquidity(params.asset, params.totalAmount, actionTimestamp, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         await testUtils.assertError(
             //when
-            joseph.test_redeem(params.asset, BigInt("1000000000000000000000"), actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
+            joseph.test_redeem(params.asset, BigInt("1000000000000000000000"), {from: liquidityProvider}),
             //then
             'IPOR_45'
         );
@@ -410,9 +410,9 @@ contract('Joseph', (accounts) => {
         await joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         await testUtils.assertError(
@@ -427,18 +427,17 @@ contract('Joseph', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
-        let actionTimestamp = Math.floor(Date.now() / 1000);
-        await joseph.test_provideLiquidity(params.asset, params.totalAmount, actionTimestamp, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await iporAddressesManager.setAddress("JOSEPH", userOne);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
         await miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_USD, {from: userOne});
-        await iporAddressesManager.setAddress("JOSEPH", joseph.address);
+        await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
 
         //when
         await testUtils.assertError(
             //when
-            joseph.test_redeem(params.asset, params.totalAmount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
+            joseph.test_redeem(params.asset, params.totalAmount, {from: liquidityProvider}),
             //then
             'IPOR_43'
         );
@@ -448,13 +447,13 @@ contract('Joseph', (accounts) => {
         //given
         await setupTokenDaiInitialValues();
         const params = getStandardDerivativeParams();
-        let actionTimestamp = Math.floor(Date.now() / 1000);
-        await joseph.test_provideLiquidity(params.asset, params.totalAmount, actionTimestamp, {from: liquidityProvider});
+
+        await joseph.test_provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //when
         await testUtils.assertError(
             //when
-            joseph.test_redeem(params.asset, params.totalAmount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider}),
+            joseph.test_redeem(params.asset, params.totalAmount, {from: liquidityProvider}),
             //then
             'IPOR_43'
         );
@@ -465,11 +464,10 @@ contract('Joseph', (accounts) => {
         await setupTokenDaiInitialValues();
         let liquidityAmount = testUtils.MILTON_14_000_USD;
         let withdrawAmount = testUtils.MILTON_10_000_USD;
-        let actionTimestamp = Math.floor(Date.now() / 1000);
-        await joseph.test_provideLiquidity(tokenDai.address, liquidityAmount, actionTimestamp, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(tokenDai.address, liquidityAmount, {from: liquidityProvider});
 
         //when
-        await joseph.test_redeem(tokenDai.address, withdrawAmount, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS - 1, {from: liquidityProvider});
+        await joseph.test_redeem(tokenDai.address, withdrawAmount, {from: liquidityProvider});
 
 
         let expectedIporTokenBalanceSender = BigInt("4000000000000000000000");
@@ -498,16 +496,15 @@ contract('Joseph', (accounts) => {
 
     });
 
-    it('should redeem Ipor Tokens, second providing liquidity less than 14 days before', async () => {
+    it('should redeem Ipor Tokens, two times provided liquidity', async () => {
         //given
         await setupTokenDaiInitialValues();
-        let actionTimestamp = Math.floor(Date.now() / 1000);
 
-        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp, {from: liquidityProvider});
-        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp + testUtils.PERIOD_1_DAY_IN_SECONDS, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_000_USD, {from: liquidityProvider});
 
         //when
-        await joseph.test_redeem(tokenDai.address, testUtils.MILTON_14_000_USD, actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS, {from: liquidityProvider})
+        await joseph.test_redeem(tokenDai.address, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         //then
         let expectedIporTokenBalanceSender = BigInt("6000000000000000000000");
@@ -534,7 +531,7 @@ contract('Joseph', (accounts) => {
             `Incorrect DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`);
     });
 
-    it('should redeem ipDAI, should redeem ipUSDC, redeem less than 14 days for ipDAI, redeem more than 14 days for ipUSDC, one user', async () => {
+    it('should redeem ipDAI, should redeem ipUSDC - simple case 1', async () => {
         //given
         await setupTokenDaiInitialValues();
         await setupTokenUsdcInitialValues();
@@ -555,16 +552,13 @@ contract('Joseph', (accounts) => {
         let expectedLiquidityProviderUSDCBalance = BigInt("9996000000000000000000000");
         let expectedLiquidityPoolUSDCBalanceMilton = expectedUSDCBalanceMilton;
 
-        let actionTimestamp = Math.floor(Date.now() / 1000);
+        await joseph.test_provideLiquidity(tokenDai.address, liquidityAmount, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(tokenUsdc.address, liquidityAmount, {from: liquidityProvider});
 
-        await joseph.test_provideLiquidity(tokenDai.address, liquidityAmount, actionTimestamp + testUtils.PERIOD_1_DAY_IN_SECONDS, {from: liquidityProvider});
-        await joseph.test_provideLiquidity(tokenUsdc.address, liquidityAmount, actionTimestamp, {from: liquidityProvider});
-
-        let redeemTimestamp = actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS;
 
         //when
-        await joseph.test_redeem(tokenUsdc.address, withdrawAmount, redeemTimestamp, {from: liquidityProvider});
-        await joseph.test_redeem(tokenDai.address, withdrawAmount, redeemTimestamp, {from: liquidityProvider});
+        await joseph.test_redeem(tokenUsdc.address, withdrawAmount, {from: liquidityProvider});
+        await joseph.test_redeem(tokenDai.address, withdrawAmount, {from: liquidityProvider});
 
 
         //then
@@ -604,7 +598,7 @@ contract('Joseph', (accounts) => {
             `Incorrect USDC balance on Liquidity Provider for asset ${tokenUsdc.address} actual: ${actualUSDCBalanceSender}, expected: ${expectedLiquidityProviderUSDCBalance}`);
     });
 
-    it('should redeem ipDAI, should redeem ipUSDC, cool off period passed for ipDAI and for ipUSDC, one user', async () => {
+    it('should redeem ipDAI, should redeem ipUSDC, two users - simple case 1', async () => {
         //given
         await setupTokenDaiInitialValues();
         await setupTokenUsdcInitialValues();
@@ -625,86 +619,14 @@ contract('Joseph', (accounts) => {
         let expectedLiquidityProviderUSDCBalance = BigInt("9996000000000000000000000");
         let expectedLiquidityPoolUSDCBalanceMilton = expectedUSDCBalanceMilton;
 
-        let actionTimestamp = Math.floor(Date.now() / 1000);
-
-        await joseph.test_provideLiquidity(tokenDai.address, liquidityAmount, actionTimestamp, {from: liquidityProvider});
-        await joseph.test_provideLiquidity(tokenUsdc.address, liquidityAmount, actionTimestamp, {from: liquidityProvider});
-
-        let redeemTimestamp = actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS;
-
-        //when
-        await joseph.test_redeem(tokenUsdc.address, withdrawAmount, redeemTimestamp, {from: liquidityProvider});
-        await joseph.test_redeem(tokenDai.address, withdrawAmount, redeemTimestamp, {from: liquidityProvider});
-
-        //then
-        const actualIpDAIBalanceSender = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
-        const actualDAIBalanceMilton = BigInt(await tokenDai.balanceOf(milton.address));
-        const actualLiquidityPoolDAIBalanceMilton = BigInt(await (await miltonStorage.balances(tokenDai.address)).liquidityPool);
-        const actualDAIBalanceSender = BigInt(await tokenDai.balanceOf(liquidityProvider));
-
-        assert(expectedipDAIBalanceSender === actualIpDAIBalanceSender,
-            `Incorrect IPOR Token DAI balance on user for asset ${tokenDai.address} actual: ${actualIpDAIBalanceSender}, expected: ${expectedipDAIBalanceSender}`);
-
-        assert(expectedDAIBalanceMilton === actualDAIBalanceMilton,
-            `Incorrect DAI balance on Milton for asset ${tokenDai.address} actual: ${actualDAIBalanceMilton}, expected: ${expectedDAIBalanceMilton}`);
-
-        assert(expectedLiquidityPoolDAIBalanceMilton === actualLiquidityPoolDAIBalanceMilton,
-            `Incorrect DAI Liquidity Pool Balance on Milton for asset ${tokenDai.address} actual: ${actualLiquidityPoolDAIBalanceMilton}, expected: ${expectedLiquidityPoolDAIBalanceMilton}`);
-
-        assert(expectedLiquidityProviderDAIBalance === actualDAIBalanceSender,
-            `Incorrect DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualDAIBalanceSender}, expected: ${expectedLiquidityProviderDAIBalance}`);
-
-        const actualIpUSDCBalanceSender = BigInt(await iporTokenUsdc.balanceOf(liquidityProvider));
-        const actualUSDCBalanceMilton = BigInt(await tokenUsdc.balanceOf(milton.address));
-
-        const actualLiquidityPoolUSDCBalanceMilton = BigInt(await (await miltonStorage.balances(tokenUsdc.address)).liquidityPool);
-        const actualUSDCBalanceSender = BigInt(await tokenUsdc.balanceOf(liquidityProvider));
-
-        assert(expectedipUSDCBalanceSender === actualIpUSDCBalanceSender,
-            `Incorrect IPOR Token USDC balance on user for asset ${tokenUsdc.address} actual: ${actualIpUSDCBalanceSender}, expected: ${expectedipUSDCBalanceSender}`);
-
-        assert(expectedUSDCBalanceMilton === actualUSDCBalanceMilton,
-            `Incorrect USDC balance on Milton for asset ${tokenUsdc.address} actual: ${actualUSDCBalanceMilton}, expected: ${expectedUSDCBalanceMilton}`);
-
-        assert(expectedLiquidityPoolUSDCBalanceMilton === actualLiquidityPoolUSDCBalanceMilton,
-            `Incorrect USDC Liquidity Pool Balance on Milton for asset ${tokenUsdc.address} actual: ${actualLiquidityPoolUSDCBalanceMilton}, expected: ${expectedLiquidityPoolUSDCBalanceMilton}`);
-
-        assert(expectedLiquidityProviderUSDCBalance === actualUSDCBalanceSender,
-            `Incorrect USDC balance on Liquidity Provider for asset ${tokenUsdc.address} actual: ${actualUSDCBalanceSender}, expected: ${expectedLiquidityProviderUSDCBalance}`);
-    });
-
-    it('should redeem ipDAI, should redeem ipUSDC, cool off period passed for ipDAI and for ipUSDC, two users', async () => {
-        //given
-        await setupTokenDaiInitialValues();
-        await setupTokenUsdcInitialValues();
-
-        await setupIporTokenDaiInitialValues();
-        await setupIporTokenUsdcInitialValues();
-
-        let liquidityAmount = testUtils.MILTON_14_000_USD;
-        let withdrawAmount = testUtils.MILTON_10_000_USD;
-
-        let expectedipDAIBalanceSender = BigInt("4000000000000000000000");
-        let expectedDAIBalanceMilton = BigInt("4000000000000000000000");
-        let expectedLiquidityProviderDAIBalance = BigInt("9996000000000000000000000");
-        let expectedLiquidityPoolDAIBalanceMilton = expectedDAIBalanceMilton;
-
-        let expectedipUSDCBalanceSender = BigInt("4000000000000000000000");
-        let expectedUSDCBalanceMilton = BigInt("4000000000000000000000");
-        let expectedLiquidityProviderUSDCBalance = BigInt("9996000000000000000000000");
-        let expectedLiquidityPoolUSDCBalanceMilton = expectedUSDCBalanceMilton;
-
-        let actionTimestamp = Math.floor(Date.now() / 1000);
         let daiUser = userOne;
         let usdcUser = userTwo;
-        await joseph.test_provideLiquidity(tokenUsdc.address, liquidityAmount, actionTimestamp, {from: usdcUser});
-        await joseph.test_provideLiquidity(tokenDai.address, liquidityAmount, actionTimestamp, {from: daiUser});
-
-        let redeemTimestamp = actionTimestamp + testUtils.PERIOD_14_DAYS_IN_SECONDS;
+        await joseph.test_provideLiquidity(tokenUsdc.address, liquidityAmount, {from: usdcUser});
+        await joseph.test_provideLiquidity(tokenDai.address, liquidityAmount, {from: daiUser});
 
         //when
-        await joseph.test_redeem(tokenUsdc.address, withdrawAmount, redeemTimestamp, {from: usdcUser});
-        await joseph.test_redeem(tokenDai.address, withdrawAmount, redeemTimestamp, {from: daiUser});
+        await joseph.test_redeem(tokenUsdc.address, withdrawAmount, {from: usdcUser});
+        await joseph.test_redeem(tokenDai.address, withdrawAmount, {from: daiUser});
 
         //then
         const actualIpDAIBalanceSender = BigInt(await iporTokenDai.balanceOf(daiUser));
@@ -746,12 +668,12 @@ contract('Joseph', (accounts) => {
     it('should redeem - Liquidity Provider can transfer tokens to other user, user can redeem tokens', async () => {
         //given
         await setupTokenDaiInitialValues();
-        let actionTimestamp = Math.floor(Date.now() / 1000);
-        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_400_USD, actionTimestamp, {from: liquidityProvider});
+
+        await joseph.test_provideLiquidity(tokenDai.address, testUtils.MILTON_10_400_USD, {from: liquidityProvider});
 
         await iporTokenDai.transfer(userThree, testUtils.MILTON_10_000_USD, {from: liquidityProvider});
 
-        await joseph.test_redeem(tokenDai.address, testUtils.MILTON_10_000_USD, actionTimestamp, {from: userThree});
+        await joseph.test_redeem(tokenDai.address, testUtils.MILTON_10_000_USD, {from: userThree});
 
         let expectedDAIBalanceMilton = BigInt("400000000000000000000");
         let expectedDAIBalanceMiltonLiquidityPool = expectedDAIBalanceMilton;
@@ -818,20 +740,20 @@ contract('Joseph', (accounts) => {
         await tokenDai.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
     const setupIporTokenDaiInitialValues = async () => {
-        await iporAddressesManager.setAddress("MILTON", userOne);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), userOne);
         let lpBalance = BigInt(await iporTokenDai.balanceOf(liquidityProvider));
         if (lpBalance > 0) {
             await iporTokenDai.burn(liquidityProvider, accounts[5], lpBalance, {from: userOne});
         }
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
     }
 
     const setupIporTokenUsdcInitialValues = async () => {
-        await iporAddressesManager.setAddress("MILTON", userOne);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), userOne);
         let lpBalance = BigInt(await iporTokenUsdc.balanceOf(liquidityProvider));
         if (lpBalance > 0) {
             await iporTokenUsdc.burn(liquidityProvider, accounts[5], lpBalance, {from: userOne});
         }
-        await iporAddressesManager.setAddress("MILTON", milton.address);
+        await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
     }
 });
