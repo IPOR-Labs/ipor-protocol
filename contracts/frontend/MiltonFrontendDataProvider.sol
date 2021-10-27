@@ -41,7 +41,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 derivativeItem.item.indicator.fixedInterestRate,
                 milton.calculatePositionValue(derivativeItem.item),
                 derivativeItem.item.startingTimestamp,
-                derivativeItem.item.endingTimestamp
+                derivativeItem.item.endingTimestamp,
+                derivativeItem.item.fee.liquidationDepositAmount
             );
         }
 
