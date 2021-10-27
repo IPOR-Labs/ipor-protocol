@@ -6,7 +6,6 @@ const keccak256 = require("keccak256");
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
-const IporConfiguration = artifacts.require('IporConfiguration');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MockTimelockController = artifacts.require('MockTimelockController');
 const MINDELAY = time.duration.days(1);

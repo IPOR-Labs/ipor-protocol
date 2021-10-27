@@ -273,7 +273,7 @@ contract('Joseph', (accounts) => {
         await warren.updateIndex(params.asset, testUtils.MILTON_3_PERCENTAGE, {from: userOne});
         let actionTimestamp = Math.floor(Date.now() / 1000);
 
-        await joseph.test_provideLiquidity(params.asset, amount, actionTimestamp, {from: liquidityProvider});
+        await joseph.test_provideLiquidity(params.asset, amount, {from: liquidityProvider});
 
 
         //open position to have something in Liquidity Pool
