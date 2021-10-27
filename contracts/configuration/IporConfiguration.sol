@@ -19,7 +19,7 @@ import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporConfiguration.sol";
 
 //TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
-//TODO: rename to IporConfiguration
+//TODO: consider using AccessControll instead Ownable - higher flexibility
 contract IporConfiguration is Ownable, IIporConfiguration {
 
     uint256 minCollateralizationFactorValue;
@@ -179,14 +179,5 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external override onlyOwner {
         minCollateralizationFactorValue = _minCollateralizationFactorValue;
         emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
-    }
-
-    function getCoolOffPeriodInSec() external override view returns (uint256) {
-        return coolOffPeriodInSec;
-    }
-
-    function setCoolOffPeriodInSec(uint256 _coolOffPeriodInSec) external override onlyOwner {
-        coolOffPeriodInSec = _coolOffPeriodInSec;
-        emit CoolOffPeriodInSecSet(_coolOffPeriodInSec);
     }
 }

@@ -14,11 +14,11 @@ import "./Joseph.sol";
 
 contract TestJoseph is Joseph {
 
-    function test_provideLiquidity(address asset, uint256 liquidityAmount, uint256 timestamp) public {
-        _provideLiquidity(asset, liquidityAmount, timestamp);
+    function test_provideLiquidity(address asset, uint256 liquidityAmount) public {
+        _provideLiquidity(asset, liquidityAmount);
     }
 
-    function test_redeem(address asset, uint256 iporTokenVolume, uint256 timestamp) public {
-        _redeem(asset, iporTokenVolume, timestamp);
+    function test_redeem(address asset, uint256 iporTokenVolume) public {
+        _redeem(asset, iporTokenVolume);
     }
 }

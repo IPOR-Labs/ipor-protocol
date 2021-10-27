@@ -21,11 +21,11 @@ contract Joseph is Ownable, IJoseph {
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
-        _provideLiquidity(asset, liquidityAmount, block.timestamp);
+        _provideLiquidity(asset, liquidityAmount);
     }
 
     function redeem(address asset, uint256 iporTokenVolume) external override {
-        _redeem(asset, iporTokenVolume, block.timestamp);
+        _redeem(asset, iporTokenVolume);
     }
 
     function calculateExchangeRate(address asset) external override view returns (uint256){
@@ -40,7 +40,7 @@ contract Joseph is Ownable, IJoseph {
         }
     }
 
-    function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 timestamp) internal {
+    function _provideLiquidity(address asset, uint256 liquidityAmount) internal {
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
 
@@ -56,7 +56,7 @@ contract Joseph is Ownable, IJoseph {
         }
     }
 
-    function _redeem(address asset, uint256 iporTokenVolume, uint256 timestamp) internal {
+    function _redeem(address asset, uint256 iporTokenVolume) internal {
         require(IIporToken(_addressesManager.getIporToken(asset)).balanceOf(msg.sender) >= iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW);
 
         uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);

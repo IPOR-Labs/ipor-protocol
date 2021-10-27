@@ -171,24 +171,7 @@ export default ({drizzle, drizzleState}) => (
             </div>
         </div>
         <hr/>
-        <div className="row">
-            <div className="col-md-3">
-                <strong>Cool Off period (in seconds)</strong>
-                <br/>
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getCoolOffPeriodInSec"
-                />
-                <hr/>
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setCoolOffPeriodInSec"/>
-            </div>
-        </div>
-        <hr/>
+
         <div className="row">
             <table className="table" align="center">
                 <tr>
