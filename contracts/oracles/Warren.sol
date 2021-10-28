@@ -3,6 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import {Errors} from '../Errors.sol';
 import "../interfaces/IWarren.sol";
 import {DataTypes} from '../libraries/types/DataTypes.sol';
@@ -16,7 +17,7 @@ import "../interfaces/IWarrenStorage.sol";
  *
  * @author IPOR Labs
  */
-contract Warren is Ownable, IWarren {
+contract Warren is Ownable, Pausable, IWarren {
 
     using IporLogic for DataTypes.IPOR;
 
@@ -37,6 +38,14 @@ contract Warren is Ownable, IWarren {
 
     constructor(address warrenStorageAddr) {
         warrenStorage = IWarrenStorage(warrenStorageAddr);
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     function getIndex(address asset) external view override

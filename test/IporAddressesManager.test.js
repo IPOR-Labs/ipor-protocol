@@ -74,7 +74,7 @@ contract('IporAddressesManager', (accounts) => {
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let calldata = prepareCallData(fnParamId, fnParamAddress);
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await timelockController.schedule(
@@ -112,7 +112,7 @@ contract('IporAddressesManager', (accounts) => {
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = prepareCallData(fnParamId, fnParamAddress);
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await testUtils.assertError(
@@ -138,7 +138,7 @@ contract('IporAddressesManager', (accounts) => {
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = prepareCallData(fnParamId, fnParamAddress);
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporAddressesManager.address,
@@ -174,7 +174,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = prepareCallData(fnParamId, fnParamAddress);
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporAddressesManager.address,
@@ -213,9 +213,7 @@ contract('IporAddressesManager', (accounts) => {
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let fnTransferOwnershipSignature = web3.utils.sha3("transferOwnership(address)").substr(0, 10);
-        let fnTransferOwnershipParam = testUtils.pad32Bytes(iporAddressesManagerOriginOwner.substr(2))
-        let calldata = fnTransferOwnershipSignature + fnTransferOwnershipParam;
+        let calldata = iporAddressesManager.contract.methods.transferOwnership(iporAddressesManagerOriginOwner).encodeABI();
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(
@@ -254,14 +252,5 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
 
     });
-
-    function prepareCallData(id, address) {
-        let fnSignature = web3.utils.sha3("setAddress(bytes32,address)").substr(0, 10);
-        let fnParamId = id.toString("hex");
-        let fnParamIdPad = testUtils.pad32Bytes(fnParamId);
-        let fnParamAddressPad = testUtils.pad32Bytes(address.substr(2));
-        let calldata = fnSignature + fnParamIdPad + fnParamAddressPad;
-        return calldata;
-    }
 
 });

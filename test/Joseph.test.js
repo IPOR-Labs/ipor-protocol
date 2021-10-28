@@ -756,4 +756,5 @@ contract('Joseph', (accounts) => {
         }
         await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
     }
+    //TODO: add tests for pausable methods
 });

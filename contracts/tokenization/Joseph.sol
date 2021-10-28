@@ -3,6 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IIporToken.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IJoseph.sol";
@@ -13,6 +14,8 @@ import "../libraries/Constants.sol";
 import "../interfaces/IIporConfiguration.sol";
 
 contract Joseph is Ownable, IJoseph {
+
+    using SafeERC20 for IERC20;
 
     IIporAddressesManager internal _addressesManager;
 
@@ -49,7 +52,8 @@ contract Joseph is Ownable, IJoseph {
         IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
 
         //TODO: take into consideration token decimals!!!
-        IERC20(asset).transferFrom(msg.sender, _addressesManager.getMilton(), liquidityAmount);
+        //TODO: user Address from OZ and use call
+        IERC20(asset).safeTransferFrom(msg.sender, _addressesManager.getMilton(), liquidityAmount);
 
         if (exchangeRate > 0) {
             IIporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * Constants.MD, exchangeRate));
@@ -71,7 +75,7 @@ contract Joseph is Ownable, IJoseph {
 
         IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, underlyingAmount);
 
-        IERC20(asset).transferFrom(_addressesManager.getMilton(), msg.sender, underlyingAmount);
+        IERC20(asset).safeTransferFrom(_addressesManager.getMilton(), msg.sender, underlyingAmount);
     }
 
 }

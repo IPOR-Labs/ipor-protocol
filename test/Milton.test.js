@@ -2690,4 +2690,6 @@ contract('Milton', (accounts) => {
                 `Incorrect Treasury total balance for ${asset}, actual:  ${actualTreasuryTotalBalance}, expected: ${expectedTreasuryTotalBalance}`)
         }
     }
+
+    //TODO: add tests for pausable methods
 });

@@ -5,8 +5,9 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/AmmMath.sol";
 //TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-//import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
@@ -26,9 +27,10 @@ import "../interfaces/IJoseph.sol";
  *
  * @author IPOR Labs
  */
-contract Milton is Ownable, MiltonEvents, IMilton {
+//TODO: add pausable modifier for methodds
+contract Milton is Ownable, Pausable, MiltonEvents, IMilton {
 
-    //    using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20;
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
@@ -50,12 +52,20 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         _addressesManager = addressesManager;
     }
 
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
+
     //    fallback() external payable  {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
-    function authorizeJoseph(address asset) external override onlyOwner {
-        IERC20(asset).approve(_addressesManager.getJoseph(), Constants.MAX_VALUE);
+    function authorizeJoseph(address asset) external override onlyOwner whenNotPaused {
+        IERC20(asset).safeIncreaseAllowance(_addressesManager.getJoseph(), Constants.MAX_VALUE);
     }
 
     //@notice transfer publication fee to configured charlie treasurer address
@@ -66,7 +76,8 @@ contract Milton is Ownable, MiltonEvents, IMilton {
         require(amount <= miltonStorage.getBalance(asset).openingFee, Errors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE);
         require(address(0) != _addressesManager.getCharlieTreasurer(asset), Errors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS);
         miltonStorage.updateStorageWhenTransferPublicationFee(asset, amount);
-        IERC20(asset).transfer(_addressesManager.getCharlieTreasurer(asset), amount);
+        //TODO: user Address from OZ and use call
+        IERC20(asset).safeTransfer(_addressesManager.getCharlieTreasurer(asset), amount);
     }
 
     function openPosition(
@@ -203,10 +214,9 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
         //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
         //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
-        //TODO: Use OpenZeppelin’s SafeERC20 wrappers.
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        IERC20(asset).transferFrom(msg.sender, address(this), totalAmount);
+        IERC20(asset).safeTransferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
 
@@ -294,7 +304,6 @@ contract Milton is Ownable, MiltonEvents, IMilton {
 
     //Depends on condition transfer only to sender (when sender == buyer) or to sender and buyer
     function _transferDerivativeAmount(DataTypes.MiltonDerivativeItem memory derivativeItem, uint256 transferAmount) internal {
-        //TODO: take into consideration state "PENDING_WITHDRAWAL"
 
         if (msg.sender == derivativeItem.item.buyer) {
             transferAmount = transferAmount + derivativeItem.item.fee.liquidationDepositAmount;
@@ -302,13 +311,13 @@ contract Milton is Ownable, MiltonEvents, IMilton {
             //transfer liquidation deposit to sender
             //TODO: take into consideration token decimals!!!
             //TODO: don't use transer but call
-            IERC20(derivativeItem.item.asset).transfer(msg.sender, derivativeItem.item.fee.liquidationDepositAmount);
+            IERC20(derivativeItem.item.asset).safeTransfer(msg.sender, derivativeItem.item.fee.liquidationDepositAmount);
         }
 
         //transfer from AMM to buyer
         //TODO: take into consideration token decimals!!!
         if (transferAmount > 0) {
-            IERC20(derivativeItem.item.asset).transfer(derivativeItem.item.buyer, transferAmount);
+            IERC20(derivativeItem.item.asset).safeTransfer(derivativeItem.item.buyer, transferAmount);
         }
     }
 

@@ -285,8 +285,8 @@ contract('IporConfiguration', (accounts) => {
     it('should use Timelock Controller - simple case 1', async () => {
         //given
         await iporConfiguration.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = "999000000000000000000";
-        let calldata = prepareCalldata(iporPublicationFeeAmount);
+        let iporPublicationFeeAmount = BigInt("999000000000000000000");
+        let calldata = iporConfiguration.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
         //when
         await timelockController.schedule(
@@ -313,7 +313,7 @@ contract('IporConfiguration', (accounts) => {
         //then
         let actualIporPublicationFeeAmount = await iporConfiguration.getIporPublicationFeeAmount();
 
-        assert(BigInt(iporPublicationFeeAmount) === BigInt(actualIporPublicationFeeAmount),
+        assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
             `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
 
     });
@@ -321,8 +321,8 @@ contract('IporConfiguration', (accounts) => {
     it('should FAIL when used Timelock Controller, because user not exists on list of proposers', async () => {
         //given
         await iporConfiguration.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = "999000000000000000000";
-        let calldata = prepareCalldata(iporPublicationFeeAmount);
+        let iporPublicationFeeAmount = BigInt("999000000000000000000");
+        let calldata = iporConfiguration.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
         //when
         await testUtils.assertError(
@@ -345,8 +345,8 @@ contract('IporConfiguration', (accounts) => {
     it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
         //given
         await iporConfiguration.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = "999000000000000000000";
-        let calldata = prepareCalldata(iporPublicationFeeAmount);
+        let iporPublicationFeeAmount = BigInt("999000000000000000000");
+        let calldata = iporConfiguration.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();;
 
         await timelockController.schedule(
             iporConfiguration.address,
@@ -380,8 +380,8 @@ contract('IporConfiguration', (accounts) => {
     it('should FAIL when used Timelock Controller, because Timelock is not an Owner of IporConfiguration smart contract', async () => {
 
         //given
-        let iporPublicationFeeAmount = "999000000000000000000";
-        let calldata = prepareCalldata(iporPublicationFeeAmount);
+        let iporPublicationFeeAmount = BigInt("999000000000000000000");
+        let calldata = iporConfiguration.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
         await timelockController.schedule(
             iporConfiguration.address,
@@ -418,9 +418,7 @@ contract('IporConfiguration', (accounts) => {
         await iporConfiguration.transferOwnership(timelockController.address);
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
 
-        let fnSignature = web3.utils.sha3("transferOwnership(address)").substr(0, 10);
-        let fnParam = testUtils.pad32Bytes(iporConfigurationOriginOwner.substr(2))
-        let calldata = fnSignature + fnParam;
+        let calldata = iporConfiguration.contract.methods.transferOwnership(iporConfigurationOriginOwner).encodeABI();
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(
@@ -459,12 +457,5 @@ contract('IporConfiguration', (accounts) => {
             `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
 
     });
-
-    function prepareCalldata(strValue) {
-        let fnSignature = web3.utils.sha3("setIporPublicationFeeAmount(uint256)").substr(0, 10);
-        let fnParam = testUtils.pad32Bytes(web3.utils.toHex(strValue).substr(2));
-        let calldata = fnSignature + fnParam;
-        return calldata;
-    }
 
 });

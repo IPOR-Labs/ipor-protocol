@@ -313,5 +313,5 @@ contract('Warren', (accounts) => {
     });
 
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
-
+//TODO: add tests for pausable methods
 });
