@@ -9,7 +9,7 @@ interface IWarrenStorage {
 
     function getIndex(address asset) external view returns (DataTypes.IPOR memory);
 
-    function updateIndexes(address[] memory _assets, uint256[] memory _indexValues, uint256 updateTimestamp) external;
+    function updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) external;
 
     function addUpdater(address updater) external;
 

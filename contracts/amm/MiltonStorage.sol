@@ -35,8 +35,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
-        //TODO: allow admin to setup it during runtime
-        derivatives.lastDerivativeId = 0;
     }
 
     //@notice add asset address to MiltonStorage structures
@@ -129,8 +127,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address asset,
         uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         return (
-        spreadPayFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration()).getSpreadPayFixedValue(asset),
-        spreadRecFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration()).getSpreadRecFixedValue(asset)
+        spreadPayFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadPayFixedValue(asset),
+        spreadRecFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadRecFixedValue(asset)
         );
     }
 
@@ -156,7 +154,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _updateBalancesWhenOpenPosition(address asset, uint256 collateral, uint256 openingFeeAmount) internal {
 
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
 
         balances[asset].derivatives = balances[asset].derivatives + collateral;
         balances[asset].openingFee = balances[asset].openingFee + openingFeeAmount;
@@ -201,8 +199,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             }
         }
 
-        uint256 incomeTax = AmmMath.calculateIncomeTax(abspositionValue,
-            IIporConfiguration(_addressesManager.getIporConfiguration()).getIncomeTaxPercentage());
+        uint256 incomeTax = AmmMath.calculateIncomeTax(
+            abspositionValue,
+            IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset)).getIncomeTaxPercentage());
 
         balances[derivativeItem.item.asset].treasury
         = balances[derivativeItem.item.asset].treasury + incomeTax;

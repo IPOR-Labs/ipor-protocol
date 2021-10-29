@@ -50,8 +50,9 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
     }
 
     function getConfiguration() external override view returns (IporConfigurationFront memory iporConfigurationFront) {
-        IIporConfiguration iporConfiguration = IIporConfiguration(addressesManager.getIporConfiguration());
         address[] memory assets = addressesManager.getAssets();
+        //TODO: fix it
+        IIporConfiguration iporConfiguration = IIporConfiguration(addressesManager.getIporConfiguration(assets[0]));
         IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(addressesManager.getMiltonSpreadStrategy());
         IporSpreadFront[] memory spreads = new IporSpreadFront[](assets.length);
 

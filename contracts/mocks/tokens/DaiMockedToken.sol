@@ -8,6 +8,6 @@ contract DaiMockedToken is MockedToken {
 
     constructor(
         uint256 initialSupply,
-        uint8 _decimals
-    ) MockedToken("Mocked DAI", "DAI", initialSupply, _decimals) {}
+        uint8 decimals
+    ) MockedToken("Mocked DAI", "DAI", initialSupply, decimals) {}
 }

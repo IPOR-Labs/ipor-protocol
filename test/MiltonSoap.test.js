@@ -98,11 +98,11 @@ contract('MiltonSoap', (accounts) => {
         await miltonStorage.addAsset(tokenUsdc.address);
         await miltonStorage.addAsset(tokenUsdt.address);
 
-        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, "IPOR USDT", "ipUSDT");
         iporTokenUsdt.initialize(iporAddressesManager.address);
-        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, "IPOR USDC", "ipUSDC");
         iporTokenUsdc.initialize(iporAddressesManager.address);
-        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
+        iporTokenDai = await IporToken.new(tokenDai.address, "IPOR DAI", "ipDAI");
         iporTokenDai.initialize(iporAddressesManager.address);
 
         await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
@@ -140,7 +140,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -175,7 +175,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -209,7 +209,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -242,7 +242,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -277,7 +277,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -317,7 +317,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -333,7 +333,7 @@ contract('MiltonSoap', (accounts) => {
         let endTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await joseph.provideLiquidity(derivativeParams.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
+        await joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_10_000_18DEC, {from: liquidityProvider})
 
         //when
         await milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
@@ -361,7 +361,7 @@ contract('MiltonSoap', (accounts) => {
 
         const firstDerivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: firstDerivativeDirection,
@@ -371,7 +371,7 @@ contract('MiltonSoap', (accounts) => {
 
         const secondDerivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: secondDerivativeDirection,
@@ -408,7 +408,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeDAIParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -418,7 +418,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeUSDCParams = {
             asset: tokenUsdc.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -470,7 +470,7 @@ contract('MiltonSoap', (accounts) => {
 
         const payFixDerivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: payFixDerivativeDirection,
@@ -480,7 +480,7 @@ contract('MiltonSoap', (accounts) => {
 
         const recFixDerivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: recFixDerivativeDirection,
@@ -524,7 +524,7 @@ contract('MiltonSoap', (accounts) => {
 
         const payFixDerivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: payFixDerivativeDirection,
@@ -534,7 +534,7 @@ contract('MiltonSoap', (accounts) => {
 
         const recFixDerivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: recFixDerivativeDirection,
@@ -578,7 +578,7 @@ contract('MiltonSoap', (accounts) => {
 
         const payFixDerivativeDAIParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: payFixDerivativeDAIDirection,
@@ -588,7 +588,7 @@ contract('MiltonSoap', (accounts) => {
 
         const recFixDerivativeUSDCParams = {
             asset: tokenUsdc.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: recFixDerivativeUSDCDirection,
@@ -605,7 +605,7 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(recFixDerivativeUSDCParams);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await joseph.provideLiquidity(recFixDerivativeUSDCParams.asset, testUtils.MILTON_10_000_USD, {from: liquidityProvider})
+        await joseph.provideLiquidity(recFixDerivativeUSDCParams.asset, testUtils.USD_10_000_18DEC, {from: liquidityProvider})
 
         let endTimestamp = recFixDerivativeUSDCParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -636,7 +636,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -676,7 +676,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -727,7 +727,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParamsFirst = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -736,7 +736,7 @@ contract('MiltonSoap', (accounts) => {
         }
         const derivativeParams25days = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -775,7 +775,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParamsFirst = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -784,7 +784,7 @@ contract('MiltonSoap', (accounts) => {
         }
         const derivativeParams25days = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -825,7 +825,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -887,7 +887,7 @@ contract('MiltonSoap', (accounts) => {
 
         const derivativeParamsFirst = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: direction,
@@ -940,32 +940,6 @@ contract('MiltonSoap', (accounts) => {
 
     const calculateSoap = async (params) => {
         return await milton.test_calculateSoap.call(params.asset, params.calculateTimestamp, {from: params.from});
-    }
-
-    const setupTokenUsdtInitialValues = async () => {
-        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdt.setupInitialAmount(admin, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(userOne, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(userThree, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_6_DECIMALS);
-    }
-    const setupTokenUsdcInitialValues = async () => {
-        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdc.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(userOne, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
-    }
-
-    const setupTokenDaiInitialValues = async () => {
-        await tokenDai.setupInitialAmount(await milton.address, ZERO);
-        await tokenDai.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(userOne, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
     }
 
 });

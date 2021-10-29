@@ -8,6 +8,6 @@ contract TusdMockedToken is MockedToken {
 
     constructor(
         uint256 initialSupply,
-        uint8 _decimals
-    ) MockedToken("Mocked TUSD", "TUSD", initialSupply, _decimals) {}
+        uint8 decimals
+    ) MockedToken("Mocked TUSD", "TUSD", initialSupply, decimals) {}
 }

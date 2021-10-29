@@ -10,11 +10,11 @@ library DerivativesView {
     //TODO: fix it, looks bad, DoS, possible out of gas
     function getPositions(DataTypes.MiltonDerivatives storage miltonDerivatives
     ) external view returns (DataTypes.IporDerivative[] memory) {
-        DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](miltonDerivatives.ids.length);
+        DataTypes.IporDerivative[] memory derivatives = new DataTypes.IporDerivative[](miltonDerivatives.ids.length);
         for (uint256 i = 0; i < miltonDerivatives.ids.length; i++) {
-            _derivatives[i] = miltonDerivatives.items[miltonDerivatives.ids[i]].item;
+            derivatives[i] = miltonDerivatives.items[miltonDerivatives.ids[i]].item;
         }
-        return _derivatives;
+        return derivatives;
 
     }
 
@@ -22,11 +22,11 @@ library DerivativesView {
         DataTypes.MiltonDerivatives storage miltonDerivatives,
         address user
     ) external view returns (DataTypes.IporDerivative[] memory) {
-        DataTypes.IporDerivative[] memory _derivatives = new DataTypes.IporDerivative[](miltonDerivatives.userDerivativeIds[user].length);
+        DataTypes.IporDerivative[] memory derivatives = new DataTypes.IporDerivative[](miltonDerivatives.userDerivativeIds[user].length);
         for (uint256 i = 0; i < miltonDerivatives.userDerivativeIds[user].length; i++) {
-            _derivatives[i] = miltonDerivatives.items[miltonDerivatives.userDerivativeIds[user][i]].item;
+            derivatives[i] = miltonDerivatives.items[miltonDerivatives.userDerivativeIds[user][i]].item;
         }
-        return _derivatives;
+        return derivatives;
     }
 
 }

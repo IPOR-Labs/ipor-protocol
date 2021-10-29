@@ -8,6 +8,6 @@ contract UsdcMockedToken is MockedToken {
 
     constructor(
         uint256 initialSupply,
-        uint8 _decimals
-    ) MockedToken("Mocked USDC", "USDC", initialSupply, _decimals) {}
+        uint8 decimals
+    ) MockedToken("Mocked USDC", "USDC", initialSupply, decimals) {}
 }

@@ -35,7 +35,9 @@ contract('IporToken', (accounts) => {
     let iporTokenDai = null;
     let warren = null;
     let warrenStorage = null;
-    let iporConfiguration = null;
+    let iporConfigurationUsdc = null;
+    let iporConfigurationUsdt = null;
+    let iporConfigurationDai = null;
     let iporAddressesManager = null;
     let miltonDevToolDataProvider = null;
     let joseph = null;
@@ -44,21 +46,28 @@ contract('IporToken', (accounts) => {
         derivativeLogic = await DerivativeLogic.deployed();
         soapIndicatorLogic = await SoapIndicatorLogic.deployed();
         totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deployed();
-        iporConfiguration = await IporConfiguration.deployed();
         iporAddressesManager = await IporAddressesManager.deployed();
         miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
         joseph = await TestJoseph.new();
 
-        //TODO: zrobic obsługę 6 miejsc po przecinku! - totalSupply6Decimals
         tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
         tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
+        iporConfigurationUsdt = await IporConfiguration.new(tokenUsdt.address);
+        iporConfigurationUsdc = await IporConfiguration.new(tokenUsdc.address);
+        iporConfigurationDai = await IporConfiguration.new(tokenDai.address);
+        await iporAddressesManager.addAsset(tokenUsdt.address);
+        await iporAddressesManager.addAsset(tokenUsdc.address);
+        await iporAddressesManager.addAsset(tokenDai.address);
+        await iporAddressesManager.setIporConfiguration(tokenUsdt.address, await iporConfigurationUsdt.address);
+        await iporAddressesManager.setIporConfiguration(tokenUsdc.address, await iporConfigurationUsdc.address);
+        await iporAddressesManager.setIporConfiguration(tokenDai.address, await iporConfigurationDai.address);
 
-        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, "IPOR USDT", "ipUSDT");
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, "IPOR USDC", "ipUSDC");
+        iporTokenDai = await IporToken.new(tokenDai.address, "IPOR DAI", "ipDAI");
         iporTokenUsdt.initialize(iporAddressesManager.address);
-        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
         iporTokenUsdc.initialize(iporAddressesManager.address);
-        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
         iporTokenDai.initialize(iporAddressesManager.address);
 
         await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
@@ -79,13 +88,8 @@ contract('IporToken', (accounts) => {
             await tokenDai.approve(milton.address, testUtils.TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
         }
 
-        await iporAddressesManager.setAddress(keccak256("IPOR_CONFIGURATION"), await iporConfiguration.address);
         await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
         await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
-
-        await iporAddressesManager.addAsset(tokenUsdt.address);
-        await iporAddressesManager.addAsset(tokenUsdc.address);
-        await iporAddressesManager.addAsset(tokenDai.address);
 
         await milton.initialize(iporAddressesManager.address);
         await joseph.initialize(iporAddressesManager.address);
@@ -111,6 +115,8 @@ contract('IporToken', (accounts) => {
         await miltonStorage.addAsset(tokenUsdc.address);
         await miltonStorage.addAsset(tokenUsdt.address);
 
+        iporConfigurationDAI = await IporConfiguration.new(tokenDai.address);
+
     });
 
 
@@ -119,7 +125,7 @@ contract('IporToken', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            iporTokenDai.mint(userOne, testUtils.MILTON_10_000_USD, {from: userTwo}),
+            iporTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: userTwo}),
             //then
             'IPOR_46'
         );
@@ -130,7 +136,7 @@ contract('IporToken', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            iporTokenDai.burn(userOne, userTwo, testUtils.MILTON_10_000_USD, {from: userTwo}),
+            iporTokenDai.burn(userOne, userTwo, testUtils.USD_10_000_18DEC, {from: userTwo}),
             //then
             'IPOR_46'
         );

@@ -94,11 +94,11 @@ contract('MiltonStorage', (accounts) => {
         await miltonStorage.addAsset(tokenUsdc.address);
         await miltonStorage.addAsset(tokenUsdt.address);
 
-        iporTokenUsdt = await IporToken.new(tokenUsdt.address, 6, "IPOR USDT", "ipUSDT");
+        iporTokenUsdt = await IporToken.new(tokenUsdt.address, "IPOR USDT", "ipUSDT");
         iporTokenUsdt.initialize(iporAddressesManager.address);
-        iporTokenUsdc = await IporToken.new(tokenUsdc.address, 18, "IPOR USDC", "ipUSDC");
+        iporTokenUsdc = await IporToken.new(tokenUsdc.address, "IPOR USDC", "ipUSDC");
         iporTokenUsdc.initialize(iporAddressesManager.address);
-        iporTokenDai = await IporToken.new(tokenDai.address, 18, "IPOR DAI", "ipDAI");
+        iporTokenDai = await IporToken.new(tokenDai.address, "IPOR DAI", "ipDAI");
         iporTokenDai.initialize(iporAddressesManager.address);
 
         await iporAddressesManager.setIporToken(tokenUsdt.address, iporTokenUsdt.address);
@@ -135,7 +135,7 @@ contract('MiltonStorage', (accounts) => {
         await setupTokenDaiInitialValues();
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
@@ -164,7 +164,7 @@ contract('MiltonStorage', (accounts) => {
         await setupTokenDaiInitialValues();
         const derivativeParams = {
             asset: tokenDai.address,
-            totalAmount: testUtils.MILTON_10_000_USD,
+            totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(10000000000000000000),
             direction: 0,
@@ -201,31 +201,6 @@ contract('MiltonStorage', (accounts) => {
             params.direction, {from: params.from});
     }
 
-    const setupTokenUsdtInitialValues = async () => {
-        await tokenUsdt.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdt.setupInitialAmount(admin, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(userOne, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(userThree, testUtils.USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_6_DECIMALS);
-    }
-    const setupTokenUsdcInitialValues = async () => {
-        await tokenUsdc.setupInitialAmount(await milton.address, ZERO);
-        await tokenUsdc.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(userOne, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenUsdc.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
-    }
-
-    const setupTokenDaiInitialValues = async () => {
-        await tokenDai.setupInitialAmount(await milton.address, ZERO);
-        await tokenDai.setupInitialAmount(admin, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(userOne, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(userTwo, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(userThree, testUtils.USER_SUPPLY_18_DECIMALS);
-        await tokenDai.setupInitialAmount(liquidityProvider, testUtils.USER_SUPPLY_18_DECIMALS);
-    }
     const prepareDerivativeItemStructSimpleCase1 = async () => {
         let item = await preprareDerivativeStructSimpleCase1();
         return {

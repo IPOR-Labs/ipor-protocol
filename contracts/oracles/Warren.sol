@@ -50,24 +50,24 @@ contract Warren is Ownable, Pausable, IWarren {
 
     function getIndex(address asset) external view override
     returns (uint256 indexValue, uint256 ibtPrice, uint256 blockTimestamp) {
-        DataTypes.IPOR memory _iporIndex = warrenStorage.getIndex(asset);
+        DataTypes.IPOR memory iporIndex = warrenStorage.getIndex(asset);
         return (
-        indexValue = _iporIndex.indexValue,
-        ibtPrice = AmmMath.division(_iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
-        blockTimestamp = _iporIndex.blockTimestamp
+        indexValue = iporIndex.indexValue,
+        ibtPrice = AmmMath.division(iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
+        blockTimestamp = iporIndex.blockTimestamp
         );
     }
 
-    function updateIndex(address _asset, uint256 _indexValue) external override {
+    function updateIndex(address asset, uint256 indexValue) external override {
         uint256[] memory indexes = new uint256[](1);
-        indexes[0] = _indexValue;
+        indexes[0] = indexValue;
         address[] memory assets = new address[](1);
-        assets[0] = _asset;
+        assets[0] = asset;
         warrenStorage.updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateIndexes(address[] memory _assets, uint256[] memory _indexValues) external override {
-        warrenStorage.updateIndexes(_assets, _indexValues, block.timestamp);
+    function updateIndexes(address[] memory assets, uint256[] memory indexValues) external override {
+        warrenStorage.updateIndexes(assets, indexValues, block.timestamp);
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view override returns (uint256) {

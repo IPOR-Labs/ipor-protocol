@@ -16,7 +16,6 @@ contract('IporAddressesManager', (accounts) => {
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
-    let iporConfiguration = null;
     let iporAddressesManager = null;
     let timelockController = null;
 
@@ -252,5 +251,5 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
 
     });
-
+    //TODO: add tests for SETs for assets which are not supported
 });

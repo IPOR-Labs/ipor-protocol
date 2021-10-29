@@ -20,10 +20,10 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 date);
 
     /// @notice event emitted when IPOR Index Updater is added by Admin
-    event IporIndexUpdaterAdd(address _updater);
+    event IporIndexUpdaterAdd(address updater);
 
     /// @notice event emitted when IPOR Index Updater is removed by Admin
-    event IporIndexUpdaterRemove(address _updater);
+    event IporIndexUpdaterRemove(address updater);
 
     /// @notice list of IPOR indexes for particular assets
     mapping(address => DataTypes.IPOR) public indexes;

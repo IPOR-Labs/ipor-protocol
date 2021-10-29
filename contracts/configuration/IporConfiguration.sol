@@ -4,8 +4,7 @@ pragma solidity >=0.8.4 <0.9.0;
 import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-//TODO: clarify if better is to have external libraries in local folder - pros for local folder - can execute Mythril and Karl static analisys
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
@@ -18,9 +17,12 @@ import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporConfiguration.sol";
 
-//TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
 //TODO: consider using AccessControll instead Ownable - higher flexibility
 contract IporConfiguration is Ownable, IIporConfiguration {
+
+    address asset;
+
+    uint256 multiplicator;
 
     uint256 minCollateralizationFactorValue;
 
@@ -43,13 +45,16 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     //@notice max total amount used when opening position
     uint256 maxPositionTotalAmount;
 
-    uint256 coolOffPeriodInSec;
-
     //TODO: spread from configuration will be deleted, spread will be calculated in runtime
     mapping(address => uint256) spreadPayFixedValues;
     mapping(address => uint256) spreadRecFixedValues;
 
     IIporAddressesManager internal _addressesManager;
+
+    constructor(address _asset) {
+        asset = _asset;
+        multiplicator = 10 ** ERC20(_asset).decimals();
+    }
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
@@ -60,7 +65,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
         liquidationDepositAmount = 20 * Constants.MD;
 
-        //@notice 
+        //@notice
         openingFeePercentage = 1e16;
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * Constants.MD;
@@ -69,9 +74,6 @@ contract IporConfiguration is Ownable, IIporConfiguration {
 
         minCollateralizationFactorValue = 10 * Constants.MD;
         maxCollateralizationFactorValue = 50 * Constants.MD;
-
-        //@notice 14 days
-        coolOffPeriodInSec = 1209600;
 
         address[] memory assets = _addressesManager.getAssets();
 
@@ -151,16 +153,16 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return spreadPayFixedValues[asset];
     }
 
-    function setSpreadPayFixedValue(address asset, uint256 _spread) external override {
-        spreadPayFixedValues[asset] = _spread;
+    function setSpreadPayFixedValue(address asset, uint256 spread) external override {
+        spreadPayFixedValues[asset] = spread;
     }
 
     function getSpreadRecFixedValue(address asset) external override view returns (uint256) {
         return spreadRecFixedValues[asset];
     }
 
-    function setSpreadRecFixedValue(address asset, uint256 _spread) external override {
-        spreadRecFixedValues[asset] = _spread;
+    function setSpreadRecFixedValue(address asset, uint256 spread) external override {
+        spreadRecFixedValues[asset] = spread;
     }
 
     function getMaxCollateralizationFactorValue() external override view returns (uint256) {

@@ -25,11 +25,11 @@ contract IporToken is Ownable, IIporToken, ERC20 {
 
     constructor(
         address underlyingAsset,
-        uint8 aTokenDecimals,
         string memory aTokenName,
         string memory aTokenSymbol) ERC20(aTokenName, aTokenSymbol) {
+        require(address(0) != underlyingAsset, Errors.WRONG_ADDRESS);
         _underlyingAsset = underlyingAsset;
-        _decimals = aTokenDecimals;
+        _decimals = ERC20(underlyingAsset).decimals();
     }
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {

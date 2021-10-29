@@ -3,7 +3,6 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "../libraries/types/DataTypes.sol";
 import "../libraries/AmmMath.sol";
-//TODO: clarify if better is to have external libraries in local folder
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -149,11 +148,8 @@ contract Milton is Ownable, Pausable, MiltonEvents, IMilton {
         require(asset != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
         require(_addressesManager.assetSupported(asset) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
 
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         require(address(iporConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
-
-        //TODO: confirm if _totalAmount always with 18 ditigs or what? (appeared question because this amount contain fee)
-        //TODO: _totalAmount multiply if required based on _asset
 
         require(collateralizationFactor >= iporConfiguration.getMinCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW);
         require(collateralizationFactor <= iporConfiguration.getMaxCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH);
@@ -169,8 +165,6 @@ contract Milton is Ownable, Pausable, MiltonEvents, IMilton {
         require(maximumSlippage <= 1e20, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
 
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS);
-
-        //TODO verify if this opened derivatives is closable based on liquidity pool
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
             totalAmount, collateralizationFactor,
@@ -243,22 +237,24 @@ contract Milton is Ownable, Pausable, MiltonEvents, IMilton {
     }
 
     function _calculateDerivativeIndicators(uint256 calculateTimestamp, address asset, uint8 direction, uint256 notionalAmount)
-    internal view returns (DataTypes.IporDerivativeIndicator memory _indicator) {
+    internal view returns (DataTypes.IporDerivativeIndicator memory indicator) {
         IWarren warren = IWarren(_addressesManager.getWarren());
         (uint256 indexValue, ,) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
         require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
         (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, block.timestamp);
-        DataTypes.IporDerivativeIndicator memory indicator = DataTypes.IporDerivativeIndicator(
+
+        indicator = DataTypes.IporDerivativeIndicator(
             indexValue,
             accruedIbtPrice,
             AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
             direction == 0 ? (indexValue + spreadPayFixedValue) : (indexValue - spreadRecFixedValue)
         );
-        return indicator;
     }
 
     function _closePosition(uint256 derivativeId, uint256 closeTimestamp) internal {
+
+        //TODO verify if this opened derivatives is closable based on liquidity pool
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
         DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(derivativeId);
@@ -280,7 +276,7 @@ contract Milton is Ownable, Pausable, MiltonEvents, IMilton {
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp) internal {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset));
         uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
 
         if (abspositionValue < derivativeItem.item.collateral) {

@@ -37,22 +37,22 @@ contract TestMilton is Milton {
     }
 
     function setSpreadPayFixed(address asset, uint256 value) public {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         iporConfiguration.setSpreadPayFixedValue(asset, value);
     }
 
     function getSpreadPayFixed(address asset) public view returns (uint256){
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         return iporConfiguration.getSpreadPayFixedValue(asset);
     }
 
     function setSpreadRecFixed(address asset, uint256 value) public {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         iporConfiguration.setSpreadRecFixedValue(asset, value);
     }
 
     function getSpreadRecFixed(address asset) public view returns (uint256){
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration());
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         return iporConfiguration.getSpreadRecFixedValue(asset);
     }
 
