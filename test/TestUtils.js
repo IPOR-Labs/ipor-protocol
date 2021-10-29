@@ -131,7 +131,7 @@ module.exports.setupIporTokenUsdcInitialValues = async (data, testData) => {
     if (lpBalance > 0) {
         await data.iporTokenUsdc.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
     }
-    await data.iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
+    await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
 }
 
 module.exports.prepareDataForBefore = async (accounts) => {
@@ -173,7 +173,7 @@ module.exports.prepareDataForBefore = async (accounts) => {
     }
 
     await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
-    await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
+    await iporAddressesManager.setAddress(keccak256("MILTON"), await milton.address);
 
     await milton.initialize(iporAddressesManager.address);
     await joseph.initialize(iporAddressesManager.address);
