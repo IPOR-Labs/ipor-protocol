@@ -12,7 +12,7 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
 import '../oracles/WarrenStorage.sol';
 import './MiltonStorage.sol';
-import './MiltonEvents.sol';
+import './IMiltonEvents.sol';
 import '../tokenization/IporToken.sol';
 
 import "../interfaces/IIporConfiguration.sol";
@@ -21,13 +21,14 @@ import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
 import "../interfaces/IJoseph.sol";
 
+
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
  * @author IPOR Labs
  */
 //TODO: add pausable modifier for methodds
-contract Milton is Ownable, Pausable, MiltonEvents, IMilton {
+contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
 
     using SafeERC20 for IERC20;
 
@@ -210,11 +211,10 @@ contract Milton is Ownable, Pausable, MiltonEvents, IMilton {
         //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
+        //TODO: sendValue z Address (zastosować razem z ReentrancyGuard)
         IERC20(asset).safeTransferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
-
-        //TODO: clarify if ipAsset should be transfered to trader when position is opened
 
         return iporDerivative.id;
     }

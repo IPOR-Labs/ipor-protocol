@@ -10,7 +10,7 @@ import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
 import '../amm/MiltonStorage.sol';
-import '../amm/MiltonEvents.sol';
+import '../amm/IMiltonEvents.sol';
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
@@ -20,7 +20,7 @@ import "../interfaces/IIporConfiguration.sol";
 //TODO: consider using AccessControll instead Ownable - higher flexibility
 contract IporConfiguration is Ownable, IIporConfiguration {
 
-    address asset;
+    address private _asset;
 
     uint256 multiplicator;
 
@@ -51,9 +51,9 @@ contract IporConfiguration is Ownable, IIporConfiguration {
 
     IIporAddressesManager internal _addressesManager;
 
-    constructor(address _asset) {
-        asset = _asset;
-        multiplicator = 10 ** ERC20(_asset).decimals();
+    constructor(address asset) {
+        _asset = asset;
+        multiplicator = 10 ** ERC20(asset).decimals();
     }
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {

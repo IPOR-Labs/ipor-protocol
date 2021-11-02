@@ -1,24 +1,5 @@
 const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
-const {time, BN} = require("@openzeppelin/test-helpers");
-const {ZERO} = require("./TestUtils");
-const TestUtils = require("./TestUtils");
-const IporConfiguration = artifacts.require('IporConfiguration');
-const TestMilton = artifacts.require('TestMilton');
-const TestJoseph = artifacts.require('TestJoseph');
-const MiltonStorage = artifacts.require('MiltonStorage');
-const TestWarren = artifacts.require('TestWarren');
-const WarrenStorage = artifacts.require('WarrenStorage');
-const IporToken = artifacts.require('IporToken');
-const DaiMockedToken = artifacts.require('DaiMockedToken');
-const UsdtMockedToken = artifacts.require('UsdtMockedToken');
-const UsdcMockedToken = artifacts.require('UsdcMockedToken');
-const DerivativeLogic = artifacts.require('DerivativeLogic');
-const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
-const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
-const IporAddressesManager = artifacts.require('IporAddressesManager');
-const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
-const Joseph = artifacts.require('Joseph');
 
 contract('Joseph', (accounts) => {
 
@@ -44,7 +25,6 @@ contract('Joseph', (accounts) => {
 
         let expectedLiquidityProviderStableBalance = BigInt("9986000000000000000000000");
         let expectedLiquidityPoolBalanceMilton = testUtils.MILTON_14_000_USD;
-        ;
 
         //when
         await data.joseph.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
