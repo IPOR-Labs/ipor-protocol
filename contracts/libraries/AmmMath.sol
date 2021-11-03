@@ -15,12 +15,12 @@ library AmmMath {
         z = (x + (y / 2)) / y;
     }
 
-    function calculateIncomeTax(uint256 derivativeProfit, uint256 incomeTaxPercentage) public pure returns (uint256) {
-        return division(derivativeProfit * incomeTaxPercentage, Constants.MD);
+    function calculateIncomeTax(uint256 derivativeProfit, uint256 incomeTaxPercentage, uint256 multiplicator) public pure returns (uint256) {
+        return division(derivativeProfit * incomeTaxPercentage, multiplicator);
     }
 
-    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice) public pure returns (uint256){
-        return division(notionalAmount * Constants.MD, ibtPrice);
+    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice, uint256 multiplicator) public pure returns (uint256){
+        return division(notionalAmount * multiplicator, ibtPrice);
     }
 
     function calculateDerivativeAmount(
@@ -28,14 +28,15 @@ library AmmMath {
         uint256 collateralizationFactor,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
-        uint256 openingFeePercentage
+        uint256 openingFeePercentage,
+        uint256 multiplicator
     ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
         uint256 collateral = division(
-            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * Constants.MD,
-            Constants.MD + division(collateralizationFactor * openingFeePercentage, Constants.MD)
+            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * multiplicator,
+            multiplicator + division(collateralizationFactor * openingFeePercentage, multiplicator)
         );
-        uint256 notional = division(collateralizationFactor * collateral, Constants.MD);
-        uint256 openingFeeAmount = division(notional * openingFeePercentage, Constants.MD);
+        uint256 notional = division(collateralizationFactor * collateral, multiplicator);
+        uint256 openingFeeAmount = division(notional * openingFeePercentage, multiplicator);
         return DataTypes.IporDerivativeAmount(collateral, notional, openingFeeAmount);
     }
 

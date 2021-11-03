@@ -13,17 +13,17 @@ library TotalSoapIndicatorLogic {
     function calculateSoap(
         DataTypes.TotalSoapIndicator storage tsi,
         uint256 calculationTimestamp,
-        uint256 ibtPrice
+        uint256 ibtPrice, uint256 multiplicator
     ) public view returns (int256 soapPf, int256 soapRf) {
-        return (soapPf = tsi.pf.calculateSoap(ibtPrice, calculationTimestamp), soapRf = tsi.rf.calculateSoap(ibtPrice, calculationTimestamp));
+        return (soapPf = tsi.pf.calculateSoap(ibtPrice, calculationTimestamp, multiplicator), soapRf = tsi.rf.calculateSoap(ibtPrice, calculationTimestamp, multiplicator));
     }
 
     function calculateQuasiSoap(
         DataTypes.TotalSoapIndicator storage tsi,
         uint256 calculationTimestamp,
-        uint256 ibtPrice
+        uint256 ibtPrice, uint256 multiplicator
     ) public view returns (int256 soapPf, int256 soapRf) {
-        return (soapPf = tsi.pf.calculateQuasiSoap(ibtPrice, calculationTimestamp), soapRf = tsi.rf.calculateQuasiSoap(ibtPrice, calculationTimestamp));
+        return (soapPf = tsi.pf.calculateQuasiSoap(ibtPrice, calculationTimestamp, multiplicator), soapRf = tsi.rf.calculateQuasiSoap(ibtPrice, calculationTimestamp, multiplicator));
     }
 
     function rebalanceSoapWhenOpenPosition(
@@ -32,15 +32,16 @@ library TotalSoapIndicatorLogic {
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
-        uint256 derivativeIbtQuantity
+        uint256 derivativeIbtQuantity,
+        uint256 multiplicator
     ) public {
         if (direction == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)) {
             tsi.pf.rebalanceWhenOpenPosition(
-                rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity);
+                rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, multiplicator);
         }
         if (direction == uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed)) {
             tsi.rf.rebalanceWhenOpenPosition(
-                rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity);
+                rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, multiplicator);
         }
     }
 
@@ -51,17 +52,18 @@ library TotalSoapIndicatorLogic {
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
-        uint256 derivativeIbtQuantity
+        uint256 derivativeIbtQuantity,
+        uint256 multiplicator
     ) public {
         if (direction == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)) {
             tsi.pf.rebalanceWhenClosePosition(
                 rebalanceTimestamp, derivativeOpenTimestamp, derivativeNotional,
-                derivativeFixedInterestRate, derivativeIbtQuantity);
+                derivativeFixedInterestRate, derivativeIbtQuantity, multiplicator);
         }
         if (direction == uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed)) {
             tsi.rf.rebalanceWhenClosePosition(
                 rebalanceTimestamp, derivativeOpenTimestamp, derivativeNotional,
-                derivativeFixedInterestRate, derivativeIbtQuantity);
+                derivativeFixedInterestRate, derivativeIbtQuantity, multiplicator);
         }
     }
 }

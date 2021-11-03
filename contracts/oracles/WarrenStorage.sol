@@ -7,6 +7,7 @@ import "../interfaces/IWarrenStorage.sol";
 import {Constants} from '../libraries/Constants.sol';
 import {Errors} from '../Errors.sol';
 import "../libraries/IporLogic.sol";
+import "../interfaces/IIporConfiguration.sol";
 
 /**
  * @title Ipor Oracle Storage initial version
@@ -42,10 +43,10 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         return indexes[asset];
     }
 
-    function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) external override onlyUpdater {
+    function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp, uint256 multiplicator) external override onlyUpdater {
         require(_assets.length == indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i = 0; i < _assets.length; i++) {
-            _updateIndex(_assets[i], indexValues[i], updateTimestamp);
+            _updateIndex(_assets[i], indexValues[i], updateTimestamp, multiplicator);
         }
     }
 
@@ -81,7 +82,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
     }
 
-    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal onlyUpdater {
+    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp, uint256 multiplicator) internal onlyUpdater {
 
         bool assetExists = false;
         for (uint256 i = 0; i < assets.length; i++) {
@@ -95,7 +96,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         if (assetExists == false) {
             //TODO: consider asset support configured in IporAddressesManager
             assets.push(asset);
-            newQuasiIbtPrice = Constants.MD_YEAR_IN_SECONDS;
+            newQuasiIbtPrice = multiplicator * Constants.YEAR_IN_SECONDS;
         } else {
             newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(updateTimestamp);
         }

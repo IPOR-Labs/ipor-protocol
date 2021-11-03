@@ -35,11 +35,11 @@ contract Joseph is Ownable, IJoseph {
         IIporToken iporToken = IIporToken(_addressesManager.getIporToken(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
         uint256 iporTokenTotalSupply = iporToken.totalSupply();
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         if (iporTokenTotalSupply > 0) {
-            uint256 result = AmmMath.division(miltonStorage.getBalance(asset).liquidityPool * Constants.MD, iporTokenTotalSupply);
-            return result;
+            return AmmMath.division(miltonStorage.getBalance(asset).liquidityPool * iporConfiguration.getMultiplicator(), iporTokenTotalSupply);
         } else {
-            return Constants.MD;
+            return iporConfiguration.getMultiplicator();
         }
     }
 
@@ -56,7 +56,8 @@ contract Joseph is Ownable, IJoseph {
         IERC20(asset).safeTransferFrom(msg.sender, _addressesManager.getMilton(), liquidityAmount);
 
         if (exchangeRate > 0) {
-            IIporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * Constants.MD, exchangeRate));
+            IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
+            IIporToken(_addressesManager.getIporToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * iporConfiguration.getMultiplicator(), exchangeRate));
         }
     }
 
@@ -69,7 +70,9 @@ contract Joseph is Ownable, IJoseph {
 
         require(IMiltonStorage(_addressesManager.getMiltonStorage()).getBalance(asset).liquidityPool > iporTokenVolume, Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW);
 
-        uint256 underlyingAmount = AmmMath.division(iporTokenVolume * exchangeRate, Constants.MD);
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
+
+        uint256 underlyingAmount = AmmMath.division(iporTokenVolume * exchangeRate, iporConfiguration.getMultiplicator());
 
         IIporToken(_addressesManager.getIporToken(asset)).burn(msg.sender, msg.sender, iporTokenVolume);
 

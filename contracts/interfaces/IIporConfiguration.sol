@@ -61,4 +61,6 @@ interface IIporConfiguration {
 
     function setMinCollateralizationFactorValue(uint256 minCollateralizationFactorValue) external;
 
+    function getMultiplicator() external view returns(uint256);
+
 }

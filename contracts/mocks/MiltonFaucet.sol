@@ -22,7 +22,7 @@ contract MiltonFaucet {
     function transfer(address asset, uint256 value) external {
         ERC20 token = ERC20(asset);
         uint256 decimals = token.decimals();
-        uint256 maxValue = 1000000 * decimals * Constants.MD;
+        uint256 maxValue = 1000000 * decimals * 10 ** token.decimals();
         require(value <= maxValue, 'Too much value for transfer');
         IERC20(asset).safeTransfer(msg.sender, value);
     }

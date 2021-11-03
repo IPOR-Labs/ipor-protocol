@@ -2102,6 +2102,8 @@ contract('Milton', (accounts) => {
 
     });
 
+    //TODO: !!!! test zamykania derywatywy, milton traci, trader zarabia, ale milton nie ma odpowiedniej ilosci kasy na balansie
+
     //TODO: check initial IBT
 
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe

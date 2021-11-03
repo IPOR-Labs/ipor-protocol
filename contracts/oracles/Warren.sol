@@ -63,11 +63,13 @@ contract Warren is Ownable, Pausable, IWarren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        warrenStorage.updateIndexes(assets, indexes, block.timestamp);
+        uint256 multiplicator = Constants.MD;
+        warrenStorage.updateIndexes(assets, indexes, block.timestamp, multiplicator);
     }
 
     function updateIndexes(address[] memory assets, uint256[] memory indexValues) external override {
-        warrenStorage.updateIndexes(assets, indexValues, block.timestamp);
+        uint256 multiplicator = Constants.MD;
+        warrenStorage.updateIndexes(assets, indexValues, block.timestamp, multiplicator);
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view override returns (uint256) {

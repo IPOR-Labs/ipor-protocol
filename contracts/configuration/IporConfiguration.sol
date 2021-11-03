@@ -62,18 +62,20 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         //@notice taken after close position from participant who take income (trader or Milton)
         incomeTaxPercentage = 1e17;
 
+        require(multiplicator != 0);
+
         //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
-        liquidationDepositAmount = 20 * Constants.MD;
+        liquidationDepositAmount = 20 * multiplicator;
 
         //@notice
         openingFeePercentage = 1e16;
         openingFeeForTreasuryPercentage = 0;
-        iporPublicationFeeAmount = 10 * Constants.MD;
+        iporPublicationFeeAmount = 10 * multiplicator;
         liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
-        maxPositionTotalAmount = 100000 * Constants.MD;
+        maxPositionTotalAmount = 100000 * multiplicator;
 
-        minCollateralizationFactorValue = 10 * Constants.MD;
-        maxCollateralizationFactorValue = 50 * Constants.MD;
+        minCollateralizationFactorValue = 10 * multiplicator;
+        maxCollateralizationFactorValue = 50 * multiplicator;
 
         address[] memory assets = _addressesManager.getAssets();
 
@@ -88,7 +90,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyOwner {
-        require(_incomeTaxPercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_incomeTaxPercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         incomeTaxPercentage = _incomeTaxPercentage;
         emit IncomeTaxPercentageSet(_incomeTaxPercentage);
     }
@@ -98,7 +100,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external override onlyOwner {
-        require(_openingFeeForTreasuryPercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeeForTreasuryPercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeeForTreasuryPercentage = _openingFeeForTreasuryPercentage;
         emit OpeningFeeForTreasuryPercentageSet(_openingFeeForTreasuryPercentage);
     }
@@ -117,7 +119,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyOwner {
-        require(_openingFeePercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeePercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeePercentage = _openingFeePercentage;
         emit OpeningFeePercentageSet(_openingFeePercentage);
     }
@@ -181,5 +183,9 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external override onlyOwner {
         minCollateralizationFactorValue = _minCollateralizationFactorValue;
         emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
+    }
+
+    function getMultiplicator() external view override returns(uint256) {
+        return multiplicator;
     }
 }

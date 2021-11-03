@@ -14,7 +14,7 @@ contract AmmMathTest {
         uint256 ibtPrice = 100000000000000000000;
 
         //when
-        uint256 ibtQuantity = AmmMath.calculateIbtQuantity(notionalAmount, ibtPrice);
+        uint256 ibtQuantity = AmmMath.calculateIbtQuantity(notionalAmount, ibtPrice, Constants.MD);
 
         //then
         Assert.equal(ibtQuantity, 987030000000000000000, "Wrong IBT Quantity");
@@ -26,7 +26,7 @@ contract AmmMathTest {
         uint256 percentage = 6 * Constants.MD / 100;
 
         //when
-        uint256 actualIncomeTaxValue = AmmMath.calculateIncomeTax(profit, percentage);
+        uint256 actualIncomeTaxValue = AmmMath.calculateIncomeTax(profit, percentage, Constants.MD);
 
         //then
         Assert.equal(actualIncomeTaxValue, 30000000000000000000, "Wrong Income Tax");
@@ -46,7 +46,8 @@ contract AmmMathTest {
             collateralizationFactor,
             liquidationDepositAmount,
             iporPublicationFeeAmount,
-            openingFeePercentage);
+            openingFeePercentage,
+                Constants.MD);
 
         //then
         Assert.equal(result.notional, 500000 * Constants.MD, "Wrong Notional");

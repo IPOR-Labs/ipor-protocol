@@ -62,7 +62,7 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 timestamp = soapIndicator.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        uint256 actualInterestRate = soapIndicator.calculateQuasiHypotheticalInterestDelta(timestamp);
+        uint256 actualInterestRate = soapIndicator.calculateQuasiHypotheticalInterestDelta(timestamp,Constants.MD);
 
         //then
         uint256 expectedInterestDelta = 3456000000 * 1e54;
@@ -75,7 +75,7 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 timestamp = soapIndicator.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        uint256 actualQuasiHypotheticalInterestTotal = soapIndicator.calculateQuasiHyphoteticalInterestTotal(timestamp);
+        uint256 actualQuasiHypotheticalInterestTotal = soapIndicator.calculateQuasiHyphoteticalInterestTotal(timestamp, Constants.MD);
 
         //then
         uint256 expectedQuasiHypotheticalInterestTotal = 19224000000 * 1e54;
@@ -93,7 +93,7 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 derivativeIbtQuantity = 95 * 1e18;
 
         //when
-        siStorage.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity);
+        siStorage.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.MD);
 
         //then
         assertSoapIndicator(siStorage, rebalanceTimestamp, derivativeNotional, derivativeIbtQuantity, derivativeFixedInterestRate, 0);
@@ -109,7 +109,7 @@ contract SoapIndicatorLogicTest is TestData {
 
         siStorage.rebalanceWhenOpenPosition(
             rebalanceTimestampFirst, derivativeNotionalFirst, derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst);
+            derivativeIbtQuantityFirst, Constants.MD);
 
         uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         uint256 derivativeNotionalSecond = 20000 * 1e18;
@@ -121,7 +121,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond);
+            derivativeIbtQuantitySecond, Constants.MD);
 
         //then
         uint256 expectedRebalanceTimestamp = rebalanceTimestampSecond;
@@ -153,7 +153,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst);
+            derivativeIbtQuantityFirst, Constants.MD);
 
         uint256 closeTimestamp = rebalanceTimestampFirst + PERIOD_25_DAYS_IN_SECONDS;
 
@@ -163,7 +163,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst
+            derivativeIbtQuantityFirst, Constants.MD
         );
 
         //then
@@ -194,7 +194,7 @@ contract SoapIndicatorLogicTest is TestData {
 
         siStorage.rebalanceWhenOpenPosition(
             rebalanceTimestampFirst, derivativeNotionalFirst, derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst);
+            derivativeIbtQuantityFirst, Constants.MD);
 
         uint256 averageInterestRateAfterFirstOpen = siStorage.averageInterestRate;
 
@@ -208,7 +208,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond);
+            derivativeIbtQuantitySecond, Constants.MD);
 
         uint256 closeTimestamp = rebalanceTimestampSecond + PERIOD_25_DAYS_IN_SECONDS;
 
@@ -218,7 +218,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond
+            derivativeIbtQuantitySecond, Constants.MD
         );
 
         //then
@@ -249,7 +249,7 @@ contract SoapIndicatorLogicTest is TestData {
 
         siStorage.rebalanceWhenOpenPosition(
             rebalanceTimestampFirst, derivativeNotionalFirst, derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst);
+            derivativeIbtQuantityFirst, Constants.MD);
 
         uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         uint256 derivativeNotionalSecond = 20000 * 1e18;
@@ -260,7 +260,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond);
+            derivativeIbtQuantitySecond, Constants.MD);
 
         uint256 closeTimestampSecondPosition = rebalanceTimestampSecond + PERIOD_25_DAYS_IN_SECONDS;
 
@@ -269,7 +269,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond
+            derivativeIbtQuantitySecond, Constants.MD
         );
 
         uint256 closeTimestampFirstPosition = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -280,7 +280,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst
+            derivativeIbtQuantityFirst, Constants.MD
         );
 
         //then
@@ -307,7 +307,7 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 calculationTimestamp = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp);
+        int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp, Constants.MD);
 
         //then
         int256 expectedSoapPf = - 6109589041095890410958;
@@ -321,7 +321,7 @@ contract SoapIndicatorLogicTest is TestData {
         uint256 calculationTimestamp = siStorage.rebalanceTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp);
+        int256 actualSoapPf = siStorage.calculateSoap(ibtPrice, calculationTimestamp, Constants.MD);
 
         //then
         int256 expectedSoapPf = 6109589041095890410959;

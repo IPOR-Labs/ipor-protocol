@@ -108,8 +108,13 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
     }
 
     function _calculatePositionValue(uint256 timestamp, DataTypes.IporDerivative memory derivative) internal view returns (int256) {
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(derivative.asset));
         DataTypes.IporDerivativeInterest memory derivativeInterest =
-        derivative.calculateInterest(timestamp, IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivative.asset, timestamp));
+        derivative.calculateInterest(
+            timestamp,
+            IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivative.asset, timestamp),
+            iporConfiguration.getMultiplicator()
+        );
 
         if (derivativeInterest.positionValue > 0) {
             if (derivativeInterest.positionValue < int256(derivative.collateral)) {
@@ -171,7 +176,8 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             totalAmount, collateralizationFactor,
             iporConfiguration.getLiquidationDepositAmount(),
             iporConfiguration.getIporPublicationFeeAmount(),
-            iporConfiguration.getOpeningFeePercentage()
+            iporConfiguration.getOpeningFeePercentage(),
+            iporConfiguration.getMultiplicator()
         );
 
         require(totalAmount > iporConfiguration.getLiquidationDepositAmount() + iporConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
@@ -238,6 +244,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
 
     function _calculateDerivativeIndicators(uint256 calculateTimestamp, address asset, uint8 direction, uint256 notionalAmount)
     internal view returns (DataTypes.IporDerivativeIndicator memory indicator) {
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         IWarren warren = IWarren(_addressesManager.getWarren());
         (uint256 indexValue, ,) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
@@ -247,17 +254,18 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         indicator = DataTypes.IporDerivativeIndicator(
             indexValue,
             accruedIbtPrice,
-            AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
+            AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice, iporConfiguration.getMultiplicator()),
             direction == 0 ? (indexValue + spreadPayFixedValue) : (indexValue - spreadRecFixedValue)
         );
     }
 
     function _closePosition(uint256 derivativeId, uint256 closeTimestamp) internal {
 
-        //TODO verify if this opened derivatives is closable based on liquidity pool
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
 
         DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(derivativeId);
+
+        require(derivativeItem.item.id > 0, Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID);
 
         int256 positionValue = _calculatePositionValue(closeTimestamp, derivativeItem.item);
 
@@ -278,6 +286,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         uint256 _calculationTimestamp) internal {
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset));
         uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
+        uint256 multiplicator = iporConfiguration.getMultiplicator();
 
         if (abspositionValue < derivativeItem.item.collateral) {
             //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
@@ -291,7 +300,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             //Trader earn, Milton loose
             _transferDerivativeAmount(
                 derivativeItem, derivativeItem.item.collateral + abspositionValue
-                - AmmMath.calculateIncomeTax(abspositionValue, iporConfiguration.getIncomeTaxPercentage()));
+                - AmmMath.calculateIncomeTax(abspositionValue, iporConfiguration.getIncomeTaxPercentage(), multiplicator));
         } else {
             //Milton earn, Trader loose
             _transferDerivativeAmount(derivativeItem, derivativeItem.item.collateral - abspositionValue);
@@ -304,15 +313,13 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         if (msg.sender == derivativeItem.item.buyer) {
             transferAmount = transferAmount + derivativeItem.item.fee.liquidationDepositAmount;
         } else {
-            //transfer liquidation deposit to sender
-            //TODO: take into consideration token decimals!!!
             //TODO: don't use transer but call
+            //transfer liquidation deposit amount from Milton to Sender
             IERC20(derivativeItem.item.asset).safeTransfer(msg.sender, derivativeItem.item.fee.liquidationDepositAmount);
         }
 
-        //transfer from AMM to buyer
-        //TODO: take into consideration token decimals!!!
         if (transferAmount > 0) {
+            //transfer from Milton to Trader
             IERC20(derivativeItem.item.asset).safeTransfer(derivativeItem.item.buyer, transferAmount);
         }
     }

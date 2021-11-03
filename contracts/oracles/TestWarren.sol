@@ -12,11 +12,11 @@ contract TestWarren is Warren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        warrenStorage.updateIndexes(assets, indexes, updateTimestamp);
+        warrenStorage.updateIndexes(assets, indexes, updateTimestamp, Constants.MD);
     }
 
     function test_updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) public onlyUpdater {
-        warrenStorage.updateIndexes(assets, indexValues, updateTimestamp);
+        warrenStorage.updateIndexes(assets, indexValues, updateTimestamp, Constants.MD);
     }
 
 }
