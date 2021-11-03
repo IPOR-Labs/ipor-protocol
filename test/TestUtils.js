@@ -10,6 +10,7 @@ const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
 const WarrenStorage = artifacts.require('WarrenStorage');
 const IporToken = artifacts.require('IporToken');
+const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 
 module.exports.assertError = async (promise, error) => {
     try {
@@ -181,6 +182,8 @@ module.exports.prepareDataForBefore = async (accounts) => {
     await milton.authorizeJoseph(tokenUsdc.address);
     await milton.authorizeJoseph(tokenUsdt.address);
 
+    let miltonDevToolDataProvider = await MiltonDevToolDataProvider.new(iporAddressesManager.address);
+
     let data = {
         admin: accounts[0],
         userOne: accounts[1],
@@ -196,7 +199,8 @@ module.exports.prepareDataForBefore = async (accounts) => {
         tokenUsdc: tokenUsdc,
         iporConfigurationUsdt: iporConfigurationUsdt,
         iporConfigurationUsdc: iporConfigurationUsdc,
-        iporConfigurationDai: iporConfigurationDai
+        iporConfigurationDai: iporConfigurationDai,
+        miltonDevToolDataProvider: miltonDevToolDataProvider
     }
 
     return data;

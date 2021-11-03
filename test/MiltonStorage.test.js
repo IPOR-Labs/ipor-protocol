@@ -62,7 +62,7 @@ contract('MiltonStorage', (accounts) => {
 
         //when
         testData.miltonStorage.updateStorageWhenClosePosition(
-            userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, {from: miltonStorageAddress});
+            userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, BigInt("1000000000000000000"), {from: miltonStorageAddress});
         //then
         assert(true);//no exception this line is achieved
     });
@@ -92,7 +92,7 @@ contract('MiltonStorage', (accounts) => {
         //when
         await testUtils.assertError(
             testData.miltonStorage.updateStorageWhenClosePosition(
-                userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, {from: userThree}),
+                userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, BigInt("1000000000000000000"), {from: userThree}),
             //then
             'IPOR_1'
         );

@@ -1,20 +1,16 @@
 const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {ZERO} = require("./TestUtils");
-const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 
 contract('Milton', (accounts) => {
 
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
-
-    let miltonDevToolDataProvider = null;
 
     let data = null;
     let testData = null;
 
     before(async () => {
         data = await testUtils.prepareDataForBefore(accounts);
-        miltonDevToolDataProvider = await MiltonDevToolDataProvider.deployed();
     });
 
     beforeEach(async () => {
@@ -2498,7 +2494,7 @@ contract('Milton', (accounts) => {
 
         let balance = await testData.miltonStorage.balances(asset);
 
-        const actualMiltonUnderlyingTokenBalance = BigInt(await miltonDevToolDataProvider.getMiltonTotalSupply(asset));
+        const actualMiltonUnderlyingTokenBalance = BigInt(await data.miltonDevToolDataProvider.getMiltonTotalSupply(asset));
         const actualDerivativesTotalBalance = BigInt(balance.derivatives);
         const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
         const actualLiquidationDepositTotalBalance = BigInt(balance.liquidationDeposit);

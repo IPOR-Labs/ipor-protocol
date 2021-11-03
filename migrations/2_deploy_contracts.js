@@ -317,7 +317,6 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(DerivativeLogic, TestMilton);
         await deployer.link(AmmMath, TestMilton);
         await deployer.link(AmmMath, TestJoseph);
-        await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManagerAddr);
         await deployer.link(AmmMath, WarrenDevToolDataProvider);
         await deployer.deploy(WarrenDevToolDataProvider, iporAddressesManagerAddr);
 

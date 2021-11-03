@@ -21,6 +21,6 @@ interface IMilton {
     //TODO: final implementation
     function calculateSpread(address asset) external view returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculatePositionValue(DataTypes.IporDerivative memory derivative) external view returns(int256);
+    function calculatePositionValue(DataTypes.IporDerivative memory derivative, uint256 multiplicator) external view returns(int256);
 
 }
