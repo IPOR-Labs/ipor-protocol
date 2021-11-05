@@ -13,7 +13,7 @@ import "../interfaces/IWarren.sol";
 import '../oracles/WarrenStorage.sol';
 import './MiltonStorage.sol';
 import './IMiltonEvents.sol';
-import '../tokenization/IporToken.sol';
+import '../tokenization/IpToken.sol';
 
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMilton.sol";

@@ -8,12 +8,12 @@ import {Errors} from '../Errors.sol';
 
 library DerivativeLogic {
 
-    //@notice for final value divide by Constants.MD_YEAR_IN_SECONDS
+    //@notice for final value divide by multiplicator* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(uint256 mdNotionalAmount, uint256 mdDerivativeFixedInterestRate, uint256 derivativePeriodInSeconds, uint256 multiplicator) public pure returns (uint256) {
         return mdNotionalAmount * multiplicator * Constants.YEAR_IN_SECONDS + mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds;
     }
 
-    //@notice for final value divide by Constants.MD_YEAR_IN_SECONDS
+    //@notice for final value divide by multiplicator * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFloating(uint256 mdIbtQuantity, uint256 mdIbtCurrentPrice) public pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
         return mdIbtQuantity * mdIbtCurrentPrice * Constants.YEAR_IN_SECONDS;

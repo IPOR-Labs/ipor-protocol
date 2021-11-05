@@ -13,8 +13,8 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     //@notice value - flag 1 - is supported, 0 - is not supported
     mapping(address => uint256) public supportedAssets;
 
-    //@notice mapping underlying asset address to ipor token address
-    mapping(address => address) public iporTokens;
+    //@notice mapping underlying asset address to IPOR Liquidity Pool Token addresses
+    mapping(address => address) public ipTokens;
 
     //@notice mapping underlying asset address to ipor configuration address
     mapping(address => address) public iporConfigurations;
@@ -165,14 +165,14 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         }
     }
 
-    function getIporToken(address unserlyingAsset) external override view returns (address){
-        return iporTokens[unserlyingAsset];
+    function getIpToken(address unserlyingAsset) external override view returns (address){
+        return ipTokens[unserlyingAsset];
     }
 
-    function setIporToken(address underlyingAssetAddress, address iporTokenAddress) external override onlyOwner {
+    function setIpToken(address underlyingAssetAddress, address ipTokenAddress) external override onlyOwner {
         require(supportedAssets[underlyingAssetAddress] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        iporTokens[underlyingAssetAddress] = iporTokenAddress;
-        emit IporTokenAddressUpdated(underlyingAssetAddress, iporTokenAddress);
+        ipTokens[underlyingAssetAddress] = ipTokenAddress;
+        emit IpTokenAddressUpdated(underlyingAssetAddress, ipTokenAddress);
     }
 
     function getJoseph() external override view returns (address){

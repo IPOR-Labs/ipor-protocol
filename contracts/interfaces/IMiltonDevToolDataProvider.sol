@@ -9,7 +9,7 @@ interface IMiltonDevToolDataProvider {
 
     function getMyTotalSupply(address asset) external view returns (uint256);
 
-    function getMyIporTokenBalance(address asset) external view returns (uint256);
+    function getMyIpTokenBalance(address asset) external view returns (uint256);
 
     function getMyAllowanceInMilton(address asset) external view returns (uint256);
 

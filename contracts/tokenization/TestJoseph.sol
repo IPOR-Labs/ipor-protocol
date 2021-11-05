@@ -3,7 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../interfaces/IIporToken.sol";
+import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IJoseph.sol";
 import {Errors} from '../Errors.sol';
@@ -19,8 +19,8 @@ contract TestJoseph is Joseph {
         _provideLiquidity(asset, liquidityAmount, iporConfiguration.getMultiplicator());
     }
 
-    function test_redeem(address asset, uint256 iporTokenVolume) public {
+    function test_redeem(address asset, uint256 ipTokenVolume) public {
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        _redeem(asset, iporTokenVolume, iporConfiguration.getMultiplicator());
+        _redeem(asset, ipTokenVolume, iporConfiguration.getMultiplicator());
     }
 }

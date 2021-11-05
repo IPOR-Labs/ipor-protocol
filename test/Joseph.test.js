@@ -16,10 +16,10 @@ contract('Joseph', (accounts) => {
         testData = await testUtils.prepareDataForBeforeEach(data);
     });
 
-    it('should provide liquidity and take IPOR token - simple case 1', async () => {
+    it('should provide liquidity and take ipToken - simple case 1', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
-        await testUtils.setupIporTokenDaiInitialValues(data, testData);
+        await testUtils.setupIpTokenDaiInitialValues(data, testData);
         const params = testUtils.getStandardDerivativeParams(data);
         let liquidityAmount = testUtils.MILTON_14_000_USD;
 
@@ -30,14 +30,14 @@ contract('Joseph', (accounts) => {
         await data.joseph.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
 
         //then
-        const actualIporTokenBalanceSender = BigInt(await testData.iporTokenDai.balanceOf(liquidityProvider));
+        const actualIpTokenBalanceSender = BigInt(await testData.ipTokenDai.balanceOf(liquidityProvider));
         const actualUnderlyingBalanceMilton = BigInt(await data.tokenDai.balanceOf(data.milton.address));
         const actualLiquidityPoolBalanceMilton = BigInt(await (await testData.miltonStorage.balances(params.asset)).liquidityPool);
         const actualUnderlyingBalanceSender = BigInt(await data.tokenDai.balanceOf(liquidityProvider));
 
 
-        assert(liquidityAmount === actualIporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${actualIporTokenBalanceSender}, expected: ${liquidityAmount}`);
+        assert(liquidityAmount === actualIpTokenBalanceSender,
+            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${liquidityAmount}`);
 
         assert(liquidityAmount === actualUnderlyingBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${liquidityAmount}`);
@@ -50,14 +50,14 @@ contract('Joseph', (accounts) => {
 
     });
 
-    it('should redeem IPOR Token - simple case 1', async () => {
+    it('should redeem ipToken - simple case 1', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
-        await testUtils.setupIporTokenDaiInitialValues(data, testData);
+        await testUtils.setupIpTokenDaiInitialValues(data, testData);
         const params = testUtils.getStandardDerivativeParams(data);
         let liquidityAmount = testUtils.MILTON_14_000_USD;
         let withdrawAmount = testUtils.USD_10_000_18DEC;
-        let expectedIporTokenBalanceSender = BigInt("4000000000000000000000");
+        let expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         let expectedStableBalanceMilton = BigInt("4000000000000000000000");
         let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
         let expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
@@ -68,14 +68,14 @@ contract('Joseph', (accounts) => {
         await data.joseph.test_redeem(params.asset, withdrawAmount, {from: liquidityProvider});
 
         //then
-        const actualIporTokenBalanceSender = BigInt(await testData.iporTokenDai.balanceOf(liquidityProvider));
+        const actualIpTokenBalanceSender = BigInt(await testData.ipTokenDai.balanceOf(liquidityProvider));
 
         const actualUnderlyingBalanceMilton = BigInt(await data.tokenDai.balanceOf(data.milton.address));
         const actualLiquidityPoolBalanceMilton = BigInt(await (await testData.miltonStorage.balances(params.asset)).liquidityPool);
         const actualUnderlyingBalanceSender = BigInt(await data.tokenDai.balanceOf(liquidityProvider));
 
-        assert(expectedIporTokenBalanceSender === actualIporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${params.asset} actual: ${actualIporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
+        assert(expectedIpTokenBalanceSender === actualIpTokenBalanceSender,
+            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${expectedIpTokenBalanceSender}`);
 
         assert(expectedStableBalanceMilton === actualUnderlyingBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
@@ -88,7 +88,7 @@ contract('Joseph', (accounts) => {
 
     });
 
-    it('should calculate Exchange Rate when Liquidity Pool Balance and Ipor Token Total Supply is zero', async () => {
+    it('should calculate Exchange Rate when Liquidity Pool Balance and ipToken Total Supply is zero', async () => {
         //given
         let expectedExchangeRate = BigInt("1000000000000000000");
         //when
@@ -100,7 +100,7 @@ contract('Joseph', (accounts) => {
             expected: ${expectedExchangeRate}`)
     });
 
-    it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and Ipor Token Total Supply is NOT zero', async () => {
+    it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         let expectedExchangeRate = BigInt("1000000000000000000");
@@ -117,7 +117,7 @@ contract('Joseph', (accounts) => {
             expected: ${expectedExchangeRate}`)
     });
 
-    it('should calculate Exchange Rate when Liquidity Pool Balance is zero and Ipor Token Total Supply is NOT zero', async () => {
+    it('should calculate Exchange Rate when Liquidity Pool Balance is zero and ipToken Total Supply is NOT zero', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         let expectedExchangeRate = BigInt("0");
@@ -163,7 +163,7 @@ contract('Joseph', (accounts) => {
             expected: ${expectedExchangeRate}`)
     });
 
-    it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and Ipor Token Total Supply is zero', async () => {
+    it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero', async () => {
         //given
         let amount = BigInt("40000000000000000000");
         await testUtils.setupTokenDaiInitialValues(data);
@@ -212,18 +212,18 @@ contract('Joseph', (accounts) => {
         //after this withdraw initial exchange rate is 1,5
         let expectedExchangeRate = BigInt("1714285714285714286");
         let exchangeRateBeforeProvideLiquidity = BigInt(await data.joseph.calculateExchangeRate.call(params.asset));
-        let expectedIporTokenBalanceForUserThree = BigInt("874999999999999999854");
+        let expectedIpTokenBalanceForUserThree = BigInt("874999999999999999854");
 
         // //when
         await data.joseph.provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
 
-        let actualIporTokenBalanceForUserThree = BigInt(await testData.iporTokenDai.balanceOf.call(userThree));
+        let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenDai.balanceOf.call(userThree));
         let actualExchangeRate = BigInt(await data.joseph.calculateExchangeRate.call(params.asset));
 
         //then
-        assert(expectedIporTokenBalanceForUserThree === actualIporTokenBalanceForUserThree,
-            `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIporTokenBalanceForUserThree},
-                 expected: ${expectedIporTokenBalanceForUserThree}`)
+        assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
+            `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
+                 expected: ${expectedIpTokenBalanceForUserThree}`)
 
         assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
             `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
@@ -255,20 +255,20 @@ contract('Joseph', (accounts) => {
         //after this withdraw initial exchange rate is 1,5
         let expectedExchangeRate = BigInt("1714285714285714286");
         let exchangeRateBeforeProvideLiquidity = BigInt(await data.joseph.calculateExchangeRate.call(params.asset));
-        let expectedIporTokenBalanceForUserThree = BigInt("0");
+        let expectedIpTokenBalanceForUserThree = BigInt("0");
         let actionTimestamp = Math.floor(Date.now() / 1000);
 
         //when
         await data.joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), {from: userThree});
         await data.joseph.test_redeem(params.asset, BigInt("874999999999999999854"), {from: userThree})
 
-        let actualIporTokenBalanceForUserThree = BigInt(await testData.iporTokenDai.balanceOf.call(userThree));
+        let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenDai.balanceOf.call(userThree));
         let actualExchangeRate = BigInt(await data.joseph.calculateExchangeRate.call(params.asset));
 
         //then
-        assert(expectedIporTokenBalanceForUserThree === actualIporTokenBalanceForUserThree,
-            `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIporTokenBalanceForUserThree},
-                 expected: ${expectedIporTokenBalanceForUserThree}`)
+        assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
+            `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
+                 expected: ${expectedIpTokenBalanceForUserThree}`)
 
         assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
             `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
@@ -282,7 +282,7 @@ contract('Joseph', (accounts) => {
     });
 
 
-    it('should NOT redeem Ipor Tokens because of empty Liquidity Pool', async () => {
+    it('should NOT redeem ipTokens because of empty Liquidity Pool', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         const params = testUtils.getStandardDerivativeParams(data);
@@ -322,7 +322,7 @@ contract('Joseph', (accounts) => {
         );
     });
 
-    it('should NOT redeem Ipor Tokens because redeem value higher than Liquidity Pool Balance', async () => {
+    it('should NOT redeem ipTokens because redeem value higher than Liquidity Pool Balance', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         const params = testUtils.getStandardDerivativeParams(data);
@@ -342,7 +342,7 @@ contract('Joseph', (accounts) => {
         );
     });
 
-    it('should NOT redeem Ipor Tokens because after redeem Liquidity Pool will be empty', async () => {
+    it('should NOT redeem ipTokens because after redeem Liquidity Pool will be empty', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         const params = testUtils.getStandardDerivativeParams(data);
@@ -358,7 +358,7 @@ contract('Joseph', (accounts) => {
         );
     });
 
-    it('should redeem Ipor Tokens because NO validation for cool off period', async () => {
+    it('should redeem ipTokens because NO validation for cool off period', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         let liquidityAmount = testUtils.MILTON_14_000_USD;
@@ -369,20 +369,20 @@ contract('Joseph', (accounts) => {
         await data.joseph.test_redeem(data.tokenDai.address, withdrawAmount, {from: liquidityProvider});
 
 
-        let expectedIporTokenBalanceSender = BigInt("4000000000000000000000");
+        let expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         let expectedStableBalanceMilton = BigInt("4000000000000000000000");
         let expectedLiquidityProviderStableBalance = BigInt("9996000000000000000000000");
         let expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
 
         //then
-        const actualIporTokenBalanceSender = BigInt(await testData.iporTokenDai.balanceOf(liquidityProvider));
+        const actualIpTokenBalanceSender = BigInt(await testData.ipTokenDai.balanceOf(liquidityProvider));
 
         const actualUnderlyingBalanceMilton = BigInt(await data.tokenDai.balanceOf(data.milton.address));
         const actualLiquidityPoolBalanceMilton = BigInt(await (await testData.miltonStorage.balances(data.tokenDai.address)).liquidityPool);
         const actualUnderlyingBalanceSender = BigInt(await data.tokenDai.balanceOf(liquidityProvider));
 
-        assert(expectedIporTokenBalanceSender === actualIporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${data.tokenDai.address} actual: ${actualIporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
+        assert(expectedIpTokenBalanceSender === actualIpTokenBalanceSender,
+            `Incorrect ipToken balance on user for asset ${data.tokenDai.address} actual: ${actualIpTokenBalanceSender}, expected: ${expectedIpTokenBalanceSender}`);
 
         assert(expectedStableBalanceMilton === actualUnderlyingBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${data.tokenDai.address} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
@@ -395,7 +395,7 @@ contract('Joseph', (accounts) => {
 
     });
 
-    it('should redeem Ipor Tokens, two times provided liquidity', async () => {
+    it('should redeem ipTokens, two times provided liquidity', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
 
@@ -406,19 +406,19 @@ contract('Joseph', (accounts) => {
         await data.joseph.test_redeem(data.tokenDai.address, testUtils.MILTON_14_000_USD, {from: liquidityProvider})
 
         //then
-        let expectedIporTokenBalanceSender = BigInt("6000000000000000000000");
+        let expectedIpTokenBalanceSender = BigInt("6000000000000000000000");
         let expectedStableBalanceMilton = BigInt("6000000000000000000000");
         let expectedLiquidityProviderStableBalance = BigInt("9994000000000000000000000");
         let expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
 
-        const actualIporTokenBalanceSender = BigInt(await testData.iporTokenDai.balanceOf(liquidityProvider));
+        const actualIpTokenBalanceSender = BigInt(await testData.ipTokenDai.balanceOf(liquidityProvider));
 
         const actualUnderlyingBalanceMilton = BigInt(await data.tokenDai.balanceOf(data.milton.address));
         const actualLiquidityPoolBalanceMilton = BigInt(await (await testData.miltonStorage.balances(data.tokenDai.address)).liquidityPool);
         const actualUnderlyingBalanceSender = BigInt(await data.tokenDai.balanceOf(liquidityProvider));
 
-        assert(expectedIporTokenBalanceSender === actualIporTokenBalanceSender,
-            `Incorrect IPOR Token balance on user for asset ${data.tokenDai.address} actual: ${actualIporTokenBalanceSender}, expected: ${expectedIporTokenBalanceSender}`);
+        assert(expectedIpTokenBalanceSender === actualIpTokenBalanceSender,
+            `Incorrect ipToken balance on user for asset ${data.tokenDai.address} actual: ${actualIpTokenBalanceSender}, expected: ${expectedIpTokenBalanceSender}`);
 
         assert(expectedStableBalanceMilton === actualUnderlyingBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${data.tokenDai.address} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`);
@@ -435,8 +435,8 @@ contract('Joseph', (accounts) => {
         await testUtils.setupTokenDaiInitialValues(data);
         await testUtils.setupTokenUsdcInitialValues(data);
 
-        await testUtils.setupIporTokenDaiInitialValues(data, testData);
-        await testUtils.setupIporTokenUsdcInitialValues(data, testData);
+        await testUtils.setupIpTokenDaiInitialValues(data, testData);
+        await testUtils.setupIpTokenUsdcInitialValues(data, testData);
 
         let liquidityAmount = testUtils.MILTON_14_000_USD;
         let withdrawAmount = testUtils.USD_10_000_18DEC;
@@ -461,13 +461,13 @@ contract('Joseph', (accounts) => {
 
 
         //then
-        const actualIpDAIBalanceSender = BigInt(await testData.iporTokenDai.balanceOf(liquidityProvider));
+        const actualIpDAIBalanceSender = BigInt(await testData.ipTokenDai.balanceOf(liquidityProvider));
         const actualDAIBalanceMilton = BigInt(await data.tokenDai.balanceOf(data.milton.address));
         const actualLiquidityPoolDAIBalanceMilton = BigInt(await (await testData.miltonStorage.balances(data.tokenDai.address)).liquidityPool);
         const actualDAIBalanceSender = BigInt(await data.tokenDai.balanceOf(liquidityProvider));
 
         assert(expectedipDAIBalanceSender === actualIpDAIBalanceSender,
-            `Incorrect IPOR Token DAI balance on user for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceSender}, expected: ${expectedipDAIBalanceSender}`);
+            `Incorrect ipToken DAI balance on user for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceSender}, expected: ${expectedipDAIBalanceSender}`);
 
         assert(expectedDAIBalanceMilton === actualDAIBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${data.tokenDai.address} actual: ${actualDAIBalanceMilton}, expected: ${expectedDAIBalanceMilton}`);
@@ -478,14 +478,14 @@ contract('Joseph', (accounts) => {
         assert(expectedLiquidityProviderDAIBalance === actualDAIBalanceSender,
             `Incorrect DAI balance on Liquidity Provider for asset ${data.tokenDai.address} actual: ${actualDAIBalanceSender}, expected: ${expectedLiquidityProviderDAIBalance}`);
 
-        const actualIpUSDCBalanceSender = BigInt(await testData.iporTokenUsdc.balanceOf(liquidityProvider));
+        const actualIpUSDCBalanceSender = BigInt(await testData.ipTokenUsdc.balanceOf(liquidityProvider));
         const actualUSDCBalanceMilton = BigInt(await data.tokenUsdc.balanceOf(data.milton.address));
 
         const actualLiquidityPoolUSDCBalanceMilton = BigInt(await (await testData.miltonStorage.balances(data.tokenUsdc.address)).liquidityPool);
         const actualUSDCBalanceSender = BigInt(await data.tokenUsdc.balanceOf(liquidityProvider));
 
         assert(expectedipUSDCBalanceSender === actualIpUSDCBalanceSender,
-            `Incorrect IPOR Token USDC balance on user for asset ${data.tokenUsdc.address} actual: ${actualIpUSDCBalanceSender}, expected: ${expectedipUSDCBalanceSender}`);
+            `Incorrect ipToken USDC balance on user for asset ${data.tokenUsdc.address} actual: ${actualIpUSDCBalanceSender}, expected: ${expectedipUSDCBalanceSender}`);
 
         assert(expectedUSDCBalanceMilton === actualUSDCBalanceMilton,
             `Incorrect USDC balance on Milton for asset ${data.tokenUsdc.address} actual: ${actualUSDCBalanceMilton}, expected: ${expectedUSDCBalanceMilton}`);
@@ -502,8 +502,8 @@ contract('Joseph', (accounts) => {
         await testUtils.setupTokenDaiInitialValues(data);
         await testUtils.setupTokenUsdcInitialValues(data);
 
-        await testUtils.setupIporTokenDaiInitialValues(data, testData);
-        await testUtils.setupIporTokenUsdcInitialValues(data, testData);
+        await testUtils.setupIpTokenDaiInitialValues(data, testData);
+        await testUtils.setupIpTokenUsdcInitialValues(data, testData);
 
         let liquidityAmount = testUtils.MILTON_14_000_USD;
         let withdrawAmount = testUtils.USD_10_000_18DEC;
@@ -528,13 +528,13 @@ contract('Joseph', (accounts) => {
         await data.joseph.test_redeem(data.tokenDai.address, withdrawAmount, {from: daiUser});
 
         //then
-        const actualIpDAIBalanceSender = BigInt(await testData.iporTokenDai.balanceOf(daiUser));
+        const actualIpDAIBalanceSender = BigInt(await testData.ipTokenDai.balanceOf(daiUser));
         const actualDAIBalanceMilton = BigInt(await data.tokenDai.balanceOf(data.milton.address));
         const actualLiquidityPoolDAIBalanceMilton = BigInt(await (await testData.miltonStorage.balances(data.tokenDai.address)).liquidityPool);
         const actualDAIBalanceSender = BigInt(await data.tokenDai.balanceOf(daiUser));
 
         assert(expectedipDAIBalanceSender === actualIpDAIBalanceSender,
-            `Incorrect IPOR Token DAI balance on user for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceSender}, expected: ${expectedipDAIBalanceSender}`);
+            `Incorrect ipToken DAI balance on user for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceSender}, expected: ${expectedipDAIBalanceSender}`);
 
         assert(expectedDAIBalanceMilton === actualDAIBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${data.tokenDai.address} actual: ${actualDAIBalanceMilton}, expected: ${expectedDAIBalanceMilton}`);
@@ -545,14 +545,14 @@ contract('Joseph', (accounts) => {
         assert(expectedLiquidityProviderDAIBalance === actualDAIBalanceSender,
             `Incorrect DAI balance on Liquidity Provider for asset ${data.tokenDai.address} actual: ${actualDAIBalanceSender}, expected: ${expectedLiquidityProviderDAIBalance}`);
 
-        const actualIpUSDCBalanceSender = BigInt(await testData.iporTokenUsdc.balanceOf(usdcUser));
+        const actualIpUSDCBalanceSender = BigInt(await testData.ipTokenUsdc.balanceOf(usdcUser));
         const actualUSDCBalanceMilton = BigInt(await data.tokenUsdc.balanceOf(data.milton.address));
 
         const actualLiquidityPoolUSDCBalanceMilton = BigInt(await (await testData.miltonStorage.balances(data.tokenUsdc.address)).liquidityPool);
         const actualUSDCBalanceSender = BigInt(await data.tokenUsdc.balanceOf(usdcUser));
 
         assert(expectedipUSDCBalanceSender === actualIpUSDCBalanceSender,
-            `Incorrect IPOR Token USDC balance on user for asset ${data.tokenUsdc.address} actual: ${actualIpUSDCBalanceSender}, expected: ${expectedipUSDCBalanceSender}`);
+            `Incorrect ipToken USDC balance on user for asset ${data.tokenUsdc.address} actual: ${actualIpUSDCBalanceSender}, expected: ${expectedipUSDCBalanceSender}`);
 
         assert(expectedUSDCBalanceMilton === actualUSDCBalanceMilton,
             `Incorrect USDC balance on Milton for asset ${data.tokenUsdc.address} actual: ${actualUSDCBalanceMilton}, expected: ${expectedUSDCBalanceMilton}`);
@@ -570,7 +570,7 @@ contract('Joseph', (accounts) => {
 
         await data.joseph.test_provideLiquidity(data.tokenDai.address, testUtils.MILTON_10_400_USD, {from: liquidityProvider});
 
-        await testData.iporTokenDai.transfer(userThree, testUtils.USD_10_000_18DEC, {from: liquidityProvider});
+        await testData.ipTokenDai.transfer(userThree, testUtils.USD_10_000_18DEC, {from: liquidityProvider});
 
         await data.joseph.test_redeem(data.tokenDai.address, testUtils.USD_10_000_18DEC, {from: userThree});
 
@@ -586,10 +586,10 @@ contract('Joseph', (accounts) => {
         const actualDAIBalanceMilton = BigInt(await data.tokenDai.balanceOf(data.milton.address));
         const actualDAIBalanceMiltonLiquidityPool = BigInt(await (await testData.miltonStorage.balances(data.tokenDai.address)).liquidityPool);
 
-        const actualIpDAIBalanceLiquidityProvider = BigInt(await testData.iporTokenDai.balanceOf(liquidityProvider));
+        const actualIpDAIBalanceLiquidityProvider = BigInt(await testData.ipTokenDai.balanceOf(liquidityProvider));
         const actualDAIBalanceLiquidityProvider = BigInt(await data.tokenDai.balanceOf(liquidityProvider));
 
-        const actualIpDAIBalanceUserThree = BigInt(await testData.iporTokenDai.balanceOf(userThree));
+        const actualIpDAIBalanceUserThree = BigInt(await testData.ipTokenDai.balanceOf(userThree));
         const actualDAIBalanceUserThree = BigInt(await data.tokenDai.balanceOf(userThree));
 
         assert(expectedDAIBalanceMilton === actualDAIBalanceMilton,
@@ -598,12 +598,12 @@ contract('Joseph', (accounts) => {
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${data.tokenDai.address} actual: ${actualDAIBalanceMiltonLiquidityPool}, expected: ${expectedDAIBalanceMiltonLiquidityPool}`);
 
         assert(expectedIpDAIBalanceLiquidityProvider === actualIpDAIBalanceLiquidityProvider,
-            `Incorrect IPOR Token DAI balance on Liquidity Provider for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceLiquidityProvider}, expected: ${expectedIpDAIBalanceLiquidityProvider}`);
+            `Incorrect ipToken DAI balance on Liquidity Provider for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceLiquidityProvider}, expected: ${expectedIpDAIBalanceLiquidityProvider}`);
         assert(expectedDAIBalanceLiquidityProvider === actualDAIBalanceLiquidityProvider,
             `Incorrect DAI balance on Liquidity Provider for asset ${data.tokenDai.address} actual: ${actualDAIBalanceLiquidityProvider}, expected: ${expectedDAIBalanceLiquidityProvider}`);
 
         assert(expectedIpDAIBalanceUserThree === actualIpDAIBalanceUserThree,
-            `Incorrect IPOR Token DAI balance on user for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceUserThree}, expected: ${expectedIpDAIBalanceUserThree}`);
+            `Incorrect ipToken DAI balance on user for asset ${data.tokenDai.address} actual: ${actualIpDAIBalanceUserThree}, expected: ${expectedIpDAIBalanceUserThree}`);
         assert(expectedDAIBalanceUserThree === actualDAIBalanceUserThree,
             `Incorrect DAI balance on user for asset ${data.tokenDai.address} actual: ${actualDAIBalanceUserThree}, expected: ${expectedDAIBalanceUserThree}`);
 

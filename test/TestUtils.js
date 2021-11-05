@@ -9,7 +9,7 @@ const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
 const WarrenStorage = artifacts.require('WarrenStorage');
-const IporToken = artifacts.require('IporToken');
+const IpToken = artifacts.require('IpToken');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
 
 module.exports.assertError = async (promise, error) => {
@@ -117,19 +117,19 @@ module.exports.setupTokenDaiInitialValues = async (data) => {
     await data.tokenDai.setupInitialAmount(data.liquidityProvider, USER_SUPPLY_18_DECIMALS);
 }
 
-module.exports.setupIporTokenDaiInitialValues = async (data, testData) => {
+module.exports.setupIpTokenDaiInitialValues = async (data, testData) => {
     await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.userOne);
-    let lpBalance = BigInt(await testData.iporTokenDai.balanceOf(data.liquidityProvider));
+    let lpBalance = BigInt(await testData.ipTokenDai.balanceOf(data.liquidityProvider));
     if (lpBalance > 0) {
-        await data.iporTokenDai.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
+        await data.ipTokenDai.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
     }
     await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
 }
-module.exports.setupIporTokenUsdcInitialValues = async (data, testData) => {
+module.exports.setupIpTokenUsdcInitialValues = async (data, testData) => {
     await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.userOne);
-    let lpBalance = BigInt(await testData.iporTokenUsdc.balanceOf(data.liquidityProvider));
+    let lpBalance = BigInt(await testData.ipTokenUsdc.balanceOf(data.liquidityProvider));
     if (lpBalance > 0) {
-        await data.iporTokenUsdc.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
+        await data.ipTokenUsdc.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
     }
     await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
 }
@@ -224,25 +224,25 @@ module.exports.prepareDataForBeforeEach = async (data) => {
     await miltonStorage.addAsset(data.tokenUsdc.address);
     await miltonStorage.addAsset(data.tokenUsdt.address);
 
-    let iporTokenUsdt = await IporToken.new(data.tokenUsdt.address, "IPOR USDT", "ipUSDT");
-    let iporTokenUsdc = await IporToken.new(data.tokenUsdc.address, "IPOR USDC", "ipUSDC");
-    let iporTokenDai = await IporToken.new(data.tokenDai.address, "IPOR DAI", "ipDAI");
+    let ipTokenUsdt = await IpToken.new(data.tokenUsdt.address, "IPOR USDT", "ipUSDT");
+    let ipTokenUsdc = await IpToken.new(data.tokenUsdc.address, "IPOR USDC", "ipUSDC");
+    let ipTokenDai = await IpToken.new(data.tokenDai.address, "IPOR DAI", "ipDAI");
 
-    iporTokenUsdt.initialize(data.iporAddressesManager.address);
-    iporTokenUsdc.initialize(data.iporAddressesManager.address);
-    iporTokenDai.initialize(data.iporAddressesManager.address);
+    ipTokenUsdt.initialize(data.iporAddressesManager.address);
+    ipTokenUsdc.initialize(data.iporAddressesManager.address);
+    ipTokenDai.initialize(data.iporAddressesManager.address);
 
-    await data.iporAddressesManager.setIporToken(data.tokenUsdt.address, iporTokenUsdt.address);
-    await data.iporAddressesManager.setIporToken(data.tokenUsdc.address, iporTokenUsdc.address);
-    await data.iporAddressesManager.setIporToken(data.tokenDai.address, iporTokenDai.address);
+    await data.iporAddressesManager.setIpToken(data.tokenUsdt.address, ipTokenUsdt.address);
+    await data.iporAddressesManager.setIpToken(data.tokenUsdc.address, ipTokenUsdc.address);
+    await data.iporAddressesManager.setIpToken(data.tokenDai.address, ipTokenDai.address);
 
     let testData = {
         miltonStorage: miltonStorage,
         warrenStorage: warrenStorage,
         warren: warren,
-        iporTokenUsdt: iporTokenUsdt,
-        iporTokenUsdc: iporTokenUsdc,
-        iporTokenDai: iporTokenDai
+        ipTokenUsdt: ipTokenUsdt,
+        ipTokenUsdc: ipTokenUsdc,
+        ipTokenDai: ipTokenDai
     }
     return testData;
 }

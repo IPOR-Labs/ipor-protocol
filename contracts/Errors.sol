@@ -41,7 +41,7 @@ library Errors {
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = 'IPOR_39'; //Asset address not supported
     string public constant MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW = 'IPOR_40'; //Amount which should be minted is too low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = 'IPOR_41'; //liquidity provider can deposit amount of stable, errors appeared when amount is to low
-    string public constant MILTON_CANNOT_REDEEM_IPOR_TOKEN_TOO_LOW = 'IPOR_42'; //user cannot redeem underlying tokens because ipor token on his balance is too low
+    string public constant MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW = 'IPOR_42'; //user cannot redeem underlying tokens because ipToken on his balance is too low
     string public constant MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = 'IPOR_43'; //liquidity provider cannot withdraw because liquidity pool is too low
     string public constant MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW = 'IPOR_44'; //Amount which should be burned is too low
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = 'IPOR_45'; //Liquidity Pool balance is equal 0

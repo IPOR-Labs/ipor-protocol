@@ -4,12 +4,11 @@ pragma solidity >=0.8.4 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../interfaces/IIporToken.sol";
+import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import {Errors} from '../Errors.sol';
 
-//TODO: confirm name and symbol of this token, beceuse there will be other types of IPOR Tokens
-contract IporToken is Ownable, IIporToken, ERC20 {
+contract IpToken is Ownable, IIpToken, ERC20 {
 
     using SafeERC20 for IERC20;
 

@@ -8,7 +8,7 @@ const MiltonFaucet = artifacts.require("MiltonFaucet");
 const TestWarren = artifacts.require("TestWarren");
 const TestMilton = artifacts.require("TestMilton");
 const TestJoseph = artifacts.require("TestJoseph");
-const IporToken = artifacts.require('IporToken');
+const IpToken = artifacts.require('IpToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
@@ -152,19 +152,19 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(AmmMath, WarrenDevToolDataProvider);
         await deployer.deploy(WarrenDevToolDataProvider, iporAddressesManagerAddr);
 
-        await deployer.deploy(IporToken, mockedUsdtAddr, "IPOR USDT", "ipUSDT");
-        ipUsdtToken = await IporToken.deployed();
-        await deployer.deploy(IporToken, mockedUsdcAddr, "IPOR USDC", "ipUSDC");
-        ipUsdcToken = await IporToken.deployed();
-        await deployer.deploy(IporToken, mockedDaiAddr, "IPOR DAI", "ipDAI");
-        ipDaiToken = await IporToken.deployed();
+        await deployer.deploy(IpToken, mockedUsdtAddr, "IP USDT", "ipUSDT");
+        ipUsdtToken = await IpToken.deployed();
+        await deployer.deploy(IpToken, mockedUsdcAddr, "IP USDC", "ipUSDC");
+        ipUsdcToken = await IpToken.deployed();
+        await deployer.deploy(IpToken, mockedDaiAddr, "IP DAI", "ipDAI");
+        ipDaiToken = await IpToken.deployed();
 
         await iporAddressesManager.addAsset(mockedDaiAddr);
         await iporAddressesManager.addAsset(mockedUsdtAddr);
         await iporAddressesManager.addAsset(mockedUsdcAddr);
-        await iporAddressesManager.setIporToken(mockedUsdtAddr, ipUsdtToken.address);
-        await iporAddressesManager.setIporToken(mockedUsdcAddr, ipUsdcToken.address);
-        await iporAddressesManager.setIporToken(mockedDaiAddr, ipDaiToken.address);
+        await iporAddressesManager.setIpToken(mockedUsdtAddr, ipUsdtToken.address);
+        await iporAddressesManager.setIpToken(mockedUsdcAddr, ipUsdcToken.address);
+        await iporAddressesManager.setIpToken(mockedDaiAddr, ipDaiToken.address);
 
         await ipUsdtToken.initialize(iporAddressesManager.address);
         await ipUsdcToken.initialize(iporAddressesManager.address);
@@ -193,12 +193,12 @@ module.exports = async function (deployer, _network, addresses) {
             await miltonStorage.addAsset(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS);
             await miltonStorage.addAsset(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS);
 
-            await deployer.deploy(IporToken, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, "IPOR USDT", "ipUSDT");
-            ipUsdtToken = await IporToken.deployed();
-            await deployer.deploy(IporToken, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, "IPOR USDC", "ipUSDC");
-            ipUsdcToken = await IporToken.deployed();
-            await deployer.deploy(IporToken, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, "IPOR DAI", "ipDAI");
-            ipDaiToken = await IporToken.deployed();
+            await deployer.deploy(IpToken, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, "IP USDT", "ipUSDT");
+            ipUsdtToken = await IpToken.deployed();
+            await deployer.deploy(IpToken, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, "IP USDC", "ipUSDC");
+            ipUsdcToken = await IpToken.deployed();
+            await deployer.deploy(IpToken, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, "IP DAI", "ipDAI");
+            ipDaiToken = await IpToken.deployed();
 
 
             await deployer.deploy(IporConfiguration, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS);
@@ -214,9 +214,9 @@ module.exports = async function (deployer, _network, addresses) {
             await iporAddressesManager.addAsset(mockedUsdtAddr);
             await iporAddressesManager.addAsset(mockedUsdcAddr);
 
-            await iporAddressesManager.setIporToken(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
-            await iporAddressesManager.setIporToken(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
-            await iporAddressesManager.setIporToken(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
+            await iporAddressesManager.setIpToken(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
+            await iporAddressesManager.setIpToken(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
+            await iporAddressesManager.setIpToken(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
 
             await iporConfigurationUsdt.initialize(iporAddressesManagerAddr);
             await iporConfigurationUsdc.initialize(iporAddressesManagerAddr);

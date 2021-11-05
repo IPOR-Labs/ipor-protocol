@@ -13,10 +13,10 @@ library SoapIndicatorLogic {
         uint256 ibtPrice,
         uint256 timestamp,
         uint256 multiplicator) public view returns (int256) {
-        return AmmMath.divisionInt(calculateQuasiSoap(si, ibtPrice, timestamp, multiplicator), Constants.MD_P2_YEAR_IN_SECONDS_INT);
+        return AmmMath.divisionInt(calculateQuasiSoap(si, ibtPrice, timestamp, multiplicator), int256(multiplicator * multiplicator * Constants.YEAR_IN_SECONDS));
     }
 
-    //@notice For highest precision there is no division by Constants.MD_P2_YEAR_IN_SECONDS
+    //@notice For highest precision there is no division by multiplicator * multiplicator * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,

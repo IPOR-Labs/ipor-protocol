@@ -153,7 +153,7 @@
                         <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporAddressesManager.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IIporToken.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IIporLiquidityPoolToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
@@ -182,7 +182,7 @@
                         <argument>${contracts.sources}/oracles/TestWarren.sol</argument>
                         <argument>${contracts.sources}/oracles/Warren.sol</argument>
                         <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
-                        <argument>${contracts.sources}/tokenization/IporToken.sol</argument>
+                        <argument>${contracts.sources}/tokenization/IporLiquidityPoolToken.sol</argument>
                     </arguments>
                 </configuration>
             </plugin>

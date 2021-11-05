@@ -48,7 +48,7 @@ contract('IporAddressesManager', (accounts) => {
         let actualCharlieTreasurerDaiAddress = await iporAddressesManager.getCharlieTreasurer(asset);
 
         assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
-            `Incorrect  Charlie Treasurer address for ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
+            `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
     });
 
     it('should set treasureTreasurers', async () => {
@@ -63,7 +63,22 @@ contract('IporAddressesManager', (accounts) => {
         let actualTreasureTreasurerDaiAddress = await iporAddressesManager.getTreasureTreasurer(asset);
 
         assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
-            `Incorrect  Trasure Treasurer address for ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
+            `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
+    });
+
+    it('should set IporConfiguration for supported asset', async () => {
+        //given
+        let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporAddressesManager.setIporConfiguration(asset, iporConfigurationAddress);
+
+        //then
+        let actualIporConfigurationAddress = await iporAddressesManager.getIporConfiguration(asset);
+
+        assert(iporConfigurationAddress === actualIporConfigurationAddress,
+            `Incorrect  IporConfiguration address for asset ${asset}, actual: ${actualIporConfigurationAddress}, expected: ${iporConfigurationAddress}`)
     });
 
     it('should use Timelock Controller - simple case 1', async () => {
