@@ -51,9 +51,9 @@ contract('MiltonStorage', (accounts) => {
             from: userTwo
         }
 
-        await testData.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
         await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
@@ -80,9 +80,9 @@ contract('MiltonStorage', (accounts) => {
             from: userTwo
         }
 
-        await testData.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
         await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.MILTON_14_000_USD, {from: liquidityProvider});
+        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);

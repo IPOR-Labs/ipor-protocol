@@ -16,7 +16,7 @@ interface IIporAddressesManager {
     event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);
-    event IpTokenAddressUpdated(address indexed underlyingAssetAddress, address indexed newIpTokenAddress);
+    event IpTokenAddressUpdated(address indexed asset, address indexed newIpTokenAddress);
     event JosephAddressUpdated(address indexed newJosephAddress);
     event AssetManagementVaultUpdated(address indexed asset, address indexed newAssetManagementVaultAddress);
 
@@ -72,9 +72,9 @@ interface IIporAddressesManager {
 
     function removeAsset(address asset) external;
 
-    function getIpToken(address unserlyingAsset) external view returns (address);
+    function getIpToken(address asset) external view returns (address);
 
-    function setIpToken(address underlyingAsset, address ipToken) external;
+    function setIpToken(address asset, address ipToken) external;
 
     function getJoseph() external view returns (address);
 

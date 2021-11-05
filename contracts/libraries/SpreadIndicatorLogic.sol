@@ -9,10 +9,8 @@ library SpreadIndicatorLogic {
 
     function calculateSpread(
         DataTypes.SpreadIndicator storage si,
-        uint256 timestamp) public pure returns (uint256) {
+        uint256 timestamp) public view returns (uint256) {
         //TODO: calculate spread in final way
-        si;
-        timestamp;
-        return 1e18;
+        return si.spread;
     }
 }

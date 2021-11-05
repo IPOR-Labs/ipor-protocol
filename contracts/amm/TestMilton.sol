@@ -33,7 +33,8 @@ contract TestMilton is Milton {
 
     function test_calculatePositionValue(
         uint256 calculateTimestamp, DataTypes.IporDerivative memory derivative) public view returns (int256){
-        return _calculatePositionValue(calculateTimestamp, derivative, Constants.MD);
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(derivative.asset));
+        return _calculatePositionValue(calculateTimestamp, derivative, iporConfiguration.getMultiplicator());
     }
 
     function setSpreadPayFixed(address asset, uint256 value) public {

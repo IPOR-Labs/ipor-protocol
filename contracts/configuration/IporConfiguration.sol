@@ -60,7 +60,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         _addressesManager = addressesManager;
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        incomeTaxPercentage = 1e17;
+        incomeTaxPercentage = AmmMath.division(multiplicator, 10);
 
         require(multiplicator != 0);
 
@@ -68,10 +68,10 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         liquidationDepositAmount = 20 * multiplicator;
 
         //@notice
-        openingFeePercentage = 1e16;
+        openingFeePercentage = AmmMath.division(multiplicator, 100);
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * multiplicator;
-        liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
+        liquidityPoolMaxUtilizationPercentage = 8 * AmmMath.division(multiplicator, 10);
         maxPositionTotalAmount = 100000 * multiplicator;
 
         minCollateralizationFactorValue = 10 * multiplicator;
@@ -80,8 +80,8 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         address[] memory assets = _addressesManager.getAssets();
 
         for (uint256 i = 0; i < assets.length; i++) {
-            spreadPayFixedValues[assets[i]] = 1e16;
-            spreadRecFixedValues[assets[i]] = 1e16;
+            spreadPayFixedValues[assets[i]] = AmmMath.division(multiplicator, 100);
+            spreadRecFixedValues[assets[i]] = AmmMath.division(multiplicator, 100);
         }
     }
 

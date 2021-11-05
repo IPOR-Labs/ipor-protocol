@@ -50,7 +50,7 @@ module.exports = async function (deployer, _network, addresses) {
     let warrenStorage = await WarrenStorage.deployed();
     let warrenStorageAddr = warrenStorage.address;
 
-    await deployer.deploy(Warren, warrenStorageAddr);
+    await deployer.deploy(Warren);
     const warren = await Warren.deployed();
 
     let faucetSupply6Decimals = '1000000000000000000000000';
@@ -234,7 +234,7 @@ module.exports = async function (deployer, _network, addresses) {
             console.log("Prepare initial IPOR migration...")
             await warren.updateIndexes(
                 [mockedDaiAddr, mockedUsdtAddr, mockedUsdcAddr],
-                [BigInt("30000000000000000"), BigInt("30000000000000000"), BigInt("30000000000000000")]);
+                [BigInt("30000000000000000"), BigInt("30000"), BigInt("30000000000000000")]);
         }
     }
 
@@ -307,6 +307,8 @@ module.exports = async function (deployer, _network, addresses) {
             await iporAddressesManager.setAddress(keccak256("MILTON"), miltonAddr);
         }
 
+        await warren.initialize(iporAddressesManagerAddr);
+        await warrenStorage.initialize(iporAddressesManagerAddr);
         await milton.initialize(iporAddressesManagerAddr);
         await miltonStorage.initialize(iporAddressesManagerAddr);
         await joseph.initialize(iporAddressesManagerAddr);
@@ -343,9 +345,6 @@ module.exports = async function (deployer, _network, addresses) {
             console.log(`Account: ${addresses[i]} - tokens transferred`);
 
             //Milton has rights to spend money on behalf of user
-            //TODO: Use safeIncreaseAllowance() and safeDecreaseAllowance() from OpenZepppelin’s
-            // SafeERC20 implementation to prevent race conditions from manipulating the allowance amounts.
-
             mockedUsdt.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
             mockedUsdc.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
             mockedDai.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});

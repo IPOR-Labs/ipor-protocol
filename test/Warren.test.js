@@ -17,7 +17,7 @@ contract('Warren', (accounts) => {
 
     const [admin, updaterOne, updaterTwo, user] = accounts;
 
-    const INITIAL_INTEREST_BEARING_TOKEN_PRICE = BigInt(1e18);
+    const INITIAL_INTEREST_BEARING_TOKEN_PRICE_DAI = BigInt(1e18);
     const YEAR_IN_SECONDS = 31536000;
     const MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
 
@@ -60,7 +60,7 @@ contract('Warren', (accounts) => {
 
     it('should update IPOR Index', async () => {
         //given
-        let asset = tokenUsdt.address;
+        let asset = tokenDai.address;
         let expectedIndexValue = BigInt(1e20);
         await warrenStorage.addUpdater(updaterOne);
         await warrenStorage.addUpdater(warren.address);
@@ -75,8 +75,8 @@ contract('Warren', (accounts) => {
 
         assert(expectedIndexValue === actualIndexValue,
             `Incorrect IPOR index value ${actualIndexValue}, expected ${expectedIndexValue}`);
-        assert(INITIAL_INTEREST_BEARING_TOKEN_PRICE == actualIbtPrice,
-            `Incorrect Interest Bearing Token Price ${actualIbtPrice}, expected ${INITIAL_INTEREST_BEARING_TOKEN_PRICE}`)
+        assert(INITIAL_INTEREST_BEARING_TOKEN_PRICE_DAI == actualIbtPrice,
+            `Incorrect Interest Bearing Token Price ${actualIbtPrice}, expected ${INITIAL_INTEREST_BEARING_TOKEN_PRICE_DAI}`)
     });
 
     it('should add IPOR Index Updater', async () => {
@@ -166,8 +166,8 @@ contract('Warren', (accounts) => {
         let actualIbtPrice = BigInt(iporIndex.ibtPrice);
         let actualIndexValue = BigInt(iporIndex.indexValue);
 
-        assert(actualIbtPrice === INITIAL_INTEREST_BEARING_TOKEN_PRICE,
-            `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${INITIAL_INTEREST_BEARING_TOKEN_PRICE}`);
+        assert(actualIbtPrice === INITIAL_INTEREST_BEARING_TOKEN_PRICE_DAI,
+            `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${INITIAL_INTEREST_BEARING_TOKEN_PRICE_DAI}`);
         assert(actualIndexValue === iporIndexValue, `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${iporIndexValue}`);
 
     });

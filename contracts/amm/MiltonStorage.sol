@@ -47,9 +47,12 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             DataTypes.SoapIndicator(0, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
         );
 
+        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
+        uint256 multiplicator = iporConfiguration.getMultiplicator();
+
         //TODO: clarify what is default value for spread when spread is calculated in final way
         spreadIndicators[asset] = DataTypes.TotalSpreadIndicator(
-            DataTypes.SpreadIndicator(1e18), DataTypes.SpreadIndicator(1e18)
+            DataTypes.SpreadIndicator(multiplicator), DataTypes.SpreadIndicator(multiplicator)
         );
     }
 
@@ -67,13 +70,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return derivatives.lastDerivativeId;
     }
 
-    //TODO: verify if sender is an smart contract
     function addLiquidity(address asset, uint256 liquidityAmount) external override onlyJoseph {
         require(liquidityAmount > 0, Errors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
         balances[asset].liquidityPool = balances[asset].liquidityPool + liquidityAmount;
     }
 
-    //TODO: verify if sender is an smart contract
     function subtractLiquidity(address asset, uint256 liquidityAmount) external override onlyJoseph {
         balances[asset].liquidityPool = balances[asset].liquidityPool - liquidityAmount;
     }
@@ -82,7 +83,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return derivatives.items[derivativeId];
     }
 
-    //TODO: verify if sender is an smart contract
     function updateStorageWhenTransferPublicationFee(address asset, uint256 transferedAmount) external override onlyMilton {
         balances[asset].iporPublicationFee = balances[asset].iporPublicationFee - transferedAmount;
     }

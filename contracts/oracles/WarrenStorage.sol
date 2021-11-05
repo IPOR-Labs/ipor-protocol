@@ -8,6 +8,7 @@ import {Constants} from '../libraries/Constants.sol';
 import {Errors} from '../Errors.sol';
 import "../libraries/IporLogic.sol";
 import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAddressesManager.sol";
 
 /**
  * @title Ipor Oracle Storage initial version
@@ -35,6 +36,12 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
 
+    IIporAddressesManager internal _addressesManager;
+
+    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+        _addressesManager = addressesManager;
+    }
+
     function getAssets() external override view returns (address[] memory) {
         return assets;
     }
@@ -43,10 +50,11 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         return indexes[asset];
     }
 
-    function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp, uint256 multiplicator) external override onlyUpdater {
+    function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) external override onlyUpdater {
         require(_assets.length == indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i = 0; i < _assets.length; i++) {
-            _updateIndex(_assets[i], indexValues[i], updateTimestamp, multiplicator);
+            IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(_assets[i]));
+            _updateIndex(_assets[i], indexValues[i], updateTimestamp, iporConfiguration.getMultiplicator());
         }
     }
 

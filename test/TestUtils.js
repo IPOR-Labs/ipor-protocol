@@ -34,10 +34,13 @@ module.exports.MILTON_99__7_USD = BigInt("99700000000000000000")
 module.exports.MILTON_9063__63_USD = BigInt("9063636363636363636364");//9063,(63) USD
 module.exports.MILTON_906__36_USD = BigInt("906363636363636363636");//906,(36) USD
 module.exports.USD_10_000_18DEC = BigInt("10000000000000000000000");
-module.exports.MILTON_10_400_USD = BigInt("10400000000000000000000");
-module.exports.MILTON_14_000_USD = BigInt("14000000000000000000000");
+module.exports.USD_10_000_6DEC = BigInt("10000000000");
+module.exports.USD_10_400_18DEC = BigInt("10400000000000000000000");
+module.exports.USD_14_000_18DEC = BigInt("14000000000000000000000");
+module.exports.USD_14_000_6DEC = BigInt("14000000000");
 module.exports.MILTON_10_000_000_USD = BigInt("10000000000000000000000000");
-module.exports.MILTON_3_PERCENTAGE = BigInt("30000000000000000");
+module.exports.PERCENTAGE_3_18DEC = BigInt("30000000000000000");
+module.exports.PERCENTAGE_3_6DEC = BigInt("30000");
 module.exports.MILTON_5_PERCENTAGE = BigInt("50000000000000000");
 module.exports.MILTON_6_PERCENTAGE = BigInt("60000000000000000");
 module.exports.MILTON_10_PERCENTAGE = BigInt("100000000000000000");
@@ -65,7 +68,7 @@ const {
     TOTAL_SUPPLY_18_DECIMALS,
     USD_10_000_18DEC,
     ZERO,
-    USER_SUPPLY_18_DECIMALS, USER_SUPPLY_6_DECIMALS
+    USER_SUPPLY_18_DECIMALS, USER_SUPPLY_6_DECIMALS, USD_10_000_6DEC
 } = require("./TestUtils");
 //specific data
 module.exports.SPECIFIC_INCOME_TAX_CASE_1 = BigInt("579079452054794521914");
@@ -79,12 +82,23 @@ module.exports.pad32Bytes = (data) => {
     return s;
 }
 
-module.exports.getStandardDerivativeParams = (data) => {
+module.exports.getStandardDerivativeParamsDAI = (data) => {
     return {
         asset: data.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
         slippageValue: 3,
         collateralizationFactor: BigInt(10000000000000000000),
+        direction: 0,
+        openTimestamp: Math.floor(Date.now() / 1000),
+        from: data.userTwo
+    }
+}
+module.exports.getStandardDerivativeParamsUSDT = (data) => {
+    return {
+        asset: data.tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        slippageValue: 3,
+        collateralizationFactor: BigInt(10000000),
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
         from: data.userTwo
@@ -134,11 +148,21 @@ module.exports.setupIpTokenUsdcInitialValues = async (data, testData) => {
     await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
 }
 
+module.exports.setupIpTokenUsdtInitialValues = async (data, testData) => {
+    await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.userOne);
+    let lpBalance = BigInt(await testData.ipTokenUsdt.balanceOf(data.liquidityProvider));
+    if (lpBalance > 0) {
+        await data.ipTokenUsdt.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
+    }
+    await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
+}
+
 module.exports.prepareDataForBefore = async (accounts) => {
     let iporAddressesManager = await IporAddressesManager.deployed();
 
-    let joseph = await TestJoseph.new();
+    let warren = await TestWarren.new();
     let milton = await TestMilton.new();
+    let joseph = await TestJoseph.new();
 
     let tokenUsdt = await UsdtMockedToken.new(TOTAL_SUPPLY_6_DECIMALS, 6);
     let tokenUsdc = await UsdcMockedToken.new(TOTAL_SUPPLY_18_DECIMALS, 18);
@@ -172,9 +196,12 @@ module.exports.prepareDataForBefore = async (accounts) => {
         await tokenDai.approve(milton.address, TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
     }
 
-    await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
+    await iporAddressesManager.setAddress(keccak256("WARREN"), await warren.address);
     await iporAddressesManager.setAddress(keccak256("MILTON"), await milton.address);
+    await iporAddressesManager.setAddress(keccak256("JOSEPH"), await joseph.address);
 
+
+    await warren.initialize(iporAddressesManager.address);
     await milton.initialize(iporAddressesManager.address);
     await joseph.initialize(iporAddressesManager.address);
 
@@ -191,6 +218,7 @@ module.exports.prepareDataForBefore = async (accounts) => {
         userThree: accounts[3],
         liquidityProvider: accounts[4],
         userFive: accounts[5],
+        warren: warren,
         milton: milton,
         joseph: joseph,
         iporAddressesManager: iporAddressesManager,
@@ -210,13 +238,12 @@ module.exports.prepareDataForBeforeEach = async (data) => {
 
     let miltonStorage = await MiltonStorage.new();
     let warrenStorage = await WarrenStorage.new();
-    let warren = await TestWarren.new(warrenStorage.address);
 
     await data.iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
-    await data.iporAddressesManager.setAddress(keccak256("WARREN"), warren.address);
+    await data.iporAddressesManager.setAddress(keccak256("WARREN_STORAGE"), warrenStorage.address);
 
     await warrenStorage.addUpdater(data.userOne);
-    await warrenStorage.addUpdater(warren.address);
+    await warrenStorage.addUpdater(data.warren.address);
 
     await miltonStorage.initialize(data.iporAddressesManager.address);
 
@@ -224,9 +251,9 @@ module.exports.prepareDataForBeforeEach = async (data) => {
     await miltonStorage.addAsset(data.tokenUsdc.address);
     await miltonStorage.addAsset(data.tokenUsdt.address);
 
-    let ipTokenUsdt = await IpToken.new(data.tokenUsdt.address, "IPOR USDT", "ipUSDT");
-    let ipTokenUsdc = await IpToken.new(data.tokenUsdc.address, "IPOR USDC", "ipUSDC");
-    let ipTokenDai = await IpToken.new(data.tokenDai.address, "IPOR DAI", "ipDAI");
+    let ipTokenUsdt = await IpToken.new(data.tokenUsdt.address, "IP USDT", "ipUSDT");
+    let ipTokenUsdc = await IpToken.new(data.tokenUsdc.address, "IP USDC", "ipUSDC");
+    let ipTokenDai = await IpToken.new(data.tokenDai.address, "IP DAI", "ipDAI");
 
     ipTokenUsdt.initialize(data.iporAddressesManager.address);
     ipTokenUsdc.initialize(data.iporAddressesManager.address);
@@ -236,10 +263,11 @@ module.exports.prepareDataForBeforeEach = async (data) => {
     await data.iporAddressesManager.setIpToken(data.tokenUsdc.address, ipTokenUsdc.address);
     await data.iporAddressesManager.setIpToken(data.tokenDai.address, ipTokenDai.address);
 
+    await warrenStorage.initialize(data.iporAddressesManager.address);
+
     let testData = {
         miltonStorage: miltonStorage,
         warrenStorage: warrenStorage,
-        warren: warren,
         ipTokenUsdt: ipTokenUsdt,
         ipTokenUsdc: ipTokenUsdc,
         ipTokenDai: ipTokenDai

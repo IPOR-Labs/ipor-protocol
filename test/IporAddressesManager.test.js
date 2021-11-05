@@ -32,7 +32,6 @@ contract('IporAddressesManager', (accounts) => {
     beforeEach(async () => {
         iporAddressesManager = await IporAddressesManager.new();
         await iporAddressesManager.addAsset(tokenUsdt.address);
-        await iporAddressesManager.addAsset(tokenUsdc.address);
         await iporAddressesManager.addAsset(tokenDai.address);
     });
 
@@ -51,6 +50,21 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
     });
 
+    it('should NOT set charlieTreasurers for NOT supported asset USDC', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setCharlieTreasurer(asset, address),
+            //then
+            'IPOR_39'
+        );
+
+    });
+
     it('should set treasureTreasurers', async () => {
         //given
         let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
@@ -66,6 +80,51 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
     });
 
+    it('should NOT set treasureTreasurers for NOT supported asset USDC', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setTreasureTreasurer(asset, address),
+            //then
+            'IPOR_39'
+        );
+
+    });
+
+    it('should set asset management vault', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporAddressesManager.setAssetManagementVault(asset, address);
+
+        //then
+        let actualAddress = await iporAddressesManager.getAssetManagementVault(asset);
+
+        assert(address === actualAddress,
+            `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
+    });
+
+    it('should NOT set asset management vault for NOT supported asset USDC', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setAssetManagementVault(asset, address),
+            //then
+            'IPOR_39'
+        );
+
+    });
+
     it('should set IporConfiguration for supported asset', async () => {
         //given
         let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
@@ -79,6 +138,50 @@ contract('IporAddressesManager', (accounts) => {
 
         assert(iporConfigurationAddress === actualIporConfigurationAddress,
             `Incorrect  IporConfiguration address for asset ${asset}, actual: ${actualIporConfigurationAddress}, expected: ${iporConfigurationAddress}`)
+    });
+
+    it('should NOT set IporConfiguration for NOT supported asset USDC', async () => {
+        //given
+        let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setIporConfiguration(asset, iporConfigurationAddress),
+            //then
+            'IPOR_39'
+        );
+    });
+
+    it('should set IpToken for supported underlying asset', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporAddressesManager.setIpToken(asset, address);
+
+        //then
+        let actualAddress = await iporAddressesManager.getIpToken(asset);
+
+        assert(address === actualAddress,
+            `Incorrect  ipToken address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
+    });
+
+    it('should NOT set IpToken for NOT supported asset USDC', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setIpToken(asset, address),
+            //then
+            'IPOR_39'
+        );
+
     });
 
     it('should use Timelock Controller - simple case 1', async () => {
@@ -266,5 +369,4 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
 
     });
-    //TODO: add tests for SETs for assets which are not supported
 });

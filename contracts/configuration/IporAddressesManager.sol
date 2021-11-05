@@ -165,14 +165,14 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         }
     }
 
-    function getIpToken(address unserlyingAsset) external override view returns (address){
-        return ipTokens[unserlyingAsset];
+    function getIpToken(address asset) external override view returns (address){
+        return ipTokens[asset];
     }
 
-    function setIpToken(address underlyingAssetAddress, address ipTokenAddress) external override onlyOwner {
-        require(supportedAssets[underlyingAssetAddress] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        ipTokens[underlyingAssetAddress] = ipTokenAddress;
-        emit IpTokenAddressUpdated(underlyingAssetAddress, ipTokenAddress);
+    function setIpToken(address asset, address ipTokenAddress) external override onlyOwner {
+        require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
+        ipTokens[asset] = ipTokenAddress;
+        emit IpTokenAddressUpdated(asset, ipTokenAddress);
     }
 
     function getJoseph() external override view returns (address){
