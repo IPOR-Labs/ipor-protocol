@@ -69,6 +69,8 @@ module.exports.COLLATERALIZATION_FACTOR_18DEC = BigInt('10000000000000000000');
 module.exports.COLLATERALIZATION_FACTOR_6DEC = BigInt('10000000');
 
 //data for Test Cases
+module.exports.TC_IBT_PRICE_DAI_18DEC = BigInt(1e18);
+module.exports.TC_IBT_PRICE_DAI_6DEC = BigInt(1e6);
 module.exports.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC = BigInt("20000000000000000000");
 module.exports.TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC = BigInt("20000000");
 module.exports.TC_IPOR_PUBLICATION_AMOUNT_18DEC = BigInt("10000000000000000000");
@@ -85,7 +87,7 @@ const {
     TOTAL_SUPPLY_18_DECIMALS,
     USD_10_000_18DEC,
     ZERO,
-    USER_SUPPLY_18_DECIMALS, USER_SUPPLY_6_DECIMALS, USD_10_000_6DEC
+    USER_SUPPLY_18_DECIMALS, USER_SUPPLY_6_DECIMALS, USD_10_000_6DEC, COLLATERALIZATION_FACTOR_18DEC
 } = require("./TestUtils");
 //specific data
 module.exports.SPECIFIC_INCOME_TAX_CASE_1 = BigInt("579079452054794521914");
@@ -104,7 +106,7 @@ module.exports.getStandardDerivativeParamsDAI = (data) => {
         asset: data.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
         slippageValue: 3,
-        collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
+        collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
         from: data.userTwo

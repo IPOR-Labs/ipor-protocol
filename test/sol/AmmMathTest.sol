@@ -10,7 +10,7 @@ contract AmmMathTest {
     function testCalculateIbtQuantityCase1() public {
 
         //given
-        uint256 notionalAmount = 98703*Constants.D18;
+        uint256 notionalAmount = 98703 * Constants.D18;
         uint256 ibtPrice = 100 * Constants.D18;
 
         //when
@@ -72,7 +72,7 @@ contract AmmMathTest {
             liquidationDepositAmount,
             iporPublicationFeeAmount,
             openingFeePercentage,
-                Constants.D18);
+            Constants.D18);
 
         //then
         Assert.equal(result.notional, 500000 * Constants.D18, "Wrong Notional");
@@ -86,7 +86,7 @@ contract AmmMathTest {
         uint256 collateralizationFactor = 50 * Constants.D6;
         uint256 liquidationDepositAmount = 20 * Constants.D6;
         uint256 iporPublicationFeeAmount = 10 * Constants.D6;
-        uint256 openingFeePercentage = 3 * 1e4;
+        uint256 openingFeePercentage = 3 * 1e2;
 
         //when
         DataTypes.IporDerivativeAmount memory result = AmmMath.calculateDerivativeAmount(

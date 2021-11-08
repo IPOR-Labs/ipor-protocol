@@ -114,8 +114,9 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 
     modifier onlyUpdater() {
         bool allowed = false;
-        for (uint256 i = 0; i < updaters.length; i++) {
-            if (updaters[i] == msg.sender) {
+        address[] memory _updaters = updaters;
+        for (uint256 i = 0; i < _updaters.length; i++) {
+            if (_updaters[i] == msg.sender) {
                 allowed = true;
                 break;
             }

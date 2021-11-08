@@ -60,7 +60,7 @@ contract Warren is Ownable, Pausable, IWarren {
         );
     }
 
-    function updateIndex(address asset, uint256 indexValue) external override {
+    function updateIndex(address asset, uint256 indexValue) external override onlyUpdater {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
@@ -68,7 +68,7 @@ contract Warren is Ownable, Pausable, IWarren {
         IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateIndexes(address[] memory assets, uint256[] memory indexValues) external override {
+    function updateIndexes(address[] memory assets, uint256[] memory indexValues) external override onlyUpdater {
         IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexValues, block.timestamp);
     }
 
