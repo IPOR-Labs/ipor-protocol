@@ -482,7 +482,7 @@ contract('Joseph', (accounts) => {
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
-        await testData.miltonStorage.subtractLiquidity(params.asset, testUtils.MILTON_10_USD, {from: userOne});
+        await testData.miltonStorage.subtractLiquidity(params.asset, testUtils.USD_10_18DEC, {from: userOne});
         await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), data.joseph.address);
 
         //when

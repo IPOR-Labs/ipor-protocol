@@ -38,20 +38,20 @@ contract('MiltonStorage', (accounts) => {
         );
     });
 
-    it('should update Milton Storage when close position, caller has rights to update', async () => {
+    it('should update Milton Storage when close position, caller has rights to update, DAI 18 decimals', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         const derivativeParams = {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
 
-        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_18DEC, derivativeParams.openTimestamp, {from: userOne});
         await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
         await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
 
@@ -67,20 +67,50 @@ contract('MiltonStorage', (accounts) => {
         assert(true);//no exception this line is achieved
     });
 
+    it('should update Milton Storage when close position, caller has rights to update, USDT 6 decimals', async () => {
+        //given
+        await testUtils.setupTokenUsdtInitialValues(data);
+        const derivativeParams = {
+            asset: data.tokenUsdt.address,
+            totalAmount: testUtils.USD_10_000_6DEC,
+            slippageValue: 3,
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
+            direction: 0,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo
+        }
+
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_6DEC, derivativeParams.openTimestamp, {from: userOne});
+        await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
+        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+
+        await openPositionFunc(derivativeParams);
+        let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
+        let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+        await data.iporAddressesManager.setAddress(keccak256("MILTON"), miltonStorageAddress);
+
+        //when
+        testData.miltonStorage.updateStorageWhenClosePosition(
+            userTwo, derivativeItem, BigInt("10000000"), closePositionTimestamp, BigInt("1000000"), {from: miltonStorageAddress});
+        //then
+        assert(true);//no exception this line is achieved
+    });
+
     it('should NOT update Milton Storage when close position, caller dont have rights to update', async () => {
+
         // given
         await testUtils.setupTokenDaiInitialValues(data);
         const derivativeParams = {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
 
-        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_5_PERCENTAGE, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_18DEC, derivativeParams.openTimestamp, {from: userOne});
         await data.iporAddressesManager.setAddress(keccak256("MILTON"), data.milton.address);
         await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
 
@@ -126,7 +156,7 @@ contract('MiltonStorage', (accounts) => {
                 spreadPayFixedValue: 123,
                 spreadRecFixedValue: 123
             },
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             notionalAmount: 123,
             startingTimestamp: openingTimestamp,
             endingTimestamp: closePositionTimestamp,

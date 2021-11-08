@@ -45,12 +45,12 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         emit AddressSet(id, newAddress, false);
     }
 
-    function getAddress(bytes32 id) public view override returns (address) {
+    function getAddress(bytes32 id) external view override returns (address) {
         return _addresses[id];
     }
 
     function getPublicationFeeTransferer() external view override returns (address) {
-        return getAddress(PUBLICATION_FEE_TRANSFERER);
+        return _addresses[PUBLICATION_FEE_TRANSFERER];
     }
 
     function setPublicationFeeTransferer(address publicationFeeTransferer) external override {
@@ -59,7 +59,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     function getMilton() external view override returns (address) {
-        return getAddress(MILTON);
+        return _addresses[MILTON];
     }
 
     function setMiltonImpl(address miltonImpl) external override onlyOwner {
@@ -68,7 +68,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     function getMiltonStorage() external view override returns (address) {
-        return getAddress(MILTON_STORAGE);
+        return _addresses[MILTON_STORAGE];
     }
 
     function setMiltonStorageImpl(address miltonStorageImpl) external override onlyOwner {
@@ -77,7 +77,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     function getMiltonUtilizationStrategy() external view override returns (address) {
-        return getAddress(MILTON_UTILIZATION_STRATEGY);
+        return _addresses[MILTON_UTILIZATION_STRATEGY];
     }
 
     function setMiltonUtilizationStrategyImpl(address miltonUtilizationStrategyImpl) external override onlyOwner {
@@ -86,7 +86,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     function getMiltonSpreadStrategy() external view override returns (address) {
-        return getAddress(MILTON_SPREAD_STRATEGY);
+        return _addresses[MILTON_SPREAD_STRATEGY];
     }
 
     function setMiltonSpreadStrategyImpl(address miltonSpreadStrategyImpl) external override onlyOwner {
@@ -105,7 +105,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     function getWarren() external view override returns (address) {
-        return getAddress(WARREN);
+        return _addresses[WARREN];
     }
 
     function setWarrenImpl(address warrenImpl) external override onlyOwner {
@@ -204,6 +204,6 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     }
 
     function getWarrenStorage() external override view returns (address) {
-        return getAddress(WARREN_STORAGE);
+        return _addresses[WARREN_STORAGE];
     }
 }

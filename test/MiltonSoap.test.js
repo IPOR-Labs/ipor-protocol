@@ -40,13 +40,13 @@ contract('MiltonSoap', (accounts) => {
         await testUtils.setupTokenDaiInitialValues(data);
         let direction = 0;
         let openerUserAddress = userTwo;
-        let iporValueBeforeOpenPosition = testUtils.MILTON_5_PERCENTAGE;
+        let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_5_18DEC;
 
         const derivativeParams = {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -81,7 +81,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -115,7 +115,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -148,7 +148,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -183,7 +183,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -223,7 +223,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress
@@ -253,7 +253,7 @@ contract('MiltonSoap', (accounts) => {
     });
 
 
-    it('should calculate soap, DAI add pay fixed, DAI add rec fixed', async () => {
+    it('should calculate soap, DAI add pay fixed, DAI add rec fixed, 18 decimals', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         let firstDerivativeDirection = 0;
@@ -267,7 +267,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: firstDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -277,7 +277,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: secondDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -301,47 +301,98 @@ contract('MiltonSoap', (accounts) => {
         await assertSoap(soapParams);
     });
 
-    it('should calculate soap, DAI add pay fixed, USDC add pay fixed', async () => {
+    it('should calculate soap, USDT add pay fixed, USDT add rec fixed, 6 decimals', async () => {
+        //given
+        await testUtils.setupTokenUsdtInitialValues(data);
+        let firstDerivativeDirection = 0;
+        let secondDerivativeDirection = 1;
+
+        let openerUserAddress = userTwo;
+        let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_6DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const firstDerivativeParams = {
+            asset: data.tokenUsdt.address,
+            totalAmount: testUtils.USD_10_000_6DEC,
+            slippageValue: 3,
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
+            direction: firstDerivativeDirection,
+            openTimestamp: openTimestamp,
+            from: openerUserAddress
+        }
+
+        const secondDerivativeParams = {
+            asset: data.tokenUsdt.address,
+            totalAmount: testUtils.USD_10_000_6DEC,
+            slippageValue: 3,
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
+            direction: secondDerivativeDirection,
+            openTimestamp: openTimestamp,
+            from: openerUserAddress
+        }
+
+        await data.joseph.provideLiquidity(firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.warren.test_updateIndex(firstDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
+        await openPositionFunc(firstDerivativeParams);
+        await openPositionFunc(secondDerivativeParams);
+
+        let expectedSoap = BigInt("-124159401");
+
+        //when
+        const soapParams = {
+            asset: data.tokenUsdt.address,
+            calculateTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
+            expectedSoap: expectedSoap,
+            from: userTwo
+        }
+
+        await assertSoap(soapParams);
+    });
+
+    it('should calculate soap, DAI add pay fixed, USDT add pay fixed', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
-        await testUtils.setupTokenUsdcInitialValues(data);
+        await testUtils.setupTokenUsdtInitialValues(data);
         let direction = 0;
         let openerUserAddress = userTwo;
-        let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_18DEC;
+
+        let iporValueBeforOpenPositionDAI = testUtils.PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenPositionUSDT = testUtils.PERCENTAGE_3_6DEC;
+
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeDAIParams = {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
 
-        const derivativeUSDCParams = {
-            asset: data.tokenUsdc.address,
-            totalAmount: testUtils.USD_10_000_18DEC,
+        const derivativeUSDTParams = {
+            asset: data.tokenUsdt.address,
+            totalAmount: testUtils.USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
         await data.joseph.provideLiquidity(derivativeDAIParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
-        await data.joseph.provideLiquidity(derivativeUSDCParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
-        await data.warren.test_updateIndex(derivativeDAIParams.asset, iporValueBeforOpenPosition, derivativeDAIParams.openTimestamp, {from: userOne});
-        await data.warren.test_updateIndex(derivativeUSDCParams.asset, iporValueBeforOpenPosition, derivativeUSDCParams.openTimestamp, {from: userOne});
+        await data.joseph.provideLiquidity(derivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.warren.test_updateIndex(derivativeDAIParams.asset, iporValueBeforOpenPositionDAI, derivativeDAIParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(derivativeUSDTParams.asset, iporValueBeforOpenPositionUSDT, derivativeUSDTParams.openTimestamp, {from: userOne});
 
         //when
         await openPositionFunc(derivativeDAIParams);
-        await openPositionFunc(derivativeUSDCParams);
+        await openPositionFunc(derivativeUSDTParams);
 
         //then
         let expectedDAISoap = BigInt("-62079701120797029831");
-        //TODO: poprawic gdy zmiana na 6 miejsc po przecinku (zmiany w całym kodzie)
-        let expectedUSDCSoap = BigInt("-62079701120797029831");
+
+        let expectedUSDTSoap = BigInt("-62061076");
 
         const soapDAIParams = {
             asset: data.tokenDai.address,
@@ -351,13 +402,13 @@ contract('MiltonSoap', (accounts) => {
         }
         await assertSoap(soapDAIParams);
 
-        const soapUSDCParams = {
-            asset: data.tokenUsdc.address,
-            calculateTimestamp: derivativeUSDCParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
-            expectedSoap: expectedUSDCSoap,
+        const soapUSDTParams = {
+            asset: data.tokenUsdt.address,
+            calculateTimestamp: derivativeUSDTParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
+            expectedSoap: expectedUSDTSoap,
             from: userTwo
         }
-        await assertSoap(soapUSDCParams);
+        await assertSoap(soapUSDTParams);
     });
 
 
@@ -376,7 +427,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -386,7 +437,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -430,7 +481,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -440,7 +491,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -468,81 +519,83 @@ contract('MiltonSoap', (accounts) => {
         await assertSoap(soapParams);
     });
 
-    it('should calculate soap, DAI add pay fixed, USDC add rec fixed, remove rec fixed position after 25 days', async () => {
+    it('should calculate soap, DAI add pay fixed, USDT add rec fixed, remove rec fixed position after 25 days', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
-        await testUtils.setupTokenUsdcInitialValues(data);
+        await testUtils.setupTokenUsdtInitialValues(data);
         let payFixDerivativeDAIDirection = 0;
-        let recFixDerivativeUSDCDirection = 1;
+        let recFixDerivativeUSDTDirection = 1;
 
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
-        let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenPositionDAI = testUtils.PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenPositionUSDT = testUtils.PERCENTAGE_3_6DEC;
+
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeDAIParams = {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: payFixDerivativeDAIDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
 
-        const recFixDerivativeUSDCParams = {
-            asset: data.tokenUsdc.address,
-            totalAmount: testUtils.USD_10_000_18DEC,
+        const recFixDerivativeUSDTParams = {
+            asset: data.tokenUsdt.address,
+            totalAmount: testUtils.USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
-            direction: recFixDerivativeUSDCDirection,
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
+            direction: recFixDerivativeUSDTDirection,
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
         await data.joseph.provideLiquidity(payFixDerivativeDAIParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
-        await data.joseph.provideLiquidity(recFixDerivativeUSDCParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
 
-        await data.warren.test_updateIndex(payFixDerivativeDAIParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
-        await data.warren.test_updateIndex(recFixDerivativeUSDCParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(payFixDerivativeDAIParams.asset, iporValueBeforOpenPositionDAI, openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(recFixDerivativeUSDTParams.asset, iporValueBeforOpenPositionUSDT, openTimestamp, {from: userOne});
 
         await openPositionFunc(payFixDerivativeDAIParams);
-        await openPositionFunc(recFixDerivativeUSDCParams);
+        await openPositionFunc(recFixDerivativeUSDTParams);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await data.joseph.provideLiquidity(recFixDerivativeUSDCParams.asset, testUtils.USD_10_000_18DEC, {from: liquidityProvider})
+        await data.joseph.provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_10_000_6DEC, {from: liquidityProvider})
 
-        let endTimestamp = recFixDerivativeUSDCParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+        let endTimestamp = recFixDerivativeUSDTParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //when
         await data.milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-62079701120797029831");
+        let expectedSoapDAI = BigInt("-62079701120797029831");
 
-        const soapParams = {
+        const soapParamsDAI = {
             asset: data.tokenDai.address,
             calculateTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
-            expectedSoap: expectedSoap,
+            expectedSoap: expectedSoapDAI,
             from: userTwo
         }
 
-        await assertSoap(soapParams);
+        await assertSoap(soapParamsDAI);
     });
 
-    it('should calculate soap, DAI add pay fixed, change ibtPrice, wait 25 days and then calculate soap', async () => {
+    it('should calculate soap, DAI add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 18 decimals', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = testUtils.MILTON_120_PERCENTAGE;
+        let iporValueAfterOpenPosition = testUtils.PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -554,7 +607,7 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
-        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_6_PERCENTAGE, calculationTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_6_18DEC, calculationTimestamp, {from: userOne});
 
         let expectedSoap = BigInt("7201245330012453280259");
 
@@ -569,20 +622,60 @@ contract('MiltonSoap', (accounts) => {
         await assertSoap(soapParams);
     });
 
+    it('should calculate soap, USDT add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 6 decimals', async () => {
+        //given
+        await testUtils.setupTokenUsdtInitialValues(data);
+        let direction = 0;
+        let openerUserAddress = userTwo;
+        let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_6DEC;
+        let iporValueAfterOpenPosition = testUtils.PERCENTAGE_120_6DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: data.tokenUsdt.address,
+            totalAmount: testUtils.USD_10_000_6DEC,
+            slippageValue: 3,
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
+            direction: direction,
+            openTimestamp: openTimestamp,
+            from: openerUserAddress
+        }
+
+        let calculationTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+
+        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await openPositionFunc(derivativeParams);
+        await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_6_6DEC, calculationTimestamp, {from: userOne});
+
+        let expectedSoap = BigInt("7201265196");
+
+        //when
+        //then
+        const soapParams = {
+            asset: data.tokenUsdt.address,
+            calculateTimestamp: calculationTimestamp,
+            expectedSoap: expectedSoap,
+            from: userTwo
+        }
+        await assertSoap(soapParams);
+    });
+
     it('should calculate soap, DAI add pay fixed, change ibtPrice, calculate soap after 28 days and after 50 days and compare', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = testUtils.MILTON_120_PERCENTAGE;
+        let iporValueAfterOpenPosition = testUtils.PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -596,7 +689,7 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
-        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.MILTON_6_PERCENTAGE, calculationTimestamp25days, {from: userOne});
+        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_6_18DEC, calculationTimestamp25days, {from: userOne});
 
         let expectedSoap28Days = BigInt("7216144458281444576607");
         let expectedSoap50Days = BigInt("7325404732254047356064");
@@ -633,7 +726,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -642,7 +735,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
@@ -681,7 +774,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -690,7 +783,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             from: openerUserAddress
@@ -731,7 +824,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: openTimestamp,
             from: openerUserAddress
@@ -793,7 +886,7 @@ contract('MiltonSoap', (accounts) => {
             asset: data.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt(10000000000000000000),
+            collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: direction,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUserAddress

@@ -24,6 +24,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     IIporAddressesManager internal _addressesManager;
 
+    event LogDebug(string name, uint256 value);
+    event LogDebugInt(string name, int256 value);
     mapping(address => DataTypes.MiltonTotalBalance) public balances;
 
     mapping(address => DataTypes.TotalSoapIndicator) public soapIndicators;
@@ -209,7 +211,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 incomeTax = AmmMath.calculateIncomeTax(
             abspositionValue,
             IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset)).getIncomeTaxPercentage(), multiplicator);
-
+        emit LogDebug("incomeTax", incomeTax);
+        emit LogDebugInt("positionValue", positionValue);
         balances[derivativeItem.item.asset].treasury
         = balances[derivativeItem.item.asset].treasury + incomeTax;
 

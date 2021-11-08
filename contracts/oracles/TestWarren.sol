@@ -6,7 +6,7 @@ import "../interfaces/IIporConfiguration.sol";
 
 contract TestWarren is Warren {
 
-    function test_updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) public onlyUpdater {
+    function test_updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) external onlyUpdater {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
@@ -14,7 +14,7 @@ contract TestWarren is Warren {
         IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexes, updateTimestamp);
     }
 
-    function test_updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) public onlyUpdater {
+    function test_updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) external onlyUpdater {
         IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexValues, updateTimestamp);
     }
 
