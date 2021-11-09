@@ -41,14 +41,14 @@ module.exports = async function (deployer, _network, addresses) {
         isTestEnvironment = 0;
     }
 
-    let faucetSupply6Decimals = '1000000000000000000000000';
-    let totalSupply6Decimals = '1000000000000000000000000000';
+    let faucetSupply6Decimals = '10000000000000000';
+    let faucetSupply18Decimals = '10000000000000000000000000000';
 
-    let faucetSupply18Decimals = '10000000000000000000000000000000000000';
-    let totalSupply18Decimals = '10000000000000000000000000000000000000000';
+    let totalSupply6Decimals = '1000000000000000000';
+    let totalSupply18Decimals = '1000000000000000000000000000000';
 
-    let userSupply6Decimals = '10000000000000';
-    let userSupply18Decimals = '10000000000000000000000000';
+    let userSupply6Decimals = '1000000000000';
+    let userSupply18Decimals = '1000000000000000000000000';
 
     let ipUsdtToken = null;
     let ipUsdcToken = null;
@@ -334,8 +334,16 @@ module.exports = async function (deployer, _network, addresses) {
         await mockedUsdt.transfer(miltonFaucetAddr, faucetSupply6Decimals);
         await mockedUsdc.transfer(miltonFaucetAddr, faucetSupply6Decimals);
         await mockedDai.transfer(miltonFaucetAddr, faucetSupply18Decimals);
-
         console.log("Setup Faucet finished.");
+
+        console.log("Setup Milton and TestMilton balance...")
+        await mockedUsdt.transfer(milton.address, userSupply6Decimals);
+        await mockedUsdc.transfer(milton.address, userSupply6Decimals);
+        await mockedDai.transfer(milton.address, userSupply18Decimals);
+        await mockedUsdt.transfer(testMilton.address, userSupply6Decimals);
+        await mockedUsdc.transfer(testMilton.address, userSupply6Decimals);
+        await mockedDai.transfer(testMilton.address, userSupply18Decimals);
+        console.log("Setup Milton and TestMilton balance finished.")
 
         console.log("Start transfer TOKENS to test addresses...");
 
@@ -344,7 +352,6 @@ module.exports = async function (deployer, _network, addresses) {
             await mockedUsdt.transfer(addresses[i], userSupply6Decimals);
             await mockedUsdc.transfer(addresses[i], userSupply6Decimals);
             await mockedDai.transfer(addresses[i], userSupply18Decimals);
-
 
             console.log(`Account: ${addresses[i]} - tokens transferred`);
 
