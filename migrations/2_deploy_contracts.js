@@ -395,7 +395,7 @@ module.exports = async function (deployer, _network, addresses) {
             console.log("Prepare initial IPOR migration...")
             await warren.updateIndexes(
                 [mockedDaiAddr, mockedUsdtAddr, mockedUsdcAddr],
-                [BigInt("30000000000000000"), BigInt("30000"), BigInt("30000000000000000")]);
+                [BigInt("30000000000000000"), BigInt("30000"), BigInt("30000")]);
         }
 
     }
