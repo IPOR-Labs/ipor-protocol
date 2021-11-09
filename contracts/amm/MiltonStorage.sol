@@ -90,11 +90,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     function updateStorageWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) external override onlyMilton {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(iporDerivative.asset));
-        uint256 multiplicator = iporConfiguration.getMultiplicator();
         _updateMiltonDerivativesWhenOpenPosition(iporDerivative);
-        _updateBalancesWhenOpenPosition(iporDerivative.asset, iporDerivative.collateral, iporDerivative.fee.openingAmount, multiplicator);
-        _updateSoapIndicatorsWhenOpenPosition(iporDerivative, multiplicator);
+        _updateBalancesWhenOpenPosition(iporDerivative.asset, iporDerivative.collateral, iporDerivative.fee.openingAmount, iporDerivative.multiplicator);
+        _updateSoapIndicatorsWhenOpenPosition(iporDerivative);
 
     }
 
@@ -102,12 +100,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 positionValue,
-        uint256 closingTimestamp,
-        uint256 multiplicator) external override onlyMilton {
+        uint256 closingTimestamp) external override onlyMilton {
 
         _updateMiltonDerivativesWhenClosePosition(derivativeItem);
-        _updateBalancesWhenClosePosition(user, derivativeItem, positionValue, closingTimestamp, multiplicator);
-        _updateSoapIndicatorsWhenClosePosition(derivativeItem, closingTimestamp, multiplicator);
+        _updateBalancesWhenClosePosition(user, derivativeItem, positionValue, closingTimestamp);
+        _updateSoapIndicatorsWhenClosePosition(derivativeItem, closingTimestamp);
 
     }
 
@@ -131,8 +128,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address asset,
         uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         return (
-        spreadPayFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadPayFixedValue(asset),
-        spreadRecFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadRecFixedValue(asset)
+        spreadPayFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadPayFixedValue(),
+        spreadRecFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadRecFixedValue()
         );
     }
 
@@ -184,8 +181,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 positionValue,
-        uint256 closingTimestamp,
-        uint256 multiplicator) internal {
+        uint256 closingTimestamp) internal {
 
         uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
 
@@ -210,7 +206,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         uint256 incomeTax = AmmMath.calculateIncomeTax(
             abspositionValue,
-            IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset)).getIncomeTaxPercentage(), multiplicator);
+            IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset)).getIncomeTaxPercentage(), derivativeItem.item.multiplicator);
         emit LogDebug("incomeTax", incomeTax);
         emit LogDebugInt("positionValue", positionValue);
         balances[derivativeItem.item.asset].treasury
@@ -264,27 +260,27 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         derivatives.userDerivativeIds[buyer].pop();
     }
 
-    function _updateSoapIndicatorsWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative, uint256 multiplicator) internal {
+    function _updateSoapIndicatorsWhenOpenPosition(DataTypes.IporDerivative memory iporDerivative) internal {
         soapIndicators[iporDerivative.asset].rebalanceSoapWhenOpenPosition(
             iporDerivative.direction,
             iporDerivative.startingTimestamp,
             iporDerivative.notionalAmount,
             iporDerivative.indicator.fixedInterestRate,
             iporDerivative.indicator.ibtQuantity,
-            multiplicator
+            iporDerivative.multiplicator
         );
     }
 
     function _updateSoapIndicatorsWhenClosePosition(
         DataTypes.MiltonDerivativeItem memory derivativeItem,
-        uint256 closingTimestamp, uint256 multiplicator) internal {
+        uint256 closingTimestamp) internal {
         soapIndicators[derivativeItem.item.asset].rebalanceSoapWhenClosePosition(
             derivativeItem.item.direction,
             closingTimestamp,
             derivativeItem.item.startingTimestamp,
             derivativeItem.item.notionalAmount,
             derivativeItem.item.indicator.fixedInterestRate,
-            derivativeItem.item.indicator.ibtQuantity, multiplicator
+            derivativeItem.item.indicator.ibtQuantity, derivativeItem.item.multiplicator
         );
     }
 

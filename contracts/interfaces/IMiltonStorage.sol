@@ -23,7 +23,7 @@ interface IMiltonStorage {
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 positionValue,
-        uint256 closingTimestamp, uint256 multiplicator) external;
+        uint256 closingTimestamp) external;
 
     function getDerivativeItem(uint256 derivativeId) external view returns (DataTypes.MiltonDerivativeItem memory);
 

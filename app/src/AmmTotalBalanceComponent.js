@@ -36,7 +36,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000}<br/>
+                                {value / 1000000 }<br/>
                                 <small>{value}</small>
                             </div>
                         )}

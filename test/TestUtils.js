@@ -4,7 +4,9 @@ const TestMilton = artifacts.require('TestMilton');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
-const IporConfiguration = artifacts.require('IporConfiguration');
+const IporConfigurationUsdt = artifacts.require('IporConfigurationUsdt');
+const IporConfigurationUsdc = artifacts.require('IporConfigurationUsdc');
+const IporConfigurationDai = artifacts.require('IporConfigurationDai');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
@@ -69,6 +71,8 @@ module.exports.COLLATERALIZATION_FACTOR_18DEC = BigInt('10000000000000000000');
 module.exports.COLLATERALIZATION_FACTOR_6DEC = BigInt('10000000');
 
 //data for Test Cases
+module.exports.TC_MULTIPLICATOR_18DEC = BigInt(1e18);
+module.exports.TC_MULTIPLICATOR_6DEC = BigInt(1e6);
 module.exports.TC_IBT_PRICE_DAI_18DEC = BigInt(1e18);
 module.exports.TC_IBT_PRICE_DAI_6DEC = BigInt(1e6);
 module.exports.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC = BigInt("20000000000000000000");
@@ -184,12 +188,12 @@ module.exports.prepareDataForBefore = async (accounts) => {
     let joseph = await TestJoseph.new();
 
     let tokenUsdt = await UsdtMockedToken.new(TOTAL_SUPPLY_6_DECIMALS, 6);
-    let tokenUsdc = await UsdcMockedToken.new(TOTAL_SUPPLY_18_DECIMALS, 18);
+    let tokenUsdc = await UsdcMockedToken.new(TOTAL_SUPPLY_6_DECIMALS, 6);
     let tokenDai = await DaiMockedToken.new(TOTAL_SUPPLY_18_DECIMALS, 18);
 
-    let iporConfigurationUsdt = await IporConfiguration.new(tokenUsdt.address);
-    let iporConfigurationUsdc = await IporConfiguration.new(tokenUsdc.address);
-    let iporConfigurationDai = await IporConfiguration.new(tokenDai.address);
+    let iporConfigurationUsdt = await IporConfigurationUsdt.new(tokenUsdt.address);
+    let iporConfigurationUsdc = await IporConfigurationUsdc.new(tokenUsdc.address);
+    let iporConfigurationDai = await IporConfigurationDai.new(tokenDai.address);
 
     await iporAddressesManager.addAsset(tokenUsdt.address);
     await iporAddressesManager.addAsset(tokenUsdc.address);
@@ -206,12 +210,12 @@ module.exports.prepareDataForBefore = async (accounts) => {
     for (let i = 1; i < accounts.length - 2; i++) {
         //Liquidity Pool has rights to spend money on behalf of user accounts[i]
         await tokenUsdt.approve(joseph.address, TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
-        await tokenUsdc.approve(joseph.address, TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+        await tokenUsdc.approve(joseph.address, TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
         await tokenDai.approve(joseph.address, TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
 
         //Milton has rights to spend money on behalf of user accounts[i]
         await tokenUsdt.approve(milton.address, TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
-        await tokenUsdc.approve(milton.address, TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
+        await tokenUsdc.approve(milton.address, TOTAL_SUPPLY_6_DECIMALS, {from: accounts[i]});
         await tokenDai.approve(milton.address, TOTAL_SUPPLY_18_DECIMALS, {from: accounts[i]});
     }
 

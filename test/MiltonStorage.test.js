@@ -23,7 +23,7 @@ contract('MiltonStorage', (accounts) => {
         await data.iporAddressesManager.setAddress(keccak256("MILTON"), miltonStorageAddress);
 
         //when
-        testData.miltonStorage.updateStorageWhenOpenPosition(await preprareDerivativeStructSimpleCase1(), {from: miltonStorageAddress});
+        testData.miltonStorage.updateStorageWhenOpenPosition(await preprareDerivativeStruct18DecSimpleCase1(), {from: miltonStorageAddress});
         //then
         assert(true);//no exception this line is achieved
 
@@ -32,7 +32,7 @@ contract('MiltonStorage', (accounts) => {
     it('should NOT update Milton Storage when open position, caller dont have rights to update', async () => {
         await testUtils.assertError(
             //when
-            testData.miltonStorage.updateStorageWhenOpenPosition(await preprareDerivativeStructSimpleCase1(), {from: userThree}),
+            testData.miltonStorage.updateStorageWhenOpenPosition(await preprareDerivativeStruct18DecSimpleCase1(), {from: userThree}),
             //then
             'IPOR_1'
         );
@@ -62,7 +62,7 @@ contract('MiltonStorage', (accounts) => {
 
         //when
         testData.miltonStorage.updateStorageWhenClosePosition(
-            userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, BigInt("1000000000000000000"), {from: miltonStorageAddress});
+            userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, {from: miltonStorageAddress});
         //then
         assert(true);//no exception this line is achieved
     });
@@ -91,7 +91,7 @@ contract('MiltonStorage', (accounts) => {
 
         //when
         testData.miltonStorage.updateStorageWhenClosePosition(
-            userTwo, derivativeItem, BigInt("10000000"), closePositionTimestamp, BigInt("1000000"), {from: miltonStorageAddress});
+            userTwo, derivativeItem, BigInt("10000000"), closePositionTimestamp, {from: miltonStorageAddress});
         //then
         assert(true);//no exception this line is achieved
     });
@@ -122,7 +122,7 @@ contract('MiltonStorage', (accounts) => {
         //when
         await testUtils.assertError(
             testData.miltonStorage.updateStorageWhenClosePosition(
-                userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, BigInt("1000000000000000000"), {from: userThree}),
+                userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, {from: userThree}),
             //then
             'IPOR_1'
         );
@@ -139,7 +139,7 @@ contract('MiltonStorage', (accounts) => {
             params.direction, {from: params.from});
     }
 
-    const preprareDerivativeStructSimpleCase1 = async () => {
+    const preprareDerivativeStruct18DecSimpleCase1 = async () => {
         let openingTimestamp = Math.floor(Date.now() / 1000);
         let closePositionTimestamp = openingTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
         return {
@@ -165,7 +165,8 @@ contract('MiltonStorage', (accounts) => {
                 ibtPrice: 123,
                 ibtQuantity: 123,
                 fixedInterestRate: 234
-            }
+            },
+            multiplicator: testUtils.TC_MULTIPLICATOR_18DEC
         };
     }
 });

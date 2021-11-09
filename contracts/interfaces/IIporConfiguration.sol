@@ -45,13 +45,13 @@ interface IIporConfiguration {
 
     function setMaxPositionTotalAmount(uint256 maxPositionTotalAmount) external;
 
-    function getSpreadPayFixedValue(address asset) external view returns (uint256);
+    function getSpreadPayFixedValue() external view returns (uint256);
 
-    function setSpreadPayFixedValue(address asset, uint256 spread) external;
+    function setSpreadPayFixedValue(uint256 spread) external;
 
-    function getSpreadRecFixedValue(address asset) external view returns (uint256);
+    function getSpreadRecFixedValue() external view returns (uint256);
 
-    function setSpreadRecFixedValue(address asset, uint256 spread) external;
+    function setSpreadRecFixedValue(uint256 spread) external;
 
     function getMaxCollateralizationFactorValue() external view returns (uint256);
 

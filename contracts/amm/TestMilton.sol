@@ -33,28 +33,27 @@ contract TestMilton is Milton {
 
     function test_calculatePositionValue(
         uint256 calculateTimestamp, DataTypes.IporDerivative memory derivative) external view returns (int256){
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(derivative.asset));
-        return _calculatePositionValue(calculateTimestamp, derivative, iporConfiguration.getMultiplicator());
+        return _calculatePositionValue(calculateTimestamp, derivative);
     }
 
     function setSpreadPayFixed(address asset, uint256 value) external {
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        iporConfiguration.setSpreadPayFixedValue(asset, value);
+        iporConfiguration.setSpreadPayFixedValue(value);
     }
 
     function getSpreadPayFixed(address asset) external view returns (uint256){
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        return iporConfiguration.getSpreadPayFixedValue(asset);
+        return iporConfiguration.getSpreadPayFixedValue();
     }
 
     function setSpreadRecFixed(address asset, uint256 value) external {
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        iporConfiguration.setSpreadRecFixedValue(asset, value);
+        iporConfiguration.setSpreadRecFixedValue(value);
     }
 
     function getSpreadRecFixed(address asset) external view returns (uint256){
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        return iporConfiguration.getSpreadRecFixedValue(asset);
+        return iporConfiguration.getSpreadRecFixedValue();
     }
 
 }

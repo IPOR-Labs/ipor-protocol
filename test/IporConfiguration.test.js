@@ -3,7 +3,7 @@ const {ZERO_BYTES32} = require("@openzeppelin/test-helpers/src/constants");
 const {time} = require("@openzeppelin/test-helpers");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
-const IporConfiguration = artifacts.require('IporConfiguration');
+const IporConfigurationDai = artifacts.require('IporConfigurationDai');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MockTimelockController = artifacts.require('MockTimelockController');
 const MINDELAY = time.duration.days(1);
@@ -24,7 +24,7 @@ contract('IporConfiguration', (accounts) => {
     });
 
     beforeEach(async () => {
-        iporConfigurationDAI = await IporConfiguration.new(tokenDai.address);
+        iporConfigurationDAI = await IporConfigurationDai.new(tokenDai.address);
         await iporConfigurationDAI.initialize(iporAddressesManager.address);
     });
 

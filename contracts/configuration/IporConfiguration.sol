@@ -22,7 +22,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
 
     address private _asset;
 
-    uint256 multiplicator;
+    uint256 private multiplicator;
 
     uint256 minCollateralizationFactorValue;
 
@@ -46,8 +46,8 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     uint256 maxPositionTotalAmount;
 
     //TODO: spread from configuration will be deleted, spread will be calculated in runtime
-    mapping(address => uint256) spreadPayFixedValues;
-    mapping(address => uint256) spreadRecFixedValues;
+    uint256 spreadPayFixedValue;
+    uint256 spreadRecFixedValue;
 
     IIporAddressesManager internal _addressesManager;
 
@@ -77,12 +77,9 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         minCollateralizationFactorValue = 10 * multiplicator;
         maxCollateralizationFactorValue = 50 * multiplicator;
 
-        address[] memory assets = _addressesManager.getAssets();
+        spreadPayFixedValue = AmmMath.division(multiplicator, 100);
+        spreadRecFixedValue = AmmMath.division(multiplicator, 100);
 
-        for (uint256 i = 0; i < assets.length; i++) {
-            spreadPayFixedValues[assets[i]] = AmmMath.division(multiplicator, 100);
-            spreadRecFixedValues[assets[i]] = AmmMath.division(multiplicator, 100);
-        }
     }
 
     function getIncomeTaxPercentage() external override view returns (uint256) {
@@ -151,20 +148,20 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
     }
 
-    function getSpreadPayFixedValue(address asset) external override view returns (uint256) {
-        return spreadPayFixedValues[asset];
+    function getSpreadPayFixedValue() external override view returns (uint256) {
+        return spreadPayFixedValue;
     }
 
-    function setSpreadPayFixedValue(address asset, uint256 spread) external override {
-        spreadPayFixedValues[asset] = spread;
+    function setSpreadPayFixedValue(uint256 spread) external override {
+        spreadPayFixedValue = spread;
     }
 
-    function getSpreadRecFixedValue(address asset) external override view returns (uint256) {
-        return spreadRecFixedValues[asset];
+    function getSpreadRecFixedValue() external override view returns (uint256) {
+        return spreadRecFixedValue;
     }
 
-    function setSpreadRecFixedValue(address asset, uint256 spread) external override {
-        spreadRecFixedValues[asset] = spread;
+    function setSpreadRecFixedValue(uint256 spread) external override {
+        spreadRecFixedValue= spread;
     }
 
     function getMaxCollateralizationFactorValue() external override view returns (uint256) {
@@ -185,7 +182,20 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
     }
 
-    function getMultiplicator() external view override returns(uint256) {
+    function getMultiplicator() external view override returns (uint256) {
         return multiplicator;
     }
+}
+
+//TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
+contract IporConfigurationUsdt is IporConfiguration {
+    constructor(address asset) IporConfiguration(asset) {}
+}
+
+contract IporConfigurationUsdc is IporConfiguration {
+    constructor(address asset) IporConfiguration(asset) {}
+}
+
+contract IporConfigurationDai is IporConfiguration {
+    constructor(address asset) IporConfiguration(asset) {}
 }

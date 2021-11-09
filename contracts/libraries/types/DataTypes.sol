@@ -123,7 +123,7 @@ library DataTypes {
     }
 
     struct MiltonDerivatives {
-        //TODO: dodac test na 2 pozycje w jednym bloku - czy sie nie naklada
+
         uint256 lastDerivativeId;
 
         mapping(uint256 => DataTypes.MiltonDerivativeItem) items;
@@ -178,6 +178,8 @@ library DataTypes {
         uint256 endingTimestamp;
 
         IporDerivativeIndicator indicator;
+
+        uint256 multiplicator;
 
     }
 

@@ -24,7 +24,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}<br/>
+                                    {soap.soapPf / 1000000}<br/>
                                     <small>{soap.soapPf}</small>
                                 </div>
                             )}
@@ -38,7 +38,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}<br/>
+                                    {soap.soapPf / 1000000}<br/>
                                     <small>{soap.soapPf}</small>
                                 </div>
                             )}
@@ -55,7 +55,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}<br/>
+                                    {soap.soapPf / 1000000}<br/>
                                     <small>{soap.soapPf}</small>
                                 </div>
                             )}
@@ -69,7 +69,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}<br/>
+                                    {soap.soapPf / 1000000}<br/>
                                     <small>{soap.soapPf}</small>
                                 </div>
                             )}
@@ -120,7 +120,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}<br/>
+                                    {soap.soapRf / 1000000}<br/>
                                     <small>{soap.soapRf}</small>
                                 </div>
                             )}
@@ -134,7 +134,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}<br/>
+                                    {soap.soapRf / 1000000}<br/>
                                     <small>{soap.soapRf}</small>
                                 </div>
                             )}
@@ -151,7 +151,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}<br/>
+                                    {soap.soapRf / 1000000}<br/>
                                     <small>{soap.soapRf}</small>
                                 </div>
                             )}
@@ -165,7 +165,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}<br/>
+                                    {soap.soapRf / 1000000}<br/>
                                     <small>{soap.soapRf}</small>
                                 </div>
                             )}
@@ -216,7 +216,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000000000000000}<br/>
+                                    {soap.soap / 1000000}<br/>
                                     <small>{soap.soap}</small>
                                 </div>
                             )}
@@ -230,7 +230,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000000000000000}<br/>
+                                    {soap.soap / 1000000}<br/>
                                     <small>{soap.soap}</small>
                                 </div>
                             )}
@@ -248,7 +248,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000000000000000}<br/>
+                                    {soap.soap / 1000000}<br/>
                                     <small>{soap.soap}</small>
                                 </div>
                             )}
@@ -262,7 +262,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000000000000000}<br/>
+                                    {soap.soap / 1000000}<br/>
                                     <small>{soap.soap}</small>
                                 </div>
                             )}

@@ -131,7 +131,8 @@ contract TestData {
             collateral * collateralizationFactor,
             block.timestamp,
             block.timestamp + 60 * 60 * 24 * 28,
-            indicator
+            indicator,
+            Constants.D18
         );
 
         return derivative;
@@ -170,7 +171,8 @@ contract TestData {
             collateral * collateralizationFactor,
             block.timestamp,
             block.timestamp + 60 * 60 * 24 * 28,
-            indicator
+            indicator,
+            Constants.D6
         );
 
         return derivative;

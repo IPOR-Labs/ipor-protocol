@@ -103,17 +103,16 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function calculatePositionValue(DataTypes.IporDerivative memory derivative, uint256 multiplicator) external override view returns (int256) {
-        return _calculatePositionValue(block.timestamp, derivative, multiplicator);
+    function calculatePositionValue(DataTypes.IporDerivative memory derivative) external override view returns (int256) {
+        return _calculatePositionValue(block.timestamp, derivative);
     }
 
-    function _calculatePositionValue(uint256 timestamp, DataTypes.IporDerivative memory derivative, uint256 multiplicator) internal view returns (int256) {
+    function _calculatePositionValue(uint256 timestamp, DataTypes.IporDerivative memory derivative) internal view returns (int256) {
 
         DataTypes.IporDerivativeInterest memory derivativeInterest =
         derivative.calculateInterest(
             timestamp,
-            IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivative.asset, timestamp),
-            multiplicator
+            IWarren(_addressesManager.getWarren()).calculateAccruedIbtPrice(derivative.asset, timestamp)
         );
 
         if (derivativeInterest.positionValue > 0) {
@@ -184,7 +183,9 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         require(IMiltonLPUtilizationStrategy(
-            _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(asset, derivativeAmount.deposit, derivativeAmount.openingFee, iporConfiguration.getMultiplicator()) <= iporConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
+            _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(
+            asset, derivativeAmount.deposit, derivativeAmount.openingFee,
+                iporConfiguration.getMultiplicator()) <= iporConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, openTimestamp);
@@ -208,7 +209,8 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             derivativeAmount.notional,
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
-            _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional, iporConfiguration.getMultiplicator())
+            _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional, iporConfiguration.getMultiplicator()),
+            iporConfiguration.getMultiplicator()
         );
 
         miltonStorage.updateStorageWhenOpenPosition(iporDerivative);
@@ -268,14 +270,13 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
 
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset));
 
-        uint256 multiplicator = iporConfiguration.getMultiplicator();
         uint256 incomeTaxPercentage = iporConfiguration.getIncomeTaxPercentage();
 
-        int256 positionValue = _calculatePositionValue(closeTimestamp, derivativeItem.item, multiplicator);
+        int256 positionValue = _calculatePositionValue(closeTimestamp, derivativeItem.item);
 
-        miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, positionValue, closeTimestamp, multiplicator);
+        miltonStorage.updateStorageWhenClosePosition(msg.sender, derivativeItem, positionValue, closeTimestamp);
 
-        _transferTokensBasedOnpositionValue(derivativeItem, positionValue, closeTimestamp, incomeTaxPercentage, multiplicator);
+        _transferTokensBasedOnpositionValue(derivativeItem, positionValue, closeTimestamp, incomeTaxPercentage);
 
         emit ClosePosition(
             derivativeId,
@@ -288,7 +289,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 incomeTaxPercentage, uint256 multiplicator) internal {
+        uint256 incomeTaxPercentage) internal {
 
         uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
 
@@ -304,7 +305,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             //Trader earn, Milton loose
             _transferDerivativeAmount(
                 derivativeItem, derivativeItem.item.collateral + abspositionValue
-                - AmmMath.calculateIncomeTax(abspositionValue, incomeTaxPercentage, multiplicator));
+                - AmmMath.calculateIncomeTax(abspositionValue, incomeTaxPercentage, derivativeItem.item.multiplicator));
         } else {
             //Milton earn, Trader looseMiltonStorage
             _transferDerivativeAmount(derivativeItem, derivativeItem.item.collateral - abspositionValue);

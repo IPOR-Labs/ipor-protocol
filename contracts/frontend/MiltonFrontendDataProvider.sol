@@ -30,7 +30,6 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMilton milton = IMilton(addressesManager.getMilton());
         for (uint256 i = 0; i < userDerivativesIds.length; i++) {
             DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(userDerivativesIds[i]);
-            IIporConfiguration iporConfiguration = IIporConfiguration(addressesManager.getIporConfiguration(derivativeItem.item.asset));
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,
                 derivativeItem.item.asset,
@@ -39,7 +38,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 derivativeItem.item.collateralizationFactor,
                 derivativeItem.item.direction,
                 derivativeItem.item.indicator.fixedInterestRate,
-                milton.calculatePositionValue(derivativeItem.item, iporConfiguration.getMultiplicator()),
+                milton.calculatePositionValue(derivativeItem.item),
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.endingTimestamp,
                 derivativeItem.item.fee.liquidationDepositAmount

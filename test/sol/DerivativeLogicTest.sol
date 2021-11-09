@@ -159,7 +159,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp, 100 * Constants.D18, Constants.D18);
+            derivative.startingTimestamp, 100 * Constants.D18);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D18), 98703 * Constants.D18, "Wrong interest fixed");
@@ -175,7 +175,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp, 100 * Constants.D6, Constants.D6);
+            derivative.startingTimestamp, 100 * Constants.D6);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D6), 98703 * Constants.D6, "Wrong interest fixed");
@@ -193,7 +193,7 @@ contract DerivativeLogicTest is TestData {
         uint256 ibtPriceSecond = 125 * Constants.D18;
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp, ibtPriceSecond, Constants.D18);
+            derivative.startingTimestamp, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D18), 98703 * Constants.D18, "Wrong interest fixed");
@@ -211,7 +211,7 @@ contract DerivativeLogicTest is TestData {
         uint256 ibtPriceSecond = 125 * Constants.D6;
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp, ibtPriceSecond, Constants.D6);
+            derivative.startingTimestamp, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D6), 98703 * Constants.D6, "Wrong interest fixed");
@@ -230,7 +230,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond, Constants.D18);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D18), 98973419178082191780822, "Wrong interest fixed");
@@ -249,7 +249,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond, Constants.D6);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D6), 98973419178, "Wrong interest fixed");
@@ -268,7 +268,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond, Constants.D18);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D18), 98973419178082191780822, "Wrong interest fixed");
@@ -287,7 +287,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond, Constants.D6);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D6), 98973419178, "Wrong interest fixed");
@@ -309,7 +309,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond, Constants.D18);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D18), 123446354794520547945205, "Wrong interest fixed");
@@ -331,7 +331,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond, Constants.D6);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D6), 123446354795, "Wrong interest fixed");
@@ -351,7 +351,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * 4, ibtPriceSecond, Constants.D18);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * 4, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D18), 99005869479452054794521, "Wrong interest fixed");
@@ -370,7 +370,7 @@ contract DerivativeLogicTest is TestData {
 
         //when
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative.calculateInterest(
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * 4, ibtPriceSecond, Constants.D6);
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * 4, ibtPriceSecond);
 
         //then
         Assert.equal(AmmMath.division(derivativeInterest.quasiInterestFixed, Constants.YEAR_IN_SECONDS * Constants.D6), 99005869479, "Wrong interest fixed");

@@ -18,12 +18,12 @@ export default (indexes) => (
                 <tr key={index.asset}>
                     <td>{index.asset}</td>
                     <td>
-                        {index.indexValue / 1000000000000000000}
+                        {index.asset === "DAI" ? index.indexValue / 1000000000000000000 : index.indexValue / 1000000}
                         <br/>
                         <small>{index.indexValue}</small>
                     </td>
                     <td>
-                        {index.ibtPrice  / 1000000000000000000}
+                        {index.asset === "DAI" ? index.ibtPrice  / 1000000000000000000 : index.ibtPrice  / 1000000}
                         <br/>
                         <small>{index.ibtPrice}</small>
                     </td>
