@@ -19,8 +19,8 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         return token.balanceOf(ADDRESSES_MANAGER.getMilton());
     }
 
-    function getMyIporTokenBalance(address asset) external override view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getIporToken(asset));
+    function getMyIpTokenBalance(address asset) external override view returns (uint256) {
+        IERC20 token = IERC20(ADDRESSES_MANAGER.getIpToken(asset));
         return token.balanceOf(msg.sender);
     }
 

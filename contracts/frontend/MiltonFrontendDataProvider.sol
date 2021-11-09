@@ -30,7 +30,6 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMilton milton = IMilton(addressesManager.getMilton());
         for (uint256 i = 0; i < userDerivativesIds.length; i++) {
             DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(userDerivativesIds[i]);
-
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,
                 derivativeItem.item.asset,
@@ -42,32 +41,36 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 milton.calculatePositionValue(derivativeItem.item),
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.endingTimestamp,
-                derivativeItem.item.fee.liquidationDepositAmount
+                derivativeItem.item.fee.liquidationDepositAmount,
+                derivativeItem.item.multiplicator
             );
         }
 
         return iporDerivatives;
     }
 
-    function getConfiguration() external override view returns (IporConfigurationFront memory iporConfigurationFront) {
-        IIporConfiguration iporConfiguration = IIporConfiguration(addressesManager.getIporConfiguration());
+    function getConfiguration() external override view returns (IporConfigurationFront[] memory) {
         address[] memory assets = addressesManager.getAssets();
+        IporConfigurationFront[] memory iporConfigurationsFront = new IporConfigurationFront[](assets.length);
+
         IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(addressesManager.getMiltonSpreadStrategy());
-        IporSpreadFront[] memory spreads = new IporSpreadFront[](assets.length);
 
         for (uint256 i = 0; i < assets.length; i++) {
             (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = spreadStrategy.calculateSpread(assets[i], block.timestamp);
-            spreads[i] = IporSpreadFront(assets[i], spreadPayFixedValue, spreadRecFixedValue);
-        }
+            IIporConfiguration iporConfiguration = IIporConfiguration(addressesManager.getIporConfiguration(assets[i]));
 
-        return IporConfigurationFront(
-            iporConfiguration.getMinCollateralizationFactorValue(),
-            iporConfiguration.getMaxCollateralizationFactorValue(),
-            iporConfiguration.getOpeningFeePercentage(),
-            iporConfiguration.getIporPublicationFeeAmount(),
-            iporConfiguration.getLiquidationDepositAmount(),
-            iporConfiguration.getIncomeTaxPercentage(),
-            spreads
-        );
+            iporConfigurationsFront[i] = IporConfigurationFront(
+                assets[i],
+                iporConfiguration.getMinCollateralizationFactorValue(),
+                iporConfiguration.getMaxCollateralizationFactorValue(),
+                iporConfiguration.getOpeningFeePercentage(),
+                iporConfiguration.getIporPublicationFeeAmount(),
+                iporConfiguration.getLiquidationDepositAmount(),
+                iporConfiguration.getIncomeTaxPercentage(),
+                spreadPayFixedValue,
+                spreadRecFixedValue
+            );
+        }
+        return iporConfigurationsFront;
     }
 }

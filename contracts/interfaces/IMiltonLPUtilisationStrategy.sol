@@ -6,5 +6,5 @@ import "../libraries/types/DataTypes.sol";
 interface IMiltonLPUtilizationStrategy {
 
     //@notice deposit and openingFee is for this particular derivative
-    function calculateUtilization(address asset, uint256 deposit, uint256 openingFee) external view returns (uint256);
+    function calculateUtilization(address asset, uint256 deposit, uint256 openingFee, uint256 multiplicator) external view returns (uint256);
 }

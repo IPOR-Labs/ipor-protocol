@@ -19,46 +19,48 @@ interface IIporConfiguration {
 
     function getIncomeTaxPercentage() external view returns (uint256);
 
-    function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external;
+    function setIncomeTaxPercentage(uint256 incomeTaxPercentage) external;
 
     function getLiquidationDepositAmount() external view returns (uint256);
 
-    function setLiquidationDepositAmount(uint256 _liquidationDepositAmount) external;
+    function setLiquidationDepositAmount(uint256 liquidationDepositAmount) external;
 
     function getOpeningFeePercentage() external view returns (uint256);
 
-    function setOpeningFeePercentage(uint256 _openingFeePercentage) external;
+    function setOpeningFeePercentage(uint256 openingFeePercentage) external;
 
     function getOpeningFeeForTreasuryPercentage() external view returns (uint256);
 
-    function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external;
+    function setOpeningFeeForTreasuryPercentage(uint256 openingFeeForTreasuryPercentage) external;
 
     function getIporPublicationFeeAmount() external view returns (uint256);
 
-    function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount) external;
+    function setIporPublicationFeeAmount(uint256 iporPublicationFeeAmount) external;
 
     function getLiquidityPoolMaxUtilizationPercentage() external view returns (uint256);
 
-    function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external;
+    function setLiquidityPoolMaxUtilizationPercentage(uint256 liquidityPoolMaxUtilizationPercentage) external;
 
     function getMaxPositionTotalAmount() external view returns (uint256);
 
-    function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external;
+    function setMaxPositionTotalAmount(uint256 maxPositionTotalAmount) external;
 
-    function getSpreadPayFixedValue(address asset) external view returns (uint256);
+    function getSpreadPayFixedValue() external view returns (uint256);
 
-    function setSpreadPayFixedValue(address asset, uint256 _spread) external;
+    function setSpreadPayFixedValue(uint256 spread) external;
 
-    function getSpreadRecFixedValue(address asset) external view returns (uint256);
+    function getSpreadRecFixedValue() external view returns (uint256);
 
-    function setSpreadRecFixedValue(address asset, uint256 _spread) external;
+    function setSpreadRecFixedValue(uint256 spread) external;
 
     function getMaxCollateralizationFactorValue() external view returns (uint256);
 
-    function setMaxCollateralizationFactorValue(uint256 _maxCollateralizationFactorValue) external;
+    function setMaxCollateralizationFactorValue(uint256 maxCollateralizationFactorValue) external;
 
     function getMinCollateralizationFactorValue() external view returns (uint256);
 
-    function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external;
+    function setMinCollateralizationFactorValue(uint256 minCollateralizationFactorValue) external;
+
+    function getMultiplicator() external view returns(uint256);
 
 }

@@ -4,23 +4,25 @@ pragma solidity >=0.8.4 <0.9.0;
 import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-//TODO: clarify if better is to have external libraries in local folder - pros for local folder - can execute Mythril and Karl static analisys
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
 import '../amm/MiltonStorage.sol';
-import '../amm/MiltonEvents.sol';
+import '../amm/IMiltonEvents.sol';
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporConfiguration.sol";
 
-//TODO: Ownable here - consider add admin address to MiltonAddressesManager and here use custom modifier onlyOwner which checks if sender is an admin
 //TODO: consider using AccessControll instead Ownable - higher flexibility
 contract IporConfiguration is Ownable, IIporConfiguration {
+
+    address private _asset;
+
+    uint256 private multiplicator;
 
     uint256 minCollateralizationFactorValue;
 
@@ -43,42 +45,41 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     //@notice max total amount used when opening position
     uint256 maxPositionTotalAmount;
 
-    uint256 coolOffPeriodInSec;
-
     //TODO: spread from configuration will be deleted, spread will be calculated in runtime
-    mapping(address => uint256) spreadPayFixedValues;
-    mapping(address => uint256) spreadRecFixedValues;
+    uint256 spreadPayFixedValue;
+    uint256 spreadRecFixedValue;
 
     IIporAddressesManager internal _addressesManager;
+
+    constructor(address asset) {
+        _asset = asset;
+        multiplicator = 10 ** ERC20(asset).decimals();
+    }
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        incomeTaxPercentage = 1e17;
+        incomeTaxPercentage = AmmMath.division(multiplicator, 10);
+
+        require(multiplicator != 0);
 
         //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
-        liquidationDepositAmount = 20 * Constants.MD;
+        liquidationDepositAmount = 20 * multiplicator;
 
-        //@notice 
-        openingFeePercentage = 1e16;
+        //@notice
+        openingFeePercentage = AmmMath.division(multiplicator, 100);
         openingFeeForTreasuryPercentage = 0;
-        iporPublicationFeeAmount = 10 * Constants.MD;
-        liquidityPoolMaxUtilizationPercentage = 8 * 1e17;
-        maxPositionTotalAmount = 100000 * Constants.MD;
+        iporPublicationFeeAmount = 10 * multiplicator;
+        liquidityPoolMaxUtilizationPercentage = 8 * AmmMath.division(multiplicator, 10);
+        maxPositionTotalAmount = 100000 * multiplicator;
 
-        minCollateralizationFactorValue = 10 * Constants.MD;
-        maxCollateralizationFactorValue = 50 * Constants.MD;
+        minCollateralizationFactorValue = 10 * multiplicator;
+        maxCollateralizationFactorValue = 50 * multiplicator;
 
-        //@notice 14 days
-        coolOffPeriodInSec = 1209600;
+        spreadPayFixedValue = AmmMath.division(multiplicator, 100);
+        spreadRecFixedValue = AmmMath.division(multiplicator, 100);
 
-        address[] memory assets = _addressesManager.getAssets();
-
-        for (uint256 i = 0; i < assets.length; i++) {
-            spreadPayFixedValues[assets[i]] = 1e16;
-            spreadRecFixedValues[assets[i]] = 1e16;
-        }
     }
 
     function getIncomeTaxPercentage() external override view returns (uint256) {
@@ -86,7 +87,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyOwner {
-        require(_incomeTaxPercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_incomeTaxPercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         incomeTaxPercentage = _incomeTaxPercentage;
         emit IncomeTaxPercentageSet(_incomeTaxPercentage);
     }
@@ -96,7 +97,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external override onlyOwner {
-        require(_openingFeeForTreasuryPercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeeForTreasuryPercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeeForTreasuryPercentage = _openingFeeForTreasuryPercentage;
         emit OpeningFeeForTreasuryPercentageSet(_openingFeeForTreasuryPercentage);
     }
@@ -115,7 +116,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyOwner {
-        require(_openingFeePercentage <= Constants.MD, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeePercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeePercentage = _openingFeePercentage;
         emit OpeningFeePercentageSet(_openingFeePercentage);
     }
@@ -147,20 +148,20 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
     }
 
-    function getSpreadPayFixedValue(address asset) external override view returns (uint256) {
-        return spreadPayFixedValues[asset];
+    function getSpreadPayFixedValue() external override view returns (uint256) {
+        return spreadPayFixedValue;
     }
 
-    function setSpreadPayFixedValue(address asset, uint256 _spread) external override {
-        spreadPayFixedValues[asset] = _spread;
+    function setSpreadPayFixedValue(uint256 spread) external override {
+        spreadPayFixedValue = spread;
     }
 
-    function getSpreadRecFixedValue(address asset) external override view returns (uint256) {
-        return spreadRecFixedValues[asset];
+    function getSpreadRecFixedValue() external override view returns (uint256) {
+        return spreadRecFixedValue;
     }
 
-    function setSpreadRecFixedValue(address asset, uint256 _spread) external override {
-        spreadRecFixedValues[asset] = _spread;
+    function setSpreadRecFixedValue(uint256 spread) external override {
+        spreadRecFixedValue= spread;
     }
 
     function getMaxCollateralizationFactorValue() external override view returns (uint256) {
@@ -180,4 +181,21 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         minCollateralizationFactorValue = _minCollateralizationFactorValue;
         emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
     }
+
+    function getMultiplicator() external view override returns (uint256) {
+        return multiplicator;
+    }
+}
+
+//TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
+contract IporConfigurationUsdt is IporConfiguration {
+    constructor(address asset) IporConfiguration(asset) {}
+}
+
+contract IporConfigurationUsdc is IporConfiguration {
+    constructor(address asset) IporConfiguration(asset) {}
+}
+
+contract IporConfigurationDai is IporConfiguration {
+    constructor(address asset) IporConfiguration(asset) {}
 }

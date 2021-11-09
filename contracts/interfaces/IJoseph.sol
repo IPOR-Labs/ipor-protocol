@@ -5,7 +5,7 @@ interface IJoseph {
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external;
 
-    function redeem(address iporTokenAddress, uint256 iporTokenVolume) external;
+    function redeem(address ipTokenAddress, uint256 ipTokenVolume) external;
 
     function calculateExchangeRate(address asset) external view returns (uint256);
 

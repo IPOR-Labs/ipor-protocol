@@ -7,6 +7,10 @@ interface IMilton {
 
     function authorizeJoseph(address asset) external;
 
+    function pause() external;
+
+    function unpause() external;
+
     function openPosition(address asset, uint256 totalAmount, uint256 maximumSlippage,
         uint256 collateralizationFactor, uint8 direction) external returns (uint256);
 

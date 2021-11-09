@@ -2,8 +2,6 @@ import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
 import SpreadComponent from "./SpreadComponent";
 import SoapComponent from "./SoapComponent";
-import DaiMockedToken from "./contracts/DaiMockedToken.json";
-import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
 
 const {ContractData} = newContextComponents;
 
@@ -36,7 +34,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.derivatives / 1000000000000000000}<br/>
+                                {value.derivatives / 1000000}<br/>
                                 <small>{value.derivatives}</small>
                             </div>
                         )}
@@ -51,7 +49,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.derivatives / 1000000000000000000}<br/>
+                                {value.derivatives / 1000000}<br/>
                                 <small>{value.derivatives}</small>
                             </div>
                         )}
@@ -84,7 +82,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.liquidityPool / 1000000000000000000}<br/>
+                                {value.liquidityPool / 1000000}<br/>
                                 <small>{value.liquidityPool}</small>
                             </div>
                         )}
@@ -99,7 +97,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.liquidityPool / 1000000000000000000}<br/>
+                                {value.liquidityPool / 1000000}<br/>
                                 <small>{value.liquidityPool}</small>
                             </div>
                         )}
@@ -132,7 +130,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.openingFee / 1000000000000000000}<br/>
+                                {value.openingFee / 1000000}<br/>
                                 <small>{value.openingFee}</small>
                             </div>
                         )}
@@ -147,7 +145,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.openingFee / 1000000000000000000}<br/>
+                                {value.openingFee / 1000000}<br/>
                                 <small>{value.openingFee}</small>
                             </div>
                         )}
@@ -180,7 +178,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.liquidationDeposit / 1000000000000000000}<br/>
+                                {value.liquidationDeposit / 1000000}<br/>
                                 <small>{value.liquidationDeposit}</small>
                             </div>
                         )}
@@ -195,7 +193,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.liquidationDeposit / 1000000000000000000}<br/>
+                                {value.liquidationDeposit / 1000000}<br/>
                                 <small>{value.liquidationDeposit}</small>
                             </div>
                         )}
@@ -228,7 +226,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.iporPublicationFee / 1000000000000000000}<br/>
+                                {value.iporPublicationFee / 1000000}<br/>
                                 <small>{value.iporPublicationFee}</small>
                             </div>
                         )}
@@ -243,7 +241,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.iporPublicationFee / 1000000000000000000}<br/>
+                                {value.iporPublicationFee / 1000000}<br/>
                                 <small>{value.iporPublicationFee}</small>
                             </div>
                         )}
@@ -276,7 +274,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.treasury / 1000000000000000000}<br/>
+                                {value.treasury / 1000000}<br/>
                                 <small>{value.treasury}</small>
                             </div>
                         )}
@@ -291,7 +289,7 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.treasury / 1000000000000000000}<br/>
+                                {value.treasury / 1000000}<br/>
                                 <small>{value.treasury}</small>
                             </div>
                         )}

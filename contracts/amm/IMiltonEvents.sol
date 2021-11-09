@@ -3,7 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 
-contract MiltonEvents {
+interface IMiltonEvents {
 
     // @notice Open derivative position
     event OpenPosition(

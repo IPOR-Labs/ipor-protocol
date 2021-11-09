@@ -12,3 +12,10 @@
 .ipor-navbar {
   margin-left: 15px!important;
 }
+
+.table {
+    border: 1px solid black;
+}
+.table tr {
+    border: 1px solid black;
+}

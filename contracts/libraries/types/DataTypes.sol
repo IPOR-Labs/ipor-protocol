@@ -37,7 +37,7 @@ library DataTypes {
         uint256 rebalanceTimestamp;
         //leg
         DataTypes.DerivativeDirection direction;
-        //O_0, value without division by Constants.MD_YEAR_IN_SECONDS
+        //O_0, value without division by multiplicator * Constants.YEAR_IN_SECONDS
         uint256 quasiHypotheticalInterestCumulative;
         //N_0
         uint256 totalNotional;
@@ -123,7 +123,7 @@ library DataTypes {
     }
 
     struct MiltonDerivatives {
-        //TODO: dodac test na 2 pozycje w jednym bloku - czy sie nie naklada
+
         uint256 lastDerivativeId;
 
         mapping(uint256 => DataTypes.MiltonDerivativeItem) items;
@@ -178,6 +178,8 @@ library DataTypes {
         uint256 endingTimestamp;
 
         IporDerivativeIndicator indicator;
+
+        uint256 multiplicator;
 
     }
 

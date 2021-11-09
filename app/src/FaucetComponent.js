@@ -153,7 +153,9 @@ export default ({drizzle, drizzleState}) => (
                 <br/>
                 <label>Max allowed value 1 000 000 USD</label>
                 <br/>
-                <small>1000000000000000000000000</small>
+                <small>6 decimals: 1000000</small>
+                <br/>
+                <small>18 decimals: 1000000000000000000000000</small>
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonFaucet"

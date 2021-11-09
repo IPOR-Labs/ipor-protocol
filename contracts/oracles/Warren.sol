@@ -3,6 +3,7 @@ pragma solidity >=0.8.4 <0.9.0;
 
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import {Errors} from '../Errors.sol';
 import "../interfaces/IWarren.sol";
 import {DataTypes} from '../libraries/types/DataTypes.sol';
@@ -10,21 +11,23 @@ import {Constants} from '../libraries/Constants.sol';
 import "../libraries/IporLogic.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../interfaces/IWarrenStorage.sol";
+import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 
 /**
  * @title IPOR Index Oracle Contract
  *
  * @author IPOR Labs
  */
-contract Warren is Ownable, IWarren {
+contract Warren is Ownable, Pausable, IWarren {
 
     using IporLogic for DataTypes.IPOR;
 
-    IWarrenStorage warrenStorage;
+    IIporAddressesManager internal _addressesManager;
 
     modifier onlyUpdater() {
         bool allowed = false;
-        address[] memory updaters = warrenStorage.getUpdaters();
+        address[] memory updaters = IWarrenStorage(_addressesManager.getWarrenStorage()).getUpdaters();
         for (uint256 i = 0; i < updaters.length; i++) {
             if (updaters[i] == msg.sender) {
                 allowed = true;
@@ -35,34 +38,42 @@ contract Warren is Ownable, IWarren {
         _;
     }
 
-    constructor(address warrenStorageAddr) {
-        warrenStorage = IWarrenStorage(warrenStorageAddr);
+    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+        _addressesManager = addressesManager;
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     function getIndex(address asset) external view override
     returns (uint256 indexValue, uint256 ibtPrice, uint256 blockTimestamp) {
-        DataTypes.IPOR memory _iporIndex = warrenStorage.getIndex(asset);
+        DataTypes.IPOR memory iporIndex = IWarrenStorage(_addressesManager.getWarrenStorage()).getIndex(asset);
         return (
-        indexValue = _iporIndex.indexValue,
-        ibtPrice = AmmMath.division(_iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
-        blockTimestamp = _iporIndex.blockTimestamp
+        indexValue = iporIndex.indexValue,
+        ibtPrice = AmmMath.division(iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
+        blockTimestamp = iporIndex.blockTimestamp
         );
     }
 
-    function updateIndex(address _asset, uint256 _indexValue) external override {
+    function updateIndex(address asset, uint256 indexValue) external override onlyUpdater {
         uint256[] memory indexes = new uint256[](1);
-        indexes[0] = _indexValue;
+        indexes[0] = indexValue;
         address[] memory assets = new address[](1);
-        assets[0] = _asset;
-        warrenStorage.updateIndexes(assets, indexes, block.timestamp);
+        assets[0] = asset;
+        IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateIndexes(address[] memory _assets, uint256[] memory _indexValues) external override {
-        warrenStorage.updateIndexes(_assets, _indexValues, block.timestamp);
+    function updateIndexes(address[] memory assets, uint256[] memory indexValues) external override onlyUpdater {
+        IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexValues, block.timestamp);
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp) external view override returns (uint256) {
-        return AmmMath.division(warrenStorage.getIndex(asset)
+        return AmmMath.division(IWarrenStorage(_addressesManager.getWarrenStorage()).getIndex(asset)
         .accrueQuasiIbtPrice(calculateTimestamp), Constants.YEAR_IN_SECONDS);
     }
 

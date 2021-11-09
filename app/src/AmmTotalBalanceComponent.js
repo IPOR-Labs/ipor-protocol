@@ -195,7 +195,9 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAddressesManager"
                         method="getMilton"
                         render={(value) => (
-                            <div>Milton: <strong>{value}</strong></div>
+                            <div>
+                                Milton: <strong>{value}</strong>
+                            </div>
                         )}
                     />
                     <ContractData
@@ -204,7 +206,9 @@ export default ({drizzle, drizzleState}) => (
                         contract="IporAddressesManager"
                         method="getJoseph"
                         render={(value) => (
-                            <div>Joseph: <strong>{value}</strong></div>
+                            <div>
+                                Joseph: <strong>{value}</strong>
+                            </div>
                         )}
                     />
                     <ContractForm
@@ -333,7 +337,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="IporAddressesManager"
-                        method="getIporToken"
+                        method="getIpToken"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                     />
                 </th>
@@ -344,7 +348,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="IporAddressesManager"
-                        method="getIporToken"
+                        method="getIpToken"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                     />
                 </th>
@@ -355,19 +359,19 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="IporAddressesManager"
-                        method="getIporToken"
+                        method="getIpToken"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                     />
                 </th>
             </tr>
             <tr>
-                <td><strong>My IPOR Token Balance</strong></td>
+                <td><strong>My ipToken Balance</strong></td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
-                        method="getMyIporTokenBalance"
+                        method="getMyIpTokenBalance"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -382,7 +386,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
-                        method="getMyIporTokenBalance"
+                        method="getMyIpTokenBalance"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -397,7 +401,7 @@ export default ({drizzle, drizzleState}) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
-                        method="getMyIporTokenBalance"
+                        method="getMyIpTokenBalance"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>

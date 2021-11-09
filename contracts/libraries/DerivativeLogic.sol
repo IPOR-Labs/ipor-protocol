@@ -8,12 +8,12 @@ import {Errors} from '../Errors.sol';
 
 library DerivativeLogic {
 
-    //@notice for final value divide by Constants.MD_YEAR_IN_SECONDS
-    function calculateQuasiInterestFixed(uint256 mdNotionalAmount, uint256 mdDerivativeFixedInterestRate, uint256 derivativePeriodInSeconds) public pure returns (uint256) {
-        return mdNotionalAmount * Constants.MD_YEAR_IN_SECONDS + mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds;
+    //@notice for final value divide by multiplicator* Constants.YEAR_IN_SECONDS
+    function calculateQuasiInterestFixed(uint256 mdNotionalAmount, uint256 mdDerivativeFixedInterestRate, uint256 derivativePeriodInSeconds, uint256 multiplicator) public pure returns (uint256) {
+        return mdNotionalAmount * multiplicator * Constants.YEAR_IN_SECONDS + mdNotionalAmount * mdDerivativeFixedInterestRate * derivativePeriodInSeconds;
     }
 
-    //@notice for final value divide by Constants.MD_YEAR_IN_SECONDS
+    //@notice for final value divide by multiplicator * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFloating(uint256 mdIbtQuantity, uint256 mdIbtCurrentPrice) public pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
         return mdIbtQuantity * mdIbtCurrentPrice * Constants.YEAR_IN_SECONDS;
@@ -36,11 +36,11 @@ library DerivativeLogic {
             calculatedPeriodInSeconds = closingTimestamp - derivative.startingTimestamp;
         }
         //TODO: use SafeCast from openzeppelin
-        uint256 quasiIFixed = calculateQuasiInterestFixed(derivative.notionalAmount, derivative.indicator.fixedInterestRate, calculatedPeriodInSeconds);
+        uint256 quasiIFixed = calculateQuasiInterestFixed(derivative.notionalAmount, derivative.indicator.fixedInterestRate, calculatedPeriodInSeconds, derivative.multiplicator);
         uint256 quasiIFloating = calculateQuasiInterestFloating(derivative.indicator.ibtQuantity, mdIbtPrice);
 
         int256 positionValue = AmmMath.divisionInt(uint8(derivative.direction) == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
-            ? int256(quasiIFloating) - int256(quasiIFixed) : int256(quasiIFixed) - int256(quasiIFloating), int256(Constants.MD_YEAR_IN_SECONDS));
+            ? int256(quasiIFloating) - int256(quasiIFixed) : int256(quasiIFixed) - int256(quasiIFloating), int256(derivative.multiplicator * Constants.YEAR_IN_SECONDS));
 
         return DataTypes.IporDerivativeInterest(quasiIFixed, quasiIFloating, positionValue);
     }

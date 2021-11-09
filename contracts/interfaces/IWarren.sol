@@ -5,6 +5,10 @@ import {DataTypes} from '../libraries/types/DataTypes.sol';
 
 interface IWarren {
 
+    function pause() external;
+
+    function unpause() external;
+
     function getIndex(address asset) external view returns (uint256 value, uint256 ibtPrice, uint256 date);
 
     function updateIndex(address asset, uint256 indexValue) external;
