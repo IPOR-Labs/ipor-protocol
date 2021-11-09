@@ -142,20 +142,24 @@
                         <!-- INFO: wildcards not working here :( -->
                         <argument>${contracts.sources}/Errors.sol</argument>
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
-                        <argument>${contracts.sources}/amm/IporConfiguration.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonLPUtilizationStrategyCollateral.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonSpreadStrategy.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/amm/TestMilton.sol</argument>
                         <argument>${contracts.sources}/configuration/IporAddressesManager.sol</argument>
+                        <argument>${contracts.sources}/configuration/IporConfigurationUsdt.sol</argument>
+                        <argument>${contracts.sources}/configuration/IporConfigurationUsdc.sol</argument>
+                        <argument>${contracts.sources}/configuration/IporConfigurationDai.sol</argument>
                         <argument>${contracts.sources}/frontend/MiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenDevToolDataProvider.sol</argument>
+                        <argument>${contracts.sources}/frontend/WarrenFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporAddressesManager.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IIporLiquidityPoolToken.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporConfiguration.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IIporToken.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonLPUtilisationStrategy.sol</argument>
@@ -163,6 +167,7 @@
                         <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarrenDevToolDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IWarrenFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarrenStorage.sol</argument>
                         <argument>${contracts.sources}/libraries/AmmMath.sol</argument>
                         <argument>${contracts.sources}/libraries/Constants.sol</argument>
@@ -174,6 +179,7 @@
                         <argument>${contracts.sources}/libraries/TotalSoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
                         <argument>${contracts.sources}/mocks/MiltonFaucet.sol</argument>
+                        <argument>${contracts.sources}/mocks/MockTimelockController.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/DaiMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/TusdMockedToken.sol</argument>
@@ -182,7 +188,9 @@
                         <argument>${contracts.sources}/oracles/TestWarren.sol</argument>
                         <argument>${contracts.sources}/oracles/Warren.sol</argument>
                         <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
-                        <argument>${contracts.sources}/tokenization/IporLiquidityPoolToken.sol</argument>
+                        <argument>${contracts.sources}/tokenization/IpToken.sol</argument>
+                        <argument>${contracts.sources}/tokenization/Joseph.sol</argument>
+                        <argument>${contracts.sources}/tokenization/TestJoseph.sol</argument>
                     </arguments>
                 </configuration>
             </plugin>
