@@ -55,25 +55,18 @@ module.exports = async function (deployer, _network, addresses) {
     let ipDaiToken = null;
 
     let mockedUsdt = null;
-    let mockedUsdtAddr = null;
     let mockedUsdc = null;
-    let mockedUsdcAddr = null;
     let mockedDai = null;
-    let mockedDaiAddr = null;
-    let warrenAddr = null;
     let milton = null;
     let testMilton = null;
+    let joseph = null;
     let testJoseph = null;
-    let miltonAddr = null;
     let miltonStorage = null;
-    let miltonStorageAddr = null;
     let miltonFaucet = null;
-    let miltonFaucetAddr = null;
     let iporConfigurationUsdt = null;
     let iporConfigurationUsdc = null;
     let iporConfigurationDai = null;
     let iporAddressesManager = null;
-    let joseph = null;
 
     await deployer.deploy(AmmMath);
 
@@ -139,20 +132,16 @@ module.exports = async function (deployer, _network, addresses) {
 
         await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
         mockedUsdt = await UsdtMockedToken.deployed();
-        mockedUsdtAddr = await mockedUsdt.address;
 
         await deployer.deploy(UsdcMockedToken, totalSupply6Decimals, 6);
         mockedUsdc = await UsdcMockedToken.deployed();
-        mockedUsdcAddr = await mockedUsdc.address;
 
         await deployer.deploy(DaiMockedToken, totalSupply18Decimals, 18);
         mockedDai = await DaiMockedToken.deployed();
-        mockedDaiAddr = await mockedDai.address;
 
         await deployer.deploy(MiltonFaucet);
 
         miltonFaucet = await MiltonFaucet.deployed();
-        miltonFaucetAddr = await miltonFaucet.address;
         miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
 
         await deployer.deploy(MiltonDevToolDataProvider, iporAddressesManager.address);
@@ -160,33 +149,33 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.link(AmmMath, WarrenDevToolDataProvider);
         await deployer.deploy(WarrenDevToolDataProvider, iporAddressesManager.address);
 
-        await deployer.deploy(IpToken, mockedUsdtAddr, "IP USDT", "ipUSDT");
+        await deployer.deploy(IpToken, mockedUsdt.address, "IP USDT", "ipUSDT");
         ipUsdtToken = await IpToken.deployed();
-        await deployer.deploy(IpToken, mockedUsdcAddr, "IP USDC", "ipUSDC");
+        await deployer.deploy(IpToken, mockedUsdc.address, "IP USDC", "ipUSDC");
         ipUsdcToken = await IpToken.deployed();
-        await deployer.deploy(IpToken, mockedDaiAddr, "IP DAI", "ipDAI");
+        await deployer.deploy(IpToken, mockedDai.address, "IP DAI", "ipDAI");
         ipDaiToken = await IpToken.deployed();
 
-        await deployer.deploy(IporConfigurationUsdt, mockedUsdtAddr);
+        await deployer.deploy(IporConfigurationUsdt, mockedUsdt.address);
         iporConfigurationUsdt = await IporConfigurationUsdt.deployed();
 
-        await deployer.deploy(IporConfigurationUsdc, mockedUsdcAddr);
+        await deployer.deploy(IporConfigurationUsdc, mockedUsdc.address);
         iporConfigurationUsdc = await IporConfigurationUsdc.deployed();
 
-        await deployer.deploy(IporConfigurationDai, mockedDaiAddr);
+        await deployer.deploy(IporConfigurationDai, mockedDai.address);
         iporConfigurationDai = await IporConfigurationDai.deployed();
 
-        await iporAddressesManager.addAsset(mockedDaiAddr);
-        await iporAddressesManager.addAsset(mockedUsdtAddr);
-        await iporAddressesManager.addAsset(mockedUsdcAddr);
+        await iporAddressesManager.addAsset(mockedDai.address);
+        await iporAddressesManager.addAsset(mockedUsdt.address);
+        await iporAddressesManager.addAsset(mockedUsdc.address);
 
-        await iporAddressesManager.setIporConfiguration(mockedUsdtAddr, await iporConfigurationUsdt.address);
-        await iporAddressesManager.setIporConfiguration(mockedUsdcAddr, await iporConfigurationUsdc.address);
-        await iporAddressesManager.setIporConfiguration(mockedDaiAddr, await iporConfigurationDai.address);
+        await iporAddressesManager.setIporConfiguration(mockedUsdt.address, await iporConfigurationUsdt.address);
+        await iporAddressesManager.setIporConfiguration(mockedUsdc.address, await iporConfigurationUsdc.address);
+        await iporAddressesManager.setIporConfiguration(mockedDai.address, await iporConfigurationDai.address);
 
-        await iporAddressesManager.setIpToken(mockedUsdtAddr, ipUsdtToken.address);
-        await iporAddressesManager.setIpToken(mockedUsdcAddr, ipUsdcToken.address);
-        await iporAddressesManager.setIpToken(mockedDaiAddr, ipDaiToken.address);
+        await iporAddressesManager.setIpToken(mockedUsdt.address, ipUsdtToken.address);
+        await iporAddressesManager.setIpToken(mockedUsdc.address, ipUsdcToken.address);
+        await iporAddressesManager.setIpToken(mockedDai.address, ipDaiToken.address);
 
         await ipUsdtToken.initialize(iporAddressesManager.address);
         await ipUsdcToken.initialize(iporAddressesManager.address);
@@ -196,8 +185,8 @@ module.exports = async function (deployer, _network, addresses) {
         await iporConfigurationDai.initialize(iporAddressesManager.address);
     } else {
 
-        //only public network - test and production
-        if (_network !== 'test') {
+        if (_network !== 'test') { //only public network - test and production
+
             await iporAddressesManager.addAsset(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS);
             await iporAddressesManager.addAsset(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS);
             await iporAddressesManager.addAsset(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS);
@@ -222,9 +211,9 @@ module.exports = async function (deployer, _network, addresses) {
             await deployer.deploy(IporConfiguration, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS);
             iporConfigurationDai = await IporConfiguration.deployed();
 
-            await iporAddressesManager.addAsset(mockedDaiAddr);
-            await iporAddressesManager.addAsset(mockedUsdtAddr);
-            await iporAddressesManager.addAsset(mockedUsdcAddr);
+            await iporAddressesManager.addAsset(mockedDai.address);
+            await iporAddressesManager.addAsset(mockedUsdt.address);
+            await iporAddressesManager.addAsset(mockedUsdc.address);
 
             await iporAddressesManager.setIporConfiguration(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, await iporConfigurationUsdt.address);
             await iporAddressesManager.setIporConfiguration(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, await iporConfigurationUsdc.address);
@@ -252,17 +241,13 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(MiltonStorage);
         miltonStorage = await MiltonStorage.deployed();
 
-        warrenAddr = await warren.address;
-        miltonAddr = await milton.address;
-        miltonStorageAddr = await miltonStorage.address;
-
         //initial addresses setup
-        await iporAddressesManager.setAddress(keccak256("WARREN"), warrenAddr);
+        await iporAddressesManager.setAddress(keccak256("WARREN"), warren.address);
         await iporAddressesManager.setAddress(keccak256("WARREN_STORAGE"), warrenStorage.address);
-        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorageAddr);
+        await iporAddressesManager.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
 
 
-        if (isTestEnvironment == 1) {
+        if (isTestEnvironment === 1) {
             //TestWarren
             await deployer.link(AmmMath, TestWarren);
             await deployer.link(IporLogic, TestWarren);
@@ -287,7 +272,7 @@ module.exports = async function (deployer, _network, addresses) {
                     await iporAddressesManager.setAddress(keccak256("MILTON"), testMilton.address);
                 } else {
                     //Web application, IPOR Dev Tool
-                    await iporAddressesManager.setAddress(keccak256("MILTON"), miltonAddr);
+                    await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
                 }
 
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
@@ -298,7 +283,7 @@ module.exports = async function (deployer, _network, addresses) {
                     await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
                 }
             } else {
-                await iporAddressesManager.setAddress(keccak256("MILTON"), miltonAddr);
+                await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
                 await iporAddressesManager.setAddress(keccak256("JOSEPH"), joseph.address);
             }
 
@@ -306,7 +291,7 @@ module.exports = async function (deployer, _network, addresses) {
             await testJoseph.initialize(iporAddressesManager.address);
 
         } else {
-            await iporAddressesManager.setAddress(keccak256("MILTON"), miltonAddr);
+            await iporAddressesManager.setAddress(keccak256("MILTON"), milton.address);
         }
 
         await warren.initialize(iporAddressesManager.address);
@@ -331,19 +316,10 @@ module.exports = async function (deployer, _network, addresses) {
 
 
         console.log("Setup Faucet...");
-        await mockedUsdt.transfer(miltonFaucetAddr, faucetSupply6Decimals);
-        await mockedUsdc.transfer(miltonFaucetAddr, faucetSupply6Decimals);
-        await mockedDai.transfer(miltonFaucetAddr, faucetSupply18Decimals);
+        await mockedUsdt.transfer(miltonFaucet.address, faucetSupply6Decimals);
+        await mockedUsdc.transfer(miltonFaucet.address, faucetSupply6Decimals);
+        await mockedDai.transfer(miltonFaucet.address, faucetSupply18Decimals);
         console.log("Setup Faucet finished.");
-
-        console.log("Setup Milton and TestMilton balance...")
-        await mockedUsdt.transfer(milton.address, userSupply6Decimals);
-        await mockedUsdc.transfer(milton.address, userSupply6Decimals);
-        await mockedDai.transfer(milton.address, userSupply18Decimals);
-        await mockedUsdt.transfer(testMilton.address, userSupply6Decimals);
-        await mockedUsdc.transfer(testMilton.address, userSupply6Decimals);
-        await mockedDai.transfer(testMilton.address, userSupply18Decimals);
-        console.log("Setup Milton and TestMilton balance finished.")
 
         console.log("Start transfer TOKENS to test addresses...");
 
@@ -356,18 +332,18 @@ module.exports = async function (deployer, _network, addresses) {
             console.log(`Account: ${addresses[i]} - tokens transferred`);
 
             //Milton has rights to spend money on behalf of user
-            mockedUsdt.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
-            mockedUsdc.approve(miltonAddr, totalSupply6Decimals, {from: addresses[i]});
-            mockedDai.approve(miltonAddr, totalSupply18Decimals, {from: addresses[i]});
+            mockedUsdt.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedUsdc.approve(milton.address, totalSupply6Decimals, {from: addresses[i]});
+            mockedDai.approve(milton.address, totalSupply18Decimals, {from: addresses[i]});
 
             mockedUsdt.approve(joseph.address, totalSupply6Decimals, {from: addresses[i]});
             mockedUsdc.approve(joseph.address, totalSupply6Decimals, {from: addresses[i]});
             mockedDai.approve(joseph.address, totalSupply18Decimals, {from: addresses[i]});
 
-            console.log(`Account: ${addresses[i]} approve spender Milton ${miltonAddr} to spend tokens on behalf of user.`);
+            console.log(`Account: ${addresses[i]} approve spender Milton ${milton.address} to spend tokens on behalf of user.`);
             console.log(`Account: ${addresses[i]} approve spender Joseph ${joseph.address} to spend tokens on behalf of user.`);
 
-            if (isTestEnvironment) {
+            if (isTestEnvironment === 1) {
 
                 mockedUsdt.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
                 mockedUsdc.approve(testMilton.address, totalSupply6Decimals, {from: addresses[i]});
@@ -391,9 +367,9 @@ module.exports = async function (deployer, _network, addresses) {
         await testMilton.authorizeJoseph(mockedUsdc.address);
         await testMilton.authorizeJoseph(mockedDai.address);
 
-        await miltonStorage.addAsset(mockedDaiAddr);
-        await miltonStorage.addAsset(mockedUsdcAddr);
-        await miltonStorage.addAsset(mockedUsdtAddr);
+        await miltonStorage.addAsset(mockedDai.address);
+        await miltonStorage.addAsset(mockedUsdc.address);
+        await miltonStorage.addAsset(mockedUsdt.address);
 
         await warrenStorage.addUpdater(admin);
         await warrenStorage.addUpdater(warren.address);
@@ -401,7 +377,7 @@ module.exports = async function (deployer, _network, addresses) {
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Prepare initial IPOR migration...")
             await warren.updateIndexes(
-                [mockedDaiAddr, mockedUsdtAddr, mockedUsdcAddr],
+                [mockedDai.address, mockedUsdt.address, mockedUsdc.address],
                 [BigInt("30000000000000000"), BigInt("30000"), BigInt("30000")]);
         }
 
