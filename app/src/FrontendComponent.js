@@ -1,6 +1,7 @@
 import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
 import FrontendPositions from "./FrontendPositions";
+import FrontendConfigurations from "./FrontendConfigurations";
 
 const {ContractData, ContractForm} = newContextComponents;
 
@@ -9,9 +10,21 @@ export default ({drizzle, drizzleState}) => (
         <table className="table">
             <tr>
                 <th scope="col">Total Outstanding Notional</th>
-                <th scope="col">USDT</th>
-                <th scope="col">USDC</th>
-                <th scope="col">DAI</th>
+                <th scope="col">
+                    USDT
+                    <br/>
+                    <small>{drizzle.contracts.UsdtMockedToken.address}</small>
+                </th>
+                <th scope="col">
+                    USDC
+                    <br/>
+                    <small>{drizzle.contracts.UsdcMockedToken.address}</small>
+                </th>
+                <th scope="col">
+                    DAI
+                    <br/>
+                    <small>{drizzle.contracts.DaiMockedToken.address}</small>
+                </th>
             </tr>
             <tr>
                 <td>Pay Fixed Total Notional</td>
@@ -110,6 +123,15 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
         </table>
+        <hr/>
+        <h5>Frontend Configuration</h5>
+        <ContractData
+            drizzle={drizzle}
+            drizzleState={drizzleState}
+            contract="MiltonFrontendDataProvider"
+            method="getConfiguration"
+            render={FrontendConfigurations}
+        />
         <hr/>
         <h5>My Positions</h5>
         <ContractData

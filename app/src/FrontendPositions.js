@@ -28,19 +28,19 @@ export default (derivatives) => (
                                 <td>{derivative.id}</td>
                                 <td>{derivative.asset}</td>
                                 <td>
-                                    {derivative.collateral / 1000000000000000000}<br/><small>{derivative.collateral}</small>
+                                    {derivative.collateral / derivative.multiplicator}<br/><small>{derivative.collateral}</small>
                                 </td>
                                 <td>
-                                    {derivative.notionalAmount / 1000000000000000000}<br/><small>{derivative.notionalAmount}</small>
+                                    {derivative.notionalAmount / derivative.multiplicator}<br/><small>{derivative.notionalAmount}</small>
                                 </td>
                                 <td>{derivative.collateralizationFactor}</td>
                                 <td>{derivative.direction}</td>
                                 <td>
-                                    {derivative.fixedInterestRate / 1000000000000000000}
+                                    {derivative.fixedInterestRate / derivative.multiplicator}
                                     <br/><small>{derivative.fixedInterestRate}</small>
                                 </td>
                                 <td>
-                                    {derivative.positionValue / 1000000000000000000}
+                                    {derivative.positionValue / derivative.multiplicator}
                                     <br/><small>{derivative.positionValue}</small>
                                 </td>
                                 <td>{toDate(derivative.startingTimestamp)}</td>

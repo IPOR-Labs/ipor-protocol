@@ -4,20 +4,16 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonFrontendDataProvider {
 
-    struct IporSpreadFront {
-        address asset;
-        uint256 spreadPayFixedValue;
-        uint256 spreadRecFixedValue;
-    }
-
     struct IporConfigurationFront {
+        address asset;
         uint256 minCollateralizationFactorValue;
         uint256 maxCollateralizationFactorValue;
         uint256 openingFeePercentage;
         uint256 iporPublicationFeeAmount;
         uint256 liquidationDepositAmount;
         uint256 incomeTaxPercentage;
-        IporSpreadFront[] spreads;
+        uint256 spreadPayFixedValue;
+        uint256 spreadRecFixedValue;
     }
 
     struct IporDerivativeFront {
@@ -32,11 +28,12 @@ interface IMiltonFrontendDataProvider {
         uint256 startingTimestamp;
         uint256 endingTimestamp;
         uint256 liquidationDepositAmount;
+        uint256 multiplicator;
     }
 
     function getTotalOutstandingNotional(address asset) external view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
 
     function getMyPositions() external view returns (IporDerivativeFront[] memory items);
 
-    function getConfiguration() external view returns (IporConfigurationFront memory iporConfiguration);
+    function getConfiguration() external view returns (IporConfigurationFront[] memory);
 }
