@@ -138,11 +138,11 @@ module.exports.setupTokenUsdtInitialValues = async (data) => {
 }
 module.exports.setupTokenUsdcInitialValues = async (data) => {
     await data.tokenUsdc.setupInitialAmount(await data.milton.address, ZERO);
-    await data.tokenUsdc.setupInitialAmount(data.admin, USER_SUPPLY_18_DECIMALS);
-    await data.tokenUsdc.setupInitialAmount(data.userOne, USER_SUPPLY_18_DECIMALS);
-    await data.tokenUsdc.setupInitialAmount(data.userTwo, USER_SUPPLY_18_DECIMALS);
-    await data.tokenUsdc.setupInitialAmount(data.userThree, USER_SUPPLY_18_DECIMALS);
-    await data.tokenUsdc.setupInitialAmount(data.liquidityProvider, USER_SUPPLY_18_DECIMALS);
+    await data.tokenUsdc.setupInitialAmount(data.admin, USER_SUPPLY_6_DECIMALS);
+    await data.tokenUsdc.setupInitialAmount(data.userOne, USER_SUPPLY_6_DECIMALS);
+    await data.tokenUsdc.setupInitialAmount(data.userTwo, USER_SUPPLY_6_DECIMALS);
+    await data.tokenUsdc.setupInitialAmount(data.userThree, USER_SUPPLY_6_DECIMALS);
+    await data.tokenUsdc.setupInitialAmount(data.liquidityProvider, USER_SUPPLY_6_DECIMALS);
 }
 
 module.exports.setupTokenDaiInitialValues = async (data) => {

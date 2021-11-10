@@ -63,4 +63,6 @@ interface IIporConfiguration {
 
     function getMultiplicator() external view returns(uint256);
 
+    function getMaxSlippagePercentage() external view returns (uint256);
+
 }

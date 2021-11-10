@@ -20,9 +20,11 @@ import "../interfaces/IIporConfiguration.sol";
 //TODO: consider using AccessControll instead Ownable - higher flexibility
 contract IporConfiguration is Ownable, IIporConfiguration {
 
-    address private _asset;
+    address private immutable _asset;
 
-    uint256 private multiplicator;
+    uint256 private immutable _multiplicator;
+
+    uint256 private immutable _maxSlippagePercentage;
 
     uint256 minCollateralizationFactorValue;
 
@@ -53,32 +55,33 @@ contract IporConfiguration is Ownable, IIporConfiguration {
 
     constructor(address asset) {
         _asset = asset;
-        multiplicator = 10 ** ERC20(asset).decimals();
+        _multiplicator = 10 ** ERC20(asset).decimals();
+        _maxSlippagePercentage = 100 * 10 ** ERC20(asset).decimals();
     }
 
     function initialize(IIporAddressesManager addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        incomeTaxPercentage = AmmMath.division(multiplicator, 10);
+        incomeTaxPercentage = AmmMath.division(_multiplicator, 10);
 
-        require(multiplicator != 0);
+        require(_multiplicator != 0);
 
         //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
-        liquidationDepositAmount = 20 * multiplicator;
+        liquidationDepositAmount = 20 * _multiplicator;
 
         //@notice
-        openingFeePercentage = AmmMath.division(multiplicator, 100);
+        openingFeePercentage = AmmMath.division(_multiplicator, 100);
         openingFeeForTreasuryPercentage = 0;
-        iporPublicationFeeAmount = 10 * multiplicator;
-        liquidityPoolMaxUtilizationPercentage = 8 * AmmMath.division(multiplicator, 10);
-        maxPositionTotalAmount = 100000 * multiplicator;
+        iporPublicationFeeAmount = 10 * _multiplicator;
+        liquidityPoolMaxUtilizationPercentage = 8 * AmmMath.division(_multiplicator, 10);
+        maxPositionTotalAmount = 100000 * _multiplicator;
 
-        minCollateralizationFactorValue = 10 * multiplicator;
-        maxCollateralizationFactorValue = 50 * multiplicator;
+        minCollateralizationFactorValue = 10 * _multiplicator;
+        maxCollateralizationFactorValue = 50 * _multiplicator;
 
-        spreadPayFixedValue = AmmMath.division(multiplicator, 100);
-        spreadRecFixedValue = AmmMath.division(multiplicator, 100);
+        spreadPayFixedValue = AmmMath.division(_multiplicator, 100);
+        spreadRecFixedValue = AmmMath.division(_multiplicator, 100);
 
     }
 
@@ -87,7 +90,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyOwner {
-        require(_incomeTaxPercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_incomeTaxPercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         incomeTaxPercentage = _incomeTaxPercentage;
         emit IncomeTaxPercentageSet(_incomeTaxPercentage);
     }
@@ -97,7 +100,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external override onlyOwner {
-        require(_openingFeeForTreasuryPercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeeForTreasuryPercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeeForTreasuryPercentage = _openingFeeForTreasuryPercentage;
         emit OpeningFeeForTreasuryPercentageSet(_openingFeeForTreasuryPercentage);
     }
@@ -116,7 +119,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyOwner {
-        require(_openingFeePercentage <= multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
+        require(_openingFeePercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeePercentage = _openingFeePercentage;
         emit OpeningFeePercentageSet(_openingFeePercentage);
     }
@@ -183,7 +186,11 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     }
 
     function getMultiplicator() external view override returns (uint256) {
-        return multiplicator;
+        return _multiplicator;
+    }
+
+    function getMaxSlippagePercentage() external view override returns (uint256) {
+        return _maxSlippagePercentage;
     }
 }
 

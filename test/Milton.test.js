@@ -51,7 +51,7 @@ contract('Milton', (accounts) => {
         );
     });
 
-    it('should NOT open position because slippage too high', async () => {
+    it('should NOT open position because slippage too high - 18 decimals', async () => {
         //given
         await testUtils.setupTokenDaiInitialValues(data);
         let asset = data.tokenDai.address;
@@ -61,6 +61,25 @@ contract('Milton', (accounts) => {
         slippageValue = slippageValue.add(theOne);
         let direction = 0;
         let collateralizationFactor = testUtils.USD_10_18DEC;
+
+        await testUtils.assertError(
+            //when
+            data.milton.openPosition(asset, collateral, slippageValue, collateralizationFactor, direction),
+            //then
+            'IPOR_9'
+        );
+    });
+
+    it('should NOT open position because slippage too high - 6 decimals', async () => {
+        //given
+        await testUtils.setupTokenUsdtInitialValues(data);
+        let asset = data.tokenUsdt.address;
+        let collateral = BigInt("30000001");
+        let slippageValue = web3.utils.toBN(1e8);
+        let theOne = web3.utils.toBN(1);
+        slippageValue = slippageValue.add(theOne);
+        let direction = 0;
+        let collateralizationFactor = testUtils.USD_10_6DEC;
 
         await testUtils.assertError(
             //when

@@ -18,7 +18,6 @@ interface IMilton {
 
     function calculateSoap(address asset) external view returns (int256 soapPf, int256 soapRf, int256 soap);
 
-    //TODO: final implementation
     function calculateSpread(address asset) external view returns (uint256 spreadPf, uint256 spreadRf);
 
     function calculatePositionValue(DataTypes.IporDerivative memory derivative) external view returns(int256);

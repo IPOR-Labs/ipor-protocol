@@ -166,8 +166,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         require(IERC20(asset).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
 
         require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
-        //TODO: setup max slippage in milton configuration
-        require(maximumSlippage <= 1e20, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
+        require(maximumSlippage <= iporConfiguration.getMaxSlippagePercentage(), Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
 
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS);
 
@@ -185,7 +184,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         require(IMiltonLPUtilizationStrategy(
             _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(
             asset, derivativeAmount.deposit, derivativeAmount.openingFee,
-                iporConfiguration.getMultiplicator()) <= iporConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
+            iporConfiguration.getMultiplicator()) <= iporConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, openTimestamp);
