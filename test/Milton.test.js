@@ -2250,6 +2250,7 @@ contract('Milton', (accounts) => {
     //TODO: dopisac test zmiany adresu usdt i sprawdzenia czy widzi to milton
     //TODO: test sprawdzajacy wykonaniue przxelewu eth na miltona
     //TODO: test na podmianke miltonStorage - czy pokazuje nowy balance??
+    //TODO: add tests for pausable methods
 
 
     const calculateSoap = async (params) => {
@@ -2269,7 +2270,7 @@ contract('Milton', (accounts) => {
     const countOpenPositions = (derivatives) => {
         let count = 0;
         for (let i = 0; i < derivatives.length; i++) {
-            if (derivatives[i].state == 0) {
+            if (derivatives[i].state == 1) {
                 count++;
             }
         }
@@ -2779,5 +2780,4 @@ contract('Milton', (accounts) => {
         }
     }
 
-    //TODO: add tests for pausable methods
 });

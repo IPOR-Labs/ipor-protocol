@@ -77,7 +77,7 @@ library DataTypes {
     }
 
     enum DerivativeState {
-        ACTIVE, INACTIVE, PENDING
+        INACTIVE, ACTIVE
     }
 
     struct IporDerivativeInterest {

@@ -1,4 +1,6 @@
 const testUtils = require("./TestUtils.js");
+const truffleAssert = require('truffle-assertions');
+const keccak256 = require("keccak256");
 
 contract('IpToken', (accounts) => {
 
@@ -36,5 +38,19 @@ contract('IpToken', (accounts) => {
             //then
             'IPOR_46'
         );
+    });
+
+    it('should emit event', async () => {
+        //given
+        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), admin);
+
+        //when
+        let tx = await testData.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: admin})
+
+        //then
+        truffleAssert.eventEmitted(tx, 'Mint', (ev) => {
+            return ev.user == userOne && ev.value == testUtils.USD_10_000_18DEC;
+        });
+        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), data.joseph.address);
     });
 });

@@ -13,6 +13,7 @@ import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../libraries/Constants.sol";
 import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IMilton.sol";
 
 contract Joseph is Ownable, IJoseph {
 
@@ -37,10 +38,12 @@ contract Joseph is Ownable, IJoseph {
     function calculateExchangeRate(address asset) external override view returns (uint256){
         IIpToken ipToken = IIpToken(_addressesManager.getIpToken(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        IMilton milton = IMilton(_addressesManager.getMilton());
+//        (int256 soapPf, int256 soapRf, int256 soap) = milton.calculateSoap(asset);
         uint256 ipTokenTotalSupply = ipToken.totalSupply();
         IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
         if (ipTokenTotalSupply > 0) {
-            return AmmMath.division(miltonStorage.getBalance(asset).liquidityPool * iporConfiguration.getMultiplicator(), ipTokenTotalSupply);
+            return AmmMath.division((miltonStorage.getBalance(asset).liquidityPool) * iporConfiguration.getMultiplicator(), ipTokenTotalSupply);
         } else {
             return iporConfiguration.getMultiplicator();
         }
