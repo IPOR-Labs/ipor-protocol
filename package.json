@@ -35,6 +35,7 @@
     "@openzeppelin/test-helpers": "^0.5.13",
     "buidler-gas-reporter": "^0.1.4",
     "eth-gas-reporter": "^0.2.22",
-    "solidity-coverage": "^0.7.16"
+    "nyc": "^15.1.0",
+    "solidity-coverage": "^0.7.17"
   }
 }

@@ -19,3 +19,7 @@
 #### How to check contract size?
 
 Run in command line: `truffle run contract-size`
+
+### How to check test coverage?
+
+Run in command line: `npx truffle run coverage`

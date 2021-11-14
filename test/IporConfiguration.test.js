@@ -1,284 +1,201 @@
 const testUtils = require("./TestUtils.js");
 const {ZERO_BYTES32} = require("@openzeppelin/test-helpers/src/constants");
 const {time} = require("@openzeppelin/test-helpers");
+const keccak256 = require("keccak256");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
-const IporAssetConfigurationDai = artifacts.require('IporAssetConfigurationDai');
+const UsdtMockedToken = artifacts.require('UsdtMockedToken');
+const UsdcMockedToken = artifacts.require('UsdcMockedToken');
 const IporConfiguration = artifacts.require('IporConfiguration');
 const MockTimelockController = artifacts.require('MockTimelockController');
 const MINDELAY = time.duration.days(1);
 
-contract('IporAssetConfiguration', (accounts) => {
+contract('IporConfiguration', (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
     let tokenDai = null;
-    let iporAssetConfigurationDAI = null;
+    let tokenUsdt = null;
+    let tokenUsdc = null;
     let iporConfiguration = null;
     let timelockController = null;
 
     before(async () => {
-        iporConfiguration = await IporConfiguration.deployed();
+
+        tokenUsdt = await UsdtMockedToken.new(testUtils.TOTAL_SUPPLY_6_DECIMALS, 6);
+        tokenUsdc = await UsdcMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
-        await iporConfiguration.addAsset(tokenDai.address);
+
         timelockController = await MockTimelockController.new(MINDELAY, [userOne], [userTwo]);
+
     });
 
     beforeEach(async () => {
-        iporAssetConfigurationDAI = await IporAssetConfigurationDai.new(tokenDai.address);
-        await iporAssetConfigurationDAI.initialize(iporConfiguration.address);
+        iporConfiguration = await IporConfiguration.new();
+        await iporConfiguration.addAsset(tokenUsdt.address);
+        await iporConfiguration.addAsset(tokenDai.address);
     });
 
-    it('should set default openingFeeForTreasuryPercentage', async () => {
+    it('should set charlieTreasurers', async () => {
         //given
-        let expectedOpeningFeeForTreasuryPercentage = BigInt("0");
+        let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
 
         //when
-        let actualOpeningFeeForTreasuryPercentage = await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
+        await iporConfiguration.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
 
         //then
-        assert(expectedOpeningFeeForTreasuryPercentage === BigInt(actualOpeningFeeForTreasuryPercentage),
-            `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`)
+        let actualCharlieTreasurerDaiAddress = await iporConfiguration.getCharlieTreasurer(asset);
+
+        assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
+            `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
     });
 
-    it('should set openingFeeForTreasuryPercentage', async () => {
+    it('should NOT set charlieTreasurers for NOT supported asset USDC', async () => {
         //given
-        let expectedOpeningFeeForTreasuryPercentage = BigInt("1000000000000000000");
-        await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage);
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
 
         //when
-        let actualOpeningFeeForTreasuryPercentage = await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
-
-        //then
-        assert(expectedOpeningFeeForTreasuryPercentage === BigInt(actualOpeningFeeForTreasuryPercentage),
-            `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`)
-    });
-
-    it('should NOT set openingFeeForTreasuryPercentage', async () => {
-        //given
-        let openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
-
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage),
+            iporConfiguration.setCharlieTreasurer(asset, address),
             //then
-            'IPOR_24'
+            'IPOR_39'
+        );
+
+    });
+
+    it('should set treasureTreasurers', async () => {
+        //given
+        let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporConfiguration.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
+
+        //then
+        let actualTreasureTreasurerDaiAddress = await iporConfiguration.getTreasureTreasurer(asset);
+
+        assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
+            `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
+    });
+
+    it('should NOT set treasureTreasurers for NOT supported asset USDC', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporConfiguration.setTreasureTreasurer(asset, address),
+            //then
+            'IPOR_39'
+        );
+
+    });
+
+    it('should set asset management vault', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporConfiguration.setAssetManagementVault(asset, address);
+
+        //then
+        let actualAddress = await iporConfiguration.getAssetManagementVault(asset);
+
+        assert(address === actualAddress,
+            `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
+    });
+
+    it('should NOT set asset management vault for NOT supported asset USDC', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporConfiguration.setAssetManagementVault(asset, address),
+            //then
+            'IPOR_39'
+        );
+
+    });
+
+    it('should set IporAssetConfiguration for supported asset', async () => {
+        //given
+        let iporAssetConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporConfiguration.setIporAssetConfiguration(asset, iporAssetConfigurationAddress);
+
+        //then
+        let actualIporAssetConfigurationAddress = await iporConfiguration.getIporAssetConfiguration(asset);
+
+        assert(iporAssetConfigurationAddress === actualIporAssetConfigurationAddress,
+            `Incorrect  IporAssetConfiguration address for asset ${asset}, actual: ${actualIporAssetConfigurationAddress}, expected: ${iporAssetConfigurationAddress}`)
+    });
+
+    it('should NOT set IporAssetConfiguration for NOT supported asset USDC', async () => {
+        //given
+        let iporAssetConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
+        await testUtils.assertError(
+            //when
+            iporConfiguration.setIporAssetConfiguration(asset, iporAssetConfigurationAddress),
+            //then
+            'IPOR_39'
         );
     });
 
-    it('should NOT set incomeTaxPercentage', async () => {
+    it('should set IpToken for supported underlying asset', async () => {
         //given
-        let incomeTaxPercentage = BigInt("1000000000000000001");
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
 
+        //when
+        await iporConfiguration.setIpToken(asset, address);
+
+        //then
+        let actualAddress = await iporConfiguration.getIpToken(asset);
+
+        assert(address === actualAddress,
+            `Incorrect  ipToken address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
+    });
+
+    it('should NOT set IpToken for NOT supported asset USDC', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenUsdc.address;
+
+        //when
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage),
+            iporConfiguration.setIpToken(asset, address),
             //then
-            'IPOR_24'
+            'IPOR_39'
         );
-    });
 
-    it('should set incomeTaxPercentage - case 1', async () => {
-        //given
-
-        let incomeTaxPercentage = BigInt("150000000000000000");
-
-        //when
-        await iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage);
-
-        //then
-        let actualIncomeTaxPercentage = await iporAssetConfigurationDAI.getIncomeTaxPercentage();
-
-        assert(incomeTaxPercentage === BigInt(actualIncomeTaxPercentage),
-            `Incorrect incomeTaxPercentage actual: ${actualIncomeTaxPercentage}, expected: ${incomeTaxPercentage}`)
-
-    });
-
-    it('should set liquidationDepositAmount - case 1', async () => {
-        //given
-
-        let liquidationDepositAmount = BigInt("50000000000000000000");
-
-        //when
-        await iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount);
-
-        //then
-        let actualLiquidationDepositAmount = await iporAssetConfigurationDAI.getLiquidationDepositAmount();
-
-        assert(liquidationDepositAmount === BigInt(actualLiquidationDepositAmount),
-            `Incorrect liquidationDepositAmount actual: ${actualLiquidationDepositAmount}, expected: ${liquidationDepositAmount}`)
-
-    });
-
-    it('should NOT set openingFeePercentage', async () => {
-        //given
-        let openingFeePercentage = BigInt("1010000000000000000");
-
-        await testUtils.assertError(
-            //when
-            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage),
-            //then
-            'IPOR_24'
-        );
-    });
-
-    it('should set openingFeePercentage - case 1', async () => {
-        //given
-
-        let openingFeePercentage = BigInt("150000000000000000");
-
-        //when
-        await iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage);
-
-        //then
-        let actualOpeningFeePercentage = await iporAssetConfigurationDAI.getOpeningFeePercentage();
-
-        assert(openingFeePercentage === BigInt(actualOpeningFeePercentage),
-            `Incorrect openingFeePercentage actual: ${actualOpeningFeePercentage}, expected: ${openingFeePercentage}`)
-
-    });
-
-    it('should set iporPublicationFeeAmount - case 1', async () => {
-        //given
-
-        let iporPublicationFeeAmount = BigInt("999000000000000000000");
-
-        //when
-        await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount);
-
-        //then
-        let actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
-
-        assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
-            `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
-
-    });
-
-    it('should set liquidityPoolMaxUtilizationPercentage higher than 100%', async () => {
-        //given
-        let liquidityPoolMaxUtilizationPercentage = BigInt("99000000000000000000");
-
-        //when
-        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
-
-        //then
-        let actualLPMaxUtilizationPercentage = await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
-
-        assert(liquidityPoolMaxUtilizationPercentage === BigInt(actualLPMaxUtilizationPercentage),
-            `Incorrect LiquidityPoolMaxUtilizationPercentage actual: ${actualLPMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
-
-    });
-
-
-    it('should get initial liquidityPoolMaxUtilizationPercentage', async () => {
-        //given
-        let expectedLiquidityPoolMaxUtilizationPercentage = BigInt("800000000000000000");
-
-        //when
-        let actualLiquidityPoolMaxUtilizationPercentage = await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
-
-        //then
-        assert(expectedLiquidityPoolMaxUtilizationPercentage === BigInt(actualLiquidityPoolMaxUtilizationPercentage),
-            `Incorrect initial liquidityPoolMaxUtilizationPercentage actual: ${actualLiquidityPoolMaxUtilizationPercentage}, expected: ${expectedLiquidityPoolMaxUtilizationPercentage}`)
-    });
-
-
-    it('should set liquidityPoolMaxUtilizationPercentage', async () => {
-        //given
-
-        let liquidityPoolMaxUtilizationPercentage = BigInt("90000000000000000");
-
-        //when
-        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
-
-        //then
-        let actualLiquidityPoolMaxUtilizationPercentage = await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
-
-        assert(liquidityPoolMaxUtilizationPercentage === BigInt(actualLiquidityPoolMaxUtilizationPercentage),
-            `Incorrect liquidityPoolMaxUtilizationPercentage actual: ${actualLiquidityPoolMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
-
-    });
-
-    it('should get initial incomeTaxPercentage', async () => {
-        //given
-        let expectedIncomeTaxPercentage = BigInt("100000000000000000");
-
-        //when
-        let actualIncomeTaxPercentage = await iporAssetConfigurationDAI.getIncomeTaxPercentage();
-
-        //then
-        assert(expectedIncomeTaxPercentage === BigInt(actualIncomeTaxPercentage),
-            `Incorrect initial incomeTaxPercentage actual: ${actualIncomeTaxPercentage}, expected: ${expectedIncomeTaxPercentage}`)
-    });
-
-    it('should get initial liquidationDepositAmount', async () => {
-        //given
-        let expectedLiquidationDepositAmount = BigInt("20000000000000000000");
-
-        //when
-        let actualLiquidationDepositAmount = await iporAssetConfigurationDAI.getLiquidationDepositAmount();
-
-        //then
-        assert(expectedLiquidationDepositAmount === BigInt(actualLiquidationDepositAmount),
-            `Incorrect initial liquidationDepositAmount actual: ${actualLiquidationDepositAmount}, expected: ${expectedLiquidationDepositAmount}`)
-    });
-
-    it('should get initial openingFeePercentage', async () => {
-        //given
-        let expectedOpeningFeePercentage = BigInt("10000000000000000");
-
-        //when
-        let actualOpeningFeePercentage = await iporAssetConfigurationDAI.getOpeningFeePercentage();
-
-        //then
-        assert(expectedOpeningFeePercentage === BigInt(actualOpeningFeePercentage),
-            `Incorrect initial openingFeePercentage actual: ${actualOpeningFeePercentage}, expected: ${expectedOpeningFeePercentage}`)
-    });
-
-    it('should get initial iporPublicationFeeAmount', async () => {
-        //given
-        let expectedIporPublicationFeeAmount = BigInt("10000000000000000000");
-
-        //when
-        let actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
-
-        //then
-        assert(expectedIporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
-            `Incorrect initial iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${expectedIporPublicationFeeAmount}`)
-    });
-
-    it('should get initial minCollateralizationFactorValue', async () => {
-        //given
-        let expectedMinCollateralizationFactorValue = BigInt("10000000000000000000");
-
-        //when
-        let actualMinCollateralizationFactorValue = await iporAssetConfigurationDAI.getMinCollateralizationFactorValue();
-
-        //then
-        assert(expectedMinCollateralizationFactorValue === BigInt(actualMinCollateralizationFactorValue),
-            `Incorrect initial MinCollateralizationFactorValue actual: ${actualMinCollateralizationFactorValue}, expected: ${expectedMinCollateralizationFactorValue}`)
-    });
-
-    it('should get initial maxCollateralizationFactorValue', async () => {
-        //given
-        let expectedMaxCollateralizationFactorValue = BigInt("50000000000000000000");
-
-        //when
-        let actualMaxCollateralizationFactorValue = await iporAssetConfigurationDAI.getMaxCollateralizationFactorValue();
-
-        //then
-        assert(expectedMaxCollateralizationFactorValue === BigInt(actualMaxCollateralizationFactorValue),
-            `Incorrect initial MaxCollateralizationFactorValue actual: ${actualMaxCollateralizationFactorValue}, expected: ${expectedMaxCollateralizationFactorValue}`)
     });
 
     it('should use Timelock Controller - simple case 1', async () => {
         //given
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+        await iporConfiguration.transferOwnership(timelockController.address);
+
+        let fnParamId = keccak256("MILTON");
+        let fnParamAddress = userThree;
+
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await timelockController.schedule(
-            iporAssetConfigurationDAI.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -290,7 +207,7 @@ contract('IporAssetConfiguration', (accounts) => {
         await time.increase(MINDELAY);
 
         await timelockController.execute(
-            iporAssetConfigurationDAI.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -299,24 +216,26 @@ contract('IporAssetConfiguration', (accounts) => {
         );
 
         //then
-        let actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
+        let actualMiltonAddress = await iporConfiguration.getAddress(fnParamId);
 
-        assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
-            `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
+        assert(fnParamAddress === actualMiltonAddress,
+            `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
 
     });
 
     it('should FAIL when used Timelock Controller, because user not exists on list of proposers', async () => {
         //given
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+        await iporConfiguration.transferOwnership(timelockController.address);
+
+        let fnParamId = keccak256("MILTON");
+        let fnParamAddress = userThree;
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await testUtils.assertError(
             //when
             timelockController.schedule(
-                iporAssetConfigurationDAI.address,
+                iporConfiguration.address,
                 "0x0",
                 calldata,
                 ZERO_BYTES32,
@@ -332,12 +251,14 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
         //given
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();;
+        await iporConfiguration.transferOwnership(timelockController.address);
+
+        let fnParamId = keccak256("MILTON");
+        let fnParamAddress = userThree;
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
-            iporAssetConfigurationDAI.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -352,7 +273,7 @@ contract('IporAssetConfiguration', (accounts) => {
         await testUtils.assertError(
             //when
             timelockController.execute(
-                iporAssetConfigurationDAI.address,
+                iporConfiguration.address,
                 "0x0",
                 calldata,
                 ZERO_BYTES32,
@@ -368,11 +289,12 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should FAIL when used Timelock Controller, because Timelock is not an Owner of IporAssetConfiguration smart contract', async () => {
 
         //given
-        let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+        let fnParamId = keccak256("MILTON");
+        let fnParamAddress = userThree;
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
-            iporAssetConfigurationDAI.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -387,7 +309,7 @@ contract('IporAssetConfiguration', (accounts) => {
         await testUtils.assertError(
             //when
             timelockController.execute(
-                iporAssetConfigurationDAI.address,
+                iporConfiguration.address,
                 "0x0",
                 calldata,
                 ZERO_BYTES32,
@@ -402,21 +324,23 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should use Timelock Controller to return ownership of IporAssetConfiguration smart contract', async () => {
         //given
-        let iporAssetConfigurationOriginOwner = admin;
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = BigInt("999000000000000000000");
+        let iporConfigurationOriginOwner = admin;
+        await iporConfiguration.transferOwnership(timelockController.address);
 
-        let calldata = iporAssetConfigurationDAI.contract.methods.transferOwnership(iporAssetConfigurationOriginOwner).encodeABI();
+        let fnParamId = keccak256("MILTON");
+        let fnParamAddress = userThree;
+
+        let calldata = iporConfiguration.contract.methods.transferOwnership(iporConfigurationOriginOwner).encodeABI();
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(
-            iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: iporAssetConfigurationOriginOwner}),
+            iporConfiguration.setAddress(fnParamId, fnParamAddress, {from: iporConfigurationOriginOwner}),
             'Ownable: caller is not the owner'
         );
 
         //when
         await timelockController.schedule(
-            iporAssetConfigurationDAI.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -428,7 +352,7 @@ contract('IporAssetConfiguration', (accounts) => {
         await time.increase(MINDELAY);
 
         await timelockController.execute(
-            iporAssetConfigurationDAI.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -436,16 +360,13 @@ contract('IporAssetConfiguration', (accounts) => {
             {from: userTwo}
         );
 
-        await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: iporAssetConfigurationOriginOwner});
+        await iporConfiguration.setAddress(fnParamId, fnParamAddress, {from: iporConfigurationOriginOwner});
 
         //then
-        let actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
+        let actualMiltonAddress = await iporConfiguration.getAddress(fnParamId);
 
-        assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
-            `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
+        assert(fnParamAddress === actualMiltonAddress,
+            `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
 
     });
-
-
-
 });

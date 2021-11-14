@@ -128,7 +128,7 @@ module.exports = async function (deployer, _network, addresses) {
     await iporConfiguration.setAddress(keccak256("MILTON_SPREAD_STRATEGY"), miltonSpreadStrategy.address);
 
     // prepare ERC20 mocked tokens...
-    if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
+    if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker' || _network === 'soliditycoverage') {
 
         await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
         mockedUsdt = await UsdtMockedToken.deployed();
@@ -186,7 +186,7 @@ module.exports = async function (deployer, _network, addresses) {
     } else {
 
         if (_network !== 'test') { //only public network - test and production
-
+            console.log("NETWORK: " + _network);
             await iporConfiguration.addAsset(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS);
             await iporConfiguration.addAsset(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS);
             await iporConfiguration.addAsset(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS);
@@ -266,7 +266,7 @@ module.exports = async function (deployer, _network, addresses) {
             await deployer.deploy(TestJoseph);
             testJoseph = await TestJoseph.deployed();
 
-            if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
+            if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker' || _network === 'soliditycoverage') {
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
                     //For IPOR Test Framework purposes
                     await iporConfiguration.setAddress(keccak256("MILTON"), testMilton.address);
@@ -312,7 +312,7 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     //Prepare tokens for initial accounts...
-    if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker') {
+    if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker' || _network === 'soliditycoverage') {
 
 
         console.log("Setup Faucet...");
