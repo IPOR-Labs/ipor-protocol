@@ -1597,7 +1597,7 @@ contract('Milton', (accounts) => {
 
 
     it('should calculate income tax, 5%, not owner, Milton loses, user earns, |I| < D', async () => {
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
 
         let incomeTax = BigInt("382659277708592775658");
         let interestAmount = BigInt("7653185554171855513162");
@@ -1611,12 +1611,12 @@ contract('Milton', (accounts) => {
             testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO,
             null, incomeTax, interestAmount
         );
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
     it('should calculate income tax, 5%, Milton loses, user earns, |I| > D', async () => {
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
 
         let incomeTax = BigInt("453181818181818181818");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
@@ -1631,12 +1631,12 @@ contract('Milton', (accounts) => {
             null, incomeTax, interestAmount
         );
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
     it('should calculate income tax, 5%, Milton earns, user loses, |I| < D', async () => {
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
 
         let incomeTax = BigInt("360062266500622666558");
         let interestAmount = BigInt("7201245330012453331164");
@@ -1651,13 +1651,13 @@ contract('Milton', (accounts) => {
             null, incomeTax, interestAmount
         );
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
 
     it('should calculate income tax, 5%, Milton earns, user loses, |I| > D', async () => {
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
         let incomeTax = BigInt("453181818181818181818");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
 
@@ -1670,11 +1670,11 @@ contract('Milton', (accounts) => {
             testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO,
             null, incomeTax, interestAmount
         );
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
     it('should calculate income tax, 100%, Milton loses, user earns, |I| < D', async () => {
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
         let incomeTax = BigInt("7653185554171855513162");
         let interestAmount = BigInt("7653185554171855513162");
 
@@ -1687,12 +1687,12 @@ contract('Milton', (accounts) => {
             testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO,
             null, incomeTax, interestAmount
         );
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
     it('should calculate income tax, 100%, Milton loses, user earns, |I| > D', async () => {
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
         let incomeTax = BigInt("9063636363636363636364");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
 
@@ -1705,12 +1705,12 @@ contract('Milton', (accounts) => {
             testUtils.ZERO, testUtils.ZERO, incomeTax, testUtils.ZERO,
             null, incomeTax, interestAmount
         );
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool', async () => {
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
         let incomeTax = BigInt("7201245330012453331164");
         let interestAmount = BigInt("7201245330012453331164");
 
@@ -1724,13 +1724,13 @@ contract('Milton', (accounts) => {
             null, incomeTax, interestAmount
         );
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool', async () => {
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_100_18DEC);
         let incomeTax = BigInt("9063636363636363636364");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
 
@@ -1744,7 +1744,7 @@ contract('Milton', (accounts) => {
             null, incomeTax, interestAmount
         );
 
-        await data.iporConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
+        await data.iporAssetConfigurationDAI.setIncomeTaxPercentage(testUtils.PERCENTAGE_10_18DEC);
     });
 
     it('should open pay fixed position, DAI, custom Opening Fee for Treasury 50%', async () => {
@@ -1753,7 +1753,7 @@ contract('Milton', (accounts) => {
         const params = testUtils.getStandardDerivativeParamsDAI(data);
 
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
-        await data.iporConfigurationDai.setOpeningFeeForTreasuryPercentage(BigInt("50000000000000000"))
+        await data.iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(BigInt("50000000000000000"))
 
         let expectedOpeningFeeTotalBalance = testUtils.TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalance = BigInt("45318181818181818182");
@@ -1785,7 +1785,7 @@ contract('Milton', (accounts) => {
             `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance},
             expected: ${expectedTreasuryTotalBalance}`)
 
-        await data.iporConfigurationDai.setOpeningFeeForTreasuryPercentage(ZERO);
+        await data.iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(ZERO);
     });
 
     it('should open pay fixed position, DAI, custom Opening Fee for Treasury 25%', async () => {
@@ -1794,7 +1794,7 @@ contract('Milton', (accounts) => {
         const params = testUtils.getStandardDerivativeParamsDAI(data);
 
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
-        await data.iporConfigurationDai.setOpeningFeeForTreasuryPercentage(BigInt("25000000000000000"))
+        await data.iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(BigInt("25000000000000000"))
 
         let expectedOpeningFeeTotalBalance = testUtils.TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalance = BigInt("22659090909090909091");
@@ -1826,7 +1826,7 @@ contract('Milton', (accounts) => {
             `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance},
             expected: ${expectedTreasuryTotalBalance}`)
 
-        await data.iporConfigurationDai.setOpeningFeeForTreasuryPercentage(ZERO);
+        await data.iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(ZERO);
     });
 
     it('should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer', async () => {
@@ -2034,11 +2034,11 @@ contract('Milton', (accounts) => {
 
         let expectedLiquidityPoolTotalBalance = miltonBalanceBeforePayout + testUtils.TC_OPENING_FEE_18DEC;
 
-        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
+        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
 
         let liquidityPoolMaxUtilizationEdge = BigInt(608038055751904007);
 
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationEdge);
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationEdge);
 
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
 
@@ -2064,7 +2064,7 @@ contract('Milton', (accounts) => {
             ZERO
         );
 
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
     });
 
 
@@ -2076,11 +2076,11 @@ contract('Milton', (accounts) => {
         let miltonBalanceBeforePayout = testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         await data.joseph.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
-        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
+        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
 
         let liquidityPoolMaxUtilizationEdge = BigInt(608038055741904007);
 
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationEdge);
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationEdge);
 
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
 
@@ -2095,7 +2095,7 @@ contract('Milton', (accounts) => {
             'IPOR_35'
         );
 
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
     });
 
 
@@ -2105,14 +2105,14 @@ contract('Milton', (accounts) => {
         await testUtils.setupTokenDaiInitialValues(data);
         const params = testUtils.getStandardDerivativeParamsDAI(data);
 
-        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
+        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
 
         let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
         await data.joseph.provideLiquidity(params.asset, miltonBalanceBeforePayout, {from: liquidityProvider})
 
         let liquiditiPoolMaxUtilizationEdge = BigInt(700036170982361327)
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(liquiditiPoolMaxUtilizationEdge);
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquiditiPoolMaxUtilizationEdge);
 
         //First open position not exceeded liquidity utilization
         await data.milton.openPosition(
@@ -2132,7 +2132,7 @@ contract('Milton', (accounts) => {
             'IPOR_35'
         );
 
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
     });
 
     it('should NOT open pay fixed position - liquidity pool utilisation exceeded, liquidity pool and opening fee are ZERO', async () => {
@@ -2140,14 +2140,14 @@ contract('Milton', (accounts) => {
         await testUtils.setupTokenDaiInitialValues(data);
         const params = testUtils.getStandardDerivativeParamsDAI(data);
 
-        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
-        let oldOpeningFeePercentage = await data.iporConfigurationDai.getOpeningFeePercentage();
+        let oldLiquidityPoolMaxUtilizationPercentage = await data.iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
+        let oldOpeningFeePercentage = await data.iporAssetConfigurationDAI.getOpeningFeePercentage();
 
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
 
-        await data.iporConfigurationDai.setOpeningFeePercentage(ZERO);
+        await data.iporAssetConfigurationDAI.setOpeningFeePercentage(ZERO);
         //very high value
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(BigInt(99999999999999999999999999999999999999999));
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(BigInt(99999999999999999999999999999999999999999));
 
 
         await testUtils.assertError(
@@ -2160,8 +2160,8 @@ contract('Milton', (accounts) => {
             'IPOR_35'
         );
 
-        await data.iporConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
-        await data.iporConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
+        await data.iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(oldLiquidityPoolMaxUtilizationPercentage);
+        await data.iporAssetConfigurationDAI.setOpeningFeePercentage(oldOpeningFeePercentage);
     });
 
     it('should open pay fixed position - when open timestamp is long time ago', async () => {
@@ -2233,7 +2233,7 @@ contract('Milton', (accounts) => {
     //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
     //TODO: dodac test 1 otwarta long, zmiana indeksu, 2 otwarta short, zmiana indeksu, zamykamy 1 i 2, soap = 0
 
-    //TODO: dodać test w którym zmieniamy konfiguracje w IporConfiguration i widac zmiany w Milton
+    //TODO: dodać test w którym zmieniamy konfiguracje w IporAssetConfiguration i widac zmiany w Milton
 
     //TODO: testy na strukturze MiltonDerivatives
 

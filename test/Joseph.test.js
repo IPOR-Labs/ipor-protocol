@@ -308,8 +308,8 @@ contract('Joseph', (accounts) => {
         const params = testUtils.getStandardDerivativeParamsDAI(data);
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
         await data.joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await data.iporConfigurationDai.getOpeningFeePercentage();
-        await data.iporConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
+        let oldOpeningFeePercentage = await data.iporAssetConfigurationDai.getOpeningFeePercentage();
+        await data.iporAssetConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
 
         //open position to have something in Liquidity Pool
         await data.milton.openPosition(
@@ -341,7 +341,7 @@ contract('Joseph', (accounts) => {
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
                 expected: ${expectedExchangeRate}`)
 
-        await data.iporConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
+        await data.iporAssetConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
     });
 
     it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, DAI 18 decimals', async () => {
@@ -351,8 +351,8 @@ contract('Joseph', (accounts) => {
         const params = testUtils.getStandardDerivativeParamsDAI(data);
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
         await data.joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await data.iporConfigurationDai.getOpeningFeePercentage();
-        await data.iporConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
+        let oldOpeningFeePercentage = await data.iporAssetConfigurationDai.getOpeningFeePercentage();
+        await data.iporAssetConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
 
         //open position to have something in Liquidity Pool
         await data.milton.openPosition(
@@ -385,7 +385,7 @@ contract('Joseph', (accounts) => {
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
                 expected: ${expectedExchangeRate}`)
 
-        await data.iporConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
+        await data.iporAssetConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
     });
 
     it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, USDT 6 decimals', async () => {
@@ -395,8 +395,8 @@ contract('Joseph', (accounts) => {
         const params = testUtils.getStandardDerivativeParamsUSDT(data);
         await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, {from: userOne});
         await data.joseph.provideLiquidity(params.asset, amount, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await data.iporConfigurationUsdt.getOpeningFeePercentage();
-        await data.iporConfigurationUsdt.setOpeningFeePercentage(BigInt("600000"));
+        let oldOpeningFeePercentage = await data.iporAssetConfigurationUsdt.getOpeningFeePercentage();
+        await data.iporAssetConfigurationUsdt.setOpeningFeePercentage(BigInt("600000"));
 
         //open position to have something in Liquidity Pool
         await data.milton.openPosition(
@@ -430,7 +430,7 @@ contract('Joseph', (accounts) => {
             `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
                 expected: ${expectedExchangeRate}`)
 
-        await data.iporConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
+        await data.iporAssetConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
     });
 
 

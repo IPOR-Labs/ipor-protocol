@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporAddressesManager.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
 import "../interfaces/IMilton.sol";
 import "../amm/MiltonStorage.sol";
@@ -49,28 +49,28 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         return iporDerivatives;
     }
 
-    function getConfiguration() external override view returns (IporConfigurationFront[] memory) {
+    function getConfiguration() external override view returns (IporAssetConfigurationFront[] memory) {
         address[] memory assets = addressesManager.getAssets();
-        IporConfigurationFront[] memory iporConfigurationsFront = new IporConfigurationFront[](assets.length);
+        IporAssetConfigurationFront[] memory iporAssetConfigurationsFront = new IporAssetConfigurationFront[](assets.length);
 
         IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(addressesManager.getMiltonSpreadStrategy());
 
         for (uint256 i = 0; i < assets.length; i++) {
             (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = spreadStrategy.calculateSpread(assets[i], block.timestamp);
-            IIporConfiguration iporConfiguration = IIporConfiguration(addressesManager.getIporConfiguration(assets[i]));
+            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(addressesManager.getIporAssetConfiguration(assets[i]));
 
-            iporConfigurationsFront[i] = IporConfigurationFront(
+            iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
                 assets[i],
-                iporConfiguration.getMinCollateralizationFactorValue(),
-                iporConfiguration.getMaxCollateralizationFactorValue(),
-                iporConfiguration.getOpeningFeePercentage(),
-                iporConfiguration.getIporPublicationFeeAmount(),
-                iporConfiguration.getLiquidationDepositAmount(),
-                iporConfiguration.getIncomeTaxPercentage(),
+                    iporAssetConfiguration.getMinCollateralizationFactorValue(),
+                    iporAssetConfiguration.getMaxCollateralizationFactorValue(),
+                    iporAssetConfiguration.getOpeningFeePercentage(),
+                    iporAssetConfiguration.getIporPublicationFeeAmount(),
+                    iporAssetConfiguration.getLiquidationDepositAmount(),
+                    iporAssetConfiguration.getIncomeTaxPercentage(),
                 spreadPayFixedValue,
                 spreadRecFixedValue
             );
         }
-        return iporConfigurationsFront;
+        return iporAssetConfigurationsFront;
     }
 }

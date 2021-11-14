@@ -5,9 +5,9 @@ import Milton from "./contracts/Milton.json";
 import TestMilton from "./contracts/TestMilton.json";
 import MiltonStorage from "./contracts/MiltonStorage.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
-import IporConfigurationUsdt from "./contracts/IporConfigurationUsdt";
-import IporConfigurationUsdc from "./contracts/IporConfigurationUsdc";
-import IporConfigurationDai from "./contracts/IporConfigurationDai";
+import IporAssetConfigurationUsdt from "./contracts/IporAssetConfigurationUsdt";
+import IporAssetConfigurationUsdc from "./contracts/IporAssetConfigurationUsdc";
+import IporAssetConfigurationDai from "./contracts/IporAssetConfigurationDai";
 import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
@@ -40,9 +40,9 @@ const options = {
         UsdtMockedToken,
         UsdcMockedToken,
         MiltonFaucet,
-        IporConfigurationDai,
-        IporConfigurationUsdt,
-        IporConfigurationUsdc],
+        IporAssetConfigurationDai,
+        IporAssetConfigurationUsdt,
+        IporAssetConfigurationUsdc],
     events: {
         WarrenStorage: ["IporIndexUpdate"]
     }

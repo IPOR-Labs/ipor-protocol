@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-interface IIporConfiguration {
+interface IIporAssetConfiguration {
 
     event IncomeTaxPercentageSet(uint256 newIncomeTaxPercentage);
     event LiquidationDepositAmountSet(uint256 newLiquidationDepositAmount);

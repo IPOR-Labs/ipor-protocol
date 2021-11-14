@@ -12,7 +12,7 @@ import {Errors} from '../Errors.sol';
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../libraries/Constants.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
 
 contract Joseph is Ownable, IJoseph {
@@ -26,13 +26,13 @@ contract Joseph is Ownable, IJoseph {
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        _provideLiquidity(asset, liquidityAmount, iporConfiguration.getMultiplicator());
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        _provideLiquidity(asset, liquidityAmount, iporAssetConfiguration.getMultiplicator());
     }
 
     function redeem(address asset, uint256 ipTokenVolume) external override {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        _redeem(asset, ipTokenVolume, iporConfiguration.getMultiplicator());
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator());
     }
 
     function calculateExchangeRate(address asset) external override view returns (uint256){
@@ -41,11 +41,11 @@ contract Joseph is Ownable, IJoseph {
         IMilton milton = IMilton(_addressesManager.getMilton());
 //        (int256 soapPf, int256 soapRf, int256 soap) = milton.calculateSoap(asset);
         uint256 ipTokenTotalSupply = ipToken.totalSupply();
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
         if (ipTokenTotalSupply > 0) {
-            return AmmMath.division((miltonStorage.getBalance(asset).liquidityPool) * iporConfiguration.getMultiplicator(), ipTokenTotalSupply);
+            return AmmMath.division((miltonStorage.getBalance(asset).liquidityPool) * iporAssetConfiguration.getMultiplicator(), ipTokenTotalSupply);
         } else {
-            return iporConfiguration.getMultiplicator();
+            return iporAssetConfiguration.getMultiplicator();
         }
     }
 

@@ -125,30 +125,30 @@ contract('IporAddressesManager', (accounts) => {
 
     });
 
-    it('should set IporConfiguration for supported asset', async () => {
+    it('should set IporAssetConfiguration for supported asset', async () => {
         //given
-        let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let iporAssetConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         let asset = tokenDai.address;
 
         //when
-        await iporAddressesManager.setIporConfiguration(asset, iporConfigurationAddress);
+        await iporAddressesManager.setIporAssetConfiguration(asset, iporAssetConfigurationAddress);
 
         //then
-        let actualIporConfigurationAddress = await iporAddressesManager.getIporConfiguration(asset);
+        let actualIporAssetConfigurationAddress = await iporAddressesManager.getIporAssetConfiguration(asset);
 
-        assert(iporConfigurationAddress === actualIporConfigurationAddress,
-            `Incorrect  IporConfiguration address for asset ${asset}, actual: ${actualIporConfigurationAddress}, expected: ${iporConfigurationAddress}`)
+        assert(iporAssetConfigurationAddress === actualIporAssetConfigurationAddress,
+            `Incorrect  IporAssetConfiguration address for asset ${asset}, actual: ${actualIporAssetConfigurationAddress}, expected: ${IporAssetConfigurationAddress}`)
     });
 
-    it('should NOT set IporConfiguration for NOT supported asset USDC', async () => {
+    it('should NOT set IporAssetConfiguration for NOT supported asset USDC', async () => {
         //given
-        let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let iporAssetConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         let asset = tokenUsdc.address;
 
         //when
         await testUtils.assertError(
             //when
-            iporAddressesManager.setIporConfiguration(asset, iporConfigurationAddress),
+            iporAddressesManager.setIporAssetConfiguration(asset, iporAssetConfigurationAddress),
             //then
             'IPOR_39'
         );
@@ -286,7 +286,7 @@ contract('IporAddressesManager', (accounts) => {
 
     });
 
-    it('should FAIL when used Timelock Controller, because Timelock is not an Owner of IporConfiguration smart contract', async () => {
+    it('should FAIL when used Timelock Controller, because Timelock is not an Owner of IporAssetConfiguration smart contract', async () => {
 
         //given
         let fnParamId = keccak256("MILTON");
@@ -322,7 +322,7 @@ contract('IporAddressesManager', (accounts) => {
 
     });
 
-    it('should use Timelock Controller to return ownership of IporConfiguration smart contract', async () => {
+    it('should use Timelock Controller to return ownership of IporAssetConfiguration smart contract', async () => {
         //given
         let iporAddressesManagerOriginOwner = admin;
         await iporAddressesManager.transferOwnership(timelockController.address);

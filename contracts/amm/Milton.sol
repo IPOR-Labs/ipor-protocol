@@ -15,7 +15,7 @@ import './MiltonStorage.sol';
 import './IMiltonEvents.sol';
 import '../tokenization/IpToken.sol';
 
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
@@ -156,36 +156,36 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
         require(_addressesManager.assetSupported(asset) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
 
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        require(address(iporConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        require(address(iporAssetConfiguration) != address(0), Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS);
 
-        require(collateralizationFactor >= iporConfiguration.getMinCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW);
-        require(collateralizationFactor <= iporConfiguration.getMaxCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH);
+        require(collateralizationFactor >= iporAssetConfiguration.getMinCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW);
+        require(collateralizationFactor <= iporAssetConfiguration.getMaxCollateralizationFactorValue(), Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH);
 
-        require(totalAmount > iporConfiguration.getLiquidationDepositAmount() + iporConfiguration.getIporPublicationFeeAmount(),
+        require(totalAmount > iporAssetConfiguration.getLiquidationDepositAmount() + iporAssetConfiguration.getIporPublicationFeeAmount(),
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
-        require(totalAmount <= iporConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
+        require(totalAmount <= iporAssetConfiguration.getMaxPositionTotalAmount(), Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH);
         require(IERC20(asset).balanceOf(msg.sender) >= totalAmount, Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW);
 
-        require(maximumSlippage <= iporConfiguration.getMaxSlippagePercentage(), Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
+        require(maximumSlippage <= iporAssetConfiguration.getMaxSlippagePercentage(), Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH);
 
         require(direction <= uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed), Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS);
 
         DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath.calculateDerivativeAmount(
             totalAmount, collateralizationFactor,
-            iporConfiguration.getLiquidationDepositAmount(),
-            iporConfiguration.getIporPublicationFeeAmount(),
-            iporConfiguration.getOpeningFeePercentage(),
-            iporConfiguration.getMultiplicator()
+            iporAssetConfiguration.getLiquidationDepositAmount(),
+            iporAssetConfiguration.getIporPublicationFeeAmount(),
+            iporAssetConfiguration.getOpeningFeePercentage(),
+            iporAssetConfiguration.getMultiplicator()
         );
 
-        require(totalAmount > iporConfiguration.getLiquidationDepositAmount() + iporConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
+        require(totalAmount > iporAssetConfiguration.getLiquidationDepositAmount() + iporAssetConfiguration.getIporPublicationFeeAmount() + derivativeAmount.openingFee,
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         require(IMiltonLPUtilizationStrategy(
             _addressesManager.getMiltonUtilizationStrategy()).calculateUtilization(
             asset, derivativeAmount.deposit, derivativeAmount.openingFee,
-            iporConfiguration.getMultiplicator()) <= iporConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
+                iporAssetConfiguration.getMultiplicator()) <= iporAssetConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, openTimestamp);
@@ -200,17 +200,17 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             direction,
             derivativeAmount.deposit,
             DataTypes.IporDerivativeFee(
-                iporConfiguration.getLiquidationDepositAmount(),
+                    iporAssetConfiguration.getLiquidationDepositAmount(),
                 derivativeAmount.openingFee,
-                iporConfiguration.getIporPublicationFeeAmount(),
+                        iporAssetConfiguration.getIporPublicationFeeAmount(),
                 spreadPayFixedValue,
                 spreadRecFixedValue),
             collateralizationFactor,
             derivativeAmount.notional,
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
-            _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional, iporConfiguration.getMultiplicator()),
-            iporConfiguration.getMultiplicator()
+            _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional, iporAssetConfiguration.getMultiplicator()),
+                iporAssetConfiguration.getMultiplicator()
         );
 
         miltonStorage.updateStorageWhenOpenPosition(iporDerivative);
@@ -270,9 +270,9 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
 
         require(derivativeItem.item.state == DataTypes.DerivativeState.ACTIVE, Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS);
 
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(derivativeItem.item.asset));
 
-        uint256 incomeTaxPercentage = iporConfiguration.getIncomeTaxPercentage();
+        uint256 incomeTaxPercentage = iporAssetConfiguration.getIncomeTaxPercentage();
 
         int256 positionValue = _calculatePositionValue(closeTimestamp, derivativeItem.item);
 

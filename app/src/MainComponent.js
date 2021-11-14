@@ -6,7 +6,7 @@ import {Tab} from "bootstrap";
 import IporIndexComponent from "./WarrenComponent";
 import MiltonComponent from "./MiltonComponent";
 import MyPositions from "./MyPositions";
-import IporConfiguration from "./IporConfigurationComponent";
+import IporAssetConfiguration from "./IporAssetConfigurationComponent";
 import FaucetComponent from "./FaucetComponent";
 import FrontendComponent from "./FrontendComponent";
 
@@ -57,7 +57,7 @@ export default ({drizzle, drizzleState}) => {
                     />
                 </Tab>
                 <Tab eventKey="miltonConfig" title="IPOR Config">
-                    <IporConfiguration
+                    <IporAssetConfiguration
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />

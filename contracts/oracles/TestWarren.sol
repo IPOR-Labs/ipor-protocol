@@ -2,7 +2,7 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import "./Warren.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 
 contract TestWarren is Warren {
 

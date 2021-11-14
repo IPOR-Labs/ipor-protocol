@@ -4,7 +4,7 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonFrontendDataProvider {
 
-    struct IporConfigurationFront {
+    struct IporAssetConfigurationFront {
         address asset;
         uint256 minCollateralizationFactorValue;
         uint256 maxCollateralizationFactorValue;
@@ -35,5 +35,5 @@ interface IMiltonFrontendDataProvider {
 
     function getMyPositions() external view returns (IporDerivativeFront[] memory items);
 
-    function getConfiguration() external view returns (IporConfigurationFront[] memory);
+    function getConfiguration() external view returns (IporAssetConfigurationFront[] memory);
 }

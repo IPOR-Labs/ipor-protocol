@@ -4,9 +4,9 @@ const TestMilton = artifacts.require('TestMilton');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
-const IporConfigurationUsdt = artifacts.require('IporConfigurationUsdt');
-const IporConfigurationUsdc = artifacts.require('IporConfigurationUsdc');
-const IporConfigurationDai = artifacts.require('IporConfigurationDai');
+const IporAssetConfigurationUsdt = artifacts.require('IporAssetConfigurationUsdt');
+const IporAssetConfigurationUsdc = artifacts.require('IporAssetConfigurationUsdc');
+const IporAssetConfigurationDai = artifacts.require('IporAssetConfigurationDai');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonStorage = artifacts.require('MiltonStorage');
 const TestWarren = artifacts.require('TestWarren');
@@ -191,21 +191,21 @@ module.exports.prepareDataForBefore = async (accounts) => {
     let tokenUsdc = await UsdcMockedToken.new(TOTAL_SUPPLY_6_DECIMALS, 6);
     let tokenDai = await DaiMockedToken.new(TOTAL_SUPPLY_18_DECIMALS, 18);
 
-    let iporConfigurationUsdt = await IporConfigurationUsdt.new(tokenUsdt.address);
-    let iporConfigurationUsdc = await IporConfigurationUsdc.new(tokenUsdc.address);
-    let iporConfigurationDai = await IporConfigurationDai.new(tokenDai.address);
+    let iporAssetConfigurationUsdt = await IporAssetConfigurationUsdt.new(tokenUsdt.address);
+    let iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.new(tokenUsdc.address);
+    let iporAssetConfigurationDai = await IporAssetConfigurationDai.new(tokenDai.address);
 
     await iporAddressesManager.addAsset(tokenUsdt.address);
     await iporAddressesManager.addAsset(tokenUsdc.address);
     await iporAddressesManager.addAsset(tokenDai.address);
 
-    await iporAddressesManager.setIporConfiguration(tokenUsdt.address, await iporConfigurationUsdt.address);
-    await iporAddressesManager.setIporConfiguration(tokenUsdc.address, await iporConfigurationUsdc.address);
-    await iporAddressesManager.setIporConfiguration(tokenDai.address, await iporConfigurationDai.address);
+    await iporAddressesManager.setIporAssetConfiguration(tokenUsdt.address, await iporAssetConfigurationUsdt.address);
+    await iporAddressesManager.setIporAssetConfiguration(tokenUsdc.address, await iporAssetConfigurationUsdc.address);
+    await iporAddressesManager.setIporAssetConfiguration(tokenDai.address, await iporAssetConfigurationDai.address);
 
-    await iporConfigurationUsdt.initialize(iporAddressesManager.address);
-    await iporConfigurationUsdc.initialize(iporAddressesManager.address);
-    await iporConfigurationDai.initialize(iporAddressesManager.address);
+    await iporAssetConfigurationUsdt.initialize(iporAddressesManager.address);
+    await iporAssetConfigurationUsdc.initialize(iporAddressesManager.address);
+    await iporAssetConfigurationDai.initialize(iporAddressesManager.address);
 
     for (let i = 1; i < accounts.length - 2; i++) {
         //Liquidity Pool has rights to spend money on behalf of user accounts[i]
@@ -248,9 +248,9 @@ module.exports.prepareDataForBefore = async (accounts) => {
         tokenDai: tokenDai,
         tokenUsdt: tokenUsdt,
         tokenUsdc: tokenUsdc,
-        iporConfigurationUsdt: iporConfigurationUsdt,
-        iporConfigurationUsdc: iporConfigurationUsdc,
-        iporConfigurationDai: iporConfigurationDai,
+        iporAssetConfigurationUsdt: iporAssetConfigurationUsdt,
+        iporAssetConfigurationUsdc: iporAssetConfigurationUsdc,
+        iporAssetConfigurationDai: iporAssetConfigurationDai,
         miltonDevToolDataProvider: miltonDevToolDataProvider
     }
 

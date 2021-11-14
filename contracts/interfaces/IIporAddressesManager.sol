@@ -9,7 +9,7 @@ interface IIporAddressesManager {
     event MiltonSpreadStrategyUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event WarrenStorageAddressUpdated(address indexed newAddress);
-    event IporConfigurationAddressUpdated(address indexed asset, address indexed newAddress);
+    event IporAssetConfigurationAddressUpdated(address indexed asset, address indexed newAddress);
     event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
     event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
     event ProxyCreated(string id, address indexed newAddress);
@@ -44,9 +44,9 @@ interface IIporAddressesManager {
 
     function setMiltonSpreadStrategyImpl(address miltonSpreadStrategyImpl) external;
 
-    function getIporConfiguration(address asset) external view returns (address);
+    function getIporAssetConfiguration(address asset) external view returns (address);
 
-    function setIporConfiguration(address asset, address iporConfigImpl) external;
+    function setIporAssetConfiguration(address asset, address iporConfigImpl) external;
 
     function getWarren() external view returns (address);
 

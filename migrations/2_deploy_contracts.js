@@ -18,9 +18,9 @@ const SoapIndicatorLogic = artifacts.require('SoapIndicatorLogic');
 const SpreadIndicatorLogic = artifacts.require('SpreadIndicatorLogic');
 const TotalSoapIndicatorLogic = artifacts.require('TotalSoapIndicatorLogic');
 const DerivativesView = artifacts.require('DerivativesView');
-const IporConfigurationUsdt = artifacts.require('IporConfigurationUsdt');
-const IporConfigurationUsdc = artifacts.require('IporConfigurationUsdc');
-const IporConfigurationDai = artifacts.require('IporConfigurationDai');
+const IporAssetConfigurationUsdt = artifacts.require('IporAssetConfigurationUsdt');
+const IporAssetConfigurationUsdc = artifacts.require('IporAssetConfigurationUsdc');
+const IporAssetConfigurationDai = artifacts.require('IporAssetConfigurationDai');
 const AmmMath = artifacts.require('AmmMath');
 const IporAddressesManager = artifacts.require('IporAddressesManager');
 const MiltonDevToolDataProvider = artifacts.require('MiltonDevToolDataProvider');
@@ -63,18 +63,18 @@ module.exports = async function (deployer, _network, addresses) {
     let testJoseph = null;
     let miltonStorage = null;
     let miltonFaucet = null;
-    let iporConfigurationUsdt = null;
-    let iporConfigurationUsdc = null;
-    let iporConfigurationDai = null;
+    let iporAssetConfigurationUsdt = null;
+    let iporAssetConfigurationUsdc = null;
+    let iporAssetConfigurationDai = null;
     let iporAddressesManager = null;
 
     await deployer.deploy(AmmMath);
 
     await deployer.link(AmmMath, IporLogic);
     await deployer.link(AmmMath, Warren);
-    await deployer.link(AmmMath, IporConfigurationUsdt);
-    await deployer.link(AmmMath, IporConfigurationUsdc);
-    await deployer.link(AmmMath, IporConfigurationDai);
+    await deployer.link(AmmMath, IporAssetConfigurationUsdt);
+    await deployer.link(AmmMath, IporAssetConfigurationUsdc);
+    await deployer.link(AmmMath, IporAssetConfigurationDai);
     await deployer.link(AmmMath, DerivativeLogic);
     await deployer.link(AmmMath, SoapIndicatorLogic);
     await deployer.link(AmmMath, MiltonStorage);
@@ -156,22 +156,22 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(IpToken, mockedDai.address, "IP DAI", "ipDAI");
         ipDaiToken = await IpToken.deployed();
 
-        await deployer.deploy(IporConfigurationUsdt, mockedUsdt.address);
-        iporConfigurationUsdt = await IporConfigurationUsdt.deployed();
+        await deployer.deploy(IporAssetConfigurationUsdt, mockedUsdt.address);
+        iporAssetConfigurationUsdt = await IporAssetConfigurationUsdt.deployed();
 
-        await deployer.deploy(IporConfigurationUsdc, mockedUsdc.address);
-        iporConfigurationUsdc = await IporConfigurationUsdc.deployed();
+        await deployer.deploy(IporAssetConfigurationUsdc, mockedUsdc.address);
+        iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.deployed();
 
-        await deployer.deploy(IporConfigurationDai, mockedDai.address);
-        iporConfigurationDai = await IporConfigurationDai.deployed();
+        await deployer.deploy(IporAssetConfigurationDai, mockedDai.address);
+        iporAssetConfigurationDai = await IporAssetConfigurationDai.deployed();
 
         await iporAddressesManager.addAsset(mockedDai.address);
         await iporAddressesManager.addAsset(mockedUsdt.address);
         await iporAddressesManager.addAsset(mockedUsdc.address);
 
-        await iporAddressesManager.setIporConfiguration(mockedUsdt.address, await iporConfigurationUsdt.address);
-        await iporAddressesManager.setIporConfiguration(mockedUsdc.address, await iporConfigurationUsdc.address);
-        await iporAddressesManager.setIporConfiguration(mockedDai.address, await iporConfigurationDai.address);
+        await iporAddressesManager.setIporAssetConfiguration(mockedUsdt.address, await iporAssetConfigurationUsdt.address);
+        await iporAddressesManager.setIporAssetConfiguration(mockedUsdc.address, await iporAssetConfigurationUsdc.address);
+        await iporAddressesManager.setIporAssetConfiguration(mockedDai.address, await iporAssetConfigurationDai.address);
 
         await iporAddressesManager.setIpToken(mockedUsdt.address, ipUsdtToken.address);
         await iporAddressesManager.setIpToken(mockedUsdc.address, ipUsdcToken.address);
@@ -180,9 +180,9 @@ module.exports = async function (deployer, _network, addresses) {
         await ipUsdtToken.initialize(iporAddressesManager.address);
         await ipUsdcToken.initialize(iporAddressesManager.address);
         await ipDaiToken.initialize(iporAddressesManager.address);
-        await iporConfigurationUsdt.initialize(iporAddressesManager.address);
-        await iporConfigurationUsdc.initialize(iporAddressesManager.address);
-        await iporConfigurationDai.initialize(iporAddressesManager.address);
+        await iporAssetConfigurationUsdt.initialize(iporAddressesManager.address);
+        await iporAssetConfigurationUsdc.initialize(iporAddressesManager.address);
+        await iporAssetConfigurationDai.initialize(iporAddressesManager.address);
     } else {
 
         if (_network !== 'test') { //only public network - test and production
@@ -202,30 +202,30 @@ module.exports = async function (deployer, _network, addresses) {
             ipDaiToken = await IpToken.deployed();
 
 
-            await deployer.deploy(IporConfiguration, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS);
-            iporConfigurationUsdt = await IporConfiguration.deployed();
+            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS);
+            iporAssetConfigurationUsdt = await IporAssetConfiguration.deployed();
 
-            await deployer.deploy(IporConfiguration, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS);
-            iporConfigurationUsdc = await IporConfiguration.deployed();
+            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS);
+            iporAssetConfigurationUsdc = await IporAssetConfiguration.deployed();
 
-            await deployer.deploy(IporConfiguration, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS);
-            iporConfigurationDai = await IporConfiguration.deployed();
+            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS);
+            iporAssetConfigurationDai = await IporAssetConfiguration.deployed();
 
             await iporAddressesManager.addAsset(mockedDai.address);
             await iporAddressesManager.addAsset(mockedUsdt.address);
             await iporAddressesManager.addAsset(mockedUsdc.address);
 
-            await iporAddressesManager.setIporConfiguration(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, await iporConfigurationUsdt.address);
-            await iporAddressesManager.setIporConfiguration(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, await iporConfigurationUsdc.address);
-            await iporAddressesManager.setIporConfiguration(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, await iporConfigurationDai.address);
+            await iporAddressesManager.setIporAssetConfiguration(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, await IporAssetConfigurationUsdt.address);
+            await iporAddressesManager.setIporAssetConfiguration(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, await IporAssetConfigurationUsdc.address);
+            await iporAddressesManager.setIporAssetConfiguration(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, await IporAssetConfigurationDai.address);
 
             await iporAddressesManager.setIpToken(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
             await iporAddressesManager.setIpToken(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
             await iporAddressesManager.setIpToken(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
 
-            await iporConfigurationUsdt.initialize(iporAddressesManager.address);
-            await iporConfigurationUsdc.initialize(iporAddressesManager.address);
-            await iporConfigurationDai.initialize(iporAddressesManager.address);
+            await iporAssetConfigurationUsdt.initialize(iporAddressesManager.address);
+            await iporAssetConfigurationUsdc.initialize(iporAddressesManager.address);
+            await iporAssetConfigurationDai.initialize(iporAddressesManager.address);
         }
     }
 

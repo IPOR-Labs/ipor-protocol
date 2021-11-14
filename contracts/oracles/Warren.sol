@@ -12,7 +12,7 @@ import "../libraries/IporLogic.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../interfaces/IWarrenStorage.sol";
 import "../interfaces/IIporAddressesManager.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 
 /**
  * @title IPOR Index Oracle Contract

@@ -17,7 +17,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
     mapping(address => address) public ipTokens;
 
     //@notice mapping underlying asset address to ipor configuration address
-    mapping(address => address) public iporConfigurations;
+    mapping(address => address) public iporAssetConfigurations;
 
     //@notice mapping underlying asset address to Asset Management Vault
     mapping(address => address) public assetManagementVaults;
@@ -94,14 +94,14 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         emit MiltonSpreadStrategyUpdated(miltonSpreadStrategyImpl);
     }
 
-    function getIporConfiguration(address asset) external view override returns (address) {
-        return iporConfigurations[asset];
+    function getIporAssetConfiguration(address asset) external view override returns (address) {
+        return iporAssetConfigurations[asset];
     }
 
-    function setIporConfiguration(address asset, address iporConfigImpl) external override onlyOwner {
+    function setIporAssetConfiguration(address asset, address iporConfigImpl) external override onlyOwner {
         require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        iporConfigurations[asset] = iporConfigImpl;
-        emit IporConfigurationAddressUpdated(asset, iporConfigImpl);
+        iporAssetConfigurations[asset] = iporConfigImpl;
+        emit IporAssetConfigurationAddressUpdated(asset, iporConfigImpl);
     }
 
     function getWarren() external view override returns (address) {

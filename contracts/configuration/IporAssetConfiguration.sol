@@ -15,10 +15,10 @@ import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 
 //TODO: consider using AccessControll instead Ownable - higher flexibility
-contract IporConfiguration is Ownable, IIporConfiguration {
+contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
     address private immutable _asset;
 
@@ -195,14 +195,14 @@ contract IporConfiguration is Ownable, IIporConfiguration {
 }
 
 //TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
-contract IporConfigurationUsdt is IporConfiguration {
-    constructor(address asset) IporConfiguration(asset) {}
+contract IporAssetConfigurationUsdt is IporAssetConfiguration {
+    constructor(address asset) IporAssetConfiguration(asset) {}
 }
 
-contract IporConfigurationUsdc is IporConfiguration {
-    constructor(address asset) IporConfiguration(asset) {}
+contract IporAssetConfigurationUsdc is IporAssetConfiguration {
+    constructor(address asset) IporAssetConfiguration(asset) {}
 }
 
-contract IporConfigurationDai is IporConfiguration {
-    constructor(address asset) IporConfiguration(asset) {}
+contract IporAssetConfigurationDai is IporAssetConfiguration {
+    constructor(address asset) IporAssetConfiguration(asset) {}
 }

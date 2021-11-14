@@ -15,12 +15,12 @@ import "./Joseph.sol";
 contract TestJoseph is Joseph {
 
     function test_provideLiquidity(address asset, uint256 liquidityAmount) external {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        _provideLiquidity(asset, liquidityAmount, iporConfiguration.getMultiplicator());
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        _provideLiquidity(asset, liquidityAmount, iporAssetConfiguration.getMultiplicator());
     }
 
     function test_redeem(address asset, uint256 ipTokenVolume) external {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        _redeem(asset, ipTokenVolume, iporConfiguration.getMultiplicator());
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator());
     }
 }
