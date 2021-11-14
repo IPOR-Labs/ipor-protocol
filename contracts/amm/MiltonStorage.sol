@@ -7,7 +7,7 @@ import "../libraries/DerivativeLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonStorage.sol";
@@ -22,7 +22,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _addressesManager;
 
     mapping(address => DataTypes.MiltonTotalBalance) public balances;
 
@@ -33,7 +33,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivatives public derivatives;
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 

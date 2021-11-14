@@ -567,7 +567,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getCharlieTreasurer"
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         />
@@ -576,7 +576,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getCharlieTreasurer"
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         />
@@ -585,7 +585,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getCharlieTreasurer"
                             methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         />
@@ -601,7 +601,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getTreasureTreasurer"
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         />
@@ -610,7 +610,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getTreasureTreasurer"
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         />
@@ -619,7 +619,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getTreasureTreasurer"
                             methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         />
@@ -635,7 +635,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getAssetManagementVault"
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         />
@@ -644,7 +644,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getAssetManagementVault"
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         />
@@ -653,7 +653,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="IporAddressesManager"
+                            contract="IporConfiguration"
                             method="getAssetManagementVault"
                             methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         />
@@ -666,21 +666,21 @@ export default ({drizzle, drizzleState}) => (
                 <strong>Charlie Treasuers</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="IporAddressesManager"
+                    contract="IporConfiguration"
                     method="setCharlieTreasurer"/>
             </div>
             <div className="col-md-4">
                 <strong>Treasure Treasuers</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="IporAddressesManager"
+                    contract="IporConfiguration"
                     method="setTreasureTreasurer"/>
             </div>
             <div className="col-md-4">
                 <strong>Asset Management Vault</strong>
                 <ContractForm
                     drizzle={drizzle}
-                    contract="IporAddressesManager"
+                    contract="IporConfiguration"
                     method="setAssetManagementVault"/>
             </div>
         </div>

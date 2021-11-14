@@ -51,7 +51,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     uint256 spreadPayFixedValue;
     uint256 spreadRecFixedValue;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _addressesManager;
 
     constructor(address asset) {
         _asset = asset;
@@ -59,7 +59,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         _maxSlippagePercentage = 100 * 10 ** ERC20(asset).decimals();
     }
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
 
         //@notice taken after close position from participant who take income (trader or Milton)

@@ -13,7 +13,7 @@ import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider";
-import IporAddressesManager from "./contracts/IporAddressesManager";
+import IporConfiguration from "./contracts/IporConfiguration";
 import Joseph from "./contracts/Joseph";
 import TestJoseph from "./contracts/TestJoseph";
 const options = {
@@ -27,7 +27,7 @@ const options = {
     contracts: [
         MiltonDevToolDataProvider,
         MiltonFrontendDataProvider,
-        IporAddressesManager,
+        IporConfiguration,
         Joseph,
         TestJoseph,
         Warren,

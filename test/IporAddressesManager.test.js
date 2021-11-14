@@ -6,17 +6,17 @@ const keccak256 = require("keccak256");
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
 const UsdcMockedToken = artifacts.require('UsdcMockedToken');
-const IporAddressesManager = artifacts.require('IporAddressesManager');
+const IporConfiguration = artifacts.require('IporConfiguration');
 const MockTimelockController = artifacts.require('MockTimelockController');
 const MINDELAY = time.duration.days(1);
 
-contract('IporAddressesManager', (accounts) => {
+contract('IporConfiguration', (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
-    let iporAddressesManager = null;
+    let iporConfiguration = null;
     let timelockController = null;
 
     before(async () => {
@@ -30,9 +30,9 @@ contract('IporAddressesManager', (accounts) => {
     });
 
     beforeEach(async () => {
-        iporAddressesManager = await IporAddressesManager.new();
-        await iporAddressesManager.addAsset(tokenUsdt.address);
-        await iporAddressesManager.addAsset(tokenDai.address);
+        iporConfiguration = await IporConfiguration.new();
+        await iporConfiguration.addAsset(tokenUsdt.address);
+        await iporConfiguration.addAsset(tokenDai.address);
     });
 
     it('should set charlieTreasurers', async () => {
@@ -41,10 +41,10 @@ contract('IporAddressesManager', (accounts) => {
         let asset = tokenDai.address;
 
         //when
-        await iporAddressesManager.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
+        await iporConfiguration.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
 
         //then
-        let actualCharlieTreasurerDaiAddress = await iporAddressesManager.getCharlieTreasurer(asset);
+        let actualCharlieTreasurerDaiAddress = await iporConfiguration.getCharlieTreasurer(asset);
 
         assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
             `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
@@ -58,7 +58,7 @@ contract('IporAddressesManager', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            iporAddressesManager.setCharlieTreasurer(asset, address),
+            iporConfiguration.setCharlieTreasurer(asset, address),
             //then
             'IPOR_39'
         );
@@ -71,10 +71,10 @@ contract('IporAddressesManager', (accounts) => {
         let asset = tokenDai.address;
 
         //when
-        await iporAddressesManager.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
+        await iporConfiguration.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
 
         //then
-        let actualTreasureTreasurerDaiAddress = await iporAddressesManager.getTreasureTreasurer(asset);
+        let actualTreasureTreasurerDaiAddress = await iporConfiguration.getTreasureTreasurer(asset);
 
         assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
             `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
@@ -88,7 +88,7 @@ contract('IporAddressesManager', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            iporAddressesManager.setTreasureTreasurer(asset, address),
+            iporConfiguration.setTreasureTreasurer(asset, address),
             //then
             'IPOR_39'
         );
@@ -101,10 +101,10 @@ contract('IporAddressesManager', (accounts) => {
         let asset = tokenDai.address;
 
         //when
-        await iporAddressesManager.setAssetManagementVault(asset, address);
+        await iporConfiguration.setAssetManagementVault(asset, address);
 
         //then
-        let actualAddress = await iporAddressesManager.getAssetManagementVault(asset);
+        let actualAddress = await iporConfiguration.getAssetManagementVault(asset);
 
         assert(address === actualAddress,
             `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
@@ -118,7 +118,7 @@ contract('IporAddressesManager', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            iporAddressesManager.setAssetManagementVault(asset, address),
+            iporConfiguration.setAssetManagementVault(asset, address),
             //then
             'IPOR_39'
         );
@@ -131,10 +131,10 @@ contract('IporAddressesManager', (accounts) => {
         let asset = tokenDai.address;
 
         //when
-        await iporAddressesManager.setIporAssetConfiguration(asset, iporAssetConfigurationAddress);
+        await iporConfiguration.setIporAssetConfiguration(asset, iporAssetConfigurationAddress);
 
         //then
-        let actualIporAssetConfigurationAddress = await iporAddressesManager.getIporAssetConfiguration(asset);
+        let actualIporAssetConfigurationAddress = await iporConfiguration.getIporAssetConfiguration(asset);
 
         assert(iporAssetConfigurationAddress === actualIporAssetConfigurationAddress,
             `Incorrect  IporAssetConfiguration address for asset ${asset}, actual: ${actualIporAssetConfigurationAddress}, expected: ${IporAssetConfigurationAddress}`)
@@ -148,7 +148,7 @@ contract('IporAddressesManager', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            iporAddressesManager.setIporAssetConfiguration(asset, iporAssetConfigurationAddress),
+            iporConfiguration.setIporAssetConfiguration(asset, iporAssetConfigurationAddress),
             //then
             'IPOR_39'
         );
@@ -160,10 +160,10 @@ contract('IporAddressesManager', (accounts) => {
         let asset = tokenDai.address;
 
         //when
-        await iporAddressesManager.setIpToken(asset, address);
+        await iporConfiguration.setIpToken(asset, address);
 
         //then
-        let actualAddress = await iporAddressesManager.getIpToken(asset);
+        let actualAddress = await iporConfiguration.getIpToken(asset);
 
         assert(address === actualAddress,
             `Incorrect  ipToken address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
@@ -177,7 +177,7 @@ contract('IporAddressesManager', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            iporAddressesManager.setIpToken(asset, address),
+            iporConfiguration.setIpToken(asset, address),
             //then
             'IPOR_39'
         );
@@ -186,16 +186,16 @@ contract('IporAddressesManager', (accounts) => {
 
     it('should use Timelock Controller - simple case 1', async () => {
         //given
-        await iporAddressesManager.transferOwnership(timelockController.address);
+        await iporConfiguration.transferOwnership(timelockController.address);
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await timelockController.schedule(
-            iporAddressesManager.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -207,7 +207,7 @@ contract('IporAddressesManager', (accounts) => {
         await time.increase(MINDELAY);
 
         await timelockController.execute(
-            iporAddressesManager.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -216,7 +216,7 @@ contract('IporAddressesManager', (accounts) => {
         );
 
         //then
-        let actualMiltonAddress = await iporAddressesManager.getAddress(fnParamId);
+        let actualMiltonAddress = await iporConfiguration.getAddress(fnParamId);
 
         assert(fnParamAddress === actualMiltonAddress,
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
@@ -225,17 +225,17 @@ contract('IporAddressesManager', (accounts) => {
 
     it('should FAIL when used Timelock Controller, because user not exists on list of proposers', async () => {
         //given
-        await iporAddressesManager.transferOwnership(timelockController.address);
+        await iporConfiguration.transferOwnership(timelockController.address);
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await testUtils.assertError(
             //when
             timelockController.schedule(
-                iporAddressesManager.address,
+                iporConfiguration.address,
                 "0x0",
                 calldata,
                 ZERO_BYTES32,
@@ -251,14 +251,14 @@ contract('IporAddressesManager', (accounts) => {
 
     it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
         //given
-        await iporAddressesManager.transferOwnership(timelockController.address);
+        await iporConfiguration.transferOwnership(timelockController.address);
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
-            iporAddressesManager.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -273,7 +273,7 @@ contract('IporAddressesManager', (accounts) => {
         await testUtils.assertError(
             //when
             timelockController.execute(
-                iporAddressesManager.address,
+                iporConfiguration.address,
                 "0x0",
                 calldata,
                 ZERO_BYTES32,
@@ -291,10 +291,10 @@ contract('IporAddressesManager', (accounts) => {
         //given
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
-            iporAddressesManager.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -309,7 +309,7 @@ contract('IporAddressesManager', (accounts) => {
         await testUtils.assertError(
             //when
             timelockController.execute(
-                iporAddressesManager.address,
+                iporConfiguration.address,
                 "0x0",
                 calldata,
                 ZERO_BYTES32,
@@ -324,23 +324,23 @@ contract('IporAddressesManager', (accounts) => {
 
     it('should use Timelock Controller to return ownership of IporAssetConfiguration smart contract', async () => {
         //given
-        let iporAddressesManagerOriginOwner = admin;
-        await iporAddressesManager.transferOwnership(timelockController.address);
+        let iporConfigurationOriginOwner = admin;
+        await iporConfiguration.transferOwnership(timelockController.address);
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let calldata = iporAddressesManager.contract.methods.transferOwnership(iporAddressesManagerOriginOwner).encodeABI();
+        let calldata = iporConfiguration.contract.methods.transferOwnership(iporConfigurationOriginOwner).encodeABI();
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(
-            iporAddressesManager.setAddress(fnParamId, fnParamAddress, {from: iporAddressesManagerOriginOwner}),
+            iporConfiguration.setAddress(fnParamId, fnParamAddress, {from: iporConfigurationOriginOwner}),
             'Ownable: caller is not the owner'
         );
 
         //when
         await timelockController.schedule(
-            iporAddressesManager.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -352,7 +352,7 @@ contract('IporAddressesManager', (accounts) => {
         await time.increase(MINDELAY);
 
         await timelockController.execute(
-            iporAddressesManager.address,
+            iporConfiguration.address,
             "0x0",
             calldata,
             ZERO_BYTES32,
@@ -360,10 +360,10 @@ contract('IporAddressesManager', (accounts) => {
             {from: userTwo}
         );
 
-        await iporAddressesManager.setAddress(fnParamId, fnParamAddress, {from: iporAddressesManagerOriginOwner});
+        await iporConfiguration.setAddress(fnParamId, fnParamAddress, {from: iporConfigurationOriginOwner});
 
         //then
-        let actualMiltonAddress = await iporAddressesManager.getAddress(fnParamId);
+        let actualMiltonAddress = await iporConfiguration.getAddress(fnParamId);
 
         assert(fnParamAddress === actualMiltonAddress,
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)

@@ -147,7 +147,7 @@
                         <argument>${contracts.sources}/amm/MiltonSpreadStrategy.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/amm/TestMilton.sol</argument>
-                        <argument>${contracts.sources}/configuration/IporAddressesManager.sol</argument>
+                        <argument>${contracts.sources}/configuration/IporConfiguration.sol</argument>
                         <argument>${contracts.sources}/configuration/IporAssetConfigurationUsdt.sol</argument>
                         <argument>${contracts.sources}/configuration/IporAssetConfigurationUsdc.sol</argument>
                         <argument>${contracts.sources}/configuration/IporAssetConfigurationDai.sol</argument>
@@ -155,7 +155,7 @@
                         <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenFrontendDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IIporAddressesManager.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IIporConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporAssetConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>

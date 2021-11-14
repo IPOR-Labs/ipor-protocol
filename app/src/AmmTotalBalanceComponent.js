@@ -192,7 +192,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getMilton"
                         render={(value) => (
                             <div>
@@ -203,7 +203,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getJoseph"
                         render={(value) => (
                             <div>
@@ -221,7 +221,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getMilton"
                         render={(value) => (
                             <div>Milton: <strong>{value}</strong></div>
@@ -230,7 +230,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getJoseph"
                         render={(value) => (
                             <div>Joseph: <strong>{value}</strong></div>
@@ -246,7 +246,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getMilton"
                         render={(value) => (
                             <div>Milton: <strong>{value}</strong></div>
@@ -255,7 +255,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getJoseph"
                         render={(value) => (
                             <div>Joseph: <strong>{value}</strong></div>
@@ -336,7 +336,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getIpToken"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                     />
@@ -347,7 +347,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getIpToken"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                     />
@@ -358,7 +358,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getIpToken"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                     />

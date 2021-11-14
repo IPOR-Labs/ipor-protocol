@@ -4,7 +4,7 @@ const {time} = require("@openzeppelin/test-helpers");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const IporAssetConfigurationDai = artifacts.require('IporAssetConfigurationDai');
-const IporAddressesManager = artifacts.require('IporAddressesManager');
+const IporConfiguration = artifacts.require('IporConfiguration');
 const MockTimelockController = artifacts.require('MockTimelockController');
 const MINDELAY = time.duration.days(1);
 
@@ -13,19 +13,19 @@ contract('IporAssetConfiguration', (accounts) => {
 
     let tokenDai = null;
     let iporAssetConfigurationDAI = null;
-    let iporAddressesManager = null;
+    let iporConfiguration = null;
     let timelockController = null;
 
     before(async () => {
-        iporAddressesManager = await IporAddressesManager.deployed();
+        iporConfiguration = await IporConfiguration.deployed();
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
-        await iporAddressesManager.addAsset(tokenDai.address);
+        await iporConfiguration.addAsset(tokenDai.address);
         timelockController = await MockTimelockController.new(MINDELAY, [userOne], [userTwo]);
     });
 
     beforeEach(async () => {
         iporAssetConfigurationDAI = await IporAssetConfigurationDai.new(tokenDai.address);
-        await iporAssetConfigurationDAI.initialize(iporAddressesManager.address);
+        await iporAssetConfigurationDAI.initialize(iporConfiguration.address);
     });
 
     it('should set default openingFeeForTreasuryPercentage', async () => {

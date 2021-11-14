@@ -11,7 +11,7 @@ import {Constants} from '../libraries/Constants.sol';
 import "../libraries/IporLogic.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../interfaces/IWarrenStorage.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
 /**
@@ -23,7 +23,7 @@ contract Warren is Ownable, Pausable, IWarren {
 
     using IporLogic for DataTypes.IPOR;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _addressesManager;
 
     modifier onlyUpdater() {
         bool allowed = false;
@@ -38,7 +38,7 @@ contract Warren is Ownable, Pausable, IWarren {
         _;
     }
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 

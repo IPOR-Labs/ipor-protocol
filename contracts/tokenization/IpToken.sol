@@ -5,14 +5,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import {Errors} from '../Errors.sol';
 
 contract IpToken is Ownable, IIpToken, ERC20 {
 
     using SafeERC20 for IERC20;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _addressesManager;
 
     address internal _underlyingAsset;
     uint8 _decimals;
@@ -31,7 +31,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         _decimals = ERC20(underlyingAsset).decimals();
     }
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 

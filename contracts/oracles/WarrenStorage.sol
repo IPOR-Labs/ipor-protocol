@@ -8,7 +8,7 @@ import {Constants} from '../libraries/Constants.sol';
 import {Errors} from '../Errors.sol';
 import "../libraries/IporLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 
 /**
  * @title Ipor Oracle Storage initial version
@@ -36,9 +36,9 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _addressesManager;
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 
@@ -102,7 +102,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 newQuasiIbtPrice;
 
         if (assetExists == false) {
-            //TODO: consider asset support configured in IporAddressesManager
+            //TODO: consider asset support configured in IporConfiguration
             assets.push(asset);
             newQuasiIbtPrice = multiplicator * Constants.YEAR_IN_SECONDS;
         } else {

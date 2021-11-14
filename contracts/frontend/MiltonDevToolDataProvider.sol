@@ -2,15 +2,15 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
 
 contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 
-    IIporAddressesManager public immutable ADDRESSES_MANAGER;
+    IIporConfiguration public immutable ADDRESSES_MANAGER;
 
-    constructor(IIporAddressesManager addressesManager) {
+    constructor(IIporConfiguration addressesManager) {
         ADDRESSES_MANAGER = addressesManager;
     }
 

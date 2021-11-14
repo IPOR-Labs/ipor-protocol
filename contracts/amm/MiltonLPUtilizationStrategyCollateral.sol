@@ -4,7 +4,7 @@ pragma solidity >=0.8.4 <0.9.0;
 import "../libraries/Constants.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from '../libraries/AmmMath.sol';
@@ -13,9 +13,9 @@ import {AmmMath} from '../libraries/AmmMath.sol';
 //(collateral is a total balance of derivatives in Milton)
 contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _addressesManager;
 
-    function initialize(IIporAddressesManager addressesManager) public {
+    function initialize(IIporConfiguration addressesManager) public {
         _addressesManager = addressesManager;
     }
 

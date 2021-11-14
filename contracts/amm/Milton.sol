@@ -34,7 +34,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _addressesManager;
 
 
     modifier onlyActiveDerivative(uint256 derivativeId) {
@@ -48,7 +48,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         _;
     }
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
         _addressesManager = addressesManager;
     }
 

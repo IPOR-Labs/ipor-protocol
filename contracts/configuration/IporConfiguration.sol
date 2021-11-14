@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import {Errors} from '../Errors.sol';
 
-contract IporAddressesManager is Ownable, IIporAddressesManager {
+contract IporConfiguration is Ownable, IIporConfiguration {
 
     //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC
     address [] public assets;

@@ -42,7 +42,7 @@ contract('IpToken', (accounts) => {
 
     it('should emit event', async () => {
         //given
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), admin);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), admin);
 
         //when
         let tx = await testData.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: admin})
@@ -51,6 +51,6 @@ contract('IpToken', (accounts) => {
         truffleAssert.eventEmitted(tx, 'Mint', (ev) => {
             return ev.user == userOne && ev.value == testUtils.USD_10_000_18DEC;
         });
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
     });
 });

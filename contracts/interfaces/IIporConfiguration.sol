@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-interface IIporAddressesManager {
+interface IIporConfiguration {
 
     event MiltonAddressUpdated(address indexed newAddress);
     event MiltonStorageAddressUpdated(address indexed newAddress);

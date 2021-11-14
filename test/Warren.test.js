@@ -16,7 +16,7 @@ contract('Warren', (accounts) => {
 
     before(async () => {
         data = await testUtils.prepareDataForBefore(accounts);
-        warrenDevToolDataProvider = await WarrenDevToolDataProvider.new(data.iporAddressesManager.address);
+        warrenDevToolDataProvider = await WarrenDevToolDataProvider.new(data.iporConfiguration.address);
     });
 
     beforeEach(async () => {

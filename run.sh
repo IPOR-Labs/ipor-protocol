@@ -101,7 +101,7 @@ function create_env_config_file(){
   set_smart_contract_address "MiltonStorage.json" "milton_storage_address"
   set_smart_contract_address "WarrenStorage.json" "warren_storage_address"
   set_smart_contract_address "MiltonFaucet.json" "milton_faucet_address"
-  set_smart_contract_address "IporAddressesManager.json" "ipor_addresses_manager"
+  set_smart_contract_address "IporConfiguration.json" "ipor_configuration"
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }

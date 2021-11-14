@@ -213,9 +213,9 @@ contract('Joseph', (accounts) => {
         await data.joseph.provideLiquidity(params.asset, testUtils.USD_10_000_18DEC, {from: liquidityProvider})
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), userOne);
         await testData.miltonStorage.subtractLiquidity(params.asset, testUtils.USD_10_000_18DEC, {from: userOne});
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
 
         //when
         let actualExchangeRate = BigInt(await data.joseph.calculateExchangeRate.call(data.tokenDai.address));
@@ -441,9 +441,9 @@ contract('Joseph', (accounts) => {
         await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), userOne);
         await testData.miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
 
         //when
         await testUtils.assertError(
@@ -461,9 +461,9 @@ contract('Joseph', (accounts) => {
         await data.joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), userOne);
         await testData.miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
 
         //when
         await testUtils.assertError(
@@ -481,9 +481,9 @@ contract('Joseph', (accounts) => {
         await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), userOne);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), userOne);
         await testData.miltonStorage.subtractLiquidity(params.asset, testUtils.USD_10_18DEC, {from: userOne});
-        await data.iporAddressesManager.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
 
         //when
         await testUtils.assertError(
