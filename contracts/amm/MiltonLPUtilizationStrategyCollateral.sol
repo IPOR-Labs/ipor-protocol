@@ -13,14 +13,14 @@ import {AmmMath} from '../libraries/AmmMath.sol';
 //(collateral is a total balance of derivatives in Milton)
 contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
 
-    IIporConfiguration internal _addressesManager;
+    IIporConfiguration internal _iporConfiguration;
 
     function initialize(IIporConfiguration addressesManager) public {
-        _addressesManager = addressesManager;
+        _iporConfiguration = addressesManager;
     }
 
     function calculateUtilization(address asset, uint256 deposit, uint256 openingFee, uint256 multiplicator) external override view returns (uint256) {
-        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
+        IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(asset);
 
         if ((balance.liquidityPool + openingFee) != 0) {

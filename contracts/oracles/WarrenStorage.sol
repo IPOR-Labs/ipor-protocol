@@ -36,10 +36,10 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
 
-    IIporConfiguration internal _addressesManager;
+    IIporConfiguration internal _iporConfiguration;
 
     function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _addressesManager = addressesManager;
+        _iporConfiguration = addressesManager;
     }
 
     function getAssets() external override view returns (address[] memory) {
@@ -53,7 +53,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) external override onlyUpdater {
         require(_assets.length == indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i = 0; i < _assets.length; i++) {
-            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(_assets[i]));
+            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(_assets[i]));
             _updateIndex(_assets[i], indexValues[i], updateTimestamp, iporAssetConfiguration.getMultiplicator());
         }
     }

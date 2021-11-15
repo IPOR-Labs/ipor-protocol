@@ -19,29 +19,29 @@ contract Joseph is Ownable, IJoseph {
 
     using SafeERC20 for IERC20;
 
-    IIporConfiguration internal _addressesManager;
+    IIporConfiguration internal _iporConfiguration;
 
     function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _addressesManager = addressesManager;
+        _iporConfiguration = addressesManager;
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         _provideLiquidity(asset, liquidityAmount, iporAssetConfiguration.getMultiplicator());
     }
 
     function redeem(address asset, uint256 ipTokenVolume) external override {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator());
     }
 
     function calculateExchangeRate(address asset) external override view returns (uint256){
-        IIpToken ipToken = IIpToken(_addressesManager.getIpToken(asset));
-        IMiltonStorage miltonStorage = IMiltonStorage(_addressesManager.getMiltonStorage());
-        IMilton milton = IMilton(_addressesManager.getMilton());
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
+        IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());
+        IMilton milton = IMilton(_iporConfiguration.getMilton());
 //        (int256 soapPf, int256 soapRf, int256 soap) = milton.calculateSoap(asset);
         uint256 ipTokenTotalSupply = ipToken.totalSupply();
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
         if (ipTokenTotalSupply > 0) {
             return AmmMath.division((miltonStorage.getBalance(asset).liquidityPool) * iporAssetConfiguration.getMultiplicator(), ipTokenTotalSupply);
         } else {
@@ -51,37 +51,40 @@ contract Joseph is Ownable, IJoseph {
 
     function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 multiplicator) internal {
 
-        uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
+        uint256 exchangeRate = IJoseph(_iporConfiguration.getJoseph()).calculateExchangeRate(asset);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        IMiltonStorage(_addressesManager.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
+        IMiltonStorage(_iporConfiguration.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
 
         //TODO: user Address from OZ and use call
         //TODO: zastosuj call zamiast transfer1!!
-        IERC20(asset).safeTransferFrom(msg.sender, _addressesManager.getMilton(), liquidityAmount);
+        IERC20(asset).safeTransferFrom(msg.sender, _iporConfiguration.getMilton(), liquidityAmount);
 
         if (exchangeRate > 0) {
-            IIpToken(_addressesManager.getIpToken(asset)).mint(msg.sender, AmmMath.division(liquidityAmount * multiplicator, exchangeRate));
+            IIpToken(IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset)).getIpToken())
+                .mint(msg.sender, AmmMath.division(liquidityAmount * multiplicator, exchangeRate));
         }
     }
 
     function _redeem(address asset, uint256 ipTokenVolume, uint256 multiplicator) internal {
-        require(IIpToken(_addressesManager.getIpToken(asset)).balanceOf(msg.sender) >= ipTokenVolume, Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW);
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 
-        uint256 exchangeRate = IJoseph(_addressesManager.getJoseph()).calculateExchangeRate(asset);
+        require(IIpToken(iporAssetConfiguration.getIpToken()).balanceOf(msg.sender) >= ipTokenVolume, Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW);
+
+        uint256 exchangeRate = IJoseph(_iporConfiguration.getJoseph()).calculateExchangeRate(asset);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        require(IMiltonStorage(_addressesManager.getMiltonStorage()).getBalance(asset).liquidityPool > ipTokenVolume, Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW);
+        require(IMiltonStorage(_iporConfiguration.getMiltonStorage()).getBalance(asset).liquidityPool > ipTokenVolume, Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW);
 
         uint256 underlyingAmount = AmmMath.division(ipTokenVolume * exchangeRate, multiplicator);
 
-        IIpToken(_addressesManager.getIpToken(asset)).burn(msg.sender, msg.sender, ipTokenVolume);
+        IIpToken(iporAssetConfiguration.getIpToken()).burn(msg.sender, msg.sender, ipTokenVolume);
 
-        IMiltonStorage(_addressesManager.getMiltonStorage()).subtractLiquidity(asset, underlyingAmount);
+        IMiltonStorage(_iporConfiguration.getMiltonStorage()).subtractLiquidity(asset, underlyingAmount);
 
-        IERC20(asset).safeTransferFrom(_addressesManager.getMilton(), msg.sender, underlyingAmount);
+        IERC20(asset).safeTransferFrom(_iporConfiguration.getMilton(), msg.sender, underlyingAmount);
     }
 
 }

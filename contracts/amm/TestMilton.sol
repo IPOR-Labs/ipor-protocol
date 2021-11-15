@@ -37,22 +37,22 @@ contract TestMilton is Milton {
     }
 
     function setSpreadPayFixed(address asset, uint256 value) external {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         iporAssetConfiguration.setSpreadPayFixedValue(value);
     }
 
     function getSpreadPayFixed(address asset) external view returns (uint256){
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         return iporAssetConfiguration.getSpreadPayFixedValue();
     }
 
     function setSpreadRecFixed(address asset, uint256 value) external {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         iporAssetConfiguration.setSpreadRecFixedValue(value);
     }
 
     function getSpreadRecFixed(address asset) external view returns (uint256){
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_addressesManager.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         return iporAssetConfiguration.getSpreadRecFixedValue();
     }
 

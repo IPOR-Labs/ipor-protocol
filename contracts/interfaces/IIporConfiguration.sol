@@ -10,15 +10,11 @@ interface IIporConfiguration {
     event WarrenAddressUpdated(address indexed newAddress);
     event WarrenStorageAddressUpdated(address indexed newAddress);
     event IporAssetConfigurationAddressUpdated(address indexed asset, address indexed newAddress);
-    event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
-    event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
     event ProxyCreated(string id, address indexed newAddress);
     event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);
-    event IpTokenAddressUpdated(address indexed asset, address indexed newIpTokenAddress);
     event JosephAddressUpdated(address indexed newJosephAddress);
-    event AssetManagementVaultUpdated(address indexed asset, address indexed newAssetManagementVaultAddress);
 
     function setAddress(bytes32 id, address newAddress) external;
 
@@ -30,39 +26,31 @@ interface IIporConfiguration {
 
     function getMilton() external view returns (address);
 
-    function setMiltonImpl(address miltonImpl) external;
+    function setMilton(address milton) external;
 
     function getMiltonStorage() external view returns (address);
 
-    function setMiltonStorageImpl(address miltonStorageImpl) external;
+    function setMiltonStorage(address miltonStorage) external;
 
     function getMiltonUtilizationStrategy() external view returns (address);
 
-    function setMiltonUtilizationStrategyImpl(address miltonUtilizationStrategyImpl) external;
+    function setMiltonUtilizationStrategy(address miltonUtilizationStrategy) external;
 
     function getMiltonSpreadStrategy() external view returns (address);
 
-    function setMiltonSpreadStrategyImpl(address miltonSpreadStrategyImpl) external;
+    function setMiltonSpreadStrategy(address miltonSpreadStrategy) external;
 
     function getIporAssetConfiguration(address asset) external view returns (address);
 
-    function setIporAssetConfiguration(address asset, address iporConfigImpl) external;
+    function setIporAssetConfiguration(address asset, address iporConfig) external;
 
     function getWarren() external view returns (address);
 
-    function setWarrenImpl(address warrenImpl) external;
+    function setWarren(address warren) external;
 
-    function setWarrenStorageImpl(address warrenStorageImpl) external;
+    function setWarrenStorage(address warrenStorage) external;
 
     function getWarrenStorage() external view returns (address);
-
-    function getCharlieTreasurer(address asset) external view returns (address);
-
-    function setCharlieTreasurer(address asset, address charlieTreasurer) external;
-
-    function getTreasureTreasurer(address asset) external view returns (address);
-
-    function setTreasureTreasurer(address asset, address treasureTreasurer) external;
 
     function getAssets() external view returns (address[] memory);
 
@@ -72,16 +60,9 @@ interface IIporConfiguration {
 
     function removeAsset(address asset) external;
 
-    function getIpToken(address asset) external view returns (address);
-
-    function setIpToken(address asset, address ipToken) external;
-
     function getJoseph() external view returns (address);
 
-    function setJoseph(address newJoseph) external;
+    function setJoseph(address joseph) external;
 
-    function getAssetManagementVault(address asset) external view returns (address);
-
-    function setAssetManagementVault(address asset, address newAssetManagementVaultAddress) external;
 
 }

@@ -191,7 +191,7 @@ contract('IporConfiguration', (accounts) => {
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await timelockController.schedule(
@@ -229,7 +229,7 @@ contract('IporConfiguration', (accounts) => {
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         //when
         await testUtils.assertError(
@@ -255,7 +255,7 @@ contract('IporConfiguration', (accounts) => {
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporConfiguration.address,
@@ -291,7 +291,7 @@ contract('IporConfiguration', (accounts) => {
         //given
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporConfiguration.address,
@@ -330,7 +330,7 @@ contract('IporConfiguration', (accounts) => {
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let calldata = iporConfiguration.contract.methods.transferOwnership(iporConfigurationOriginOwner).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.transferOwnership(iporConfigurationOriginOwner).encodeABI();
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(

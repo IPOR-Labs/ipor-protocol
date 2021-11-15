@@ -12,13 +12,13 @@ contract IpToken is Ownable, IIpToken, ERC20 {
 
     using SafeERC20 for IERC20;
 
-    IIporConfiguration internal _addressesManager;
+    IIporConfiguration internal _iporConfiguration;
 
     address internal _underlyingAsset;
     uint8 _decimals;
 
     modifier onlyJoseph() {
-        require(msg.sender == _addressesManager.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
+        require(msg.sender == _iporConfiguration.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -32,7 +32,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
     }
 
     function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _addressesManager = addressesManager;
+        _iporConfiguration = addressesManager;
     }
 
     function decimals() public view override returns (uint8) {

@@ -12,13 +12,13 @@ import "../interfaces/IMiltonSpreadStrategy.sol";
 
 contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
 
-    IIporConfiguration internal _addressesManager;
+    IIporConfiguration internal _iporConfiguration;
 
     function initialize(IIporConfiguration addressesManager) public {
-        _addressesManager = addressesManager;
+        _iporConfiguration = addressesManager;
     }
 
     function calculateSpread(address asset, uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
-        return IMiltonStorage(_addressesManager.getMiltonStorage()).calculateSpread(asset, calculateTimestamp);
+        return IMiltonStorage(_iporConfiguration.getMiltonStorage()).calculateSpread(asset, calculateTimestamp);
     }
 }

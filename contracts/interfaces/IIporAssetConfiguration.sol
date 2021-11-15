@@ -3,6 +3,8 @@ pragma solidity >=0.8.4 <0.9.0;
 
 interface IIporAssetConfiguration {
 
+    //TODO: same order in interface and in implementation
+
     event IncomeTaxPercentageSet(uint256 newIncomeTaxPercentage);
     event LiquidationDepositAmountSet(uint256 newLiquidationDepositAmount);
     event OpeningFeePercentageSet(uint256 newOpeningFeePercentage);
@@ -16,6 +18,12 @@ interface IIporAssetConfiguration {
 
     event MaxCollateralizationFactorValueSet(uint256 newMaxCollateralizationFactorValue);
     event MinCollateralizationFactorValueSet(uint256 newMinCollateralizationFactorValue);
+
+    event AssetManagementVaultUpdated(address indexed asset, address indexed newAssetManagementVaultAddress);
+    event IpTokenAddressUpdated(address indexed asset, address indexed newIpTokenAddress);
+
+    event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
+    event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
 
     function getIncomeTaxPercentage() external view returns (uint256);
 
@@ -64,5 +72,21 @@ interface IIporAssetConfiguration {
     function getMultiplicator() external view returns(uint256);
 
     function getMaxSlippagePercentage() external view returns (uint256);
+
+    function getIpToken() external view returns (address);
+
+    function setIpToken(address ipToken) external;
+
+    function getCharlieTreasurer() external view returns (address);
+
+    function setCharlieTreasurer(address charlieTreasurer) external;
+
+    function getTreasureTreasurer() external view returns (address);
+
+    function setTreasureTreasurer(address treasureTreasurer) external;
+
+    function getAssetManagementVault() external view returns (address);
+
+    function setAssetManagementVault(address newAssetManagementVaultAddress) external;
 
 }

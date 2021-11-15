@@ -51,7 +51,14 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     uint256 spreadPayFixedValue;
     uint256 spreadRecFixedValue;
 
-    IIporConfiguration internal _addressesManager;
+    address ipToken;
+    address assetManagementVault;
+    address charlieTreasurer;
+
+    //TODO: fix this name;
+    address treasureTreasurer;
+
+    IIporConfiguration internal _iporConfiguration;
 
     constructor(address asset) {
         _asset = asset;
@@ -60,7 +67,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _addressesManager = addressesManager;
+        _iporConfiguration = addressesManager;
 
         //@notice taken after close position from participant who take income (trader or Milton)
         incomeTaxPercentage = AmmMath.division(_multiplicator, 10);
@@ -164,7 +171,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function setSpreadRecFixedValue(uint256 spread) external override {
-        spreadRecFixedValue= spread;
+        spreadRecFixedValue = spread;
     }
 
     function getMaxCollateralizationFactorValue() external override view returns (uint256) {
@@ -191,6 +198,42 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
     function getMaxSlippagePercentage() external view override returns (uint256) {
         return _maxSlippagePercentage;
+    }
+
+    function getCharlieTreasurer() external override view returns (address) {
+        return charlieTreasurer;
+    }
+
+    function setCharlieTreasurer(address newCharlieTreasurer) external override onlyOwner {
+        charlieTreasurer = newCharlieTreasurer;
+        emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
+    }
+
+    function getTreasureTreasurer() external override view returns (address) {
+        return treasureTreasurer;
+    }
+
+    function setTreasureTreasurer(address newTreasureTreasurer) external override onlyOwner {
+        treasureTreasurer = newTreasureTreasurer;
+        emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
+    }
+
+    function getIpToken() external override view returns (address){
+        return ipToken;
+    }
+
+    function setIpToken(address ipTokenAddress) external override onlyOwner {
+        ipToken = ipTokenAddress;
+        emit IpTokenAddressUpdated(_asset, ipTokenAddress);
+    }
+
+    function getAssetManagementVault() external override view returns (address){
+        return assetManagementVault;
+    }
+
+    function setAssetManagementVault(address newAssetManagementVaultAddress) external override onlyOwner {
+        assetManagementVault = newAssetManagementVaultAddress;
+        emit AssetManagementVaultUpdated(_asset, newAssetManagementVaultAddress);
     }
 }
 

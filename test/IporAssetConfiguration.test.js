@@ -274,7 +274,7 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+        let calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
         //when
         await timelockController.schedule(
@@ -310,7 +310,7 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+        let calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
         //when
         await testUtils.assertError(
@@ -334,7 +334,7 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();;
+        let calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();;
 
         await timelockController.schedule(
             iporAssetConfigurationDAI.address,
@@ -369,7 +369,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
         //given
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+        let calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
         await timelockController.schedule(
             iporAssetConfigurationDAI.address,
@@ -406,7 +406,7 @@ contract('IporAssetConfiguration', (accounts) => {
         await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
 
-        let calldata = iporAssetConfigurationDAI.contract.methods.transferOwnership(iporAssetConfigurationOriginOwner).encodeABI();
+        let calldata = await iporAssetConfigurationDAI.contract.methods.transferOwnership(iporAssetConfigurationOriginOwner).encodeABI();
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(

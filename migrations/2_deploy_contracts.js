@@ -142,7 +142,13 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(MiltonFaucet);
 
         miltonFaucet = await MiltonFaucet.deployed();
-        miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
+
+        if (_network === 'soliditycoverage') {
+            miltonFaucet.sendTransaction({from: admin, value: "50000000000000000000"});
+        } else {
+            miltonFaucet.sendTransaction({from: admin, value: "500000000000000000000000"});
+        }
+
 
         await deployer.deploy(MiltonDevToolDataProvider, iporConfiguration.address);
 

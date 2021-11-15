@@ -14,8 +14,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
     IIporConfiguration public immutable addressesManager;
 
-    constructor(IIporConfiguration _addressesManager) {
-        addressesManager = _addressesManager;
+    constructor(IIporConfiguration _iporConfiguration) {
+        addressesManager = _iporConfiguration;
     }
 
     function getTotalOutstandingNotional(address asset) external override view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional) {

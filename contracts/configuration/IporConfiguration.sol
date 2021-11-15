@@ -13,25 +13,11 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     //@notice value - flag 1 - is supported, 0 - is not supported
     mapping(address => uint256) public supportedAssets;
 
-    //@notice mapping underlying asset address to IPOR Liquidity Pool Token addresses
-    mapping(address => address) public ipTokens;
-
     //@notice mapping underlying asset address to ipor configuration address
     mapping(address => address) public iporAssetConfigurations;
 
-    //@notice mapping underlying asset address to Asset Management Vault
-    mapping(address => address) public assetManagementVaults;
-
     mapping(bytes32 => address) private _addresses;
 
-    //this treasurer manage ipor publication fee balance, key is an asset
-    mapping(address => address) charlieTreasurers;
-
-    //this treasurer manage opening fee balance, key is an asset
-    mapping(address => address) treasureTreasurers;
-
-    //@notice the user who can transfer publication fee to Charlie Treasurer
-    bytes32 private constant PUBLICATION_FEE_TRANSFERER = keccak256("PUBLICATION_FEE_TRANSFERER");
     bytes32 private constant WARREN = keccak256("WARREN");
     bytes32 private constant WARREN_STORAGE = keccak256("WARREN_STORAGE");
     bytes32 private constant MILTON = keccak256("MILTON");
@@ -39,6 +25,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     bytes32 private constant MILTON_UTILIZATION_STRATEGY = keccak256("MILTON_UTILIZATION_STRATEGY");
     bytes32 private constant MILTON_SPREAD_STRATEGY = keccak256("MILTON_SPREAD_STRATEGY");
     bytes32 private constant JOSEPH = keccak256("JOSEPH");
+    bytes32 private constant PUBLICATION_FEE_TRANSFERER = keccak256("PUBLICATION_FEE_TRANSFERER");
 
     function setAddress(bytes32 id, address newAddress) external override onlyOwner {
         _addresses[id] = newAddress;
@@ -62,76 +49,55 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return _addresses[MILTON];
     }
 
-    function setMiltonImpl(address miltonImpl) external override onlyOwner {
-        _addresses[MILTON] = miltonImpl;
-        emit MiltonAddressUpdated(miltonImpl);
+    function setMilton(address milton) external override onlyOwner {
+        _addresses[MILTON] = milton;
+        emit MiltonAddressUpdated(milton);
     }
 
     function getMiltonStorage() external view override returns (address) {
         return _addresses[MILTON_STORAGE];
     }
 
-    function setMiltonStorageImpl(address miltonStorageImpl) external override onlyOwner {
-        _addresses[MILTON_STORAGE] = miltonStorageImpl;
-        emit MiltonStorageAddressUpdated(miltonStorageImpl);
+    function setMiltonStorage(address miltonStorage) external override onlyOwner {
+        _addresses[MILTON_STORAGE] = miltonStorage;
+        emit MiltonStorageAddressUpdated(miltonStorage);
     }
 
     function getMiltonUtilizationStrategy() external view override returns (address) {
         return _addresses[MILTON_UTILIZATION_STRATEGY];
     }
 
-    function setMiltonUtilizationStrategyImpl(address miltonUtilizationStrategyImpl) external override onlyOwner {
-        _addresses[MILTON_UTILIZATION_STRATEGY] = miltonUtilizationStrategyImpl;
-        emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategyImpl);
+    function setMiltonUtilizationStrategy(address miltonUtilizationStrategy) external override onlyOwner {
+        _addresses[MILTON_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
+        emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
     }
 
     function getMiltonSpreadStrategy() external view override returns (address) {
         return _addresses[MILTON_SPREAD_STRATEGY];
     }
 
-    function setMiltonSpreadStrategyImpl(address miltonSpreadStrategyImpl) external override onlyOwner {
-        _addresses[MILTON_SPREAD_STRATEGY] = miltonSpreadStrategyImpl;
-        emit MiltonSpreadStrategyUpdated(miltonSpreadStrategyImpl);
+    function setMiltonSpreadStrategy(address miltonSpreadStrategy) external override onlyOwner {
+        _addresses[MILTON_SPREAD_STRATEGY] = miltonSpreadStrategy;
+        emit MiltonSpreadStrategyUpdated(miltonSpreadStrategy);
     }
 
     function getIporAssetConfiguration(address asset) external view override returns (address) {
         return iporAssetConfigurations[asset];
     }
 
-    function setIporAssetConfiguration(address asset, address iporConfigImpl) external override onlyOwner {
+    function setIporAssetConfiguration(address asset, address iporConfig) external override onlyOwner {
         require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        iporAssetConfigurations[asset] = iporConfigImpl;
-        emit IporAssetConfigurationAddressUpdated(asset, iporConfigImpl);
+        iporAssetConfigurations[asset] = iporConfig;
+        emit IporAssetConfigurationAddressUpdated(asset, iporConfig);
     }
 
     function getWarren() external view override returns (address) {
         return _addresses[WARREN];
     }
 
-    function setWarrenImpl(address warrenImpl) external override onlyOwner {
-        _addresses[WARREN] = warrenImpl;
-        emit WarrenAddressUpdated(warrenImpl);
-    }
-
-
-    function getCharlieTreasurer(address asset) external override view returns (address) {
-        return charlieTreasurers[asset];
-    }
-
-    function setCharlieTreasurer(address asset, address charlieTreasurer) external override onlyOwner {
-        require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        charlieTreasurers[asset] = charlieTreasurer;
-        emit CharlieTreasurerUpdated(asset, charlieTreasurer);
-    }
-
-    function getTreasureTreasurer(address asset) external override view returns (address) {
-        return treasureTreasurers[asset];
-    }
-
-    function setTreasureTreasurer(address asset, address treasureTreasurer) external override onlyOwner {
-        require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        treasureTreasurers[asset] = treasureTreasurer;
-        emit TreasureTreasurerUpdated(asset, treasureTreasurer);
+    function setWarren(address warren) external override onlyOwner {
+        _addresses[WARREN] = warren;
+        emit WarrenAddressUpdated(warren);
     }
 
     function getAssets() external override view returns (address[] memory){
@@ -165,42 +131,22 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         }
     }
 
-    function getIpToken(address asset) external override view returns (address){
-        return ipTokens[asset];
-    }
-
-    function setIpToken(address asset, address ipTokenAddress) external override onlyOwner {
-        require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        ipTokens[asset] = ipTokenAddress;
-        emit IpTokenAddressUpdated(asset, ipTokenAddress);
-    }
-
     function getJoseph() external override view returns (address){
         return _addresses[JOSEPH];
     }
 
-    function setJoseph(address newJoseph) external override onlyOwner {
-        _addresses[JOSEPH] = newJoseph;
-        emit JosephAddressUpdated(newJoseph);
-    }
-
-    function getAssetManagementVault(address asset) external override view returns (address){
-        return assetManagementVaults[asset];
-    }
-
-    function setAssetManagementVault(address asset, address newAssetManagementVaultAddress) external override onlyOwner {
-        require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
-        assetManagementVaults[asset] = newAssetManagementVaultAddress;
-        emit AssetManagementVaultUpdated(asset, newAssetManagementVaultAddress);
+    function setJoseph(address joseph) external override onlyOwner {
+        _addresses[JOSEPH] = joseph;
+        emit JosephAddressUpdated(joseph);
     }
 
     function assetSupported(address asset) external override view returns (uint256) {
         return supportedAssets[asset];
     }
 
-    function setWarrenStorageImpl(address warrenStorageImpl) external override onlyOwner {
-        _addresses[WARREN_STORAGE] = warrenStorageImpl;
-        emit WarrenStorageAddressUpdated(warrenStorageImpl);
+    function setWarrenStorage(address warrenStorage) external override onlyOwner {
+        _addresses[WARREN_STORAGE] = warrenStorage;
+        emit WarrenStorageAddressUpdated(warrenStorage);
     }
 
     function getWarrenStorage() external override view returns (address) {
