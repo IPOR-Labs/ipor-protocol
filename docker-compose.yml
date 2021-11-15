@@ -13,6 +13,42 @@ services:
     environment:
       - TZ=${TIMEZONE}
 
+  ipor-protocol-eth-bc:
+    container_name: ipor-protocol-eth-bc
+    image: ethereum/client-go:alltools-v1.10.12
+    restart: "no"
+    ports:
+      - "9545:8545"   # HTTP-RPC server
+      - "9546:8546"   # WS-RPC server
+      - "9547:8547"   # GraphQL
+      - "${ETH_BC_NETWORK_PORT}:${ETH_BC_NETWORK_PORT}" # Network
+    entrypoint:
+      - ./geth-entrypoint.sh
+      - run-geth
+    volumes:
+      - ipor-protocol-eth-bc-data:/root
+      - ./containers/eth-bc/geth-entrypoint.sh:/geth-entrypoint.sh
+      - ./containers/eth-bc/envs/${ENV_PROFILE}/genesis.json:/genesis.json
+      - ./containers/eth-bc/envs/${ENV_PROFILE}/geth-config.toml:/geth-config.toml
+      - ./containers/eth-bc/envs/${ENV_PROFILE}/miner.key:/miner.key
+      - ./containers/eth-bc/envs/${ENV_PROFILE}/key-password.txt:/key-password.txt
+    environment:
+      - TZ=${TIMEZONE}
+      - ETH_BC_CORS=${ETH_BC_CORS}
+      - ETH_BC_HOST_ADDRESS=${ETH_BC_HOST_ADDRESS}
+      - ETH_BC_MINER_ADDRESS=${ETH_BC_MINER_ADDRESS}
+      - ETH_BC_NETWORK_PORT=${ETH_BC_NETWORK_PORT}
+      - ETH_BC_DATA_DIR=${ETH_BC_DATA_DIR}
+      - ETH_BC_GENESIS_BLOCK_FILE=${ETH_BC_GENESIS_BLOCK_FILE}
+      - ETH_BC_CONFIG_FILE=${ETH_BC_CONFIG_FILE}
+      - ETH_BC_MINER_KEY_PASSWORD_FILE=${ETH_BC_MINER_KEY_PASSWORD_FILE}
+      - ETH_BC_MINER_KEY_FILE=${ETH_BC_MINER_KEY_FILE}
+      - ETH_BC_MINER_THREADS=${ETH_BC_MINER_THREADS}
+      - ETH_BC_NETWORK_ID=${ETH_BC_NETWORK_ID}
+      - ETH_BC_BLOCK_PERIOD=${ETH_BC_BLOCK_PERIOD}
+      - ETH_BC_NODE_MODE=${ETH_BC_NODE_MODE}
+      - ETH_BC_NODE_NAME=${ETH_BC_NODE_NAME}
+
   ipor-protocol-nginx:
     container_name: ipor-protocol-nginx
     image: nginx:1.21.1
@@ -32,58 +68,28 @@ services:
     depends_on:
       - ipor-protocol-milton-tool
 
-  ipor-protocol-ganache:
-    container_name: ipor-protocol-ganache
-    image: trufflesuite/ganache-cli:v6.12.2
-    restart: always
-    ports:
-      - "9545:8545"
-    volumes:
-      - ipor-protocol-ganache-data:/ganache_data
-    entrypoint:
-      - node
-      - /app/ganache-core.docker.cli.js
-      - --deterministic
-      - --db=/ganache_data
-      - --mnemonic
-      - ${MNEMONIC}
-      - --networkId
-      - '5777'
-      - --chainId
-      - '5777'
-      - --hostname
-      - '0.0.0.0'
-      - --accounts
-      - ${ETH_ACCOUNTS_NUMBER}
-      - --defaultBalanceEther
-      - ${ETH_INITIAL_BALANCE}
-      - ${ETH_AUTO_MINING_CMD}
-      - ${ETH_AUTO_MINING_BLOCK_TIME}
-      - --verbose
-      - --debug
-
-  ipor-protocol-nginx-ganache:
-    container_name: ipor-protocol-nginx-ganache
-    image: io.ipor/nginx-ganche:latest
+  ipor-protocol-nginx-eth-bc:
+    container_name: ipor-protocol-nginx-eth-bc
+    image: io.ipor/nginx-eth-bc:latest
     restart: always
     ports:
       - "34555:34555"
     volumes:
-      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
-      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/htpasswd.users:/etc/nginx/htpasswd.users
-      - ./containers/nginx-ganache/errors:/usr/share/nginx/html/errors
-      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/cert:/etc/nginx/cert
-      - ./containers/nginx-ganache/envs/${ENV_PROFILE}/keys:/etc/nginx/keys
-      - ./containers/logs/nginx-ganache:/var/log/nginx
+      - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
+      - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/htpasswd.users:/etc/nginx/htpasswd.users
+      - ./containers/nginx-eth-bc/errors:/usr/share/nginx/html/errors
+      - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/cert:/etc/nginx/cert
+      - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/keys:/etc/nginx/keys
+      - ./containers/logs/nginx-eth-bc:/var/log/nginx
     environment:
       - TZ=${TIMEZONE}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      - ipor-protocol-ganache
+      - ipor-protocol-eth-bc
 
 volumes:
-  ipor-protocol-ganache-data:
-    name: ipor-protocol-ganache-data
+  ipor-protocol-eth-bc-data:
+    name: ipor-protocol-eth-bc-data
     driver: local

@@ -24,10 +24,10 @@ ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
 ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/contracts.zip"
 ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/contracts.zip"
 
-GANACHE_CONTAINER="ipor-protocol-ganache"
-GANACHE_DATA_VOLUME="ipor-protocol-ganache-data"
+ETH_BC_CONTAINER="ipor-protocol-eth-bc"
+ETH_BC_DATA_VOLUME="ipor-protocol-eth-bc-data"
 
-NGINX_GANACHE_CONTAINER="ipor-protocol-nginx-ganache"
+NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
 
 AWS_REGION="eu-central-1"
 
@@ -37,7 +37,7 @@ IS_CLEAN_BC="NO"
 IS_RUN="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
-IS_NGINX_GANACHE_RESTART="NO"
+IS_NGINX_ETH_BC_RESTART="NO"
 
 if [ $# -eq 0 ]; then
     IS_RUN="YES"
@@ -62,7 +62,7 @@ do
             IS_CLEAN_BC="YES"
         ;;
         nginx|n)
-            IS_NGINX_GANACHE_RESTART="YES"
+            IS_NGINX_ETH_BC_RESTART="YES"
         ;;
         help|h|?)
             IS_HELP="YES"
@@ -139,12 +139,11 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
 
   docker build -t io.ipor/ipor-protocol-milton-tool .
 
-  cd "${DIR}/containers/nginx-ganache"
-  echo -e "\n\e[32mBuild nginx-ganche docker...\e[0m\n"
+  cd "${DIR}/containers/nginx-eth-bc"
+  echo -e "\n\e[32mBuild nginx-eth-bc docker...\e[0m\n"
 
-  docker build -t io.ipor/nginx-ganche:latest .
+  docker build -t io.ipor/nginx-eth-bc:latest .
 fi
-
 
 if [ $IS_RUN = "YES" ]; then
   cd "${DIR}"
@@ -160,30 +159,29 @@ fi
 if [ $IS_CLEAN_BC = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mClean Ganache blockchain...\e[0m\n"
+  echo -e "\n\e[32mClean Ethereum blockchain...\e[0m\n"
 
-  EXISTS=$(docker ps -a -q -f name="${GANACHE_CONTAINER}")
+  EXISTS=$(docker ps -a -q -f name="${ETH_BC_CONTAINER}")
   if [ -n "$EXISTS" ]; then
-      echo -e "Remove container: ${GANACHE_CONTAINER}\n"
-      docker stop "${GANACHE_CONTAINER}"
-      docker rm -v -f "${GANACHE_CONTAINER}"
+      echo -e "Remove container: ${ETH_BC_CONTAINER}\n"
+      docker stop "${ETH_BC_CONTAINER}"
+      docker rm -v -f "${ETH_BC_CONTAINER}"
   fi
 
-  EXISTS=$(docker volume ls -q -f name="${GANACHE_DATA_VOLUME}")
+  EXISTS=$(docker volume ls -q -f name="${ETH_BC_DATA_VOLUME}")
   if [ -n "$EXISTS" ]; then
-      echo -e "Remove volume: ${GANACHE_DATA_VOLUME}\n"
-      docker volume rm "${GANACHE_DATA_VOLUME}"
+      echo -e "Remove volume: ${ETH_BC_DATA_VOLUME}\n"
+      docker volume rm "${ETH_BC_DATA_VOLUME}"
   fi
 
-  echo -e "Start cleaned container: ${GANACHE_CONTAINER}\n"
+  echo -e "Start cleaned container: ${ETH_BC_CONTAINER}\n"
   docker-compose -f docker-compose.yml up -d
 fi
-
 
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mMigrate Smart Contracts to Ganache blockchain...\e[0m\n"
+  echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
 
   truffle migrate --network docker --reset --compile-none
 fi
@@ -202,19 +200,19 @@ if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
 fi
 
 
-if [ $IS_NGINX_GANACHE_RESTART = "YES" ]; then
+if [ $IS_NGINX_ETH_BC_RESTART = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mRestart NGINX Ganache...\e[0m\n"
+  echo -e "\n\e[32mRestart NGINX Ethereum blockchain...\e[0m\n"
 
-  EXISTS=$(docker ps -a -q -f name="${NGINX_GANACHE_CONTAINER}")
+  EXISTS=$(docker ps -a -q -f name="${NGINX_ETH_BC_CONTAINER}")
   if [ -n "$EXISTS" ]; then
-      echo -e "Remove container: ${NGINX_GANACHE_CONTAINER}\n"
-      docker stop "${NGINX_GANACHE_CONTAINER}"
-      docker rm -v -f "${NGINX_GANACHE_CONTAINER}"
+      echo -e "Remove container: ${NGINX_ETH_BC_CONTAINER}\n"
+      docker stop "${NGINX_ETH_BC_CONTAINER}"
+      docker rm -v -f "${NGINX_ETH_BC_CONTAINER}"
   fi
 
-  echo -e "Start cleaned container: ${NGINX_GANACHE_CONTAINER}\n"
+  echo -e "Start cleaned container: ${NGINX_ETH_BC_CONTAINER}\n"
   docker-compose -f docker-compose.yml up -d
 fi
 
@@ -228,8 +226,8 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m         Run / restart Milton Tool"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m     Compile and migrate Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m     Publish build artifacts to S3 bucket"
-    echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m       Clean Ganache blockchain"
-    echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m       Restart nginx Ganache container"
+    echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m       Clean Ethereum blockchain"
+    echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m       Restart nginx Ethereum blockchain container"
     echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m      Show help"
     echo -e "   \e[34mwithout any command\e[0m - the same as Run"
     echo -e ""
