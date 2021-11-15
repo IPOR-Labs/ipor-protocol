@@ -23,7 +23,7 @@ contract('IpToken', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            testData.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: userTwo}),
+            data.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: userTwo}),
             //then
             'IPOR_46'
         );
@@ -34,7 +34,7 @@ contract('IpToken', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            testData.ipTokenDai.burn(userOne, userTwo, testUtils.USD_10_000_18DEC, {from: userTwo}),
+            data.ipTokenDai.burn(userOne, userTwo, testUtils.USD_10_000_18DEC, {from: userTwo}),
             //then
             'IPOR_46'
         );
@@ -45,7 +45,7 @@ contract('IpToken', (accounts) => {
         await data.iporConfiguration.setAddress(keccak256("JOSEPH"), admin);
 
         //when
-        let tx = await testData.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: admin})
+        let tx = await data.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: admin})
 
         //then
         truffleAssert.eventEmitted(tx, 'Mint', (ev) => {

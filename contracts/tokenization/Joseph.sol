@@ -34,14 +34,16 @@ contract Joseph is Ownable, IJoseph {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator());
     }
-
-    function calculateExchangeRate(address asset) external override view returns (uint256){
+    event LogDebug(string name, uint256 value);
+    function calculateExchangeRate(address asset) external override returns (uint256){
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
         IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());
         IMilton milton = IMilton(_iporConfiguration.getMilton());
 //        (int256 soapPf, int256 soapRf, int256 soap) = milton.calculateSoap(asset);
         uint256 ipTokenTotalSupply = ipToken.totalSupply();
+        emit LogDebug("ipTokenTotalSupply", ipTokenTotalSupply);
+        emit LogDebug("MiltonLiquidityPoolBalance", miltonStorage.getBalance(asset).liquidityPool);
         if (ipTokenTotalSupply > 0) {
             return AmmMath.division((miltonStorage.getBalance(asset).liquidityPool) * iporAssetConfiguration.getMultiplicator(), ipTokenTotalSupply);
         } else {
@@ -53,7 +55,7 @@ contract Joseph is Ownable, IJoseph {
 
         uint256 exchangeRate = IJoseph(_iporConfiguration.getJoseph()).calculateExchangeRate(asset);
 
-        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+//        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         IMiltonStorage(_iporConfiguration.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
 

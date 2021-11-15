@@ -153,31 +153,56 @@ module.exports.setupTokenDaiInitialValues = async (data) => {
     await data.tokenDai.setupInitialAmount(data.userThree, USER_SUPPLY_18_DECIMALS);
     await data.tokenDai.setupInitialAmount(data.liquidityProvider, USER_SUPPLY_18_DECIMALS);
 }
+module.exports.setupTokenDaiInitialZeroValues = async (data) => {
+    await data.tokenDai.setupInitialAmount(await data.milton.address, ZERO);
+    await data.tokenDai.setupInitialAmount(data.admin, ZERO);
+    await data.tokenDai.setupInitialAmount(data.userOne, ZERO);
+    await data.tokenDai.setupInitialAmount(data.userTwo, ZERO);
+    await data.tokenDai.setupInitialAmount(data.userThree, ZERO);
+    await data.tokenDai.setupInitialAmount(data.liquidityProvider, ZERO);
+}
 
-module.exports.setupIpTokenDaiInitialValues = async (data, testData) => {
-    await data.iporConfiguration.setAddress(keccak256("MILTON"), data.userOne);
-    let lpBalance = BigInt(await testData.ipTokenDai.balanceOf(data.liquidityProvider));
+module.exports.setupIpTokenDaiInitialValues = async (data, initialAmount) => {
+    await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.userOne);
+    let lpBalance = BigInt(await data.ipTokenDai.balanceOf(data.liquidityProvider));
     if (lpBalance > 0) {
         await data.ipTokenDai.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
     }
-    await data.iporConfiguration.setAddress(keccak256("MILTON"), data.milton.address);
+    if (initialAmount > 0) {
+        await data.ipTokenDai.mint(data.liquidityProvider, initialAmount, {from: data.userOne});
+    }
+    await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
 }
-module.exports.setupIpTokenUsdcInitialValues = async (data, testData) => {
-    await data.iporConfiguration.setAddress(keccak256("MILTON"), data.userOne);
-    let lpBalance = BigInt(await testData.ipTokenUsdc.balanceOf(data.liquidityProvider));
+
+module.exports.setupIpTokenUsdcInitialValues = async (data, initialAmount) => {
+    await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.userOne);
+    let lpBalance = BigInt(await data.ipTokenUsdc.balanceOf(data.liquidityProvider));
     if (lpBalance > 0) {
         await data.ipTokenUsdc.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
     }
-    await data.iporConfiguration.setAddress(keccak256("MILTON"), data.milton.address);
+    if (initialAmount > 0) {
+        await data.ipTokenUsdc.mint(data.liquidityProvider, initialAmount, {from: data.userOne});
+    }
+    await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
 }
 
 module.exports.setupIpTokenUsdtInitialValues = async (data, testData) => {
-    await data.iporConfiguration.setAddress(keccak256("MILTON"), data.userOne);
-    let lpBalance = BigInt(await testData.ipTokenUsdt.balanceOf(data.liquidityProvider));
+    await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.userOne);
+    let lpBalance = BigInt(await data.ipTokenUsdt.balanceOf(data.liquidityProvider));
     if (lpBalance > 0) {
         await data.ipTokenUsdt.burn(data.liquidityProvider, data.userFive, lpBalance, {from: data.userOne});
     }
-    await data.iporConfiguration.setAddress(keccak256("MILTON"), data.milton.address);
+    await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
+}
+
+
+module.exports.clearTokenUsdt = async (data) => {
+    await data.tokenUsdt.setupInitialAmount(await data.milton.address, ZERO);
+    await data.tokenUsdt.setupInitialAmount(data.admin, ZERO);
+    await data.tokenUsdt.setupInitialAmount(data.userOne, ZERO);
+    await data.tokenUsdt.setupInitialAmount(data.userTwo, ZERO);
+    await data.tokenUsdt.setupInitialAmount(data.userThree, ZERO);
+    await data.tokenUsdt.setupInitialAmount(data.liquidityProvider, ZERO);
 }
 
 module.exports.prepareDataForBefore = async (accounts) => {
@@ -191,21 +216,9 @@ module.exports.prepareDataForBefore = async (accounts) => {
     let tokenUsdc = await UsdcMockedToken.new(TOTAL_SUPPLY_6_DECIMALS, 6);
     let tokenDai = await DaiMockedToken.new(TOTAL_SUPPLY_18_DECIMALS, 18);
 
-    let iporAssetConfigurationUsdt = await IporAssetConfigurationUsdt.new(tokenUsdt.address);
-    let iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.new(tokenUsdc.address);
-    let iporAssetConfigurationDai = await IporAssetConfigurationDai.new(tokenDai.address);
-
     await iporConfiguration.addAsset(tokenUsdt.address);
     await iporConfiguration.addAsset(tokenUsdc.address);
     await iporConfiguration.addAsset(tokenDai.address);
-
-    await iporConfiguration.setIporAssetConfiguration(tokenUsdt.address, await iporAssetConfigurationUsdt.address);
-    await iporConfiguration.setIporAssetConfiguration(tokenUsdc.address, await iporAssetConfigurationUsdc.address);
-    await iporConfiguration.setIporAssetConfiguration(tokenDai.address, await iporAssetConfigurationDai.address);
-
-    await iporAssetConfigurationUsdt.initialize(iporConfiguration.address);
-    await iporAssetConfigurationUsdc.initialize(iporConfiguration.address);
-    await iporAssetConfigurationDai.initialize(iporConfiguration.address);
 
     for (let i = 1; i < accounts.length - 2; i++) {
         //Liquidity Pool has rights to spend money on behalf of user accounts[i]
@@ -232,6 +245,27 @@ module.exports.prepareDataForBefore = async (accounts) => {
     await milton.authorizeJoseph(tokenUsdc.address);
     await milton.authorizeJoseph(tokenUsdt.address);
 
+
+    let ipTokenUsdt = await IpToken.new(tokenUsdt.address, "IP USDT", "ipUSDT");
+    let ipTokenUsdc = await IpToken.new(tokenUsdc.address, "IP USDC", "ipUSDC");
+    let ipTokenDai = await IpToken.new(tokenDai.address, "IP DAI", "ipDAI");
+
+    ipTokenUsdt.initialize(iporConfiguration.address);
+    ipTokenUsdc.initialize(iporConfiguration.address);
+    ipTokenDai.initialize(iporConfiguration.address);
+
+    let iporAssetConfigurationUsdt = await IporAssetConfigurationUsdt.new(tokenUsdt.address, ipTokenUsdt.address);
+    let iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.new(tokenUsdc.address, ipTokenUsdc.address);
+    let iporAssetConfigurationDai = await IporAssetConfigurationDai.new(tokenDai.address, ipTokenDai.address);
+
+    await iporAssetConfigurationUsdt.initialize(iporConfiguration.address);
+    await iporAssetConfigurationUsdc.initialize(iporConfiguration.address);
+    await iporAssetConfigurationDai.initialize(iporConfiguration.address);
+
+    await iporConfiguration.setIporAssetConfiguration(tokenUsdt.address, await iporAssetConfigurationUsdt.address);
+    await iporConfiguration.setIporAssetConfiguration(tokenUsdc.address, await iporAssetConfigurationUsdc.address);
+    await iporConfiguration.setIporAssetConfiguration(tokenDai.address, await iporAssetConfigurationDai.address);
+
     let miltonDevToolDataProvider = await MiltonDevToolDataProvider.new(iporConfiguration.address);
 
     let data = {
@@ -248,6 +282,9 @@ module.exports.prepareDataForBefore = async (accounts) => {
         tokenDai: tokenDai,
         tokenUsdt: tokenUsdt,
         tokenUsdc: tokenUsdc,
+        ipTokenUsdt: ipTokenUsdt,
+        ipTokenUsdc: ipTokenUsdc,
+        ipTokenDai: ipTokenDai,
         iporAssetConfigurationUsdt: iporAssetConfigurationUsdt,
         iporAssetConfigurationUsdc: iporAssetConfigurationUsdc,
         iporAssetConfigurationDai: iporAssetConfigurationDai,
@@ -274,26 +311,11 @@ module.exports.prepareDataForBeforeEach = async (data) => {
     await miltonStorage.addAsset(data.tokenUsdc.address);
     await miltonStorage.addAsset(data.tokenUsdt.address);
 
-    let ipTokenUsdt = await IpToken.new(data.tokenUsdt.address, "IP USDT", "ipUSDT");
-    let ipTokenUsdc = await IpToken.new(data.tokenUsdc.address, "IP USDC", "ipUSDC");
-    let ipTokenDai = await IpToken.new(data.tokenDai.address, "IP DAI", "ipDAI");
-
-    ipTokenUsdt.initialize(data.iporConfiguration.address);
-    ipTokenUsdc.initialize(data.iporConfiguration.address);
-    ipTokenDai.initialize(data.iporConfiguration.address);
-
-    await data.iporConfiguration.setIpToken(data.tokenUsdt.address, ipTokenUsdt.address);
-    await data.iporConfiguration.setIpToken(data.tokenUsdc.address, ipTokenUsdc.address);
-    await data.iporConfiguration.setIpToken(data.tokenDai.address, ipTokenDai.address);
-
     await warrenStorage.initialize(data.iporConfiguration.address);
 
     let testData = {
         miltonStorage: miltonStorage,
-        warrenStorage: warrenStorage,
-        ipTokenUsdt: ipTokenUsdt,
-        ipTokenUsdc: ipTokenUsdc,
-        ipTokenDai: ipTokenDai
+        warrenStorage: warrenStorage
     }
     return testData;
 }

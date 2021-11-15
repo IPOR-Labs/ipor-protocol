@@ -20,7 +20,6 @@ interface IIporAssetConfiguration {
     event MinCollateralizationFactorValueSet(uint256 newMinCollateralizationFactorValue);
 
     event AssetManagementVaultUpdated(address indexed asset, address indexed newAssetManagementVaultAddress);
-    event IpTokenAddressUpdated(address indexed asset, address indexed newIpTokenAddress);
 
     event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
     event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
@@ -74,8 +73,6 @@ interface IIporAssetConfiguration {
     function getMaxSlippagePercentage() external view returns (uint256);
 
     function getIpToken() external view returns (address);
-
-    function setIpToken(address ipToken) external;
 
     function getCharlieTreasurer() external view returns (address);
 

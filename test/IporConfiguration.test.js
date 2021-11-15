@@ -35,96 +35,6 @@ contract('IporConfiguration', (accounts) => {
         await iporConfiguration.addAsset(tokenDai.address);
     });
 
-    it('should set charlieTreasurers', async () => {
-        //given
-        let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenDai.address;
-
-        //when
-        await iporConfiguration.setCharlieTreasurer(asset, charlieTreasurersDaiAddress);
-
-        //then
-        let actualCharlieTreasurerDaiAddress = await iporConfiguration.getCharlieTreasurer(asset);
-
-        assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
-            `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
-    });
-
-    it('should NOT set charlieTreasurers for NOT supported asset USDC', async () => {
-        //given
-        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenUsdc.address;
-
-        //when
-        await testUtils.assertError(
-            //when
-            iporConfiguration.setCharlieTreasurer(asset, address),
-            //then
-            'IPOR_39'
-        );
-
-    });
-
-    it('should set treasureTreasurers', async () => {
-        //given
-        let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenDai.address;
-
-        //when
-        await iporConfiguration.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
-
-        //then
-        let actualTreasureTreasurerDaiAddress = await iporConfiguration.getTreasureTreasurer(asset);
-
-        assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
-            `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
-    });
-
-    it('should NOT set treasureTreasurers for NOT supported asset USDC', async () => {
-        //given
-        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenUsdc.address;
-
-        //when
-        await testUtils.assertError(
-            //when
-            iporConfiguration.setTreasureTreasurer(asset, address),
-            //then
-            'IPOR_39'
-        );
-
-    });
-
-    it('should set asset management vault', async () => {
-        //given
-        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenDai.address;
-
-        //when
-        await iporConfiguration.setAssetManagementVault(asset, address);
-
-        //then
-        let actualAddress = await iporConfiguration.getAssetManagementVault(asset);
-
-        assert(address === actualAddress,
-            `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
-    });
-
-    it('should NOT set asset management vault for NOT supported asset USDC', async () => {
-        //given
-        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenUsdc.address;
-
-        //when
-        await testUtils.assertError(
-            //when
-            iporConfiguration.setAssetManagementVault(asset, address),
-            //then
-            'IPOR_39'
-        );
-
-    });
-
     it('should set IporAssetConfiguration for supported asset', async () => {
         //given
         let iporAssetConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
@@ -152,36 +62,6 @@ contract('IporConfiguration', (accounts) => {
             //then
             'IPOR_39'
         );
-    });
-
-    it('should set IpToken for supported underlying asset', async () => {
-        //given
-        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenDai.address;
-
-        //when
-        await iporConfiguration.setIpToken(asset, address);
-
-        //then
-        let actualAddress = await iporConfiguration.getIpToken(asset);
-
-        assert(address === actualAddress,
-            `Incorrect  ipToken address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
-    });
-
-    it('should NOT set IpToken for NOT supported asset USDC', async () => {
-        //given
-        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenUsdc.address;
-
-        //when
-        await testUtils.assertError(
-            //when
-            iporConfiguration.setIpToken(asset, address),
-            //then
-            'IPOR_39'
-        );
-
     });
 
     it('should use Timelock Controller - simple case 1', async () => {

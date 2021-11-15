@@ -7,19 +7,19 @@ import "./Constants.sol";
 library AmmMath {
 
     //@notice Division with rounding up on last position, x, and y is with MD
-    function division(uint256 x, uint256 y) public pure returns (uint256 z) {
+    function division(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = (x + (y / 2)) / y;
     }
 
-    function divisionInt(int256 x, int256 y) public pure returns (int256 z) {
+    function divisionInt(int256 x, int256 y) internal pure returns (int256 z) {
         z = (x + (y / 2)) / y;
     }
 
-    function calculateIncomeTax(uint256 derivativeProfit, uint256 incomeTaxPercentage, uint256 multiplicator) public pure returns (uint256) {
+    function calculateIncomeTax(uint256 derivativeProfit, uint256 incomeTaxPercentage, uint256 multiplicator) internal pure returns (uint256) {
         return division(derivativeProfit * incomeTaxPercentage, multiplicator);
     }
 
-    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice, uint256 multiplicator) public pure returns (uint256){
+    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice, uint256 multiplicator) internal pure returns (uint256){
         return division(notionalAmount * multiplicator, ibtPrice);
     }
 

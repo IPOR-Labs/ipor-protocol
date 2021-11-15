@@ -22,6 +22,8 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
     address private immutable _asset;
 
+    address private immutable _ipToken;
+
     uint256 private immutable _multiplicator;
 
     uint256 private immutable _maxSlippagePercentage;
@@ -51,17 +53,17 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     uint256 spreadPayFixedValue;
     uint256 spreadRecFixedValue;
 
-    address ipToken;
     address assetManagementVault;
     address charlieTreasurer;
 
-    //TODO: fix this name;
+    //TODO: fix this name; treasureManager
     address treasureTreasurer;
 
     IIporConfiguration internal _iporConfiguration;
 
-    constructor(address asset) {
+    constructor(address asset, address ipToken) {
         _asset = asset;
+        _ipToken = ipToken;
         _multiplicator = 10 ** ERC20(asset).decimals();
         _maxSlippagePercentage = 100 * 10 ** ERC20(asset).decimals();
     }
@@ -219,12 +221,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getIpToken() external override view returns (address){
-        return ipToken;
-    }
-
-    function setIpToken(address ipTokenAddress) external override onlyOwner {
-        ipToken = ipTokenAddress;
-        emit IpTokenAddressUpdated(_asset, ipTokenAddress);
+        return _ipToken;
     }
 
     function getAssetManagementVault() external override view returns (address){
@@ -239,13 +236,13 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
 //TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
 contract IporAssetConfigurationUsdt is IporAssetConfiguration {
-    constructor(address asset) IporAssetConfiguration(asset) {}
+    constructor(address asset, address ipToken) IporAssetConfiguration(asset, ipToken) {}
 }
 
 contract IporAssetConfigurationUsdc is IporAssetConfiguration {
-    constructor(address asset) IporAssetConfiguration(asset) {}
+    constructor(address asset, address ipToken) IporAssetConfiguration(asset, ipToken) {}
 }
 
 contract IporAssetConfigurationDai is IporAssetConfiguration {
-    constructor(address asset) IporAssetConfiguration(asset) {}
+    constructor(address asset, address ipToken) IporAssetConfiguration(asset, ipToken) {}
 }

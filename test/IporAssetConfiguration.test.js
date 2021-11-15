@@ -446,6 +446,65 @@ contract('IporAssetConfiguration', (accounts) => {
 
     });
 
+    it('should set charlieTreasurer', async () => {
+        //given
+        let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
 
+        //when
+        await iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress);
+
+        //then
+        let actualCharlieTreasurerDaiAddress = await iporAssetConfigurationDAI.getCharlieTreasurer();
+
+        assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
+            `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
+    });
+
+    it('should set treasureTreasurers', async () => {
+        //given
+        let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress);
+
+        //then
+        let actualTreasureTreasurerDaiAddress = await iporAssetConfigurationDAI.getTreasureTreasurer();
+
+        assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
+            `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
+    });
+
+
+    it('should set asset management vault', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporAssetConfigurationDAI.setAssetManagementVault(address);
+
+        //then
+        let actualAddress = await iporAssetConfigurationDAI.getAssetManagementVault();
+
+        assert(address === actualAddress,
+            `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
+    });
+
+    it('should set IpToken for supported underlying asset', async () => {
+        //given
+        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await iporAssetConfigurationDAI.setIpToken(address);
+
+        //then
+        let actualAddress = await iporAssetConfigurationDAI.getIpToken();
+
+        assert(address === actualAddress,
+            `Incorrect  ipToken address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
+    });
 
 });
