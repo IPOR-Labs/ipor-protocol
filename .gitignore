@@ -27,9 +27,6 @@
 *.iml
 *.ipr
 
-### Ganache data ###
-/containers/ganache/ganache_data/
-
 ### macOS system files ###
 .DS_Store
 
