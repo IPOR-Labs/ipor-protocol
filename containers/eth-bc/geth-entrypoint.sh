@@ -43,9 +43,9 @@ if [ "${FIRST_ARG}" = "run-geth" ]; then
 
     echo "Start geth..."
     exec geth --datadir "${ETH_BC_DATA_DIR}" --config "${ETH_BC_CONFIG_FILE}" \
-        --http --http.corsdomain "${ETH_BC_CORS}" --http.addr "${ETH_BC_HOST_ADDRESS}" \
+        --http --http.corsdomain "${ETH_BC_CORS}" --http.addr "${ETH_BC_HOST_ADDRESS}" --http.vhosts "${ETH_BC_CORS}" \
         --ws --ws.origins "${ETH_BC_CORS}" --ws.addr "${ETH_BC_HOST_ADDRESS}" \
-        --graphql --graphql.corsdomain "${ETH_BC_CORS}" \
+        --graphql --graphql.corsdomain "${ETH_BC_CORS}" --graphql.vhosts "${ETH_BC_CORS}" \
         --mine --miner.threads "${ETH_BC_MINER_THREADS}" --miner.etherbase "${ETH_BC_MINER_ADDRESS}" \
         --port "${ETH_BC_NETWORK_PORT}" --nodiscover \
         --password "${ETH_BC_MINER_KEY_PASSWORD_FILE}" --unlock "${ETH_BC_MINER_ADDRESS}" \

@@ -16,7 +16,7 @@ services:
   ipor-protocol-eth-bc:
     container_name: ipor-protocol-eth-bc
     image: ethereum/client-go:alltools-v1.10.12
-    restart: "no"
+    restart: always
     ports:
       - "9545:8545"   # HTTP-RPC server
       - "9546:8546"   # WS-RPC server
