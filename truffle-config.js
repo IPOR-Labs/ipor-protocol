@@ -26,6 +26,12 @@ module.exports = {
             network_id: "5777",
             skipDryRun: true
         },
+        docker_debug: {
+            host: "127.0.0.1",
+            port: 9545,
+            network_id: "5777",
+            skipDryRun: true
+        },
         develop: {
             host: "127.0.0.1",
             port: 8545,
