@@ -4,7 +4,7 @@ const {time} = require("@openzeppelin/test-helpers");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const IporAssetConfigurationDai = artifacts.require('IporAssetConfigurationDai');
-const IporConfiguration = artifacts.require('IporConfiguration');
+const IpToken = artifacts.require('IpToken');
 const MockTimelockController = artifacts.require('MockTimelockController');
 const MINDELAY = time.duration.days(1);
 
@@ -12,20 +12,18 @@ contract('IporAssetConfiguration', (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
     let tokenDai = null;
+    let ipTokenDai = null;
     let iporAssetConfigurationDAI = null;
-    let iporConfiguration = null;
     let timelockController = null;
 
     before(async () => {
-        iporConfiguration = await IporConfiguration.deployed();
         tokenDai = await DaiMockedToken.new(testUtils.TOTAL_SUPPLY_18_DECIMALS, 18);
-        await iporConfiguration.addAsset(tokenDai.address);
+        ipTokenDai = await IpToken.new(tokenDai.address, "IP DAI", "ipDAI");
         timelockController = await MockTimelockController.new(MINDELAY, [userOne], [userTwo]);
     });
 
     beforeEach(async () => {
-        iporAssetConfigurationDAI = await IporAssetConfigurationDai.new(tokenDai.address);
-        await iporAssetConfigurationDAI.initialize(iporConfiguration.address);
+        iporAssetConfigurationDAI = await IporAssetConfigurationDai.new(tokenDai.address, ipTokenDai.address);
     });
 
     it('should set default openingFeeForTreasuryPercentage', async () => {
@@ -490,21 +488,6 @@ contract('IporAssetConfiguration', (accounts) => {
 
         assert(address === actualAddress,
             `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
-    });
-
-    it('should set IpToken for supported underlying asset', async () => {
-        //given
-        let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenDai.address;
-
-        //when
-        await iporAssetConfigurationDAI.setIpToken(address);
-
-        //then
-        let actualAddress = await iporAssetConfigurationDAI.getIpToken();
-
-        assert(address === actualAddress,
-            `Incorrect  ipToken address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
     });
 
 });
