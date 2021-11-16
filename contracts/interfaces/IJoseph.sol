@@ -7,6 +7,6 @@ interface IJoseph {
 
     function redeem(address ipTokenAddress, uint256 ipTokenVolume) external;
 
-    function calculateExchangeRate(address asset) external returns (uint256);
+//    function calculateExchangeRate(address asset) external view returns (uint256);
 
 }

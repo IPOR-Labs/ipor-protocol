@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
@@ -18,6 +19,8 @@ import "../interfaces/IMilton.sol";
 contract Joseph is Ownable, IJoseph {
 
     using SafeERC20 for IERC20;
+    using SafeCast for uint256;
+    using SafeCast for int256;
 
     IIporConfiguration internal _iporConfiguration;
 
@@ -27,33 +30,33 @@ contract Joseph is Ownable, IJoseph {
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-        _provideLiquidity(asset, liquidityAmount, iporAssetConfiguration.getMultiplicator());
+        _provideLiquidity(asset, liquidityAmount, iporAssetConfiguration.getMultiplicator(), block.timestamp);
     }
 
     function redeem(address asset, uint256 ipTokenVolume) external override {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-        _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator());
-    }
-    event LogDebug(string name, uint256 value);
-    function calculateExchangeRate(address asset) external override returns (uint256){
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-        IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
-        IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());
-        IMilton milton = IMilton(_iporConfiguration.getMilton());
-//        (int256 soapPf, int256 soapRf, int256 soap) = milton.calculateSoap(asset);
-        uint256 ipTokenTotalSupply = ipToken.totalSupply();
-        emit LogDebug("ipTokenTotalSupply", ipTokenTotalSupply);
-        emit LogDebug("MiltonLiquidityPoolBalance", miltonStorage.getBalance(asset).liquidityPool);
-        if (ipTokenTotalSupply > 0) {
-            return AmmMath.division((miltonStorage.getBalance(asset).liquidityPool) * iporAssetConfiguration.getMultiplicator(), ipTokenTotalSupply);
-        } else {
-            return iporAssetConfiguration.getMultiplicator();
-        }
+        _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator(), block.timestamp);
     }
 
-    function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 multiplicator) internal {
+//    function calculateExchangeRate(address asset) external view override returns (uint256){
+//        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+//        IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
+//        IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());
+//        IMilton milton = IMilton(_iporConfiguration.getMilton());
+//        (,, int256 soap) = milton.calculateSoap(asset);
+//        int256 balance = miltonStorage.getBalance(asset).liquidityPool.toInt256() + soap;
+//        require(balance >= 0, Errors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW);
+//        uint256 ipTokenTotalSupply = ipToken.totalSupply();
+//        if (ipTokenTotalSupply > 0) {
+//            return AmmMath.division(balance.toUint256() * iporAssetConfiguration.getMultiplicator(), ipTokenTotalSupply);
+//        } else {
+//            return iporAssetConfiguration.getMultiplicator();
+//        }
+//    }
 
-        uint256 exchangeRate = IJoseph(_iporConfiguration.getJoseph()).calculateExchangeRate(asset);
+    function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 multiplicator, uint256 timestamp) internal {
+
+        uint256 exchangeRate = IMilton(_iporConfiguration.getMilton()).calculateExchangeRate(asset, timestamp);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
@@ -69,12 +72,12 @@ contract Joseph is Ownable, IJoseph {
         }
     }
 
-    function _redeem(address asset, uint256 ipTokenVolume, uint256 multiplicator) internal {
+    function _redeem(address asset, uint256 ipTokenVolume, uint256 multiplicator, uint256 timestamp) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 
         require(IIpToken(iporAssetConfiguration.getIpToken()).balanceOf(msg.sender) >= ipTokenVolume, Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW);
 
-        uint256 exchangeRate = IJoseph(_iporConfiguration.getJoseph()).calculateExchangeRate(asset);
+        uint256 exchangeRate = IMilton(_iporConfiguration.getMilton()).calculateExchangeRate(asset, timestamp);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 

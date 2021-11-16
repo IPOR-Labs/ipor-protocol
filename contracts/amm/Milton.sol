@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
@@ -31,6 +32,8 @@ import "../interfaces/IJoseph.sol";
 contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
 
     using SafeERC20 for IERC20;
+    using SafeCast for uint256;
+    using SafeCast for int256;
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
@@ -106,6 +109,22 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
 
     function calculatePositionValue(DataTypes.IporDerivative memory derivative) external override view returns (int256) {
         return _calculatePositionValue(block.timestamp, derivative);
+    }
+
+    //TODO: refactor in this way that timestamp is not visible in external milton method
+    function calculateExchangeRate(address asset, uint256 calculateTimestamp) external view override returns (uint256){
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
+        IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());
+        (,, int256 soap) = _calculateSoap(asset, calculateTimestamp);
+        int256 balance = miltonStorage.getBalance(asset).liquidityPool.toInt256() + soap;
+        require(balance >= 0, Errors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW);
+        uint256 ipTokenTotalSupply = ipToken.totalSupply();
+        if (ipTokenTotalSupply > 0) {
+            return AmmMath.division(balance.toUint256() * iporAssetConfiguration.getMultiplicator(), ipTokenTotalSupply);
+        } else {
+            return iporAssetConfiguration.getMultiplicator();
+        }
     }
 
     function _calculatePositionValue(uint256 timestamp, DataTypes.IporDerivative memory derivative) internal view returns (int256) {
@@ -185,7 +204,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         require(IMiltonLPUtilizationStrategy(
             _iporConfiguration.getMiltonUtilizationStrategy()).calculateUtilization(
             asset, derivativeAmount.deposit, derivativeAmount.openingFee,
-                iporAssetConfiguration.getMultiplicator()) <= iporAssetConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
+            iporAssetConfiguration.getMultiplicator()) <= iporAssetConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);
 
         (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, openTimestamp);
@@ -200,9 +219,9 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             direction,
             derivativeAmount.deposit,
             DataTypes.IporDerivativeFee(
-                    iporAssetConfiguration.getLiquidationDepositAmount(),
+                iporAssetConfiguration.getLiquidationDepositAmount(),
                 derivativeAmount.openingFee,
-                        iporAssetConfiguration.getIporPublicationFeeAmount(),
+                iporAssetConfiguration.getIporPublicationFeeAmount(),
                 spreadPayFixedValue,
                 spreadRecFixedValue),
             collateralizationFactor,
@@ -210,7 +229,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             openTimestamp,
             openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
             _calculateDerivativeIndicators(openTimestamp, asset, direction, derivativeAmount.notional, iporAssetConfiguration.getMultiplicator()),
-                iporAssetConfiguration.getMultiplicator()
+            iporAssetConfiguration.getMultiplicator()
         );
 
         miltonStorage.updateStorageWhenOpenPosition(iporDerivative);
