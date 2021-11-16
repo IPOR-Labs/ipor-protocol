@@ -55,7 +55,7 @@ contract Joseph is Ownable, IJoseph {
 
         uint256 exchangeRate = IJoseph(_iporConfiguration.getJoseph()).calculateExchangeRate(asset);
 
-//        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         IMiltonStorage(_iporConfiguration.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
 

@@ -59,39 +59,33 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     //TODO: fix this name; treasureManager
     address treasureTreasurer;
 
-    IIporConfiguration internal _iporConfiguration;
-
     constructor(address asset, address ipToken) {
         _asset = asset;
         _ipToken = ipToken;
-        _multiplicator = 10 ** ERC20(asset).decimals();
-        _maxSlippagePercentage = 100 * 10 ** ERC20(asset).decimals();
-    }
-
-    function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _iporConfiguration = addressesManager;
+        uint256 multiplicator = 10 ** ERC20(asset).decimals();
+        _multiplicator = multiplicator;
+        _maxSlippagePercentage = 100 * multiplicator;
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        incomeTaxPercentage = AmmMath.division(_multiplicator, 10);
+        incomeTaxPercentage = AmmMath.division(multiplicator, 10);
 
-        require(_multiplicator != 0);
+        require(multiplicator != 0);
 
         //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
-        liquidationDepositAmount = 20 * _multiplicator;
+        liquidationDepositAmount = 20 * multiplicator;
 
         //@notice
-        openingFeePercentage = AmmMath.division(_multiplicator, 100);
+        openingFeePercentage = AmmMath.division(multiplicator, 100);
         openingFeeForTreasuryPercentage = 0;
-        iporPublicationFeeAmount = 10 * _multiplicator;
-        liquidityPoolMaxUtilizationPercentage = 8 * AmmMath.division(_multiplicator, 10);
-        maxPositionTotalAmount = 100000 * _multiplicator;
+        iporPublicationFeeAmount = 10 * multiplicator;
+        liquidityPoolMaxUtilizationPercentage = 8 * AmmMath.division(multiplicator, 10);
+        maxPositionTotalAmount = 100000 * multiplicator;
 
-        minCollateralizationFactorValue = 10 * _multiplicator;
-        maxCollateralizationFactorValue = 50 * _multiplicator;
+        minCollateralizationFactorValue = 10 * multiplicator;
+        maxCollateralizationFactorValue = 50 * multiplicator;
 
-        spreadPayFixedValue = AmmMath.division(_multiplicator, 100);
-        spreadRecFixedValue = AmmMath.division(_multiplicator, 100);
-
+        spreadPayFixedValue = AmmMath.division(multiplicator, 100);
+        spreadRecFixedValue = AmmMath.division(multiplicator, 100);
     }
 
     function getIncomeTaxPercentage() external override view returns (uint256) {
