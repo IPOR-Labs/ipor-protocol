@@ -7,7 +7,6 @@
     "test": "test"
   },
   "scripts": {
-    "truffle:deploy:kovan": "truffle migrate --network kovan",
     "coverage": "truffle run coverage",
     "test": "truffle test --stacktrace-extra"
   },
