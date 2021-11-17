@@ -1,4 +1,3 @@
-const keccak256 = require("keccak256");
 const TestJoseph = artifacts.require('TestJoseph');
 const TestMilton = artifacts.require('TestMilton');
 const DaiMockedToken = artifacts.require('DaiMockedToken');
@@ -147,18 +146,18 @@ module.exports.setupTokenUsdcInitialValuesForUsers = async (users, testData) => 
 module.exports.setupIpTokenDaiInitialValues = async (liquidityProvider, initialAmount) => {
 
     if (initialAmount > 0) {
-        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), liquidityProvider);
+        await data.iporConfiguration.setJoseph(liquidityProvider);
         await data.ipTokenDai.mint(liquidityProvider, initialAmount, {from: liquidityProvider});
-        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setJoseph(data.joseph.address);
     }
 }
 
 module.exports.setupIpTokenUsdtInitialValues = async (liquidityProvider, initialAmount) => {
 
     if (initialAmount > 0) {
-        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), liquidityProvider);
+        await data.iporConfiguration.setJoseph(liquidityProvider);
         await data.ipTokenUsdt.mint(liquidityProvider, initialAmount, {from: liquidityProvider});
-        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setJoseph(data.joseph.address);
     }
 }
 
@@ -187,9 +186,9 @@ module.exports.prepareData = async () => {
     let milton = await TestMilton.new();
     let joseph = await TestJoseph.new();
 
-    await iporConfiguration.setAddress(keccak256("WARREN"), await warren.address);
-    await iporConfiguration.setAddress(keccak256("MILTON"), await milton.address);
-    await iporConfiguration.setAddress(keccak256("JOSEPH"), await joseph.address);
+    await iporConfiguration.setWarren(await warren.address);
+    await iporConfiguration.setMilton(await milton.address);
+    await iporConfiguration.setJoseph(await joseph.address);
 
     await warren.initialize(iporConfiguration.address);
     await milton.initialize(iporConfiguration.address);
@@ -223,8 +222,8 @@ module.exports.prepareTestData = async (accounts, assets, data) => {
     await warrenStorage.addUpdater(accounts[1]);
     await warrenStorage.addUpdater(data.warren.address);
 
-    await data.iporConfiguration.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
-    await data.iporConfiguration.setAddress(keccak256("WARREN_STORAGE"), warrenStorage.address);
+    await data.iporConfiguration.setMiltonStorage(miltonStorage.address);
+    await data.iporConfiguration.setWarrenStorage(warrenStorage.address);
 
     await miltonStorage.initialize(data.iporConfiguration.address);
     await warrenStorage.initialize(data.iporConfiguration.address);

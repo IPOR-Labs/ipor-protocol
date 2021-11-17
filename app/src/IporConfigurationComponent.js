@@ -6,665 +6,155 @@ const {ContractData, ContractForm} = newContextComponents;
 export default ({drizzle, drizzleState}) => (
     <div>
         <div className="row">
-            <table className="table" align="center">
-                <tr>
-                    <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                        <br/>
-                        {drizzle.contracts.UsdtMockedToken.address}
-                        <br/><br/>
-                    </th>
-                    <th scope="col">
-                        USDC
-                        <br/>
-                        {drizzle.contracts.UsdcMockedToken.address}
-                        <br/><br/>
-                    </th>
-                    <th scope="col">
-                        DAI
-                        <br/>
-                        {drizzle.contracts.DaiMockedToken.address}
-                        <br/><br/>
-                    </th>
-                </tr>
-                <tr>
-                    <td>
-                        <br/>
-                        <strong>Ipor Configuration Address</strong>
-                        <br/><br/>
-                    </td>
-                    <td>
-                        <br/>
-                        {drizzle.contracts.IporAssetConfigurationUsdt.address}
-                        <br/><br/>
-                    </td>
-                    <td>
-                        <br/>
-                        {drizzle.contracts.IporAssetConfigurationUsdc.address}
-                        <br/><br/>
-                    </td>
-                    <td>
-                        <br/>
-                        {drizzle.contracts.IporAssetConfigurationDai.address}
-                        <br/><br/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Income Tax Percentage</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getIncomeTaxPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setIncomeTaxPercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getIncomeTaxPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setIncomeTaxPercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getIncomeTaxPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setIncomeTaxPercentage"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Liquidation Deposit Fee Amount</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getLiquidationDepositAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
+            <div className="col-md-2">
+                Warren
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getWarren"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setWarren"/>
+            </div>
+        </div>
 
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setLiquidationDepositAmount"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getLiquidationDepositAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setLiquidationDepositAmount"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getLiquidationDepositAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setLiquidationDepositAmount"/>
-                    </td>
-                </tr>
+        <div className="row">
+            <div className="col-md-2">
+                Warren Storage
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getWarrenStorage"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setWarrenStorage"/>
+            </div>
+        </div>
 
-                <tr>
-                    <td>
-                        <strong>Open Fee Percentage</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getOpeningFeePercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setOpeningFeePercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getOpeningFeePercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setOpeningFeePercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getOpeningFeePercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setOpeningFeePercentage"/>
-                    </td>
-                </tr>
+        <div className="row">
+            <div className="col-md-2">
+                Milton
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getMilton"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setMilton"/>
+            </div>
+        </div>
 
-                <tr>
-                    <td>
-                        <strong>IPOR Publication Fee Amount</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getIporPublicationFeeAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setIporPublicationFeeAmount"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getIporPublicationFeeAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setIporPublicationFeeAmount"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getIporPublicationFeeAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setIporPublicationFeeAmount"/>
-                    </td>
-                </tr>
+        <div className="row">
+            <div className="col-md-2">
+                Milton Storage
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getMiltonStorage"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setMiltonStorage"/>
+            </div>
+        </div>
 
-                <tr>
-                    <td>
-                        <strong>Minimum Collateralization Factor Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getMinCollateralizationFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setMinCollateralizationFactorValue"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getMinCollateralizationFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
+        <div className="row">
+            <div className="col-md-2">
+                Joseph
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getJoseph"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setJoseph"/>
+            </div>
+        </div>
 
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setMinCollateralizationFactorValue"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getMinCollateralizationFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
+        <div className="row">
+            <div className="col-md-2">
+                Milton Liquidity Pool Utilization Strategy
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getMiltonLPUtilizationStrategy"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setMiltonLPUtilizationStrategy"/>
+            </div>
+        </div>
 
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setMinCollateralizationFactorValue"/>
-                    </td>
-                </tr>
+        <div className="row">
+            <div className="col-md-2">
+                Milton Spread Strategy
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getMiltonSpreadStrategy"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setMiltonSpreadStrategy"/>
+            </div>
+        </div>
 
-                <tr>
-                    <td>
-                        <strong>Maximum Collateralization Factor Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getMaxCollateralizationFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setMaxCollateralizationFactorValue"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getMaxCollateralizationFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setMaxCollateralizationFactorValue"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getMaxCollateralizationFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setMaxCollateralizationFactorValue"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Opening Fee for Treasury Percentage</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getOpeningFeeForTreasuryPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setOpeningFeeForTreasuryPercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getOpeningFeeForTreasuryPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setOpeningFeeForTreasuryPercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getOpeningFeeForTreasuryPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setOpeningFeeForTreasuryPercentage"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Liquidity Pool Max Utilization Percentage</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getLiquidityPoolMaxUtilizationPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setLiquidityPoolMaxUtilizationPercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getLiquidityPoolMaxUtilizationPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setLiquidityPoolMaxUtilizationPercentage"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getLiquidityPoolMaxUtilizationPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}<br/>
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setLiquidityPoolMaxUtilizationPercentage"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Charlie Treasuers</strong>
-                        <br/>
-                        <small>Manage IPOR publication fee token balance</small>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getCharlieTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setCharlieTreasurer"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getCharlieTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setCharlieTreasurer"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getCharlieTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setCharlieTreasurer"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Treasure Manager</strong>
-                        <br/>
-                        <small>Manage opening fee balance</small>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getTreasureTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setTreasureTreasurer"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getTreasureTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setTreasureTreasurer"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getTreasureTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setTreasureTreasurer"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Asset Management Vault</strong>
-                        <br/>
-                        <small>Manage LP balance in external portals like AAVE & Compound</small>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getAssetManagementVault"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setAssetManagementVault"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getAssetManagementVault"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setAssetManagementVault"/>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getAssetManagementVault"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setAssetManagementVault"/>
-                    </td>
-                </tr>
-
-            </table>
+        <div className="row">
+            <div className="col-md-2">
+                Publication Fee Transferer
+            </div>
+            <div className="col-md-3">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="IporConfiguration"
+                    method="getMiltonPublicationFeeTransferer"/>
+            </div>
+            <div className="col-md-7">
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="IporConfiguration"
+                    method="setMiltonPublicationFeeTransferer"/>
+            </div>
         </div>
     </div>
 );

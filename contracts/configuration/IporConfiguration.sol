@@ -22,27 +22,18 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     bytes32 private constant WARREN_STORAGE = keccak256("WARREN_STORAGE");
     bytes32 private constant MILTON = keccak256("MILTON");
     bytes32 private constant MILTON_STORAGE = keccak256("MILTON_STORAGE");
-    bytes32 private constant MILTON_UTILIZATION_STRATEGY = keccak256("MILTON_UTILIZATION_STRATEGY");
-    bytes32 private constant MILTON_SPREAD_STRATEGY = keccak256("MILTON_SPREAD_STRATEGY");
     bytes32 private constant JOSEPH = keccak256("JOSEPH");
-    bytes32 private constant PUBLICATION_FEE_TRANSFERER = keccak256("PUBLICATION_FEE_TRANSFERER");
+    bytes32 private constant MILTON_LP_UTILIZATION_STRATEGY = keccak256("MILTON_LP_UTILIZATION_STRATEGY");
+    bytes32 private constant MILTON_SPREAD_STRATEGY = keccak256("MILTON_SPREAD_STRATEGY");
+    bytes32 private constant MILTON_PUBLICATION_FEE_TRANSFERER = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
 
-    function setAddress(bytes32 id, address newAddress) external override onlyOwner {
-        _addresses[id] = newAddress;
-        emit AddressSet(id, newAddress, false);
+    function getMiltonPublicationFeeTransferer() external view override returns (address) {
+        return _addresses[MILTON_PUBLICATION_FEE_TRANSFERER];
     }
 
-    function getAddress(bytes32 id) external view override returns (address) {
-        return _addresses[id];
-    }
-
-    function getPublicationFeeTransferer() external view override returns (address) {
-        return _addresses[PUBLICATION_FEE_TRANSFERER];
-    }
-
-    function setPublicationFeeTransferer(address publicationFeeTransferer) external override {
-        _addresses[PUBLICATION_FEE_TRANSFERER] = publicationFeeTransferer;
-        emit AddressSet(PUBLICATION_FEE_TRANSFERER, publicationFeeTransferer, false);
+    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer) external override {
+        _addresses[MILTON_PUBLICATION_FEE_TRANSFERER] = publicationFeeTransferer;
+        emit MiltonPublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
 
     function getMilton() external view override returns (address) {
@@ -63,12 +54,12 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         emit MiltonStorageAddressUpdated(miltonStorage);
     }
 
-    function getMiltonUtilizationStrategy() external view override returns (address) {
-        return _addresses[MILTON_UTILIZATION_STRATEGY];
+    function getMiltonLPUtilizationStrategy() external view override returns (address) {
+        return _addresses[MILTON_LP_UTILIZATION_STRATEGY];
     }
 
-    function setMiltonUtilizationStrategy(address miltonUtilizationStrategy) external override onlyOwner {
-        _addresses[MILTON_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
+    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy) external override onlyOwner {
+        _addresses[MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
     }
 

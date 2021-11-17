@@ -1,5 +1,4 @@
 require('dotenv').config({path: '../.env'})
-const keccak256 = require('keccak256')
 const Warren = artifacts.require("Warren");
 const WarrenStorage = artifacts.require("WarrenStorage");
 const Milton = artifacts.require("Milton");
@@ -121,11 +120,11 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
     await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
     let miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deployed();
-    await iporConfiguration.setAddress(keccak256("MILTON_UTILIZATION_STRATEGY"), miltonLPUtilizationStrategyCollateral.address);
+    await iporConfiguration.setMiltonLPUtilizationStrategy(miltonLPUtilizationStrategyCollateral.address);
 
     await deployer.deploy(MiltonSpreadStrategy);
     let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
-    await iporConfiguration.setAddress(keccak256("MILTON_SPREAD_STRATEGY"), miltonSpreadStrategy.address);
+    await iporConfiguration.setMiltonSpreadStrategy(miltonSpreadStrategy.address);
 
     // prepare ERC20 mocked tokens...
     if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker' || _network === 'soliditycoverage') {
@@ -235,9 +234,9 @@ module.exports = async function (deployer, _network, addresses) {
         miltonStorage = await MiltonStorage.deployed();
 
         //initial addresses setup
-        await iporConfiguration.setAddress(keccak256("WARREN"), warren.address);
-        await iporConfiguration.setAddress(keccak256("WARREN_STORAGE"), warrenStorage.address);
-        await iporConfiguration.setAddress(keccak256("MILTON_STORAGE"), miltonStorage.address);
+        await iporConfiguration.setWarren(warren.address);
+        await iporConfiguration.setWarrenStorage(warrenStorage.address);
+        await iporConfiguration.setMiltonStorage(miltonStorage.address);
 
 
         if (isTestEnvironment === 1) {
@@ -262,29 +261,29 @@ module.exports = async function (deployer, _network, addresses) {
             if (_network === 'develop' || _network === 'develop2' || _network === 'dev' || _network === 'docker' || _network === 'soliditycoverage') {
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
                     //For IPOR Test Framework purposes
-                    await iporConfiguration.setAddress(keccak256("MILTON"), testMilton.address);
+                    await iporConfiguration.setMilton(testMilton.address);
                 } else {
                     //Web application, IPOR Dev Tool
-                    await iporConfiguration.setAddress(keccak256("MILTON"), milton.address);
+                    await iporConfiguration.setMilton(milton.address);
                 }
 
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
                     //For IPOR Test Framework purposes
-                    await iporConfiguration.setAddress(keccak256("JOSEPH"), testJoseph.address);
+                    await iporConfiguration.setJoseph(testJoseph.address);
                 } else {
                     //Web application, IPOR Dev Tool
-                    await iporConfiguration.setAddress(keccak256("JOSEPH"), joseph.address);
+                    await iporConfiguration.setJoseph(joseph.address);
                 }
             } else {
-                await iporConfiguration.setAddress(keccak256("MILTON"), milton.address);
-                await iporConfiguration.setAddress(keccak256("JOSEPH"), joseph.address);
+                await iporConfiguration.setMilton(milton.address);
+                await iporConfiguration.setJoseph(joseph.address);
             }
 
             await testMilton.initialize(iporConfiguration.address);
             await testJoseph.initialize(iporConfiguration.address);
 
         } else {
-            await iporConfiguration.setAddress(keccak256("MILTON"), milton.address);
+            await iporConfiguration.setMilton(milton.address);
         }
 
         await warren.initialize(iporConfiguration.address);

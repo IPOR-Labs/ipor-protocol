@@ -47,7 +47,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
     }
 
     modifier onlyPublicationFeeTransferer() {
-        require(msg.sender == _iporConfiguration.getPublicationFeeTransferer(), Errors.MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
+        require(msg.sender == _iporConfiguration.getMiltonPublicationFeeTransferer(), Errors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER);
         _;
     }
 
@@ -202,7 +202,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
             Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE);
 
         require(IMiltonLPUtilizationStrategy(
-            _iporConfiguration.getMiltonUtilizationStrategy()).calculateUtilization(
+            _iporConfiguration.getMiltonLPUtilizationStrategy()).calculateUtilization(
             asset, derivativeAmount.deposit, derivativeAmount.openingFee,
             iporAssetConfiguration.getMultiplicator()) <= iporAssetConfiguration.getLiquidityPoolMaxUtilizationPercentage(),
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED);

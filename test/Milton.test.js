@@ -1,7 +1,5 @@
-const keccak256 = require('keccak256')
 const testUtils = require("./TestUtils.js");
 const {ZERO} = require("./TestUtils");
-const {b} = require("truffle/build/671.bundled");
 
 contract('Milton', (accounts) => {
 
@@ -320,9 +318,9 @@ contract('Milton', (accounts) => {
         await data.warren.test_updateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(params.asset, BigInt("50000000000000000"), closePositionTimestamp, {from: userOne});
 
-        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), userOne);
+        await data.iporConfiguration.setJoseph(userOne);
         await testData.miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne})
-        await data.iporConfiguration.setAddress(keccak256("JOSEPH"), data.joseph.address);
+        await data.iporConfiguration.setJoseph(data.joseph.address);
 
         //when
         await testUtils.assertError(
@@ -2133,7 +2131,7 @@ contract('Milton', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await data.iporConfiguration.setAddress(keccak256("PUBLICATION_FEE_TRANSFERER"), admin);
+        await data.iporConfiguration.setMiltonPublicationFeeTransferer(admin);
 
         //when
         await testUtils.assertError(
@@ -2160,7 +2158,7 @@ contract('Milton', (accounts) => {
             params.slippageValue, params.collateralizationFactor,
             params.direction, {from: userTwo});
 
-        await data.iporConfiguration.setAddress(keccak256("PUBLICATION_FEE_TRANSFERER"), admin);
+        await data.iporConfiguration.setMiltonPublicationFeeTransferer(admin);
         await testData.iporAssetConfigurationDai.setCharlieTreasurer(userThree);
 
         const transferedAmount = BigInt("100");

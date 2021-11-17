@@ -7,22 +7,18 @@ interface IIporConfiguration {
     event MiltonStorageAddressUpdated(address indexed newAddress);
     event MiltonUtilizationStrategyUpdated(address indexed newAddress);
     event MiltonSpreadStrategyUpdated(address indexed newAddress);
+    event MiltonPublicationFeeTransfererUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event WarrenStorageAddressUpdated(address indexed newAddress);
     event IporAssetConfigurationAddressUpdated(address indexed asset, address indexed newAddress);
     event ProxyCreated(string id, address indexed newAddress);
-    event AddressSet(bytes32 id, address indexed newAddress, bool hasProxy);
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);
     event JosephAddressUpdated(address indexed newJosephAddress);
 
-    function setAddress(bytes32 id, address newAddress) external;
+    function getMiltonPublicationFeeTransferer() external view returns (address);
 
-    function getAddress(bytes32 id) external view returns (address);
-
-    function getPublicationFeeTransferer() external view returns (address);
-
-    function setPublicationFeeTransferer(address publicationFeeTransferer) external;
+    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer) external;
 
     function getMilton() external view returns (address);
 
@@ -32,9 +28,9 @@ interface IIporConfiguration {
 
     function setMiltonStorage(address miltonStorage) external;
 
-    function getMiltonUtilizationStrategy() external view returns (address);
+    function getMiltonLPUtilizationStrategy() external view returns (address);
 
-    function setMiltonUtilizationStrategy(address miltonUtilizationStrategy) external;
+    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy) external;
 
     function getMiltonSpreadStrategy() external view returns (address);
 

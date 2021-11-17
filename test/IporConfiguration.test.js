@@ -68,10 +68,9 @@ contract('IporConfiguration', (accounts) => {
         //given
         await iporConfiguration.transferOwnership(timelockController.address);
 
-        let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
         //when
         await timelockController.schedule(
@@ -107,9 +106,8 @@ contract('IporConfiguration', (accounts) => {
         //given
         await iporConfiguration.transferOwnership(timelockController.address);
 
-        let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
         //when
         await testUtils.assertError(
@@ -133,9 +131,8 @@ contract('IporConfiguration', (accounts) => {
         //given
         await iporConfiguration.transferOwnership(timelockController.address);
 
-        let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporConfiguration.address,
@@ -169,9 +166,8 @@ contract('IporConfiguration', (accounts) => {
     it('should FAIL when used Timelock Controller, because Timelock is not an Owner of IporAssetConfiguration smart contract', async () => {
 
         //given
-        let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = await iporConfiguration.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporConfiguration.address,
@@ -207,14 +203,13 @@ contract('IporConfiguration', (accounts) => {
         let iporConfigurationOriginOwner = admin;
         await iporConfiguration.transferOwnership(timelockController.address);
 
-        let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
         let calldata = await iporConfiguration.contract.methods.transferOwnership(iporConfigurationOriginOwner).encodeABI();
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(
-            iporConfiguration.setAddress(fnParamId, fnParamAddress, {from: iporConfigurationOriginOwner}),
+            iporConfiguration.setMilton(fnParamAddress, {from: iporConfigurationOriginOwner}),
             'Ownable: caller is not the owner'
         );
 
