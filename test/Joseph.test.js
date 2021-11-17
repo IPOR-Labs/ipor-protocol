@@ -279,22 +279,22 @@ contract('Joseph', (accounts) => {
             expected: ${expectedExchangeRate}`)
     });
 
-
-    it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance', async () => {
-        //TODO: add this test
-    });
-
-    it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance', async () => {
-        //TODO: add this test
-    });
-
-    it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance', async () => {
-        //TODO: add this test
-    });
-
-    it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance', async () => {
-        //TODO: add this test
-    });
+    //
+    // it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance', async () => {
+    //     //TODO: add this test
+    // });
+    //
+    // it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance', async () => {
+    //     //TODO: add this test
+    // });
+    //
+    // it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance', async () => {
+    //     //TODO: add this test
+    // });
+    //
+    // it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance', async () => {
+    //     //TODO: add this test
+    // });
 
     it('should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals', async () => {
         //given
@@ -336,7 +336,7 @@ contract('Joseph', (accounts) => {
         let amount = BigInt("40000000000000000000");
         let expectedExchangeRate = BigInt("1000000000000000000");
 
-        await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, {from: userOne});
+        await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
 
         await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
 
