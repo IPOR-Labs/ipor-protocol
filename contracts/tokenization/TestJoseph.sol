@@ -14,11 +14,13 @@ import "./Joseph.sol";
 
 contract TestJoseph is Joseph {
 
+    //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
     function test_provideLiquidity(address asset, uint256 liquidityAmount, uint256 timestamp) external {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         _provideLiquidity(asset, liquidityAmount, iporAssetConfiguration.getMultiplicator(), timestamp);
     }
 
+    //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
     function test_redeem(address asset, uint256 ipTokenVolume, uint256 timestamp) external {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator(), timestamp);

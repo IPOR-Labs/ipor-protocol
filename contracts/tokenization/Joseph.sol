@@ -38,22 +38,6 @@ contract Joseph is Ownable, IJoseph {
         _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator(), block.timestamp);
     }
 
-//    function calculateExchangeRate(address asset) external view override returns (uint256){
-//        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-//        IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
-//        IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());
-//        IMilton milton = IMilton(_iporConfiguration.getMilton());
-//        (,, int256 soap) = milton.calculateSoap(asset);
-//        int256 balance = miltonStorage.getBalance(asset).liquidityPool.toInt256() + soap;
-//        require(balance >= 0, Errors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW);
-//        uint256 ipTokenTotalSupply = ipToken.totalSupply();
-//        if (ipTokenTotalSupply > 0) {
-//            return AmmMath.division(balance.toUint256() * iporAssetConfiguration.getMultiplicator(), ipTokenTotalSupply);
-//        } else {
-//            return iporAssetConfiguration.getMultiplicator();
-//        }
-//    }
-
     function _provideLiquidity(address asset, uint256 liquidityAmount, uint256 multiplicator, uint256 timestamp) internal {
 
         uint256 exchangeRate = IMilton(_iporConfiguration.getMilton()).calculateExchangeRate(asset, timestamp);

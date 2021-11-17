@@ -162,13 +162,13 @@ module.exports = async function (deployer, _network, addresses) {
         await deployer.deploy(IpToken, mockedDai.address, "IP DAI", "ipDAI");
         ipDaiToken = await IpToken.deployed();
 
-        await deployer.deploy(IporAssetConfigurationUsdt, mockedUsdt.address);
+        await deployer.deploy(IporAssetConfigurationUsdt, mockedUsdt.address, ipUsdtToken.address);
         iporAssetConfigurationUsdt = await IporAssetConfigurationUsdt.deployed();
 
-        await deployer.deploy(IporAssetConfigurationUsdc, mockedUsdc.address);
+        await deployer.deploy(IporAssetConfigurationUsdc, mockedUsdc.address, ipUsdcToken.address);
         iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.deployed();
 
-        await deployer.deploy(IporAssetConfigurationDai, mockedDai.address);
+        await deployer.deploy(IporAssetConfigurationDai, mockedDai.address, ipDaiToken.address);
         iporAssetConfigurationDai = await IporAssetConfigurationDai.deployed();
 
         await iporConfiguration.addAsset(mockedDai.address);
@@ -179,16 +179,10 @@ module.exports = async function (deployer, _network, addresses) {
         await iporConfiguration.setIporAssetConfiguration(mockedUsdc.address, await iporAssetConfigurationUsdc.address);
         await iporConfiguration.setIporAssetConfiguration(mockedDai.address, await iporAssetConfigurationDai.address);
 
-        await iporConfiguration.setIpToken(mockedUsdt.address, ipUsdtToken.address);
-        await iporConfiguration.setIpToken(mockedUsdc.address, ipUsdcToken.address);
-        await iporConfiguration.setIpToken(mockedDai.address, ipDaiToken.address);
-
         await ipUsdtToken.initialize(iporConfiguration.address);
         await ipUsdcToken.initialize(iporConfiguration.address);
         await ipDaiToken.initialize(iporConfiguration.address);
-        await iporAssetConfigurationUsdt.initialize(iporConfiguration.address);
-        await iporAssetConfigurationUsdc.initialize(iporConfiguration.address);
-        await iporAssetConfigurationDai.initialize(iporConfiguration.address);
+
     } else {
 
         if (_network !== 'test') { //only public network - test and production
@@ -208,13 +202,13 @@ module.exports = async function (deployer, _network, addresses) {
             ipDaiToken = await IpToken.deployed();
 
 
-            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS);
+            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
             iporAssetConfigurationUsdt = await IporAssetConfiguration.deployed();
 
-            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS);
+            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
             iporAssetConfigurationUsdc = await IporAssetConfiguration.deployed();
 
-            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS);
+            await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
             iporAssetConfigurationDai = await IporAssetConfiguration.deployed();
 
             await iporConfiguration.addAsset(mockedDai.address);
@@ -225,13 +219,6 @@ module.exports = async function (deployer, _network, addresses) {
             await iporConfiguration.setIporAssetConfiguration(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, await IporAssetConfigurationUsdc.address);
             await iporConfiguration.setIporAssetConfiguration(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, await IporAssetConfigurationDai.address);
 
-            await iporConfiguration.setIpToken(process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
-            await iporConfiguration.setIpToken(process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
-            await iporConfiguration.setIpToken(process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
-
-            await iporAssetConfigurationUsdt.initialize(iporConfiguration.address);
-            await iporAssetConfigurationUsdc.initialize(iporConfiguration.address);
-            await iporAssetConfigurationDai.initialize(iporConfiguration.address);
         }
     }
 
