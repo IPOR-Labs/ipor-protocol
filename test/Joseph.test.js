@@ -24,7 +24,7 @@ contract('Joseph', (accounts) => {
         let expectedLiquidityPoolBalanceMilton = testUtils.USD_14_000_18DEC;
 
         //when
-        await data.joseph.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(params.asset, liquidityAmount, params.openTimestamp, {from: liquidityProvider})
 
         //then
         const actualIpTokenBalanceSender = BigInt(await testData.ipTokenDai.balanceOf(liquidityProvider));
@@ -60,7 +60,7 @@ contract('Joseph', (accounts) => {
         let expectedLiquidityPoolBalanceMilton = testUtils.USD_14_000_6DEC;
 
         //when
-        await data.joseph.provideLiquidity(params.asset, liquidityAmount, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(params.asset, liquidityAmount, params.openTimestamp, {from: liquidityProvider})
 
         //then
         const actualIpTokenBalanceSender = BigInt(await testData.ipTokenUsdt.balanceOf(liquidityProvider));
@@ -192,7 +192,7 @@ contract('Joseph', (accounts) => {
 
         let expectedExchangeRate = BigInt("1000000000000000000");
 
-        await data.joseph.provideLiquidity(params.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(params.asset, testUtils.USD_14_000_18DEC, params.openTimestamp, {from: liquidityProvider})
 
         //when
         let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(testData.tokenDai.address, params.openTimestamp));
@@ -213,7 +213,7 @@ contract('Joseph', (accounts) => {
 
         let expectedExchangeRate = BigInt("1000000");
 
-        await data.joseph.provideLiquidity(params.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(params.asset, testUtils.USD_14_000_6DEC, params.openTimestamp, {from: liquidityProvider})
 
         //when
         let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(testData.tokenUsdt.address, params.openTimestamp));
@@ -234,7 +234,7 @@ contract('Joseph', (accounts) => {
 
         let expectedExchangeRate = BigInt("0");
 
-        await data.joseph.provideLiquidity(params.asset, testUtils.USD_10_000_18DEC, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(params.asset, testUtils.USD_10_000_18DEC, params.openTimestamp, {from: liquidityProvider})
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         await data.iporConfiguration.setJoseph(userOne);
@@ -306,8 +306,8 @@ contract('Joseph', (accounts) => {
 
         let expectedExchangeRate = BigInt("1022727");
 
-        await data.warren.updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, {from: userOne});
-        await data.joseph.provideLiquidity(params.asset, BigInt("40000000"), {from: liquidityProvider})
+        await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, params.openTimestamp, {from: userOne});
+        await data.joseph.test_provideLiquidity(params.asset, BigInt("40000000"), params.openTimestamp, {from: liquidityProvider})
 
         //open position to have something in Liquidity Pool
         await data.milton.test_openPosition(
@@ -539,7 +539,7 @@ contract('Joseph', (accounts) => {
         await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
         const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
 
-        await data.joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider});
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         await data.iporConfiguration.setJoseph(userOne);
@@ -549,7 +549,7 @@ contract('Joseph', (accounts) => {
         //when
         await testUtils.assertError(
             //when
-            data.joseph.provideLiquidity(params.asset, params.totalAmount, {from: liquidityProvider}),
+            data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider}),
             //then
             'IPOR_45'
         );

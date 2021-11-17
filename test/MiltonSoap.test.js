@@ -51,7 +51,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -88,7 +88,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -124,7 +124,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -159,7 +159,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -196,7 +196,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -238,7 +238,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -246,7 +246,7 @@ contract('MiltonSoap', (accounts) => {
         let endTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_10_000_18DEC, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_10_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider})
 
         //when
         await data.milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
@@ -294,7 +294,9 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(
+            firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC,
+            openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(firstDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
@@ -344,7 +346,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_6DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(firstDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
@@ -397,8 +399,8 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(derivativeDAIParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
-        await data.joseph.provideLiquidity(derivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeDAIParams.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeDAIParams.asset, iporValueBeforOpenPositionDAI, derivativeDAIParams.openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(derivativeUSDTParams.asset, iporValueBeforOpenPositionUSDT, derivativeUSDTParams.openTimestamp, {from: userOne});
 
@@ -462,7 +464,7 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(payFixDerivativeParams);
         await openPositionFunc(recFixDerivativeParams);
@@ -519,7 +521,7 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(payFixDerivativeParams);
         await openPositionFunc(recFixDerivativeParams);
@@ -579,8 +581,8 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(payFixDerivativeDAIParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
-        await data.joseph.provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(payFixDerivativeDAIParams.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, openTimestamp, {from: liquidityProvider});
 
         await data.warren.test_updateIndex(payFixDerivativeDAIParams.asset, iporValueBeforOpenPositionDAI, openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(recFixDerivativeUSDTParams.asset, iporValueBeforOpenPositionUSDT, openTimestamp, {from: userOne});
@@ -589,7 +591,7 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(recFixDerivativeUSDTParams);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await data.joseph.provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_10_000_6DEC, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_10_000_6DEC, openTimestamp, {from: liquidityProvider})
 
         let endTimestamp = recFixDerivativeUSDTParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -633,7 +635,7 @@ contract('MiltonSoap', (accounts) => {
 
         let calculationTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -676,7 +678,7 @@ contract('MiltonSoap', (accounts) => {
 
         let calculationTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC,  derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -721,7 +723,7 @@ contract('MiltonSoap', (accounts) => {
         let calculationTimestamp28days = derivativeParams.openTimestamp + testUtils.PERIOD_28_DAYS_IN_SECONDS;
         let calculationTimestamp50days = derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -781,7 +783,9 @@ contract('MiltonSoap', (accounts) => {
         }
         let calculationTimestamp50days = derivativeParams25days.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(
+            derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC,
+            derivativeParamsFirst.openTimestamp, {from: liquidityProvider});
 
         //when
         await data.warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
@@ -831,7 +835,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
         let calculationTimestamp50days = derivativeParams25days.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
-        await data.joseph.provideLiquidity(derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
 
         //when
         await data.warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
@@ -885,7 +889,7 @@ contract('MiltonSoap', (accounts) => {
             from: userTwo
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
 
         //when
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -940,7 +944,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParamsFirst.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParamsFirst.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, firstUpdateIndexTimestamp, {from: userOne});
         await openPositionFunc(derivativeParamsFirst);
 

@@ -58,7 +58,7 @@ contract('MiltonStorage', (accounts) => {
 
         await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_18DEC, derivativeParams.openTimestamp, {from: userOne});
         await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
@@ -91,7 +91,7 @@ contract('MiltonStorage', (accounts) => {
 
         await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_6DEC, derivativeParams.openTimestamp, {from: userOne});
         await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC, params.openTimestamp, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
@@ -124,7 +124,7 @@ contract('MiltonStorage', (accounts) => {
 
         await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_18DEC, derivativeParams.openTimestamp, {from: userOne});
         await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, params.openTimestamp, {from: liquidityProvider});
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
