@@ -4,8 +4,9 @@ pragma solidity >=0.8.4 <0.9.0;
 import "../interfaces/IIporAddressesManager.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import {Errors} from '../Errors.sol';
+import "./AccessControlConfiguration.sol";
 
-contract IporAddressesManager is Ownable, IIporAddressesManager {
+contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable, IIporAddressesManager {
 
     //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC
     address [] public assets;
@@ -138,7 +139,7 @@ contract IporAddressesManager is Ownable, IIporAddressesManager {
         return assets;
     }
 
-    function addAsset(address asset) external override onlyOwner {
+    function addAsset(address asset) external override onlyRole(IPOR_ASSETS) {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         bool assetExists = false;
         for (uint256 i; i < assets.length; i++) {

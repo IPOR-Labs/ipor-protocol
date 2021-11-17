@@ -31,6 +31,7 @@ contract('IporAddressesManager', (accounts) => {
 
     beforeEach(async () => {
         iporAddressesManager = await IporAddressesManager.new();
+        await iporAddressesManager.grantRole(keccak256("IPOR_ASSETS"), admin);
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenDai.address);
     });
@@ -369,4 +370,6 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
 
     });
+
+//    TODO: Pete Add tests for IPOR_ASSETS role
 });
