@@ -95,7 +95,7 @@ contract('IporConfiguration', (accounts) => {
         );
 
         //then
-        let actualMiltonAddress = await iporConfiguration.getAddress(fnParamId);
+        let actualMiltonAddress = await iporConfiguration.getMilton();
 
         assert(fnParamAddress === actualMiltonAddress,
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
@@ -235,10 +235,10 @@ contract('IporConfiguration', (accounts) => {
             {from: userTwo}
         );
 
-        await iporConfiguration.setAddress(fnParamId, fnParamAddress, {from: iporConfigurationOriginOwner});
+        await iporConfiguration.setMilton(fnParamAddress, {from: iporConfigurationOriginOwner});
 
         //then
-        let actualMiltonAddress = await iporConfiguration.getAddress(fnParamId);
+        let actualMiltonAddress = await iporConfiguration.getMilton();
 
         assert(fnParamAddress === actualMiltonAddress,
             `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
