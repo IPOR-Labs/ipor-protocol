@@ -30,11 +30,11 @@ library Errors {
     string public constant MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE = 'IPOR_28'; // Opening Fee Balance is too low`
     string public constant MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS = 'IPOR_29'; // Charlie Treasurer address is incorrect
     string public constant MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER = 'IPOR_30'; // Amount is too low to transfer
-    string public constant MILTON_CALLER_NOT_PUBLICATION_FEE_TRANSFERER = 'IPOR_31'; // Sender is not a publication fee transferer, not match address defined in IporAddressesManager in key PUBLICATION_FEE_TRANSFERER
+    string public constant MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER = 'IPOR_31'; // Sender is not a publication fee transferer, not match address defined in IporConfiguration in key MILTON_PUBLICATION_FEE_TRANSFERER
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = 'IPOR_32'; // Incorrect IPOR Configuration address
     string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS = 'IPOR_33'; // Incorrect IPOR Configuration address
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = 'IPOR_34';
-    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, IporConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
+    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED = 'IPOR_35'; //Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
     string public constant WARREN_WRONG_UPDATER_ADDRESS = 'IPOR_36'; // Updater address is wrong
     string public constant WRONG_ADDRESS = 'IPOR_37'; // General problem, address is wrong
     string public constant MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS = 'IPOR_38'; //Cannot add new asset to asset list, because already exists
@@ -46,5 +46,6 @@ library Errors {
     string public constant MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW = 'IPOR_44'; //Amount which should be burned is too low
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = 'IPOR_45'; //Liquidity Pool balance is equal 0
     string public constant MILTON_CALLER_NOT_JOSEPH = 'IPOR_46'; // 'The caller must be the Ipor Liquidity Pool - Joseph'
+    string public constant JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW = 'IPOR_47'; // 'Summary SOAP and Miltion Liquidity Pool Balance is less than zero. SOAP can be negative, Sum of SOAM and Liquidity Pool Balance can be negative, but this is undesirable.
 
 }

@@ -15,17 +15,17 @@ contract('Warren', (accounts) => {
     let warrenDevToolDataProvider = null;
 
     before(async () => {
-        data = await testUtils.prepareDataForBefore(accounts);
-        warrenDevToolDataProvider = await WarrenDevToolDataProvider.new(data.iporAddressesManager.address);
+        data = await testUtils.prepareData();
+        warrenDevToolDataProvider = await WarrenDevToolDataProvider.new(data.iporConfiguration.address);
     });
 
     beforeEach(async () => {
-        testData = await testUtils.prepareDataForBeforeEach(data);
+        testData = await testUtils.prepareTestData([admin, updaterOne, updaterTwo, user], ["USDC", "USDT", "DAI"], data);
     });
 
     it('should NOT update IPOR Index, because sender is not an updater', async () => {
         await testUtils.assertError(
-            data.warren.updateIndex(data.tokenUsdt.address, 123, {from: user}),
+            data.warren.updateIndex(testData.tokenUsdt.address, 123, {from: user}),
             'IPOR_2'
         );
     });
@@ -36,7 +36,7 @@ contract('Warren', (accounts) => {
 
         await testUtils.assertError(
             //when
-            data.warren.updateIndex(data.tokenUsdt.address, 123, {from: updaterTwo}),
+            data.warren.updateIndex(testData.tokenUsdt.address, 123, {from: updaterTwo}),
             //then
             'IPOR_2'
         );
@@ -45,7 +45,7 @@ contract('Warren', (accounts) => {
 
     it('should update IPOR Index', async () => {
         //given
-        let asset = data.tokenDai.address;
+        let asset = testData.tokenDai.address;
         let expectedIndexValue = BigInt(1e20);
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
@@ -94,9 +94,9 @@ contract('Warren', (accounts) => {
 
     it('should retrieve list of IPOR Indexes', async () => {
         //given
-        let expectedAssetOne = data.tokenUsdt.address;
+        let expectedAssetOne = testData.tokenUsdt.address;
         let expectedAssetSymbolOne = "USDT";
-        let expectedAssetTwo = data.tokenDai.address;
+        let expectedAssetTwo = testData.tokenDai.address;
         let expectedAssetSymbolTwo = "DAI";
         let expectedIporIndexesSize = 2;
         await testData.warrenStorage.addUpdater(updaterOne);
@@ -119,7 +119,7 @@ contract('Warren', (accounts) => {
 
     it('should update existing IPOR Index', async () => {
         //given
-        let asset = data.tokenUsdt.address;
+        let asset = testData.tokenUsdt.address;
         let expectedIndexValueOne = BigInt("123000000000000000000");
         let expectedIndexValueTwo = BigInt("321000000000000000000");
         await testData.warrenStorage.addUpdater(updaterOne);
@@ -138,7 +138,7 @@ contract('Warren', (accounts) => {
 
     it('should calculate initial Interest Bearing Token Price', async () => {
         //given
-        let asset = data.tokenUsdt.address;
+        let asset = testData.tokenUsdt.address;
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
         let iporIndexValue = BigInt("500000000");
@@ -159,7 +159,7 @@ contract('Warren', (accounts) => {
 
     it('should calculate next Interest Bearing Token Price - one year period', async () => {
         //given
-        let asset = data.tokenUsdt.address;
+        let asset = testData.tokenUsdt.address;
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
         let updateDate = Math.floor(Date.now() / 1000);
@@ -184,7 +184,7 @@ contract('Warren', (accounts) => {
 
     it('should calculate next Interest Bearing Token Price - one month period', async () => {
         //given
-        let asset = data.tokenUsdt.address;
+        let asset = testData.tokenUsdt.address;
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
@@ -212,7 +212,7 @@ contract('Warren', (accounts) => {
 
     it('should calculate next after next Interest Bearing Token Price - half year and three months snapshots', async () => {
         //given
-        let asset = data.tokenUsdt.address;
+        let asset = testData.tokenUsdt.address;
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
         let updateDate = Math.floor(Date.now() / 1000);
@@ -244,7 +244,7 @@ contract('Warren', (accounts) => {
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
-        let assets = [data.tokenUsdc.address, data.tokenDai.address];
+        let assets = [testData.tokenUsdc.address, testData.tokenDai.address];
         let indexValues = [BigInt("50000000000000000")];
 
         await testUtils.assertError(
@@ -260,7 +260,7 @@ contract('Warren', (accounts) => {
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
-        let assets = [data.tokenUsdc.address, data.tokenDai.address];
+        let assets = [testData.tokenUsdc.address, testData.tokenDai.address];
         let indexValues = [BigInt("50000000000000000"), BigInt("50000000000000000")];
         await data.warren.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne})
 
@@ -280,7 +280,7 @@ contract('Warren', (accounts) => {
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
-        let assets = [data.tokenUsdc.address, data.tokenDai.address];
+        let assets = [testData.tokenUsdc.address, testData.tokenDai.address];
         let indexValues = [WARREN_8_PERCENTAGE, WARREN_7_PERCENTAGE];
 
         //when

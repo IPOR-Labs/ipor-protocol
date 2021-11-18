@@ -7,8 +7,8 @@ import "../interfaces/IWarrenStorage.sol";
 import {Constants} from '../libraries/Constants.sol';
 import {Errors} from '../Errors.sol';
 import "../libraries/IporLogic.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IIporConfiguration.sol";
-import "../interfaces/IIporAddressesManager.sol";
 
 /**
  * @title Ipor Oracle Storage initial version
@@ -36,10 +36,10 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _iporConfiguration;
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
-        _addressesManager = addressesManager;
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
+        _iporConfiguration = addressesManager;
     }
 
     function getAssets() external override view returns (address[] memory) {
@@ -53,8 +53,8 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) external override onlyUpdater {
         require(_assets.length == indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i = 0; i < _assets.length; i++) {
-            IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(_assets[i]));
-            _updateIndex(_assets[i], indexValues[i], updateTimestamp, iporConfiguration.getMultiplicator());
+            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(_assets[i]));
+            _updateIndex(_assets[i], indexValues[i], updateTimestamp, iporAssetConfiguration.getMultiplicator());
         }
     }
 
@@ -102,7 +102,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 newQuasiIbtPrice;
 
         if (assetExists == false) {
-            //TODO: consider asset support configured in IporAddressesManager
+            //TODO: consider asset support configured in IporConfiguration
             assets.push(asset);
             newQuasiIbtPrice = multiplicator * Constants.YEAR_IN_SECONDS;
         } else {

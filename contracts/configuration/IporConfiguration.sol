@@ -1,208 +1,146 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
-import "../libraries/types/DataTypes.sol";
-import "../libraries/DerivativeLogic.sol";
-import "../libraries/AmmMath.sol";
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
-import {Errors} from '../Errors.sol';
-import {DataTypes} from '../libraries/types/DataTypes.sol';
-import "../interfaces/IWarren.sol";
-import '../amm/MiltonStorage.sol';
-import '../amm/IMiltonEvents.sol';
-import "../libraries/SoapIndicatorLogic.sol";
-import "../libraries/TotalSoapIndicatorLogic.sol";
-import "../libraries/DerivativesView.sol";
-import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporConfiguration.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import {Errors} from '../Errors.sol';
 
-//TODO: consider using AccessControll instead Ownable - higher flexibility
 contract IporConfiguration is Ownable, IIporConfiguration {
 
-    address private immutable _asset;
+    //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC
+    address [] public assets;
 
-    uint256 private immutable _multiplicator;
+    //@notice value - flag 1 - is supported, 0 - is not supported
+    mapping(address => uint256) public supportedAssets;
 
-    uint256 private immutable _maxSlippagePercentage;
+    //@notice mapping underlying asset address to ipor configuration address
+    mapping(address => address) public iporAssetConfigurations;
 
-    uint256 minCollateralizationFactorValue;
+    mapping(bytes32 => address) private _addresses;
 
-    uint256 maxCollateralizationFactorValue;
+    bytes32 private constant WARREN = keccak256("WARREN");
+    bytes32 private constant WARREN_STORAGE = keccak256("WARREN_STORAGE");
+    bytes32 private constant MILTON = keccak256("MILTON");
+    bytes32 private constant MILTON_STORAGE = keccak256("MILTON_STORAGE");
+    bytes32 private constant JOSEPH = keccak256("JOSEPH");
+    bytes32 private constant MILTON_LP_UTILIZATION_STRATEGY = keccak256("MILTON_LP_UTILIZATION_STRATEGY");
+    bytes32 private constant MILTON_SPREAD_STRATEGY = keccak256("MILTON_SPREAD_STRATEGY");
+    bytes32 private constant MILTON_PUBLICATION_FEE_TRANSFERER = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
 
-    uint256 incomeTaxPercentage;
-
-    uint256 liquidationDepositAmount;
-
-    uint256 openingFeePercentage;
-
-    //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big
-    //pie going to Treasury Balance
-    uint256 openingFeeForTreasuryPercentage;
-
-    uint256 iporPublicationFeeAmount;
-
-    uint256 liquidityPoolMaxUtilizationPercentage;
-
-    //@notice max total amount used when opening position
-    uint256 maxPositionTotalAmount;
-
-    //TODO: spread from configuration will be deleted, spread will be calculated in runtime
-    uint256 spreadPayFixedValue;
-    uint256 spreadRecFixedValue;
-
-    IIporAddressesManager internal _addressesManager;
-
-    constructor(address asset) {
-        _asset = asset;
-        _multiplicator = 10 ** ERC20(asset).decimals();
-        _maxSlippagePercentage = 100 * 10 ** ERC20(asset).decimals();
+    function getMiltonPublicationFeeTransferer() external view override returns (address) {
+        return _addresses[MILTON_PUBLICATION_FEE_TRANSFERER];
     }
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
-        _addressesManager = addressesManager;
-
-        //@notice taken after close position from participant who take income (trader or Milton)
-        incomeTaxPercentage = AmmMath.division(_multiplicator, 10);
-
-        require(_multiplicator != 0);
-
-        //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
-        liquidationDepositAmount = 20 * _multiplicator;
-
-        //@notice
-        openingFeePercentage = AmmMath.division(_multiplicator, 100);
-        openingFeeForTreasuryPercentage = 0;
-        iporPublicationFeeAmount = 10 * _multiplicator;
-        liquidityPoolMaxUtilizationPercentage = 8 * AmmMath.division(_multiplicator, 10);
-        maxPositionTotalAmount = 100000 * _multiplicator;
-
-        minCollateralizationFactorValue = 10 * _multiplicator;
-        maxCollateralizationFactorValue = 50 * _multiplicator;
-
-        spreadPayFixedValue = AmmMath.division(_multiplicator, 100);
-        spreadRecFixedValue = AmmMath.division(_multiplicator, 100);
-
+    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer) external override {
+        _addresses[MILTON_PUBLICATION_FEE_TRANSFERER] = publicationFeeTransferer;
+        emit MiltonPublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
 
-    function getIncomeTaxPercentage() external override view returns (uint256) {
-        return incomeTaxPercentage;
+    function getMilton() external view override returns (address) {
+        return _addresses[MILTON];
     }
 
-    function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyOwner {
-        require(_incomeTaxPercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
-        incomeTaxPercentage = _incomeTaxPercentage;
-        emit IncomeTaxPercentageSet(_incomeTaxPercentage);
+    function setMilton(address milton) external override onlyOwner {
+        _addresses[MILTON] = milton;
+        emit MiltonAddressUpdated(milton);
     }
 
-    function getOpeningFeeForTreasuryPercentage() external override view returns (uint256) {
-        return openingFeeForTreasuryPercentage;
+    function getMiltonStorage() external view override returns (address) {
+        return _addresses[MILTON_STORAGE];
     }
 
-    function setOpeningFeeForTreasuryPercentage(uint256 _openingFeeForTreasuryPercentage) external override onlyOwner {
-        require(_openingFeeForTreasuryPercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
-        openingFeeForTreasuryPercentage = _openingFeeForTreasuryPercentage;
-        emit OpeningFeeForTreasuryPercentageSet(_openingFeeForTreasuryPercentage);
+    function setMiltonStorage(address miltonStorage) external override onlyOwner {
+        _addresses[MILTON_STORAGE] = miltonStorage;
+        emit MiltonStorageAddressUpdated(miltonStorage);
     }
 
-    function getLiquidationDepositAmount() external override view returns (uint256) {
-        return liquidationDepositAmount;
+    function getMiltonLPUtilizationStrategy() external view override returns (address) {
+        return _addresses[MILTON_LP_UTILIZATION_STRATEGY];
     }
 
-    function setLiquidationDepositAmount(uint256 _liquidationDepositAmount) external override onlyOwner {
-        liquidationDepositAmount = _liquidationDepositAmount;
-        emit LiquidationDepositAmountSet(_liquidationDepositAmount);
+    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy) external override onlyOwner {
+        _addresses[MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
+        emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
     }
 
-    function getOpeningFeePercentage() external override view returns (uint256) {
-        return openingFeePercentage;
+    function getMiltonSpreadStrategy() external view override returns (address) {
+        return _addresses[MILTON_SPREAD_STRATEGY];
     }
 
-    function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyOwner {
-        require(_openingFeePercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
-        openingFeePercentage = _openingFeePercentage;
-        emit OpeningFeePercentageSet(_openingFeePercentage);
+    function setMiltonSpreadStrategy(address miltonSpreadStrategy) external override onlyOwner {
+        _addresses[MILTON_SPREAD_STRATEGY] = miltonSpreadStrategy;
+        emit MiltonSpreadStrategyUpdated(miltonSpreadStrategy);
     }
 
-    function getIporPublicationFeeAmount() external override view returns (uint256) {
-        return iporPublicationFeeAmount;
+    function getIporAssetConfiguration(address asset) external view override returns (address) {
+        return iporAssetConfigurations[asset];
     }
 
-    function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount) external override onlyOwner {
-        iporPublicationFeeAmount = _iporPublicationFeeAmount;
-        emit IporPublicationFeeAmountSet(_iporPublicationFeeAmount);
+    function setIporAssetConfiguration(address asset, address iporConfig) external override onlyOwner {
+        require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
+        iporAssetConfigurations[asset] = iporConfig;
+        emit IporAssetConfigurationAddressUpdated(asset, iporConfig);
     }
 
-    function getLiquidityPoolMaxUtilizationPercentage() external override view returns (uint256) {
-        return liquidityPoolMaxUtilizationPercentage;
+    function getWarren() external view override returns (address) {
+        return _addresses[WARREN];
     }
 
-    function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external override onlyOwner {
-        liquidityPoolMaxUtilizationPercentage = _liquidityPoolMaxUtilizationPercentage;
-        emit LiquidityPoolMaxUtilizationPercentageSet(_liquidityPoolMaxUtilizationPercentage);
+    function setWarren(address warren) external override onlyOwner {
+        _addresses[WARREN] = warren;
+        emit WarrenAddressUpdated(warren);
     }
 
-    function getMaxPositionTotalAmount() external override view returns (uint256) {
-        return maxPositionTotalAmount;
+    function getAssets() external override view returns (address[] memory){
+        return assets;
     }
 
-    function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external override onlyOwner {
-        maxPositionTotalAmount = _maxPositionTotalAmount;
-        emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
+    function addAsset(address asset) external override onlyOwner {
+        require(asset != address(0), Errors.WRONG_ADDRESS);
+        bool assetExists = false;
+        for (uint256 i; i < assets.length; i++) {
+            if (assets[i] == asset) {
+                assetExists = true;
+            }
+        }
+        if (assetExists == false) {
+            assets.push(asset);
+            supportedAssets[asset] = 1;
+            emit AssetAddressAdd(asset);
+        }
     }
 
-    function getSpreadPayFixedValue() external override view returns (uint256) {
-        return spreadPayFixedValue;
+    function removeAsset(address asset) external override onlyOwner {
+        require(asset != address(0), Errors.WRONG_ADDRESS);
+        for (uint256 i; i < assets.length; i++) {
+            if (assets[i] == asset) {
+                delete assets[i];
+                supportedAssets[asset] = 0;
+                emit AssetAddressRemoved(asset);
+                break;
+            }
+        }
     }
 
-    function setSpreadPayFixedValue(uint256 spread) external override {
-        spreadPayFixedValue = spread;
+    function getJoseph() external override view returns (address){
+        return _addresses[JOSEPH];
     }
 
-    function getSpreadRecFixedValue() external override view returns (uint256) {
-        return spreadRecFixedValue;
+    function setJoseph(address joseph) external override onlyOwner {
+        _addresses[JOSEPH] = joseph;
+        emit JosephAddressUpdated(joseph);
     }
 
-    function setSpreadRecFixedValue(uint256 spread) external override {
-        spreadRecFixedValue= spread;
+    function assetSupported(address asset) external override view returns (uint256) {
+        return supportedAssets[asset];
     }
 
-    function getMaxCollateralizationFactorValue() external override view returns (uint256) {
-        return maxCollateralizationFactorValue;
+    function setWarrenStorage(address warrenStorage) external override onlyOwner {
+        _addresses[WARREN_STORAGE] = warrenStorage;
+        emit WarrenStorageAddressUpdated(warrenStorage);
     }
 
-    function setMaxCollateralizationFactorValue(uint256 _maxCollateralizationFactorValue) external override onlyOwner {
-        maxCollateralizationFactorValue = _maxCollateralizationFactorValue;
-        emit MaxCollateralizationFactorValueSet(_maxCollateralizationFactorValue);
+    function getWarrenStorage() external override view returns (address) {
+        return _addresses[WARREN_STORAGE];
     }
-
-    function getMinCollateralizationFactorValue() external override view returns (uint256) {
-        return minCollateralizationFactorValue;
-    }
-
-    function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external override onlyOwner {
-        minCollateralizationFactorValue = _minCollateralizationFactorValue;
-        emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
-    }
-
-    function getMultiplicator() external view override returns (uint256) {
-        return _multiplicator;
-    }
-
-    function getMaxSlippagePercentage() external view override returns (uint256) {
-        return _maxSlippagePercentage;
-    }
-}
-
-//TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
-contract IporConfigurationUsdt is IporConfiguration {
-    constructor(address asset) IporConfiguration(asset) {}
-}
-
-contract IporConfigurationUsdc is IporConfiguration {
-    constructor(address asset) IporConfiguration(asset) {}
-}
-
-contract IporConfigurationDai is IporConfiguration {
-    constructor(address asset) IporConfiguration(asset) {}
 }

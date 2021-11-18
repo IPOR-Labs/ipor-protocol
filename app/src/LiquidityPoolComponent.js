@@ -21,9 +21,9 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestJoseph"
+                            contract="TestMilton"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                            methodArgs={[drizzle.contracts.UsdtMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}<br/>
@@ -35,9 +35,9 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Joseph"
+                            contract="Milton"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                            methodArgs={[drizzle.contracts.UsdtMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}<br/>
@@ -52,9 +52,9 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestJoseph"
+                            contract="TestMilton"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                            methodArgs={[drizzle.contracts.UsdcMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}<br/>
@@ -66,9 +66,9 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Joseph"
+                            contract="Milton"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                            methodArgs={[drizzle.contracts.UsdcMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}<br/>
@@ -83,9 +83,9 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestJoseph"
+                            contract="TestMilton"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                            methodArgs={[drizzle.contracts.DaiMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}<br/>
@@ -97,9 +97,9 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestJoseph"
+                            contract="TestMilton"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                            methodArgs={[drizzle.contracts.DaiMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}<br/>

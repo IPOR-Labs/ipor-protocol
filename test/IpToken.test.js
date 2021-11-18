@@ -1,4 +1,5 @@
 const testUtils = require("./TestUtils.js");
+const truffleAssert = require('truffle-assertions');
 
 contract('IpToken', (accounts) => {
 
@@ -8,11 +9,11 @@ contract('IpToken', (accounts) => {
     let testData
 
     before(async () => {
-        data = await testUtils.prepareDataForBefore(accounts);
+        data = await testUtils.prepareData();
     });
 
     beforeEach(async () => {
-        testData = await testUtils.prepareDataForBeforeEach(data);
+        testData =await testUtils.prepareTestData([userTwo, liquidityProvider], ["DAI"], data);
     });
 
 
@@ -36,5 +37,19 @@ contract('IpToken', (accounts) => {
             //then
             'IPOR_46'
         );
+    });
+
+    it('should emit event', async () => {
+        //given
+        await data.iporConfiguration.setJoseph(admin);
+
+        //when
+        let tx = await testData.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {from: admin})
+
+        //then
+        truffleAssert.eventEmitted(tx, 'Mint', (ev) => {
+            return ev.user == userOne && ev.value == testUtils.USD_10_000_18DEC;
+        });
+        await data.iporConfiguration.setJoseph(data.joseph.address);
     });
 });

@@ -7,11 +7,11 @@ import "../libraries/DerivativeLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 
 
 contract MiltonStorage is Ownable, IMiltonStorage {
@@ -22,7 +22,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
-    IIporAddressesManager internal _addressesManager;
+    IIporConfiguration internal _iporConfiguration;
 
     mapping(address => DataTypes.MiltonTotalBalance) public balances;
 
@@ -33,22 +33,22 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivatives public derivatives;
 
-    function initialize(IIporAddressesManager addressesManager) public onlyOwner {
-        _addressesManager = addressesManager;
+    function initialize(IIporConfiguration addressesManager) public onlyOwner {
+        _iporConfiguration = addressesManager;
     }
 
     //@notice add asset address to MiltonStorage structures
     function addAsset(address asset) external override onlyOwner {
 
-        require(_addressesManager.assetSupported(asset) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
+        require(_iporConfiguration.assetSupported(asset) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
 
         soapIndicators[asset] = DataTypes.TotalSoapIndicator(
             DataTypes.SoapIndicator(0, DataTypes.DerivativeDirection.PayFixedReceiveFloating, 0, 0, 0, 0, 0),
             DataTypes.SoapIndicator(0, DataTypes.DerivativeDirection.PayFloatingReceiveFixed, 0, 0, 0, 0, 0)
         );
 
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        uint256 multiplicator = iporConfiguration.getMultiplicator();
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
 
         //TODO: clarify what is default value for spread when spread is calculated in final way
         spreadIndicators[asset] = DataTypes.TotalSpreadIndicator(
@@ -126,8 +126,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address asset,
         uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {
         return (
-        spreadPayFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadPayFixedValue(),
-        spreadRecFixedValue = IIporConfiguration(_addressesManager.getIporConfiguration(asset)).getSpreadRecFixedValue()
+        spreadPayFixedValue = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset)).getSpreadPayFixedValue(),
+        spreadRecFixedValue = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset)).getSpreadRecFixedValue()
         );
     }
 
@@ -135,8 +135,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address asset,
         uint256 ibtPrice,
         uint256 calculateTimestamp) external override view returns (int256 soapPf, int256 soapRf, int256 soap) {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        uint256 multiplicator = iporConfiguration.getMultiplicator();
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
 
         (int256 qSoapPf, int256 qSoapRf, int256 qSoap) = _calculateQuasiSoap(asset, ibtPrice, calculateTimestamp, multiplicator);
         int256 p2YearInSeconds = int256(multiplicator * multiplicator * Constants.YEAR_IN_SECONDS);
@@ -157,14 +157,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _updateBalancesWhenOpenPosition(address asset, uint256 collateral, uint256 openingFeeAmount, uint256 multiplicator) internal {
 
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 
         balances[asset].derivatives = balances[asset].derivatives + collateral;
         balances[asset].openingFee = balances[asset].openingFee + openingFeeAmount;
-        balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + iporConfiguration.getLiquidationDepositAmount();
-        balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + iporConfiguration.getIporPublicationFeeAmount();
+        balances[asset].liquidationDeposit = balances[asset].liquidationDeposit + iporAssetConfiguration.getLiquidationDepositAmount();
+        balances[asset].iporPublicationFee = balances[asset].iporPublicationFee + iporAssetConfiguration.getIporPublicationFeeAmount();
 
-        uint256 openingFeeForTreasurePercentage = iporConfiguration.getOpeningFeeForTreasuryPercentage();
+        uint256 openingFeeForTreasurePercentage = iporAssetConfiguration.getOpeningFeeForTreasuryPercentage();
         (uint256 openingFeeLPValue, uint256 openingFeeTreasuryValue) = _splitOpeningFeeAmount(openingFeeAmount, openingFeeForTreasurePercentage, multiplicator);
         balances[asset].liquidityPool = balances[asset].liquidityPool + openingFeeLPValue;
         balances[asset].treasury = balances[asset].treasury + openingFeeTreasuryValue;
@@ -204,7 +204,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         uint256 incomeTax = AmmMath.calculateIncomeTax(
             abspositionValue,
-            IIporConfiguration(_addressesManager.getIporConfiguration(derivativeItem.item.asset)).getIncomeTaxPercentage(), derivativeItem.item.multiplicator);
+            IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(derivativeItem.item.asset)).getIncomeTaxPercentage(), derivativeItem.item.multiplicator);
 
         balances[derivativeItem.item.asset].treasury
         = balances[derivativeItem.item.asset].treasury + incomeTax;
@@ -283,13 +283,13 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyMilton() {
         //TODO: check if msg.sender == tx.origin - czy jest smart contractem de facto
-        require(msg.sender == _addressesManager.getMilton(), Errors.MILTON_CALLER_NOT_MILTON);
+        require(msg.sender == _iporConfiguration.getMilton(), Errors.MILTON_CALLER_NOT_MILTON);
         _;
     }
 
     modifier onlyJoseph() {
         //TODO: check if msg.sender == tx.origin - czy jest smart contractem de facto
-        require(msg.sender == _addressesManager.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
+        require(msg.sender == _iporConfiguration.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }
 

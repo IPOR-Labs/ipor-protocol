@@ -3,16 +3,16 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../interfaces/IWarrenDevToolDataProvider.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import {Constants} from '../libraries/Constants.sol';
 import {AmmMath} from '../libraries/AmmMath.sol';
 import "../interfaces/IWarrenStorage.sol";
 
 contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
 
-    IIporAddressesManager public immutable ADDRESSES_MANAGER;
+    IIporConfiguration public immutable ADDRESSES_MANAGER;
 
-    constructor(IIporAddressesManager addressesManager) {
+    constructor(IIporConfiguration addressesManager) {
         ADDRESSES_MANAGER = addressesManager;
     }
 

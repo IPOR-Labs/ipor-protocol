@@ -2,15 +2,16 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 
-    IIporAddressesManager public immutable ADDRESSES_MANAGER;
+    IIporConfiguration public immutable ADDRESSES_MANAGER;
 
-    constructor(IIporAddressesManager addressesManager) {
+    constructor(IIporConfiguration addressesManager) {
         ADDRESSES_MANAGER = addressesManager;
     }
 
@@ -20,7 +21,8 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
     }
 
     function getMyIpTokenBalance(address asset) external override view returns (uint256) {
-        IERC20 token = IERC20(ADDRESSES_MANAGER.getIpToken(asset));
+
+        IERC20 token = IERC20(IIporAssetConfiguration(ADDRESSES_MANAGER.getIporAssetConfiguration(asset)).getIpToken());
         return token.balanceOf(msg.sender);
     }
 

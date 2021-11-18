@@ -36,7 +36,9 @@ library DerivativeLogic {
             calculatedPeriodInSeconds = closingTimestamp - derivative.startingTimestamp;
         }
         //TODO: use SafeCast from openzeppelin
-        uint256 quasiIFixed = calculateQuasiInterestFixed(derivative.notionalAmount, derivative.indicator.fixedInterestRate, calculatedPeriodInSeconds, derivative.multiplicator);
+        uint256 quasiIFixed = calculateQuasiInterestFixed(
+            derivative.notionalAmount, derivative.indicator.fixedInterestRate,
+            calculatedPeriodInSeconds, derivative.multiplicator);
         uint256 quasiIFloating = calculateQuasiInterestFloating(derivative.indicator.ibtQuantity, mdIbtPrice);
 
         int256 positionValue = AmmMath.divisionInt(uint8(derivative.direction) == uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
