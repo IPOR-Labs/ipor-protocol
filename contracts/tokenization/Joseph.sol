@@ -47,7 +47,7 @@ contract Joseph is Ownable, IJoseph {
         IMiltonStorage(_iporConfiguration.getMiltonStorage()).addLiquidity(asset, liquidityAmount);
 
         //TODO: user Address from OZ and use call
-        //TODO: zastosuj call zamiast transfer1!!
+        //TODO: use call instead transfer if possible!!
         IERC20(asset).safeTransferFrom(msg.sender, _iporConfiguration.getMilton(), liquidityAmount);
 
         if (exchangeRate > 0) {

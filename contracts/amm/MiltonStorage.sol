@@ -282,13 +282,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     modifier onlyMilton() {
-        //TODO: check if msg.sender == tx.origin - czy jest smart contractem de facto
         require(msg.sender == _iporConfiguration.getMilton(), Errors.MILTON_CALLER_NOT_MILTON);
         _;
     }
 
     modifier onlyJoseph() {
-        //TODO: check if msg.sender == tx.origin - czy jest smart contractem de facto
         require(msg.sender == _iporConfiguration.getJoseph(), Errors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }

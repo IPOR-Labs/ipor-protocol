@@ -294,6 +294,6 @@ contract('Warren', (accounts) => {
         }
     });
 
-    //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
+    //TODO: add test when transfer ownership and Warren still works properly
 //TODO: add tests for pausable methods
 });

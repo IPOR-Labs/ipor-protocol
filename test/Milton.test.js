@@ -2530,30 +2530,26 @@ contract('Milton', (accounts) => {
 
     });
 
-    //TODO: !!!! test zamykania derywatywy, milton traci, trader zarabia, ale milton nie ma odpowiedniej ilosci kasy na balansie
+    //TODO: !!!! add test when closing derivative, Milton lost, Trader earn, but milton don't have enough balance to withdraw during closing position
 
     //TODO: check initial IBT
 
-    //TODO: test w którym skutecznie przenoszone jest wlascicielstwo kontraktu na inna osobe
-    //TODO: dodac test 1 otwarta long, zmiana indeksu, 2 otwarta short, zmiana indeksu, zamykamy 1 i 2, soap = 0
+    //TODO: test when transfer ownership and Milton still works properly
 
-    //TODO: dodać test w którym zmieniamy konfiguracje w IporAssetConfiguration i widac zmiany w Milton
+    //TODO: add test: open long, change index, open short, change index, close long and short and check if soap = 0
 
-    //TODO: testy na strukturze MiltonDerivatives
+    //TODO: add simple test where iporassetcopnfiguration or iporconfiguration is changing and milton see this.
 
     //TODO: test when ipor not ready yet
 
     //TODO: create test when ipor index not yet created for specific asset
 
-    //TODO: test na 1 sprwdzenie czy totalAmount wiekszy od fee
-    //TODO: test na 2 sprwdzenie czy totalAmount wiekszy od fee (po przeliczeniu openingFeeAmount)
-    //TODO: test na wysłanie USDT które ma 6 miejsc po przecinku i weryfikacja liczb
+    //TODO: add test where total amount higher than openingfeeamount
 
     //TODO: add test which checks emited events!!!
-    //TODO: dopisać test zmiany na przykład adresu warrena i sprawdzenia czy widzi to milton
-    //TODO: dopisac test zmiany adresu usdt i sprawdzenia czy widzi to milton
-    //TODO: test sprawdzajacy wykonaniue przxelewu eth na miltona
-    //TODO: test na podmianke miltonStorage - czy pokazuje nowy balance??
+    //TODO: add test when warren address will change and check if milton see this
+    //TODO: add test when user try to send eth on milton
+    //TODO: add test where milton storage is changing - how balance behave
     //TODO: add tests for pausable methods
 
 

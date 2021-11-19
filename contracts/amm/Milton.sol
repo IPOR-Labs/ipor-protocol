@@ -238,7 +238,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        //TODO: sendValue z Address (zastosować razem z ReentrancyGuard)
+        //TODO: sendValue z Address (use with ReentrancyGuard)
         IERC20(asset).safeTransferFrom(msg.sender, address(this), totalAmount);
 
         _emitOpenPositionEvent(iporDerivative);
