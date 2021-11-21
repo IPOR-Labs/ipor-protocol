@@ -155,7 +155,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
         }
     }
 
-    function removeAsset(address asset) external override onlyOwner {
+    function removeAsset(address asset) external override onlyRole(IPOR_ASSETS_ROLE) {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         for (uint256 i; i < assets.length; i++) {
             if (assets[i] == asset) {

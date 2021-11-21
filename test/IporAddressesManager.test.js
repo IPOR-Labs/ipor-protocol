@@ -549,4 +549,65 @@ contract('IporAddressesManager', (accounts) => {
     });
 
 
+    it('should add new asset', async () => {
+        //given
+        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        const role = keccak256("IPOR_ASSETS_ROLE");
+        await iporAddressesManager.grantRole(role, userOne);
+        //when
+        await iporAddressesManager.addAsset(address);
+        //then
+        const result = await iporAddressesManager.getAssets();
+        assert(result.includes(address));
+    });
+
+    it('should NOT be able to add new asset because user does not have IPOR_ASSETS_ROLE role', async () => {
+        //given
+        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.addAsset(address, { from: userOne })
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xf2f6e1201d6fbf7ec2033ab2b3ad3dcf0ded3dd534a82806a88281c063f67656`
+        );
+    });
+
+
+    it('should removed asset', async () => {
+        //given
+        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        const role = keccak256("IPOR_ASSETS_ROLE");
+        await iporAddressesManager.grantRole(role, admin);
+        await iporAddressesManager.addAsset(address);
+        const newAsset = Array.from( await iporAddressesManager.getAssets());
+        assert(newAsset.includes(address));
+        //when
+        await iporAddressesManager.removeAsset(address);
+        //then
+        const result = Array.from(await iporAddressesManager.getAssets());
+        assert(!result.includes(address));
+    });
+
+    it('should NOT be able to remove asset because user does not have IPOR_ASSETS_ROLE role', async () => {
+        //given
+        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        const role = keccak256("IPOR_ASSETS_ROLE");
+        await iporAddressesManager.grantRole(role, admin);
+        await iporAddressesManager.addAsset(address);
+        const newAsset = Array.from( await iporAddressesManager.getAssets());
+        assert(newAsset.includes(address));
+
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.removeAsset(address, { from: userOne })
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xf2f6e1201d6fbf7ec2033ab2b3ad3dcf0ded3dd534a82806a88281c063f67656`
+        );
+    });
+
+
+
 });
