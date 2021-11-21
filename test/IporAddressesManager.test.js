@@ -40,6 +40,7 @@ contract('IporAddressesManager', (accounts) => {
     it('should set charlieTreasurers', async () => {
         //given
         let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        await iporAddressesManager.grantRole(keccak256("CHARLIE_TREASURER_ROLE"), admin);
         let asset = tokenDai.address;
 
         //when
@@ -52,9 +53,24 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
     });
 
+    it('should NOT set charlieTreasurers, user does not have CHARLIE_TREASURER_ROLE role', async () => {
+        //given
+        let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        //when
+        await testUtils.assertError(
+            iporAddressesManager.setCharlieTreasurer(asset, charlieTreasurersDaiAddress),
+            `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0x21b203ce7b3398e0ad35c938bc2c62a805ef17dc57de85e9d29052eac6d9d6f7`
+
+        )
+
+    });
+
     it('should NOT set charlieTreasurers for NOT supported asset USDC', async () => {
         //given
         let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        await iporAddressesManager.grantRole(keccak256("CHARLIE_TREASURER_ROLE"), admin);
         let asset = tokenUsdc.address;
 
         //when
@@ -516,7 +532,7 @@ contract('IporAddressesManager', (accounts) => {
             //then
             `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0xe2062703bb72555ff94bfdd96351e7f292b8034f5f9127a25167d8d44f91ae85`
         );
-    });   
+    });
 
 
 });
