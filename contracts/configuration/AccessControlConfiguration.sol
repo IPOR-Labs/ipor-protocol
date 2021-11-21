@@ -10,6 +10,8 @@ abstract contract AccessControlConfiguration is AccessControl {
     bytes32 internal constant MILTON_UTILIZATION_STRATEGY_ROLE = keccak256("MILTON_UTILIZATION_STRATEGY_ROLE");
     bytes32 internal constant MILTON_SPREAD_STRATEGY_ROLE = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
     bytes32 internal constant IPOR_CONFIGURATION_ROLE = keccak256("IPOR_CONFIGURATION_ROLE");
+    bytes32 internal constant WARREN_ROLE = keccak256("WARREN_ROLE");
+
 
 
 
@@ -25,7 +27,7 @@ abstract contract AccessControlConfiguration is AccessControl {
         _setRoleAdmin(MILTON_UTILIZATION_STRATEGY_ROLE, DEFAULT_ADMIN_ROLE);
         _setRoleAdmin(MILTON_SPREAD_STRATEGY_ROLE, DEFAULT_ADMIN_ROLE);
         _setRoleAdmin(IPOR_CONFIGURATION_ROLE, DEFAULT_ADMIN_ROLE);
-
+        _setRoleAdmin(WARREN_ROLE, DEFAULT_ADMIN_ROLE);
 
     }
 }

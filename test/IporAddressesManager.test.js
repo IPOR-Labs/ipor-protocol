@@ -167,10 +167,10 @@ contract('IporAddressesManager', (accounts) => {
             //when
             iporAddressesManager.setIporConfiguration(asset, iporConfigurationAddress),
             //then
-            `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0x9a9e09319182158cfefd8a0d9a111e4dca28c60e3e161fb0de43c60c26ceb187`   
+            `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0x9a9e09319182158cfefd8a0d9a111e4dca28c60e3e161fb0de43c60c26ceb187`
         );
 
-   });
+    });
 
     it('should set IpToken for supported underlying asset', async () => {
         //given
@@ -403,7 +403,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
 
-    
+
         await testUtils.assertError(
             //when
             iporAddressesManager.setMiltonImpl(miltonAddress)
@@ -411,7 +411,7 @@ contract('IporAddressesManager', (accounts) => {
             //then
             'account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0x57a20741ae1ee76695a182cdfb995538919da5f1f6a92bca097f37a35c4be803'
         );
-    });    
+    });
 
     it('should set Milton Storage', async () => {
         //given
@@ -428,7 +428,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
 
-    
+
         await testUtils.assertError(
             //when
             iporAddressesManager.setMiltonStorageImpl(miltonAddress)
@@ -436,7 +436,7 @@ contract('IporAddressesManager', (accounts) => {
             //then
             'account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0xb8f71ab818f476672f61fd76955446cd0045ed8ddb51f595d9e262b68d1157f6'
         );
-    });    
+    });
 
 
 
@@ -455,7 +455,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
 
-    
+
         await testUtils.assertError(
             //when
             iporAddressesManager.setMiltonUtilizationStrategyImpl(miltonAddress)
@@ -463,7 +463,7 @@ contract('IporAddressesManager', (accounts) => {
             //then
             'account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0xea07fe4bbf61e4626124decaac03ce1f9b7fc0f439c58e398dccfa7c9f00f7b9'
         );
-    });   
+    });
 
 
 
@@ -489,6 +489,32 @@ contract('IporAddressesManager', (accounts) => {
             ,
             //then
             `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0xdf80c0078aae521b601e4fddc35fbb2871ffaa4e22d30b53745545184b3cff3e`
+        );
+    });
+
+
+    it('should set Warren', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        const role = keccak256("WARREN_ROLE");
+        await iporAddressesManager.grantRole(role, admin);
+        //when
+        await iporAddressesManager.setWarrenImpl(miltonAddress);
+        //then
+        const result = await iporAddressesManager.getWarren();
+        assert(miltonAddress === result);
+    });
+
+    it('should NOT set Warren because user does not have WARREN_ROLE role', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setWarrenImpl(miltonAddress)
+            ,
+            //then
+            `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0xe2062703bb72555ff94bfdd96351e7f292b8034f5f9127a25167d8d44f91ae85`
         );
     });   
 

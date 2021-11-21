@@ -110,7 +110,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
         return _addresses[WARREN];
     }
 
-    function setWarrenImpl(address warrenImpl) external override onlyOwner {
+    function setWarrenImpl(address warrenImpl) external override onlyRole(WARREN_ROLE) {
         _addresses[WARREN] = warrenImpl;
         emit WarrenAddressUpdated(warrenImpl);
     }
