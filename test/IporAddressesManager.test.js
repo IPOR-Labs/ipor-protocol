@@ -1,7 +1,8 @@
 const testUtils = require("./TestUtils.js");
-const {ZERO_BYTES32} = require("@openzeppelin/test-helpers/src/constants");
-const {time} = require("@openzeppelin/test-helpers");
+const { ZERO_BYTES32 } = require("@openzeppelin/test-helpers/src/constants");
+const { time } = require("@openzeppelin/test-helpers");
 const keccak256 = require("keccak256");
+const constants = require("@openzeppelin/test-helpers/src/constants");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const UsdtMockedToken = artifacts.require('UsdtMockedToken');
@@ -192,7 +193,7 @@ contract('IporAddressesManager', (accounts) => {
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
 
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId, fnParamAddress).encodeABI();
 
         //when
         await timelockController.schedule(
@@ -202,7 +203,7 @@ contract('IporAddressesManager', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -213,7 +214,7 @@ contract('IporAddressesManager', (accounts) => {
             calldata,
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            {from: userTwo}
+            { from: userTwo }
         );
 
         //then
@@ -230,7 +231,7 @@ contract('IporAddressesManager', (accounts) => {
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId, fnParamAddress).encodeABI();
 
         //when
         await testUtils.assertError(
@@ -242,7 +243,7 @@ contract('IporAddressesManager', (accounts) => {
                 ZERO_BYTES32,
                 "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
                 MINDELAY,
-                {from: userThree}
+                { from: userThree }
             ),
             //then
             'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1'
@@ -256,7 +257,7 @@ contract('IporAddressesManager', (accounts) => {
 
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId, fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporAddressesManager.address,
@@ -265,7 +266,7 @@ contract('IporAddressesManager', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -279,7 +280,7 @@ contract('IporAddressesManager', (accounts) => {
                 calldata,
                 ZERO_BYTES32,
                 "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-                {from: userThree}
+                { from: userThree }
             ),
             //then
             'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63'
@@ -292,7 +293,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         let fnParamId = keccak256("MILTON");
         let fnParamAddress = userThree;
-        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId,fnParamAddress).encodeABI();
+        let calldata = iporAddressesManager.contract.methods.setAddress(fnParamId, fnParamAddress).encodeABI();
 
         await timelockController.schedule(
             iporAddressesManager.address,
@@ -301,7 +302,7 @@ contract('IporAddressesManager', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -315,7 +316,7 @@ contract('IporAddressesManager', (accounts) => {
                 calldata,
                 ZERO_BYTES32,
                 "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-                {from: userTwo}
+                { from: userTwo }
             ),
             //then
             'TimelockController: underlying transaction reverted'
@@ -335,7 +336,7 @@ contract('IporAddressesManager', (accounts) => {
 
         //First try cannot be done, because ownership is transfered to Timelock Controller
         await testUtils.assertError(
-            iporAddressesManager.setAddress(fnParamId, fnParamAddress, {from: iporAddressesManagerOriginOwner}),
+            iporAddressesManager.setAddress(fnParamId, fnParamAddress, { from: iporAddressesManagerOriginOwner }),
             'Ownable: caller is not the owner'
         );
 
@@ -347,7 +348,7 @@ contract('IporAddressesManager', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -358,10 +359,10 @@ contract('IporAddressesManager', (accounts) => {
             calldata,
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            {from: userTwo}
+            { from: userTwo }
         );
 
-        await iporAddressesManager.setAddress(fnParamId, fnParamAddress, {from: iporAddressesManagerOriginOwner});
+        await iporAddressesManager.setAddress(fnParamId, fnParamAddress, { from: iporAddressesManagerOriginOwner });
 
         //then
         let actualMiltonAddress = await iporAddressesManager.getAddress(fnParamId);
@@ -371,5 +372,30 @@ contract('IporAddressesManager', (accounts) => {
 
     });
 
-//    TODO: Pete Add tests for IPOR_ASSETS role
+    it('should set Milton impl', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        await iporAddressesManager.grantRole(keccak256("MILTON_ROLE"), admin);
+        //when
+        await iporAddressesManager.setMiltonImpl(miltonAddress);
+        //then
+        const result = await iporAddressesManager.getMilton();
+        assert(miltonAddress === result);
+    });
+
+    it('should NOT set Milton impl because user does not have MILTON_ROLE role', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+    
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setMiltonImpl(miltonAddress)
+            ,
+            //then
+            'account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0x57a20741ae1ee76695a182cdfb995538919da5f1f6a92bca097f37a35c4be803'
+        );
+    });    
+
+
 });
