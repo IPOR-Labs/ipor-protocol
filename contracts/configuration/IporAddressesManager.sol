@@ -73,7 +73,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
         return _addresses[MILTON_STORAGE];
     }
 
-    function setMiltonStorageImpl(address miltonStorageImpl) external override onlyOwner {
+    function setMiltonStorageImpl(address miltonStorageImpl) external override onlyRole(MILTON_STORAGE_ROLE) {
         _addresses[MILTON_STORAGE] = miltonStorageImpl;
         emit MiltonStorageAddressUpdated(miltonStorageImpl);
     }

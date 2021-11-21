@@ -397,5 +397,30 @@ contract('IporAddressesManager', (accounts) => {
         );
     });    
 
+    it('should set Milton Storage', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        await iporAddressesManager.grantRole(keccak256("MILTON_STORAGE_ROLE"), admin);
+        //when
+        await iporAddressesManager.setMiltonStorageImpl(miltonAddress);
+        //then
+        const result = await iporAddressesManager.getMiltonStorage();
+        assert(miltonAddress === result);
+    });
+
+    it('should NOT set Milton storage because user does not have MILTON_STORAGE_ROLE role', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+    
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setMiltonStorageImpl(miltonAddress)
+            ,
+            //then
+            'account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0xb8f71ab818f476672f61fd76955446cd0045ed8ddb51f595d9e262b68d1157f6'
+        );
+    });    
+
 
 });
