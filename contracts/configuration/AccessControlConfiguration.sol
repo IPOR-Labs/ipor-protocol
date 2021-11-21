@@ -12,6 +12,7 @@ abstract contract AccessControlConfiguration is AccessControl {
     bytes32 internal constant IPOR_CONFIGURATION_ROLE = keccak256("IPOR_CONFIGURATION_ROLE");
     bytes32 internal constant WARREN_ROLE = keccak256("WARREN_ROLE");
     bytes32 internal constant CHARLIE_TREASURER_ROLE = keccak256("CHARLIE_TREASURER_ROLE");
+    bytes32 internal constant TREASURE_TREASURER_ROLE = keccak256("TREASURE_TREASURER_ROLE");
 
 
 
@@ -31,6 +32,7 @@ abstract contract AccessControlConfiguration is AccessControl {
         _setRoleAdmin(IPOR_CONFIGURATION_ROLE, DEFAULT_ADMIN_ROLE);
         _setRoleAdmin(WARREN_ROLE, DEFAULT_ADMIN_ROLE);
         _setRoleAdmin(CHARLIE_TREASURER_ROLE, DEFAULT_ADMIN_ROLE);
+        _setRoleAdmin(TREASURE_TREASURER_ROLE, DEFAULT_ADMIN_ROLE);
 
 
     }

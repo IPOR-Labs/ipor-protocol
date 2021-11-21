@@ -87,6 +87,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         let asset = tokenDai.address;
+        await iporAddressesManager.grantRole(keccak256("TREASURE_TREASURER_ROLE"), admin);
 
         //when
         await iporAddressesManager.setTreasureTreasurer(asset, treasureTreasurerDaiAddress);
@@ -98,10 +99,23 @@ contract('IporAddressesManager', (accounts) => {
             `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
     });
 
+    it('should NOT set treasureTreasurers, because user does not have TREASURE_TREASURER_ROLE role', async () => {
+        //given
+        let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setTreasureTreasurer(asset, treasureTreasurerDaiAddress),
+            `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0x9cdee4e06275597b667c73a5eb52ed89fe6acbbd36bd9fa38146b1316abfbbc4`
+        );
+    });
+
     it('should NOT set treasureTreasurers for NOT supported asset USDC', async () => {
         //given
         let address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         let asset = tokenUsdc.address;
+        await iporAddressesManager.grantRole(keccak256("TREASURE_TREASURER_ROLE"), admin);
 
         //when
         await testUtils.assertError(

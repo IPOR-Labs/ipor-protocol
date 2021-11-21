@@ -130,7 +130,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
         return treasureTreasurers[asset];
     }
 
-    function setTreasureTreasurer(address asset, address treasureTreasurer) external override onlyOwner {
+    function setTreasureTreasurer(address asset, address treasureTreasurer) external override onlyRole(TREASURE_TREASURER_ROLE) {
         require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
         treasureTreasurers[asset] = treasureTreasurer;
         emit TreasureTreasurerUpdated(asset, treasureTreasurer);
