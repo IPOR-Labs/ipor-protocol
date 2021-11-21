@@ -82,7 +82,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
         return _addresses[MILTON_UTILIZATION_STRATEGY];
     }
 
-    function setMiltonUtilizationStrategyImpl(address miltonUtilizationStrategyImpl) external override onlyOwner {
+    function setMiltonUtilizationStrategyImpl(address miltonUtilizationStrategyImpl) external override onlyRole(MILTON_UTILIZATION_STRATEGY_ROLE) {
         _addresses[MILTON_UTILIZATION_STRATEGY] = miltonUtilizationStrategyImpl;
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategyImpl);
     }
