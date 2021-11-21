@@ -450,4 +450,31 @@ contract('IporAddressesManager', (accounts) => {
     });   
 
 
+
+    it('should set Milton Spread Strategy', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        const role = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
+        await iporAddressesManager.grantRole(role, admin);
+        //when
+        await iporAddressesManager.setMiltonSpreadStrategyImpl(miltonAddress);
+        //then
+        const result = await iporAddressesManager.getMiltonSpreadStrategy();
+        assert(miltonAddress === result);
+    });
+
+    it('should NOT set Milton Spread Strategy because user does not have MILTON_SPREAD_STRATEGY_ROLE role', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setMiltonSpreadStrategyImpl(miltonAddress)
+            ,
+            //then
+            `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0xdf80c0078aae521b601e4fddc35fbb2871ffaa4e22d30b53745545184b3cff3e`
+        );
+    });   
+
+
 });
