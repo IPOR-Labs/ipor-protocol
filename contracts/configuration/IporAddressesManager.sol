@@ -100,7 +100,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
         return iporConfigurations[asset];
     }
 
-    function setIporConfiguration(address asset, address iporConfigImpl) external override onlyOwner {
+    function setIporConfiguration(address asset, address iporConfigImpl) external override onlyRole(IPOR_CONFIGURATION_ROLE) {
         require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
         iporConfigurations[asset] = iporConfigImpl;
         emit IporConfigurationAddressUpdated(asset, iporConfigImpl);

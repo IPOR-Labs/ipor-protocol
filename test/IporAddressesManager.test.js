@@ -131,6 +131,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         let asset = tokenDai.address;
+        iporAddressesManager.grantRole(keccak256("IPOR_CONFIGURATION_ROLE"), admin);
 
         //when
         await iporAddressesManager.setIporConfiguration(asset, iporConfigurationAddress);
@@ -146,6 +147,7 @@ contract('IporAddressesManager', (accounts) => {
         //given
         let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         let asset = tokenUsdc.address;
+        iporAddressesManager.grantRole(keccak256("IPOR_CONFIGURATION_ROLE"), admin);
 
         //when
         await testUtils.assertError(
@@ -155,6 +157,20 @@ contract('IporAddressesManager', (accounts) => {
             'IPOR_39'
         );
     });
+
+    it('should NOT set IporConfiguration because user does not have IPOR_CONFIGURATION_ROLE role', async () => {
+        //given
+        let iporConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        let asset = tokenDai.address;
+
+        await testUtils.assertError(
+            //when
+            iporAddressesManager.setIporConfiguration(asset, iporConfigurationAddress),
+            //then
+            `account 0x627306090abab3a6e1400e9345bc60c78a8bef57 is missing role 0x9a9e09319182158cfefd8a0d9a111e4dca28c60e3e161fb0de43c60c26ceb187`   
+        );
+
+   });
 
     it('should set IpToken for supported underlying asset', async () => {
         //given
