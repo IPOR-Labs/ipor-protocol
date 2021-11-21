@@ -31,7 +31,7 @@ contract('IporAddressesManager', (accounts) => {
 
     beforeEach(async () => {
         iporAddressesManager = await IporAddressesManager.new();
-        await iporAddressesManager.grantRole(keccak256("IPOR_ASSETS"), admin);
+        await iporAddressesManager.grantRole(keccak256("IPOR_ASSETS_ROLE"), admin);
         await iporAddressesManager.addAsset(tokenUsdt.address);
         await iporAddressesManager.addAsset(tokenDai.address);
     });

@@ -23,6 +23,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
     //@notice mapping underlying asset address to Asset Management Vault
     mapping(address => address) public assetManagementVaults;
 
+
     mapping(bytes32 => address) private _addresses;
 
     //this treasurer manage ipor publication fee balance, key is an asset
@@ -139,7 +140,7 @@ contract IporAddressesManager is AccessControlConfiguration(msg.sender), Ownable
         return assets;
     }
 
-    function addAsset(address asset) external override onlyRole(IPOR_ASSETS) {
+    function addAsset(address asset) external override onlyRole(IPOR_ASSETS_ROLE) {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         bool assetExists = false;
         for (uint256 i; i < assets.length; i++) {
