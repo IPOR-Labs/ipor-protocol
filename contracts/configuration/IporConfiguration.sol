@@ -4,8 +4,10 @@ pragma solidity >=0.8.4 <0.9.0;
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import {Errors} from '../Errors.sol';
+import "./AccessControlConfiguration.sol";
 
-contract IporConfiguration is Ownable, IIporConfiguration {
+
+contract IporConfiguration is AccessControlConfiguration(msg.sender), IIporConfiguration {
 
     //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC
     address [] public assets;
@@ -40,7 +42,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return _addresses[MILTON];
     }
 
-    function setMilton(address milton) external override onlyOwner {
+    function setMilton(address milton) external override onlyRole(MILTON_ROLE) {
         _addresses[MILTON] = milton;
         emit MiltonAddressUpdated(milton);
     }
@@ -49,7 +51,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return _addresses[MILTON_STORAGE];
     }
 
-    function setMiltonStorage(address miltonStorage) external override onlyOwner {
+    function setMiltonStorage(address miltonStorage) external override onlyRole(MILTON_STORAGE_ROLE) {
         _addresses[MILTON_STORAGE] = miltonStorage;
         emit MiltonStorageAddressUpdated(miltonStorage);
     }
@@ -58,7 +60,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return _addresses[MILTON_LP_UTILIZATION_STRATEGY];
     }
 
-    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy) external override onlyOwner {
+    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy) external override onlyRole(MILTON_LP_UTILIZATION_STRATEGY_ROLE) {
         _addresses[MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
     }
@@ -67,7 +69,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return _addresses[MILTON_SPREAD_STRATEGY];
     }
 
-    function setMiltonSpreadStrategy(address miltonSpreadStrategy) external override onlyOwner {
+    function setMiltonSpreadStrategy(address miltonSpreadStrategy) external override onlyRole(MILTON_SPREAD_STRATEGY_ROLE) {
         _addresses[MILTON_SPREAD_STRATEGY] = miltonSpreadStrategy;
         emit MiltonSpreadStrategyUpdated(miltonSpreadStrategy);
     }
@@ -76,7 +78,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return iporAssetConfigurations[asset];
     }
 
-    function setIporAssetConfiguration(address asset, address iporConfig) external override onlyOwner {
+    function setIporAssetConfiguration(address asset, address iporConfig) external override onlyRole(IPOR_ASSET_CONFIGURATION_ROLE) {
         require(supportedAssets[asset] == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
         iporAssetConfigurations[asset] = iporConfig;
         emit IporAssetConfigurationAddressUpdated(asset, iporConfig);
@@ -86,7 +88,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return _addresses[WARREN];
     }
 
-    function setWarren(address warren) external override onlyOwner {
+    function setWarren(address warren) external override onlyRole(WARREN_ROLE) {
         _addresses[WARREN] = warren;
         emit WarrenAddressUpdated(warren);
     }
@@ -95,7 +97,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return assets;
     }
 
-    function addAsset(address asset) external override onlyOwner {
+    function addAsset(address asset) external override onlyRole(IPOR_ASSETS_ROLE) {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         bool assetExists = false;
         for (uint256 i; i < assets.length; i++) {
@@ -110,7 +112,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         }
     }
 
-    function removeAsset(address asset) external override onlyOwner {
+    function removeAsset(address asset) external override onlyRole(IPOR_ASSETS_ROLE) {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         for (uint256 i; i < assets.length; i++) {
             if (assets[i] == asset) {
@@ -126,7 +128,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return _addresses[JOSEPH];
     }
 
-    function setJoseph(address joseph) external override onlyOwner {
+    function setJoseph(address joseph) external override onlyRole(JOSEPH_ROLE) {
         _addresses[JOSEPH] = joseph;
         emit JosephAddressUpdated(joseph);
     }
@@ -135,7 +137,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
         return supportedAssets[asset];
     }
 
-    function setWarrenStorage(address warrenStorage) external override onlyOwner {
+    function setWarrenStorage(address warrenStorage) external override onlyRole(WARREN_STORAGE_ROLE) {
         _addresses[WARREN_STORAGE] = warrenStorage;
         emit WarrenStorageAddressUpdated(warrenStorage);
     }

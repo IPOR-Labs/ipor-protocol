@@ -1,4 +1,5 @@
 require('dotenv').config({path: '../.env'})
+const keccak256 = require("keccak256");
 const Warren = artifacts.require("Warren");
 const WarrenStorage = artifacts.require("WarrenStorage");
 const Milton = artifacts.require("Milton");
@@ -120,10 +121,12 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
     await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
     let miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deployed();
+    await iporConfiguration.grantRole(keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"), admin);
     await iporConfiguration.setMiltonLPUtilizationStrategy(miltonLPUtilizationStrategyCollateral.address);
 
     await deployer.deploy(MiltonSpreadStrategy);
     let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
+    await iporConfiguration.grantRole(keccak256("MILTON_SPREAD_STRATEGY_ROLE"), admin);
     await iporConfiguration.setMiltonSpreadStrategy(miltonSpreadStrategy.address);
 
     // prepare ERC20 mocked tokens...
@@ -169,11 +172,12 @@ module.exports = async function (deployer, _network, addresses) {
 
         await deployer.deploy(IporAssetConfigurationDai, mockedDai.address, ipDaiToken.address);
         iporAssetConfigurationDai = await IporAssetConfigurationDai.deployed();
-
+        await iporConfiguration.grantRole(keccak256("IPOR_ASSETS_ROLE"), admin);
         await iporConfiguration.addAsset(mockedDai.address);
         await iporConfiguration.addAsset(mockedUsdt.address);
         await iporConfiguration.addAsset(mockedUsdc.address);
 
+        await iporConfiguration.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ROLE"), admin);
         await iporConfiguration.setIporAssetConfiguration(mockedUsdt.address, await iporAssetConfigurationUsdt.address);
         await iporConfiguration.setIporAssetConfiguration(mockedUsdc.address, await iporAssetConfigurationUsdc.address);
         await iporConfiguration.setIporAssetConfiguration(mockedDai.address, await iporAssetConfigurationDai.address);
