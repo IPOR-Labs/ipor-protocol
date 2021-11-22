@@ -1,6 +1,6 @@
 const testUtils = require("./TestUtils.js");
-const {ZERO_BYTES32} = require("@openzeppelin/test-helpers/src/constants");
-const {time} = require("@openzeppelin/test-helpers");
+const { ZERO_BYTES32 } = require("@openzeppelin/test-helpers/src/constants");
+const { time } = require("@openzeppelin/test-helpers");
 const keccak256 = require("keccak256");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
@@ -80,106 +80,103 @@ contract('IporConfiguration', (accounts) => {
         );
     });
 
-    // it('should use Timelock Controller - simple case 1', async () => {
-    //     //given
-    //     await iporConfiguration.transferOwnership(timelockController.address);
+    it('should use Timelock Controller - simple case 1', async () => {
+        //given
 
-    //     let fnParamAddress = userThree;
-    //     await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), admin);
-    //     let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
+        let fnParamAddress = userThree;
+        await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), timelockController.address);
+        let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
-    //     //when
-    //     await timelockController.schedule(
-    //         iporConfiguration.address,
-    //         "0x0",
-    //         calldata,
-    //         ZERO_BYTES32,
-    //         "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-    //         MINDELAY,
-    //         {from: userOne}
-    //     );
+        //when
+        await timelockController.schedule(
+            iporConfiguration.address,
+            "0x0",
+            calldata,
+            ZERO_BYTES32,
+            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+            MINDELAY,
+            { from: userOne }
+        );
 
-    //     await time.increase(MINDELAY);
+        await time.increase(MINDELAY);
 
-    //     await timelockController.execute(
-    //         iporConfiguration.address,
-    //         "0x0",
-    //         calldata,
-    //         ZERO_BYTES32,
-    //         "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-    //         {from: userTwo}
-    //     );
+        await timelockController.execute(
+            iporConfiguration.address,
+            "0x0",
+            calldata,
+            ZERO_BYTES32,
+            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+            { from: userTwo }
+        );
 
-    //     //then
-    //     let actualMiltonAddress = await iporConfiguration.getMilton();
+        //then
+        let actualMiltonAddress = await iporConfiguration.getMilton();
 
-    //     assert(fnParamAddress === actualMiltonAddress,
-    //         `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
+        assert(fnParamAddress === actualMiltonAddress,
+            `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`)
 
-    // });
+    });
 
-    // TODO: PETE THIS WAS WORK
-    // it('should FAIL when used Timelock Controller, because user not exists on list of proposers', async () => {
-    //     //given
-    //     await iporConfiguration.transferOwnership(timelockController.address);
-    //     await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), admin);
-    //     let fnParamAddress = userThree;
-    //     let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
-    //     //when
-    //     await testUtils.assertError(
-    //         //when
-    //         timelockController.schedule(
-    //             iporConfiguration.address,
-    //             "0x0",
-    //             calldata,
-    //             ZERO_BYTES32,
-    //             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-    //             MINDELAY,
-    //             {from: userThree}
-    //         ),
-    //         //then
-    //         'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1'
-    //     );
+    it('should FAIL when used Timelock Controller, because user not exists on list of proposers', async () => {
+        //given
+        await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), timelockController.address);
+        let fnParamAddress = userThree;
+        let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
-    // });
+        //when
+        await testUtils.assertError(
+            //when
+            timelockController.schedule(
+                iporConfiguration.address,
+                "0x0",
+                calldata,
+                ZERO_BYTES32,
+                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+                MINDELAY,
+                { from: userThree }
+            ),
+            //then
+            'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1'
+        );
 
-    // it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
-    //     //given
-    //     await iporConfiguration.transferOwnership(timelockController.address);
-    //     await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), admin);
+    });
 
-    //     let fnParamAddress = userThree;
-    //     let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
+    it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
+        //given
+        await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), timelockController.address);
 
-    //     await timelockController.schedule(
-    //         iporConfiguration.address,
-    //         "0x0",
-    //         calldata,
-    //         ZERO_BYTES32,
-    //         "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-    //         MINDELAY,
-    //         {from: userOne}
-    //     );
+        let fnParamAddress = userThree;
+        let calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
-    //     await time.increase(MINDELAY);
+        await timelockController.schedule(
+            iporConfiguration.address,
+            "0x0",
+            calldata,
+            ZERO_BYTES32,
+            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+            MINDELAY,
+            { from: userOne }
+        );
 
-    //     //when
-    //     await testUtils.assertError(
-    //         //when
-    //         timelockController.execute(
-    //             iporConfiguration.address,
-    //             "0x0",
-    //             calldata,
-    //             ZERO_BYTES32,
-    //             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-    //             {from: userThree}
-    //         ),
-    //         //then
-    //         'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63'
-    //     );
+        await time.increase(MINDELAY);
 
-    // });
+        //when
+        await testUtils.assertError(
+            //when
+            timelockController.execute(
+                iporConfiguration.address,
+                "0x0",
+                calldata,
+                ZERO_BYTES32,
+                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+                { from: userThree }
+            ),
+            //then
+            'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63'
+        );
+
+    });
 
     it('should FAIL when used Timelock Controller, because Timelock is not an Owner of IporAssetConfiguration smart contract', async () => {
 
@@ -195,7 +192,7 @@ contract('IporConfiguration', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -209,18 +206,21 @@ contract('IporConfiguration', (accounts) => {
                 calldata,
                 ZERO_BYTES32,
                 "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-                {from: userTwo}
+                { from: userTwo }
             ),
             //then
             'TimelockController: underlying transaction reverted'
         );
 
     });
-
-    // it('should use Timelock Controller to return ownership of IporAssetConfiguration smart contract', async () => {
+    // TODO: PETE need to be refactore when implement revokeRole and revokeAdminRole 
+    // it.only('should use Timelock Controller to return ownership of IporAssetConfiguration smart contract', async () => {
     //     //given
     //     let iporConfigurationOriginOwner = admin;
-    //     await iporConfiguration.transferOwnership(timelockController.address);
+    //     const adminRole = keccak256("ADMIN_ROLE")
+    //     await iporConfiguration.grantRole(adminRole, timelockController.address);
+    //     await iporConfiguration.revokeRole(adminRole, admin, {from: timelockController.address});
+
 
     //     let fnParamAddress = userThree;
 
@@ -229,7 +229,7 @@ contract('IporConfiguration', (accounts) => {
     //     //First try cannot be done, because ownership is transfered to Timelock Controller
     //     await testUtils.assertError(
     //         iporConfiguration.setMilton(fnParamAddress, {from: iporConfigurationOriginOwner}),
-    //         'Ownable: caller is not the owner'
+    //         `account 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775`
     //     );
 
     //     //when
@@ -398,7 +398,7 @@ contract('IporConfiguration', (accounts) => {
         const role = keccak256("IPOR_ASSETS_ROLE");
         await iporConfiguration.grantRole(role, admin);
         await iporConfiguration.addAsset(address);
-        const newAsset = Array.from( await iporConfiguration.getAssets());
+        const newAsset = Array.from(await iporConfiguration.getAssets());
         assert(newAsset.includes(address));
         //when
         await iporConfiguration.removeAsset(address);
@@ -413,7 +413,7 @@ contract('IporConfiguration', (accounts) => {
         const role = keccak256("IPOR_ASSETS_ROLE");
         await iporConfiguration.grantRole(role, admin);
         await iporConfiguration.addAsset(address);
-        const newAsset = Array.from( await iporConfiguration.getAssets());
+        const newAsset = Array.from(await iporConfiguration.getAssets());
         assert(newAsset.includes(address));
 
         await testUtils.assertError(
@@ -450,7 +450,7 @@ contract('IporConfiguration', (accounts) => {
         );
     });
 
-    
+
     it('should set Warren Storage', async () => {
         //given
         const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
@@ -476,4 +476,55 @@ contract('IporConfiguration', (accounts) => {
         );
     });
 
+
+    it('should revoke WARREN_STORAGE_ROLE role', async () => {
+        //given
+        const role = keccak256("WARREN_STORAGE_ROLE");
+        await iporConfiguration.grantRole(role, userOne);
+        const shouldHasRole = await iporConfiguration.hasRole(role, userOne);
+        assert(shouldHasRole);
+        //when
+        await iporConfiguration.revokeRole(role, userOne);
+        //then
+        const shouldNotHasRole = await iporConfiguration.hasRole(role, userOne);
+        assert(!shouldNotHasRole);
+    });
+
+    it('should NOT revoke WARREN_STORAGE_ROLE role, when user has not DEFAULT_ADMIN_ROLE', async () => {
+        //given
+        const role = keccak256("WARREN_STORAGE_ROLE");
+        await iporConfiguration.grantRole(role, userOne);
+        const shouldHasRole = await iporConfiguration.hasRole(role, userOne);
+        assert(shouldHasRole);
+        await testUtils.assertError(
+            //when
+            iporConfiguration.revokeRole(role, userOne, { from: userTwo }),
+            //then
+            `account 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775`
+        );
+    });
+
+    it('should NOT revoke ADMIN_ROLE role, when user want removed ADMIN_ROLE to himself', async () => {
+        //given
+        const role = keccak256("ADMIN_ROLE");
+        await testUtils.assertError(
+            //when
+            iporConfiguration.revokeRole(role, admin),
+            //then
+            'ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE'
+        );
+    });
+
+    it('should revoke DEFAULT_ADMIN_ROLE role', async () => {
+        //given
+        const role = keccak256("ADMIN_ROLE");  
+        await iporConfiguration.grantRole(role, userOne);
+        const shouldHasRole = await iporConfiguration.hasRole(role, userOne);
+        assert(shouldHasRole);
+        //when
+        await iporConfiguration.revokeRole(role, admin, {from: userOne});
+        //then
+        const shouldNotHasRole = await iporConfiguration.hasRole(role, admin);
+        assert(!shouldNotHasRole);
+    });
 });
