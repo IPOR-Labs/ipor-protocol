@@ -32,3 +32,7 @@
 
 ### Ansible build artifacts ###
 /contracts.zip
+/coverage/
+/containers/ganache/
+/containers/logs/nginx-eth-bc/access.log
+/containers/logs/nginx-eth-bc/error.log

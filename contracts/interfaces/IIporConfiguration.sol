@@ -3,66 +3,62 @@ pragma solidity >=0.8.4 <0.9.0;
 
 interface IIporConfiguration {
 
-    event IncomeTaxPercentageSet(uint256 newIncomeTaxPercentage);
-    event LiquidationDepositAmountSet(uint256 newLiquidationDepositAmount);
-    event OpeningFeePercentageSet(uint256 newOpeningFeePercentage);
+    event MiltonAddressUpdated(address indexed newAddress);
+    event MiltonStorageAddressUpdated(address indexed newAddress);
+    event MiltonUtilizationStrategyUpdated(address indexed newAddress);
+    event MiltonSpreadStrategyUpdated(address indexed newAddress);
+    event MiltonPublicationFeeTransfererUpdated(address indexed newAddress);
+    event WarrenAddressUpdated(address indexed newAddress);
+    event WarrenStorageAddressUpdated(address indexed newAddress);
+    event IporAssetConfigurationAddressUpdated(address indexed asset, address indexed newAddress);
+    event ProxyCreated(string id, address indexed newAddress);
+    event AssetAddressRemoved(address indexed asset);
+    event AssetAddressAdd(address newAddress);
+    event JosephAddressUpdated(address indexed newJosephAddress);
 
-    event OpeningFeeForTreasuryPercentageSet(uint256 newOpeningFeeForTreasuryPercentage);
+    function getMiltonPublicationFeeTransferer() external view returns (address);
 
-    event IporPublicationFeeAmountSet(uint256 newIporPublicationFeeAmount);
+    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer) external;
 
-    event LiquidityPoolMaxUtilizationPercentageSet(uint256 newLiquidityPoolMaxUtilizationPercentageSet);
-    event MaxPositionTotalAmountSet(uint256 newMaxPositionTotalAmount);
+    function getMilton() external view returns (address);
 
-    event MaxCollateralizationFactorValueSet(uint256 newMaxCollateralizationFactorValue);
-    event MinCollateralizationFactorValueSet(uint256 newMinCollateralizationFactorValue);
+    function setMilton(address milton) external;
 
-    function getIncomeTaxPercentage() external view returns (uint256);
+    function getMiltonStorage() external view returns (address);
 
-    function setIncomeTaxPercentage(uint256 incomeTaxPercentage) external;
+    function setMiltonStorage(address miltonStorage) external;
 
-    function getLiquidationDepositAmount() external view returns (uint256);
+    function getMiltonLPUtilizationStrategy() external view returns (address);
 
-    function setLiquidationDepositAmount(uint256 liquidationDepositAmount) external;
+    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy) external;
 
-    function getOpeningFeePercentage() external view returns (uint256);
+    function getMiltonSpreadStrategy() external view returns (address);
 
-    function setOpeningFeePercentage(uint256 openingFeePercentage) external;
+    function setMiltonSpreadStrategy(address miltonSpreadStrategy) external;
 
-    function getOpeningFeeForTreasuryPercentage() external view returns (uint256);
+    function getIporAssetConfiguration(address asset) external view returns (address);
 
-    function setOpeningFeeForTreasuryPercentage(uint256 openingFeeForTreasuryPercentage) external;
+    function setIporAssetConfiguration(address asset, address iporConfig) external;
 
-    function getIporPublicationFeeAmount() external view returns (uint256);
+    function getWarren() external view returns (address);
 
-    function setIporPublicationFeeAmount(uint256 iporPublicationFeeAmount) external;
+    function setWarren(address warren) external;
 
-    function getLiquidityPoolMaxUtilizationPercentage() external view returns (uint256);
+    function setWarrenStorage(address warrenStorage) external;
 
-    function setLiquidityPoolMaxUtilizationPercentage(uint256 liquidityPoolMaxUtilizationPercentage) external;
+    function getWarrenStorage() external view returns (address);
 
-    function getMaxPositionTotalAmount() external view returns (uint256);
+    function getAssets() external view returns (address[] memory);
 
-    function setMaxPositionTotalAmount(uint256 maxPositionTotalAmount) external;
+    function addAsset(address asset) external;
 
-    function getSpreadPayFixedValue() external view returns (uint256);
+    function assetSupported(address asset) external view returns (uint256);
 
-    function setSpreadPayFixedValue(uint256 spread) external;
+    function removeAsset(address asset) external;
 
-    function getSpreadRecFixedValue() external view returns (uint256);
+    function getJoseph() external view returns (address);
 
-    function setSpreadRecFixedValue(uint256 spread) external;
+    function setJoseph(address joseph) external;
 
-    function getMaxCollateralizationFactorValue() external view returns (uint256);
-
-    function setMaxCollateralizationFactorValue(uint256 maxCollateralizationFactorValue) external;
-
-    function getMinCollateralizationFactorValue() external view returns (uint256);
-
-    function setMinCollateralizationFactorValue(uint256 minCollateralizationFactorValue) external;
-
-    function getMultiplicator() external view returns(uint256);
-
-    function getMaxSlippagePercentage() external view returns (uint256);
 
 }

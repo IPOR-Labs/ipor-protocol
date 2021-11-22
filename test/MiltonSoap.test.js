@@ -1,24 +1,21 @@
 const testUtils = require("./TestUtils.js");
+const {ZERO} = require("./TestUtils");
 
 contract('MiltonSoap', (accounts) => {
 
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
     let data = null;
-    let testData = null;
 
     before(async () => {
-        data = await testUtils.prepareDataForBefore(accounts);
-    });
-
-    beforeEach(async () => {
-        testData = await testUtils.prepareDataForBeforeEach(data);
+        data = await testUtils.prepareData();
     });
 
     it('should calculate soap, no derivatives, soap equal 0', async () => {
         //given
+        let testData = await testUtils.prepareTestData([admin, userTwo], ["DAI"], data);
         const params = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo
         }
@@ -29,7 +26,6 @@ contract('MiltonSoap', (accounts) => {
         let actualSoap = BigInt(actualSoapStruct.soap);
 
         //then
-
         assert(expectedSoap === actualSoap,
             `Incorrect SOAP for asset ${params.asset} actual: ${actualSoap}, expected: ${expectedSoap}`)
     });
@@ -37,13 +33,16 @@ contract('MiltonSoap', (accounts) => {
     it('should calculate soap, DAI, pay fixed, add position, calculate now', async () => {
 
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_5_18DEC;
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -52,7 +51,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -60,7 +59,7 @@ contract('MiltonSoap', (accounts) => {
 
         //when
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -72,13 +71,15 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, pay fixed, add position, calculate after 25 days', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -87,7 +88,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -95,7 +96,7 @@ contract('MiltonSoap', (accounts) => {
 
         //when
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -106,13 +107,15 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, rec fixed, add position, calculate now', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         let direction = 1;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -121,7 +124,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -129,7 +132,7 @@ contract('MiltonSoap', (accounts) => {
 
         //when
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -139,13 +142,15 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, rec fixed, add position, calculate after 25 days', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         let direction = 1;
         let openerUserAddress = userTwo;
         let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -154,7 +159,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -162,7 +167,7 @@ contract('MiltonSoap', (accounts) => {
 
         //when
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -173,14 +178,16 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, pay fixed, add and remove position', async () => {
         // given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         let direction = 0;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
         let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -189,7 +196,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -202,7 +209,7 @@ contract('MiltonSoap', (accounts) => {
 
         //when
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: endTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -213,14 +220,16 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI, rec fixed, add and remove position', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         let direction = 1;
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
         let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -229,7 +238,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp,{from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
@@ -237,14 +246,14 @@ contract('MiltonSoap', (accounts) => {
         let endTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_10_000_18DEC, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_10_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider})
 
         //when
         await data.milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
 
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -255,7 +264,9 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, DAI add rec fixed, 18 decimals', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         let firstDerivativeDirection = 0;
         let secondDerivativeDirection = 1;
 
@@ -264,7 +275,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const firstDerivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -274,7 +285,7 @@ contract('MiltonSoap', (accounts) => {
         }
 
         const secondDerivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -283,7 +294,9 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(
+            firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC,
+            openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(firstDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
@@ -292,7 +305,7 @@ contract('MiltonSoap', (accounts) => {
 
         //when
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -303,7 +316,9 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, USDT add pay fixed, USDT add rec fixed, 6 decimals', async () => {
         //given
-        await testUtils.setupTokenUsdtInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["USDT"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
+        await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         let firstDerivativeDirection = 0;
         let secondDerivativeDirection = 1;
 
@@ -312,7 +327,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const firstDerivativeParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             totalAmount: testUtils.USD_10_000_6DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
@@ -322,7 +337,7 @@ contract('MiltonSoap', (accounts) => {
         }
 
         const secondDerivativeParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             totalAmount: testUtils.USD_10_000_6DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
@@ -331,7 +346,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(firstDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_6DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(firstDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
@@ -340,7 +355,7 @@ contract('MiltonSoap', (accounts) => {
 
         //when
         const soapParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             calculateTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -351,8 +366,12 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, USDT add pay fixed', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
-        await testUtils.setupTokenUsdtInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI", "USDT"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
+        await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
 
@@ -362,7 +381,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeDAIParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -372,7 +391,7 @@ contract('MiltonSoap', (accounts) => {
         }
 
         const derivativeUSDTParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             totalAmount: testUtils.USD_10_000_6DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
@@ -380,8 +399,8 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(derivativeDAIParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
-        await data.joseph.provideLiquidity(derivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeDAIParams.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeDAIParams.asset, iporValueBeforOpenPositionDAI, derivativeDAIParams.openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(derivativeUSDTParams.asset, iporValueBeforOpenPositionUSDT, derivativeUSDTParams.openTimestamp, {from: userOne});
 
@@ -395,7 +414,7 @@ contract('MiltonSoap', (accounts) => {
         let expectedUSDTSoap = BigInt("-62061076");
 
         const soapDAIParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: derivativeDAIParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedDAISoap,
             from: userTwo
@@ -403,7 +422,7 @@ contract('MiltonSoap', (accounts) => {
         await assertSoap(soapDAIParams);
 
         const soapUSDTParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             calculateTimestamp: derivativeUSDTParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedUSDTSoap,
             from: userTwo
@@ -414,7 +433,10 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, DAI add rec fixed, close rec fixed position', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let payFixDerivativeDirection = 0;
         let recFixDerivativeDirection = 1;
 
@@ -424,7 +446,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -434,7 +456,7 @@ contract('MiltonSoap', (accounts) => {
         }
 
         const recFixDerivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -442,7 +464,7 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(payFixDerivativeParams);
         await openPositionFunc(recFixDerivativeParams);
@@ -456,7 +478,7 @@ contract('MiltonSoap', (accounts) => {
         let expectedSoap = BigInt("-62079701120797029831");
 
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -468,7 +490,10 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, DAI add rec fixed, remove pay fixed position after 25 days', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let payFixDerivativeDirection = 0;
         let recFixDerivativeDirection = 1;
 
@@ -478,7 +503,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -488,7 +513,7 @@ contract('MiltonSoap', (accounts) => {
         }
 
         const recFixDerivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -496,7 +521,7 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(payFixDerivativeParams.asset, BigInt(2) * testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(payFixDerivativeParams.asset, iporValueBeforOpenPosition, openTimestamp, {from: userOne});
         await openPositionFunc(payFixDerivativeParams);
         await openPositionFunc(recFixDerivativeParams);
@@ -510,7 +535,7 @@ contract('MiltonSoap', (accounts) => {
         let expectedSoap = BigInt("-62079701120796992583");
 
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -521,8 +546,12 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, USDT add rec fixed, remove rec fixed position after 25 days', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
-        await testUtils.setupTokenUsdtInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI", "USDT"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
+        await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let payFixDerivativeDAIDirection = 0;
         let recFixDerivativeUSDTDirection = 1;
 
@@ -534,7 +563,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeDAIParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -544,7 +573,7 @@ contract('MiltonSoap', (accounts) => {
         }
 
         const recFixDerivativeUSDTParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             totalAmount: testUtils.USD_10_000_6DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
@@ -552,8 +581,8 @@ contract('MiltonSoap', (accounts) => {
             openTimestamp: openTimestamp,
             from: openerUserAddress
         }
-        await data.joseph.provideLiquidity(payFixDerivativeDAIParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
-        await data.joseph.provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(payFixDerivativeDAIParams.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_14_000_6DEC, openTimestamp, {from: liquidityProvider});
 
         await data.warren.test_updateIndex(payFixDerivativeDAIParams.asset, iporValueBeforOpenPositionDAI, openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(recFixDerivativeUSDTParams.asset, iporValueBeforOpenPositionUSDT, openTimestamp, {from: userOne});
@@ -562,7 +591,7 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(recFixDerivativeUSDTParams);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await data.joseph.provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_10_000_6DEC, {from: liquidityProvider})
+        await data.joseph.test_provideLiquidity(recFixDerivativeUSDTParams.asset, testUtils.USD_10_000_6DEC, openTimestamp, {from: liquidityProvider})
 
         let endTimestamp = recFixDerivativeUSDTParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -573,7 +602,7 @@ contract('MiltonSoap', (accounts) => {
         let expectedSoapDAI = BigInt("-62079701120797029831");
 
         const soapParamsDAI = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS,
             expectedSoap: expectedSoapDAI,
             from: userTwo
@@ -584,7 +613,10 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 18 decimals', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
@@ -592,7 +624,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -603,7 +635,7 @@ contract('MiltonSoap', (accounts) => {
 
         let calculationTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -614,7 +646,7 @@ contract('MiltonSoap', (accounts) => {
         //when
         //then
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: calculationTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -624,7 +656,10 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, USDT add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 6 decimals', async () => {
         //given
-        await testUtils.setupTokenUsdtInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["USDT"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
+        await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_6DEC;
@@ -632,7 +667,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             totalAmount: testUtils.USD_10_000_6DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
@@ -643,7 +678,7 @@ contract('MiltonSoap', (accounts) => {
 
         let calculationTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC,  derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -654,7 +689,7 @@ contract('MiltonSoap', (accounts) => {
         //when
         //then
         const soapParams = {
-            asset: data.tokenUsdt.address,
+            asset: testData.tokenUsdt.address,
             calculateTimestamp: calculationTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -664,7 +699,10 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, change ibtPrice, calculate soap after 28 days and after 50 days and compare', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
@@ -672,7 +710,7 @@ contract('MiltonSoap', (accounts) => {
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -685,7 +723,7 @@ contract('MiltonSoap', (accounts) => {
         let calculationTimestamp28days = derivativeParams.openTimestamp + testUtils.PERIOD_28_DAYS_IN_SECONDS;
         let calculationTimestamp50days = derivativeParams.openTimestamp + testUtils.PERIOD_50_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -697,7 +735,7 @@ contract('MiltonSoap', (accounts) => {
         //when
         //then
         const soapParams28days = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: calculationTimestamp28days,
             expectedSoap: expectedSoap28Days,
             from: userTwo
@@ -705,7 +743,7 @@ contract('MiltonSoap', (accounts) => {
         await assertSoap(soapParams28days);
 
         const soapParams50days = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             expectedSoap: expectedSoap50Days,
             from: userTwo
@@ -716,14 +754,17 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, wait 25 days, DAI add pay fixed, wait 25 days and then calculate soap', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -732,7 +773,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
         const derivativeParams25days = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -742,7 +783,9 @@ contract('MiltonSoap', (accounts) => {
         }
         let calculationTimestamp50days = derivativeParams25days.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph.provideLiquidity(derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(
+            derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC,
+            derivativeParamsFirst.openTimestamp, {from: liquidityProvider});
 
         //when
         await data.warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
@@ -753,7 +796,7 @@ contract('MiltonSoap', (accounts) => {
         let expectedSoap = BigInt("-186621001728821146220");
 
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -764,14 +807,17 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate soap, DAI add pay fixed, wait 25 days, update IPOR and DAI add pay fixed, wait 25 days update IPOR and then calculate soap', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -780,7 +826,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
         const derivativeParams25days = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -789,7 +835,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
         let calculationTimestamp50days = derivativeParams25days.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
-        await data.joseph.provideLiquidity(derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParamsFirst.asset, BigInt(2) * testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
 
         //when
         await data.warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, derivativeParamsFirst.openTimestamp, {from: userOne});
@@ -802,7 +848,7 @@ contract('MiltonSoap', (accounts) => {
         let expectedSoap = BigInt("-186621001728821146220");
 
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             expectedSoap: expectedSoap,
             from: userTwo
@@ -814,14 +860,17 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate EXACTLY the same SOAP with and without update IPOR Index with the same indexValue, DAI add pay fixed, 25 and 50 days period', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -835,12 +884,12 @@ contract('MiltonSoap', (accounts) => {
         let soapBeforeUpdateIndex = null;
 
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             from: userTwo
         }
 
-        await data.joseph.provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
 
         //when
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
@@ -872,7 +921,10 @@ contract('MiltonSoap', (accounts) => {
 
     it('should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after derivative opened, soap should be negative right after opened position and updated ibtPrice', async () => {
         //given
-        await testUtils.setupTokenDaiInitialValues(data);
+        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+
         let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
@@ -883,7 +935,7 @@ contract('MiltonSoap', (accounts) => {
         let secondUpdateIndexTimestamp = firstUpdateIndexTimestamp + testUtils.PERIOD_1_DAY_IN_SECONDS;
 
         const derivativeParamsFirst = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
@@ -892,7 +944,7 @@ contract('MiltonSoap', (accounts) => {
             from: openerUserAddress
         }
 
-        await data.joseph.provideLiquidity(derivativeParamsFirst.asset, testUtils.USD_14_000_18DEC, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(derivativeParamsFirst.asset, testUtils.USD_14_000_18DEC, openTimestamp, {from: liquidityProvider});
         await data.warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, firstUpdateIndexTimestamp, {from: userOne});
         await openPositionFunc(derivativeParamsFirst);
 
@@ -902,7 +954,7 @@ contract('MiltonSoap', (accounts) => {
         let rightAfterOpenedPositionTimestamp = secondUpdateIndexTimestamp + 100;
 
         const soapParams = {
-            asset: data.tokenDai.address,
+            asset: testData.tokenDai.address,
             calculateTimestamp: rightAfterOpenedPositionTimestamp,
             expectedSoap: 0,
             from: userTwo

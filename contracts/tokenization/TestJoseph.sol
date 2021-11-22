@@ -4,7 +4,7 @@ pragma solidity >=0.8.4 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporAddressesManager.sol";
+import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
 import {Errors} from '../Errors.sol';
 import "../interfaces/IMiltonStorage.sol";
@@ -14,13 +14,15 @@ import "./Joseph.sol";
 
 contract TestJoseph is Joseph {
 
-    function test_provideLiquidity(address asset, uint256 liquidityAmount) external {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        _provideLiquidity(asset, liquidityAmount, iporConfiguration.getMultiplicator());
+    //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
+    function test_provideLiquidity(address asset, uint256 liquidityAmount, uint256 timestamp) external {
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        _provideLiquidity(asset, liquidityAmount, iporAssetConfiguration.getMultiplicator(), timestamp);
     }
 
-    function test_redeem(address asset, uint256 ipTokenVolume) external {
-        IIporConfiguration iporConfiguration = IIporConfiguration(_addressesManager.getIporConfiguration(asset));
-        _redeem(asset, ipTokenVolume, iporConfiguration.getMultiplicator());
+    //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
+    function test_redeem(address asset, uint256 ipTokenVolume, uint256 timestamp) external {
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        _redeem(asset, ipTokenVolume, iporAssetConfiguration.getMultiplicator(), timestamp);
     }
 }

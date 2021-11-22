@@ -1,5 +1,6 @@
 import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
+import IporAssetConfigurationDai from "./contracts/IporAssetConfigurationDai.json";
 
 
 const {ContractData, ContractForm} = newContextComponents;
@@ -192,7 +193,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getMilton"
                         render={(value) => (
                             <div>
@@ -203,7 +204,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getJoseph"
                         render={(value) => (
                             <div>
@@ -221,7 +222,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getMilton"
                         render={(value) => (
                             <div>Milton: <strong>{value}</strong></div>
@@ -230,7 +231,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getJoseph"
                         render={(value) => (
                             <div>Joseph: <strong>{value}</strong></div>
@@ -246,7 +247,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getMilton"
                         render={(value) => (
                             <div>Milton: <strong>{value}</strong></div>
@@ -255,7 +256,7 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporConfiguration"
                         method="getJoseph"
                         render={(value) => (
                             <div>Joseph: <strong>{value}</strong></div>
@@ -336,9 +337,8 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporAssetConfigurationUsdt"
                         method="getIpToken"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                     />
                 </th>
                 <th scope="col">
@@ -347,9 +347,8 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporAssetConfigurationUsdc"
                         method="getIpToken"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                     />
                 </th>
                 <th scope="col">
@@ -358,9 +357,8 @@ export default ({drizzle, drizzleState}) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporAddressesManager"
+                        contract="IporAssetConfigurationDai"
                         method="getIpToken"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                     />
                 </th>
             </tr>

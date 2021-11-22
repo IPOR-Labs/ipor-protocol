@@ -1,7 +1,7 @@
-import React, {Component} from "react";
+import React from "react";
 import {newContextComponents} from "@drizzle/react-components";
 
-const { ContractData, ContractForm} = newContextComponents;
+const {ContractData, ContractForm} = newContextComponents;
 
 export default ({drizzle, drizzleState}) => (
     <div align="left">
@@ -153,9 +153,9 @@ export default ({drizzle, drizzleState}) => (
                 <br/>
                 <label>Max allowed value 1 000 000 USD</label>
                 <br/>
-                <small>6 decimals: 1000000</small>
+                <small>Max in 6 decimals: 1000000000000</small>
                 <br/>
-                <small>18 decimals: 1000000000000000000000000</small>
+                <small>Max in 18 decimals: 1000000000000000000000000</small>
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonFaucet"

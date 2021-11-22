@@ -2,7 +2,7 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import "./Warren.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporAssetConfiguration.sol";
 
 contract TestWarren is Warren {
 
@@ -11,11 +11,11 @@ contract TestWarren is Warren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexes, updateTimestamp);
+        IWarrenStorage(_iporConfiguration.getWarrenStorage()).updateIndexes(assets, indexes, updateTimestamp);
     }
 
     function test_updateIndexes(address[] memory assets, uint256[] memory indexValues, uint256 updateTimestamp) external onlyUpdater {
-        IWarrenStorage(_addressesManager.getWarrenStorage()).updateIndexes(assets, indexValues, updateTimestamp);
+        IWarrenStorage(_iporConfiguration.getWarrenStorage()).updateIndexes(assets, indexValues, updateTimestamp);
     }
 
 }

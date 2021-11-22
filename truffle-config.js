@@ -4,9 +4,10 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
     plugins: [
-        "solidity-coverage",
         "truffle-contract-size",
-        "buidler-gas-reporter"],
+        // "buidler-gas-reporter",
+        "solidity-coverage"
+    ],
     contracts_build_directory: path.join(__dirname, "app/src/contracts"),
     networks: {
         // test: {
