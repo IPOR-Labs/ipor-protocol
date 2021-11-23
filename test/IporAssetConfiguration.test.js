@@ -1,6 +1,7 @@
 const testUtils = require("./TestUtils.js");
 const {ZERO_BYTES32} = require("@openzeppelin/test-helpers/src/constants");
 const {time} = require("@openzeppelin/test-helpers");
+const keccak256 = require("keccak256");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
 const IporAssetConfigurationDai = artifacts.require('IporAssetConfigurationDai');
@@ -66,10 +67,11 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should NOT set incomeTaxPercentage', async () => {
         //given
         let incomeTaxPercentage = BigInt("1000000000000000001");
+        iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), userOne);
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage),
+            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, {from: userOne}),
             //then
             'IPOR_24'
         );
@@ -79,9 +81,10 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         let incomeTaxPercentage = BigInt("150000000000000000");
+        iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage);
+        await iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, {from: userOne});
 
         //then
         let actualIncomeTaxPercentage = await iporAssetConfigurationDAI.getIncomeTaxPercentage();
@@ -89,6 +92,19 @@ contract('IporAssetConfiguration', (accounts) => {
         assert(incomeTaxPercentage === BigInt(actualIncomeTaxPercentage),
             `Incorrect incomeTaxPercentage actual: ${actualIncomeTaxPercentage}, expected: ${incomeTaxPercentage}`)
 
+    });
+
+    it('should NOT set incomeTaxPercentage when user does not have INCOME_TAX_PERCENTAGE_ROLE role', async () => {
+        //given
+        let incomeTaxPercentage = BigInt("150000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x1d60df71b356d37d065129ba494c44450d203a323cc11390563281105e480394`
+        );
     });
 
     it('should set liquidationDepositAmount - case 1', async () => {
@@ -489,5 +505,30 @@ contract('IporAssetConfiguration', (accounts) => {
         assert(address === actualAddress,
             `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
     });
+
+    // it('should set Milton Publication Fee Transferer', async () => {
+    //     //given
+    //     const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+    //     const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
+    //     await iporAssetConfigurationDAI.grantRole(role, userOne);
+    //     //when
+    //     await iporConfiguration.setMiltonPublicationFeeTransferer(address, {from: userOne});
+    //     //then
+    //     const result = await iporConfiguration.getMiltonPublicationFeeTransferer();
+    //     assert(address === result);
+    // });
+
+    // it('should NOT set Milton Publication Fee Transferer when user does not have MILTON_PUBLICATION_FEE_TRANSFERER_ROLE role', async () => {
+    //     //given
+    //     const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+    //     await testUtils.assertError(
+    //         //when
+    //         iporConfiguration.setMiltonPublicationFeeTransferer(address, {from: userOne})
+    //         ,
+    //         //then
+    //         `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xcaf9c92ac95381198cb99b15cf6677f38c77ba44a82d424368980282298f9dc9`
+    //     );
+    // });
 
 });

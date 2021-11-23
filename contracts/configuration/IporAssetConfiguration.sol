@@ -16,10 +16,10 @@ import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
-import "./AccessControlConfiguration.sol";
+import "./AccessControlAssetConfiguration.sol";
 
 //TODO: consider using AccessControll instead Ownable - higher flexibility
-contract IporAssetConfiguration is AccessControlConfiguration(msg.sender), Ownable, IIporAssetConfiguration {
+contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), Ownable, IIporAssetConfiguration {
 
     address private immutable _asset;
 
@@ -93,7 +93,7 @@ contract IporAssetConfiguration is AccessControlConfiguration(msg.sender), Ownab
         return incomeTaxPercentage;
     }
 
-    function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyOwner {
+    function setIncomeTaxPercentage(uint256 _incomeTaxPercentage) external override onlyRole(INCOME_TAX_PERCENTAGE_ROLE) {
         require(_incomeTaxPercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         incomeTaxPercentage = _incomeTaxPercentage;
         emit IncomeTaxPercentageSet(_incomeTaxPercentage);
