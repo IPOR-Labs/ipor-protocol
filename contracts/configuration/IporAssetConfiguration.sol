@@ -16,9 +16,10 @@ import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
+import "./AccessControlConfiguration.sol";
 
 //TODO: consider using AccessControll instead Ownable - higher flexibility
-contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
+contract IporAssetConfiguration is AccessControlConfiguration(msg.sender), Ownable, IIporAssetConfiguration {
 
     address private immutable _asset;
 
