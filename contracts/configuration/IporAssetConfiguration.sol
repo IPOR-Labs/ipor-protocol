@@ -201,7 +201,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return charlieTreasurer;
     }
 
-    function setCharlieTreasurer(address newCharlieTreasurer) external override onlyOwner {
+    function setCharlieTreasurer(address newCharlieTreasurer) external override onlyRole(CHARLIE_TREASURER_ROLE) {
         charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }

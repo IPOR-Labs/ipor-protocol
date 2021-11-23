@@ -531,15 +531,30 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         let charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         let asset = tokenDai.address;
+        await iporAssetConfigurationDAI.grantRole(keccak256("CHARLIE_TREASURER_ROLE"), userOne);
+
 
         //when
-        await iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress);
+        await iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress, {from: userOne});
 
         //then
         let actualCharlieTreasurerDaiAddress = await iporAssetConfigurationDAI.getCharlieTreasurer();
 
         assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
             `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
+    });
+
+    it('should NOT set CharlieTreasurer when user does not have CHARLIE_TREASURER_ROLE role', async () => {
+        //given
+        const charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x21b203ce7b3398e0ad35c938bc2c62a805ef17dc57de85e9d29052eac6d9d6f7`
+        );
     });
 
     it('should set treasureTreasurers', async () => {

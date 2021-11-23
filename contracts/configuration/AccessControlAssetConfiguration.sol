@@ -14,6 +14,7 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
     bytes32 internal constant SPREAD_PAY_FIXED_VALUE_ROLE = keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
     bytes32 internal constant SPREAD_REC_FIXED_VALUE_ROLE = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
     bytes32 internal constant COLLATERALIZATION_FACTOR_VALUE_ROLE = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
+    bytes32 internal constant CHARLIE_TREASURER_ROLE = keccak256("CHARLIE_TREASURER_ROLE");
 
     constructor(address root) {
         _setupRole(ADMIN_ROLE, root);
@@ -27,6 +28,7 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(SPREAD_PAY_FIXED_VALUE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(SPREAD_REC_FIXED_VALUE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(COLLATERALIZATION_FACTOR_VALUE_ROLE, ADMIN_ROLE);
+        _setRoleAdmin(CHARLIE_TREASURER_ROLE, ADMIN_ROLE);
 
     }
 }
