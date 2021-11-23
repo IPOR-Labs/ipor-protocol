@@ -127,9 +127,10 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         let liquidationDepositAmount = BigInt("50000000000000000000");
+        iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount);
+        await iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount, {from: userOne});
 
         //then
         let actualLiquidationDepositAmount = await iporAssetConfigurationDAI.getLiquidationDepositAmount();
@@ -137,6 +138,19 @@ contract('IporAssetConfiguration', (accounts) => {
         assert(liquidationDepositAmount === BigInt(actualLiquidationDepositAmount),
             `Incorrect liquidationDepositAmount actual: ${actualLiquidationDepositAmount}, expected: ${liquidationDepositAmount}`)
 
+    });
+
+    it('should NOT set liquidationDepositAmount when user does not have LIQUIDATION_DEPOSIT_AMOUNT_ROLE role', async () => {
+        //given
+        const liquidationDepositAmount = BigInt("50000000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xe5d97cc7ebc77e4491947e53b4b684cfaea4b3d5ec8734ba48d1fc4d2d54a42e`
+        );
     });
 
     it('should NOT set openingFeePercentage', async () => {

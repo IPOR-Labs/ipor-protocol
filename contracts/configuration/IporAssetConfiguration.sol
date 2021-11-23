@@ -113,7 +113,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return liquidationDepositAmount;
     }
 
-    function setLiquidationDepositAmount(uint256 _liquidationDepositAmount) external override onlyOwner {
+    function setLiquidationDepositAmount(uint256 _liquidationDepositAmount) external override onlyRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE) {
         liquidationDepositAmount = _liquidationDepositAmount;
         emit LiquidationDepositAmountSet(_liquidationDepositAmount);
     }
