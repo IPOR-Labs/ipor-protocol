@@ -223,7 +223,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return assetManagementVault;
     }
 
-    function setAssetManagementVault(address newAssetManagementVaultAddress) external override onlyOwner {
+    function setAssetManagementVault(address newAssetManagementVaultAddress) external override onlyRole(ASSET_MANAGEMENT_VAULT_ROLE) {
         assetManagementVault = newAssetManagementVaultAddress;
         emit AssetManagementVaultUpdated(_asset, newAssetManagementVaultAddress);
     }
