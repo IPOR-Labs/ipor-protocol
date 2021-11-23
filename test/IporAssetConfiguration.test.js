@@ -559,18 +559,35 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should set treasureTreasurers', async () => {
         //given
-        let treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        let asset = tokenDai.address;
+        const treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        const asset = tokenDai.address;
+        iporAssetConfigurationDAI.grantRole(keccak256("TREASURE_TREASURER_ROLE"), userOne);
+
 
         //when
-        await iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress);
+        await iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress, {from: userOne});
 
         //then
-        let actualTreasureTreasurerDaiAddress = await iporAssetConfigurationDAI.getTreasureTreasurer();
+        const actualTreasureTreasurerDaiAddress = await iporAssetConfigurationDAI.getTreasureTreasurer();
 
         assert(treasureTreasurerDaiAddress === actualTreasureTreasurerDaiAddress,
             `Incorrect  Trasure Treasurer address for asset ${asset}, actual: ${actualTreasureTreasurerDaiAddress}, expected: ${treasureTreasurerDaiAddress}`)
     });
+
+    it('should NOT set TreasureTreasurer when user does not have TREASURE_TREASURER_ROLE role', async () => {
+        //given
+        const treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x9cdee4e06275597b667c73a5eb52ed89fe6acbbd36bd9fa38146b1316abfbbc4`
+        );
+    });
+
+
 
 
     it('should set asset management vault', async () => {
