@@ -100,6 +100,7 @@ services:
     restart: always
     ports:
       - "34555:34555"
+      - "34556:34556"
     volumes:
       - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
@@ -136,6 +137,7 @@ services:
       - ETHEREUM_JSONRPC_VARIANT=${BS_ETHEREUM_JSONRPC_VARIANT}
       - ETHEREUM_JSONRPC_HTTP_URL=${BS_ETHEREUM_JSONRPC_HTTP_URL}
       - ETHEREUM_JSONRPC_TRACE_URL=${BS_ETHEREUM_JSONRPC_HTTP_URL}
+      - ETHEREUM_JSONRPC_WS_URL=${BS_ETHEREUM_JSONRPC_WS_URL}
       - DATABASE_URL=${BS_DATABASE_URL}
       - BLOCKSCOUT_PROTOCOL=${BS_PROTOCOL}
       - BLOCKSCOUT_HOST=${BS_HOST}
