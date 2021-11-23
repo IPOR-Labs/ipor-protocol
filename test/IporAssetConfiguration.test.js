@@ -42,9 +42,10 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set openingFeeForTreasuryPercentage', async () => {
         //given
         let expectedOpeningFeeForTreasuryPercentage = BigInt("1000000000000000000");
-        await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage);
+        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), userOne);
 
         //when
+        await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage, {from: userOne});        
         let actualOpeningFeeForTreasuryPercentage = await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
 
         //then
@@ -55,12 +56,25 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should NOT set openingFeeForTreasuryPercentage', async () => {
         //given
         let openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
+        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), userOne);
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage),
+            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage, {from: userOne}),
             //then
             'IPOR_24'
+        );
+    });
+
+    it('should NOT set openingFeeForTreasuryPercentage when user does not have OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE role', async () => {
+        //given
+        const openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage, {from: userOne}),
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x6d0de9008651a921e7ec84f14cdce94213af6041f456fcfc8c7e6fa897beab0f`
         );
     });
 
@@ -76,6 +90,8 @@ contract('IporAssetConfiguration', (accounts) => {
             'IPOR_24'
         );
     });
+
+    
 
     it('should set incomeTaxPercentage - case 1', async () => {
         //given
