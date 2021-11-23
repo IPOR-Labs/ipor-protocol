@@ -132,7 +132,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return iporPublicationFeeAmount;
     }
 
-    function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount) external override onlyOwner {
+    function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount) external override onlyRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE) {
         iporPublicationFeeAmount = _iporPublicationFeeAmount;
         emit IporPublicationFeeAmountSet(_iporPublicationFeeAmount);
     }

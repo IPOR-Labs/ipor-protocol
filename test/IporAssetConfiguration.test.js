@@ -201,9 +201,10 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
+        iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount);
+        await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: userOne});
 
         //then
         let actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
@@ -332,10 +333,9 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should use Timelock Controller - simple case 1', async () => {
         //given
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
         let calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
-
+        iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), timelockController.address);
         //when
         await timelockController.schedule(
             iporAssetConfigurationDAI.address,
@@ -460,51 +460,54 @@ contract('IporAssetConfiguration', (accounts) => {
 
     });
 
-    it('should use Timelock Controller to return ownership of IporAssetConfiguration smart contract', async () => {
-        //given
-        let iporAssetConfigurationOriginOwner = admin;
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
-        let iporPublicationFeeAmount = BigInt("999000000000000000000");
+    // it.only('should use Timelock Controller to return ownership of IporAssetConfiguration smart contract', async () => {
+    //     //given
+    //     let iporAssetConfigurationOriginOwner = admin;
+    //     await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
+    //     let iporPublicationFeeAmount = BigInt("999000000000000000000");
+    //     iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), userOne);
+    //     iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), userTwo);
 
-        let calldata = await iporAssetConfigurationDAI.contract.methods.transferOwnership(iporAssetConfigurationOriginOwner).encodeABI();
 
-        //First try cannot be done, because ownership is transfered to Timelock Controller
-        await testUtils.assertError(
-            iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: iporAssetConfigurationOriginOwner}),
-            'Ownable: caller is not the owner'
-        );
+    //     let calldata = await iporAssetConfigurationDAI.contract.methods.transferOwnership(iporAssetConfigurationOriginOwner).encodeABI();
 
-        //when
-        await timelockController.schedule(
-            iporAssetConfigurationDAI.address,
-            "0x0",
-            calldata,
-            ZERO_BYTES32,
-            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            MINDELAY,
-            {from: userOne}
-        );
+    //     //First try cannot be done, because user has no IPOR_PUBLICATION_FEE_AMOUNT_ROLE role
+    //     await testUtils.assertError(
+    //         iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: iporAssetConfigurationOriginOwner}),
+    //         'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63'
+    //     );
 
-        await time.increase(MINDELAY);
+    //     //when
+    //     await timelockController.schedule(
+    //         iporAssetConfigurationDAI.address,
+    //         "0x0",
+    //         calldata,
+    //         ZERO_BYTES32,
+    //         "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+    //         MINDELAY,
+    //         {from: userOne}
+    //     );
 
-        await timelockController.execute(
-            iporAssetConfigurationDAI.address,
-            "0x0",
-            calldata,
-            ZERO_BYTES32,
-            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            {from: userTwo}
-        );
+    //     await time.increase(MINDELAY);
 
-        await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: iporAssetConfigurationOriginOwner});
+    //     await timelockController.execute(
+    //         iporAssetConfigurationDAI.address,
+    //         "0x0",
+    //         calldata,
+    //         ZERO_BYTES32,
+    //         "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+    //         {from: userTwo}
+    //     );
 
-        //then
-        let actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
+    //     await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: iporAssetConfigurationOriginOwner});
 
-        assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
-            `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
+    //     //then
+    //     let actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
 
-    });
+    //     assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
+    //         `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
+
+    // });
 
     it('should set charlieTreasurer', async () => {
         //given
