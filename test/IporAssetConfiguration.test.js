@@ -624,4 +624,30 @@ contract('IporAssetConfiguration', (accounts) => {
         );
     });
 
+
+    it.only('should set SpreadRecFixedValue(', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+        const role = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+        //when
+        await iporAssetConfigurationDAI.setSpreadRecFixedValue(max, {from: userOne});
+        //then
+        const result = await iporAssetConfigurationDAI.getSpreadRecFixedValue();
+        assert(max === BigInt(result));
+    });
+
+    it.only('should NOT set SpreadPayFixedValue when user does not have SPREAD_PAY_FIXED_VALUE_ROLE role', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setSpreadRecFixedValue(max, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfabc2f0c8274a3b08bd6a559681dd3a447265796340f783fbb8b3476bbd4b17b`
+        );
+    });
+
 });

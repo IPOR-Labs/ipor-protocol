@@ -167,7 +167,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return spreadRecFixedValue;
     }
 
-    function setSpreadRecFixedValue(uint256 spread) external override {
+    function setSpreadRecFixedValue(uint256 spread) external override onlyRole(SPREAD_REC_FIXED_VALUE_ROLE){
         spreadRecFixedValue = spread;
     }
 
