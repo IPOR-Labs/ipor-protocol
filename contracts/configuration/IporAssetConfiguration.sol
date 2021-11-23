@@ -141,7 +141,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return liquidityPoolMaxUtilizationPercentage;
     }
 
-    function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external override onlyOwner {
+    function setLiquidityPoolMaxUtilizationPercentage(uint256 _liquidityPoolMaxUtilizationPercentage) external override onlyRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE) {
         liquidityPoolMaxUtilizationPercentage = _liquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(_liquidityPoolMaxUtilizationPercentage);
     }

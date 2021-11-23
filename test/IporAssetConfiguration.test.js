@@ -217,9 +217,11 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set liquidityPoolMaxUtilizationPercentage higher than 100%', async () => {
         //given
         let liquidityPoolMaxUtilizationPercentage = BigInt("99000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), userOne);
+
 
         //when
-        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
+        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, {from: userOne});
 
         //then
         let actualLPMaxUtilizationPercentage = await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
@@ -247,9 +249,11 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         let liquidityPoolMaxUtilizationPercentage = BigInt("90000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), userOne);
+
 
         //when
-        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage);
+        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, {from: userOne});
 
         //then
         let actualLiquidityPoolMaxUtilizationPercentage = await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
@@ -258,6 +262,20 @@ contract('IporAssetConfiguration', (accounts) => {
             `Incorrect liquidityPoolMaxUtilizationPercentage actual: ${actualLiquidityPoolMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
 
     });
+
+    it('should NOT set liquidityPoolMaxUtilizationPercentage when user does not have LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE role', async () => {
+        //given
+        const liquidityPoolMaxUtilizationPercentage = BigInt("90000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x53e7faacb3381a7b6b7185a9fc96bd9430da87ec709e6d3e0f009ed7c71e45ef`
+        );
+    });
+
 
     it('should get initial incomeTaxPercentage', async () => {
         //given
