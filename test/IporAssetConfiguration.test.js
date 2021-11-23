@@ -625,7 +625,7 @@ contract('IporAssetConfiguration', (accounts) => {
     });
 
 
-    it.only('should set SpreadRecFixedValue(', async () => {
+    it('should set SpreadRecFixedValue(', async () => {
         //given
         const max = BigInt("999000000000000000000");
         const role = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
@@ -637,7 +637,7 @@ contract('IporAssetConfiguration', (accounts) => {
         assert(max === BigInt(result));
     });
 
-    it.only('should NOT set SpreadPayFixedValue when user does not have SPREAD_PAY_FIXED_VALUE_ROLE role', async () => {
+    it('should NOT set SpreadPayFixedValue when user does not have SPREAD_PAY_FIXED_VALUE_ROLE role', async () => {
         //given
         const max = BigInt("999000000000000000000");
 
@@ -647,6 +647,57 @@ contract('IporAssetConfiguration', (accounts) => {
             ,
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfabc2f0c8274a3b08bd6a559681dd3a447265796340f783fbb8b3476bbd4b17b`
+        );
+    });
+
+
+    it('should set MaxCollateralizationFactorValue', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+        const role = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+        //when
+        await iporAssetConfigurationDAI.setMaxCollateralizationFactorValue(max, {from: userOne});
+        //then
+        const result = await iporAssetConfigurationDAI.getMaxCollateralizationFactorValue();
+        assert(max === BigInt(result));
+    });
+
+    it('should NOT set MaxCollateralizationFactorValue when user does not have COLLATERALIZATION_FACTOR_VALUE_ROLE role', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setMaxCollateralizationFactorValue(max, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e`
+        );
+    });
+
+    it('should set MinCollateralizationFactorValue', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+        const role = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+        //when
+        await iporAssetConfigurationDAI.setMinCollateralizationFactorValue(max, {from: userOne});
+        //then
+        const result = await iporAssetConfigurationDAI.getMinCollateralizationFactorValue();
+        assert(max === BigInt(result));
+    });
+
+    it('should NOT set MinCollateralizationFactorValue when user does not have COLLATERALIZATION_FACTOR_VALUE_ROLE role', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setMinCollateralizationFactorValue(max, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e`
         );
     });
 

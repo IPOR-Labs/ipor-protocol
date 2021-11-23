@@ -175,7 +175,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return maxCollateralizationFactorValue;
     }
 
-    function setMaxCollateralizationFactorValue(uint256 _maxCollateralizationFactorValue) external override onlyOwner {
+    function setMaxCollateralizationFactorValue(uint256 _maxCollateralizationFactorValue) external override onlyRole(COLLATERALIZATION_FACTOR_VALUE_ROLE) {
         maxCollateralizationFactorValue = _maxCollateralizationFactorValue;
         emit MaxCollateralizationFactorValueSet(_maxCollateralizationFactorValue);
     }
@@ -184,7 +184,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return minCollateralizationFactorValue;
     }
 
-    function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external override onlyOwner {
+    function setMinCollateralizationFactorValue(uint256 _minCollateralizationFactorValue) external override onlyRole(COLLATERALIZATION_FACTOR_VALUE_ROLE) {
         minCollateralizationFactorValue = _minCollateralizationFactorValue;
         emit MinCollateralizationFactorValueSet(_minCollateralizationFactorValue);
     }
