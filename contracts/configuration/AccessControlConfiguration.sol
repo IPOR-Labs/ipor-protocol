@@ -24,8 +24,8 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
     /// @dev Add `root` to the admin role as a member.
     constructor(address root) {
         _setupRole(ADMIN_ROLE, root);
-        _setRoleAdmin(IPOR_ASSETS_ROLE, ADMIN_ROLE);
         _setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
+        _setRoleAdmin(IPOR_ASSETS_ROLE, ADMIN_ROLE);
         _setRoleAdmin(MILTON_ROLE, ADMIN_ROLE);
         _setRoleAdmin(MILTON_STORAGE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(MILTON_LP_UTILIZATION_STRATEGY_ROLE, ADMIN_ROLE);

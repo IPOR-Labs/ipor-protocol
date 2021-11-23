@@ -20,6 +20,7 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
 
     constructor(address root) {
         _setupRole(ADMIN_ROLE, root);
+        _setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
         _setRoleAdmin(INCOME_TAX_PERCENTAGE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, ADMIN_ROLE);            
