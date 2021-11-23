@@ -150,7 +150,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return maxPositionTotalAmount;
     }
 
-    function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external override onlyOwner {
+    function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount) external override onlyRole(MAX_POSITION_TOTAL_AMOUNT_ROLE) {
         maxPositionTotalAmount = _maxPositionTotalAmount;
         emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
     }
@@ -159,7 +159,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return spreadPayFixedValue;
     }
 
-    function setSpreadPayFixedValue(uint256 spread) external override {
+    function setSpreadPayFixedValue(uint256 spread) external override onlyRole(SPREAD_PAY_FIXED_VALUE_ROLE) {
         spreadPayFixedValue = spread;
     }
 

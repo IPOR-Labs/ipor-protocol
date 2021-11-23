@@ -573,29 +573,55 @@ contract('IporAssetConfiguration', (accounts) => {
             `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
     });
 
-    // it('should set Milton Publication Fee Transferer', async () => {
-    //     //given
-    //     const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-    //     const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
-    //     await iporAssetConfigurationDAI.grantRole(role, userOne);
-    //     //when
-    //     await iporConfiguration.setMiltonPublicationFeeTransferer(address, {from: userOne});
-    //     //then
-    //     const result = await iporConfiguration.getMiltonPublicationFeeTransferer();
-    //     assert(address === result);
-    // });
+    it('should set MaxPositionTotalAmount', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+        const role = keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+        //when
+        await iporAssetConfigurationDAI.setMaxPositionTotalAmount(max, {from: userOne});
+        //then
+        const result = await iporAssetConfigurationDAI.getMaxPositionTotalAmount();
+        assert(max === BigInt(result));
+    });
 
-    // it('should NOT set Milton Publication Fee Transferer when user does not have MILTON_PUBLICATION_FEE_TRANSFERER_ROLE role', async () => {
-    //     //given
-    //     const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+    it('should NOT set MaxPositionTotalAmount when user does not have MAX_POSITION_TOTAL_AMOUNT_ROLE role', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
 
-    //     await testUtils.assertError(
-    //         //when
-    //         iporConfiguration.setMiltonPublicationFeeTransferer(address, {from: userOne})
-    //         ,
-    //         //then
-    //         `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xcaf9c92ac95381198cb99b15cf6677f38c77ba44a82d424368980282298f9dc9`
-    //     );
-    // });
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setMaxPositionTotalAmount(max, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xbd6e7260790b38b2aece87cbeb2f1d97be9c3b1eb157efb80e7b3c341450caf2`
+        );
+    });
+
+
+    it('should set SpreadPayFixedValue', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+        const role = keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+        //when
+        await iporAssetConfigurationDAI.setSpreadPayFixedValue(max, {from: userOne});
+        //then
+        const result = await iporAssetConfigurationDAI.getSpreadPayFixedValue();
+        assert(max === BigInt(result));
+    });
+
+    it('should NOT set SpreadPayFixedValue when user does not have SPREAD_PAY_FIXED_VALUE_ROLE role', async () => {
+        //given
+        const max = BigInt("999000000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setSpreadPayFixedValue(max, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x83d7135b2dfb3276d590bad8848fb596869644b2f5a647ccbdba6f13e445fb46`
+        );
+    });
 
 });
