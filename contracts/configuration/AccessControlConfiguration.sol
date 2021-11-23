@@ -18,6 +18,7 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
     bytes32 internal constant WARREN_STORAGE_ROLE =
         keccak256("WARREN_STORAGE_ROLE");
     bytes32 internal constant JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
+    bytes32 internal constant MILTON_PUBLICATION_FEE_TRANSFERER_ROLE = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
 
 
     /// @dev Add `root` to the admin role as a member.
@@ -33,5 +34,6 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
         _setRoleAdmin(WARREN_ROLE, ADMIN_ROLE);
         _setRoleAdmin(WARREN_STORAGE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(JOSEPH_ROLE, ADMIN_ROLE);
+        _setRoleAdmin(MILTON_PUBLICATION_FEE_TRANSFERER_ROLE, ADMIN_ROLE);
     }
 }

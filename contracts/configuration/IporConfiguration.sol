@@ -33,7 +33,7 @@ contract IporConfiguration is AccessControlConfiguration(msg.sender), IIporConfi
         return _addresses[MILTON_PUBLICATION_FEE_TRANSFERER];
     }
 
-    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer) external override {
+    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer) external override onlyRole(MILTON_PUBLICATION_FEE_TRANSFERER_ROLE){
         _addresses[MILTON_PUBLICATION_FEE_TRANSFERER] = publicationFeeTransferer;
         emit MiltonPublicationFeeTransfererUpdated(publicationFeeTransferer);
     }

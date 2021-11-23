@@ -527,4 +527,30 @@ contract('IporConfiguration', (accounts) => {
         const shouldNotHasRole = await iporConfiguration.hasRole(role, admin);
         assert(!shouldNotHasRole);
     });
+
+    it('should set Milton Publication Fee Transferer', async () => {
+        //given
+        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+        const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
+        await iporConfiguration.grantRole(role, userOne);
+        //when
+        await iporConfiguration.setMiltonPublicationFeeTransferer(address, {from: userOne});
+        //then
+        const result = await iporConfiguration.getMiltonPublicationFeeTransferer();
+        assert(address === result);
+    });
+
+    it('should NOT set Milton Publication Fee Transferer when user does not have MILTON_PUBLICATION_FEE_TRANSFERER_ROLE role', async () => {
+        //given
+        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+        await testUtils.assertError(
+            //when
+            iporConfiguration.setMiltonPublicationFeeTransferer(address, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xcaf9c92ac95381198cb99b15cf6677f38c77ba44a82d424368980282298f9dc9`
+        );
+    });
+
 });
