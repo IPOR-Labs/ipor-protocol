@@ -95,7 +95,7 @@ services:
     image: io.ipor/nginx-eth-bc:latest
     profiles:
       - ssl-eth-bc
-      - eth-chain-provider
+      - eth-bc-provider
       - all
     restart: always
     ports:
