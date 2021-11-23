@@ -122,7 +122,7 @@ contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), 
         return openingFeePercentage;
     }
 
-    function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyOwner {
+    function setOpeningFeePercentage(uint256 _openingFeePercentage) external override onlyRole(OPENING_FEE_PERCENTAGE_ROLE) {
         require(_openingFeePercentage <= _multiplicator, Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED);
         openingFeePercentage = _openingFeePercentage;
         emit OpeningFeePercentageSet(_openingFeePercentage);

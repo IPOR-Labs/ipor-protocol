@@ -156,10 +156,12 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should NOT set openingFeePercentage', async () => {
         //given
         let openingFeePercentage = BigInt("1010000000000000000");
+        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
+
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage),
+            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, {from: userOne}),
             //then
             'IPOR_24'
         );
@@ -169,9 +171,10 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         let openingFeePercentage = BigInt("150000000000000000");
+        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage);
+        await iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, {from: userOne});
 
         //then
         let actualOpeningFeePercentage = await iporAssetConfigurationDAI.getOpeningFeePercentage();
@@ -179,6 +182,19 @@ contract('IporAssetConfiguration', (accounts) => {
         assert(openingFeePercentage === BigInt(actualOpeningFeePercentage),
             `Incorrect openingFeePercentage actual: ${actualOpeningFeePercentage}, expected: ${openingFeePercentage}`)
 
+    });
+
+    it('should NOT set openingFeePercentage when user does not have OPENING_FEE_PERCENTAGE_ROLE role', async () => {
+        //given
+        let openingFeePercentage = BigInt("150000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, {from: userOne})
+            ,
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xe5f1f8ca5512a616c0bd4bc9709dc97b4fc337caf7a3c160e93904247bd8daab`
+        );
     });
 
     it('should set iporPublicationFeeAmount - case 1', async () => {
