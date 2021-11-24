@@ -5,7 +5,6 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
 import {Errors} from '../Errors.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import "../interfaces/IWarren.sol";
@@ -18,8 +17,7 @@ import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "./AccessControlAssetConfiguration.sol";
 
-//TODO: consider using AccessControll instead Ownable - higher flexibility
-contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), Ownable, IIporAssetConfiguration {
+contract IporAssetConfiguration is AccessControlAssetConfiguration(msg.sender), IIporAssetConfiguration {
 
     address private immutable _asset;
 

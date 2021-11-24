@@ -383,10 +383,9 @@ contract('IporAssetConfiguration', (accounts) => {
             `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
 
     });
-
+// TODO: chcek this
     it('should FAIL when used Timelock Controller, because user not exists on list of proposers', async () => {
         //given
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         const iporPublicationFeeAmount = BigInt("999000000000000000000");
         const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
@@ -410,7 +409,6 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
         //given
-        await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         const iporPublicationFeeAmount = BigInt("999000000000000000000");
         const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();;
 
@@ -426,7 +424,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await time.increase(MINDELAY);
 
-        //when
+        //when todo: PETE check this
         await testUtils.assertError(
             //when
             timelockController.execute(
@@ -478,7 +476,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
     });
 
-    it.only('should use Timelock Controller to revoke ADMIN_ROLE role from admin', async () => {
+    it('should use Timelock Controller to revoke ADMIN_ROLE role from admin', async () => {
         //given
         const iporAssetConfigurationOriginOwner = admin;
         const ADMIN_ROLE = keccak256("ADMIN_ROLE")
@@ -514,7 +512,7 @@ contract('IporAssetConfiguration', (accounts) => {
         assert(!hasRoleAdmin);
     });
 
-    it.only('should use Timelock Controller to grant ADMIN_ROLE role to userOne', async () => {
+    it('should use Timelock Controller to grant ADMIN_ROLE role to userOne', async () => {
         //given
         const ADMIN_ROLE = keccak256("ADMIN_ROLE")
         await iporAssetConfigurationDAI.grantRole(ADMIN_ROLE, timelockController.address);
