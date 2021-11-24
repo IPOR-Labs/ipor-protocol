@@ -109,9 +109,32 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(DerivativesView, MiltonStorage);
     await deployer.link(DerivativeLogic, Milton);
 
+    const IPOR_ASSETS_ROLE = keccak256("IPOR_ASSETS_ROLE");
+    const MILTON_ROLE = keccak256("MILTON_ROLE");
+    const MILTON_STORAGE_ROLE = keccak256("MILTON_STORAGE_ROLE");
+    const MILTON_LP_UTILIZATION_STRATEGY_ROLE = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE");
+    const MILTON_SPREAD_STRATEGY_ROLE = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
+    const IPOR_ASSET_CONFIGURATION_ROLE = keccak256("IPOR_ASSET_CONFIGURATION_ROLE");
+    const WARREN_ROLE = keccak256("WARREN_ROLE");
+    const WARREN_STORAGE_ROLE = keccak256("WARREN_STORAGE_ROLE");
+    const JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
+    const MILTON_PUBLICATION_FEE_TRANSFERER_ROLE = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
+
+
 
     await deployer.deploy(IporConfiguration);
     iporConfiguration = await IporConfiguration.deployed();
+    iporConfiguration.grantRole(IPOR_ASSETS_ROLE, admin);
+    iporConfiguration.grantRole(MILTON_ROLE, admin);
+    iporConfiguration.grantRole(MILTON_STORAGE_ROLE, admin);
+    iporConfiguration.grantRole(MILTON_LP_UTILIZATION_STRATEGY_ROLE, admin);
+    iporConfiguration.grantRole(MILTON_SPREAD_STRATEGY_ROLE, admin);
+    iporConfiguration.grantRole(IPOR_ASSET_CONFIGURATION_ROLE, admin);
+    iporConfiguration.grantRole(WARREN_ROLE, admin);
+    iporConfiguration.grantRole(WARREN_STORAGE_ROLE, admin);
+    iporConfiguration.grantRole(JOSEPH_ROLE, admin);
+    iporConfiguration.grantRole(MILTON_PUBLICATION_FEE_TRANSFERER_ROLE, admin);
+
 
     await deployer.deploy(MiltonFrontendDataProvider, iporConfiguration.address);
 
@@ -172,12 +195,10 @@ module.exports = async function (deployer, _network, addresses) {
 
         await deployer.deploy(IporAssetConfigurationDai, mockedDai.address, ipDaiToken.address);
         iporAssetConfigurationDai = await IporAssetConfigurationDai.deployed();
-        await iporConfiguration.grantRole(keccak256("IPOR_ASSETS_ROLE"), admin);
         await iporConfiguration.addAsset(mockedDai.address);
         await iporConfiguration.addAsset(mockedUsdt.address);
         await iporConfiguration.addAsset(mockedUsdc.address);
 
-        await iporConfiguration.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ROLE"), admin);
         await iporConfiguration.setIporAssetConfiguration(mockedUsdt.address, await iporAssetConfigurationUsdt.address);
         await iporConfiguration.setIporAssetConfiguration(mockedUsdc.address, await iporAssetConfigurationUsdc.address);
         await iporConfiguration.setIporAssetConfiguration(mockedDai.address, await iporAssetConfigurationDai.address);
@@ -204,15 +225,68 @@ module.exports = async function (deployer, _network, addresses) {
             await deployer.deploy(IpToken, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, "IP DAI", "ipDAI");
             ipDaiToken = await IpToken.deployed();
 
+            const INCOME_TAX_PERCENTAGE_ROLE = keccak256("INCOME_TAX_PERCENTAGE_ROLE");
+            const OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE = keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE");
+            const LIQUIDATION_DEPOSIT_AMOUNT_ROLE = keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE");
+            const OPENING_FEE_PERCENTAGE_ROLE = keccak256("OPENING_FEE_PERCENTAGE_ROLE");
+            const IPOR_PUBLICATION_FEE_AMOUNT_ROLE = keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE");
+            const LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE = keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE");
+            const MAX_POSITION_TOTAL_AMOUNT_ROLE = keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE");
+            const SPREAD_PAY_FIXED_VALUE_ROLE = keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
+            const SPREAD_REC_FIXED_VALUE_ROLE = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
+            const COLLATERALIZATION_FACTOR_VALUE_ROLE = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
+            const CHARLIE_TREASURER_ROLE = keccak256("CHARLIE_TREASURER_ROLE");
+            const TREASURE_TREASURER_ROLE = keccak256("TREASURE_TREASURER_ROLE");
+            const ASSET_MANAGEMENT_VAULT_ROLE = keccak256("ASSET_MANAGEMENT_VAULT_ROLE");
+
 
             await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
             iporAssetConfigurationUsdt = await IporAssetConfiguration.deployed();
+            iporAssetConfigurationUsdt.grantRole(INCOME_TAX_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(OPENING_FEE_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(MAX_POSITION_TOTAL_AMOUNT_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(SPREAD_PAY_FIXED_VALUE_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(SPREAD_REC_FIXED_VALUE_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(COLLATERALIZATION_FACTOR_VALUE_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(CHARLIE_TREASURER_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(TREASURE_TREASURER_ROLE, admin);
+            iporAssetConfigurationUsdt.grantRole(ASSET_MANAGEMENT_VAULT_ROLE, admin);
 
             await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
             iporAssetConfigurationUsdc = await IporAssetConfiguration.deployed();
+            iporAssetConfigurationUsdc.grantRole(INCOME_TAX_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(OPENING_FEE_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(MAX_POSITION_TOTAL_AMOUNT_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(SPREAD_PAY_FIXED_VALUE_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(SPREAD_REC_FIXED_VALUE_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(COLLATERALIZATION_FACTOR_VALUE_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(CHARLIE_TREASURER_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(TREASURE_TREASURER_ROLE, admin);
+            iporAssetConfigurationUsdc.grantRole(ASSET_MANAGEMENT_VAULT_ROLE, admin);
 
             await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
             iporAssetConfigurationDai = await IporAssetConfiguration.deployed();
+            iporAssetConfigurationDai.grantRole(INCOME_TAX_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(OPENING_FEE_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(MAX_POSITION_TOTAL_AMOUNT_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(SPREAD_PAY_FIXED_VALUE_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(SPREAD_REC_FIXED_VALUE_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(COLLATERALIZATION_FACTOR_VALUE_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(CHARLIE_TREASURER_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(TREASURE_TREASURER_ROLE, admin);
+            iporAssetConfigurationDai.grantRole(ASSET_MANAGEMENT_VAULT_ROLE, admin);
 
             await iporConfiguration.addAsset(mockedDai.address);
             await iporConfiguration.addAsset(mockedUsdt.address);
