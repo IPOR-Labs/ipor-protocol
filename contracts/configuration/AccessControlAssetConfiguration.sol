@@ -4,29 +4,45 @@ pragma solidity >=0.8.4 <0.9.0;
 import "./AccessControlRevoke.sol";
 
 abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
-    bytes32 internal constant INCOME_TAX_PERCENTAGE_ROLE = keccak256("INCOME_TAX_PERCENTAGE_ROLE");
-    bytes32 internal constant OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE = keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE");
-    bytes32 internal constant LIQUIDATION_DEPOSIT_AMOUNT_ROLE = keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE");
-    bytes32 internal constant OPENING_FEE_PERCENTAGE_ROLE = keccak256("OPENING_FEE_PERCENTAGE_ROLE");
-    bytes32 internal constant IPOR_PUBLICATION_FEE_AMOUNT_ROLE = keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE");
-    bytes32 internal constant LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE = keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE");
-    bytes32 internal constant MAX_POSITION_TOTAL_AMOUNT_ROLE = keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE");
-    bytes32 internal constant SPREAD_PAY_FIXED_VALUE_ROLE = keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
-    bytes32 internal constant SPREAD_REC_FIXED_VALUE_ROLE = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
-    bytes32 internal constant COLLATERALIZATION_FACTOR_VALUE_ROLE = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
-    bytes32 internal constant CHARLIE_TREASURER_ROLE = keccak256("CHARLIE_TREASURER_ROLE");
-    bytes32 internal constant TREASURE_TREASURER_ROLE = keccak256("TREASURE_TREASURER_ROLE");
-    bytes32 internal constant ASSET_MANAGEMENT_VAULT_ROLE = keccak256("ASSET_MANAGEMENT_VAULT_ROLE");
+    bytes32 internal constant INCOME_TAX_PERCENTAGE_ROLE =
+        keccak256("INCOME_TAX_PERCENTAGE_ROLE");
+    bytes32 internal constant OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE =
+        keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE");
+    bytes32 internal constant LIQUIDATION_DEPOSIT_AMOUNT_ROLE =
+        keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE");
+    bytes32 internal constant OPENING_FEE_PERCENTAGE_ROLE =
+        keccak256("OPENING_FEE_PERCENTAGE_ROLE");
+    bytes32 internal constant IPOR_PUBLICATION_FEE_AMOUNT_ROLE =
+        keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE");
+    bytes32 internal constant LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE =
+        keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE");
+    bytes32 internal constant MAX_POSITION_TOTAL_AMOUNT_ROLE =
+        keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE");
+    bytes32 internal constant SPREAD_PAY_FIXED_VALUE_ROLE =
+        keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
+    bytes32 internal constant SPREAD_REC_FIXED_VALUE_ROLE =
+        keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
+    bytes32 internal constant COLLATERALIZATION_FACTOR_VALUE_ROLE =
+        keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
+    bytes32 internal constant CHARLIE_TREASURER_ROLE =
+        keccak256("CHARLIE_TREASURER_ROLE");
+    bytes32 internal constant TREASURE_TREASURER_ROLE =
+        keccak256("TREASURE_TREASURER_ROLE");
+    bytes32 internal constant ASSET_MANAGEMENT_VAULT_ROLE =
+        keccak256("ASSET_MANAGEMENT_VAULT_ROLE");
 
     constructor(address root) {
         _setupRole(ADMIN_ROLE, root);
         _setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
         _setRoleAdmin(INCOME_TAX_PERCENTAGE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, ADMIN_ROLE);            
+        _setRoleAdmin(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, ADMIN_ROLE);
         _setRoleAdmin(OPENING_FEE_PERCENTAGE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(IPOR_PUBLICATION_FEE_AMOUNT_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE, ADMIN_ROLE);
+        _setRoleAdmin(
+            LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE,
+            ADMIN_ROLE
+        );
         _setRoleAdmin(MAX_POSITION_TOTAL_AMOUNT_ROLE, ADMIN_ROLE);
         _setRoleAdmin(SPREAD_PAY_FIXED_VALUE_ROLE, ADMIN_ROLE);
         _setRoleAdmin(SPREAD_REC_FIXED_VALUE_ROLE, ADMIN_ROLE);
@@ -34,6 +50,5 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(CHARLIE_TREASURER_ROLE, ADMIN_ROLE);
         _setRoleAdmin(TREASURE_TREASURER_ROLE, ADMIN_ROLE);
         _setRoleAdmin(ASSET_MANAGEMENT_VAULT_ROLE, ADMIN_ROLE);
-
     }
 }

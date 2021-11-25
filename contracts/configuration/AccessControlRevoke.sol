@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 abstract contract AccessControlRevoke is AccessControl {
     bytes32 internal constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
-        function revokeRole(bytes32 role, address account)
+    function revokeRole(bytes32 role, address account)
         public
         virtual
         override
@@ -15,7 +15,10 @@ abstract contract AccessControlRevoke is AccessControl {
         if (role != ADMIN_ROLE) {
             super.revokeRole(role, account);
         } else {
-            require(_msgSender()!= account, 'ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE');
+            require(
+                _msgSender() != account,
+                "ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE"
+            );
             super.revokeRole(role, account);
         }
     }
