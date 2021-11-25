@@ -38,8 +38,8 @@ contract Warren is Ownable, Pausable, IWarren {
         _;
     }
 
-    function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
+        _iporConfiguration = iporConfiguration;
     }
 
     function pause() external override onlyOwner {
@@ -51,11 +51,12 @@ contract Warren is Ownable, Pausable, IWarren {
     }
 
     function getIndex(address asset) external view override
-    returns (uint256 indexValue, uint256 ibtPrice, uint256 blockTimestamp) {
+    returns (uint256 indexValue, uint256 ibtPrice, uint256 exponentialMovingAverage, uint256 blockTimestamp) {
         DataTypes.IPOR memory iporIndex = IWarrenStorage(_iporConfiguration.getWarrenStorage()).getIndex(asset);
         return (
         indexValue = iporIndex.indexValue,
         ibtPrice = AmmMath.division(iporIndex.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
+        exponentialMovingAverage = iporIndex.exponentialMovingAverage,
         blockTimestamp = iporIndex.blockTimestamp
         );
     }

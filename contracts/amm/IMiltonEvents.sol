@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.10;
 
 import {DataTypes} from "../libraries/types/DataTypes.sol";
+
 
 interface IMiltonEvents {
 

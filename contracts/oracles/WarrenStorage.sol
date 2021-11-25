@@ -19,7 +19,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
-    event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 date);
+    event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 exponentialMovingAverage, uint256 date);
 
     /// @notice event emitted when IPOR Index Updater is added by Admin
     event IporIndexUpdaterAdd(address updater);
@@ -33,13 +33,14 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice list of assets used in indexes mapping
     address[] public assets;
 
+    //TODO: [gas-optimisation] move to mapping(address => uint1) where in value = 1 then is updater if value = 0 then is not updater
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
 
     IIporConfiguration internal _iporConfiguration;
 
-    function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
+        _iporConfiguration = iporConfiguration;
     }
 
     function getAssets() external override view returns (address[] memory) {
@@ -53,8 +54,8 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) external override onlyUpdater {
         require(_assets.length == indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
         for (uint256 i = 0; i < _assets.length; i++) {
-            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(_assets[i]));
-            _updateIndex(_assets[i], indexValues[i], updateTimestamp, iporAssetConfiguration.getMultiplicator());
+            require(_iporConfiguration.assetSupported(_assets[i]) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
+            _updateIndex(_assets[i], indexValues[i], updateTimestamp);
         }
     }
 
@@ -90,7 +91,9 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
     }
 
-    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp, uint256 multiplicator) internal onlyUpdater {
+    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal onlyUpdater {
+
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 
         bool assetExists = false;
         for (uint256 i = 0; i < assets.length; i++) {
@@ -100,16 +103,20 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
 
         uint256 newQuasiIbtPrice;
+        uint256 newExponentialMovingAverage;
 
         if (assetExists == false) {
-            //TODO: consider asset support configured in IporConfiguration
             assets.push(asset);
-            newQuasiIbtPrice = multiplicator * Constants.YEAR_IN_SECONDS;
+            newQuasiIbtPrice = iporAssetConfiguration.getMultiplicator() * Constants.YEAR_IN_SECONDS;
+            newExponentialMovingAverage = indexValue;
         } else {
             newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(updateTimestamp);
+            newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
+                indexes[asset].exponentialMovingAverage, indexValue,
+                iporAssetConfiguration.getDecayFactorValue(), iporAssetConfiguration.getMultiplicator());
         }
-        indexes[asset] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
-        emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, updateTimestamp);
+        indexes[asset] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, newExponentialMovingAverage, updateTimestamp);
+        emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, newExponentialMovingAverage, updateTimestamp);
     }
 
     modifier onlyUpdater() {

@@ -31,8 +31,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivatives public derivatives;
 
-    function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
+        _iporConfiguration = iporConfiguration;
     }
 
     //@notice add asset address to MiltonStorage structures

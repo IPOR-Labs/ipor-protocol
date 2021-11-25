@@ -31,8 +31,8 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         _decimals = ERC20(underlyingAsset).decimals();
     }
 
-    function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
+        _iporConfiguration = iporConfiguration;
     }
 
     function decimals() public view override returns (uint8) {

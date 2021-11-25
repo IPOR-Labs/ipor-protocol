@@ -16,7 +16,7 @@ contract IporLogicTest {
         uint256 initialTimestamp = block.timestamp;
         uint256 initialQuasiIbtPrice = Constants.D18 * Constants.YEAR_IN_SECONDS;
 
-        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
+        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000000000000000, initialQuasiIbtPrice, 30000000000000000, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
         uint256 expectedIbtPrice = 1002054794520547945;
@@ -34,7 +34,7 @@ contract IporLogicTest {
         uint256 initialTimestamp = block.timestamp;
         uint256 initialQuasiIbtPrice = Constants.D6 * Constants.YEAR_IN_SECONDS;
 
-        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000, initialQuasiIbtPrice, initialTimestamp);
+        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000, initialQuasiIbtPrice, 30000, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
         uint256 expectedIbtPrice = 1002055;
@@ -53,7 +53,7 @@ contract IporLogicTest {
         //given
         uint256 initialTimestamp = block.timestamp;
         uint256 initialQuasiIbtPrice = Constants.D18 * Constants.YEAR_IN_SECONDS;
-        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000000000000000, initialQuasiIbtPrice, initialTimestamp);
+        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000000000000000, initialQuasiIbtPrice, 30000000000000000, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
 
@@ -79,7 +79,7 @@ contract IporLogicTest {
         //given
         uint256 initialTimestamp = block.timestamp;
         uint256 initialQuasiIbtPrice = Constants.D6 * Constants.YEAR_IN_SECONDS;
-        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000, initialQuasiIbtPrice, initialTimestamp);
+        DataTypes.IPOR memory ipor = DataTypes.IPOR(msg.sender, 30000, initialQuasiIbtPrice, 30000, initialTimestamp);
 
         uint256 days25 = 60 * 60 * 24 * 25;
 
@@ -97,6 +97,25 @@ contract IporLogicTest {
 
         //then
         Assert.equal(actualIbtPrice, expectedIbtPrice, 'Incorrect IBT Price');
+
+    }
+
+
+    function testCalculateExponentialMovingAverageTwoCalculationsDecimals18() public {
+
+        //given
+        uint256 exponentialMovingAverage = 30000000000000000;
+        uint256 indexValue = 500000000000000000;
+        uint256 decayFactor = 1e18;
+        uint256 multiplicator = 1e18;
+        uint256 expectedExponentialMovingAverage = 1130000000;
+
+        //when
+        uint256 actualExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
+            exponentialMovingAverage, indexValue, decayFactor, multiplicator);
+
+        //then
+        Assert.equal(actualExponentialMovingAverage, expectedExponentialMovingAverage, 'Incorrect Exponential Moving Average');
 
     }
 }

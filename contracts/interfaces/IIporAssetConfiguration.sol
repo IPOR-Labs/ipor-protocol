@@ -24,6 +24,8 @@ interface IIporAssetConfiguration {
     event CharlieTreasurerUpdated(address asset, address indexed newCharlieTreasurer);
     event TreasureTreasurerUpdated(address asset, address indexed newTreasureTreasurer);
 
+    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);
+
     function getIncomeTaxPercentage() external view returns (uint256);
 
     function setIncomeTaxPercentage(uint256 incomeTaxPercentage) external;
@@ -85,5 +87,9 @@ interface IIporAssetConfiguration {
     function getAssetManagementVault() external view returns (address);
 
     function setAssetManagementVault(address newAssetManagementVaultAddress) external;
+
+    function getDecayFactorValue() external view returns (uint256);
+
+    function setDecayFactorValue(uint256 newDecayFactorValue) external;
 
 }

@@ -47,5 +47,6 @@ library Errors {
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = 'IPOR_45'; //Liquidity Pool balance is equal 0
     string public constant MILTON_CALLER_NOT_JOSEPH = 'IPOR_46'; // 'The caller must be the Ipor Liquidity Pool - Joseph'
     string public constant JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW = 'IPOR_47'; // 'Summary SOAP and Miltion Liquidity Pool Balance is less than zero. SOAP can be negative, Sum of SOAM and Liquidity Pool Balance can be negative, but this is undesirable.
+    string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = 'IPOR_48'; // 'Decay factor cannot be higher than 1 * multiplicator'
 
 }

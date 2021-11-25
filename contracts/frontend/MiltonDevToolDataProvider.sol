@@ -11,8 +11,8 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 
     IIporConfiguration public immutable ADDRESSES_MANAGER;
 
-    constructor(IIporConfiguration addressesManager) {
-        ADDRESSES_MANAGER = addressesManager;
+    constructor(IIporConfiguration iporConfiguration) {
+        ADDRESSES_MANAGER = iporConfiguration;
     }
 
     function getMiltonTotalSupply(address asset) external override view returns (uint256) {

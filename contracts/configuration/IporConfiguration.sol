@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.10;
 
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {Errors} from '../Errors.sol';
+import {Errors} from "../Errors.sol";
+
 
 contract IporConfiguration is Ownable, IIporConfiguration {
 
     //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC
-    address [] public assets;
+    address[] public assets;
 
     //@notice value - flag 1 - is supported, 0 - is not supported
     mapping(address => uint256) public supportedAssets;
@@ -29,7 +30,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
 
     function getMiltonPublicationFeeTransferer() external view override returns (address) {
         return _addresses[MILTON_PUBLICATION_FEE_TRANSFERER];
-    }
+	}
 
     function setMiltonPublicationFeeTransferer(address publicationFeeTransferer) external override {
         _addresses[MILTON_PUBLICATION_FEE_TRANSFERER] = publicationFeeTransferer;

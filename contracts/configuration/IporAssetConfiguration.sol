@@ -6,8 +6,8 @@ import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import { Errors } from "../Errors.sol";
-import { DataTypes } from "../libraries/types/DataTypes.sol";
+import {Errors} from "../Errors.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 import "../amm/IMiltonEvents.sol";
@@ -48,6 +48,9 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     //@notice max total amount used when opening position
     uint256 private maxPositionTotalAmount;
 
+    //@notice Decay factor, value between 0..1, indicator used in spread calculation
+    uint256 private decayFactorValue;
+
     //TODO: spread from configuration will be deleted, spread will be calculated in runtime
     uint256 private spreadPayFixedValue;
     uint256 private spreadRecFixedValue;
@@ -61,7 +64,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     constructor(address asset, address ipToken) {
         _asset = asset;
         _ipToken = ipToken;
-        uint256 multiplicator = 10**ERC20(asset).decimals();
+        uint256 multiplicator = 10 ** ERC20(asset).decimals();
         _multiplicator = multiplicator;
         _maxSlippagePercentage = 100 * multiplicator;
 
@@ -78,8 +81,8 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * multiplicator;
         liquidityPoolMaxUtilizationPercentage =
-            8 *
-            AmmMath.division(multiplicator, 10);
+        8 *
+        AmmMath.division(multiplicator, 10);
         maxPositionTotalAmount = 100000 * multiplicator;
 
         minCollateralizationFactorValue = 10 * multiplicator;
@@ -87,6 +90,8 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
         spreadPayFixedValue = AmmMath.division(multiplicator, 100);
         spreadRecFixedValue = AmmMath.division(multiplicator, 100);
+
+        decayFactorValue = AmmMath.division(multiplicator, 10);
     }
 
     function getIncomeTaxPercentage() external view override returns (uint256) {
@@ -94,9 +99,9 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage)
-        external
-        override
-        onlyOwner
+    external
+    override
+    onlyOwner
     {
         require(
             _incomeTaxPercentage <= _multiplicator,
@@ -107,10 +112,10 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getOpeningFeeForTreasuryPercentage()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return openingFeeForTreasuryPercentage;
     }
@@ -129,36 +134,36 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getLiquidationDepositAmount()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return liquidationDepositAmount;
     }
 
     function setLiquidationDepositAmount(uint256 _liquidationDepositAmount)
-        external
-        override
-        onlyOwner
+    external
+    override
+    onlyOwner
     {
         liquidationDepositAmount = _liquidationDepositAmount;
         emit LiquidationDepositAmountSet(_liquidationDepositAmount);
     }
 
     function getOpeningFeePercentage()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return openingFeePercentage;
     }
 
     function setOpeningFeePercentage(uint256 _openingFeePercentage)
-        external
-        override
-        onlyOwner
+    external
+    override
+    onlyOwner
     {
         require(
             _openingFeePercentage <= _multiplicator,
@@ -169,28 +174,28 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getIporPublicationFeeAmount()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return iporPublicationFeeAmount;
     }
 
     function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount)
-        external
-        override
-        onlyOwner
+    external
+    override
+    onlyOwner
     {
         iporPublicationFeeAmount = _iporPublicationFeeAmount;
         emit IporPublicationFeeAmountSet(_iporPublicationFeeAmount);
     }
 
     function getLiquidityPoolMaxUtilizationPercentage()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return liquidityPoolMaxUtilizationPercentage;
     }
@@ -205,18 +210,18 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getMaxPositionTotalAmount()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return maxPositionTotalAmount;
     }
 
     function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount)
-        external
-        override
-        onlyOwner
+    external
+    override
+    onlyOwner
     {
         maxPositionTotalAmount = _maxPositionTotalAmount;
         emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
@@ -239,10 +244,10 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getMaxCollateralizationFactorValue()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return maxCollateralizationFactorValue;
     }
@@ -257,10 +262,10 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getMinCollateralizationFactorValue()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return minCollateralizationFactorValue;
     }
@@ -279,10 +284,10 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getMaxSlippagePercentage()
-        external
-        view
-        override
-        returns (uint256)
+    external
+    view
+    override
+    returns (uint256)
     {
         return _maxSlippagePercentage;
     }
@@ -292,9 +297,9 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function setCharlieTreasurer(address newCharlieTreasurer)
-        external
-        override
-        onlyOwner
+    external
+    override
+    onlyOwner
     {
         charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
@@ -305,9 +310,9 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function setTreasureTreasurer(address newTreasureTreasurer)
-        external
-        override
-        onlyOwner
+    external
+    override
+    onlyOwner
     {
         treasureTreasurer = newTreasureTreasurer;
         emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
@@ -318,42 +323,48 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     }
 
     function getAssetManagementVault()
-        external
-        view
-        override
-        returns (address)
+    external
+    view
+    override
+    returns (address)
     {
         return assetManagementVault;
     }
 
-    function setAssetManagementVault(address newAssetManagementVaultAddress)
-        external
-        override
-        onlyOwner
-    {
+    function setAssetManagementVault(address newAssetManagementVaultAddress) external override onlyOwner {
         assetManagementVault = newAssetManagementVaultAddress;
         emit AssetManagementVaultUpdated(
             _asset,
             newAssetManagementVaultAddress
         );
     }
+
+    function getDecayFactorValue() external view override returns (uint256) {
+        return decayFactorValue;
+    }
+
+    function setDecayFactorValue(uint256 newDecayFactorValue) external override onlyOwner {
+        require(newDecayFactorValue <= _multiplicator, Errors.CONFIG_DECAY_FACTOR_TOO_HIGH);
+        decayFactorValue = newDecayFactorValue;
+        emit DecayFactorValueUpdated(_asset, newDecayFactorValue);
+    }
 }
 
 //TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
 contract IporAssetConfigurationUsdt is IporAssetConfiguration {
     constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
+    IporAssetConfiguration(asset, ipToken)
     {}
 }
 
 contract IporAssetConfigurationUsdc is IporAssetConfiguration {
     constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
+    IporAssetConfiguration(asset, ipToken)
     {}
 }
 
 contract IporAssetConfigurationDai is IporAssetConfiguration {
     constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
+    IporAssetConfiguration(asset, ipToken)
     {}
 }

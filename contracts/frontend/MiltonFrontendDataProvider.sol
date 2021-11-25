@@ -12,22 +12,22 @@ import "../amm/MiltonStorage.sol";
 
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
-    IIporConfiguration public immutable addressesManager;
+    IIporConfiguration public immutable iporConfiguration;
 
     constructor(IIporConfiguration _iporConfiguration) {
-        addressesManager = _iporConfiguration;
+        iporConfiguration = _iporConfiguration;
     }
 
     function getTotalOutstandingNotional(address asset) external override view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional) {
-        IMiltonStorage miltonStorage = IMiltonStorage(addressesManager.getMiltonStorage());
+        IMiltonStorage miltonStorage = IMiltonStorage(iporConfiguration.getMiltonStorage());
         (payFixedTotalNotional, recFixedTotalNotional) = miltonStorage.getTotalOutstandingNotional(asset);
     }
 
     function getMyPositions() external override view returns (IporDerivativeFront[] memory items) {
-        IMiltonStorage miltonStorage = IMiltonStorage(addressesManager.getMiltonStorage());
+        IMiltonStorage miltonStorage = IMiltonStorage(iporConfiguration.getMiltonStorage());
         uint256[] memory userDerivativesIds = miltonStorage.getUserDerivativeIds(msg.sender);
         IporDerivativeFront[] memory iporDerivatives = new IporDerivativeFront[](userDerivativesIds.length);
-        IMilton milton = IMilton(addressesManager.getMilton());
+        IMilton milton = IMilton(iporConfiguration.getMilton());
         for (uint256 i = 0; i < userDerivativesIds.length; i++) {
             DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage.getDerivativeItem(userDerivativesIds[i]);
             iporDerivatives[i] = IporDerivativeFront(
@@ -50,14 +50,14 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
     }
 
     function getConfiguration() external override view returns (IporAssetConfigurationFront[] memory) {
-        address[] memory assets = addressesManager.getAssets();
+        address[] memory assets = iporConfiguration.getAssets();
         IporAssetConfigurationFront[] memory iporAssetConfigurationsFront = new IporAssetConfigurationFront[](assets.length);
 
-        IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(addressesManager.getMiltonSpreadStrategy());
+        IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(iporConfiguration.getMiltonSpreadStrategy());
 
         for (uint256 i = 0; i < assets.length; i++) {
             (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = spreadStrategy.calculateSpread(assets[i], block.timestamp);
-            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(addressesManager.getIporAssetConfiguration(assets[i]));
+            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(iporConfiguration.getIporAssetConfiguration(assets[i]));
 
             iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
                 assets[i],

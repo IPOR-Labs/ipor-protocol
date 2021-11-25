@@ -52,4 +52,18 @@ contract('IpToken', (accounts) => {
         });
         await data.iporConfiguration.setJoseph(data.joseph.address);
     });
+
+    it('should contain 18 decimals', async () => {
+        //given
+        await data.iporConfiguration.setJoseph(admin);
+        const expectedDecimals = BigInt("18");
+        //when
+        let actualDecimals = await testData.ipTokenDai.decimals({from: admin})
+
+        //then
+        assert(expectedDecimals === actualDecimals,
+            `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`);
+
+        await data.iporConfiguration.setJoseph(data.joseph.address);
+    });
 });

@@ -14,8 +14,8 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
 
     IIporConfiguration internal _iporConfiguration;
 
-    function initialize(IIporConfiguration addressesManager) public {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public {
+        _iporConfiguration = iporConfiguration;
     }
 
     function calculateSpread(address asset, uint256 calculateTimestamp) external override view returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) {

@@ -222,7 +222,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should get initial openingFeePercentage', async () => {
         //given
-        let expectedOpeningFeePercentage = BigInt("10000000000000000");
+        let expectedOpeningFeePercentage = BigInt("300000000000000");
 
         //when
         let actualOpeningFeePercentage = await iporAssetConfigurationDAI.getOpeningFeePercentage();
@@ -332,7 +332,8 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         await iporAssetConfigurationDAI.transferOwnership(timelockController.address);
         let iporPublicationFeeAmount = BigInt("999000000000000000000");
-        let calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();;
+        let calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+        ;
 
         await timelockController.schedule(
             iporAssetConfigurationDAI.address,
@@ -488,6 +489,32 @@ contract('IporAssetConfiguration', (accounts) => {
 
         assert(address === actualAddress,
             `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`)
+    });
+
+    it('should set decay factor value', async () => {
+        //given
+        let decayFactorValue = testUtils.TC_MULTIPLICATOR_18DEC;
+
+        //when
+        await iporAssetConfigurationDAI.setDecayFactorValue(decayFactorValue);
+
+        //then
+        let actualDecayFactorValue = BigInt(await iporAssetConfigurationDAI.getDecayFactorValue());
+
+        assert(decayFactorValue === actualDecayFactorValue,
+            `Incorrect  decay factor value for asset DAI, actual: ${actualDecayFactorValue}, expected: ${decayFactorValue}`)
+    });
+
+    it('should NOT set decay factor value, decay factor too high', async () => {
+        //given
+        let decayFactorValue = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setDecayFactorValue(decayFactorValue),
+            //then
+            'IPOR_48'
+        );
     });
 
 });

@@ -9,7 +9,8 @@ interface IWarren {
 
     function unpause() external;
 
-    function getIndex(address asset) external view returns (uint256 value, uint256 ibtPrice, uint256 date);
+    function getIndex(address asset) external view returns (
+        uint256 value, uint256 ibtPrice, uint256 exponentialMovingAverage, uint256 date);
 
     function updateIndex(address asset, uint256 indexValue) external;
 

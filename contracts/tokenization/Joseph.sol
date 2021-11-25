@@ -24,8 +24,8 @@ contract Joseph is Ownable, IJoseph {
 
     IIporConfiguration internal _iporConfiguration;
 
-    function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
+        _iporConfiguration = iporConfiguration;
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount) external override {

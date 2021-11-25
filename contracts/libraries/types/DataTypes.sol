@@ -54,6 +54,8 @@ library DataTypes {
         uint256 indexValue;
         //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds
         uint256 quasiIbtPrice;
+        //@notice exponential moving average - required for calculating SPREAD in Milton
+        uint256 exponentialMovingAverage;
         //@notice block timestamp
         uint256 blockTimestamp;
     }

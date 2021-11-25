@@ -51,8 +51,8 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
         _;
     }
 
-    function initialize(IIporConfiguration addressesManager) public onlyOwner {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
+        _iporConfiguration = iporConfiguration;
     }
 
     function pause() external override onlyOwner {
@@ -266,7 +266,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
     function _calculateDerivativeIndicators(uint256 calculateTimestamp, address asset, uint8 direction, uint256 notionalAmount, uint256 multiplicator)
     internal view returns (DataTypes.IporDerivativeIndicator memory indicator) {
         IWarren warren = IWarren(_iporConfiguration.getWarren());
-        (uint256 indexValue, ,) = warren.getIndex(asset);
+        (uint256 indexValue, , ,) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(asset, calculateTimestamp);
         require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
         (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue) = _calculateSpread(asset, block.timestamp);

@@ -15,8 +15,8 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
 
     IIporConfiguration internal _iporConfiguration;
 
-    function initialize(IIporConfiguration addressesManager) public {
-        _iporConfiguration = addressesManager;
+    function initialize(IIporConfiguration iporConfiguration) public {
+        _iporConfiguration = iporConfiguration;
     }
 
     function calculateUtilization(address asset, uint256 deposit, uint256 openingFee, uint256 multiplicator) external override view returns (uint256) {

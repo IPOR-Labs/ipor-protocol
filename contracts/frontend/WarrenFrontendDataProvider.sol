@@ -12,8 +12,8 @@ contract WarrenFrontendDataProvider is IWarrenFrontendDataProvider {
 
     IIporConfiguration public immutable ADDRESSES_MANAGER;
 
-    constructor(IIporConfiguration addressesManager) {
-        ADDRESSES_MANAGER = addressesManager;
+    constructor(IIporConfiguration iporConfiguration) {
+        ADDRESSES_MANAGER = iporConfiguration;
     }
 
     function getIndexes() external override view returns (IporFront[] memory) {
