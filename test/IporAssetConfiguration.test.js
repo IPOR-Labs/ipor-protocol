@@ -1,6 +1,6 @@
 const testUtils = require("./TestUtils.js");
-const {ZERO_BYTES32} = require("@openzeppelin/test-helpers/src/constants");
-const {time} = require("@openzeppelin/test-helpers");
+const { ZERO_BYTES32 } = require("@openzeppelin/test-helpers/src/constants");
+const { time } = require("@openzeppelin/test-helpers");
 const keccak256 = require("keccak256");
 
 const DaiMockedToken = artifacts.require('DaiMockedToken');
@@ -45,7 +45,7 @@ contract('IporAssetConfiguration', (accounts) => {
         iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage, {from: userOne});        
+        await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage, { from: userOne });
         const actualOpeningFeeForTreasuryPercentage = await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
 
         //then
@@ -60,7 +60,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage, {from: userOne}),
+            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage, { from: userOne }),
+
             //then
             'IPOR_24'
         );
@@ -72,7 +73,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage, {from: userOne}),
+            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(openingFeeForTreasuryPercentage, { from: userOne }),
+
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x6d0de9008651a921e7ec84f14cdce94213af6041f456fcfc8c7e6fa897beab0f`
         );
@@ -85,13 +87,13 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, {from: userOne}),
+            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, { from: userOne }),
             //then
             'IPOR_24'
         );
     });
 
-    
+
 
     it('should set incomeTaxPercentage - case 1', async () => {
         //given
@@ -100,7 +102,7 @@ contract('IporAssetConfiguration', (accounts) => {
         iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, {from: userOne});
+        await iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, { from: userOne });
 
         //then
         const actualIncomeTaxPercentage = await iporAssetConfigurationDAI.getIncomeTaxPercentage();
@@ -116,8 +118,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, { from: userOne }),
+
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x1d60df71b356d37d065129ba494c44450d203a323cc11390563281105e480394`
         );
@@ -125,16 +127,14 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should set liquidationDepositAmount - case 1', async () => {
         //given
-
         const liquidationDepositAmount = BigInt("50000000000000000000");
         iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount, {from: userOne});
+        await iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount, { from: userOne });
 
         //then
         const actualLiquidationDepositAmount = await iporAssetConfigurationDAI.getLiquidationDepositAmount();
-
         assert(liquidationDepositAmount === BigInt(actualLiquidationDepositAmount),
             `Incorrect liquidationDepositAmount actual: ${actualLiquidationDepositAmount}, expected: ${liquidationDepositAmount}`)
 
@@ -146,8 +146,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount, { from: userOne }),
+
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xe5d97cc7ebc77e4491947e53b4b684cfaea4b3d5ec8734ba48d1fc4d2d54a42e`
         );
@@ -158,10 +158,10 @@ contract('IporAssetConfiguration', (accounts) => {
         const openingFeePercentage = BigInt("1010000000000000000");
         iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
 
-
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, {from: userOne}),
+            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, { from: userOne }),
+
             //then
             'IPOR_24'
         );
@@ -169,16 +169,14 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should set openingFeePercentage - case 1', async () => {
         //given
-
         const openingFeePercentage = BigInt("150000000000000000");
         iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, {from: userOne});
+        await iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, { from: userOne });
 
         //then
         const actualOpeningFeePercentage = await iporAssetConfigurationDAI.getOpeningFeePercentage();
-
         assert(openingFeePercentage === BigInt(actualOpeningFeePercentage),
             `Incorrect openingFeePercentage actual: ${actualOpeningFeePercentage}, expected: ${openingFeePercentage}`)
 
@@ -190,8 +188,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, { from: userOne }),
+
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xe5f1f8ca5512a616c0bd4bc9709dc97b4fc337caf7a3c160e93904247bd8daab`
         );
@@ -204,14 +202,12 @@ contract('IporAssetConfiguration', (accounts) => {
         iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, {from: userOne});
+        await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, { from: userOne });
 
         //then
         const actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
-
         assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
             `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
-
     });
 
     it('should set liquidityPoolMaxUtilizationPercentage higher than 100%', async () => {
@@ -219,16 +215,13 @@ contract('IporAssetConfiguration', (accounts) => {
         const liquidityPoolMaxUtilizationPercentage = BigInt("99000000000000000000");
         await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), userOne);
 
-
         //when
-        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, {from: userOne});
+        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, { from: userOne });
 
         //then
         const actualLPMaxUtilizationPercentage = await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
-
         assert(liquidityPoolMaxUtilizationPercentage === BigInt(actualLPMaxUtilizationPercentage),
             `Incorrect LiquidityPoolMaxUtilizationPercentage actual: ${actualLPMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
-
     });
 
 
@@ -251,13 +244,11 @@ contract('IporAssetConfiguration', (accounts) => {
         const liquidityPoolMaxUtilizationPercentage = BigInt("90000000000000000");
         await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), userOne);
 
-
         //when
-        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, {from: userOne});
+        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, { from: userOne });
 
         //then
         const actualLiquidityPoolMaxUtilizationPercentage = await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
-
         assert(liquidityPoolMaxUtilizationPercentage === BigInt(actualLiquidityPoolMaxUtilizationPercentage),
             `Incorrect liquidityPoolMaxUtilizationPercentage actual: ${actualLiquidityPoolMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`)
 
@@ -269,8 +260,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(liquidityPoolMaxUtilizationPercentage, { from: userOne }),
+
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x53e7faacb3381a7b6b7185a9fc96bd9430da87ec709e6d3e0f009ed7c71e45ef`
         );
@@ -354,6 +345,7 @@ contract('IporAssetConfiguration', (accounts) => {
         const iporPublicationFeeAmount = BigInt("999000000000000000000");
         const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
         iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), timelockController.address);
+        
         //when
         await timelockController.schedule(
             iporAssetConfigurationDAI.address,
@@ -362,7 +354,7 @@ contract('IporAssetConfiguration', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -373,23 +365,21 @@ contract('IporAssetConfiguration', (accounts) => {
             calldata,
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            {from: userTwo}
+            { from: userTwo }
         );
 
         //then
         const actualIporPublicationFeeAmount = await iporAssetConfigurationDAI.getIporPublicationFeeAmount();
-
         assert(iporPublicationFeeAmount === BigInt(actualIporPublicationFeeAmount),
             `Incorrect iporPublicationFeeAmount actual: ${actualIporPublicationFeeAmount}, expected: ${iporPublicationFeeAmount}`)
 
     });
-// TODO: chcek this
-    it('should FAIL when used Timelock Controller, because user not exists on list of proposers', async () => {
+    // TODO: chcek this
+    it('should FAIL when used Timelock Controller, when user not exists on list of proposers', async () => {
         //given
         const iporPublicationFeeAmount = BigInt("999000000000000000000");
         const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
 
-        //when
         await testUtils.assertError(
             //when
             timelockController.schedule(
@@ -399,15 +389,16 @@ contract('IporAssetConfiguration', (accounts) => {
                 ZERO_BYTES32,
                 "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
                 MINDELAY,
-                {from: userThree}
+                { from: userThree }
             ),
+
             //then
             'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1'
         );
 
     });
 
-    it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
+    it('should FAIL when used Timelock Controller, when user not exists on list of executors', async () => {
         //given
         const iporPublicationFeeAmount = BigInt("999000000000000000000");
         const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();;
@@ -419,42 +410,7 @@ contract('IporAssetConfiguration', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
-        );
-
-        await time.increase(MINDELAY);
-
-        //when todo: PETE check this
-        await testUtils.assertError(
-            //when
-            timelockController.execute(
-                iporAssetConfigurationDAI.address,
-                "0x0",
-                calldata,
-                ZERO_BYTES32,
-                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-                {from: userThree}
-            ),
-            //then
-            'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63'
-        );
-
-    });
-
-    it('should FAIL when used Timelock Controller, because Timelock is not an Owner of IporAssetConfiguration smart contract', async () => {
-
-        //given
-        const iporPublicationFeeAmount = BigInt("999000000000000000000");
-        const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
-
-        await timelockController.schedule(
-            iporAssetConfigurationDAI.address,
-            "0x0",
-            calldata,
-            ZERO_BYTES32,
-            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -468,8 +424,45 @@ contract('IporAssetConfiguration', (accounts) => {
                 calldata,
                 ZERO_BYTES32,
                 "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-                {from: userTwo}
+                { from: userThree }
             ),
+            //then
+            'account 0x821aea9a577a9b44299b9c15c88cf3087f3b5544 is missing role 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63'
+        );
+
+    });
+
+    it('should FAIL when used Timelock Controller, when Timelock is not an Owner of IporAssetConfiguration smart contract', async () => {
+
+        //given
+        const iporPublicationFeeAmount = BigInt("999000000000000000000");
+        const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
+
+        await timelockController.schedule(
+            iporAssetConfigurationDAI.address,
+            "0x0",
+            calldata,
+            ZERO_BYTES32,
+            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+            MINDELAY,
+            { from: userOne }
+        );
+
+        await time.increase(MINDELAY);
+
+        
+        await testUtils.assertError(
+            
+            //when
+            timelockController.execute(
+                iporAssetConfigurationDAI.address,
+                "0x0",
+                calldata,
+                ZERO_BYTES32,
+                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+                { from: userTwo }
+            ),
+            
             //then
             'TimelockController: underlying transaction reverted'
         );
@@ -495,7 +488,7 @@ contract('IporAssetConfiguration', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -506,7 +499,7 @@ contract('IporAssetConfiguration', (accounts) => {
             calldata,
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            {from: userTwo}
+            { from: userTwo }
         );
         const hasRoleAdmin = await iporAssetConfigurationDAI.hasRole(ADMIN_ROLE, admin);
         assert(!hasRoleAdmin);
@@ -516,10 +509,7 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         const ADMIN_ROLE = keccak256("ADMIN_ROLE")
         await iporAssetConfigurationDAI.grantRole(ADMIN_ROLE, timelockController.address);
-
         const calldata = await iporAssetConfigurationDAI.contract.methods.grantRole(ADMIN_ROLE, userOne).encodeABI();
-
-        // assert(!await iporAssetConfigurationDAI.hasRole(ADMIN_ROLE, userOne));
         assert(await iporAssetConfigurationDAI.hasRole(ADMIN_ROLE, timelockController.address));
 
         //when
@@ -530,7 +520,7 @@ contract('IporAssetConfiguration', (accounts) => {
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
             MINDELAY,
-            {from: userOne}
+            { from: userOne }
         );
 
         await time.increase(MINDELAY);
@@ -541,7 +531,7 @@ contract('IporAssetConfiguration', (accounts) => {
             calldata,
             ZERO_BYTES32,
             "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            {from: userTwo}
+            { from: userTwo }
         );
         const hasRoleAdmin = await iporAssetConfigurationDAI.hasRole(ADMIN_ROLE, userOne);
         assert(hasRoleAdmin);
@@ -553,13 +543,11 @@ contract('IporAssetConfiguration', (accounts) => {
         const asset = tokenDai.address;
         await iporAssetConfigurationDAI.grantRole(keccak256("CHARLIE_TREASURER_ROLE"), userOne);
 
-
         //when
-        await iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress, {from: userOne});
+        await iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress, { from: userOne });
 
         //then
         const actualCharlieTreasurerDaiAddress = await iporAssetConfigurationDAI.getCharlieTreasurer();
-
         assert(charlieTreasurersDaiAddress === actualCharlieTreasurerDaiAddress,
             `Incorrect  Charlie Treasurer address for asset ${asset}, actual: ${actualCharlieTreasurerDaiAddress}, expected: ${charlieTreasurersDaiAddress}`)
     });
@@ -570,7 +558,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress, {from: userOne})
+            iporAssetConfigurationDAI.setCharlieTreasurer(charlieTreasurersDaiAddress, { from: userOne })
             ,
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x21b203ce7b3398e0ad35c938bc2c62a805ef17dc57de85e9d29052eac6d9d6f7`
@@ -583,9 +571,8 @@ contract('IporAssetConfiguration', (accounts) => {
         const asset = tokenDai.address;
         iporAssetConfigurationDAI.grantRole(keccak256("TREASURE_TREASURER_ROLE"), userOne);
 
-
         //when
-        await iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress, {from: userOne});
+        await iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress, { from: userOne });
 
         //then
         const actualTreasureTreasurerDaiAddress = await iporAssetConfigurationDAI.getTreasureTreasurer();
@@ -600,7 +587,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress, {from: userOne})
+            iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress, { from: userOne })
             ,
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x9cdee4e06275597b667c73a5eb52ed89fe6acbbd36bd9fa38146b1316abfbbc4`
@@ -614,7 +601,7 @@ contract('IporAssetConfiguration', (accounts) => {
         iporAssetConfigurationDAI.grantRole(keccak256("ASSET_MANAGEMENT_VAULT_ROLE"), userOne);
 
         //when
-        await iporAssetConfigurationDAI.setAssetManagementVault(address, {from: userOne});
+        await iporAssetConfigurationDAI.setAssetManagementVault(address, { from: userOne });
 
         //then
         const actualAddress = await iporAssetConfigurationDAI.getAssetManagementVault();
@@ -629,8 +616,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setAssetManagementVault(address, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setAssetManagementVault(address, { from: userOne }),
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x2a7b2b7d358f8b11f783d1505af660b492b725a034776176adc7c268915d5bd8`
         );
@@ -641,8 +627,10 @@ contract('IporAssetConfiguration', (accounts) => {
         const max = BigInt("999000000000000000000");
         const role = keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
+
         //when
-        await iporAssetConfigurationDAI.setMaxPositionTotalAmount(max, {from: userOne});
+        await iporAssetConfigurationDAI.setMaxPositionTotalAmount(max, { from: userOne });
+        
         //then
         const result = await iporAssetConfigurationDAI.getMaxPositionTotalAmount();
         assert(max === BigInt(result));
@@ -654,8 +642,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setMaxPositionTotalAmount(max, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setMaxPositionTotalAmount(max, { from: userOne }),
+
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xbd6e7260790b38b2aece87cbeb2f1d97be9c3b1eb157efb80e7b3c341450caf2`
         );
@@ -667,8 +655,10 @@ contract('IporAssetConfiguration', (accounts) => {
         const max = BigInt("999000000000000000000");
         const role = keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
+        
         //when
-        await iporAssetConfigurationDAI.setSpreadPayFixedValue(max, {from: userOne});
+        await iporAssetConfigurationDAI.setSpreadPayFixedValue(max, { from: userOne });
+        
         //then
         const result = await iporAssetConfigurationDAI.getSpreadPayFixedValue();
         assert(max === BigInt(result));
@@ -680,8 +670,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setSpreadPayFixedValue(max, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setSpreadPayFixedValue(max, { from: userOne }),
+
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x83d7135b2dfb3276d590bad8848fb596869644b2f5a647ccbdba6f13e445fb46`
         );
@@ -693,8 +683,10 @@ contract('IporAssetConfiguration', (accounts) => {
         const max = BigInt("999000000000000000000");
         const role = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
+        
         //when
-        await iporAssetConfigurationDAI.setSpreadRecFixedValue(max, {from: userOne});
+        await iporAssetConfigurationDAI.setSpreadRecFixedValue(max, { from: userOne });
+        
         //then
         const result = await iporAssetConfigurationDAI.getSpreadRecFixedValue();
         assert(max === BigInt(result));
@@ -706,8 +698,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setSpreadRecFixedValue(max, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setSpreadRecFixedValue(max, { from: userOne }),
+            
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfabc2f0c8274a3b08bd6a559681dd3a447265796340f783fbb8b3476bbd4b17b`
         );
@@ -719,8 +711,10 @@ contract('IporAssetConfiguration', (accounts) => {
         const max = BigInt("999000000000000000000");
         const role = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
+        
         //when
-        await iporAssetConfigurationDAI.setMaxCollateralizationFactorValue(max, {from: userOne});
+        await iporAssetConfigurationDAI.setMaxCollateralizationFactorValue(max, { from: userOne });
+        
         //then
         const result = await iporAssetConfigurationDAI.getMaxCollateralizationFactorValue();
         assert(max === BigInt(result));
@@ -732,8 +726,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setMaxCollateralizationFactorValue(max, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setMaxCollateralizationFactorValue(max, { from: userOne }),
+            
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e`
         );
@@ -744,8 +738,10 @@ contract('IporAssetConfiguration', (accounts) => {
         const max = BigInt("999000000000000000000");
         const role = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
+        
         //when
-        await iporAssetConfigurationDAI.setMinCollateralizationFactorValue(max, {from: userOne});
+        await iporAssetConfigurationDAI.setMinCollateralizationFactorValue(max, { from: userOne });
+        
         //then
         const result = await iporAssetConfigurationDAI.getMinCollateralizationFactorValue();
         assert(max === BigInt(result));
@@ -757,8 +753,8 @@ contract('IporAssetConfiguration', (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setMinCollateralizationFactorValue(max, {from: userOne})
-            ,
+            iporAssetConfigurationDAI.setMinCollateralizationFactorValue(max, { from: userOne }),
+            
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e`
         );
