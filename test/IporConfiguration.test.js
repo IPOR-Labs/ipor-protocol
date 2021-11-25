@@ -317,6 +317,20 @@ contract('IporConfiguration', (accounts) => {
         assert(miltonAddress === result);
     });
 
+    it.only('should NOT set MiltonLPUtilizationStrategy when user does not have MILTON_LP_UTILIZATION_STRATEGY_ROLE role', async () => {
+        //given
+        const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+
+
+        await testUtils.assertError(
+            //when
+            iporConfiguration.setMiltonLPUtilizationStrategy(miltonAddress, {from: userOne})
+            ,
+            //then
+            'account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xef6ebe4a0a1a6329b3e5cd4d5c8731f6077174efd4f525f70490c35144b6ed72'
+        );
+    });
+
     it('should set Milton Spread Strategy', async () => {
         //given
         const miltonAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
@@ -490,7 +504,7 @@ contract('IporConfiguration', (accounts) => {
         assert(!shouldNotHasRole);
     });
 
-    it('should NOT revoke WARREN_STORAGE_ROLE role, when user has not DEFAULT_ADMIN_ROLE', async () => {
+    it('should NOT revoke WARREN_STORAGE_ROLE role, when user has not ADMIN_ROLE', async () => {
         //given
         const role = keccak256("WARREN_STORAGE_ROLE");
         await iporConfiguration.grantRole(role, userOne);
@@ -552,5 +566,11 @@ contract('IporConfiguration', (accounts) => {
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xcaf9c92ac95381198cb99b15cf6677f38c77ba44a82d424368980282298f9dc9`
         );
     });
+
+    it.only('test', async ()=> {
+        console.log(admin.toString());
+        const result = await iporConfiguration.hasRole( keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE"),admin)
+        console.log(result);
+    })
 
 });
