@@ -74,7 +74,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         liquidationDepositAmount = 20 * multiplicator;
 
         //@notice
-        openingFeePercentage = AmmMath.division(multiplicator, 100);
+        openingFeePercentage = AmmMath.division(3 * multiplicator, 10000);
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * multiplicator;
         liquidityPoolMaxUtilizationPercentage =
