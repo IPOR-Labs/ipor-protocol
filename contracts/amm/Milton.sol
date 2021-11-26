@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.10;
 
 import "../libraries/types/DataTypes.sol";
 import "../libraries/AmmMath.sol";
@@ -72,7 +72,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
     }
 
     //@notice transfer publication fee to configured charlie treasurer address
-    function transferPublicationFee(address asset, uint256 amount) external onlyPublicationFeeTransferer {
+    function transferPublnpicationFee(address asset, uint256 amount) external onlyPublicationFeeTransferer {
 
         require(amount > 0, Errors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
         IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());

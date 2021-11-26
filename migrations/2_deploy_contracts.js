@@ -69,14 +69,14 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(AmmMath);
 
-    await deployer.link(AmmMath, IporLogic);
-    await deployer.link(AmmMath, Warren);
-    await deployer.link(AmmMath, IporAssetConfigurationUsdt);
-    await deployer.link(AmmMath, IporAssetConfigurationUsdc);
-    await deployer.link(AmmMath, IporAssetConfigurationDai);
-    await deployer.link(AmmMath, DerivativeLogic);
-    await deployer.link(AmmMath, SoapIndicatorLogic);
-    await deployer.link(AmmMath, MiltonStorage);
+    // await deployer.link(AmmMath, IporLogic);
+    // await deployer.link(AmmMath, Warren);
+    // await deployer.link(AmmMath, IporAssetConfigurationUsdt);
+    // await deployer.link(AmmMath, IporAssetConfigurationUsdc);
+    // await deployer.link(AmmMath, IporAssetConfigurationDai);
+    // await deployer.link(AmmMath, DerivativeLogic);
+    // await deployer.link(AmmMath, SoapIndicatorLogic);
+    // await deployer.link(AmmMath, MiltonStorage);
 
     await deployer.deploy(IporLogic);
 
@@ -114,10 +114,10 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(MiltonFrontendDataProvider, iporConfiguration.address);
 
-    await deployer.link(AmmMath, WarrenFrontendDataProvider);
+    // await deployer.link(AmmMath, WarrenFrontendDataProvider);
     await deployer.deploy(WarrenFrontendDataProvider, iporConfiguration.address);
 
-    await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
+    // await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
     await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
     let miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deployed();
     await iporConfiguration.setMiltonLPUtilizationStrategy(miltonLPUtilizationStrategyCollateral.address);
@@ -151,7 +151,7 @@ module.exports = async function (deployer, _network, addresses) {
 
         await deployer.deploy(MiltonDevToolDataProvider, iporConfiguration.address);
 
-        await deployer.link(AmmMath, WarrenDevToolDataProvider);
+        // await deployer.link(AmmMath, WarrenDevToolDataProvider);
         await deployer.deploy(WarrenDevToolDataProvider, iporConfiguration.address);
 
         await deployer.deploy(IpToken, mockedUsdt.address, "IP USDT", "ipUSDT");
@@ -222,11 +222,11 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     if (_network !== 'test') {
-        await deployer.link(AmmMath, Milton);
+        // await deployer.link(AmmMath, Milton);
         await deployer.deploy(Milton);
         milton = await Milton.deployed();
 
-        await deployer.link(AmmMath, Joseph);
+        // await deployer.link(AmmMath, Joseph);
         await deployer.deploy(Joseph);
         joseph = await Joseph.deployed();
 
@@ -241,20 +241,20 @@ module.exports = async function (deployer, _network, addresses) {
 
         if (isTestEnvironment === 1) {
             //TestWarren
-            await deployer.link(AmmMath, TestWarren);
+            // await deployer.link(AmmMath, TestWarren);
             await deployer.link(IporLogic, TestWarren);
             await deployer.deploy(TestWarren, warrenStorage.address);
             let testWarren = await TestWarren.deployed();
             await warrenStorage.addUpdater(testWarren.address);
 
             //TestMilton
-            await deployer.link(AmmMath, TestMilton);
+            // await deployer.link(AmmMath, TestMilton);
             await deployer.link(DerivativeLogic, TestMilton);
             await deployer.deploy(TestMilton);
             testMilton = await TestMilton.deployed();
 
             //TestJoseph
-            await deployer.link(AmmMath, TestJoseph);
+            // await deployer.link(AmmMath, TestJoseph);
             await deployer.deploy(TestJoseph);
             testJoseph = await TestJoseph.deployed();
 
@@ -293,12 +293,12 @@ module.exports = async function (deployer, _network, addresses) {
         await joseph.initialize(iporConfiguration.address);
 
     } else {
-        await deployer.link(AmmMath, TestWarren);
+        // await deployer.link(AmmMath, TestWarren);
         await deployer.link(IporLogic, TestWarren);
         await deployer.link(DerivativeLogic, TestMilton);
-        await deployer.link(AmmMath, TestMilton);
-        await deployer.link(AmmMath, TestJoseph);
-        await deployer.link(AmmMath, WarrenDevToolDataProvider);
+        // await deployer.link(AmmMath, TestMilton);
+        // await deployer.link(AmmMath, TestJoseph);
+        // await deployer.link(AmmMath, WarrenDevToolDataProvider);
         await deployer.deploy(WarrenDevToolDataProvider, iporConfiguration.address);
 
     }
