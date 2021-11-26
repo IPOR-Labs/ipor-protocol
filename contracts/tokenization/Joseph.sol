@@ -48,6 +48,8 @@ contract Joseph is Ownable, IJoseph {
 
         //TODO: user Address from OZ and use call
         //TODO: use call instead transfer if possible!!
+
+        //TODO: add from address to black list
         IERC20(asset).safeTransferFrom(msg.sender, _iporConfiguration.getMilton(), liquidityAmount);
 
         if (exchangeRate > 0) {
@@ -59,7 +61,7 @@ contract Joseph is Ownable, IJoseph {
     function _redeem(address asset, uint256 ipTokenVolume, uint256 multiplicator, uint256 timestamp) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 
-        require(IIpToken(iporAssetConfiguration.getIpToken()).balanceOf(msg.sender) >= ipTokenVolume, Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW);
+        require(ipTokenVolume <= IIpToken(iporAssetConfiguration.getIpToken()).balanceOf(msg.sender), Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW);
 
         uint256 exchangeRate = IMilton(_iporConfiguration.getMilton()).calculateExchangeRate(asset, timestamp);
 

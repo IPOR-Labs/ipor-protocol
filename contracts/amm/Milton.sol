@@ -72,7 +72,7 @@ contract Milton is Ownable, Pausable, IMiltonEvents, IMilton {
     }
 
     //@notice transfer publication fee to configured charlie treasurer address
-    function transferPublnpicationFee(address asset, uint256 amount) external onlyPublicationFeeTransferer {
+    function transferPublicationFee(address asset, uint256 amount) external onlyPublicationFeeTransferer {
 
         require(amount > 0, Errors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
         IMiltonStorage miltonStorage = IMiltonStorage(_iporConfiguration.getMiltonStorage());

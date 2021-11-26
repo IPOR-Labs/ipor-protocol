@@ -28,4 +28,5 @@ interface IMiltonEvents {
         uint256 date
     //TODO: figure out what we need in this event
     );
+    //TODO: add to event data this state which can be changed during one block!!! configuration/balances/ipor
 }
