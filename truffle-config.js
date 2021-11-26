@@ -47,7 +47,7 @@ module.exports = {
             networkCheckTimeout: 10000,
             provider: () => {
                 return new HDWalletProvider(
-                    process.env.MNEMONIC,
+                    process.env.ADMIN_PRIV_KEY,
                     `wss://kovan.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
                 );
             },
@@ -58,7 +58,7 @@ module.exports = {
             networkCheckTimeout: 10000,
             provider: () => {
                 return new HDWalletProvider(
-                    process.env.MNEMONIC,
+                    process.env.ADMIN_PRIV_KEY,
                     `wss://ropsten.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
                 );
             },
