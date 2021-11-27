@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {DataTypes} from '../libraries/types/DataTypes.sol';
+import { DataTypes } from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarrenStorage.sol";
-import {Constants} from '../libraries/Constants.sol';
-import {Errors} from '../Errors.sol';
+import { Constants } from "../libraries/Constants.sol";
+import { Errors } from "../Errors.sol";
 import "../libraries/IporLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IIporConfiguration.sol";
@@ -15,11 +15,16 @@ import "../interfaces/IIporConfiguration.sol";
  * @author IPOR Labs
  */
 contract WarrenStorage is Ownable, IWarrenStorage {
-
     using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
-    event IporIndexUpdate(address asset, uint256 indexValue, uint256 quasiIbtPrice, uint256 exponentialMovingAverage, uint256 date);
+    event IporIndexUpdate(
+        address asset,
+        uint256 indexValue,
+        uint256 quasiIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 date
+    );
 
     /// @notice event emitted when IPOR Index Updater is added by Admin
     event IporIndexUpdaterAdd(address updater);
@@ -43,18 +48,33 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         _iporConfiguration = iporConfiguration;
     }
 
-    function getAssets() external override view returns (address[] memory) {
+    function getAssets() external view override returns (address[] memory) {
         return assets;
     }
 
-    function getIndex(address asset) external override view returns (DataTypes.IPOR memory) {
+    function getIndex(address asset)
+        external
+        view
+        override
+        returns (DataTypes.IPOR memory)
+    {
         return indexes[asset];
     }
 
-    function updateIndexes(address[] memory _assets, uint256[] memory indexValues, uint256 updateTimestamp) external override onlyUpdater {
-        require(_assets.length == indexValues.length, Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH);
+    function updateIndexes(
+        address[] memory _assets,
+        uint256[] memory indexValues,
+        uint256 updateTimestamp
+    ) external override onlyUpdater {
+        require(
+            _assets.length == indexValues.length,
+            Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
+        );
         for (uint256 i = 0; i < _assets.length; i++) {
-            require(_iporConfiguration.assetSupported(_assets[i]) == 1, Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED);
+            require(
+                _iporConfiguration.assetSupported(_assets[i]) == 1,
+                Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            );
             _updateIndex(_assets[i], indexValues[i], updateTimestamp);
         }
     }
@@ -73,7 +93,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
     }
 
-    function getUpdaters() external override view returns (address[] memory) {
+    function getUpdaters() external view override returns (address[] memory) {
         return updaters;
     }
 
@@ -91,9 +111,14 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
     }
 
-    function _updateIndex(address asset, uint256 indexValue, uint256 updateTimestamp) internal onlyUpdater {
-
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+    function _updateIndex(
+        address asset,
+        uint256 indexValue,
+        uint256 updateTimestamp
+    ) internal onlyUpdater {
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
+                _iporConfiguration.getIporAssetConfiguration(asset)
+            );
 
         bool assetExists = false;
         for (uint256 i = 0; i < assets.length; i++) {
@@ -107,16 +132,36 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 
         if (assetExists == false) {
             assets.push(asset);
-            newQuasiIbtPrice = iporAssetConfiguration.getMultiplicator() * Constants.YEAR_IN_SECONDS;
+            newQuasiIbtPrice =
+                iporAssetConfiguration.getMultiplicator() *
+                Constants.YEAR_IN_SECONDS;
             newExponentialMovingAverage = indexValue;
         } else {
-            newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(updateTimestamp);
-            newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
-                indexes[asset].exponentialMovingAverage, indexValue,
-                iporAssetConfiguration.getDecayFactorValue(), iporAssetConfiguration.getMultiplicator());
+            newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(
+                updateTimestamp
+            );
+            newExponentialMovingAverage = IporLogic
+                .calculateExponentialMovingAverage(
+                    indexes[asset].exponentialMovingAverage,
+                    indexValue,
+                    iporAssetConfiguration.getDecayFactorValue(),
+                    iporAssetConfiguration.getMultiplicator()
+                );
         }
-        indexes[asset] = DataTypes.IPOR(asset, indexValue, newQuasiIbtPrice, newExponentialMovingAverage, updateTimestamp);
-        emit IporIndexUpdate(asset, indexValue, newQuasiIbtPrice, newExponentialMovingAverage, updateTimestamp);
+        indexes[asset] = DataTypes.IPOR(
+            asset,
+            indexValue,
+            newQuasiIbtPrice,
+            newExponentialMovingAverage,
+            updateTimestamp
+        );
+        emit IporIndexUpdate(
+            asset,
+            indexValue,
+            newQuasiIbtPrice,
+            newExponentialMovingAverage,
+            updateTimestamp
+        );
     }
 
     modifier onlyUpdater() {
@@ -131,5 +176,4 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         require(allowed == true, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
         _;
     }
-
 }
