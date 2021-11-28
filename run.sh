@@ -25,7 +25,11 @@ ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/contracts.zip"
 ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/contracts.zip"
 
 ETH_BC_CONTAINER="ipor-protocol-eth-bc"
+ETH_EXP_CONTAINER="ipor-protocol-eth-explorer"
+ETH_EXP_POSTGRES_CONTAINER="ipor-protocol-eth-exp-postgres"
+
 ETH_BC_DATA_VOLUME="ipor-protocol-eth-bc-data"
+ETH_EXP_DATA_VOLUME="ipor-protocol-eth-exp-postgres-data"
 
 NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
 
@@ -35,6 +39,7 @@ IS_MIGRATE_SC="NO"
 IS_BUILD_DOCKER="NO"
 IS_CLEAN_BC="NO"
 IS_RUN="NO"
+IS_STOP="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
@@ -54,6 +59,10 @@ do
         ;;
         run|r)
             IS_RUN="YES"
+            IS_STOP="YES"
+        ;;
+        stop|s)
+            IS_STOP="YES"
         ;;
         publish|p)
             IS_PUBLISH_ARTIFACTS="YES"
@@ -125,6 +134,25 @@ function put_file_to_bucket(){
   echo -e "${FILE_KEY} file was published"
 }
 
+function remove_container(){
+  local CONTAINER_NAME="${1}"
+  local EXISTS=$(docker ps -a -q -f name="${CONTAINER_NAME}")
+  if [ -n "$EXISTS" ]; then
+      echo -e "Remove container: ${CONTAINER_NAME}\n"
+      docker stop "${CONTAINER_NAME}"
+      docker rm -v -f "${CONTAINER_NAME}"
+  fi
+}
+
+function remove_volume(){
+  local VOLUME_NAME="${1}"
+  local EXISTS=$(docker volume ls -q -f name="${VOLUME_NAME}")
+  if [ -n "$EXISTS" ]; then
+      echo -e "Remove volume: ${VOLUME_NAME}\n"
+      docker volume rm "${VOLUME_NAME}"
+  fi
+}
+
 
 ################################### COMMANDS ###################################
 
@@ -145,37 +173,34 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
   docker build -t io.ipor/nginx-eth-bc:latest .
 fi
 
+if [ $IS_STOP = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mStopping ipor protocol containers with \e[33m${COMPOSE_PROFILE} \e[32mprofile..\e[0m\n"
+  docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} rm -s -v -f
+fi
+
 if [ $IS_RUN = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mStopping Milton Tool docker...\e[0m\n"
-  docker-compose -f docker-compose.yml rm -s -v -f
-
-  echo -e "\n\e[32mStarting Milton Tool docker..\e[0m\n"
-  docker-compose -f docker-compose.yml up -d --remove-orphans
+  echo -e "\n\e[32mStarting ipor protocol containers with \e[33m${COMPOSE_PROFILE} \e[32mprofile..\e[0m\n"
+  docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} up -d --remove-orphans
 fi
-
 
 if [ $IS_CLEAN_BC = "YES" ]; then
   cd "${DIR}"
 
   echo -e "\n\e[32mClean Ethereum blockchain...\e[0m\n"
 
-  EXISTS=$(docker ps -a -q -f name="${ETH_BC_CONTAINER}")
-  if [ -n "$EXISTS" ]; then
-      echo -e "Remove container: ${ETH_BC_CONTAINER}\n"
-      docker stop "${ETH_BC_CONTAINER}"
-      docker rm -v -f "${ETH_BC_CONTAINER}"
-  fi
+  remove_container "${ETH_BC_CONTAINER}"
+  remove_volume "${ETH_BC_DATA_VOLUME}"
 
-  EXISTS=$(docker volume ls -q -f name="${ETH_BC_DATA_VOLUME}")
-  if [ -n "$EXISTS" ]; then
-      echo -e "Remove volume: ${ETH_BC_DATA_VOLUME}\n"
-      docker volume rm "${ETH_BC_DATA_VOLUME}"
-  fi
+  remove_container "${ETH_EXP_CONTAINER}"
+  remove_container "${ETH_EXP_POSTGRES_CONTAINER}"
+  remove_volume "${ETH_EXP_DATA_VOLUME}"
 
-  echo -e "Start cleaned container: ${ETH_BC_CONTAINER}\n"
-  docker-compose -f docker-compose.yml up -d
+  echo -e "Start cleaned containers: ${ETH_BC_CONTAINER}/${ETH_EXP_CONTAINER}/${ETH_EXP_POSTGRES_CONTAINER} with \e[32m${COMPOSE_PROFILE}\e[0m profile..\n"
+  docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} up -d
 fi
 
 if [ $IS_MIGRATE_SC = "YES" ]; then
@@ -212,8 +237,8 @@ if [ $IS_NGINX_ETH_BC_RESTART = "YES" ]; then
       docker rm -v -f "${NGINX_ETH_BC_CONTAINER}"
   fi
 
-  echo -e "Start cleaned container: ${NGINX_ETH_BC_CONTAINER}\n"
-  docker-compose -f docker-compose.yml up -d
+  echo -e "Start cleaned container: ${NGINX_ETH_BC_CONTAINER} with \e[33m${COMPOSE_PROFILE}\e[0m profile..\n"
+  docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} up -d
 fi
 
 
@@ -222,8 +247,9 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
     echo -e ""
     echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
-    echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m       Build Milton Tool docker"
-    echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m         Run / restart Milton Tool"
+    echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m       Build IPOR dockers"
+    echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m         Run / restart IPOR dockers"
+    echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m        Stop IPOR dockers"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m     Compile and migrate Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m     Publish build artifacts to S3 bucket"
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m       Clean Ethereum blockchain"
@@ -233,4 +259,3 @@ if [ $IS_HELP = "YES" ]; then
     echo -e ""
     exit 0
 fi
-

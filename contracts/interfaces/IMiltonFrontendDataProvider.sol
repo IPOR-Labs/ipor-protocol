@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonFrontendDataProvider {
-
     struct IporAssetConfigurationFront {
         address asset;
         uint256 minCollateralizationFactorValue;
@@ -31,9 +30,18 @@ interface IMiltonFrontendDataProvider {
         uint256 multiplicator;
     }
 
-    function getTotalOutstandingNotional(address asset) external view returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
+    function getTotalOutstandingNotional(address asset)
+        external
+        view
+        returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
 
-    function getMyPositions() external view returns (IporDerivativeFront[] memory items);
+    function getMyPositions()
+        external
+        view
+        returns (IporDerivativeFront[] memory items);
 
-    function getConfiguration() external view returns (IporAssetConfigurationFront[] memory);
+    function getConfiguration()
+        external
+        view
+        returns (IporAssetConfigurationFront[] memory);
 }

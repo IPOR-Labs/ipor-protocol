@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
@@ -29,36 +29,39 @@ contract IporAssetConfiguration is
 
     uint256 private immutable _maxSlippagePercentage;
 
-    uint256 minCollateralizationFactorValue;
+    uint256 private minCollateralizationFactorValue;
 
-    uint256 maxCollateralizationFactorValue;
+    uint256 private maxCollateralizationFactorValue;
 
-    uint256 incomeTaxPercentage;
+    uint256 private incomeTaxPercentage;
 
-    uint256 liquidationDepositAmount;
+    uint256 private liquidationDepositAmount;
 
-    uint256 openingFeePercentage;
+    uint256 private openingFeePercentage;
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big
     //pie going to Treasury Balance
-    uint256 openingFeeForTreasuryPercentage;
+    uint256 private openingFeeForTreasuryPercentage;
 
-    uint256 iporPublicationFeeAmount;
+    uint256 private iporPublicationFeeAmount;
 
-    uint256 liquidityPoolMaxUtilizationPercentage;
+    uint256 private liquidityPoolMaxUtilizationPercentage;
 
     //@notice max total amount used when opening position
-    uint256 maxPositionTotalAmount;
+    uint256 private maxPositionTotalAmount;
+
+    //@notice Decay factor, value between 0..1, indicator used in spread calculation
+    uint256 private decayFactorValue;
 
     //TODO: spread from configuration will be deleted, spread will be calculated in runtime
-    uint256 spreadPayFixedValue;
-    uint256 spreadRecFixedValue;
+    uint256 private spreadPayFixedValue;
+    uint256 private spreadRecFixedValue;
 
-    address assetManagementVault;
-    address charlieTreasurer;
+    address private assetManagementVault;
+    address private charlieTreasurer;
 
     //TODO: fix this name; treasureManager
-    address treasureTreasurer;
+    address private treasureTreasurer;
 
     constructor(address asset, address ipToken) {
         _asset = asset;
@@ -76,7 +79,7 @@ contract IporAssetConfiguration is
         liquidationDepositAmount = 20 * multiplicator;
 
         //@notice
-        openingFeePercentage = AmmMath.division(multiplicator, 100);
+        openingFeePercentage = AmmMath.division(3 * multiplicator, 10000);
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * multiplicator;
         liquidityPoolMaxUtilizationPercentage =
@@ -89,6 +92,8 @@ contract IporAssetConfiguration is
 
         spreadPayFixedValue = AmmMath.division(multiplicator, 100);
         spreadRecFixedValue = AmmMath.division(multiplicator, 100);
+
+        decayFactorValue = AmmMath.division(multiplicator, 10);
     }
 
     function getIncomeTaxPercentage() external view override returns (uint256) {
@@ -350,6 +355,23 @@ contract IporAssetConfiguration is
             _asset,
             newAssetManagementVaultAddress
         );
+    }
+
+    function getDecayFactorValue() external view override returns (uint256) {
+        return decayFactorValue;
+    }
+
+    function setDecayFactorValue(uint256 newDecayFactorValue)
+        external
+        override
+        onlyRole(DECAY_FACTOR_VALUE_ROLE)
+    {
+        require(
+            newDecayFactorValue <= _multiplicator,
+            Errors.CONFIG_DECAY_FACTOR_TOO_HIGH
+        );
+        decayFactorValue = newDecayFactorValue;
+        emit DecayFactorValueUpdated(_asset, newDecayFactorValue);
     }
 }
 
