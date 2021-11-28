@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.9;
 
-import '../../contracts/amm/Milton.sol';
+import "../../contracts/amm/Milton.sol";
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../../contracts/libraries/TotalSoapIndicatorLogic.sol";
 import "./TestData.sol";
 
 contract TotalSoapIndicatorLogicTest is TestData {
-
-    using SoapIndicatorLogic  for DataTypes.SoapIndicator;
+    using SoapIndicatorLogic for DataTypes.SoapIndicator;
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
 
     DataTypes.TotalSoapIndicator public tsiStorage;
@@ -22,11 +21,15 @@ contract TotalSoapIndicatorLogicTest is TestData {
         simulateOpenPayFixPositionCase2D18(PERIOD_1_DAY_IN_SECONDS);
 
         //when
-        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS, ibtPrice, Constants.D18);
+        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(
+            timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPrice,
+            Constants.D18
+        );
         int256 soap = soapPf + soapRf;
         //then
-        int256 expectedSOAP = - 202814383561643835615;
-        Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
+        int256 expectedSOAP = -202814383561643835615;
+        Assert.equal(soap, expectedSOAP, "Incorrect SOAP");
     }
 
     function testCalculateSoapWhenOpenPayFixPositionD6() public {
@@ -37,14 +40,20 @@ contract TotalSoapIndicatorLogicTest is TestData {
         simulateOpenPayFixPositionCase2D6(PERIOD_1_DAY_IN_SECONDS);
 
         //when
-        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS, ibtPrice, Constants.D6);
+        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(
+            timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPrice,
+            Constants.D6
+        );
         int256 soap = soapPf + soapRf;
         //then
-        int256 expectedSOAP = - 202814383;
-        Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
+        int256 expectedSOAP = -202814383;
+        Assert.equal(soap, expectedSOAP, "Incorrect SOAP");
     }
 
-    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalSameMomentD18() public {
+    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalSameMomentD18()
+        public
+    {
         //given
         uint256 ibtPrice = 100 * Constants.D18;
         uint256 timestamp = block.timestamp;
@@ -53,14 +62,20 @@ contract TotalSoapIndicatorLogicTest is TestData {
         simulateOpenRecFixPositionCase2D18(0);
 
         //when
-        (int256 qSoapPf, int256 qSoapRf) = tsiStorage.calculateQuasiSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice, Constants.D18);
+        (int256 qSoapPf, int256 qSoapRf) = tsiStorage.calculateQuasiSoap(
+            timestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPrice,
+            Constants.D18
+        );
         int256 soap = qSoapPf + qSoapRf;
         //then
         int256 expectedSOAP = 0;
-        Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
+        Assert.equal(soap, expectedSOAP, "Incorrect SOAP");
     }
 
-    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalSameMomentD6() public {
+    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalSameMomentD6()
+        public
+    {
         //given
         uint256 ibtPrice = 100 * Constants.D6;
         uint256 timestamp = block.timestamp;
@@ -69,14 +84,20 @@ contract TotalSoapIndicatorLogicTest is TestData {
         simulateOpenRecFixPositionCase2D6(0);
 
         //when
-        (int256 qSoapPf, int256 qSoapRf) = tsiStorage.calculateQuasiSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice, Constants.D6);
+        (int256 qSoapPf, int256 qSoapRf) = tsiStorage.calculateQuasiSoap(
+            timestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPrice,
+            Constants.D6
+        );
         int256 soap = qSoapPf + qSoapRf;
         //then
         int256 expectedSOAP = 0;
-        Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
+        Assert.equal(soap, expectedSOAP, "Incorrect SOAP");
     }
 
-    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalDifferentMomentD18() public {
+    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalDifferentMomentD18()
+        public
+    {
         //given
         uint256 ibtPrice = 100 * Constants.D18;
         uint256 timestamp = block.timestamp;
@@ -85,14 +106,20 @@ contract TotalSoapIndicatorLogicTest is TestData {
         simulateOpenRecFixPositionCase2D18(0);
 
         //when
-        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice, Constants.D18);
+        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(
+            timestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPrice,
+            Constants.D18
+        );
         int256 soap = soapPf + soapRf;
         //then
         int256 expectedSOAP = 202814383561643835616;
-        Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
+        Assert.equal(soap, expectedSOAP, "Incorrect SOAP");
     }
 
-    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalDifferentMomentD6() public {
+    function testCalculateSoapWhenOpenPayFixAndRecFixPositionSameNotionalDifferentMomentD6()
+        public
+    {
         //given
         uint256 ibtPrice = 100 * Constants.D6;
         uint256 timestamp = block.timestamp;
@@ -101,11 +128,15 @@ contract TotalSoapIndicatorLogicTest is TestData {
         simulateOpenRecFixPositionCase2D6(0);
 
         //when
-        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(timestamp + PERIOD_25_DAYS_IN_SECONDS, ibtPrice, Constants.D6);
+        (int256 soapPf, int256 soapRf) = tsiStorage.calculateSoap(
+            timestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPrice,
+            Constants.D6
+        );
         int256 soap = soapPf + soapRf;
         //then
         int256 expectedSOAP = 202814384;
-        Assert.equal(soap, expectedSOAP, 'Incorrect SOAP');
+        Assert.equal(soap, expectedSOAP, "Incorrect SOAP");
     }
 
     function testRebalanceSoapWhenOpenPayFixPositionD18() public {
@@ -130,7 +161,6 @@ contract TotalSoapIndicatorLogicTest is TestData {
             expectedAverageInterestRate,
             expectedHypotheticalInterestCumulative
         );
-
     }
 
     function testRebalanceSoapWhenOpenPayFixPositionD6() public {
@@ -155,7 +185,6 @@ contract TotalSoapIndicatorLogicTest is TestData {
             expectedAverageInterestRate,
             expectedHypotheticalInterestCumulative
         );
-
     }
 
     function testRebalanceSoapWhenOpenRecFixPositionD18() public {
@@ -180,7 +209,6 @@ contract TotalSoapIndicatorLogicTest is TestData {
             expectedAverageInterestRate,
             expectedHypotheticalInterestCumulative
         );
-
     }
 
     function testRebalanceSoapWhenOpenRecFixPositionD6() public {
@@ -205,7 +233,6 @@ contract TotalSoapIndicatorLogicTest is TestData {
             expectedAverageInterestRate,
             expectedHypotheticalInterestCumulative
         );
-
     }
 
     function testRebalanceSoapWhenPayFixAndRecFixPositionD18() public {
@@ -276,67 +303,139 @@ contract TotalSoapIndicatorLogicTest is TestData {
         );
     }
 
-    function simulateOpenPayFixPositionCase1D18(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenPayFixPositionCase1D18(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 10000 * Constants.D18;
         uint256 derivativeFixedInterestRate = 5 * 1e16;
         uint256 derivativeIbtQuantity = 95 * Constants.D18;
-        tsiStorage.pf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D18);
+        tsiStorage.pf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D18
+        );
     }
 
-    function simulateOpenPayFixPositionCase1D6(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenPayFixPositionCase1D6(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 10000 * Constants.D6;
         uint256 derivativeFixedInterestRate = 5 * 1e4;
         uint256 derivativeIbtQuantity = 95 * Constants.D6;
-        tsiStorage.pf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D6);
+        tsiStorage.pf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D6
+        );
     }
 
-    function simulateOpenPayFixPositionCase2D18(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenPayFixPositionCase2D18(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 98703 * Constants.D18;
         uint256 derivativeFixedInterestRate = 3 * 1e16;
         uint256 derivativeIbtQuantity = 98703 * 1e16;
-        tsiStorage.pf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D18);
+        tsiStorage.pf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D18
+        );
     }
 
-    function simulateOpenPayFixPositionCase2D6(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenPayFixPositionCase2D6(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 98703 * Constants.D6;
         uint256 derivativeFixedInterestRate = 3 * 1e4;
         uint256 derivativeIbtQuantity = 98703 * 1e4;
-        tsiStorage.pf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D6);
+        tsiStorage.pf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D6
+        );
     }
 
-    function simulateOpenRecFixPositionCase1D18(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenRecFixPositionCase1D18(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 10000 * Constants.D18;
         uint256 derivativeFixedInterestRate = 5 * 1e16;
         uint256 derivativeIbtQuantity = 95 * Constants.D18;
-        tsiStorage.rf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D18);
+        tsiStorage.rf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D18
+        );
     }
 
-    function simulateOpenRecFixPositionCase1D6(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenRecFixPositionCase1D6(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 10000 * Constants.D6;
         uint256 derivativeFixedInterestRate = 5 * 1e4;
         uint256 derivativeIbtQuantity = 95 * Constants.D6;
-        tsiStorage.rf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D6);
+        tsiStorage.rf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D6
+        );
     }
 
-    function simulateOpenRecFixPositionCase2D18(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenRecFixPositionCase2D18(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 98703 * Constants.D18;
         uint256 derivativeFixedInterestRate = 3 * 1e16;
         uint256 derivativeIbtQuantity = 98703 * 1e16;
-        tsiStorage.rf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D18);
+        tsiStorage.rf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D18
+        );
     }
 
-    function simulateOpenRecFixPositionCase2D6(uint256 deltaTimeInSeconds) internal {
-        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp + deltaTimeInSeconds;
+    function simulateOpenRecFixPositionCase2D6(uint256 deltaTimeInSeconds)
+        internal
+    {
+        uint256 rebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp +
+            deltaTimeInSeconds;
         uint256 derivativeNotional = 98703 * Constants.D6;
         uint256 derivativeFixedInterestRate = 3 * 1e4;
         uint256 derivativeIbtQuantity = 98703 * 1e4;
-        tsiStorage.rf.rebalanceWhenOpenPosition(rebalanceTimestamp, derivativeNotional, derivativeFixedInterestRate, derivativeIbtQuantity, Constants.D6);
+        tsiStorage.rf.rebalanceWhenOpenPosition(
+            rebalanceTimestamp,
+            derivativeNotional,
+            derivativeFixedInterestRate,
+            derivativeIbtQuantity,
+            Constants.D6
+        );
     }
 }

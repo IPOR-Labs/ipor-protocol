@@ -47,7 +47,7 @@ module.exports = {
             networkCheckTimeout: 10000,
             provider: () => {
                 return new HDWalletProvider(
-                    process.env.ADMIN_PRIV_KEY,
+                    process.env.MNEMONIC,
                     `wss://kovan.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
                 );
             },
@@ -58,7 +58,7 @@ module.exports = {
             networkCheckTimeout: 10000,
             provider: () => {
                 return new HDWalletProvider(
-                    process.env.ADMIN_PRIV_KEY,
+                    process.env.MNEMONIC,
                     `wss://ropsten.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
                 );
             },
@@ -76,7 +76,7 @@ module.exports = {
     },
     compilers: {
         solc: {
-            version: "0.8.4",    // Fetch exact version from solc-bin (default: truffle's version)
+            version: "0.8.9",    // Fetch exact version from solc-bin (default: truffle's version)
             // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
 
             settings: {          // See the solidity docs for advice about optimization and evmVersion
