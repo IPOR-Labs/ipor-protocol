@@ -521,4 +521,15 @@ contract('IporConfiguration', (accounts) => {
     });
 
     // TODO Add test with Timelock grant and revolk ADMIN_ROLE
+
+    it('admin should have ADMIN_ROLE when check all roles', async () => {
+        //given
+        await iporConfiguration.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
+        
+        //when
+        const result = await iporConfiguration.getUserRoles(admin);
+
+        ///then
+        assert(result.includes('0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775'));
+    });
 });
