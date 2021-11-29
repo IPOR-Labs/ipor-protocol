@@ -36,24 +36,26 @@ abstract contract AccessControlRevoke is AccessControl {
 
     function _revolkeFromRoleMembers(bytes32 role, address account) private {
         uint8 i = 0;
-        address[] memory usersWithRole = new address[](roleMembers[role].length -1); 
+        address[] memory tempMembers = roleMembers[role];
+        address[] memory usersWithRole = new address[](tempMembers.length -1); 
         for (uint256 index = 0; index < usersWithRole.length; index++) {
-            if (account == roleMembers[role][index]) {
+            if (account == tempMembers[index]) {
                 i++;
             }
-            usersWithRole[index] = roleMembers[role][index+i];
+            usersWithRole[index] = tempMembers[index+i];
         }
         roleMembers[role] = usersWithRole;
     }
 
     function _revolkeFromMemberRoles(bytes32 role, address account) private {
         uint8 i = 0;
-        bytes32[] memory rolesWithUser = new bytes32[](userRoles[account].length -1); 
+        bytes32[] memory tempRoles = userRoles[account];
+        bytes32[] memory rolesWithUser = new bytes32[](tempRoles.length -1); 
         for (uint256 index = 0; index < rolesWithUser.length; index++) {
-            if (role == userRoles[account][index]) {
+            if (role == tempRoles[index]) {
                 i++;
             }
-            rolesWithUser[index] = userRoles[account][index+i];
+            rolesWithUser[index] = tempRoles[index+i];
         }
         userRoles[account] = rolesWithUser;
     }

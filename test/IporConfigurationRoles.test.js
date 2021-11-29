@@ -29,7 +29,7 @@ const IPOR_ASSETS_ADMIN_ROLE = keccak256("IPOR_ASSETS_ADMIN_ROLE");
 
 
 
-contract('IporConfiguration', (accounts) => {
+contract('IporConfigurationRoles', (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
     beforeEach(async () => {
         iporConfiguration = await IporConfiguration.new();

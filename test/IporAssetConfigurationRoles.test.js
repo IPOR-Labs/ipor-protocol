@@ -9,7 +9,7 @@ const IpToken = artifacts.require('IpToken');
 const MockTimelockController = artifacts.require('MockTimelockController');
 const MINDELAY = time.duration.days(1);
 
-contract('IporAssetConfiguration', (accounts) => {
+contract('IporAssetConfigurationRoles', (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
 
     let tokenDai = null;
