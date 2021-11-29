@@ -364,6 +364,7 @@ contract('Joseph', (accounts) => {
 
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -422,6 +423,7 @@ contract('Joseph', (accounts) => {
         await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
         await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
         let oldOpeningFeePercentage = await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
         await testData.iporAssetConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
 
@@ -462,6 +464,7 @@ contract('Joseph', (accounts) => {
     it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, USDT 6 decimals', async () => {
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["USDT"], data);
+        await testData.iporAssetConfigurationUsdt.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationUsdt.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
         await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);

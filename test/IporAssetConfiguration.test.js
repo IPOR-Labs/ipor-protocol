@@ -42,8 +42,9 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set openingFeeForTreasuryPercentage', async () => {
         //given
         const expectedOpeningFeeForTreasuryPercentage = BigInt("1000000000000000000");
-        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), userOne);
-
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), userOne);
+        
         //when
         await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(expectedOpeningFeeForTreasuryPercentage, { from: userOne });
         const actualOpeningFeeForTreasuryPercentage = await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
@@ -56,7 +57,8 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should NOT set openingFeeForTreasuryPercentage', async () => {
         //given
         const openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
-        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), userOne);
 
         await testUtils.assertError(
             //when
@@ -83,7 +85,8 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should NOT set incomeTaxPercentage', async () => {
         //given
         const incomeTaxPercentage = BigInt("1000000000000000001");
-        iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), userOne);
 
         await testUtils.assertError(
             //when
@@ -99,7 +102,8 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         const incomeTaxPercentage = BigInt("150000000000000000");
-        iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), userOne);
 
         //when
         await iporAssetConfigurationDAI.setIncomeTaxPercentage(incomeTaxPercentage, { from: userOne });
@@ -128,7 +132,8 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set liquidationDepositAmount - case 1', async () => {
         //given
         const liquidationDepositAmount = BigInt("50000000000000000000");
-        iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"), userOne);
 
         //when
         await iporAssetConfigurationDAI.setLiquidationDepositAmount(liquidationDepositAmount, { from: userOne });
@@ -156,7 +161,8 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should NOT set openingFeePercentage', async () => {
         //given
         const openingFeePercentage = BigInt("1010000000000000000");
-        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
 
         await testUtils.assertError(
             //when
@@ -170,7 +176,8 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set openingFeePercentage - case 1', async () => {
         //given
         const openingFeePercentage = BigInt("150000000000000000");
-        iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), userOne);
 
         //when
         await iporAssetConfigurationDAI.setOpeningFeePercentage(openingFeePercentage, { from: userOne });
@@ -199,7 +206,8 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         const iporPublicationFeeAmount = BigInt("999000000000000000000");
-        iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), userOne);
 
         //when
         await iporAssetConfigurationDAI.setIporPublicationFeeAmount(iporPublicationFeeAmount, { from: userOne });
@@ -213,6 +221,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set liquidityPoolMaxUtilizationPercentage higher than 100%', async () => {
         //given
         const liquidityPoolMaxUtilizationPercentage = BigInt("99000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"), admin);
         await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), userOne);
 
         //when
@@ -242,6 +251,7 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
 
         const liquidityPoolMaxUtilizationPercentage = BigInt("90000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"), admin);
         await iporAssetConfigurationDAI.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), userOne);
 
         //when
@@ -344,7 +354,8 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         const iporPublicationFeeAmount = BigInt("999000000000000000000");
         const calldata = await iporAssetConfigurationDAI.contract.methods.setIporPublicationFeeAmount(iporPublicationFeeAmount).encodeABI();
-        iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), timelockController.address);
+        await iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"), timelockController.address);
         
         //when
         await timelockController.schedule(
@@ -541,6 +552,7 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         const charlieTreasurersDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         const asset = tokenDai.address;
+        await iporAssetConfigurationDAI.grantRole(keccak256("CHARLIE_TREASURER_ADMIN_ROLE"), admin);
         await iporAssetConfigurationDAI.grantRole(keccak256("CHARLIE_TREASURER_ROLE"), userOne);
 
         //when
@@ -569,7 +581,8 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         const treasureTreasurerDaiAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         const asset = tokenDai.address;
-        iporAssetConfigurationDAI.grantRole(keccak256("TREASURE_TREASURER_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("TREASURE_TREASURER_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("TREASURE_TREASURER_ROLE"), userOne);
 
         //when
         await iporAssetConfigurationDAI.setTreasureTreasurer(treasureTreasurerDaiAddress, { from: userOne });
@@ -598,7 +611,8 @@ contract('IporAssetConfiguration', (accounts) => {
         //given
         const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         const asset = tokenDai.address;
-        iporAssetConfigurationDAI.grantRole(keccak256("ASSET_MANAGEMENT_VAULT_ROLE"), userOne);
+        await iporAssetConfigurationDAI.grantRole(keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"), admin);
+        await iporAssetConfigurationDAI.grantRole(keccak256("ASSET_MANAGEMENT_VAULT_ROLE"), userOne);
 
         //when
         await iporAssetConfigurationDAI.setAssetManagementVault(address, { from: userOne });
@@ -625,6 +639,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set MaxPositionTotalAmount', async () => {
         //given
         const max = BigInt("999000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"), admin);
         const role = keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
 
@@ -653,6 +668,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set SpreadPayFixedValue', async () => {
         //given
         const max = BigInt("999000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE"), admin);
         const role = keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
         
@@ -681,6 +697,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set SpreadRecFixedValue(', async () => {
         //given
         const max = BigInt("999000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("SPREAD_REC_FIXED_VALUE_ADMIN_ROLE"), admin);
         const role = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
         
@@ -709,6 +726,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set MaxCollateralizationFactorValue', async () => {
         //given
         const max = BigInt("999000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"), admin);
         const role = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
         
@@ -736,6 +754,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set MinCollateralizationFactorValue', async () => {
         //given
         const max = BigInt("999000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"), admin);
         const role = keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
         

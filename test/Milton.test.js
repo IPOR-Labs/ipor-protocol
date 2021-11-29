@@ -1838,6 +1838,7 @@ contract('Milton', (accounts) => {
 
     it('should calculate income tax, 5%, not owner, Milton loses, user earns, |I| < D', async () => {
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -1861,6 +1862,7 @@ contract('Milton', (accounts) => {
     it('should calculate income tax, 5%, Milton loses, user earns, |I| > D', async () => {
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(testUtils.PERCENTAGE_5_18DEC);
@@ -1883,6 +1885,7 @@ contract('Milton', (accounts) => {
 
     it('should calculate income tax, 5%, Milton earns, user loses, |I| < D', async () => {
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -1909,6 +1912,7 @@ contract('Milton', (accounts) => {
 
     it('should calculate income tax, 5%, Milton earns, user loses, |I| > D', async () => {
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
 
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
@@ -1933,6 +1937,7 @@ contract('Milton', (accounts) => {
 
     it('should calculate income tax, 100%, Milton loses, user earns, |I| < D', async () => {
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -1955,6 +1960,7 @@ contract('Milton', (accounts) => {
     it('should calculate income tax, 100%, Milton loses, user earns, |I| > D', async () => {
 
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -1976,6 +1982,7 @@ contract('Milton', (accounts) => {
 
     it('should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool', async () => {
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -2002,6 +2009,7 @@ contract('Milton', (accounts) => {
     it('should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool', async () => {
 
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("INCOME_TAX_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -2027,6 +2035,7 @@ contract('Milton', (accounts) => {
     it('should open pay fixed position, DAI, custom Opening Fee for Treasury 50%', async () => {
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -2071,6 +2080,7 @@ contract('Milton', (accounts) => {
     it('should open pay fixed position, DAI, custom Opening Fee for Treasury 25%', async () => {
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -2167,7 +2177,9 @@ contract('Milton', (accounts) => {
     it('should transfer Publication Fee to Charlie Treasury - simple case 1', async () => {
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("CHARLIE_TREASURER_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("CHARLIE_TREASURER_ROLE"), admin);
+        await data.iporConfiguration.grantRole(keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"), admin);
         await data.iporConfiguration.grantRole(keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE"), admin);
 
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
@@ -2314,6 +2326,7 @@ contract('Milton', (accounts) => {
     it('should open pay fixed position - liquidity pool utilisation not exceeded, custom utilisation', async () => {
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -2376,7 +2389,9 @@ contract('Milton', (accounts) => {
     it('should NOT open pay fixed position - when new position opened then liquidity pool utilisation exceeded, custom utilisation', async () => {
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -2412,6 +2427,7 @@ contract('Milton', (accounts) => {
 
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
@@ -2450,7 +2466,9 @@ contract('Milton', (accounts) => {
     it('should NOT open pay fixed position - liquidity pool utilisation exceeded, liquidity pool and opening fee are ZERO', async () => {
         //given
         let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
+        await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"), admin);
         await testData.iporAssetConfigurationDai.grantRole(keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"), admin);
         await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
         await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
