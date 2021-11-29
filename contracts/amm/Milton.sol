@@ -118,7 +118,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 maximumSlippage,
         uint256 collateralizationFactor,
         uint8 direction
-    ) external override nonReentrant returns (uint256) {
+    ) external override returns (uint256) {
         return
             _openPosition(
                 block.timestamp,
