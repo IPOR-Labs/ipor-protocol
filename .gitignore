@@ -39,3 +39,6 @@
 /bin/
 /test/output
 /.nyc_output/
+slither-report.json
+app/.env
+.vscode/settings.json
