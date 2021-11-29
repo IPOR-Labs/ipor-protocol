@@ -32,6 +32,7 @@ contract('IporConfiguration', (accounts) => {
 
     beforeEach(async () => {
         iporConfiguration = await IporConfiguration.new();
+        await iporConfiguration.grantRole(keccak256("IPOR_ASSETS_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("IPOR_ASSETS_ROLE"), admin);
         await iporConfiguration.addAsset(tokenUsdt.address);
         await iporConfiguration.addAsset(tokenDai.address);
@@ -41,6 +42,7 @@ contract('IporConfiguration', (accounts) => {
         //given
         const iporAssetConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         const asset = tokenDai.address;
+        await iporConfiguration.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ROLE"), admin);
         //when
         await iporConfiguration.setIporAssetConfiguration(asset, mockAddress);
@@ -56,6 +58,7 @@ contract('IporConfiguration', (accounts) => {
         const iporAssetConfigurationAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
         const asset = tokenUsdc.address;
 
+        await iporConfiguration.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ROLE"), admin);
         //when
         await testUtils.assertError(
@@ -85,6 +88,7 @@ contract('IporConfiguration', (accounts) => {
         //given
 
         const fnParamAddress = userThree;
+        await iporConfiguration.grantRole(keccak256("MILTON_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), timelockController.address);
         const calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
 
@@ -121,6 +125,7 @@ contract('IporConfiguration', (accounts) => {
 
     it('should FAIL when used Timelock Controller, when  user not exists on list of proposers', async () => {
         //given
+        await iporConfiguration.grantRole(keccak256("MILTON_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), timelockController.address);
         const fnParamAddress = userThree;
         const calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
@@ -145,6 +150,7 @@ contract('IporConfiguration', (accounts) => {
 
     it('should FAIL when used Timelock Controller, because user not exists on list of executors', async () => {
         //given
+        await iporConfiguration.grantRole(keccak256("MILTON_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), timelockController.address);
 
         const fnParamAddress = userThree;
@@ -180,45 +186,9 @@ contract('IporConfiguration', (accounts) => {
 
     });
 
-    it('should FAIL when used Timelock Controller, when Timelock is not an Owner of IporAssetConfiguration smart contract', async () => {
-
-        //given
-        await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), admin);
-        const fnParamAddress = userThree;
-        const calldata = await iporConfiguration.contract.methods.setMilton(fnParamAddress).encodeABI();
-
-        await timelockController.schedule(
-            iporConfiguration.address,
-            "0x0",
-            calldata,
-            ZERO_BYTES32,
-            "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-            MINDELAY,
-            { from: userOne }
-        );
-
-        await time.increase(MINDELAY);
-
-        //when
-        await testUtils.assertError(
-            //when
-            timelockController.execute(
-                iporConfiguration.address,
-                "0x0",
-                calldata,
-                ZERO_BYTES32,
-                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
-                { from: userTwo }
-            ),
-            
-            //then
-            'TimelockController: underlying transaction reverted'
-        );
-
-    });
-
     it('should set Milton Storage', async () => {
         //given
+        await iporConfiguration.grantRole(keccak256("MILTON_STORAGE_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("MILTON_STORAGE_ROLE"), admin);
         
         //when
@@ -256,6 +226,7 @@ contract('IporConfiguration', (accounts) => {
 
     it('should set Milton LP Utilization Strategy', async () => {
         //given
+        await iporConfiguration.grantRole(keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"), admin);
         
         //when
@@ -281,6 +252,8 @@ contract('IporConfiguration', (accounts) => {
     it('should set Milton Spread Strategy', async () => {
         //given
         const role = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
+        const adminRole = keccak256("MILTON_SPREAD_STRATEGY_ADMIN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         await iporConfiguration.grantRole(role, admin);
         
         //when
@@ -305,7 +278,9 @@ contract('IporConfiguration', (accounts) => {
 
     it('should set Warren', async () => {
         //given
+        const adminRole = keccak256("WARREN_ADMIN_ROLE");
         const role = keccak256("WARREN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         await iporConfiguration.grantRole(role, admin);
         
         //when
@@ -330,7 +305,9 @@ contract('IporConfiguration', (accounts) => {
 
     it('should add new asset', async () => {
         //given
+        const adminRole = keccak256("IPOR_ASSETS_ADMIN_ROLE");
         const role = keccak256("IPOR_ASSETS_ROLE");
+        await iporConfiguration.grantRole(adminRole, userOne);
         await iporConfiguration.grantRole(role, userOne);
         
         //when
@@ -355,7 +332,9 @@ contract('IporConfiguration', (accounts) => {
 
     it('should removed asset', async () => {
         //given
+        const adminRole = keccak256("IPOR_ASSETS_ADMIN_ROLE");
         const role = keccak256("IPOR_ASSETS_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         await iporConfiguration.grantRole(role, admin);
         await iporConfiguration.addAsset(mockAddress);
         const newAsset = Array.from(await iporConfiguration.getAssets());
@@ -372,6 +351,8 @@ contract('IporConfiguration', (accounts) => {
     it('should NOT be able to remove asset when user does not have IPOR_ASSETS_ROLE role', async () => {
         //given
         const role = keccak256("IPOR_ASSETS_ROLE");
+        const adminRole = keccak256("IPOR_ASSETS_ADMIN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         await iporConfiguration.grantRole(role, admin);
         await iporConfiguration.addAsset(mockAddress);
         const newAsset = Array.from(await iporConfiguration.getAssets());
@@ -388,6 +369,8 @@ contract('IporConfiguration', (accounts) => {
 
     it('should set joseph', async () => {
         //given
+        const adminRole = keccak256("JOSEPH_ADMIN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         const role = keccak256("JOSEPH_ROLE");
         await iporConfiguration.grantRole(role, admin);
         
@@ -414,9 +397,10 @@ contract('IporConfiguration', (accounts) => {
 
     it('should set Warren Storage', async () => {
         //given
+        const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         const role = keccak256("WARREN_STORAGE_ROLE");
         await iporConfiguration.grantRole(role, admin);
-        
         //when
         await iporConfiguration.setWarrenStorage(mockAddress);
         
@@ -439,6 +423,8 @@ contract('IporConfiguration', (accounts) => {
 
     it('should revoke WARREN_STORAGE_ROLE role', async () => {
         //given
+        const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         const role = keccak256("WARREN_STORAGE_ROLE");
         await iporConfiguration.grantRole(role, userOne);
         const shouldHasRole = await iporConfiguration.hasRole(role, userOne);
@@ -452,8 +438,10 @@ contract('IporConfiguration', (accounts) => {
         assert(!shouldNotHasRole);
     });
 
-    it('should NOT revoke WARREN_STORAGE_ROLE role, when user has not ADMIN_ROLE', async () => {
+    it('should NOT revoke WARREN_STORAGE_ROLE role, when user has not WARREN_STORAGE_ADMIN_ROLE', async () => {
         //given
+        const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         const role = keccak256("WARREN_STORAGE_ROLE");
         await iporConfiguration.grantRole(role, userOne);
         const shouldHasRole = await iporConfiguration.hasRole(role, userOne);
@@ -464,7 +452,7 @@ contract('IporConfiguration', (accounts) => {
             iporConfiguration.revokeRole(role, userOne, { from: userTwo }),
             
             //then
-            `account 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775`
+            `account 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef is missing role 0xb1c511825e3a3673b7b3e9816a90ae950555bc6dbcfe9ddcd93d74ef23df3ed2`
         );
     });
 
@@ -497,6 +485,8 @@ contract('IporConfiguration', (accounts) => {
 
     it('should set Milton Publication Fee Transferer', async () => {
         //given
+        const adminRole = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE");
+        await iporConfiguration.grantRole(adminRole, admin);
         const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
         await iporConfiguration.grantRole(role, userOne);
         
@@ -524,6 +514,7 @@ contract('IporConfiguration', (accounts) => {
 
     it('admin should have ADMIN_ROLE when check all roles', async () => {
         //given
+        await iporConfiguration.grantRole(keccak256("ROLES_INFO_ADMIN_ROLE"), admin);
         await iporConfiguration.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
         
         //when

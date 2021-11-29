@@ -109,6 +109,18 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(DerivativesView, MiltonStorage);
     await deployer.link(DerivativeLogic, Milton);
 
+    const IPOR_ASSETS_ADMIN_ROLE = keccak256("IPOR_ASSETS_ADMIN_ROLE");
+    const MILTON_ADMIN_ROLE = keccak256("MILTON_ADMIN_ROLE");
+    const MILTON_STORAGE_ADMIN_ROLE = keccak256("MILTON_STORAGE_ADMIN_ROLE");
+    const MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE");
+    const MILTON_SPREAD_STRATEGY_ADMIN_ROLE = keccak256("MILTON_SPREAD_STRATEGY_ADMIN_ROLE");
+    const IPOR_ASSET_CONFIGURATION_ADMIN_ROLE = keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE");
+    const WARREN_ADMIN_ROLE = keccak256("WARREN_ADMIN_ROLE");
+    const WARREN_STORAGE_ADMIN_ROLE = keccak256("WARREN_STORAGE_ADMIN_ROLE");
+    const JOSEPH_ADMIN_ROLE = keccak256("JOSEPH_ADMIN_ROLE");
+    const MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE");
+    const ROLES_INFO_ADMIN_ROLE = keccak256("ROLES_INFO_ADMIN_ROLE");
+
     const IPOR_ASSETS_ROLE = keccak256("IPOR_ASSETS_ROLE");
     const MILTON_ROLE = keccak256("MILTON_ROLE");
     const MILTON_STORAGE_ROLE = keccak256("MILTON_STORAGE_ROLE");
@@ -119,22 +131,47 @@ module.exports = async function (deployer, _network, addresses) {
     const WARREN_STORAGE_ROLE = keccak256("WARREN_STORAGE_ROLE");
     const JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
     const MILTON_PUBLICATION_FEE_TRANSFERER_ROLE = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
+    const ROLES_INFO_ROLE = keccak256("ROLES_INFO_ROLE");
 
-
+    IporConfiguration.defaults({
+        gasPrice: 0,
+    });
 
     await deployer.deploy(IporConfiguration);
     iporConfiguration = await IporConfiguration.deployed();
-    iporConfiguration.grantRole(IPOR_ASSETS_ROLE, admin);
-    iporConfiguration.grantRole(MILTON_ROLE, admin);
-    iporConfiguration.grantRole(MILTON_STORAGE_ROLE, admin);
-    iporConfiguration.grantRole(MILTON_LP_UTILIZATION_STRATEGY_ROLE, admin);
-    iporConfiguration.grantRole(MILTON_SPREAD_STRATEGY_ROLE, admin);
-    iporConfiguration.grantRole(IPOR_ASSET_CONFIGURATION_ROLE, admin);
-    iporConfiguration.grantRole(WARREN_ROLE, admin);
-    iporConfiguration.grantRole(WARREN_STORAGE_ROLE, admin);
-    iporConfiguration.grantRole(JOSEPH_ROLE, admin);
-    iporConfiguration.grantRole(MILTON_PUBLICATION_FEE_TRANSFERER_ROLE, admin);
 
+    await iporConfiguration.grantRole(ROLES_INFO_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(ROLES_INFO_ROLE, admin);
+    
+    await iporConfiguration.grantRole(IPOR_ASSETS_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(IPOR_ASSETS_ROLE, admin);
+    
+    await iporConfiguration.grantRole(MILTON_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(MILTON_ROLE, admin);
+        
+    await iporConfiguration.grantRole(MILTON_STORAGE_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(MILTON_STORAGE_ROLE, admin);
+    
+    await iporConfiguration.grantRole(MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(MILTON_LP_UTILIZATION_STRATEGY_ROLE, admin);
+    
+    await iporConfiguration.grantRole(MILTON_SPREAD_STRATEGY_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(MILTON_SPREAD_STRATEGY_ROLE, admin);
+    
+    await iporConfiguration.grantRole(IPOR_ASSET_CONFIGURATION_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(IPOR_ASSET_CONFIGURATION_ROLE, admin);
+
+    await iporConfiguration.grantRole(WARREN_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(WARREN_ROLE, admin);
+
+    await iporConfiguration.grantRole(WARREN_STORAGE_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(WARREN_STORAGE_ROLE, admin);
+
+    await iporConfiguration.grantRole(JOSEPH_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(JOSEPH_ROLE, admin);
+
+    await iporConfiguration.grantRole(MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE, admin);    
+    await iporConfiguration.grantRole(MILTON_PUBLICATION_FEE_TRANSFERER_ROLE, admin);
 
     await deployer.deploy(MiltonFrontendDataProvider, iporConfiguration.address);
 

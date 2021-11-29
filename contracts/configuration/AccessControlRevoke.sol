@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 abstract contract AccessControlRevoke is AccessControl {
     bytes32 internal constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 internal constant ROLES_INFO_ROLE = keccak256("ROLES_INFO_ROLE");
+    bytes32 internal constant ROLES_INFO_ADMIN_ROLE = keccak256("ROLES_INFO_ADMIN_ROLE");
     mapping(bytes32 => address[]) private roleMembers;
     mapping(address => bytes32[]) private userRoles;
 
