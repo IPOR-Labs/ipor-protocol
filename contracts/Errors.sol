@@ -163,6 +163,4 @@ library Errors {
     //@notice Decay factor cannot be higher than 1 * multiplicator
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
 
-	//@notice Ipor Token Minting general problem
-    string public constant MILTON_IPOR_TOKEN_MINT_GENERAL_PROBLEM = "IPOR_49";
 }

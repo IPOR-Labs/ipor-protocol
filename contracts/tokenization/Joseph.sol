@@ -82,7 +82,7 @@ contract Joseph is Ownable, IJoseph {
         );
 
         if (exchangeRate > 0) {
-            bool mintResult = IIpToken(
+            IIpToken(
                 IIporAssetConfiguration(
                     iporConfiguration.getIporAssetConfiguration(asset)
                 ).getIpToken()
@@ -93,7 +93,6 @@ contract Joseph is Ownable, IJoseph {
                         exchangeRate
                     )
                 );	
-			require(mintResult, Errors.MILTON_IPOR_TOKEN_MINT_GENERAL_PROBLEM);		
         }
     }
 

@@ -47,15 +47,11 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         external
         override
         onlyJoseph
-        returns (bool)
-    {
-        uint256 previousBalance = super.balanceOf(user);
+    {        
         require(amount > 0, Errors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(user, amount);
         emit Transfer(address(0), user, amount);
         emit Mint(user, amount);
-
-        return previousBalance == 0;
     }
 
     function burn(

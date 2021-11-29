@@ -9,7 +9,7 @@ interface IIpToken is IERC20 {
 
     event Burn(address indexed from, address indexed target, uint256 value);
 
-    function mint(address user, uint256 amount) external returns (bool);
+    function mint(address user, uint256 amount) external;
 
     function burn(
         address user,

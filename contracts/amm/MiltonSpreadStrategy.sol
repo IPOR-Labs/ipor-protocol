@@ -11,11 +11,11 @@ import { AmmMath } from "../libraries/AmmMath.sol";
 import "../interfaces/IMiltonSpreadStrategy.sol";
 
 contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration internal iporConfiguration;
 	
 	//TODO: initialization only once
-	function initialize(IIporConfiguration iporConfiguration) public {
-        _iporConfiguration = iporConfiguration;
+	function initialize(IIporConfiguration initialIporConfiguration) external {
+        iporConfiguration = initialIporConfiguration;
     }
 
     function calculateSpread(address asset, uint256 calculateTimestamp)
@@ -25,7 +25,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         return
-            IMiltonStorage(_iporConfiguration.getMiltonStorage())
+            IMiltonStorage(iporConfiguration.getMiltonStorage())
                 .calculateSpread(asset, calculateTimestamp);
     }
 }
