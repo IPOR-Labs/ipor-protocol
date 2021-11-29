@@ -1,0 +1,11 @@
+{    
+    "detectors_to_exclude": "solc-version,similar-names,timestamp,dead-code",
+    "exclude_informational": false,
+    "exclude_low": false,
+    "exclude_medium": false,
+    "exclude_high": false,
+    "json": "slither-report.json",
+    "disable_color": false,
+    "filter_paths": "@openzeppelin/contracts/",
+    "legacy_ast": false
+}

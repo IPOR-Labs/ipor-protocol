@@ -21,10 +21,11 @@ contract Joseph is Ownable, IJoseph {
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration internal iporConfiguration;
 
-    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
-        _iporConfiguration = iporConfiguration;
+	//TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+        iporConfiguration = initialIporConfiguration;
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount)
@@ -32,7 +33,7 @@ contract Joseph is Ownable, IJoseph {
         override
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
         _provideLiquidity(
             asset,
@@ -44,7 +45,7 @@ contract Joseph is Ownable, IJoseph {
 
     function redeem(address asset, uint256 ipTokenVolume) external override {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
         _redeem(
             asset,
@@ -60,12 +61,12 @@ contract Joseph is Ownable, IJoseph {
         uint256 multiplicator,
         uint256 timestamp
     ) internal {
-        uint256 exchangeRate = IMilton(_iporConfiguration.getMilton())
+        uint256 exchangeRate = IMilton(iporConfiguration.getMilton())
             .calculateExchangeRate(asset, timestamp);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        IMiltonStorage(_iporConfiguration.getMiltonStorage()).addLiquidity(
+        IMiltonStorage(iporConfiguration.getMiltonStorage()).addLiquidity(
             asset,
             liquidityAmount
         );
@@ -76,14 +77,14 @@ contract Joseph is Ownable, IJoseph {
         //TODO: add from address to black list
         IERC20(asset).safeTransferFrom(
             msg.sender,
-            _iporConfiguration.getMilton(),
+            iporConfiguration.getMilton(),
             liquidityAmount
         );
 
         if (exchangeRate > 0) {
-            IIpToken(
+            bool mintResult = IIpToken(
                 IIporAssetConfiguration(
-                    _iporConfiguration.getIporAssetConfiguration(asset)
+                    iporConfiguration.getIporAssetConfiguration(asset)
                 ).getIpToken()
             ).mint(
                     msg.sender,
@@ -91,7 +92,8 @@ contract Joseph is Ownable, IJoseph {
                         liquidityAmount * multiplicator,
                         exchangeRate
                     )
-                );
+                );	
+			require(mintResult, Errors.MILTON_IPOR_TOKEN_MINT_GENERAL_PROBLEM);		
         }
     }
 
@@ -102,7 +104,7 @@ contract Joseph is Ownable, IJoseph {
         uint256 timestamp
     ) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
 
         require(
@@ -113,13 +115,13 @@ contract Joseph is Ownable, IJoseph {
             Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
 
-        uint256 exchangeRate = IMilton(_iporConfiguration.getMilton())
+        uint256 exchangeRate = IMilton(iporConfiguration.getMilton())
             .calculateExchangeRate(asset, timestamp);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         require(
-            IMiltonStorage(_iporConfiguration.getMiltonStorage())
+            IMiltonStorage(iporConfiguration.getMiltonStorage())
                 .getBalance(asset)
                 .liquidityPool > ipTokenVolume,
             Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
@@ -136,13 +138,13 @@ contract Joseph is Ownable, IJoseph {
             ipTokenVolume
         );
 
-        IMiltonStorage(_iporConfiguration.getMiltonStorage()).subtractLiquidity(
+        IMiltonStorage(iporConfiguration.getMiltonStorage()).subtractLiquidity(
                 asset,
                 underlyingAmount
             );
 
         IERC20(asset).safeTransferFrom(
-            _iporConfiguration.getMilton(),
+            iporConfiguration.getMilton(),
             msg.sender,
             underlyingAmount
         );

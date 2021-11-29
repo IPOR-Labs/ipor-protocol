@@ -20,7 +20,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration internal iporConfiguration;
 
     mapping(address => DataTypes.MiltonTotalBalance) public balances;
 
@@ -31,14 +31,15 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivatives public derivatives;
 
-    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
-        _iporConfiguration = iporConfiguration;
+	//TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+        iporConfiguration = initialIporConfiguration;
     }
 
     //@notice add asset address to MiltonStorage structures
     function addAsset(address asset) external override onlyOwner {
         require(
-            _iporConfiguration.assetSupported(asset) == 1,
+            iporConfiguration.assetSupported(asset) == 1,
             Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
 
@@ -64,7 +65,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         );
 
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
         uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
 
@@ -216,10 +217,10 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     {
         return (
             spreadPayFixedValue = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             ).getSpreadPayFixedValue(),
             spreadRecFixedValue = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             ).getSpreadRecFixedValue()
         );
     }
@@ -239,7 +240,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         )
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
         uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
 
@@ -285,7 +286,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 multiplicator
     ) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
 
         balances[asset].derivatives = balances[asset].derivatives + collateral;
@@ -371,7 +372,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 incomeTax = AmmMath.calculateIncomeTax(
             abspositionValue,
             IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(
+                iporConfiguration.getIporAssetConfiguration(
                     derivativeItem.item.asset
                 )
             ).getIncomeTaxPercentage(),
@@ -493,7 +494,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyMilton() {
         require(
-            msg.sender == _iporConfiguration.getMilton(),
+            msg.sender == iporConfiguration.getMilton(),
             Errors.MILTON_CALLER_NOT_MILTON
         );
         _;
@@ -501,7 +502,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyJoseph() {
         require(
-            msg.sender == _iporConfiguration.getJoseph(),
+            msg.sender == iporConfiguration.getJoseph(),
             Errors.MILTON_CALLER_NOT_JOSEPH
         );
         _;

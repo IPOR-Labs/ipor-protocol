@@ -13,7 +13,7 @@ library DerivativeLogic {
         uint256 mdDerivativeFixedInterestRate,
         uint256 derivativePeriodInSeconds,
         uint256 multiplicator
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         return
             mdNotionalAmount *
             multiplicator *
@@ -27,7 +27,7 @@ library DerivativeLogic {
     function calculateQuasiInterestFloating(
         uint256 mdIbtQuantity,
         uint256 mdIbtCurrentPrice
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
         return mdIbtQuantity * mdIbtCurrentPrice * Constants.YEAR_IN_SECONDS;
     }
@@ -36,7 +36,7 @@ library DerivativeLogic {
         DataTypes.IporDerivative memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) public pure returns (DataTypes.IporDerivativeInterest memory) {
+    ) external pure returns (DataTypes.IporDerivativeInterest memory) {
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
             closingTimestamp >= derivative.startingTimestamp,

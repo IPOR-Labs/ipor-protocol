@@ -20,7 +20,7 @@ contract TestJoseph is Joseph {
         uint256 timestamp
     ) external {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
         _provideLiquidity(
             asset,
@@ -37,7 +37,7 @@ contract TestJoseph is Joseph {
         uint256 timestamp
     ) external {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
         _redeem(
             asset,

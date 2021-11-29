@@ -21,12 +21,12 @@ import "../interfaces/IIporAssetConfiguration.sol";
 contract Warren is Ownable, Pausable, IWarren {
     using IporLogic for DataTypes.IPOR;
 
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration internal iporConfiguration;
 
     modifier onlyUpdater() {
         bool allowed = false;
         address[] memory updaters = IWarrenStorage(
-            _iporConfiguration.getWarrenStorage()
+            iporConfiguration.getWarrenStorage()
         ).getUpdaters();
         for (uint256 i = 0; i < updaters.length; i++) {
             if (updaters[i] == msg.sender) {
@@ -34,12 +34,13 @@ contract Warren is Ownable, Pausable, IWarren {
                 break;
             }
         }
-        require(allowed == true, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
+        require(allowed, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
         _;
     }
 
-    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
-        _iporConfiguration = iporConfiguration;
+	//TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+        iporConfiguration = initialIporConfiguration;
     }
 
     function pause() external override onlyOwner {
@@ -62,7 +63,7 @@ contract Warren is Ownable, Pausable, IWarren {
         )
     {
         DataTypes.IPOR memory iporIndex = IWarrenStorage(
-            _iporConfiguration.getWarrenStorage()
+            iporConfiguration.getWarrenStorage()
         ).getIndex(asset);
         return (
             indexValue = iporIndex.indexValue,
@@ -84,7 +85,7 @@ contract Warren is Ownable, Pausable, IWarren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        IWarrenStorage(_iporConfiguration.getWarrenStorage()).updateIndexes(
+        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
             assets,
             indexes,
             block.timestamp
@@ -95,7 +96,7 @@ contract Warren is Ownable, Pausable, IWarren {
         address[] memory assets,
         uint256[] memory indexValues
     ) external override onlyUpdater {
-        IWarrenStorage(_iporConfiguration.getWarrenStorage()).updateIndexes(
+        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
             assets,
             indexValues,
             block.timestamp
@@ -110,7 +111,7 @@ contract Warren is Ownable, Pausable, IWarren {
     {
         return
             AmmMath.division(
-                IWarrenStorage(_iporConfiguration.getWarrenStorage())
+                IWarrenStorage(iporConfiguration.getWarrenStorage())
                     .getIndex(asset)
                     .accrueQuasiIbtPrice(calculateTimestamp),
                 Constants.YEAR_IN_SECONDS

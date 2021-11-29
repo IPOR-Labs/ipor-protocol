@@ -144,12 +144,12 @@ contract IporConfiguration is Ownable, IIporConfiguration {
     function addAsset(address asset) external override onlyOwner {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         bool assetExists = false;
-        for (uint256 i; i < assets.length; i++) {
+        for (uint256 i = 0; i < assets.length; i++) {
             if (assets[i] == asset) {
                 assetExists = true;
             }
         }
-        if (assetExists == false) {
+        if (!assetExists) {
             assets.push(asset);
             supportedAssets[asset] = 1;
             emit AssetAddressAdd(asset);
@@ -158,7 +158,7 @@ contract IporConfiguration is Ownable, IIporConfiguration {
 
     function removeAsset(address asset) external override onlyOwner {
         require(asset != address(0), Errors.WRONG_ADDRESS);
-        for (uint256 i; i < assets.length; i++) {
+        for (uint256 i = 0; i < assets.length; i++) {
             if (assets[i] == asset) {
                 delete assets[i];
                 supportedAssets[asset] = 0;

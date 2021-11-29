@@ -9,15 +9,15 @@ import { AmmMath } from "../libraries/AmmMath.sol";
 import "../interfaces/IWarrenStorage.sol";
 
 contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
-    IIporConfiguration public immutable ADDRESSES_MANAGER;
+    IIporConfiguration private immutable iporConfiguration;
 
-    constructor(IIporConfiguration iporConfiguration) {
-        ADDRESSES_MANAGER = iporConfiguration;
+    constructor(IIporConfiguration initialIporConfiguration) {
+        iporConfiguration = initialIporConfiguration;
     }
 
     function getIndexes() external view override returns (IporFront[] memory) {
         IWarrenStorage warrenStorage = IWarrenStorage(
-            ADDRESSES_MANAGER.getWarrenStorage()
+            iporConfiguration.getWarrenStorage()
         );
         address[] memory assets = warrenStorage.getAssets();
         IporFront[] memory indexes = new IporFront[](assets.length);

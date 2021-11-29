@@ -12,8 +12,9 @@ import "../interfaces/IMiltonSpreadStrategy.sol";
 
 contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
     IIporConfiguration internal _iporConfiguration;
-
-    function initialize(IIporConfiguration iporConfiguration) public {
+	
+	//TODO: initialization only once
+	function initialize(IIporConfiguration iporConfiguration) public {
         _iporConfiguration = iporConfiguration;
     }
 
