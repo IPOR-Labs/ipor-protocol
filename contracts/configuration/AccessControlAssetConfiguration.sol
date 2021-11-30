@@ -69,10 +69,11 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         keccak256("ASSET_MANAGEMENT_VAULT_ROLE");
     bytes32 internal constant ASSET_MANAGEMENT_VAULT_ADMIN_ROLE =
         keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE");
-    bytes32 internal constant DECAY_FACTOR_VALUE_ADMIN_ROLE =
-        keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE");
+
     bytes32 internal constant DECAY_FACTOR_VALUE_ROLE =
         keccak256("DECAY_FACTOR_VALUE_ROLE");
+    bytes32 internal constant DECAY_FACTOR_VALUE_ADMIN_ROLE =
+        keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE");
 
     constructor(address root) {
         _setupRole(ADMIN_ROLE, root);

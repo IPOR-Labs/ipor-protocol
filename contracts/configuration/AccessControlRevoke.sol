@@ -2,6 +2,7 @@
 pragma solidity >=0.8.4 <0.9.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import { Errors } from "../Errors.sol";
 
 abstract contract AccessControlRevoke is AccessControl {
     bytes32 internal constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -21,8 +22,7 @@ abstract contract AccessControlRevoke is AccessControl {
             _revolke(role, account);
         } else {
             require(
-                _msgSender() != account,
-                "ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE"
+                _msgSender() != account, Errors.CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED
             );
             super.revokeRole(role, account);
             _revolke(role, account);

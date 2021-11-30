@@ -464,7 +464,7 @@ contract('IporConfiguration', (accounts) => {
             iporConfiguration.revokeRole(role, admin),
             
             //then
-            'ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE'
+            'IPOR_49'
         );
     });
 

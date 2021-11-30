@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {Errors} from "../Errors.sol";
+import { Errors } from "../Errors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
