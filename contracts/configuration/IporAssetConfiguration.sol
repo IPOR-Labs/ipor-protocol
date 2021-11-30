@@ -51,11 +51,16 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint256 private decayFactorValue;
 
-    //TODO: spread from configuration will be deleted, spread will be calculated in runtime
-    uint256 private spreadPayFixedValue;
-    uint256 private spreadRecFixedValue;
+    //@notice Part of Spread calculation - Utilization Component Kf value - check Whitepaper
+    uint256 private spreadUtilizationComponentKfValue;
+
+    //@notice Part of Spread calculation - Utilization Component Lambda value - check Whitepaper
+    uint256 private spreadUtilizationComponentLambdaValue;
+
+	uint256 private spreadTemporaryValue;
 
     address private assetManagementVault;
+
     address private charlieTreasurer;
 
     //TODO: fix this name; treasureManager
@@ -70,14 +75,16 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
         //@notice taken after close position from participant who take income (trader or Milton)
         incomeTaxPercentage = AmmMath.division(multiplicator, 10);
+		
+		//TODO: add test when multiplicator lower than 10000
+        require(multiplicator >= Constants.D4, Errors.CONFIG_INCORRECT_MULTIPLICATOR);
 
-        require(multiplicator != 0);
-
-        //@notice taken after open position from participant who execute opening position, paid after close position to participant who execute closing position
+        //@notice taken after open position from participant who execute opening position,
+        //paid after close position to participant who execute closing position
         liquidationDepositAmount = 20 * multiplicator;
 
         //@notice
-        openingFeePercentage = AmmMath.division(3 * multiplicator, 10000);
+        openingFeePercentage = AmmMath.division(3 * multiplicator, Constants.D4);
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * multiplicator;
         liquidityPoolMaxUtilizationPercentage =
@@ -88,10 +95,12 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         minCollateralizationFactorValue = 10 * multiplicator;
         maxCollateralizationFactorValue = 50 * multiplicator;
 
-        spreadPayFixedValue = AmmMath.division(multiplicator, 100);
-        spreadRecFixedValue = AmmMath.division(multiplicator, 100);
+        spreadTemporaryValue = AmmMath.division(multiplicator, 100);        
 
         decayFactorValue = AmmMath.division(multiplicator, 10);
+		
+		spreadUtilizationComponentKfValue = AmmMath.division(1 * multiplicator, 1000);
+		spreadUtilizationComponentLambdaValue = AmmMath.division(3 * multiplicator, 10);
     }
 
     function getIncomeTaxPercentage() external view override returns (uint256) {
@@ -301,7 +310,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         override
         onlyOwner
     {
-		require(newCharlieTreasurer != address(0), Errors.WRONG_ADDRESS);
+        require(newCharlieTreasurer != address(0), Errors.WRONG_ADDRESS);
         charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }
@@ -315,7 +324,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         override
         onlyOwner
     {
-		require(newTreasureTreasurer != address(0), Errors.WRONG_ADDRESS);
+        require(newTreasureTreasurer != address(0), Errors.WRONG_ADDRESS);
         treasureTreasurer = newTreasureTreasurer;
         emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
     }
@@ -338,7 +347,10 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         override
         onlyOwner
     {
-		require(newAssetManagementVaultAddress != address(0), Errors.WRONG_ADDRESS);
+        require(
+            newAssetManagementVaultAddress != address(0),
+            Errors.WRONG_ADDRESS
+        );
         assetManagementVault = newAssetManagementVaultAddress;
         emit AssetManagementVaultUpdated(
             _asset,

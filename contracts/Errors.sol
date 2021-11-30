@@ -163,4 +163,7 @@ library Errors {
     //@notice Decay factor cannot be higher than 1 * multiplicator
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
 
+	//@notice Multiplicator should be higher than Constants.D4
+    string public constant CONFIG_INCORRECT_MULTIPLICATOR = "IPOR_49";
+
 }
