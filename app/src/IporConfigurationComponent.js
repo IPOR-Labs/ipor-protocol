@@ -191,6 +191,18 @@ export default ({ drizzle, drizzleState }) => (
                             0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
                         </td>
                     </tr>
+					<tr>
+                        <td>ROLES_INFO_ROLE</td>
+                        <td>
+                            0xc878cde3567a457053651a2406e31db6dbb9207b6d5eedb081ef807beaaf5444
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ROLES_INFO_ADMIN_ROLE</td>
+                        <td>
+                            0xfb1902cbac4bf447ada58dff398caab7aa9089eba1be77a2833d9e08dbe8664c
+                        </td>
+                    </tr>
                     <tr>
                         <td>IPOR_ASSETS_ROLE</td>
                         <td>
