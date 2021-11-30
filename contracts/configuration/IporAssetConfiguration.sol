@@ -5,9 +5,8 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import { Errors } from "../Errors.sol";
-import { DataTypes } from "../libraries/types/DataTypes.sol";
+import {Errors} from "../Errors.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 import "../amm/IMiltonEvents.sol";
@@ -16,9 +15,12 @@ import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
+import "./AccessControlAssetConfiguration.sol";
 
-//TODO: consider using AccessControll instead Ownable - higher flexibility
-contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
+contract IporAssetConfiguration is
+    AccessControlAssetConfiguration(msg.sender),
+    IIporAssetConfiguration
+{
     address private immutable _asset;
 
     address private immutable _ipToken;
@@ -101,7 +103,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setIncomeTaxPercentage(uint256 _incomeTaxPercentage)
         external
         override
-        onlyOwner
+        onlyRole(INCOME_TAX_PERCENTAGE_ROLE)
     {
         require(
             _incomeTaxPercentage <= _multiplicator,
@@ -122,7 +124,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
     function setOpeningFeeForTreasuryPercentage(
         uint256 _openingFeeForTreasuryPercentage
-    ) external override onlyOwner {
+    ) external override onlyRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE) {
         require(
             _openingFeeForTreasuryPercentage <= _multiplicator,
             Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
@@ -145,7 +147,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setLiquidationDepositAmount(uint256 _liquidationDepositAmount)
         external
         override
-        onlyOwner
+        onlyRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE)
     {
         liquidationDepositAmount = _liquidationDepositAmount;
         emit LiquidationDepositAmountSet(_liquidationDepositAmount);
@@ -163,7 +165,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setOpeningFeePercentage(uint256 _openingFeePercentage)
         external
         override
-        onlyOwner
+        onlyRole(OPENING_FEE_PERCENTAGE_ROLE)
     {
         require(
             _openingFeePercentage <= _multiplicator,
@@ -185,7 +187,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setIporPublicationFeeAmount(uint256 _iporPublicationFeeAmount)
         external
         override
-        onlyOwner
+        onlyRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE)
     {
         iporPublicationFeeAmount = _iporPublicationFeeAmount;
         emit IporPublicationFeeAmountSet(_iporPublicationFeeAmount);
@@ -202,7 +204,11 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
     function setLiquidityPoolMaxUtilizationPercentage(
         uint256 _liquidityPoolMaxUtilizationPercentage
-    ) external override onlyOwner {
+    )
+        external
+        override
+        onlyRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE)
+    {
         liquidityPoolMaxUtilizationPercentage = _liquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(
             _liquidityPoolMaxUtilizationPercentage
@@ -221,7 +227,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setMaxPositionTotalAmount(uint256 _maxPositionTotalAmount)
         external
         override
-        onlyOwner
+        onlyRole(MAX_POSITION_TOTAL_AMOUNT_ROLE)
     {
         maxPositionTotalAmount = _maxPositionTotalAmount;
         emit MaxPositionTotalAmountSet(_maxPositionTotalAmount);
@@ -231,7 +237,11 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         return spreadPayFixedValue;
     }
 
-    function setSpreadPayFixedValue(uint256 spread) external override {
+    function setSpreadPayFixedValue(uint256 spread)
+        external
+        override
+        onlyRole(SPREAD_PAY_FIXED_VALUE_ROLE)
+    {
         spreadPayFixedValue = spread;
     }
 
@@ -239,7 +249,11 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
         return spreadRecFixedValue;
     }
 
-    function setSpreadRecFixedValue(uint256 spread) external override {
+    function setSpreadRecFixedValue(uint256 spread)
+        external
+        override
+        onlyRole(SPREAD_REC_FIXED_VALUE_ROLE)
+    {
         spreadRecFixedValue = spread;
     }
 
@@ -254,7 +268,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
     function setMaxCollateralizationFactorValue(
         uint256 _maxCollateralizationFactorValue
-    ) external override onlyOwner {
+    ) external override onlyRole(COLLATERALIZATION_FACTOR_VALUE_ROLE) {
         maxCollateralizationFactorValue = _maxCollateralizationFactorValue;
         emit MaxCollateralizationFactorValueSet(
             _maxCollateralizationFactorValue
@@ -272,7 +286,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
 
     function setMinCollateralizationFactorValue(
         uint256 _minCollateralizationFactorValue
-    ) external override onlyOwner {
+    ) external override onlyRole(COLLATERALIZATION_FACTOR_VALUE_ROLE) {
         minCollateralizationFactorValue = _minCollateralizationFactorValue;
         emit MinCollateralizationFactorValueSet(
             _minCollateralizationFactorValue
@@ -299,7 +313,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setCharlieTreasurer(address newCharlieTreasurer)
         external
         override
-        onlyOwner
+        onlyRole(CHARLIE_TREASURER_ROLE)
     {
         charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
@@ -312,7 +326,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setTreasureTreasurer(address newTreasureTreasurer)
         external
         override
-        onlyOwner
+        onlyRole(TREASURE_TREASURER_ROLE)
     {
         treasureTreasurer = newTreasureTreasurer;
         emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
@@ -334,7 +348,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setAssetManagementVault(address newAssetManagementVaultAddress)
         external
         override
-        onlyOwner
+        onlyRole(ASSET_MANAGEMENT_VAULT_ROLE)
     {
         assetManagementVault = newAssetManagementVaultAddress;
         emit AssetManagementVaultUpdated(
@@ -350,7 +364,7 @@ contract IporAssetConfiguration is Ownable, IIporAssetConfiguration {
     function setDecayFactorValue(uint256 newDecayFactorValue)
         external
         override
-        onlyOwner
+        onlyRole(DECAY_FACTOR_VALUE_ROLE)
     {
         require(
             newDecayFactorValue <= _multiplicator,

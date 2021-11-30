@@ -162,4 +162,7 @@ library Errors {
 
     //@notice Decay factor cannot be higher than 1 * multiplicator
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
+
+	//@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
+    string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_49";
 }
