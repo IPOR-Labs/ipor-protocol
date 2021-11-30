@@ -3,7 +3,10 @@ pragma solidity 0.8.9;
 
 library DataTypes {
     struct MiltonTotalBalance {
-        uint256 derivatives;
+        //@notice derivatives balance for Pay Fixed & Receive Floating leg
+        uint256 payFixedDerivatives;
+        //@notice derivatives balance for Pay Floating & Receive Fixed leg
+        uint256 recFixedDerivatives;
         uint256 openingFee;
         uint256 liquidationDeposit;
         uint256 iporPublicationFee;

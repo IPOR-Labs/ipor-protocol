@@ -31,8 +31,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivatives public derivatives;
 
-	//TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+    //TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration)
+        external
+        onlyOwner
+    {
         iporConfiguration = initialIporConfiguration;
     }
 
@@ -147,6 +150,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         _updateMiltonDerivativesWhenOpenPosition(iporDerivative);
         _updateBalancesWhenOpenPosition(
             iporDerivative.asset,
+            iporDerivative.direction,
             iporDerivative.collateral,
             iporDerivative.fee.openingAmount,
             iporDerivative.multiplicator
@@ -281,6 +285,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _updateBalancesWhenOpenPosition(
         address asset,
+        uint8 direction,
         uint256 collateral,
         uint256 openingFeeAmount,
         uint256 multiplicator
@@ -289,7 +294,19 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
 
-        balances[asset].derivatives = balances[asset].derivatives + collateral;
+        if (
+            direction ==
+            uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
+        ) {
+            balances[asset].payFixedDerivatives =
+                balances[asset].payFixedDerivatives +
+                collateral;
+        } else {
+            balances[asset].recFixedDerivatives =
+                balances[asset].recFixedDerivatives +
+                collateral;
+        }
+
         balances[asset].openingFee =
             balances[asset].openingFee +
             openingFeeAmount;
@@ -349,14 +366,25 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             Errors
                 .MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
         );
-
         balances[derivativeItem.item.asset].liquidationDeposit =
             balances[derivativeItem.item.asset].liquidationDeposit -
             derivativeItem.item.fee.liquidationDepositAmount;
 
-        balances[derivativeItem.item.asset].derivatives =
-            balances[derivativeItem.item.asset].derivatives -
-            derivativeItem.item.collateral;
+        if (
+            derivativeItem.item.direction ==
+            uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
+        ) {
+            balances[derivativeItem.item.asset].payFixedDerivatives =
+                balances[derivativeItem.item.asset].payFixedDerivatives -
+                derivativeItem.item.collateral;
+        } else if (
+            derivativeItem.item.direction ==
+            uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed)
+        ) {
+            balances[derivativeItem.item.asset].recFixedDerivatives =
+                balances[derivativeItem.item.asset].recFixedDerivatives -
+                derivativeItem.item.collateral;
+        }
 
         if (abspositionValue < derivativeItem.item.collateral) {
             //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
@@ -448,9 +476,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             uint256 userDerivativeIdToMove = derivatives.userDerivativeIds[
                 buyer
             ][derivatives.userDerivativeIds[buyer].length - 1];
+
             derivatives
                 .items[userDerivativeIdToMove]
                 .userDerivativeIdsIndex = userDerivativeIdsIndexToDelete;
+
             derivatives.userDerivativeIds[buyer][
                 userDerivativeIdsIndexToDelete
             ] = userDerivativeIdToMove;

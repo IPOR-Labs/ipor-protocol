@@ -38,7 +38,7 @@ contract Warren is Ownable, Pausable, IWarren {
         _;
     }
 
-	//TODO: initialization only once
+	//TODO: initialization only once,
     function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
         iporConfiguration = initialIporConfiguration;
     }

@@ -35,7 +35,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         if ((balance.liquidityPool + openingFee) != 0) {
             return
                 AmmMath.division(
-                    (balance.derivatives + deposit) * multiplicator,
+                    (balance.payFixedDerivatives + balance.recFixedDerivatives + deposit) * multiplicator,
                     balance.liquidityPool + openingFee
                 );
         } else {
