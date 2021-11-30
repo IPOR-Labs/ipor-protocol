@@ -13,8 +13,18 @@ import "../amm/MiltonStorage.sol";
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
     IIporConfiguration public immutable iporConfiguration;
 
-    constructor(IIporConfiguration _iporConfiguration) {
-        iporConfiguration = _iporConfiguration;
+    constructor(IIporConfiguration initialIporConfiguration) {
+        iporConfiguration = initialIporConfiguration;
+    }
+
+    function getIpTokenExchangeRate(address asset)
+        external view
+        override
+        returns (uint256)
+    {
+        IMilton milton = IMilton(iporConfiguration.getMilton());
+        uint256 result = milton.calculateExchangeRate(asset, block.timestamp);
+		return result;
     }
 
     function getTotalOutstandingNotional(address asset)

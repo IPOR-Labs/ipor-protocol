@@ -40,5 +40,5 @@
 /test/output
 /.nyc_output/
 slither-report.json
-.vscode/settings.json
 app/.env
+.vscode/settings.json

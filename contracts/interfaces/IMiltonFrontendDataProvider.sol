@@ -30,6 +30,8 @@ interface IMiltonFrontendDataProvider {
         uint256 multiplicator;
     }
 
+	function getIpTokenExchangeRate(address asset) external view returns(uint256);
+
     function getTotalOutstandingNotional(address asset)
         external
         view
