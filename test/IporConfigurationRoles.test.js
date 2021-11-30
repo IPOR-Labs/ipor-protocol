@@ -659,7 +659,7 @@ contract('IporConfigurationRoles', (accounts) => {
             iporConfiguration.grantRole(role, userTwo, { from: userOne }),
 
             //then
-            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xb1c511825e3a3673b7b3e9816a90ae950555bc6dbcfe9ddcd93d74ef23df3ed2.`
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xb1c511825e3a3673b7b3e9816a90ae950555bc6dbcfe9ddcd93d74ef23df3ed2`
         );
     });
 

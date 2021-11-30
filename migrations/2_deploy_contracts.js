@@ -279,32 +279,34 @@ module.exports = async function (deployer, _network, addresses) {
 
             await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS, ipUsdtToken.address);
             iporAssetConfigurationUsdt = await IporAssetConfiguration.deployed();
-            iporAssetConfigurationUsdt.grantRole(INCOME_TAX_PERCENTAGE_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(INCOME_TAX_PERCENTAGE_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(OPENING_FEE_PERCENTAGE_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(OPENING_FEE_PERCENTAGE_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(MAX_POSITION_TOTAL_AMOUNT_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(SPREAD_PAY_FIXED_VALUE_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(SPREAD_REC_FIXED_VALUE_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(SPREAD_REC_FIXED_VALUE_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(COLLATERALIZATION_FACTOR_VALUE_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(CHARLIE_TREASURER_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(CHARLIE_TREASURER_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(TREASURE_TREASURER_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(TREASURE_TREASURER_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(ASSET_MANAGEMENT_VAULT_ADMIN_ROLE, admin);
-            iporAssetConfigurationUsdt.grantRole(ASSET_MANAGEMENT_VAULT_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(INCOME_TAX_PERCENTAGE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(INCOME_TAX_PERCENTAGE_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(OPENING_FEE_PERCENTAGE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(OPENING_FEE_PERCENTAGE_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(MAX_POSITION_TOTAL_AMOUNT_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(SPREAD_PAY_FIXED_VALUE_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(SPREAD_REC_FIXED_VALUE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(SPREAD_REC_FIXED_VALUE_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(COLLATERALIZATION_FACTOR_VALUE_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(CHARLIE_TREASURER_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(CHARLIE_TREASURER_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(TREASURE_TREASURER_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(TREASURE_TREASURER_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(ASSET_MANAGEMENT_VAULT_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(ASSET_MANAGEMENT_VAULT_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(DECAY_FACTOR_VALUE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdt.grantRole(DECAY_FACTOR_VALUE_ROLE, admin);
 
             await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS, ipUsdcToken.address);
             iporAssetConfigurationUsdc = await IporAssetConfiguration.deployed();
@@ -334,6 +336,8 @@ module.exports = async function (deployer, _network, addresses) {
             await iporAssetConfigurationUsdc.grantRole(TREASURE_TREASURER_ROLE, admin);
             await iporAssetConfigurationUsdc.grantRole(ASSET_MANAGEMENT_VAULT_ADMIN_ROLE, admin);
             await iporAssetConfigurationUsdc.grantRole(ASSET_MANAGEMENT_VAULT_ROLE, admin);
+            await iporAssetConfigurationUsdc.grantRole(DECAY_FACTOR_VALUE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationUsdc.grantRole(DECAY_FACTOR_VALUE_ROLE, admin);
 
             await deployer.deploy(IporAssetConfiguration, process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS, ipDaiToken.address);
             iporAssetConfigurationDai = await IporAssetConfiguration.deployed();
@@ -363,6 +367,8 @@ module.exports = async function (deployer, _network, addresses) {
             await iporAssetConfigurationDai.grantRole(TREASURE_TREASURER_ROLE, admin);
             await iporAssetConfigurationDai.grantRole(ASSET_MANAGEMENT_VAULT_ADMIN_ROLE, admin);
             await iporAssetConfigurationDai.grantRole(ASSET_MANAGEMENT_VAULT_ROLE, admin);
+            await iporAssetConfigurationDai.grantRole(DECAY_FACTOR_VALUE_ADMIN_ROLE, admin);
+            await iporAssetConfigurationDai.grantRole(DECAY_FACTOR_VALUE_ROLE, admin);
 
             await iporConfiguration.addAsset(mockedDai.address);
             await iporConfiguration.addAsset(mockedUsdt.address);

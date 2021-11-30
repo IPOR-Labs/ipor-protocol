@@ -782,6 +782,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should set decay factor value', async () => {
         //given
         let decayFactorValue = testUtils.TC_MULTIPLICATOR_18DEC;
+        await iporAssetConfigurationDAI.grantRole(keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"), admin);
 		const role = keccak256("DECAY_FACTOR_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
 
@@ -798,6 +799,7 @@ contract('IporAssetConfiguration', (accounts) => {
     it('should NOT set decay factor value, decay factor too high', async () => {
         //given
         let decayFactorValue = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+        await iporAssetConfigurationDAI.grantRole(keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"), admin);
 		const role = keccak256("DECAY_FACTOR_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne);
 

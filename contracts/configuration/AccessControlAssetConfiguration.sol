@@ -31,7 +31,8 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
 
     bytes32 internal constant LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE =
         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE");
-    bytes32 internal constant LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE =
+    bytes32
+        internal constant LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE =
         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE");
 
     bytes32 internal constant MAX_POSITION_TOTAL_AMOUNT_ROLE =
@@ -63,12 +64,14 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         keccak256("TREASURE_TREASURER_ROLE");
     bytes32 internal constant TREASURE_TREASURER_ADMIN_ROLE =
         keccak256("TREASURE_TREASURER_ADMIN_ROLE");
-        
+
     bytes32 internal constant ASSET_MANAGEMENT_VAULT_ROLE =
         keccak256("ASSET_MANAGEMENT_VAULT_ROLE");
     bytes32 internal constant ASSET_MANAGEMENT_VAULT_ADMIN_ROLE =
         keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE");
-	bytes32 internal constant DECAY_FACTOR_VALUE_ROLE =
+    bytes32 internal constant DECAY_FACTOR_VALUE_ADMIN_ROLE =
+        keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE");
+    bytes32 internal constant DECAY_FACTOR_VALUE_ROLE =
         keccak256("DECAY_FACTOR_VALUE_ROLE");
 
     constructor(address root) {
@@ -79,19 +82,37 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(ROLES_INFO_ROLE, ROLES_INFO_ADMIN_ROLE);
 
         _setRoleAdmin(INCOME_TAX_PERCENTAGE_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(INCOME_TAX_PERCENTAGE_ROLE, INCOME_TAX_PERCENTAGE_ADMIN_ROLE);
+        _setRoleAdmin(
+            INCOME_TAX_PERCENTAGE_ROLE,
+            INCOME_TAX_PERCENTAGE_ADMIN_ROLE
+        );
 
-        _setRoleAdmin(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE, OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE);
+        _setRoleAdmin(
+            OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE,
+            ADMIN_ROLE
+        );
+        _setRoleAdmin(
+            OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE,
+            OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE
+        );
 
         _setRoleAdmin(LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(LIQUIDATION_DEPOSIT_AMOUNT_ROLE, LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE);
+        _setRoleAdmin(
+            LIQUIDATION_DEPOSIT_AMOUNT_ROLE,
+            LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE
+        );
 
         _setRoleAdmin(OPENING_FEE_PERCENTAGE_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(OPENING_FEE_PERCENTAGE_ROLE, OPENING_FEE_PERCENTAGE_ADMIN_ROLE);
+        _setRoleAdmin(
+            OPENING_FEE_PERCENTAGE_ROLE,
+            OPENING_FEE_PERCENTAGE_ADMIN_ROLE
+        );
 
         _setRoleAdmin(IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(IPOR_PUBLICATION_FEE_AMOUNT_ROLE, IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE);
+        _setRoleAdmin(
+            IPOR_PUBLICATION_FEE_AMOUNT_ROLE,
+            IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE
+        );
 
         _setRoleAdmin(
             LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE,
@@ -103,16 +124,28 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         );
 
         _setRoleAdmin(MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(MAX_POSITION_TOTAL_AMOUNT_ROLE, MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE);
+        _setRoleAdmin(
+            MAX_POSITION_TOTAL_AMOUNT_ROLE,
+            MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE
+        );
 
         _setRoleAdmin(SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(SPREAD_PAY_FIXED_VALUE_ROLE, SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE);
+        _setRoleAdmin(
+            SPREAD_PAY_FIXED_VALUE_ROLE,
+            SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE
+        );
 
         _setRoleAdmin(SPREAD_REC_FIXED_VALUE_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(SPREAD_REC_FIXED_VALUE_ROLE, SPREAD_REC_FIXED_VALUE_ADMIN_ROLE);
+        _setRoleAdmin(
+            SPREAD_REC_FIXED_VALUE_ROLE,
+            SPREAD_REC_FIXED_VALUE_ADMIN_ROLE
+        );
 
         _setRoleAdmin(COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(COLLATERALIZATION_FACTOR_VALUE_ROLE, COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE);
+        _setRoleAdmin(
+            COLLATERALIZATION_FACTOR_VALUE_ROLE,
+            COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE
+        );
 
         _setRoleAdmin(CHARLIE_TREASURER_ADMIN_ROLE, ADMIN_ROLE);
         _setRoleAdmin(CHARLIE_TREASURER_ROLE, CHARLIE_TREASURER_ADMIN_ROLE);
@@ -121,8 +154,12 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(TREASURE_TREASURER_ROLE, TREASURE_TREASURER_ADMIN_ROLE);
 
         _setRoleAdmin(ASSET_MANAGEMENT_VAULT_ADMIN_ROLE, ADMIN_ROLE);
-        _setRoleAdmin(ASSET_MANAGEMENT_VAULT_ROLE, ASSET_MANAGEMENT_VAULT_ADMIN_ROLE);
+        _setRoleAdmin(
+            ASSET_MANAGEMENT_VAULT_ROLE,
+            ASSET_MANAGEMENT_VAULT_ADMIN_ROLE
+        );
 
-		_setRoleAdmin(DECAY_FACTOR_VALUE_ROLE, ADMIN_ROLE);
+        _setRoleAdmin(DECAY_FACTOR_VALUE_ADMIN_ROLE, ADMIN_ROLE);
+        _setRoleAdmin(DECAY_FACTOR_VALUE_ROLE, DECAY_FACTOR_VALUE_ADMIN_ROLE);
     }
 }

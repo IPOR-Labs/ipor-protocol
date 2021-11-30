@@ -544,6 +544,43 @@ contract('IporAssetConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
+    it('should grant and revoke DECAY_FACTOR_VALUE_*', async () => {
+        //given
+        const adminRole = keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE");
+        const role = keccak256("DECAY_FACTOR_VALUE_ROLE");
+
+        // userOne has granted adminRole
+        // userTwo has granted role
+        // userTwo has revoke role
+        // userOne has revoke adminRole 
+
+        let hasAdminRole = await iporAssetConfigurationDAI.hasRole(adminRole, userOne);
+        assert(!hasAdminRole);
+
+        await iporAssetConfigurationDAI.grantRole(adminRole, userOne);
+
+        hasAdminRole = await iporAssetConfigurationDAI.hasRole(adminRole, userOne);
+        assert(hasAdminRole);
+
+        let hasRole = await iporAssetConfigurationDAI.hasRole(role, userTwo);
+        assert(!hasRole);
+
+        await iporAssetConfigurationDAI.grantRole(role, userTwo, {from: userOne});
+
+        hasRole = await iporAssetConfigurationDAI.hasRole(role, userTwo);
+        assert(hasRole);
+
+        await iporAssetConfigurationDAI.revokeRole(role, userTwo, {from: userOne});
+
+        hasRole = await iporAssetConfigurationDAI.hasRole(role, userTwo);
+        assert(!hasRole);
+
+        await iporAssetConfigurationDAI.revokeRole(adminRole, userOne);
+
+        hasAdminRole = await iporAssetConfigurationDAI.hasRole(adminRole, userOne);
+        assert(!hasAdminRole);
+    });
+
     it('should NOT be able to grant ROLES_INFO_ROLE role', async () => {
         //given
         const role = keccak256("ROLES_INFO_ROLE");
@@ -899,6 +936,32 @@ contract('IporAssetConfigurationRoles', (accounts) => {
     it('should NOT be able to grant ASSET_MANAGEMENT_VAULT_ADMIN_ROLE role', async () => {
         //given
         const role = keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.grantRole(role, userTwo, { from: userOne }),
+
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775`
+        );
+    });
+
+    it('should NOT be able to grant DECAY_FACTOR_VALUE_ROLE role', async () => {
+        //given
+        const role = keccak256("DECAY_FACTOR_VALUE_ROLE");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.grantRole(role, userTwo, { from: userOne }),
+
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xed044c57d37423bb4623f9110729ee31cae04cae931fe5ab3b24fc2e474fbb70`
+        );
+    });
+
+    it('should NOT be able to grant DECAY_FACTOR_VALUE_ADMIN_ROLE role', async () => {
+        //given
+        const role = keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE");
 
         await testUtils.assertError(
             //when
