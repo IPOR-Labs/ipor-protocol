@@ -1,7 +1,5 @@
 const testUtils = require("./TestUtils.js");
 const WarrenDevToolDataProvider = artifacts.require('WarrenDevToolDataProvider');
-const WARREN_7_PERCENTAGE = BigInt("70000000000000000");
-const WARREN_8_PERCENTAGE = BigInt("80000000000000000");
 
 contract('Warren', (accounts) => {
 
@@ -221,7 +219,7 @@ contract('Warren', (accounts) => {
         await data.warren.test_updateIndex(asset, testUtils.PERCENTAGE_6_6DEC, updateDate, {from: updaterOne});
         updateDate = updateDate + YEAR_IN_SECONDS / 4;
 
-        let iporIndexThirdValue = WARREN_7_PERCENTAGE;
+        let iporIndexThirdValue = testUtils.PERCENTAGE_7_18DEC;
 
         //when
         await data.warren.test_updateIndex(asset, iporIndexThirdValue, updateDate, {from: updaterOne});
@@ -281,7 +279,7 @@ contract('Warren', (accounts) => {
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
         let assets = [testData.tokenUsdc.address, testData.tokenDai.address];
-        let indexValues = [WARREN_8_PERCENTAGE, WARREN_7_PERCENTAGE];
+        let indexValues = [testUtils.PERCENTAGE_8_18DEC, testUtils.PERCENTAGE_7_18DEC];
 
         //when
         await data.warren.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne})
@@ -294,6 +292,68 @@ contract('Warren', (accounts) => {
         }
     });
 
+    it('should calculate initial Exponential Moving Average - simple case 1', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(updaterOne);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        let assets = [testData.tokenDai.address];
+        let indexValues = [testUtils.PERCENTAGE_7_18DEC];
+        let expectedExpoMovingAverage = testUtils.PERCENTAGE_7_18DEC;
+        //when
+        await data.warren.test_updateIndexes(assets, indexValues, updateDate, {from: updaterOne})
+
+        //then
+        const iporIndex = await data.warren.getIndex(assets[0]);
+        let actualExponentialMovingAverage = BigInt(await iporIndex.exponentialMovingAverage);
+        assert(actualExponentialMovingAverage === expectedExpoMovingAverage,
+            `Actual exponential moving average is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`);
+
+    });
+
+
+    it('should calculate initial Exponential Moving Average - 2x IPOR Index updates - 18 decimals', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(updaterOne);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        let assets = [testData.tokenDai.address];
+        let firstIndexValues = [testUtils.PERCENTAGE_7_18DEC];
+        let secondIndexValues = [testUtils.PERCENTAGE_50_18DEC];
+        let expectedExpoMovingAverage = BigInt("113000000000000000");
+        //when
+        await data.warren.test_updateIndexes(assets, firstIndexValues, updateDate, {from: updaterOne})
+        await data.warren.test_updateIndexes(assets, secondIndexValues, updateDate, {from: updaterOne})
+
+        //then
+        const iporIndex = await data.warren.getIndex(assets[0]);
+        let actualExponentialMovingAverage = BigInt(await iporIndex.exponentialMovingAverage);
+        assert(actualExponentialMovingAverage === expectedExpoMovingAverage,
+            `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`);
+
+    });
+
+    it('should calculate initial Exponential Moving Average - 2x IPOR Index updates - 6 decimals', async () => {
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(updaterOne);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        let assets = [testData.tokenUsdc.address];
+        let firstIndexValues = [testUtils.PERCENTAGE_7_6DEC];
+        let secondIndexValues = [testUtils.PERCENTAGE_50_6DEC];
+        let expectedExpoMovingAverage = BigInt("113000");
+        //when
+        await data.warren.test_updateIndexes(assets, firstIndexValues, updateDate, {from: updaterOne})
+        await data.warren.test_updateIndexes(assets, secondIndexValues, updateDate, {from: updaterOne})
+
+        //then
+        const iporIndex = await data.warren.getIndex(assets[0]);
+        let actualExponentialMovingAverage = BigInt(await iporIndex.exponentialMovingAverage);
+        assert(actualExponentialMovingAverage === expectedExpoMovingAverage,
+            `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`);
+
+    });
+
     //TODO: add test when transfer ownership and Warren still works properly
-//TODO: add tests for pausable methods
+    //TODO: add tests for pausable methods
 });

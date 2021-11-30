@@ -260,7 +260,7 @@ contract('Joseph', (accounts) => {
         await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
         const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1022727272727272727");
+        let expectedExchangeRate = BigInt("1000747756729810568");
 
         await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
         await data.joseph.test_provideLiquidity(params.asset, BigInt("40000000000000000000"), params.openTimestamp, {from: liquidityProvider})
@@ -305,7 +305,7 @@ contract('Joseph', (accounts) => {
         await testUtils.setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = testUtils.getStandardDerivativeParamsUSDT(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1022727");
+        let expectedExchangeRate = BigInt("1000748");
 
         await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, params.openTimestamp, {from: userOne});
         await data.joseph.test_provideLiquidity(params.asset, BigInt("40000000"), params.openTimestamp, {from: liquidityProvider})

@@ -304,7 +304,7 @@ contract('IporAssetConfiguration', (accounts) => {
 
     it('should get initial openingFeePercentage', async () => {
         //given
-        const expectedOpeningFeePercentage = BigInt("10000000000000000");
+        let expectedOpeningFeePercentage = BigInt("300000000000000");
 
         //when
         const actualOpeningFeePercentage = await iporAssetConfigurationDAI.getOpeningFeePercentage();
@@ -776,6 +776,36 @@ contract('IporAssetConfiguration', (accounts) => {
             
             //then
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e`
+		);
+	});
+
+    it('should set decay factor value', async () => {
+        //given
+        let decayFactorValue = testUtils.TC_MULTIPLICATOR_18DEC;
+		const role = keccak256("DECAY_FACTOR_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+
+        //when
+        await iporAssetConfigurationDAI.setDecayFactorValue(decayFactorValue, { from: userOne });
+
+        //then
+        let actualDecayFactorValue = BigInt(await iporAssetConfigurationDAI.getDecayFactorValue());
+
+        assert(decayFactorValue === actualDecayFactorValue,
+            `Incorrect  decay factor value for asset DAI, actual: ${actualDecayFactorValue}, expected: ${decayFactorValue}`)
+    });
+
+    it('should NOT set decay factor value, decay factor too high', async () => {
+        //given
+        let decayFactorValue = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+		const role = keccak256("DECAY_FACTOR_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setDecayFactorValue(decayFactorValue, { from: userOne }),
+            //then
+            'IPOR_48'
         );
     });
 

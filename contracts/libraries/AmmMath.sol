@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity >=0.8.4 <0.9.0;
+pragma solidity 0.8.9;
 
 import "./types/DataTypes.sol";
 import "./Constants.sol";
 
 library AmmMath {
-
     //@notice Division with rounding up on last position, x, and y is with MD
     function division(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = (x + (y / 2)) / y;
@@ -15,11 +14,19 @@ library AmmMath {
         z = (x + (y / 2)) / y;
     }
 
-    function calculateIncomeTax(uint256 derivativeProfit, uint256 incomeTaxPercentage, uint256 multiplicator) internal pure returns (uint256) {
+    function calculateIncomeTax(
+        uint256 derivativeProfit,
+        uint256 incomeTaxPercentage,
+        uint256 multiplicator
+    ) internal pure returns (uint256) {
         return division(derivativeProfit * incomeTaxPercentage, multiplicator);
     }
 
-    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice, uint256 multiplicator) internal pure returns (uint256){
+    function calculateIbtQuantity(
+        uint256 notionalAmount,
+        uint256 ibtPrice,
+        uint256 multiplicator
+    ) internal pure returns (uint256) {
         return division(notionalAmount * multiplicator, ibtPrice);
     }
 
@@ -32,15 +39,32 @@ library AmmMath {
         uint256 multiplicator
     ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
         uint256 collateral = division(
-            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * multiplicator,
-            multiplicator + division(collateralizationFactor * openingFeePercentage, multiplicator)
+            (totalAmount -
+                liquidationDepositAmount -
+                iporPublicationFeeAmount) * multiplicator,
+            multiplicator +
+                division(
+                    collateralizationFactor * openingFeePercentage,
+                    multiplicator
+                )
         );
-        uint256 notional = division(collateralizationFactor * collateral, multiplicator);
-        uint256 openingFeeAmount = division(notional * openingFeePercentage, multiplicator);
-        return DataTypes.IporDerivativeAmount(collateral, notional, openingFeeAmount);
+        uint256 notional = division(
+            collateralizationFactor * collateral,
+            multiplicator
+        );
+        uint256 openingFeeAmount = division(
+            notional * openingFeePercentage,
+            multiplicator
+        );
+        return
+            DataTypes.IporDerivativeAmount(
+                collateral,
+                notional,
+                openingFeeAmount
+            );
     }
 
     function absoluteValue(int256 value) internal pure returns (uint256) {
-        return (uint256)(value < 0 ? - value : value);
+        return (uint256)(value < 0 ? -value : value);
     }
 }

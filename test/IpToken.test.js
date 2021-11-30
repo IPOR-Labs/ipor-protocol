@@ -13,7 +13,7 @@ contract('IpToken', (accounts) => {
     });
 
     beforeEach(async () => {
-        testData =await testUtils.prepareTestData([userTwo, liquidityProvider], ["DAI"], data);
+        testData = await testUtils.prepareTestData([userTwo, liquidityProvider], ["DAI"], data);
     });
 
 
@@ -51,5 +51,30 @@ contract('IpToken', (accounts) => {
             return ev.user == userOne && ev.value == testUtils.USD_10_000_18DEC;
         });
         await data.iporConfiguration.setJoseph(data.joseph.address);
+    });
+
+    it('should contain 18 decimals', async () => {
+        //given
+        await data.iporConfiguration.setJoseph(admin);
+        const expectedDecimals = BigInt("18");
+        //when
+        let actualDecimals = BigInt(await testData.ipTokenDai.decimals({from: admin}));
+
+        //then
+        assert(expectedDecimals === actualDecimals,
+            `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`);
+
+        await data.iporConfiguration.setJoseph(data.joseph.address);
+    });
+
+    it('should contain correct underlying token address', async () => {
+        //given
+        const expectedUnderlyingTokenAddress = testData.tokenDai.address;
+        //when
+        let actualUnderlyingTokenAddress = await testData.ipTokenDai.getUnderlyingAssetAddress({from: admin});
+
+        //then
+        assert(expectedUnderlyingTokenAddress === actualUnderlyingTokenAddress,
+            `Incorrect underlying token address actual: ${actualUnderlyingTokenAddress}, expected: ${expectedUnderlyingTokenAddress}`);
     });
 });

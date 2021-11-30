@@ -92,7 +92,7 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforeOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
-        let expectedSoap = BigInt("-62079701120797029831");
+        let expectedSoap = BigInt("-68083420969966832317");
 
         //when
         const soapParams = {
@@ -163,7 +163,7 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueBeforOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await openPositionFunc(derivativeParams);
 
-        let expectedSoap = BigInt("-62079701120796992583");
+        let expectedSoap = BigInt("-68083420969966791467");
 
         //when
         const soapParams = {
@@ -301,7 +301,7 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
 
-        let expectedSoap = BigInt("-124159402241594022415");
+        let expectedSoap = BigInt("-136166841939933623785");
 
         //when
         const soapParams = {
@@ -351,7 +351,7 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
 
-        let expectedSoap = BigInt("-124159401");
+        let expectedSoap = BigInt("-136166841");
 
         //when
         const soapParams = {
@@ -409,9 +409,9 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(derivativeUSDTParams);
 
         //then
-        let expectedDAISoap = BigInt("-62079701120797029831");
+        let expectedDAISoap = BigInt("-68083420969966832317");
 
-        let expectedUSDTSoap = BigInt("-62061076");
+        let expectedUSDTSoap = BigInt("-68062995");
 
         const soapDAIParams = {
             asset: testData.tokenDai.address,
@@ -475,7 +475,7 @@ contract('MiltonSoap', (accounts) => {
         await data.milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-62079701120797029831");
+        let expectedSoap = BigInt("-68083420969966832317");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -532,7 +532,7 @@ contract('MiltonSoap', (accounts) => {
         await data.milton.test_closePosition(1, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoap = BigInt("-62079701120796992583");
+        let expectedSoap = BigInt("-68083420969966791467");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -599,7 +599,7 @@ contract('MiltonSoap', (accounts) => {
         await data.milton.test_closePosition(2, endTimestamp, {from: closerUserAddress});
 
         //then
-        let expectedSoapDAI = BigInt("-62079701120797029831");
+        let expectedSoapDAI = BigInt("-68083420969966832317");
 
         const soapParamsDAI = {
             asset: testData.tokenDai.address,
@@ -641,7 +641,7 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_6_18DEC, calculationTimestamp, {from: userOne});
 
-        let expectedSoap = BigInt("7201245330012453280259");
+        let expectedSoap = BigInt("7897676832516150157812");
 
         //when
         //then
@@ -684,7 +684,7 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_6_6DEC, calculationTimestamp, {from: userOne});
 
-        let expectedSoap = BigInt("7201265196");
+        let expectedSoap = BigInt("7897698620");
 
         //when
         //then
@@ -729,8 +729,8 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParams.asset, iporValueAfterOpenPosition, derivativeParams.openTimestamp, {from: userOne});
         await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_6_18DEC, calculationTimestamp25days, {from: userOne});
 
-        let expectedSoap28Days = BigInt("7216144458281444576607");
-        let expectedSoap50Days = BigInt("7325404732254047356064");
+        let expectedSoap28Days = BigInt("7914016853548942207644");
+        let expectedSoap50Days = BigInt("8033843674456083840150");
 
         //when
         //then
@@ -793,7 +793,7 @@ contract('MiltonSoap', (accounts) => {
         await openPositionFunc(derivativeParams25days);
 
         //then
-        let expectedSoap = BigInt("-186621001728821146220");
+        let expectedSoap = BigInt("-204669094617849711707");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -845,7 +845,7 @@ contract('MiltonSoap', (accounts) => {
         await data.warren.test_updateIndex(derivativeParamsFirst.asset, iporValueBeforeOpenPosition, calculationTimestamp50days, {from: userOne});
 
         //then
-        let expectedSoap = BigInt("-186621001728821146220");
+        let expectedSoap = BigInt("-204669094617849711707");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -908,7 +908,7 @@ contract('MiltonSoap', (accounts) => {
 
 
         //then
-        let expectedSoap = BigInt("-124159402241594059663");
+        let expectedSoap = BigInt("-136166841939933664635");
 
         assert(expectedSoap === soapBeforeUpdateIndex,
             `Incorrect SOAP before update index for asset ${soapParams.asset} actual: ${soapBeforeUpdateIndex}, expected: ${expectedSoap}`);
