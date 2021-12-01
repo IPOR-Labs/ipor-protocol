@@ -942,7 +942,7 @@ contract("IporAssetConfiguration", (accounts) => {
         await iporAssetConfigurationDAI.grantRole(role, userOne);
 
         //when
-        await iporAssetConfigurationDAI.setSpreadPayFixedValue(max, {
+        await iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
             from: userOne,
         });
 
@@ -957,7 +957,7 @@ contract("IporAssetConfiguration", (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setSpreadPayFixedValue(max, {
+            iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
                 from: userOne,
             }),
 
@@ -977,7 +977,7 @@ contract("IporAssetConfiguration", (accounts) => {
         await iporAssetConfigurationDAI.grantRole(role, userOne);
 
         //when
-        await iporAssetConfigurationDAI.setSpreadRecFixedValue(max, {
+        await iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
             from: userOne,
         });
 
@@ -992,7 +992,7 @@ contract("IporAssetConfiguration", (accounts) => {
 
         await testUtils.assertError(
             //when
-            iporAssetConfigurationDAI.setSpreadRecFixedValue(max, {
+            iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
                 from: userOne,
             }),
 

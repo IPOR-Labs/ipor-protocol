@@ -3927,7 +3927,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getStandardDerivativeParamsDAI(
+        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
             userTwo,
             testData
         );
@@ -4020,7 +4020,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getStandardDerivativeParamsDAI(
+        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
             userTwo,
             testData
         );
@@ -4240,7 +4240,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getStandardDerivativeParamsDAI(
+        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
             userTwo,
             testData
         );
@@ -4518,7 +4518,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getStandardDerivativeParamsDAI(
+        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
             userTwo,
             testData
         );
@@ -4643,7 +4643,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getStandardDerivativeParamsDAI(
+        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
             userTwo,
             testData
         );
@@ -4719,7 +4719,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getStandardDerivativeParamsDAI(
+        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
             userTwo,
             testData
         );
@@ -4812,7 +4812,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getStandardDerivativeParamsDAI(
+        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
             userTwo,
             testData
         );

@@ -387,9 +387,8 @@ contract IporAssetConfiguration is
     }
 
     function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale)
-        external        
+        external
         override
-        returns (uint256)
     {
         spreadTemporaryValue = newSpreadTemporaryVale;
     }

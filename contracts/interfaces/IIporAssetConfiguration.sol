@@ -125,7 +125,5 @@ interface IIporAssetConfiguration {
 
     function getSpreadTemporaryValue() external view returns (uint256);
 
-    function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale)
-        external        
-        returns (uint256);
+    function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale) external;
 }
