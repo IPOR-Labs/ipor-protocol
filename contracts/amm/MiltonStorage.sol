@@ -222,10 +222,10 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return (
             spreadPayFixedValue = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadPayFixedValue(),
+            ).getSpreadTemporaryValue(),
             spreadRecFixedValue = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadRecFixedValue()
+				iporConfiguration.getIporAssetConfiguration(asset)
+            ).getSpreadTemporaryValue()
         );
     }
 

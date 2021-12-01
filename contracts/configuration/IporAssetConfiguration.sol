@@ -5,8 +5,8 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/AmmMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {Errors} from "../Errors.sol";
-import {DataTypes} from "../libraries/types/DataTypes.sol";
+import { Errors } from "../Errors.sol";
+import { DataTypes } from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 import "../amm/IMiltonEvents.sol";
@@ -59,7 +59,7 @@ contract IporAssetConfiguration is
     //@notice Part of Spread calculation - Utilization Component Lambda value - check Whitepaper
     uint256 private spreadUtilizationComponentLambdaValue;
 
-	uint256 private spreadTemporaryValue;
+    uint256 private spreadTemporaryValue;
 
     address private assetManagementVault;
 
@@ -77,16 +77,22 @@ contract IporAssetConfiguration is
 
         //@notice taken after close position from participant who take income (trader or Milton)
         incomeTaxPercentage = AmmMath.division(multiplicator, 10);
-		
-		//TODO: add test when multiplicator lower than 10000
-        require(multiplicator >= Constants.D4, Errors.CONFIG_INCORRECT_MULTIPLICATOR);
+
+        //TODO: add test when multiplicator lower than 10000
+        require(
+            multiplicator >= Constants.D4,
+            Errors.CONFIG_INCORRECT_MULTIPLICATOR
+        );
 
         //@notice taken after open position from participant who execute opening position,
         //paid after close position to participant who execute closing position
         liquidationDepositAmount = 20 * multiplicator;
 
         //@notice
-        openingFeePercentage = AmmMath.division(3 * multiplicator, Constants.D4);
+        openingFeePercentage = AmmMath.division(
+            3 * multiplicator,
+            Constants.D4
+        );
         openingFeeForTreasuryPercentage = 0;
         iporPublicationFeeAmount = 10 * multiplicator;
         liquidityPoolMaxUtilizationPercentage =
@@ -97,12 +103,18 @@ contract IporAssetConfiguration is
         minCollateralizationFactorValue = 10 * multiplicator;
         maxCollateralizationFactorValue = 50 * multiplicator;
 
-        spreadTemporaryValue = AmmMath.division(multiplicator, 100);        
+        spreadTemporaryValue = AmmMath.division(multiplicator, 100);
 
         decayFactorValue = AmmMath.division(multiplicator, 10);
-		
-		spreadUtilizationComponentKfValue = AmmMath.division(1 * multiplicator, 1000);
-		spreadUtilizationComponentLambdaValue = AmmMath.division(3 * multiplicator, 10);
+
+        spreadUtilizationComponentKfValue = AmmMath.division(
+            1 * multiplicator,
+            1000
+        );
+        spreadUtilizationComponentLambdaValue = AmmMath.division(
+            3 * multiplicator,
+            10
+        );
     }
 
     function getIncomeTaxPercentage() external view override returns (uint256) {
@@ -240,7 +252,7 @@ contract IporAssetConfiguration is
     {
         maxPositionTotalAmount = newMaxPositionTotalAmount;
         emit MaxPositionTotalAmountSet(newMaxPositionTotalAmount);
-    }   
+    }
 
     function getMaxCollateralizationFactorValue()
         external
@@ -363,6 +375,23 @@ contract IporAssetConfiguration is
         );
         decayFactorValue = newDecayFactorValue;
         emit DecayFactorValueUpdated(_asset, newDecayFactorValue);
+    }
+
+    function getSpreadTemporaryValue()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return spreadTemporaryValue;
+    }
+
+    function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale)
+        external        
+        override
+        returns (uint256)
+    {
+        spreadTemporaryValue = newSpreadTemporaryVale;
     }
 }
 

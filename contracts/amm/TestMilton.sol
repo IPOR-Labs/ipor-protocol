@@ -60,27 +60,27 @@ contract TestMilton is Milton {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
-        iporAssetConfiguration.setSpreadPayFixedValue(value);
+        iporAssetConfiguration.setSpreadTemporaryValue(value);
     }
 
     function getSpreadPayFixed(address asset) external view returns (uint256) {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
-        return iporAssetConfiguration.getSpreadPayFixedValue();
+        return iporAssetConfiguration.getSpreadTemporaryValue();
     }
 
     function setSpreadRecFixed(address asset, uint256 value) external {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
-        iporAssetConfiguration.setSpreadRecFixedValue(value);
+        iporAssetConfiguration.setSpreadTemporaryValue(value);
     }
 
     function getSpreadRecFixed(address asset) external view returns (uint256) {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
-        return iporAssetConfiguration.getSpreadRecFixedValue();
+        return iporAssetConfiguration.getSpreadTemporaryValue();
     }
 }
