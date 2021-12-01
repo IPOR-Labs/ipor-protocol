@@ -1,3 +1,4 @@
+const keccak256 = require("keccak256");
 const testUtils = require("./TestUtils.js");
 const { ZERO } = require("./TestUtils");
 
@@ -8,7 +9,7 @@ contract("Joseph", (accounts) => {
     let data = null;
 
     before(async () => {
-        data = await testUtils.prepareData();
+        data = await testUtils.prepareData(admin);
     });
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
@@ -750,6 +751,14 @@ contract("Joseph", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -890,6 +899,14 @@ contract("Joseph", (accounts) => {
         );
         let oldOpeningFeePercentage =
             await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
+            admin
+        );
         await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
             BigInt("600000000000000000")
         );
@@ -970,6 +987,14 @@ contract("Joseph", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data
+        );
+        await testData.iporAssetConfigurationUsdt.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationUsdt.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
+            admin
         );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

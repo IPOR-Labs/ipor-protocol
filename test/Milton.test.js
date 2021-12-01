@@ -1,3 +1,4 @@
+const keccak256 = require("keccak256");
 const testUtils = require("./TestUtils.js");
 const { ZERO } = require("./TestUtils");
 
@@ -286,17 +287,18 @@ contract("Milton", (accounts) => {
             testUtils.USD_20_18DEC,
             BigInt("0")
         );
-		const actualPayFixDerivativesBalance = BigInt(
+        const actualPayFixDerivativesBalance = BigInt(
             await (
                 await testData.miltonStorage.balances(params.asset)
             ).payFixedDerivatives
         );
-		const actualRecFixDerivativesBalance = BigInt(
+        const actualRecFixDerivativesBalance = BigInt(
             await (
                 await testData.miltonStorage.balances(params.asset)
             ).recFixedDerivatives
         );
-        const actualDerivativesTotalBalance = actualPayFixDerivativesBalance + actualRecFixDerivativesBalance;
+        const actualDerivativesTotalBalance =
+            actualPayFixDerivativesBalance + actualRecFixDerivativesBalance;
 
         assert(
             expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
@@ -377,19 +379,20 @@ contract("Milton", (accounts) => {
             testUtils.USD_20_6DEC,
             BigInt("0")
         );
-		const actualPayFixDerivativesBalance = BigInt(
+        const actualPayFixDerivativesBalance = BigInt(
             await (
                 await testData.miltonStorage.balances(params.asset)
             ).payFixedDerivatives
         );
 
-		const actualRecFixDerivativesBalance = BigInt(
+        const actualRecFixDerivativesBalance = BigInt(
             await (
                 await testData.miltonStorage.balances(params.asset)
             ).recFixedDerivatives
         );
 
-        const actualDerivativesTotalBalance = actualPayFixDerivativesBalance + actualRecFixDerivativesBalance;
+        const actualDerivativesTotalBalance =
+            actualPayFixDerivativesBalance + actualRecFixDerivativesBalance;
 
         assert(
             expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
@@ -541,8 +544,7 @@ contract("Milton", (accounts) => {
             interestAmount
         );
     });
-    //
-    //
+
     it("should NOT open position because Liquidity Pool balance is to low", async () => {
         //given
         let testData = await testUtils.prepareTestData(
@@ -618,6 +620,7 @@ contract("Milton", (accounts) => {
             "IPOR_14"
         );
     });
+
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, DAI 18 decimals", async () => {
         let testData = await testUtils.prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -658,6 +661,7 @@ contract("Milton", (accounts) => {
             interestAmount
         );
     });
+
     it("should close position, USDT, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, USDT 6 decimals", async () => {
         let testData = await testUtils.prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -738,6 +742,7 @@ contract("Milton", (accounts) => {
             interestAmount
         );
     });
+
     it("should close position, USDT, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, USDT 6 decimals", async () => {
         let testData = await testUtils.prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -859,6 +864,7 @@ contract("Milton", (accounts) => {
             interestAmount
         );
     });
+
     it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, USDT 6 decimals", async () => {
         let testData = await testUtils.prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -940,6 +946,7 @@ contract("Milton", (accounts) => {
             interestAmount
         );
     });
+
     it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, USDT 6 decimals", async () => {
         let testData = await testUtils.prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -3418,6 +3425,14 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -3471,6 +3486,14 @@ contract("Milton", (accounts) => {
             data,
             testData
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
@@ -3512,6 +3535,14 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
         );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3572,10 +3603,38 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
+    });
+
+    it("should calculate income tax, 5%, Milton earns, user loses, |I| > D", async () => {
+        let testData = await testUtils.prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
+        );
+
+        await testUtils.prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await testUtils.setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
 
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_5_18DEC
         );
+
         let incomeTax = BigInt("497008973080757726820");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
 
@@ -3609,6 +3668,14 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -3622,6 +3689,7 @@ contract("Milton", (accounts) => {
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_100_18DEC
         );
+
         let incomeTax = BigInt("8393324137177508538862");
         let interestAmount = BigInt("8393324137177508538862");
 
@@ -3655,6 +3723,14 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -3668,6 +3744,7 @@ contract("Milton", (accounts) => {
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_100_18DEC
         );
+
         let incomeTax = BigInt("9940179461615154536391");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
 
@@ -3700,6 +3777,14 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
         );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3759,10 +3844,36 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
+    });
 
+    it("should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
+        let testData = await testUtils.prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+            admin
+        );
+        await testUtils.prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await testUtils.setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_100_18DEC
         );
+
         let incomeTax = BigInt("9940179461615154536391");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
 
@@ -3798,6 +3909,14 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -3808,7 +3927,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+        const params = testUtils.getStandardDerivativeParamsDAI(
             userTwo,
             testData
         );
@@ -3883,6 +4002,14 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -3893,7 +4020,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+        const params = testUtils.getStandardDerivativeParamsDAI(
             userTwo,
             testData
         );
@@ -4086,6 +4213,23 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("CHARLIE_TREASURER_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("CHARLIE_TREASURER_ROLE"),
+            admin
+        );
+        await data.iporConfiguration.grantRole(
+            keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"),
+            admin
+        );
+        await data.iporConfiguration.grantRole(
+            keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE"),
+            admin
+        );
+
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4096,7 +4240,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+        const params = testUtils.getStandardDerivativeParamsDAI(
             userTwo,
             testData
         );
@@ -4356,6 +4500,14 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4366,7 +4518,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+        const params = testUtils.getStandardDerivativeParamsDAI(
             userTwo,
             testData
         );
@@ -4465,6 +4617,22 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4475,7 +4643,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+        const params = testUtils.getStandardDerivativeParamsDAI(
             userTwo,
             testData
         );
@@ -4533,6 +4701,14 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4543,7 +4719,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+        const params = testUtils.getStandardDerivativeParamsDAI(
             userTwo,
             testData
         );
@@ -4610,6 +4786,22 @@ contract("Milton", (accounts) => {
             ["DAI"],
             data
         );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            admin
+        );
+        await testData.iporAssetConfigurationDai.grantRole(
+            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            admin
+        );
         await testUtils.prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4620,7 +4812,7 @@ contract("Milton", (accounts) => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+        const params = testUtils.getStandardDerivativeParamsDAI(
             userTwo,
             testData
         );
@@ -5443,9 +5635,14 @@ contract("Milton", (accounts) => {
         const actualMiltonUnderlyingTokenBalance = BigInt(
             await data.miltonDevToolDataProvider.getMiltonTotalSupply(asset)
         );
-		const actualPayFixedDerivativesBalance = BigInt(balance.payFixedDerivatives);
-		const actualRecFixedDerivativesBalance = BigInt(balance.recFixedDerivatives);
-        const actualDerivativesTotalBalance = actualPayFixedDerivativesBalance + actualRecFixedDerivativesBalance;
+        const actualPayFixedDerivativesBalance = BigInt(
+            balance.payFixedDerivatives
+        );
+        const actualRecFixedDerivativesBalance = BigInt(
+            balance.recFixedDerivatives
+        );
+        const actualDerivativesTotalBalance =
+            actualPayFixedDerivativesBalance + actualRecFixedDerivativesBalance;
         const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
         const actualLiquidationDepositTotalBalance = BigInt(
             balance.liquidationDeposit
