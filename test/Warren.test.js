@@ -438,6 +438,7 @@ contract("Warren", (accounts) => {
         let firstIndexValues = [testUtils.PERCENTAGE_7_18DEC];
         let secondIndexValues = [testUtils.PERCENTAGE_50_18DEC];
         let expectedExpoMovingAverage = BigInt("113000000000000000");
+
         //when
         await data.warren.test_updateIndexes(
             assets,
@@ -472,6 +473,7 @@ contract("Warren", (accounts) => {
         let firstIndexValues = [testUtils.PERCENTAGE_7_6DEC];
         let secondIndexValues = [testUtils.PERCENTAGE_50_6DEC];
         let expectedExpoMovingAverage = BigInt("113000");
+
         //when
         await data.warren.test_updateIndexes(
             assets,

@@ -9,6 +9,8 @@ interface IWarrenDevToolDataProvider {
         uint256 indexValue;
         //@notice Interest Bearing Token Price
         uint256 ibtPrice;
+        //@notice exponential moving average
+        uint256 exponentialMovingAverage;
         //@notice block timestamp
         uint256 blockTimestamp;
     }

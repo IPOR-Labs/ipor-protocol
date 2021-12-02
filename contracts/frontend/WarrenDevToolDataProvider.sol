@@ -30,6 +30,7 @@ contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
                     iporIndex.quasiIbtPrice,
                     Constants.YEAR_IN_SECONDS
                 ),
+                iporIndex.exponentialMovingAverage,
                 iporIndex.blockTimestamp
             );
         }

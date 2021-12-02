@@ -139,11 +139,11 @@ contract IporLogicTest {
         public
     {
         //given
-        uint256 exponentialMovingAverage = 30000000000000000;
-        uint256 indexValue = 500000000000000000;
+        uint256 exponentialMovingAverage = 3e16;
+        uint256 indexValue = 5e16;
         uint256 decayFactor = 1e16;
         uint256 multiplicator = 1e18;
-        uint256 expectedExponentialMovingAverage = 34700000000000000;
+        uint256 expectedExponentialMovingAverage = 30200000000000000;
 
         //when
         uint256 actualExponentialMovingAverage = IporLogic
