@@ -23,18 +23,11 @@ library DataTypes {
         SoapIndicator rf;
     }
 
-    struct TotalSpreadIndicator {
-        SpreadIndicator pf;
-        SpreadIndicator rf;
-    }
-
-    struct SpreadIndicator {
-        uint256 spread;
-    }
-
     //soap payfixed and soap recfixed indicators
     struct SoapIndicator {
         uint256 rebalanceTimestamp;
+
+		//TODO: don't have to store - use two separate structure - one for pay fixe, one for rec fixed
         //leg
         DataTypes.DerivativeDirection direction;
         //O_0, value without division by multiplicator * Constants.YEAR_IN_SECONDS
@@ -45,6 +38,8 @@ library DataTypes {
         uint256 averageInterestRate;
         //TT
         uint256 totalIbtQuantity;
+
+		//TODO: don't have to store this - can be calculated in runtime
         //SOAP
         int256 soap;
     }
@@ -103,9 +98,14 @@ library DataTypes {
     struct IporDerivativeFee {
         //@notice amount
         uint256 liquidationDepositAmount;
+
+		//TODO: probably don't have to store, add to event
         //@notice amount calculated based on deposit amount
         uint256 openingAmount;
+
+		//TODO: probably don't have to store, add to event
         uint256 iporPublicationAmount;
+
         //@notice value are basis points
         uint256 spreadPayFixedValue;
         //@notice value are basis points
@@ -142,6 +142,8 @@ library DataTypes {
         uint256 collateral;
         IporDerivativeFee fee;
         uint256 collateralizationFactor;
+
+		//TODO: remove from storage, can be calculated
         //@notice Notional Principal Amount
         uint256 notionalAmount;
         //@notice Starting time of this Derivative
@@ -149,6 +151,8 @@ library DataTypes {
         //@notice Endind time of this Derivative
         uint256 endingTimestamp;
         IporDerivativeIndicator indicator;
+
+		//TODO: remove from storage, can be fetched from underlying asset
         uint256 multiplicator;
     }
 }

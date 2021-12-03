@@ -36,7 +36,7 @@ library DerivativeLogic {
         DataTypes.IporDerivative memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) external pure returns (DataTypes.IporDerivativeInterest memory) {
+    ) internal pure returns (DataTypes.IporDerivativeInterest memory) {
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
             closingTimestamp >= derivative.startingTimestamp,

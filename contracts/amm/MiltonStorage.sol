@@ -9,14 +9,12 @@ import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../libraries/types/DataTypes.sol";
-import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonStorage is Ownable, IMiltonStorage {
     using DerivativeLogic for DataTypes.IporDerivative;
-    using SoapIndicatorLogic for DataTypes.SoapIndicator;
-    using SpreadIndicatorLogic for DataTypes.SpreadIndicator;
+    using SoapIndicatorLogic for DataTypes.SoapIndicator;    
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
@@ -25,9 +23,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     mapping(address => DataTypes.MiltonTotalBalance) public balances;
 
     mapping(address => DataTypes.TotalSoapIndicator) public soapIndicators;
-
-    //TODO: when spread is calculated in final way then consider remove this storage (maybe will be not needed)
-    mapping(address => DataTypes.TotalSpreadIndicator) public spreadIndicators;
 
     DataTypes.MiltonDerivatives public derivatives;
 
@@ -67,16 +62,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             )
         );
 
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
-
-        //TODO: clarify what is default value for spread when spread is calculated in final way
-        spreadIndicators[asset] = DataTypes.TotalSpreadIndicator(
-            DataTypes.SpreadIndicator(multiplicator),
-            DataTypes.SpreadIndicator(multiplicator)
-        );
     }
 
     function getBalance(address asset)

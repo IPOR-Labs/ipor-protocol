@@ -13,7 +13,7 @@ import "../amm/IMiltonEvents.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
-import "../libraries/SpreadIndicatorLogic.sol";
+
 import "../interfaces/IIporAssetConfiguration.sol";
 import "./AccessControlAssetConfiguration.sol";
 
@@ -391,6 +391,46 @@ contract IporAssetConfiguration is
         override
     {
         spreadTemporaryValue = newSpreadTemporaryVale;
+    }
+
+    function getSpreadUtilizationComponentKfValue()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return spreadUtilizationComponentKfValue;
+    }
+
+    function setSpreadUtilizationComponentKfValue(
+        uint256 newSpreadUtilizationComponentKfValue
+    ) external override onlyRole(SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE) {
+        spreadUtilizationComponentKfValue = newSpreadUtilizationComponentKfValue;
+        emit SpreadUtilizationComponentKfValueSet(
+            newSpreadUtilizationComponentKfValue
+        );
+    }
+
+    function getSpreadUtilizationComponentLambdaValue()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return spreadUtilizationComponentLambdaValue;
+    }
+
+    function setSpreadUtilizationComponentLambdaValue(
+        uint256 newSpreadUtilizationComponentLambdaValue
+    )
+        external
+        override
+        onlyRole(SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE)
+    {
+        spreadUtilizationComponentLambdaValue = newSpreadUtilizationComponentLambdaValue;
+        emit SpreadUtilizationComponentLambdaValueSet(
+            newSpreadUtilizationComponentLambdaValue
+        );
     }
 }
 

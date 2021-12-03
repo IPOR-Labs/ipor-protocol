@@ -364,7 +364,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         require(
             IMiltonLPUtilizationStrategy(
                 iporConfiguration.getMiltonLPUtilizationStrategy()
-            ).calculateUtilization(
+            ).calculateUtilizationRate(
                     asset,
                     derivativeAmount.deposit,
                     derivativeAmount.openingFee,
