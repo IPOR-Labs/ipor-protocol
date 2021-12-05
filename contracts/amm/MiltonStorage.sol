@@ -13,6 +13,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonStorage is Ownable, IMiltonStorage {
+	//TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using DerivativeLogic for DataTypes.IporDerivative;
     using SoapIndicatorLogic for DataTypes.SoapIndicator;    
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;

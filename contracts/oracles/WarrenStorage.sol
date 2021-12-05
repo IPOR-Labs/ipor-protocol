@@ -14,6 +14,7 @@ import "../interfaces/IIporConfiguration.sol";
  * @title Ipor Oracle Storage initial version
  * @author IPOR Labs
  */
+ //TODO: [gas-opt] use with Warren as inheritance
 contract WarrenStorage is Ownable, IWarrenStorage {
     using IporLogic for DataTypes.IPOR;
 
@@ -72,6 +73,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
             Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
         );
         for (uint256 i = 0; i < assetList.length; i++) {
+			//TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
             require(
                 iporConfiguration.assetSupported(assetList[i]) == 1,
                 Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED

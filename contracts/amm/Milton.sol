@@ -112,6 +112,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         IERC20(asset).safeTransfer(charlieTreasurer, amount);
     }
 
+	//TODO: !!! consider connect configuration with milton storage, 
+	//in this way that if there is parameter used only in open and close position then let put it in miltonstorage
     function openPosition(
         address asset,
         uint256 totalAmount,
@@ -364,7 +366,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         require(
             IMiltonLPUtilizationStrategy(
                 iporConfiguration.getMiltonLPUtilizationStrategy()
-            ).calculateUtilizationRate(
+            ).calculateTotalUtilizationRate(
                     asset,
                     derivativeAmount.deposit,
                     derivativeAmount.openingFee,

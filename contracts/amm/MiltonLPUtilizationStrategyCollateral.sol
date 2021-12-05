@@ -19,7 +19,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         iporConfiguration = initialIporConfiguration;
     }
 
-    function calculateUtilizationRate(
+    function calculateTotalUtilizationRate(
         address asset,
         uint256 deposit,
         uint256 openingFee,
@@ -45,70 +45,38 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         }
     }
 
-    function calculatePayFixedUtilizationRate(
-        address asset,
-        uint256 deposit,
-        uint256 openingFee,
-        uint256 multiplicator
-    ) external view override returns (uint256) {
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
-        );
-        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
-            asset
-        );
 
-        if ((balance.liquidityPool + openingFee) != 0) {
-            return
-                AmmMath.division(
-                    (balance.payFixedDerivatives + deposit) * multiplicator,
-                    balance.liquidityPool + openingFee
-                );
-        } else {
-            return Constants.MAX_VALUE;
-        }
-    }
+    // function calculateRecFixedUtilizationRate(
+    //     address asset,
+    //     uint256 deposit,
+    //     uint256 openingFee,
+    //     uint256 multiplicator
+    // ) external view override returns (uint256) {
+    //     IMiltonStorage miltonStorage = IMiltonStorage(
+    //         iporConfiguration.getMiltonStorage()
+    //     );
+    //     DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+    //         asset
+    //     );
 
-    function calculatePayFixedAdjustedUtilizationRate(
-        address asset,
-        uint256 deposit,
-        uint256 openingFee,
-        uint256 multiplicator
-    ) external view override returns (uint256) {
-		return 0;
-	}
+    //     if ((balance.liquidityPool + openingFee) != 0) {
+    //         return
+    //             AmmMath.division(
+    //                 (balance.recFixedDerivatives + deposit) * multiplicator,
+    //                 balance.liquidityPool + openingFee
+    //             );
+    //     } else {
+    //         //TODO: clarify what if liquidityPool is empty
+    //         return Constants.MAX_VALUE;
+    //     }
+    // }
 
-    function calculateRecFixedUtilizationRate(
-        address asset,
-        uint256 deposit,
-        uint256 openingFee,
-        uint256 multiplicator
-    ) external view override returns (uint256) {
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
-        );
-        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
-            asset
-        );
-
-        if ((balance.liquidityPool + openingFee) != 0) {
-            return
-                AmmMath.division(
-                    (balance.recFixedDerivatives + deposit) * multiplicator,
-                    balance.liquidityPool + openingFee
-                );
-        } else {
-            return Constants.MAX_VALUE;
-        }
-    }
-
-
-    function calculateRecFixedAdjustedUtilizationRate(
-        address asset,
-        uint256 deposit,
-        uint256 openingFee,
-        uint256 multiplicator
-    ) external view override returns (uint256) {
-		return 0;
-	}
+    // function calculateRecFixedAdjustedUtilizationRate(
+    //     address asset,
+    //     uint256 deposit,
+    //     uint256 openingFee,
+    //     uint256 multiplicator
+    // ) external view override returns (uint256) {
+    //     return 0;
+    // }
 }

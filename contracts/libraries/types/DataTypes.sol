@@ -106,8 +106,10 @@ library DataTypes {
 		//TODO: probably don't have to store, add to event
         uint256 iporPublicationAmount;
 
+		//TODO: probably don't have to store, add to event
         //@notice value are basis points
         uint256 spreadPayFixedValue;
+		//TODO: probably don't have to store, add to event
         //@notice value are basis points
         uint256 spreadRecFixedValue;
     }
@@ -134,6 +136,8 @@ library DataTypes {
         DerivativeState state;
         //@notice Buyer of this derivative
         address buyer;
+
+		//TODO: asset can be removed from storage when Milton per asset
         //@notice the name of the asset to which the derivative relates
         address asset;
         //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
