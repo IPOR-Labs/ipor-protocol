@@ -4779,84 +4779,85 @@ contract("Milton", (accounts) => {
         );
     });
 
-    it("should NOT open pay fixed position - liquidity pool utilisation exceeded, liquidity pool and opening fee are ZERO", async () => {
-        //given
-        let testData = await testUtils.prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-            admin
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-            admin
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-            admin
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
-            admin
-        );
-        await testUtils.prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await testUtils.setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        const params = testUtils.getPayFixedDerivativeParamsDAICase1(
-            userTwo,
-            testData
-        );
+	//TODO: clarify when spread equasion will be clarified
+    // it("should NOT open pay fixed position - liquidity pool utilisation exceeded, liquidity pool and opening fee are ZERO", async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data
+    //     );
+    //     await testData.iporAssetConfigurationDai.grantRole(
+    //         keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
+    //         admin
+    //     );
+    //     await testData.iporAssetConfigurationDai.grantRole(
+    //         keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
+    //         admin
+    //     );
+    //     await testData.iporAssetConfigurationDai.grantRole(
+    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+    //         admin
+    //     );
+    //     await testData.iporAssetConfigurationDai.grantRole(
+    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+    //         admin
+    //     );
+    //     await testUtils.prepareApproveForUsers(
+    //         [userOne, userTwo, userThree, liquidityProvider],
+    //         "DAI",
+    //         data,
+    //         testData
+    //     );
+    //     await testUtils.setupTokenDaiInitialValuesForUsers(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         testData
+    //     );
+    //     const params = testUtils.getPayFixedDerivativeParamsDAICase1(
+    //         userTwo,
+    //         testData
+    //     );
 
-        let oldLiquidityPoolMaxUtilizationPercentage =
-            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
-        let oldOpeningFeePercentage =
-            await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
+    //     let oldLiquidityPoolMaxUtilizationPercentage =
+    //         await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
+    //     let oldOpeningFeePercentage =
+    //         await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
 
-        await data.warren.test_updateIndex(
-            params.asset,
-            testUtils.PERCENTAGE_3_18DEC,
-            params.openTimestamp,
-            { from: userOne }
-        );
+    //     await data.warren.test_updateIndex(
+    //         params.asset,
+    //         testUtils.PERCENTAGE_3_18DEC,
+    //         params.openTimestamp,
+    //         { from: userOne }
+    //     );
 
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(ZERO);
-        //very high value
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-            BigInt(99999999999999999999999999999999999999999)
-        );
+    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(ZERO);
+    //     //very high value
+    //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
+    //         BigInt(99999999999999999999999999999999999999999)
+    //     );
 
-        await testUtils.assertError(
-            //when
-            data.milton.test_openPosition(
-                params.openTimestamp,
-                params.asset,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor,
-                params.direction,
-                { from: userTwo }
-            ),
-            //then
-            "IPOR_35"
-        );
+    //     await testUtils.assertError(
+    //         //when
+    //         data.milton.test_openPosition(
+    //             params.openTimestamp,
+    //             params.asset,
+    //             params.totalAmount,
+    //             params.slippageValue,
+    //             params.collateralizationFactor,
+    //             params.direction,
+    //             { from: userTwo }
+    //         ),
+    //         //then
+    //         "IPOR_35"
+    //     );
 
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-            oldLiquidityPoolMaxUtilizationPercentage
-        );
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
-            oldOpeningFeePercentage
-        );
-    });
+    //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
+    //         oldLiquidityPoolMaxUtilizationPercentage
+    //     );
+    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
+    //         oldOpeningFeePercentage
+    //     );
+    // });
 
     it("should open pay fixed position - when open timestamp is long time ago", async () => {
         //given
