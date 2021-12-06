@@ -331,35 +331,37 @@ contract("IporAssetConfiguration", (accounts) => {
         );
     });
 
-    it("should set liquidityPoolMaxUtilizationPercentage higher than 100%", async () => {
-        //given
-        const liquidityPoolMaxUtilizationPercentage = BigInt(
-            "99000000000000000000"
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-            admin
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
-            userOne
-        );
 
-        //when
-        await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(
-            liquidityPoolMaxUtilizationPercentage,
-            { from: userOne }
-        );
+	//TODO: clarify when spread equasion will be clarified
+    // it("should set liquidityPoolMaxUtilizationPercentage higher than 100%", async () => {
+    //     //given
+    //     const liquidityPoolMaxUtilizationPercentage = BigInt(
+    //         "99000000000000000000"
+    //     );
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+    //         admin
+    //     );
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+    //         userOne
+    //     );
 
-        //then
-        const actualLPMaxUtilizationPercentage =
-            await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
-        assert(
-            liquidityPoolMaxUtilizationPercentage ===
-                BigInt(actualLPMaxUtilizationPercentage),
-            `Incorrect LiquidityPoolMaxUtilizationPercentage actual: ${actualLPMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`
-        );
-    });
+    //     //when
+    //     await iporAssetConfigurationDAI.setLiquidityPoolMaxUtilizationPercentage(
+    //         liquidityPoolMaxUtilizationPercentage,
+    //         { from: userOne }
+    //     );
+
+    //     //then
+    //     const actualLPMaxUtilizationPercentage =
+    //         await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
+    //     assert(
+    //         liquidityPoolMaxUtilizationPercentage ===
+    //             BigInt(actualLPMaxUtilizationPercentage),
+    //         `Incorrect LiquidityPoolMaxUtilizationPercentage actual: ${actualLPMaxUtilizationPercentage}, expected: ${liquidityPoolMaxUtilizationPercentage}`
+    //     );
+    // });
 
     it("should get initial liquidityPoolMaxUtilizationPercentage", async () => {
         //given
@@ -931,76 +933,6 @@ contract("IporAssetConfiguration", (accounts) => {
         );
     });
 
-    it("should set SpreadPayFixedValue", async () => {
-        //given
-        const max = BigInt("999000000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE"),
-            admin
-        );
-        const role = keccak256("SPREAD_PAY_FIXED_VALUE_ROLE");
-        await iporAssetConfigurationDAI.grantRole(role, userOne);
-
-        //when
-        await iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
-            from: userOne,
-        });
-
-        //then
-        const result = await iporAssetConfigurationDAI.getSpreadPayFixedValue();
-        assert(max === BigInt(result));
-    });
-
-    it("should NOT set SpreadPayFixedValue when user does not have SPREAD_PAY_FIXED_VALUE_ROLE role", async () => {
-        //given
-        const max = BigInt("999000000000000000000");
-
-        await testUtils.assertError(
-            //when
-            iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
-                from: userOne,
-            }),
-
-            //then
-            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x83d7135b2dfb3276d590bad8848fb596869644b2f5a647ccbdba6f13e445fb46`
-        );
-    });
-
-    it("should set SpreadRecFixedValue(", async () => {
-        //given
-        const max = BigInt("999000000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("SPREAD_REC_FIXED_VALUE_ADMIN_ROLE"),
-            admin
-        );
-        const role = keccak256("SPREAD_REC_FIXED_VALUE_ROLE");
-        await iporAssetConfigurationDAI.grantRole(role, userOne);
-
-        //when
-        await iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
-            from: userOne,
-        });
-
-        //then
-        const result = await iporAssetConfigurationDAI.getSpreadRecFixedValue();
-        assert(max === BigInt(result));
-    });
-
-    it("should NOT set SpreadPayFixedValue when user does not have SPREAD_PAY_FIXED_VALUE_ROLE role", async () => {
-        //given
-        const max = BigInt("999000000000000000000");
-
-        await testUtils.assertError(
-            //when
-            iporAssetConfigurationDAI.setSpreadTemporaryValue(max, {
-                from: userOne,
-            }),
-
-            //then
-            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xfabc2f0c8274a3b08bd6a559681dd3a447265796340f783fbb8b3476bbd4b17b`
-        );
-    });
-
     it("should set MaxCollateralizationFactorValue", async () => {
         //given
         const max = BigInt("999000000000000000000");
@@ -1077,7 +1009,7 @@ contract("IporAssetConfiguration", (accounts) => {
 
     it("should set decay factor value", async () => {
         //given
-        let decayFactorValue = testUtils.TC_MULTIPLICATOR_18DEC;
+        const decayFactorValue = testUtils.TC_MULTIPLICATOR_18DEC;
         await iporAssetConfigurationDAI.grantRole(
             keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
             admin
@@ -1091,7 +1023,7 @@ contract("IporAssetConfiguration", (accounts) => {
         });
 
         //then
-        let actualDecayFactorValue = BigInt(
+        const actualDecayFactorValue = BigInt(
             await iporAssetConfigurationDAI.getDecayFactorValue()
         );
 
@@ -1101,9 +1033,24 @@ contract("IporAssetConfiguration", (accounts) => {
         );
     });
 
+	it("should NOT set DecayFactorValue when user does not have DECAY_FACTOR_VALUE_ROLE role", async () => {
+        //given
+        const decayFactorValue = testUtils.TC_MULTIPLICATOR_18DEC;
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setDecayFactorValue(decayFactorValue, {
+                from: userOne,
+            }),
+
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x94c58a89ab11d8b2894ecfbd6cb5c324f772536d0ea878a10cee7effe8ce98d0`
+        );
+    });
+
     it("should NOT set decay factor value, decay factor too high", async () => {
         //given
-        let decayFactorValue = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+        const decayFactorValue = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
         await iporAssetConfigurationDAI.grantRole(
             keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
             admin
@@ -1120,4 +1067,87 @@ contract("IporAssetConfiguration", (accounts) => {
             "IPOR_48"
         );
     });
+
+	it("should set SpreadUtilizationComponentKfValue", async () => {
+        //given
+        const expectedValue = BigInt("1234000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE"),
+            admin
+        );
+        const role = keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+
+        //when
+        await iporAssetConfigurationDAI.setSpreadUtilizationComponentKfValue(expectedValue, {
+            from: userOne,
+        });
+
+        //then
+        const actualValue = BigInt(
+            await iporAssetConfigurationDAI.getSpreadUtilizationComponentKfValue()
+        );
+
+        assert(
+            expectedValue === actualValue,
+            `Incorrect  SpreadUtilizationComponentKfValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
+        );
+    });
+
+	it("should NOT set SpreadUtilizationComponentKfValue when user does not have SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE role", async () => {
+        //given
+        const expectedValue = BigInt("1234000000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setSpreadUtilizationComponentKfValue(expectedValue, {
+                from: userOne,
+            }),
+
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x59542b17ceec8a6f8b1bb7b3e5ec973b56689fbcced2a9d87bb75563f9a53956`
+        );
+    });
+
+	it("should set SpreadUtilizationComponentLambdaValue", async () => {
+        //given
+        const expectedValue = BigInt("1234000000000000000000");
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
+            admin
+        );
+        const role = keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne);
+
+        //when
+        await iporAssetConfigurationDAI.setSpreadUtilizationComponentLambdaValue(expectedValue, {
+            from: userOne,
+        });
+
+        //then
+        const actualValue = BigInt(
+            await iporAssetConfigurationDAI.getSpreadUtilizationComponentLambdaValue()
+        );
+
+        assert(
+            expectedValue === actualValue,
+            `Incorrect  SpreadUtilizationComponentLambdaValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
+        );
+    });
+
+	it("should NOT set SpreadUtilizationComponentLambdaValue when user does not have SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE role", async () => {
+        //given
+        const expectedValue = BigInt("1234000000000000000000");
+
+        await testUtils.assertError(
+            //when
+            iporAssetConfigurationDAI.setSpreadUtilizationComponentLambdaValue(expectedValue, {
+                from: userOne,
+            }),
+
+            //then
+            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xeec7cc7aa729979c27c0c22d8699c9207ef8923ec66180dd8e0b68e1a3d1ce9f`
+        );
+    });
+
 });
