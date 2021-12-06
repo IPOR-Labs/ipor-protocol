@@ -21,6 +21,8 @@ const MiltonDevToolDataProvider = artifacts.require(
     "MiltonDevToolDataProvider"
 );
 
+const MiltonSpreadStrategy = artifacts.require("MiltonSpreadStrategy");
+
 module.exports.assertError = async (promise, error) => {
     try {
         await promise;
@@ -263,7 +265,7 @@ module.exports.prepareData = async () => {
     );
     let warren = await TestWarren.new();
     let milton = await TestMilton.new();
-    let joseph = await TestJoseph.new();
+    let joseph = await TestJoseph.new();	
 
     await iporConfiguration.setWarren(await warren.address);
     await iporConfiguration.setMilton(await milton.address);
@@ -272,6 +274,7 @@ module.exports.prepareData = async () => {
     await warren.initialize(iporConfiguration.address);
     await milton.initialize(iporConfiguration.address);
     await joseph.initialize(iporConfiguration.address);
+	
 
     let data = {
         warren: warren,
@@ -296,6 +299,7 @@ module.exports.prepareTestData = async (accounts, assets, data) => {
 
     let miltonStorage = await MiltonStorage.new();
     let warrenStorage = await WarrenStorage.new();
+	let miltonSpread = await MiltonSpreadStrategy.new();
 
     await warrenStorage.addUpdater(accounts[1]);
     await warrenStorage.addUpdater(data.warren.address);
@@ -305,6 +309,7 @@ module.exports.prepareTestData = async (accounts, assets, data) => {
 
     await miltonStorage.initialize(data.iporConfiguration.address);
     await warrenStorage.initialize(data.iporConfiguration.address);
+	await miltonSpread.initialize(data.iporConfiguration.address);
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -376,6 +381,7 @@ module.exports.prepareTestData = async (accounts, assets, data) => {
         iporAssetConfigurationUsdc: iporAssetConfigurationUsdc,
         iporAssetConfigurationDai: iporAssetConfigurationDai,
         miltonStorage: miltonStorage,
+		miltonSpread: miltonSpread,
         warrenStorage: warrenStorage,
     };
     return testData;

@@ -49,16 +49,17 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
 
         return
             AmmMath.division(
-                kf,
-                calculatePayFixedAdjustedUtilizationRate(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
-                    multiplicator,
-                    lambda
-                )
+                kf * multiplicator,
+                multiplicator -
+                    calculatePayFixedAdjustedUtilizationRate(
+                        derivativeDeposit,
+                        derivativeOpeningFee,
+                        liquidityPool,
+                        payFixedDerivativesBalance,
+                        recFixedDerivativesBalance,
+                        multiplicator,
+                        lambda
+                    )
             );
     }
 
@@ -106,8 +107,10 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = calculateUtilizationRateWithoutPosition(
+                derivativeOpeningFee,
                 liquidityPool,
-                recFixedDerivativesBalance
+                recFixedDerivativesBalance,
+                multiplicator
             );
 
         uint256 utilizationRatePayFixedWithPosition = calculateUtilizationRateWithPosition(
@@ -119,7 +122,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
             );
 
         return
-            calculateRecFixedAdjustedUtilizationRate(
+            calculateImbalanceFactorWithLambda(
                 utilizationRatePayFixedWithPosition,
                 utilizationRateRecFixed,
                 multiplicator,
@@ -137,8 +140,10 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRatePayFixed = calculateUtilizationRateWithoutPosition(
+                derivativeOpeningFee,
                 liquidityPool,
-                payFixedDerivativesBalance
+                payFixedDerivativesBalance,
+                multiplicator
             );
 
         uint256 utilizationRateRecFixedWithPosition = calculateUtilizationRateWithPosition(
@@ -148,17 +153,17 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                 recFixedDerivativesBalance,
                 multiplicator
             );
+        uint256 adjustedUtilizationRate = calculateImbalanceFactorWithLambda(
+            utilizationRateRecFixedWithPosition,
+            utilizationRatePayFixed,
+            multiplicator,
+            lambda
+        );
 
-        return
-            calculateRecFixedAdjustedUtilizationRate(
-                utilizationRateRecFixedWithPosition,
-                utilizationRatePayFixed,
-                multiplicator,
-                lambda
-            );
+        return adjustedUtilizationRate;
     }
 
-    function calculateRecFixedAdjustedUtilizationRate(
+    function calculateImbalanceFactorWithLambda(
         uint256 utilizationRateLegWithPosition,
         uint256 utilizationRateLegWithoutPosition,
         uint256 multiplicator,
@@ -202,11 +207,17 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
 
     //URleg(0)
     function calculateUtilizationRateWithoutPosition(
+        uint256 derivativeOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 derivativesBalance
+        uint256 derivativesBalance,
+        uint256 multiplicator
     ) internal pure returns (uint256) {
         if (liquidityPoolBalance != 0) {
-            return AmmMath.division(derivativesBalance, liquidityPoolBalance);
+            return
+                AmmMath.division(
+                    derivativesBalance * multiplicator,
+                    liquidityPoolBalance + derivativeOpeningFee
+                );
         } else {
             return Constants.MAX_VALUE;
         }

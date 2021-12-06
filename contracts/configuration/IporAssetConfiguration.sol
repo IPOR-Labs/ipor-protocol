@@ -230,6 +230,11 @@ contract IporAssetConfiguration is
         override
         onlyRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE)
     {
+        require(
+            newLiquidityPoolMaxUtilizationPercentage <= _multiplicator,
+            Errors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
+        );
+        
         liquidityPoolMaxUtilizationPercentage = newLiquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(
             newLiquidityPoolMaxUtilizationPercentage

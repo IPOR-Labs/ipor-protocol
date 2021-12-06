@@ -51,15 +51,17 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     modifier onlyPublicationFeeTransferer() {
         require(
-            msg.sender ==
-                iporConfiguration.getMiltonPublicationFeeTransferer(),
+            msg.sender == iporConfiguration.getMiltonPublicationFeeTransferer(),
             Errors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
         );
         _;
     }
 
-	//TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+    //TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration)
+        external
+        onlyOwner
+    {
         iporConfiguration = initialIporConfiguration;
     }
 
@@ -112,8 +114,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         IERC20(asset).safeTransfer(charlieTreasurer, amount);
     }
 
-	//TODO: !!! consider connect configuration with milton storage, 
-	//in this way that if there is parameter used only in open and close position then let put it in miltonstorage
+    //TODO: !!! consider connect configuration with milton storage,
+    //in this way that if there is parameter used only in open and close position then let put it in miltonstorage
     function openPosition(
         address asset,
         uint256 totalAmount,
@@ -135,7 +137,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     function closePosition(uint256 derivativeId)
         external
         override
-        onlyActiveDerivative(derivativeId) nonReentrant
+        onlyActiveDerivative(derivativeId)
+        nonReentrant
     {
         _closePosition(derivativeId, block.timestamp);
     }
@@ -225,8 +228,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
             .calculateInterest(
                 timestamp,
-                IWarren(iporConfiguration.getWarren())
-                    .calculateAccruedIbtPrice(derivative.asset, timestamp)
+                IWarren(iporConfiguration.getWarren()).calculateAccruedIbtPrice(
+                    derivative.asset,
+                    timestamp
+                )
             );
 
         if (derivativeInterest.positionValue > 0) {

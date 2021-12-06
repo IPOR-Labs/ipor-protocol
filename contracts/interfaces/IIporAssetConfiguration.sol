@@ -82,7 +82,7 @@ interface IIporAssetConfiguration {
         view
         returns (uint256);
 
-    function setLiquidityPoolMaxUtilizationPercentage(
+    function setLiquidityPoolMaxUtilizationPercentage(		
         uint256 liquidityPoolMaxUtilizationPercentage
     ) external;
 
