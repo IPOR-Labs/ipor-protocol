@@ -4,17 +4,20 @@ const itParam = require("mocha-param");
 
 const keccak256 = require("keccak256");
 
-const TOTAL_SUPPLY_18_DECIMALS = BigInt("10000000000000000000000000000000000");
-const TOTAL_SUPPLY_6_DECIMALS = BigInt("100000000000000000000");
-const USER_SUPPLY_18_DECIMALS = BigInt("10000000000000000000000000");
-const ZERO = BigInt("0");
-const COLLATERALIZATION_FACTOR_18DEC = BigInt("10000000000000000000");
-const USD_10_000_18DEC = BigInt("10000000000000000000000");
-const USD_14_000_18DEC = BigInt("14000000000000000000000");
-const USD_10_000_6DEC = BigInt("10000000000");
-const USD_14_000_6DEC = BigInt("14000000000");
-const USER_SUPPLY_6_DECIMALS = BigInt("10000000000000");
-const PERCENTAGE_3_18DEC = BigInt("30000000000000000");
+const {
+  TOTAL_SUPPLY_18_DECIMALS,
+  TOTAL_SUPPLY_6_DECIMALS,
+  USER_SUPPLY_18_DECIMALS,
+  ZERO,
+  COLLATERALIZATION_FACTOR_18DEC,
+  USD_10_000_18DEC,
+  USD_14_000_18DEC,
+  USD_10_000_6DEC,
+  USD_14_000_6DEC,
+  USER_SUPPLY_6_DECIMALS,
+  PERCENTAGE_3_18DEC
+} =  require('./ConstValue.js');
+
 
 const grantAllRoleIporConfiguration = async (iporConfiguration, accounts) => {
   await iporConfiguration.grantRole(
@@ -77,6 +80,25 @@ const grantAllRoleIporConfiguration = async (iporConfiguration, accounts) => {
     keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
     accounts[0].address
   );
+
+  await iporConfiguration.grantRole(
+    keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
+    accounts[0].address
+);
+
+await iporConfiguration.grantRole(
+  keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
+  accounts[0].address
+);
+
+await iporConfiguration.grantRole(
+  keccak256("MILTON_SPREAD_STRATEGY_ADMIN_ROLE"),
+  accounts[0].address
+);
+await iporConfiguration.grantRole(
+  keccak256("MILTON_SPREAD_STRATEGY_ROLE"),
+  accounts[0].address
+);
 };
 
 const setupTokenDaiInitialValuesForUsers = async (users, testData) => {
@@ -258,6 +280,20 @@ const prepareTestData = async (accounts, assets, data, lib) => {
 
   await miltonStorage.initialize(data.iporConfiguration.address);
   await warrenStorage.initialize(data.iporConfiguration.address);
+
+  const MiltonLPUtilizationStrategyCollateral = await ethers.getContractFactory("MiltonLPUtilizationStrategyCollateral");
+  const miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deploy();
+  await miltonLPUtilizationStrategyCollateral.deployed();
+  await miltonLPUtilizationStrategyCollateral.initialize(data.iporConfiguration.address);
+  await data.iporConfiguration.setMiltonLPUtilizationStrategy(miltonLPUtilizationStrategyCollateral.address);
+
+  const MiltonSpreadStrategy = await ethers.getContractFactory("MiltonSpreadStrategy");
+  const miltonSpreadStrategy = await MiltonSpreadStrategy.deploy()
+  await miltonSpreadStrategy.deployed();
+  await miltonSpreadStrategy.initialize(data.iporConfiguration.address);
+  await data.iporConfiguration.setMiltonSpreadStrategy(miltonSpreadStrategy.address);
+
+
 
   for (let k = 0; k < assets.length; k++) {
     if (assets[k] === "USDT") {
@@ -876,33 +912,34 @@ describe("IporConfigurationRoles", () => {
     ).to.be.eql(actualExchangeRate);
   });
 
-  // it.only('should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals', async () => {
-  //   //given
-  //   let testData = await prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data, libraries);
-  //   await prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-  //   await setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-  //   await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-  //   const params = getStandardDerivativeParamsDAI(userTwo, testData);
+  it.only('should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals', async () => {
+    //given
+    let testData = await prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data, libraries);
+    await prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+    await setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+    const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
-  //   let expectedExchangeRate = BigInt("1000747756729810568");
+    let expectedExchangeRate = BigInt("1000747756729810568");
 
-  //   await data.warren.connect(userOne).test_updateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-  //   await data.joseph.connect(liquidityProvider).test_provideLiquidity(params.asset, BigInt("40000000000000000000"), params.openTimestamp)
+    await data.warren.connect(userOne).test_updateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+    await data.joseph.connect(liquidityProvider).test_provideLiquidity(params.asset, BigInt("40000000000000000000"), params.openTimestamp)
 
-  //   //open position to have something in Liquidity Pool
-  //   await data.milton.connect(userTwo).test_openPosition(
-  //       params.openTimestamp, params.asset, BigInt("40000000000000000000"),
-  //       params.slippageValue, params.collateralizationFactor,
-  //       params.direction);
+    //open position to have something in Liquidity Pool
+    await data.milton.connect(userTwo).test_openPosition(
+        params.openTimestamp, params.asset, BigInt("40000000000000000000"),
+        params.slippageValue, params.collateralizationFactor,
+        params.direction);
 
-    // //when
-    // let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(testData.tokenDai.address, params.openTimestamp));
+    //when
+    let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate(testData.tokenDai.address, params.openTimestamp));
 
-    // //then
-    // assert(expectedExchangeRate === actualExchangeRate,
-    //     `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-    //     expected: ${expectedExchangeRate}`)
-// });
+    //then
+    expect(expectedExchangeRate,
+        `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+        expected: ${expectedExchangeRate}`)
+        .to.be.eql(actualExchangeRate)
+});
 
 
 });
