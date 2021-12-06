@@ -66,10 +66,10 @@ module.exports = {
     },
     mocha: {
         useColors: true,
-        // reporter: "eth-gas-reporter",
+        // reporter: 'eth-gas-reporter',
         reporterOptions: {
             showTimeSpent: true,
-            // outputFile: "test-eth-gas-report.log",
+            // outputFile: "test-eth-gas-report.log"
         },
     },
     compilers: {
