@@ -44,39 +44,4 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
             return Constants.MAX_VALUE;
         }
     }
-
-
-    // function calculateRecFixedUtilizationRate(
-    //     address asset,
-    //     uint256 deposit,
-    //     uint256 openingFee,
-    //     uint256 multiplicator
-    // ) external view override returns (uint256) {
-    //     IMiltonStorage miltonStorage = IMiltonStorage(
-    //         iporConfiguration.getMiltonStorage()
-    //     );
-    //     DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
-    //         asset
-    //     );
-
-    //     if ((balance.liquidityPool + openingFee) != 0) {
-    //         return
-    //             AmmMath.division(
-    //                 (balance.recFixedDerivatives + deposit) * multiplicator,
-    //                 balance.liquidityPool + openingFee
-    //             );
-    //     } else {
-    //         //TODO: clarify what if liquidityPool is empty
-    //         return Constants.MAX_VALUE;
-    //     }
-    // }
-
-    // function calculateRecFixedAdjustedUtilizationRate(
-    //     address asset,
-    //     uint256 deposit,
-    //     uint256 openingFee,
-    //     uint256 multiplicator
-    // ) external view override returns (uint256) {
-    //     return 0;
-    // }
 }
