@@ -255,7 +255,7 @@ contract("MiltonSpread", (accounts) => {
         );
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, imbalance factor > 0, opening fee = 0, pay fixed derivative deposit = 0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Derivative, imbalance factor > 0, opening fee = 0, pay fixed derivative balance = 0", async () => {
         //given
         let testData = await testUtils.prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -543,7 +543,7 @@ contract("MiltonSpread", (accounts) => {
         );
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, imbalance factor > 0, opening fee = 0, rec fixed derivative deposit = 0", async () => {
+    it("should calculate spread - demand component - Rec Fixed Derivative, imbalance factor > 0, opening fee = 0, rec fixed derivative balance = 0", async () => {
         //given
         let testData = await testUtils.prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
