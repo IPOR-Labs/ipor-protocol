@@ -83,16 +83,17 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
 
         return
             AmmMath.division(
-                kf,
-                calculateRecFixedAdjustedUtilizationRate(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
-                    multiplicator,
-                    lambda
-                )
+                kf * multiplicator,
+                multiplicator -
+                    calculateRecFixedAdjustedUtilizationRate(
+                        derivativeDeposit,
+                        derivativeOpeningFee,
+                        liquidityPool,
+                        payFixedDerivativesBalance,
+                        recFixedDerivativesBalance,
+                        multiplicator,
+                        lambda
+                    )
             );
     }
 
