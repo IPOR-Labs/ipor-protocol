@@ -297,294 +297,294 @@ contract('Joseph', (accounts) => {
     //     //TODO: add this test
     // });
 
-    it('should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals', async () => {
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["USDT"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
-        await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsUSDT(userTwo, testData);
+    // it('should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals', async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["USDT"], data);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
+    //     await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsUSDT(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000748");
+    //     let expectedExchangeRate = BigInt("1000748");
 
-        await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, params.openTimestamp, {from: userOne});
-        await data.joseph.test_provideLiquidity(params.asset, BigInt("40000000"), params.openTimestamp, {from: liquidityProvider})
+    //     await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, params.openTimestamp, {from: userOne});
+    //     await data.joseph.test_provideLiquidity(params.asset, BigInt("40000000"), params.openTimestamp, {from: liquidityProvider})
 
-        //open position to have something in Liquidity Pool
-        await data.milton.test_openPosition(
-            params.openTimestamp,
-            params.asset, BigInt("40000000"),
-            params.slippageValue, params.collateralizationFactor,
-            params.direction, {from: userTwo});
+    //     //open position to have something in Liquidity Pool
+    //     await data.milton.test_openPosition(
+    //         params.openTimestamp,
+    //         params.asset, BigInt("40000000"),
+    //         params.slippageValue, params.collateralizationFactor,
+    //         params.direction, {from: userTwo});
 
-        //when
-        let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(testData.tokenUsdt.address, params.openTimestamp));
+    //     //when
+    //     let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(testData.tokenUsdt.address, params.openTimestamp));
 
-        //then
-        assert(expectedExchangeRate === actualExchangeRate,
-            `Incorrect exchange rate for USDT, actual:  ${actualExchangeRate},
-                expected: ${expectedExchangeRate}`)
-    });
+    //     //then
+    //     assert(expectedExchangeRate === actualExchangeRate,
+    //         `Incorrect exchange rate for USDT, actual:  ${actualExchangeRate},
+    //             expected: ${expectedExchangeRate}`)
+    // });
 
-    it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero', async () => {
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+    // it('should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero', async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+    //     await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
 
-        let amount = BigInt("40000000000000000000");
-        let expectedExchangeRate = BigInt("1000000000000000000");
+    //     let amount = BigInt("40000000000000000000");
+    //     let expectedExchangeRate = BigInt("1000000000000000000");
 
-        await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
+    //     await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
 
-        await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
+    //     await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
 
 
-        //open position to have something in Liquidity Pool
-        await data.milton.test_openPosition(
-            params.openTimestamp,
-            params.asset, amount,
-            params.slippageValue, params.collateralizationFactor,
-            params.direction, {from: userTwo});
+    //     //open position to have something in Liquidity Pool
+    //     await data.milton.test_openPosition(
+    //         params.openTimestamp,
+    //         params.asset, amount,
+    //         params.slippageValue, params.collateralizationFactor,
+    //         params.direction, {from: userTwo});
 
-        await data.joseph.test_redeem(params.asset, amount, params.openTimestamp, {from: liquidityProvider})
+    //     await data.joseph.test_redeem(params.asset, amount, params.openTimestamp, {from: liquidityProvider})
 
-        //when
-        let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(testData.tokenDai.address, params.openTimestamp));
+    //     //when
+    //     let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(testData.tokenDai.address, params.openTimestamp));
 
-        //then
-        assert(expectedExchangeRate === actualExchangeRate,
-            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-            expected: ${expectedExchangeRate}`)
-    });
+    //     //then
+    //     assert(expectedExchangeRate === actualExchangeRate,
+    //         `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+    //         expected: ${expectedExchangeRate}`)
+    // });
 
-    it('should NOT change Exchange Rate when Liquidity Provider provide liquidity, initial Exchange Rate equal to 1.5', async () => {
+    // it('should NOT change Exchange Rate when Liquidity Provider provide liquidity, initial Exchange Rate equal to 1.5', async () => {
 
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
-        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
-        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+    //     await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
+    //     await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+    //     await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
 
-        let amount = BigInt("180000000000000000000");
-        await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
-        await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
+    //     let amount = BigInt("180000000000000000000");
+    //     await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
+    //     await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
+    //     let oldOpeningFeePercentage = await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
+    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
 
-        //open position to have something in Liquidity Pool
-        await data.milton.test_openPosition(
-            params.openTimestamp, params.asset, amount,
-            params.slippageValue, params.collateralizationFactor,
-            params.direction,  {from: userTwo});
+    //     //open position to have something in Liquidity Pool
+    //     await data.milton.test_openPosition(
+    //         params.openTimestamp, params.asset, amount,
+    //         params.slippageValue, params.collateralizationFactor,
+    //         params.direction,  {from: userTwo});
 
-        //after this withdraw initial exchange rate is 1,5
-        let expectedExchangeRate = BigInt("1714285714285714286");
-        let exchangeRateBeforeProvideLiquidity = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
-        let expectedIpTokenBalanceForUserThree = BigInt("874999999999999999854");
+    //     //after this withdraw initial exchange rate is 1,5
+    //     let expectedExchangeRate = BigInt("1714285714285714286");
+    //     let exchangeRateBeforeProvideLiquidity = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
+    //     let expectedIpTokenBalanceForUserThree = BigInt("874999999999999999854");
 
-        // //when
-        await data.joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), params.openTimestamp, {from: userThree});
+    //     // //when
+    //     await data.joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), params.openTimestamp, {from: userThree});
 
-        let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenDai.balanceOf.call(userThree));
-        let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
+    //     let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenDai.balanceOf.call(userThree));
+    //     let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
 
-        //then
-        assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
-            `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
-                 expected: ${expectedIpTokenBalanceForUserThree}`)
+    //     //then
+    //     assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
+    //         `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
+    //              expected: ${expectedIpTokenBalanceForUserThree}`)
 
-        assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
-            `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
-                expected: ${expectedExchangeRate}`)
+    //     assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
+    //         `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
+    //             expected: ${expectedExchangeRate}`)
 
-        assert(expectedExchangeRate === actualExchangeRate,
-            `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
-                expected: ${expectedExchangeRate}`)
+    //     assert(expectedExchangeRate === actualExchangeRate,
+    //         `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
+    //             expected: ${expectedExchangeRate}`)
 
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
-    });
+    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
+    // });
 
-    it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, DAI 18 decimals', async () => {
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+    // it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, DAI 18 decimals', async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+    //     await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
 
-        let amount = BigInt("180000000000000000000");
+    //     let amount = BigInt("180000000000000000000");
 
-        await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
-        await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
-        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
-        await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
+    //     await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_18DEC, params.openTimestamp, {from: userOne});
+    //     await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
+    //     let oldOpeningFeePercentage = await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
+    //     await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
+    //     await testData.iporAssetConfigurationDai.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
+    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(BigInt("600000000000000000"));
 
-        //open position to have something in Liquidity Pool
-        await data.milton.test_openPosition(
-            params.openTimestamp, params.asset, amount,
-            params.slippageValue, params.collateralizationFactor,
-            params.direction, {from: userTwo});
+    //     //open position to have something in Liquidity Pool
+    //     await data.milton.test_openPosition(
+    //         params.openTimestamp, params.asset, amount,
+    //         params.slippageValue, params.collateralizationFactor,
+    //         params.direction, {from: userTwo});
 
-        //after this withdraw initial exchange rate is 1,5
-        let expectedExchangeRate = BigInt("1714285714285714286");
-        let exchangeRateBeforeProvideLiquidity = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
-        let expectedIpTokenBalanceForUserThree = BigInt("0");
+    //     //after this withdraw initial exchange rate is 1,5
+    //     let expectedExchangeRate = BigInt("1714285714285714286");
+    //     let exchangeRateBeforeProvideLiquidity = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
+    //     let expectedIpTokenBalanceForUserThree = BigInt("0");
 
-        //when
-        await data.joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), params.openTimestamp, {from: userThree});
-        await data.joseph.test_redeem(params.asset, BigInt("874999999999999999854"), params.openTimestamp,  {from: userThree})
+    //     //when
+    //     await data.joseph.test_provideLiquidity(params.asset, BigInt("1500000000000000000000"), params.openTimestamp, {from: userThree});
+    //     await data.joseph.test_redeem(params.asset, BigInt("874999999999999999854"), params.openTimestamp,  {from: userThree})
 
-        let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenDai.balanceOf.call(userThree));
-        let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
+    //     let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenDai.balanceOf.call(userThree));
+    //     let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
 
-        //then
-        assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
-            `Incorrect ipToken Balance for DAI asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
-                 expected: ${expectedIpTokenBalanceForUserThree}`)
+    //     //then
+    //     assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
+    //         `Incorrect ipToken Balance for DAI asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
+    //              expected: ${expectedIpTokenBalanceForUserThree}`)
 
-        assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
-            `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
-                expected: ${expectedExchangeRate}`)
+    //     assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
+    //         `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
+    //             expected: ${expectedExchangeRate}`)
 
-        assert(expectedExchangeRate === actualExchangeRate,
-            `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
-                expected: ${expectedExchangeRate}`)
+    //     assert(expectedExchangeRate === actualExchangeRate,
+    //         `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
+    //             expected: ${expectedExchangeRate}`)
 
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
-    });
+    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(oldOpeningFeePercentage);
+    // });
 
-    it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, USDT 6 decimals', async () => {
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["USDT"], data);
-        await testData.iporAssetConfigurationUsdt.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
-        await testData.iporAssetConfigurationUsdt.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
-        await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsUSDT(userTwo, testData);
+    // it('should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, USDT 6 decimals', async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["USDT"], data);
+    //     await testData.iporAssetConfigurationUsdt.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"), admin);
+    //     await testData.iporAssetConfigurationUsdt.grantRole(keccak256("OPENING_FEE_PERCENTAGE_ROLE"), admin);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
+    //     await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsUSDT(userTwo, testData);
         
-        let amount = BigInt("180000000");        
-        await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, params.openTimestamp, {from: userOne});
-        await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
-        let oldOpeningFeePercentage = await testData.iporAssetConfigurationUsdt.getOpeningFeePercentage();
-        await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(BigInt("600000"));
+    //     let amount = BigInt("180000000");        
+    //     await data.warren.test_updateIndex(params.asset, testUtils.PERCENTAGE_3_6DEC, params.openTimestamp, {from: userOne});
+    //     await data.joseph.test_provideLiquidity(params.asset, amount, params.openTimestamp, {from: liquidityProvider});
+    //     let oldOpeningFeePercentage = await testData.iporAssetConfigurationUsdt.getOpeningFeePercentage();
+    //     await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(BigInt("600000"));
 
-        //open position to have something in Liquidity Pool
-        await data.milton.test_openPosition(
-            params.openTimestamp, params.asset, amount,
-            params.slippageValue, params.collateralizationFactor,
-            params.direction, {from: userTwo});
+    //     //open position to have something in Liquidity Pool
+    //     await data.milton.test_openPosition(
+    //         params.openTimestamp, params.asset, amount,
+    //         params.slippageValue, params.collateralizationFactor,
+    //         params.direction, {from: userTwo});
 
-        //after this withdraw initial exchange rate is 1,5
-        let expectedExchangeRate = BigInt("1714286");
-        let exchangeRateBeforeProvideLiquidity = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
-        let expectedIpTokenBalanceForUserThree = BigInt("0");
-
-
-        //when
-        await data.joseph.test_provideLiquidity(params.asset, BigInt("1500000000"), params.openTimestamp, {from: userThree});
-        await data.joseph.test_redeem(params.asset, BigInt("874999854"), params.openTimestamp, {from: userThree})
-
-        let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenUsdt.balanceOf.call(userThree));
-        let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
-
-        //then
-        assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
-            `Incorrect ipToken Balance for USDT asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
-                 expected: ${expectedIpTokenBalanceForUserThree}`)
-
-        assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
-            `Incorrect exchange rate before providing liquidity for USDT, actual:  ${exchangeRateBeforeProvideLiquidity},
-                expected: ${expectedExchangeRate}`)
-
-        assert(expectedExchangeRate === actualExchangeRate,
-            `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
-                expected: ${expectedExchangeRate}`)
-
-        await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(oldOpeningFeePercentage);
-    });
+    //     //after this withdraw initial exchange rate is 1,5
+    //     let expectedExchangeRate = BigInt("1714286");
+    //     let exchangeRateBeforeProvideLiquidity = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
+    //     let expectedIpTokenBalanceForUserThree = BigInt("0");
 
 
+    //     //when
+    //     await data.joseph.test_provideLiquidity(params.asset, BigInt("1500000000"), params.openTimestamp, {from: userThree});
+    //     await data.joseph.test_redeem(params.asset, BigInt("874999854"), params.openTimestamp, {from: userThree})
 
-    it('should NOT redeem ipTokens because of empty Liquidity Pool', async () => {
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+    //     let actualIpTokenBalanceForUserThree = BigInt(await testData.ipTokenUsdt.balanceOf.call(userThree));
+    //     let actualExchangeRate = BigInt(await data.milton.calculateExchangeRate.call(params.asset, params.openTimestamp));
 
-        await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider});
+    //     //then
+    //     assert(expectedIpTokenBalanceForUserThree === actualIpTokenBalanceForUserThree,
+    //         `Incorrect ipToken Balance for USDT asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
+    //              expected: ${expectedIpTokenBalanceForUserThree}`)
 
-        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await data.iporConfiguration.setJoseph(userOne);
-        await testData.miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await data.iporConfiguration.setJoseph(data.joseph.address);
+    //     assert(expectedExchangeRate === exchangeRateBeforeProvideLiquidity,
+    //         `Incorrect exchange rate before providing liquidity for USDT, actual:  ${exchangeRateBeforeProvideLiquidity},
+    //             expected: ${expectedExchangeRate}`)
 
-        //when
-        await testUtils.assertError(
-            //when
-            data.joseph.test_redeem(params.asset, BigInt("1000000000000000000000"), params.openTimestamp, {from: liquidityProvider}),
-            //then
-            'IPOR_45'
-        );
-    });
+    //     assert(expectedExchangeRate === actualExchangeRate,
+    //         `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
+    //             expected: ${expectedExchangeRate}`)
 
-    it('should NOT provide liquidity because of empty Liquidity Pool', async () => {
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+    //     await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(oldOpeningFeePercentage);
+    // });
 
-        await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider});
 
-        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await data.iporConfiguration.setJoseph(userOne);
-        await testData.miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
-        await data.iporConfiguration.setJoseph(data.joseph.address);
 
-        //when
-        await testUtils.assertError(
-            //when
-            data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider}),
-            //then
-            'IPOR_45'
-        );
-    });
+    // it('should NOT redeem ipTokens because of empty Liquidity Pool', async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+    //     await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
 
-    it('should NOT redeem ipTokens because redeem value higher than Liquidity Pool Balance', async () => {
-        //given
-        let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
-        await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+    //     await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider});
 
-        await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider});
+    //     //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+    //     await data.iporConfiguration.setJoseph(userOne);
+    //     await testData.miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
+    //     await data.iporConfiguration.setJoseph(data.joseph.address);
 
-        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await data.iporConfiguration.setJoseph(userOne);
-        await testData.miltonStorage.subtractLiquidity(params.asset, testUtils.USD_10_18DEC, {from: userOne});
-        await data.iporConfiguration.setJoseph(data.joseph.address);
+    //     //when
+    //     await testUtils.assertError(
+    //         //when
+    //         data.joseph.test_redeem(params.asset, BigInt("1000000000000000000000"), params.openTimestamp, {from: liquidityProvider}),
+    //         //then
+    //         'IPOR_45'
+    //     );
+    // });
 
-        //when
-        await testUtils.assertError(
-            //when
-            data.joseph.test_redeem(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider}),
-            //then
-            'IPOR_43'
-        );
-    });
+    // it('should NOT provide liquidity because of empty Liquidity Pool', async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+    //     await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+
+    //     await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider});
+
+    //     //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+    //     await data.iporConfiguration.setJoseph(userOne);
+    //     await testData.miltonStorage.subtractLiquidity(params.asset, params.totalAmount, {from: userOne});
+    //     await data.iporConfiguration.setJoseph(data.joseph.address);
+
+    //     //when
+    //     await testUtils.assertError(
+    //         //when
+    //         data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider}),
+    //         //then
+    //         'IPOR_45'
+    //     );
+    // });
+
+    // it('should NOT redeem ipTokens because redeem value higher than Liquidity Pool Balance', async () => {
+    //     //given
+    //     let testData = await testUtils.prepareTestData([admin, userOne, userTwo, userThree, liquidityProvider], ["DAI"], data);
+    //     await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
+    //     await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, userThree, liquidityProvider], testData);
+    //     await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+    //     const params = testUtils.getStandardDerivativeParamsDAI(userTwo, testData);
+
+    //     await data.joseph.test_provideLiquidity(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider});
+
+    //     //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+    //     await data.iporConfiguration.setJoseph(userOne);
+    //     await testData.miltonStorage.subtractLiquidity(params.asset, testUtils.USD_10_18DEC, {from: userOne});
+    //     await data.iporConfiguration.setJoseph(data.joseph.address);
+
+    //     //when
+    //     await testUtils.assertError(
+    //         //when
+    //         data.joseph.test_redeem(params.asset, params.totalAmount, params.openTimestamp, {from: liquidityProvider}),
+    //         //then
+    //         'IPOR_43'
+    //     );
+    // });
 
     it('should NOT redeem ipTokens because after redeem Liquidity Pool will be empty', async () => {
         //given
