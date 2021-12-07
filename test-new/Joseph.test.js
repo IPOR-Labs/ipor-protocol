@@ -182,12 +182,7 @@ const getLibraries = async () => {
     await soapIndicatorLogic.deployed();
 
     const TotalSoapIndicatorLogic = await ethers.getContractFactory(
-        "TotalSoapIndicatorLogic",
-        {
-            libraries: {
-                SoapIndicatorLogic: soapIndicatorLogic.address,
-            },
-        }
+        "TotalSoapIndicatorLogic"
     );
     const totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deploy();
     await totalSoapIndicatorLogic.deployed();
@@ -219,9 +214,7 @@ const prepareData = async (libraries, accounts) => {
     const warren = await TestWarren.deploy();
     await warren.deployed();
 
-    const TestMilton = await ethers.getContractFactory("TestMilton", {
-        libraries: { DerivativeLogic: libraries.derivativeLogic.address },
-    });
+    const TestMilton = await ethers.getContractFactory("TestMilton");
     const milton = await TestMilton.deploy();
     await milton.deployed();
 
@@ -263,7 +256,7 @@ const prepareTestData = async (accounts, assets, data, lib) => {
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage", {
         libraries: {
             DerivativesView: lib.derivativeLogic.address,
-            TotalSoapIndicatorLogic: lib.totalSoapIndicatorLogic.address,
+            SoapIndicatorLogic: lib.soapIndicatorLogic.address,
         },
     });
     const miltonStorage = await MiltonStorage.deploy();
