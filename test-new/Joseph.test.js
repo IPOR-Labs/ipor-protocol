@@ -4,18 +4,18 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 
 const {
-    ZERO,
-    USD_10_000_18DEC,
-    USD_14_000_18DEC,
-    USD_10_000_6DEC,
-    USD_14_000_6DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
+    USD_10_000_18DEC,
+    USD_10_000_6DEC,
     USD_10_18DEC,
     USD_10_400_18DEC,
+    USD_14_000_18DEC,
+    USD_14_000_6DEC,
+    ZERO,
 } = require("./Const.js");
 
-const { 
+const {
     assertError,
     getLibraries,
     getStandardDerivativeParamsDAI,
@@ -27,7 +27,7 @@ const {
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
-} = require("./Utils")
+} = require("./Utils");
 
 describe("Joseph", () => {
     let data = null;

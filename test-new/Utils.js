@@ -2,20 +2,13 @@ const keccak256 = require("keccak256");
 const { expect } = require("chai");
 
 const {
+    COLLATERALIZATION_FACTOR_18DEC,
     TOTAL_SUPPLY_18_DECIMALS,
     TOTAL_SUPPLY_6_DECIMALS,
-    USER_SUPPLY_18_DECIMALS,
-    ZERO,
-    COLLATERALIZATION_FACTOR_18DEC,
     USD_10_000_18DEC,
-    USD_14_000_18DEC,
     USD_10_000_6DEC,
-    USD_14_000_6DEC,
+    USER_SUPPLY_18_DECIMALS,
     USER_SUPPLY_6_DECIMALS,
-    PERCENTAGE_3_18DEC,
-    PERCENTAGE_3_6DEC,
-    USD_10_18DEC,
-    USD_10_400_18DEC,
 } = require("./Const.js");
 
 module.exports.assertError = async (promise, error) => {
@@ -79,7 +72,10 @@ module.exports.getStandardDerivativeParamsUSDT = (user, testData) => {
     };
 };
 
-module.exports.grantAllRoleIporConfiguration = async (iporConfiguration, accounts) => {
+module.exports.grantAllRoleIporConfiguration = async (
+    iporConfiguration,
+    accounts
+) => {
     await iporConfiguration.grantRole(
         keccak256("MILTON_STORAGE_ADMIN_ROLE"),
         accounts[0].address
@@ -161,7 +157,12 @@ module.exports.grantAllRoleIporConfiguration = async (iporConfiguration, account
     );
 };
 
-module.exports.prepareApproveForUsers = async (users, asset, data, testData) => {
+module.exports.prepareApproveForUsers = async (
+    users,
+    asset,
+    data,
+    testData
+) => {
     for (let i = 0; i < users.length; i++) {
         if (asset === "USDT") {
             await testData.tokenUsdt
@@ -428,7 +429,10 @@ module.exports.setupTokenDaiInitialValuesForUsers = async (users, testData) => {
     }
 };
 
-module.exports.setupTokenUsdtInitialValuesForUsers = async (users, testData) => {
+module.exports.setupTokenUsdtInitialValuesForUsers = async (
+    users,
+    testData
+) => {
     for (let i = 0; i < users.length; i++) {
         await testData.tokenUsdt.setupInitialAmount(
             users[i].address,
