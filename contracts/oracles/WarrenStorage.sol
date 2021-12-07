@@ -14,6 +14,7 @@ import "../interfaces/IIporConfiguration.sol";
  * @title Ipor Oracle Storage initial version
  * @author IPOR Labs
  */
+ //TODO: [gas-opt] use with Warren as inheritance
 contract WarrenStorage is Ownable, IWarrenStorage {
     using IporLogic for DataTypes.IPOR;
 
@@ -42,10 +43,11 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] public updaters;
 
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration private iporConfiguration;
 
-    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
-        _iporConfiguration = iporConfiguration;
+	//TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+        iporConfiguration = initialIporConfiguration;
     }
 
     function getAssets() external view override returns (address[] memory) {
@@ -62,20 +64,21 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     }
 
     function updateIndexes(
-        address[] memory _assets,
+        address[] memory assetList,
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) external override onlyUpdater {
         require(
-            _assets.length == indexValues.length,
+            assetList.length == indexValues.length,
             Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
         );
-        for (uint256 i = 0; i < _assets.length; i++) {
+        for (uint256 i = 0; i < assetList.length; i++) {
+			//TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
             require(
-                _iporConfiguration.assetSupported(_assets[i]) == 1,
+                iporConfiguration.assetSupported(assetList[i]) == 1,
                 Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
             );
-            _updateIndex(_assets[i], indexValues[i], updateTimestamp);
+            _updateIndex(assetList[i], indexValues[i], updateTimestamp);
         }
     }
 
@@ -85,7 +88,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 
     function removeUpdater(address updater) external override onlyOwner {
         require(updater != address(0), Errors.WARREN_WRONG_UPDATER_ADDRESS);
-        for (uint256 i; i < updaters.length; i++) {
+        for (uint256 i = 0; i < updaters.length; i++) {
             if (updaters[i] == updater) {
                 delete updaters[i];
                 emit IporIndexUpdaterRemove(updater);
@@ -100,12 +103,12 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     function _addUpdater(address updater) internal {
         require(updater != address(0), Errors.WARREN_WRONG_UPDATER_ADDRESS);
         bool updaterExists = false;
-        for (uint256 i; i < updaters.length; i++) {
+        for (uint256 i = 0; i < updaters.length; i++) {
             if (updaters[i] == updater) {
                 updaterExists = true;
             }
         }
-        if (updaterExists == false) {
+        if (!updaterExists) {
             updaters.push(updater);
             emit IporIndexUpdaterAdd(updater);
         }
@@ -117,7 +120,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 updateTimestamp
     ) internal onlyUpdater {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
 
         bool assetExists = false;
@@ -130,7 +133,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
 
-        if (assetExists == false) {
+        if (!assetExists) {
             assets.push(asset);
             newQuasiIbtPrice =
                 iporAssetConfiguration.getMultiplicator() *
@@ -173,7 +176,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
                 break;
             }
         }
-        require(allowed == true, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
+        require(allowed, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
         _;
     }
 }

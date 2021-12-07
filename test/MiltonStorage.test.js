@@ -1,8 +1,15 @@
 const testUtils = require("./TestUtils.js");
 
-contract('MiltonStorage', (accounts) => {
-
-    const [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress, _] = accounts;
+contract("MiltonStorage", (accounts) => {
+    const [
+        admin,
+        userOne,
+        userTwo,
+        userThree,
+        liquidityProvider,
+        miltonStorageAddress,
+        _,
+    ] = accounts;
 
     let data = null;
 
@@ -10,41 +17,91 @@ contract('MiltonStorage', (accounts) => {
         data = await testUtils.prepareData();
     });
 
-    it('should update Milton Storage when open position, caller has rights to update', async () => {
-
+    it("should update Milton Storage when open position, caller has rights to update", async () => {
         //given
         let testData = await testUtils.prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, liquidityProvider], testData);
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["DAI"],
+            data
+        );
+        await testUtils.prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await testUtils.setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, liquidityProvider],
+            testData
+        );
 
         await data.iporConfiguration.setMilton(miltonStorageAddress);
 
         //when
-        testData.miltonStorage.updateStorageWhenOpenPosition(await preprareDerivativeStruct18DecSimpleCase1(testData), {from: miltonStorageAddress});
+        testData.miltonStorage.updateStorageWhenOpenPosition(
+            await preprareDerivativeStruct18DecSimpleCase1(testData),
+            { from: miltonStorageAddress }
+        );
         //then
-        assert(true);//no exception this line is achieved
-
+        assert(true); //no exception this line is achieved
     });
 
-    it('should NOT update Milton Storage when open position, caller dont have rights to update', async () => {
+    it("should NOT update Milton Storage when open position, caller dont have rights to update", async () => {
         //given
         let testData = await testUtils.prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress], ["DAI"], data);
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["DAI"],
+            data
+        );
         await testUtils.assertError(
             //when
-            testData.miltonStorage.updateStorageWhenOpenPosition(await preprareDerivativeStruct18DecSimpleCase1(testData), {from: userThree}),
+            testData.miltonStorage.updateStorageWhenOpenPosition(
+                await preprareDerivativeStruct18DecSimpleCase1(testData),
+                { from: userThree }
+            ),
             //then
-            'IPOR_1'
+            "IPOR_1"
         );
     });
 
-    it('should update Milton Storage when close position, caller has rights to update, DAI 18 decimals', async () => {
+    it("should update Milton Storage when close position, caller has rights to update, DAI 18 decimals", async () => {
         //given
         let testData = await testUtils.prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, liquidityProvider], testData);
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["DAI"],
+            data
+        );
+        await testUtils.prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await testUtils.setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
@@ -53,31 +110,66 @@ contract('MiltonStorage', (accounts) => {
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo
-        }
+            from: userTwo,
+        };
 
-        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_18DEC, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(
+            derivativeParams.asset,
+            testUtils.PERCENTAGE_5_18DEC,
+            derivativeParams.openTimestamp,
+            { from: userOne }
+        );
         await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(
+            derivativeParams.asset,
+            testUtils.USD_14_000_18DEC,
+            derivativeParams.openTimestamp,
+            { from: liquidityProvider }
+        );
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
-        let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+        let closePositionTimestamp =
+            derivativeParams.openTimestamp +
+            testUtils.PERIOD_25_DAYS_IN_SECONDS;
         await data.iporConfiguration.setMilton(miltonStorageAddress);
 
         //when
         testData.miltonStorage.updateStorageWhenClosePosition(
-            userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, {from: miltonStorageAddress});
+            userTwo,
+            derivativeItem,
+            BigInt("10000000000000000000"),
+            closePositionTimestamp,
+            { from: miltonStorageAddress }
+        );
         //then
-        assert(true);//no exception this line is achieved
+        assert(true); //no exception this line is achieved
     });
 
-    it('should update Milton Storage when close position, caller has rights to update, USDT 6 decimals', async () => {
+    it("should update Milton Storage when close position, caller has rights to update, USDT 6 decimals", async () => {
         //given
         let testData = await testUtils.prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress], ["USDT"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "USDT", data, testData);
-        await testUtils.setupTokenUsdtInitialValuesForUsers([admin, userOne, userTwo, liquidityProvider], testData);
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["USDT"],
+            data
+        );
+        await testUtils.prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await testUtils.setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
 
         const derivativeParams = {
             asset: testData.tokenUsdt.address,
@@ -86,32 +178,66 @@ contract('MiltonStorage', (accounts) => {
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_6DEC,
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo
-        }
+            from: userTwo,
+        };
 
-        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_6DEC, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(
+            derivativeParams.asset,
+            testUtils.PERCENTAGE_5_6DEC,
+            derivativeParams.openTimestamp,
+            { from: userOne }
+        );
         await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_6DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(
+            derivativeParams.asset,
+            testUtils.USD_14_000_6DEC,
+            derivativeParams.openTimestamp,
+            { from: liquidityProvider }
+        );
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
-        let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+        let closePositionTimestamp =
+            derivativeParams.openTimestamp +
+            testUtils.PERIOD_25_DAYS_IN_SECONDS;
         await data.iporConfiguration.setMilton(miltonStorageAddress);
 
         //when
         testData.miltonStorage.updateStorageWhenClosePosition(
-            userTwo, derivativeItem, BigInt("10000000"), closePositionTimestamp, {from: miltonStorageAddress});
+            userTwo,
+            derivativeItem,
+            BigInt("10000000"),
+            closePositionTimestamp,
+            { from: miltonStorageAddress }
+        );
         //then
-        assert(true);//no exception this line is achieved
+        assert(true); //no exception this line is achieved
     });
 
-    it('should NOT update Milton Storage when close position, caller dont have rights to update', async () => {
-
+    it("should NOT update Milton Storage when close position, caller dont have rights to update", async () => {
         // given
         let testData = await testUtils.prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress], ["DAI"], data);
-        await testUtils.prepareApproveForUsers([userOne, userTwo, userThree, liquidityProvider], "DAI", data, testData);
-        await testUtils.setupTokenDaiInitialValuesForUsers([admin, userOne, userTwo, liquidityProvider], testData);
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["DAI"],
+            data
+        );
+        await testUtils.prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await testUtils.setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: testUtils.USD_10_000_18DEC,
@@ -119,26 +245,42 @@ contract('MiltonStorage', (accounts) => {
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo
-        }
+            from: userTwo,
+        };
 
-        await data.warren.test_updateIndex(derivativeParams.asset, testUtils.PERCENTAGE_5_18DEC, derivativeParams.openTimestamp, {from: userOne});
+        await data.warren.test_updateIndex(
+            derivativeParams.asset,
+            testUtils.PERCENTAGE_5_18DEC,
+            derivativeParams.openTimestamp,
+            { from: userOne }
+        );
         await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph.test_provideLiquidity(derivativeParams.asset, testUtils.USD_14_000_18DEC, derivativeParams.openTimestamp, {from: liquidityProvider});
+        await data.joseph.test_provideLiquidity(
+            derivativeParams.asset,
+            testUtils.USD_14_000_18DEC,
+            derivativeParams.openTimestamp,
+            { from: liquidityProvider }
+        );
 
         await openPositionFunc(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
-        let closePositionTimestamp = derivativeParams.openTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+        let closePositionTimestamp =
+            derivativeParams.openTimestamp +
+            testUtils.PERIOD_25_DAYS_IN_SECONDS;
         await data.iporConfiguration.setMilton(miltonStorageAddress);
 
         //when
         await testUtils.assertError(
             testData.miltonStorage.updateStorageWhenClosePosition(
-                userTwo, derivativeItem, BigInt("10000000000000000000"), closePositionTimestamp, {from: userThree}),
+                userTwo,
+                derivativeItem,
+                BigInt("10000000000000000000"),
+                closePositionTimestamp,
+                { from: userThree }
+            ),
             //then
-            'IPOR_1'
+            "IPOR_1"
         );
-
     });
 
     const openPositionFunc = async (params) => {
@@ -148,12 +290,15 @@ contract('MiltonStorage', (accounts) => {
             params.totalAmount,
             params.slippageValue,
             params.collateralizationFactor,
-            params.direction, {from: params.from});
-    }
+            params.direction,
+            { from: params.from }
+        );
+    };
 
     const preprareDerivativeStruct18DecSimpleCase1 = async (testData) => {
         let openingTimestamp = Math.floor(Date.now() / 1000);
-        let closePositionTimestamp = openingTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
+        let closePositionTimestamp =
+            openingTimestamp + testUtils.PERIOD_25_DAYS_IN_SECONDS;
         return {
             id: 1,
             state: 0,
@@ -166,7 +311,7 @@ contract('MiltonStorage', (accounts) => {
                 openingAmount: 123,
                 iporPublicationAmount: 123,
                 spreadPayFixedValue: 123,
-                spreadRecFixedValue: 123
+                spreadRecFixedValue: 123,
             },
             collateralizationFactor: testUtils.COLLATERALIZATION_FACTOR_18DEC,
             notionalAmount: 123,
@@ -176,9 +321,9 @@ contract('MiltonStorage', (accounts) => {
                 iporIndexValue: 123,
                 ibtPrice: 123,
                 ibtQuantity: 123,
-                fixedInterestRate: 234
+                fixedInterestRate: 234,
             },
-            multiplicator: testUtils.TC_MULTIPLICATOR_18DEC
+            multiplicator: testUtils.TC_MULTIPLICATOR_18DEC,
         };
-    }
+    };
 });

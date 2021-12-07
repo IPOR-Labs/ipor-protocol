@@ -14,7 +14,7 @@ library TotalSoapIndicatorLogic {
         uint256 calculationTimestamp,
         uint256 ibtPrice,
         uint256 multiplicator
-    ) public view returns (int256 soapPf, int256 soapRf) {
+    ) internal view returns (int256 soapPf, int256 soapRf) {
         return (
             soapPf = tsi.pf.calculateSoap(
                 ibtPrice,
@@ -34,7 +34,7 @@ library TotalSoapIndicatorLogic {
         uint256 calculationTimestamp,
         uint256 ibtPrice,
         uint256 multiplicator
-    ) public view returns (int256 soapPf, int256 soapRf) {
+    ) internal view returns (int256 soapPf, int256 soapRf) {
         return (
             soapPf = tsi.pf.calculateQuasiSoap(
                 ibtPrice,
@@ -57,7 +57,7 @@ library TotalSoapIndicatorLogic {
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity,
         uint256 multiplicator
-    ) public {
+    ) internal {
         if (
             direction ==
             uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
@@ -93,7 +93,7 @@ library TotalSoapIndicatorLogic {
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity,
         uint256 multiplicator
-    ) public {
+    ) internal {
         if (
             direction ==
             uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)

@@ -1,41 +1,53 @@
 const testUtils = require("./TestUtils.js");
 const keccak256 = require("keccak256");
 
-const IporConfiguration = artifacts.require('IporConfiguration');
+const IporConfiguration = artifacts.require("IporConfiguration");
 
 const IPOR_ASSETS_ADMIN_ROLE = keccak256("IPOR_ASSETS_ADMIN_ROLE");
-    const MILTON_ADMIN_ROLE = keccak256("MILTON_ADMIN_ROLE");
-    const MILTON_STORAGE_ADMIN_ROLE = keccak256("MILTON_STORAGE_ADMIN_ROLE");
-    const MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE");
-    const MILTON_SPREAD_STRATEGY_ADMIN_ROLE = keccak256("MILTON_SPREAD_STRATEGY_ADMIN_ROLE");
-    const IPOR_ASSET_CONFIGURATION_ADMIN_ROLE = keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE");
-    const WARREN_ADMIN_ROLE = keccak256("WARREN_ADMIN_ROLE");
-    const WARREN_STORAGE_ADMIN_ROLE = keccak256("WARREN_STORAGE_ADMIN_ROLE");
-    const JOSEPH_ADMIN_ROLE = keccak256("JOSEPH_ADMIN_ROLE");
-    const MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE");
-    const ROLES_INFO_ADMIN_ROLE = keccak256("ROLES_INFO_ADMIN_ROLE");
+const MILTON_ADMIN_ROLE = keccak256("MILTON_ADMIN_ROLE");
+const MILTON_STORAGE_ADMIN_ROLE = keccak256("MILTON_STORAGE_ADMIN_ROLE");
+const MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE = keccak256(
+    "MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"
+);
+const MILTON_SPREAD_STRATEGY_ADMIN_ROLE = keccak256(
+    "MILTON_SPREAD_STRATEGY_ADMIN_ROLE"
+);
+const IPOR_ASSET_CONFIGURATION_ADMIN_ROLE = keccak256(
+    "IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"
+);
+const WARREN_ADMIN_ROLE = keccak256("WARREN_ADMIN_ROLE");
+const WARREN_STORAGE_ADMIN_ROLE = keccak256("WARREN_STORAGE_ADMIN_ROLE");
+const JOSEPH_ADMIN_ROLE = keccak256("JOSEPH_ADMIN_ROLE");
+const MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE = keccak256(
+    "MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"
+);
+const ROLES_INFO_ADMIN_ROLE = keccak256("ROLES_INFO_ADMIN_ROLE");
 
-    const IPOR_ASSETS_ROLE = keccak256("IPOR_ASSETS_ROLE");
-    const MILTON_ROLE = keccak256("MILTON_ROLE");
-    const MILTON_STORAGE_ROLE = keccak256("MILTON_STORAGE_ROLE");
-    const MILTON_LP_UTILIZATION_STRATEGY_ROLE = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE");
-    const MILTON_SPREAD_STRATEGY_ROLE = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
-    const IPOR_ASSET_CONFIGURATION_ROLE = keccak256("IPOR_ASSET_CONFIGURATION_ROLE");
-    const WARREN_ROLE = keccak256("WARREN_ROLE");
-    const WARREN_STORAGE_ROLE = keccak256("WARREN_STORAGE_ROLE");
-    const JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
-    const MILTON_PUBLICATION_FEE_TRANSFERER_ROLE = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
-    const ROLES_INFO_ROLE = keccak256("ROLES_INFO_ROLE");
+const IPOR_ASSETS_ROLE = keccak256("IPOR_ASSETS_ROLE");
+const MILTON_ROLE = keccak256("MILTON_ROLE");
+const MILTON_STORAGE_ROLE = keccak256("MILTON_STORAGE_ROLE");
+const MILTON_LP_UTILIZATION_STRATEGY_ROLE = keccak256(
+    "MILTON_LP_UTILIZATION_STRATEGY_ROLE"
+);
+const MILTON_SPREAD_STRATEGY_ROLE = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
+const IPOR_ASSET_CONFIGURATION_ROLE = keccak256(
+    "IPOR_ASSET_CONFIGURATION_ROLE"
+);
+const WARREN_ROLE = keccak256("WARREN_ROLE");
+const WARREN_STORAGE_ROLE = keccak256("WARREN_STORAGE_ROLE");
+const JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
+const MILTON_PUBLICATION_FEE_TRANSFERER_ROLE = keccak256(
+    "MILTON_PUBLICATION_FEE_TRANSFERER_ROLE"
+);
+const ROLES_INFO_ROLE = keccak256("ROLES_INFO_ROLE");
 
-
-
-contract('IporConfigurationRoles', (accounts) => {
+contract("IporConfigurationRoles", (accounts) => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
     beforeEach(async () => {
         iporConfiguration = await IporConfiguration.new();
     });
 
-    it('should grant and revoke ROLES_INFO_*', async () => {
+    it("should grant and revoke ROLES_INFO_*", async () => {
         //given
         const adminRole = keccak256("ROLES_INFO_ADMIN_ROLE");
         const role = keccak256("ROLES_INFO_ROLE");
@@ -43,7 +55,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -56,12 +68,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -72,7 +84,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke IPOR_ASSETS_*', async () => {
+    it("should grant and revoke IPOR_ASSETS_*", async () => {
         //given
         const adminRole = keccak256("IPOR_ASSETS_ADMIN_ROLE");
         const role = keccak256("IPOR_ASSETS_ROLE");
@@ -80,7 +92,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -93,12 +105,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -109,7 +121,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke MILTON_*', async () => {
+    it("should grant and revoke MILTON_*", async () => {
         //given
         const adminRole = keccak256("MILTON_ADMIN_ROLE");
         const role = keccak256("MILTON_ROLE");
@@ -117,7 +129,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -130,12 +142,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -146,7 +158,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke MILTON_STORAGE_*', async () => {
+    it("should grant and revoke MILTON_STORAGE_*", async () => {
         //given
         const adminRole = keccak256("MILTON_STORAGE_ADMIN_ROLE");
         const role = keccak256("MILTON_STORAGE_ROLE");
@@ -154,7 +166,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -167,12 +179,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -183,15 +195,17 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke MILTON_LP_UTILIZATION_STRATEGY_*', async () => {
+    it("should grant and revoke MILTON_LP_UTILIZATION_STRATEGY_*", async () => {
         //given
-        const adminRole = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE");
+        const adminRole = keccak256(
+            "MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"
+        );
         const role = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE");
 
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -204,12 +218,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -220,7 +234,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke MILTON_SPREAD_STRATEGY_*', async () => {
+    it("should grant and revoke MILTON_SPREAD_STRATEGY_*", async () => {
         //given
         const adminRole = keccak256("MILTON_SPREAD_STRATEGY_ADMIN_ROLE");
         const role = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
@@ -228,7 +242,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -241,12 +255,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -257,7 +271,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke IPOR_ASSET_CONFIGURATION_*', async () => {
+    it("should grant and revoke IPOR_ASSET_CONFIGURATION_*", async () => {
         //given
         const adminRole = keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE");
         const role = keccak256("IPOR_ASSET_CONFIGURATION_ROLE");
@@ -265,7 +279,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -278,12 +292,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -294,7 +308,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke WARREN_*', async () => {
+    it("should grant and revoke WARREN_*", async () => {
         //given
         const adminRole = keccak256("WARREN_ADMIN_ROLE");
         const role = keccak256("WARREN_ROLE");
@@ -302,7 +316,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -315,12 +329,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -331,7 +345,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke WARREN_STORAGE_*', async () => {
+    it("should grant and revoke WARREN_STORAGE_*", async () => {
         //given
         const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
         const role = keccak256("WARREN_STORAGE_ROLE");
@@ -339,7 +353,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -352,12 +366,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -368,7 +382,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke JOSEPH_*', async () => {
+    it("should grant and revoke JOSEPH_*", async () => {
         //given
         const adminRole = keccak256("JOSEPH_ADMIN_ROLE");
         const role = keccak256("JOSEPH_ROLE");
@@ -376,7 +390,7 @@ contract('IporConfigurationRoles', (accounts) => {
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -389,12 +403,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -405,15 +419,17 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should grant and revoke MILTON_PUBLICATION_FEE_TRANSFERER_*', async () => {
+    it("should grant and revoke MILTON_PUBLICATION_FEE_TRANSFERER_*", async () => {
         //given
         const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
-        const adminRole = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE");
+        const adminRole = keccak256(
+            "MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"
+        );
 
         // userOne has granted adminRole
         // userTwo has granted role
         // userTwo has revoke role
-        // userOne has revoke adminRole 
+        // userOne has revoke adminRole
 
         let hasAdminRole = await iporConfiguration.hasRole(adminRole, userOne);
         assert(!hasAdminRole);
@@ -426,12 +442,12 @@ contract('IporConfigurationRoles', (accounts) => {
         let hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
 
-        await iporConfiguration.grantRole(role, userTwo, {from: userOne});
+        await iporConfiguration.grantRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(hasRole);
 
-        await iporConfiguration.revokeRole(role, userTwo, {from: userOne});
+        await iporConfiguration.revokeRole(role, userTwo, { from: userOne });
 
         hasRole = await iporConfiguration.hasRole(role, userTwo);
         assert(!hasRole);
@@ -442,7 +458,7 @@ contract('IporConfigurationRoles', (accounts) => {
         assert(!hasAdminRole);
     });
 
-    it('should NOT be able to grant ROLES_INFO_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant ROLES_INFO_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("ROLES_INFO_ADMIN_ROLE");
 
@@ -455,7 +471,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-    it('should NOT be able to grant ROLES_INFO_ROLE role', async () => {
+    it("should NOT be able to grant ROLES_INFO_ROLE role", async () => {
         //given
         const role = keccak256("ROLES_INFO_ROLE");
 
@@ -468,7 +484,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-    it('should NOT be able to grant IPOR_ASSETS_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant IPOR_ASSETS_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("IPOR_ASSETS_ADMIN_ROLE");
 
@@ -481,8 +497,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_ADMIN_ROLE");
 
@@ -495,8 +510,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant IPOR_ASSETS_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant IPOR_ASSETS_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("IPOR_ASSETS_ADMIN_ROLE");
 
@@ -509,8 +523,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_STORAGE_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_STORAGE_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_STORAGE_ADMIN_ROLE");
 
@@ -523,8 +536,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_STORAGE_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_STORAGE_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_STORAGE_ROLE");
 
@@ -537,8 +549,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE");
 
@@ -551,8 +562,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_LP_UTILIZATION_STRATEGY_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_LP_UTILIZATION_STRATEGY_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE");
 
@@ -565,8 +575,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_SPREAD_STRATEGY_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_SPREAD_STRATEGY_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
 
@@ -579,8 +588,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-    
-    it('should NOT be able to grant IPOR_ASSET_CONFIGURATION_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant IPOR_ASSET_CONFIGURATION_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE");
 
@@ -593,8 +601,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant IPOR_ASSET_CONFIGURATION_ROLE role', async () => {
+    it("should NOT be able to grant IPOR_ASSET_CONFIGURATION_ROLE role", async () => {
         //given
         const role = keccak256("IPOR_ASSET_CONFIGURATION_ROLE");
 
@@ -607,8 +614,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant WARREN_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant WARREN_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("WARREN_ADMIN_ROLE");
 
@@ -620,9 +626,8 @@ contract('IporConfigurationRoles', (accounts) => {
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775`
         );
     });
-    
 
-    it('should NOT be able to grant WARREN_ROLE role', async () => {
+    it("should NOT be able to grant WARREN_ROLE role", async () => {
         //given
         const role = keccak256("WARREN_ROLE");
 
@@ -635,8 +640,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-    
-    it('should NOT be able to grant WARREN_STORAGE_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant WARREN_STORAGE_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("WARREN_STORAGE_ADMIN_ROLE");
 
@@ -649,8 +653,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-    
-    it('should NOT be able to grant WARREN_STORAGE_ROLE role', async () => {
+    it("should NOT be able to grant WARREN_STORAGE_ROLE role", async () => {
         //given
         const role = keccak256("WARREN_STORAGE_ROLE");
 
@@ -663,8 +666,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant JOSEPH_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant JOSEPH_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("JOSEPH_ADMIN_ROLE");
 
@@ -677,8 +679,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant JOSEPH_ROLE role', async () => {
+    it("should NOT be able to grant JOSEPH_ROLE role", async () => {
         //given
         const role = keccak256("JOSEPH_ROLE");
 
@@ -691,8 +692,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE");
 
@@ -705,8 +705,7 @@ contract('IporConfigurationRoles', (accounts) => {
         );
     });
 
-
-    it('should NOT be able to grant MILTON_PUBLICATION_FEE_TRANSFERER_ROLE role', async () => {
+    it("should NOT be able to grant MILTON_PUBLICATION_FEE_TRANSFERER_ROLE role", async () => {
         //given
         const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
 
@@ -718,5 +717,4 @@ contract('IporConfigurationRoles', (accounts) => {
             `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x7509198b389a0e4178b0935b3089a6bcebb17099877530792a238050cad1a93a`
         );
     });
-
 });

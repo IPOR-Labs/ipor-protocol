@@ -4,6 +4,7 @@ pragma solidity 0.8.9;
 library Constants {
     uint256 constant MAX_VALUE =
         115792089237316195423570985008687907853269984665640564039457584007913129639935;
+	uint256 constant D4 = 1e4;
     uint256 constant D6 = 1e6;
     uint256 constant D18 = 1e18;
 

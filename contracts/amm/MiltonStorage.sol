@@ -9,36 +9,36 @@ import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../libraries/types/DataTypes.sol";
-import "../libraries/SpreadIndicatorLogic.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonStorage is Ownable, IMiltonStorage {
+	//TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using DerivativeLogic for DataTypes.IporDerivative;
-    using SoapIndicatorLogic for DataTypes.SoapIndicator;
-    using SpreadIndicatorLogic for DataTypes.SpreadIndicator;
+    using SoapIndicatorLogic for DataTypes.SoapIndicator;    
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration internal iporConfiguration;
 
     mapping(address => DataTypes.MiltonTotalBalance) public balances;
 
     mapping(address => DataTypes.TotalSoapIndicator) public soapIndicators;
 
-    //TODO: when spread is calculated in final way then consider remove this storage (maybe will be not needed)
-    mapping(address => DataTypes.TotalSpreadIndicator) public spreadIndicators;
-
     DataTypes.MiltonDerivatives public derivatives;
 
-    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
-        _iporConfiguration = iporConfiguration;
+    //TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration)
+        external
+        onlyOwner
+    {
+        iporConfiguration = initialIporConfiguration;
     }
 
     //@notice add asset address to MiltonStorage structures
     function addAsset(address asset) external override onlyOwner {
         require(
-            _iporConfiguration.assetSupported(asset) == 1,
+            iporConfiguration.assetSupported(asset) == 1,
             Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
 
@@ -63,16 +63,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             )
         );
 
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
-
-        //TODO: clarify what is default value for spread when spread is calculated in final way
-        spreadIndicators[asset] = DataTypes.TotalSpreadIndicator(
-            DataTypes.SpreadIndicator(multiplicator),
-            DataTypes.SpreadIndicator(multiplicator)
-        );
     }
 
     function getBalance(address asset)
@@ -146,6 +136,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         _updateMiltonDerivativesWhenOpenPosition(iporDerivative);
         _updateBalancesWhenOpenPosition(
             iporDerivative.asset,
+            iporDerivative.direction,
             iporDerivative.collateral,
             iporDerivative.fee.openingAmount,
             iporDerivative.multiplicator
@@ -216,11 +207,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     {
         return (
             spreadPayFixedValue = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadPayFixedValue(),
+                iporConfiguration.getIporAssetConfiguration(asset)
+            ).getSpreadTemporaryValue(),
             spreadRecFixedValue = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadRecFixedValue()
+				iporConfiguration.getIporAssetConfiguration(asset)
+            ).getSpreadTemporaryValue()
         );
     }
 
@@ -239,7 +230,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         )
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
         uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
 
@@ -280,15 +271,28 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _updateBalancesWhenOpenPosition(
         address asset,
+        uint8 direction,
         uint256 collateral,
         uint256 openingFeeAmount,
         uint256 multiplicator
     ) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             );
 
-        balances[asset].derivatives = balances[asset].derivatives + collateral;
+        if (
+            direction ==
+            uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
+        ) {
+            balances[asset].payFixedDerivatives =
+                balances[asset].payFixedDerivatives +
+                collateral;
+        } else {
+            balances[asset].recFixedDerivatives =
+                balances[asset].recFixedDerivatives +
+                collateral;
+        }
+
         balances[asset].openingFee =
             balances[asset].openingFee +
             openingFeeAmount;
@@ -348,14 +352,25 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             Errors
                 .MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
         );
-
         balances[derivativeItem.item.asset].liquidationDeposit =
             balances[derivativeItem.item.asset].liquidationDeposit -
             derivativeItem.item.fee.liquidationDepositAmount;
 
-        balances[derivativeItem.item.asset].derivatives =
-            balances[derivativeItem.item.asset].derivatives -
-            derivativeItem.item.collateral;
+        if (
+            derivativeItem.item.direction ==
+            uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
+        ) {
+            balances[derivativeItem.item.asset].payFixedDerivatives =
+                balances[derivativeItem.item.asset].payFixedDerivatives -
+                derivativeItem.item.collateral;
+        } else if (
+            derivativeItem.item.direction ==
+            uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed)
+        ) {
+            balances[derivativeItem.item.asset].recFixedDerivatives =
+                balances[derivativeItem.item.asset].recFixedDerivatives -
+                derivativeItem.item.collateral;
+        }
 
         if (abspositionValue < derivativeItem.item.collateral) {
             //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
@@ -371,7 +386,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 incomeTax = AmmMath.calculateIncomeTax(
             abspositionValue,
             IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(
+                iporConfiguration.getIporAssetConfiguration(
                     derivativeItem.item.asset
                 )
             ).getIncomeTaxPercentage(),
@@ -447,9 +462,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             uint256 userDerivativeIdToMove = derivatives.userDerivativeIds[
                 buyer
             ][derivatives.userDerivativeIds[buyer].length - 1];
+
             derivatives
                 .items[userDerivativeIdToMove]
                 .userDerivativeIdsIndex = userDerivativeIdsIndexToDelete;
+
             derivatives.userDerivativeIds[buyer][
                 userDerivativeIdsIndexToDelete
             ] = userDerivativeIdToMove;
@@ -493,7 +510,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyMilton() {
         require(
-            msg.sender == _iporConfiguration.getMilton(),
+            msg.sender == iporConfiguration.getMilton(),
             Errors.MILTON_CALLER_NOT_MILTON
         );
         _;
@@ -501,7 +518,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyJoseph() {
         require(
-            msg.sender == _iporConfiguration.getJoseph(),
+            msg.sender == iporConfiguration.getJoseph(),
             Errors.MILTON_CALLER_NOT_JOSEPH
         );
         _;
