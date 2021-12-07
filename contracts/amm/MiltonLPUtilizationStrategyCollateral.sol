@@ -12,20 +12,21 @@ import { AmmMath } from "../libraries/AmmMath.sol";
 //@notice Milton utilization strategy which - for simplification - is based on Collateral
 //(collateral is a total balance of derivatives in Milton)
 contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration internal iporConfiguration;
 
-    function initialize(IIporConfiguration iporConfiguration) public {
-        _iporConfiguration = iporConfiguration;
+    //TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration) external {
+        iporConfiguration = initialIporConfiguration;
     }
 
-    function calculateUtilization(
+    function calculateTotalUtilizationRate(
         address asset,
         uint256 deposit,
         uint256 openingFee,
         uint256 multiplicator
     ) external view override returns (uint256) {
         IMiltonStorage miltonStorage = IMiltonStorage(
-            _iporConfiguration.getMiltonStorage()
+            iporConfiguration.getMiltonStorage()
         );
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
             asset
@@ -34,7 +35,9 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         if ((balance.liquidityPool + openingFee) != 0) {
             return
                 AmmMath.division(
-                    (balance.derivatives + deposit) * multiplicator,
+                    (balance.payFixedDerivatives +
+                        balance.recFixedDerivatives +
+                        deposit) * multiplicator,
                     balance.liquidityPool + openingFee
                 );
         } else {

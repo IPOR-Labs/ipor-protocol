@@ -163,6 +163,14 @@ library Errors {
     //@notice Decay factor cannot be higher than 1 * multiplicator
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
 
+	//@notice Multiplicator should be higher than Constants.D4
+    string public constant CONFIG_INCORRECT_MULTIPLICATOR = "IPOR_49";
+
 	//@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
-    string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_49";
+    string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_50";
+
+	//TODO: add test for this code
+	//@notice Liquidity Pool Max Utilization Percentage cannot be higher than 1 * multiplicator
+    string public constant CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH = "IPOR_51";
+
 }

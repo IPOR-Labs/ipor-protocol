@@ -23,11 +23,16 @@ contract IporConfiguration is
 
     bytes32 private constant WARREN = keccak256("WARREN");
     bytes32 private constant WARREN_STORAGE = keccak256("WARREN_STORAGE");
+
     bytes32 private constant MILTON = keccak256("MILTON");
     bytes32 private constant MILTON_STORAGE = keccak256("MILTON_STORAGE");
     bytes32 private constant JOSEPH = keccak256("JOSEPH");
+
+	//TODO: move to MiltonConfiguration
     bytes32 private constant MILTON_LP_UTILIZATION_STRATEGY =
         keccak256("MILTON_LP_UTILIZATION_STRATEGY");
+
+	//TODO: move to MiltonConfiguration
     bytes32 private constant MILTON_SPREAD_STRATEGY =
         keccak256("MILTON_SPREAD_STRATEGY");
     bytes32 private constant MILTON_PUBLICATION_FEE_TRANSFERER =
@@ -58,6 +63,7 @@ contract IporConfiguration is
     }
 
     function setMilton(address milton) external override onlyRole(MILTON_ROLE) {
+        //TODO: when Milton address is changing make sure than allowance on Josepth is set to 0 for old milton
         _addresses[MILTON] = milton;
         emit MiltonAddressUpdated(milton);
     }
@@ -153,12 +159,12 @@ contract IporConfiguration is
     {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         bool assetExists = false;
-        for (uint256 i; i < assets.length; i++) {
+        for (uint256 i = 0; i < assets.length; i++) {
             if (assets[i] == asset) {
                 assetExists = true;
             }
         }
-        if (assetExists == false) {
+        if (!assetExists) {
             assets.push(asset);
             supportedAssets[asset] = 1;
             emit AssetAddressAdd(asset);
@@ -171,7 +177,7 @@ contract IporConfiguration is
         onlyRole(IPOR_ASSETS_ROLE)
     {
         require(asset != address(0), Errors.WRONG_ADDRESS);
-        for (uint256 i; i < assets.length; i++) {
+        for (uint256 i = 0; i < assets.length; i++) {
             if (assets[i] == asset) {
                 delete assets[i];
                 supportedAssets[asset] = 0;

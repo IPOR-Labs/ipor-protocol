@@ -732,13 +732,11 @@ export default ({ drizzle, drizzleState }) => (
                         />
                     </td>
                 </tr>
-				<tr>
+                <tr>
                     <td>
                         <strong>Decay Factor Value</strong>
                         <br />
-                        <small>
-							Indicator used in Spread calculation
-                        </small>
+                        <small>Indicator used in Spread calculation</small>
                     </td>
                     <td>
                         <ContractData
@@ -746,7 +744,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="IporAssetConfigurationUsdt"
                             method="getDecayFactorValue"
-							render={(value) => (
+                            render={(value) => (
                                 <div>
                                     {value / 1000000}
                                     <br />
@@ -766,7 +764,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="IporAssetConfigurationUsdc"
                             method="getDecayFactorValue"
-							render={(value) => (
+                            render={(value) => (
                                 <div>
                                     {value / 1000000}
                                     <br />
@@ -786,7 +784,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="IporAssetConfigurationDai"
                             method="getDecayFactorValue"
-							render={(value) => (
+                            render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
                                     <br />
@@ -804,9 +802,10 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Grant role to user</strong>
-						<br />
+                        <br />
                         <small>
-                            In field role use byte32 representation. Available roles listed below.
+                            In field role use byte32 representation. Available
+                            roles listed below.
                         </small>
                     </td>
                     <td>
@@ -846,7 +845,7 @@ export default ({ drizzle, drizzleState }) => (
                             0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
                         </td>
                     </tr>
-					<tr>
+                    <tr>
                         <td>ROLES_INFO_ROLE</td>
                         <td>
                             0xc878cde3567a457053651a2406e31db6dbb9207b6d5eedb081ef807beaaf5444
@@ -1014,6 +1013,34 @@ export default ({ drizzle, drizzleState }) => (
                         <td>DECAY_FACTOR_VALUE_ADMIN_ROLE</td>
                         <td>
                             0xed044c57d37423bb4623f9110729ee31cae04cae931fe5ab3b24fc2e474fbb70
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE</td>
+                        <td>
+                            59542b17ceec8a6f8b1bb7b3e5ec973b56689fbcced2a9d87bb75563f9a53956
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE
+                        </td>
+                        <td>
+                            1c9b0d8b08ffbdf9b98505e7cf1f9e06651991e756457077322da759fd3d7c0e
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE</td>
+                        <td>
+                            eec7cc7aa729979c27c0c22d8699c9207ef8923ec66180dd8e0b68e1a3d1ce9f
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE
+                        </td>
+                        <td>
+                            224acf7ed8de77b69b931434110da49f990b16f168d2cc437ca7086e3dd981ce
                         </td>
                     </tr>
                 </tbody>

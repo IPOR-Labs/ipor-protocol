@@ -14,7 +14,7 @@ contract TestWarren is Warren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        IWarrenStorage(_iporConfiguration.getWarrenStorage()).updateIndexes(
+        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
             assets,
             indexes,
             updateTimestamp
@@ -26,7 +26,7 @@ contract TestWarren is Warren {
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) external onlyUpdater {
-        IWarrenStorage(_iporConfiguration.getWarrenStorage()).updateIndexes(
+        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
             assets,
             indexValues,
             updateTimestamp

@@ -11,14 +11,14 @@ import { Errors } from "../Errors.sol";
 contract IpToken is Ownable, IIpToken, ERC20 {
     using SafeERC20 for IERC20;
 
-    IIporConfiguration internal _iporConfiguration;
+    IIporConfiguration internal iporConfiguration;
 
-    address internal _underlyingAsset;
-    uint8 _decimals;
+    address private _underlyingAsset;
+    uint8 private _decimals;
 
     modifier onlyJoseph() {
         require(
-            msg.sender == _iporConfiguration.getJoseph(),
+            msg.sender == iporConfiguration.getJoseph(),
             Errors.MILTON_CALLER_NOT_JOSEPH
         );
         _;
@@ -34,8 +34,9 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         _decimals = ERC20(underlyingAsset).decimals();
     }
 
-    function initialize(IIporConfiguration iporConfiguration) public onlyOwner {
-        _iporConfiguration = iporConfiguration;
+	//TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+        iporConfiguration = initialIporConfiguration;
     }
 
     function decimals() public view override returns (uint8) {
@@ -46,15 +47,11 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         external
         override
         onlyJoseph
-        returns (bool)
-    {
-        uint256 previousBalance = super.balanceOf(user);
+    {        
         require(amount > 0, Errors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(user, amount);
         emit Transfer(address(0), user, amount);
         emit Mint(user, amount);
-
-        return previousBalance == 0;
     }
 
     function burn(
@@ -70,7 +67,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
     }
 
     function getUnderlyingAssetAddress()
-        public
+        external
         view
         override
         returns (address)

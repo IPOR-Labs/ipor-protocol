@@ -12,7 +12,7 @@ library SoapIndicatorLogic {
         uint256 ibtPrice,
         uint256 timestamp,
         uint256 multiplicator
-    ) public view returns (int256) {
+    ) internal view returns (int256) {
         return
             AmmMath.divisionInt(
                 calculateQuasiSoap(si, ibtPrice, timestamp, multiplicator),
@@ -28,7 +28,7 @@ library SoapIndicatorLogic {
         uint256 ibtPrice,
         uint256 timestamp,
         uint256 multiplicator
-    ) public view returns (int256) {
+    ) internal view returns (int256) {
         if (
             si.direction ==
             DataTypes.DerivativeDirection.PayFixedReceiveFloating
@@ -80,7 +80,7 @@ library SoapIndicatorLogic {
         uint256 mdDerivativeFixedInterestRate,
         uint256 mdDerivativeIbtQuantity,
         uint256 multiplicator
-    ) public {
+    ) internal {
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
             si,
@@ -108,7 +108,7 @@ library SoapIndicatorLogic {
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity,
         uint256 multiplicator
-    ) public {
+    ) external {
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp,
@@ -146,7 +146,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 multiplicator
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
             Errors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP
@@ -162,7 +162,7 @@ library SoapIndicatorLogic {
         DataTypes.SoapIndicator memory si,
         uint256 timestamp,
         uint256 multiplicator
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         return
             si.quasiHypotheticalInterestCumulative +
             calculateQuasiHypotheticalInterestDelta(
@@ -177,7 +177,7 @@ library SoapIndicatorLogic {
         DataTypes.SoapIndicator memory si,
         uint256 timestamp,
         uint256 multiplicator
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         require(
             timestamp >= si.rebalanceTimestamp,
             Errors
