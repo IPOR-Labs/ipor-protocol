@@ -270,7 +270,7 @@ const rolesNotGrant = [
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
     },
-]
+];
 
 describe("IporAssetConfigurationRoles", () => {
     itParam(
@@ -300,11 +300,10 @@ describe("IporAssetConfigurationRoles", () => {
                 "IporAssetConfiguration"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const iporAssetConfiguration =
-                await IporAssetConfiguration.deploy(
-                    tokenDai.address,
-                    ipTokenDai.address
-                );
+            const iporAssetConfiguration = await IporAssetConfiguration.deploy(
+                tokenDai.address,
+                ipTokenDai.address
+            );
             await iporAssetConfiguration.deployed();
 
             let hasAdminRole = await iporAssetConfiguration.hasRole(
@@ -361,7 +360,7 @@ describe("IporAssetConfigurationRoles", () => {
         "should not be able to grant role ${value.name}",
         rolesNotGrant,
         async function (value) {
-            const {role, code} = value
+            const { role, code } = value;
             const DaiMockedToken = await ethers.getContractFactory(
                 "DaiMockedToken"
             );
@@ -383,11 +382,10 @@ describe("IporAssetConfigurationRoles", () => {
                 "IporAssetConfiguration"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const iporAssetConfiguration =
-                await IporAssetConfiguration.deploy(
-                    tokenDai.address,
-                    ipTokenDai.address
-                );
+            const iporAssetConfiguration = await IporAssetConfiguration.deploy(
+                tokenDai.address,
+                ipTokenDai.address
+            );
             await iporAssetConfiguration.deployed();
 
             await expect(
