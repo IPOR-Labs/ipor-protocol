@@ -1,7 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
-const MINDELAY = BigInt("86400");
 const { ZERO_BYTES32 } = require("@openzeppelin/test-helpers/src/constants");
 const { time } = require("@openzeppelin/test-helpers");
 
@@ -9,6 +8,7 @@ const {
     TOTAL_SUPPLY_18_DECIMALS,
     TC_MULTIPLICATOR_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
+    MINDELAY,
 } = require("./Const.js");
 
 const { assertError } = require("./Utils");
@@ -1083,7 +1083,9 @@ describe("IporAssetConfiguration", () => {
 
         await assertError(
             //when
-            iporAssetConfigurationDAI.connect(userOne).setDecayFactorValue(decayFactorValue),
+            iporAssetConfigurationDAI
+                .connect(userOne)
+                .setDecayFactorValue(decayFactorValue),
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x94c58a89ab11d8b2894ecfbd6cb5c324f772536d0ea878a10cee7effe8ce98d0`
@@ -1102,14 +1104,15 @@ describe("IporAssetConfiguration", () => {
 
         await assertError(
             //when
-            iporAssetConfigurationDAI.connect(userOne).setDecayFactorValue(decayFactorValue),
+            iporAssetConfigurationDAI
+                .connect(userOne)
+                .setDecayFactorValue(decayFactorValue),
             //then
             "IPOR_48"
         );
     });
 
-
-	it("should set SpreadUtilizationComponentKfValue", async () => {
+    it("should set SpreadUtilizationComponentKfValue", async () => {
         //given
         const expectedValue = BigInt("1234000000000000000000");
         await iporAssetConfigurationDAI.grantRole(
@@ -1120,7 +1123,9 @@ describe("IporAssetConfiguration", () => {
         await iporAssetConfigurationDAI.grantRole(role, userOne.address);
 
         //when
-        await iporAssetConfigurationDAI.connect(userOne).setSpreadUtilizationComponentKfValue(expectedValue);
+        await iporAssetConfigurationDAI
+            .connect(userOne)
+            .setSpreadUtilizationComponentKfValue(expectedValue);
 
         //then
         const actualValue = BigInt(
@@ -1139,7 +1144,9 @@ describe("IporAssetConfiguration", () => {
 
         await assertError(
             //when
-            iporAssetConfigurationDAI.connect(userOne).setSpreadUtilizationComponentKfValue(expectedValue),
+            iporAssetConfigurationDAI
+                .connect(userOne)
+                .setSpreadUtilizationComponentKfValue(expectedValue),
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x59542b17ceec8a6f8b1bb7b3e5ec973b56689fbcced2a9d87bb75563f9a53956`
@@ -1153,11 +1160,15 @@ describe("IporAssetConfiguration", () => {
             keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
             admin.address
         );
-        const role = keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE");
+        const role = keccak256(
+            "SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE"
+        );
         await iporAssetConfigurationDAI.grantRole(role, userOne.address);
 
         //when
-        await iporAssetConfigurationDAI.connect(userOne).setSpreadUtilizationComponentLambdaValue(expectedValue);
+        await iporAssetConfigurationDAI
+            .connect(userOne)
+            .setSpreadUtilizationComponentLambdaValue(expectedValue);
 
         //then
         const actualValue = BigInt(
@@ -1176,11 +1187,12 @@ describe("IporAssetConfiguration", () => {
 
         await assertError(
             //when
-            iporAssetConfigurationDAI.connect(userOne).setSpreadUtilizationComponentLambdaValue(expectedValue),
+            iporAssetConfigurationDAI
+                .connect(userOne)
+                .setSpreadUtilizationComponentLambdaValue(expectedValue),
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xeec7cc7aa729979c27c0c22d8699c9207ef8923ec66180dd8e0b68e1a3d1ce9f`
         );
     });
 });
-
