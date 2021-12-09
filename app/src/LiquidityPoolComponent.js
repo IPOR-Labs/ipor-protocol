@@ -26,7 +26,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}<br/>
+                                    {value / 1000000000000000000}<br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -40,7 +40,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}<br/>
+                                    {value / 1000000000000000000}<br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -57,7 +57,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}<br/>
+                                    {value / 1000000000000000000}<br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -71,7 +71,7 @@ export default ({drizzle, drizzleState}) => (
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}<br/>
+                                    {value / 1000000000000000000}<br/>
                                     <small>{value}</small>
                                 </div>
                             )}

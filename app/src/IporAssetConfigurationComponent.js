@@ -69,7 +69,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getIncomeTaxPercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -89,7 +89,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getIncomeTaxPercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -134,7 +134,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getLiquidationDepositAmount"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -155,7 +155,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getLiquidationDepositAmount"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -201,7 +201,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getOpeningFeePercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -221,7 +221,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getOpeningFeePercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -267,7 +267,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getIporPublicationFeeAmount"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -287,7 +287,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getIporPublicationFeeAmount"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -333,7 +333,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getMinCollateralizationFactorValue"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -353,7 +353,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getMinCollateralizationFactorValue"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -401,7 +401,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getMaxCollateralizationFactorValue"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -421,7 +421,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getMaxCollateralizationFactorValue"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -467,7 +467,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getOpeningFeeForTreasuryPercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -487,7 +487,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getOpeningFeeForTreasuryPercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -535,7 +535,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getLiquidityPoolMaxUtilizationPercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -555,7 +555,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getLiquidityPoolMaxUtilizationPercentage"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -746,7 +746,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getDecayFactorValue"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>
@@ -766,7 +766,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="getDecayFactorValue"
                             render={(value) => (
                                 <div>
-                                    {value / 1000000}
+                                    {value / 1000000000000000000}
                                     <br />
                                     <small>{value}</small>
                                 </div>

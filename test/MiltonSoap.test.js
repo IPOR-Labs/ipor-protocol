@@ -506,7 +506,7 @@ contract("MiltonSoap", (accounts) => {
         let secondDerivativeDirection = 1;
 
         let openerUserAddress = userTwo;
-        let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_6DEC;
+        let iporValueBeforOpenPosition = testUtils.PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const firstDerivativeParams = {
@@ -544,7 +544,7 @@ contract("MiltonSoap", (accounts) => {
         await openPositionFunc(firstDerivativeParams);
         await openPositionFunc(secondDerivativeParams);
 
-        let expectedSoap = BigInt("-136166841");
+        let expectedSoap = BigInt("-136166841939933623785");
 
         //when
         const soapParams = {
@@ -590,7 +590,7 @@ contract("MiltonSoap", (accounts) => {
         let openerUserAddress = userTwo;
 
         let iporValueBeforOpenPositionDAI = testUtils.PERCENTAGE_3_18DEC;
-        let iporValueBeforOpenPositionUSDT = testUtils.PERCENTAGE_3_6DEC;
+        let iporValueBeforOpenPositionUSDT = testUtils.PERCENTAGE_3_18DEC;
 
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -645,7 +645,7 @@ contract("MiltonSoap", (accounts) => {
         //then
         let expectedDAISoap = BigInt("-68083420969966832317");
 
-        let expectedUSDTSoap = BigInt("-68062995");
+        let expectedUSDTSoap = BigInt("-68083420969966832317");
 
         const soapDAIParams = {
             asset: testData.tokenDai.address,
@@ -868,7 +868,7 @@ contract("MiltonSoap", (accounts) => {
         let openerUserAddress = userTwo;
         let closerUserAddress = userTwo;
         let iporValueBeforOpenPositionDAI = testUtils.PERCENTAGE_3_18DEC;
-        let iporValueBeforOpenPositionUSDT = testUtils.PERCENTAGE_3_6DEC;
+        let iporValueBeforOpenPositionUSDT = testUtils.PERCENTAGE_3_18DEC;
 
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -1048,8 +1048,8 @@ contract("MiltonSoap", (accounts) => {
 
         let direction = 0;
         let openerUserAddress = userTwo;
-        let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_6DEC;
-        let iporValueAfterOpenPosition = testUtils.PERCENTAGE_120_6DEC;
+        let iporValueBeforeOpenPosition = testUtils.PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenPosition = testUtils.PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1078,7 +1078,9 @@ contract("MiltonSoap", (accounts) => {
             derivativeParams.openTimestamp,
             { from: userOne }
         );
+
         await openPositionFunc(derivativeParams);
+
         await data.warren.test_updateIndex(
             derivativeParams.asset,
             iporValueAfterOpenPosition,
@@ -1092,7 +1094,7 @@ contract("MiltonSoap", (accounts) => {
             { from: userOne }
         );
 
-        let expectedSoap = BigInt("7897698620");
+        let expectedSoap = BigInt("7897676832516150157812");
 
         //when
         //then

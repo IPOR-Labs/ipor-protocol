@@ -26,8 +26,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("1000000000000000000000000");
         const payFixedDerivativesBalance = BigInt("2000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
-
         const expectedSpreadDemandComponentValue = BigInt("83335000000000000");
 
         //when
@@ -39,7 +37,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -67,7 +64,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("1000000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("90910909090909091");
 
@@ -80,7 +76,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -108,7 +103,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("1000000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("2000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("90910909090909091");
 
@@ -121,7 +115,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -149,7 +142,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("1000000000000000000000");
         const payFixedDerivativesBalance = testUtils.USD_20_18DEC;
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1000000000000000");
 
@@ -162,7 +154,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -189,7 +180,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1444230769230769");
 
@@ -202,7 +192,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -229,7 +218,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = testUtils.ZERO;
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1650549450549451");
 
@@ -242,7 +230,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -269,7 +256,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = testUtils.ZERO;
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1648351648351648");
 
@@ -282,7 +268,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -313,7 +298,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1444230769230769");
 
@@ -326,7 +310,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -354,7 +337,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("5000000000000000000000");
         const recFixedDerivativesBalance = BigInt("5000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1001333333333333");
 
@@ -367,7 +349,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -395,7 +376,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("3000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1155384615384615");
 
@@ -408,7 +388,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -436,7 +415,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("1000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = testUtils.USD_20_18DEC;
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1000000000000000");
 
@@ -449,7 +427,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -477,7 +454,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1444230769230769");
 
@@ -490,7 +466,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -517,7 +492,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = testUtils.ZERO;
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1650549450549451");
 
@@ -530,7 +504,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );
@@ -557,7 +530,6 @@ contract("MiltonSpread", (accounts) => {
         const liquidityPool = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = testUtils.ZERO;
-        const multiplicator = BigInt("1000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("1648351648351648");
 
@@ -570,7 +542,6 @@ contract("MiltonSpread", (accounts) => {
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                multiplicator,
                 { from: liquidityProvider }
             )
         );

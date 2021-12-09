@@ -27,7 +27,6 @@ interface IMiltonFrontendDataProvider {
         uint256 startingTimestamp;
         uint256 endingTimestamp;
         uint256 liquidationDepositAmount;
-        uint256 multiplicator;
     }
 
 	function getIpTokenExchangeRate(address asset) external view returns(uint256);

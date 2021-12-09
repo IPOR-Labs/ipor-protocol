@@ -12,40 +12,22 @@ library TotalSoapIndicatorLogic {
     function calculateSoap(
         DataTypes.TotalSoapIndicator storage tsi,
         uint256 calculationTimestamp,
-        uint256 ibtPrice,
-        uint256 multiplicator
+        uint256 ibtPrice
     ) internal view returns (int256 soapPf, int256 soapRf) {
         return (
-            soapPf = tsi.pf.calculateSoap(
-                ibtPrice,
-                calculationTimestamp,
-                multiplicator
-            ),
-            soapRf = tsi.rf.calculateSoap(
-                ibtPrice,
-                calculationTimestamp,
-                multiplicator
-            )
+            soapPf = tsi.pf.calculateSoap(ibtPrice, calculationTimestamp),
+            soapRf = tsi.rf.calculateSoap(ibtPrice, calculationTimestamp)
         );
     }
 
     function calculateQuasiSoap(
         DataTypes.TotalSoapIndicator storage tsi,
         uint256 calculationTimestamp,
-        uint256 ibtPrice,
-        uint256 multiplicator
+        uint256 ibtPrice
     ) internal view returns (int256 soapPf, int256 soapRf) {
         return (
-            soapPf = tsi.pf.calculateQuasiSoap(
-                ibtPrice,
-                calculationTimestamp,
-                multiplicator
-            ),
-            soapRf = tsi.rf.calculateQuasiSoap(
-                ibtPrice,
-                calculationTimestamp,
-                multiplicator
-            )
+            soapPf = tsi.pf.calculateQuasiSoap(ibtPrice, calculationTimestamp),
+            soapRf = tsi.rf.calculateQuasiSoap(ibtPrice, calculationTimestamp)
         );
     }
 
@@ -55,8 +37,7 @@ library TotalSoapIndicatorLogic {
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
-        uint256 derivativeIbtQuantity,
-        uint256 multiplicator
+        uint256 derivativeIbtQuantity
     ) internal {
         if (
             direction ==
@@ -66,8 +47,7 @@ library TotalSoapIndicatorLogic {
                 rebalanceTimestamp,
                 derivativeNotional,
                 derivativeFixedInterestRate,
-                derivativeIbtQuantity,
-                multiplicator
+                derivativeIbtQuantity
             );
         }
         if (
@@ -78,8 +58,7 @@ library TotalSoapIndicatorLogic {
                 rebalanceTimestamp,
                 derivativeNotional,
                 derivativeFixedInterestRate,
-                derivativeIbtQuantity,
-                multiplicator
+                derivativeIbtQuantity
             );
         }
     }
@@ -91,8 +70,7 @@ library TotalSoapIndicatorLogic {
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
-        uint256 derivativeIbtQuantity,
-        uint256 multiplicator
+        uint256 derivativeIbtQuantity
     ) internal {
         if (
             direction ==
@@ -103,8 +81,7 @@ library TotalSoapIndicatorLogic {
                 derivativeOpenTimestamp,
                 derivativeNotional,
                 derivativeFixedInterestRate,
-                derivativeIbtQuantity,
-                multiplicator
+                derivativeIbtQuantity
             );
         }
         if (
@@ -116,8 +93,7 @@ library TotalSoapIndicatorLogic {
                 derivativeOpenTimestamp,
                 derivativeNotional,
                 derivativeFixedInterestRate,
-                derivativeIbtQuantity,
-                multiplicator
+                derivativeIbtQuantity
             );
         }
     }

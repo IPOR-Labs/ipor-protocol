@@ -149,27 +149,29 @@ contract("Warren", (accounts) => {
 
     it("should update existing IPOR Index", async () => {
         //given
-        let asset = testData.tokenUsdt.address;
-        let expectedIndexValueOne = BigInt("123000000000000000000");
-        let expectedIndexValueTwo = BigInt("321000000000000000000");
+        const asset = testData.tokenUsdt.address;
+        const firstIndexValueInput = BigInt("123000000000000000000");
+        const secondIndexValueInput = BigInt("321000000000000000000");
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
 
+        const expectedIndexValue = BigInt("321000000000000000000");
+
         //when
-        await data.warren.updateIndex(asset, expectedIndexValueOne, {
+        await data.warren.updateIndex(asset, firstIndexValueInput, {
             from: updaterOne,
         });
-        await data.warren.updateIndex(asset, expectedIndexValueTwo, {
+        await data.warren.updateIndex(asset, secondIndexValueInput, {
             from: updaterOne,
         });
 
         //then
         const iporIndex = await data.warren.getIndex(asset);
-        let actualIndexValue = BigInt(iporIndex.indexValue);
+        const actualIndexValue = BigInt(iporIndex.indexValue);
 
         assert(
-            actualIndexValue === expectedIndexValueTwo,
-            `Incorrect IPOR index value ${actualIndexValue}, expected ${expectedIndexValueOne}`
+            actualIndexValue === expectedIndexValue,
+            `Incorrect IPOR index value ${actualIndexValue}, expected ${expectedIndexValue}`
         );
     });
 
@@ -178,7 +180,7 @@ contract("Warren", (accounts) => {
         let asset = testData.tokenUsdt.address;
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
-        let iporIndexValue = BigInt("500000000");
+        let iporIndexValue = BigInt("500000000000000000000");
 
         //when
         await data.warren.updateIndex(asset, iporIndexValue, {
@@ -191,8 +193,8 @@ contract("Warren", (accounts) => {
         let actualIndexValue = BigInt(iporIndex.indexValue);
 
         assert(
-            actualIbtPrice === testUtils.TC_IBT_PRICE_DAI_6DEC,
-            `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${testUtils.TC_IBT_PRICE_DAI_6DEC}`
+            actualIbtPrice === testUtils.TC_IBT_PRICE_DAI_18DEC,
+            `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${testUtils.TC_IBT_PRICE_DAI_18DEC}`
         );
         assert(
             actualIndexValue === iporIndexValue,
@@ -208,13 +210,13 @@ contract("Warren", (accounts) => {
         let updateDate = Math.floor(Date.now() / 1000);
         await data.warren.test_updateIndex(
             asset,
-            testUtils.PERCENTAGE_5_6DEC,
+            testUtils.PERCENTAGE_5_18DEC,
             updateDate,
             { from: updaterOne }
         );
         let updateDateSecond = updateDate + YEAR_IN_SECONDS;
 
-        let iporIndexSecondValue = BigInt("51000");
+        let iporIndexSecondValue = BigInt("51000000000000000");
 
         //when
         await data.warren.test_updateIndex(
@@ -228,7 +230,7 @@ contract("Warren", (accounts) => {
         const iporIndex = await data.warren.getIndex(asset);
         let actualIbtPrice = BigInt(iporIndex.ibtPrice);
         let actualIndexValue = BigInt(iporIndex.indexValue);
-        let expectedIbtPrice = BigInt("1050000");
+        let expectedIbtPrice = BigInt("1050000000000000000");
 
         assert(
             actualIbtPrice === expectedIbtPrice,
@@ -248,12 +250,12 @@ contract("Warren", (accounts) => {
         await testData.warrenStorage.addUpdater(data.warren.address);
         await data.warren.test_updateIndex(
             asset,
-            testUtils.PERCENTAGE_5_6DEC,
+            testUtils.PERCENTAGE_5_18DEC,
             updateDate,
             { from: updaterOne }
         );
         updateDate = updateDate + MONTH_IN_SECONDS;
-        let iporIndexSecondValue = testUtils.PERCENTAGE_6_6DEC;
+        let iporIndexSecondValue = testUtils.PERCENTAGE_6_18DEC;
 
         //when
         await data.warren.test_updateIndex(
@@ -268,7 +270,7 @@ contract("Warren", (accounts) => {
         let actualIbtPrice = BigInt(iporIndex.ibtPrice);
         let actualIndexValue = BigInt(iporIndex.indexValue);
 
-        let expectedIbtPrice = BigInt("1004110");
+        let expectedIbtPrice = BigInt("1004109589041095890");
 
         assert(
             actualIbtPrice === expectedIbtPrice,
@@ -281,6 +283,96 @@ contract("Warren", (accounts) => {
         );
     });
 
+    it("should calculate DIFFERENT Interest Bearing Token Price  - ONE SECOND period, same IPOR Index value, 6 decimals asset", async () => {
+        //given
+        const asset = testData.tokenUsdt.address;
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(updaterOne);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        await data.warren.test_updateIndex(
+            asset,
+            testUtils.PERCENTAGE_5_18DEC,
+            updateDate,
+            { from: updaterOne }
+        );
+
+        const actualFirstIporIndex = await data.warren.getIndex(asset);
+        const actualFirstIbtPrice = BigInt(actualFirstIporIndex.ibtPrice);
+        const actualFirstIndexValue = BigInt(actualFirstIporIndex.indexValue);
+
+        updateDate = updateDate + 1;
+
+        const iporIndexSecondValue = testUtils.PERCENTAGE_5_18DEC;
+
+        //when
+        await data.warren.test_updateIndex(
+            asset,
+            iporIndexSecondValue,
+            updateDate,
+            { from: updaterOne }
+        );
+
+        //then
+        const actualSecondIporIndex = await data.warren.getIndex(asset);
+        const actualSecondIbtPrice = BigInt(actualSecondIporIndex.ibtPrice);
+        const actualSecondIndexValue = BigInt(actualSecondIporIndex.indexValue);
+
+        assert(
+            actualSecondIbtPrice != actualFirstIbtPrice,
+            `Actual Interest Bearing Token Price should be different than previous one, actual: ${actualSecondIbtPrice}, expected: ${actualFirstIbtPrice}`
+        );
+
+        assert(
+            actualSecondIndexValue === actualFirstIndexValue,
+            `Actual IPOR Index Value is incorrect, actual: ${actualSecondIndexValue}, expected: ${actualFirstIndexValue}`
+        );
+    });
+
+    it("should calculate DIFFERENT Interest Bearing Token Price  - ONE SECOND period, same IPOR Index value, 18 decimals asset", async () => {
+        //given
+        const asset = testData.tokenDai.address;
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(updaterOne);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        await data.warren.test_updateIndex(
+            asset,
+            testUtils.PERCENTAGE_5_18DEC,
+            updateDate,
+            { from: updaterOne }
+        );
+
+        const actualFirstIporIndex = await data.warren.getIndex(asset);
+        const actualFirstIbtPrice = BigInt(actualFirstIporIndex.ibtPrice);
+        const actualFirstIndexValue = BigInt(actualFirstIporIndex.indexValue);
+
+        updateDate = updateDate + 1;
+
+        const iporIndexSecondValue = testUtils.PERCENTAGE_5_18DEC;
+
+        //when
+        await data.warren.test_updateIndex(
+            asset,
+            iporIndexSecondValue,
+            updateDate,
+            { from: updaterOne }
+        );
+
+        //then
+        const actualSecondIporIndex = await data.warren.getIndex(asset);
+        const actualSecondIbtPrice = BigInt(actualSecondIporIndex.ibtPrice);
+        const actualSecondIndexValue = BigInt(actualSecondIporIndex.indexValue);
+
+        assert(
+            actualSecondIbtPrice != actualFirstIbtPrice,
+            `Actual Interest Bearing Token Price should be different than previous one.`
+        );
+
+        assert(
+            actualSecondIndexValue === actualFirstIndexValue,
+            `Actual IPOR Index Value is incorrect, actual: ${actualSecondIndexValue}, expected: ${actualFirstIndexValue}`
+        );
+    });
+
     it("should calculate next after next Interest Bearing Token Price - half year and three months snapshots", async () => {
         //given
         let asset = testData.tokenUsdt.address;
@@ -289,14 +381,14 @@ contract("Warren", (accounts) => {
         let updateDate = Math.floor(Date.now() / 1000);
         await data.warren.test_updateIndex(
             asset,
-            testUtils.PERCENTAGE_5_6DEC,
+            testUtils.PERCENTAGE_5_18DEC,
             updateDate,
             { from: updaterOne }
         );
         updateDate = updateDate + YEAR_IN_SECONDS / 2;
         await data.warren.test_updateIndex(
             asset,
-            testUtils.PERCENTAGE_6_6DEC,
+            testUtils.PERCENTAGE_6_18DEC,
             updateDate,
             { from: updaterOne }
         );
@@ -318,7 +410,7 @@ contract("Warren", (accounts) => {
         let actualIbtPrice = BigInt(iporIndex.ibtPrice);
         let actualIndexValue = BigInt(iporIndex.indexValue);
 
-        let expectedIbtPrice = BigInt("1040000");
+        let expectedIbtPrice = BigInt("1040000000000000000");
 
         assert(
             actualIbtPrice === expectedIbtPrice,
@@ -470,9 +562,9 @@ contract("Warren", (accounts) => {
         await testData.warrenStorage.addUpdater(updaterOne);
         await testData.warrenStorage.addUpdater(data.warren.address);
         let assets = [testData.tokenUsdc.address];
-        let firstIndexValues = [testUtils.PERCENTAGE_7_6DEC];
-        let secondIndexValues = [testUtils.PERCENTAGE_50_6DEC];
-        let expectedExpoMovingAverage = BigInt("113000");
+        let firstIndexValues = [testUtils.PERCENTAGE_7_18DEC];
+        let secondIndexValues = [testUtils.PERCENTAGE_50_18DEC];
+        let expectedExpoMovingAverage = BigInt("113000000000000000");
 
         //when
         await data.warren.test_updateIndexes(

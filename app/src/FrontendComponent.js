@@ -37,7 +37,8 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalNotional / 1000000}
+                                {value.payFixedTotalNotional /
+                                    1000000000000000000}
                                 <br />
                                 <small>{value.payFixedTotalNotional}</small>
                             </div>
@@ -53,7 +54,8 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalNotional / 1000000}
+                                {value.payFixedTotalNotional /
+                                    1000000000000000000}
                                 <br />
                                 <small>{value.payFixedTotalNotional}</small>
                             </div>
@@ -89,7 +91,8 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalNotional / 1000000}
+                                {value.recFixedTotalNotional /
+                                    1000000000000000000}
                                 <br />
                                 <small>{value.recFixedTotalNotional}</small>
                             </div>
@@ -105,7 +108,8 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalNotional / 1000000}
+                                {value.recFixedTotalNotional /
+                                    1000000000000000000}
                                 <br />
                                 <small>{value.recFixedTotalNotional}</small>
                             </div>
@@ -141,7 +145,7 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000}
+                                {value / 1000000000000000000}
                                 <br />
                                 <small>{value}</small>
                             </div>
@@ -157,7 +161,7 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000}
+                                {value / 1000000000000000000}
                                 <br />
                                 <small>{value}</small>
                             </div>

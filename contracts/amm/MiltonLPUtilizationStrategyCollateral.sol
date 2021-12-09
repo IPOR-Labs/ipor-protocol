@@ -22,8 +22,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
     function calculateTotalUtilizationRate(
         address asset,
         uint256 deposit,
-        uint256 openingFee,
-        uint256 multiplicator
+        uint256 openingFee
     ) external view override returns (uint256) {
         IMiltonStorage miltonStorage = IMiltonStorage(
             iporConfiguration.getMiltonStorage()
@@ -37,7 +36,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
                 AmmMath.division(
                     (balance.payFixedDerivatives +
                         balance.recFixedDerivatives +
-                        deposit) * multiplicator,
+                        deposit) * Constants.D18,
                     balance.liquidityPool + openingFee
                 );
         } else {

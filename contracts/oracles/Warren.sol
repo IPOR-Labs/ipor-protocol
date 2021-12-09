@@ -19,6 +19,7 @@ import "../interfaces/IIporAssetConfiguration.sol";
  * @author IPOR Labs
  */
 contract Warren is Ownable, Pausable, IWarren {
+	
     using IporLogic for DataTypes.IPOR;
 
     IIporConfiguration internal iporConfiguration;
@@ -75,7 +76,8 @@ contract Warren is Ownable, Pausable, IWarren {
             blockTimestamp = iporIndex.blockTimestamp
         );
     }
-
+	
+	//@notice indexValue value with number of decimals like in asset
     function updateIndex(address asset, uint256 indexValue)
         external
         override

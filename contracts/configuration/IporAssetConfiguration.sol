@@ -25,7 +25,7 @@ contract IporAssetConfiguration is
 
     address private immutable _ipToken;
 
-    uint256 private immutable _multiplicator;
+    uint8 private immutable _decimals;
 
     uint256 private immutable _maxSlippagePercentage;
 
@@ -51,7 +51,7 @@ contract IporAssetConfiguration is
     uint256 private maxPositionTotalAmount;
 
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
-    uint256 private decayFactorValue;
+    uint256 private wadDecayFactorValue;
 
     //@notice Part of Spread calculation - Utilization Component Kf value - check Whitepaper
     uint256 private spreadUtilizationComponentKfValue;
@@ -71,48 +71,44 @@ contract IporAssetConfiguration is
     constructor(address asset, address ipToken) {
         _asset = asset;
         _ipToken = ipToken;
-        uint256 multiplicator = 10**ERC20(asset).decimals();
-        _multiplicator = multiplicator;
-        _maxSlippagePercentage = 100 * multiplicator;
+        uint8 decimals = ERC20(asset).decimals();
+        require(decimals > 0, Errors.CONFIG_ASSET_DECIMALS_TOO_LOW);
+        _decimals = decimals;
+
+        _maxSlippagePercentage = 100 * Constants.D18;
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        incomeTaxPercentage = AmmMath.division(multiplicator, 10);
-
-        //TODO: add test when multiplicator lower than 10000
-        require(
-            multiplicator >= Constants.D4,
-            Errors.CONFIG_INCORRECT_MULTIPLICATOR
-        );
+        incomeTaxPercentage = AmmMath.division(Constants.D18, 10);
 
         //@notice taken after open position from participant who execute opening position,
         //paid after close position to participant who execute closing position
-        liquidationDepositAmount = 20 * multiplicator;
+        liquidationDepositAmount = 20 * Constants.D18;
 
         //@notice
         openingFeePercentage = AmmMath.division(
-            3 * multiplicator,
+            3 * Constants.D18,
             Constants.D4
         );
         openingFeeForTreasuryPercentage = 0;
-        iporPublicationFeeAmount = 10 * multiplicator;
+        iporPublicationFeeAmount = 10 * Constants.D18;
         liquidityPoolMaxUtilizationPercentage =
             8 *
-            AmmMath.division(multiplicator, 10);
-        maxPositionTotalAmount = 1e5 * multiplicator;
+            AmmMath.division(Constants.D18, 10);
+        maxPositionTotalAmount = 1e5 * Constants.D18;
 
-        minCollateralizationFactorValue = 10 * multiplicator;
-        maxCollateralizationFactorValue = 50 * multiplicator;
+        minCollateralizationFactorValue = 10 * Constants.D18;
+        maxCollateralizationFactorValue = 50 * Constants.D18;
 
-        spreadTemporaryValue = AmmMath.division(multiplicator, 100);
+        spreadTemporaryValue = AmmMath.division(Constants.D18, 100);
 
-        decayFactorValue = AmmMath.division(multiplicator, 10);
+        wadDecayFactorValue = 1e17;
 
         spreadUtilizationComponentKfValue = AmmMath.division(
-            1 * multiplicator,
+            1 * Constants.D18,
             1000
         );
         spreadUtilizationComponentLambdaValue = AmmMath.division(
-            3 * multiplicator,
+            3 * Constants.D18,
             10
         );
     }
@@ -127,7 +123,7 @@ contract IporAssetConfiguration is
         onlyRole(INCOME_TAX_PERCENTAGE_ROLE)
     {
         require(
-            newIncomeTaxPercentage <= _multiplicator,
+            newIncomeTaxPercentage <= Constants.D18,
             Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         incomeTaxPercentage = newIncomeTaxPercentage;
@@ -147,7 +143,7 @@ contract IporAssetConfiguration is
         uint256 newOpeningFeeForTreasuryPercentage
     ) external override onlyRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE) {
         require(
-            newOpeningFeeForTreasuryPercentage <= _multiplicator,
+            newOpeningFeeForTreasuryPercentage <= Constants.D18,
             Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         openingFeeForTreasuryPercentage = newOpeningFeeForTreasuryPercentage;
@@ -189,7 +185,7 @@ contract IporAssetConfiguration is
         onlyRole(OPENING_FEE_PERCENTAGE_ROLE)
     {
         require(
-            newOpeningFeePercentage <= _multiplicator,
+            newOpeningFeePercentage <= Constants.D18,
             Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         openingFeePercentage = newOpeningFeePercentage;
@@ -231,10 +227,10 @@ contract IporAssetConfiguration is
         onlyRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE)
     {
         require(
-            newLiquidityPoolMaxUtilizationPercentage <= _multiplicator,
+            newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
             Errors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
-        
+
         liquidityPoolMaxUtilizationPercentage = newLiquidityPoolMaxUtilizationPercentage;
         emit LiquidityPoolMaxUtilizationPercentageSet(
             newLiquidityPoolMaxUtilizationPercentage
@@ -295,8 +291,8 @@ contract IporAssetConfiguration is
         );
     }
 
-    function getMultiplicator() external view override returns (uint256) {
-        return _multiplicator;
+    function getDecimals() external view override returns (uint8) {
+        return _decimals;
     }
 
     function getMaxSlippagePercentage()
@@ -366,20 +362,21 @@ contract IporAssetConfiguration is
     }
 
     function getDecayFactorValue() external view override returns (uint256) {
-        return decayFactorValue;
+        return wadDecayFactorValue;
     }
 
-    function setDecayFactorValue(uint256 newDecayFactorValue)
+    //@param newWadDecayFactorValue - WAD value
+    function setDecayFactorValue(uint256 newWadDecayFactorValue)
         external
         override
         onlyRole(DECAY_FACTOR_VALUE_ROLE)
     {
         require(
-            newDecayFactorValue <= _multiplicator,
+            newWadDecayFactorValue <= Constants.D18,
             Errors.CONFIG_DECAY_FACTOR_TOO_HIGH
         );
-        decayFactorValue = newDecayFactorValue;
-        emit DecayFactorValueUpdated(_asset, newDecayFactorValue);
+        wadDecayFactorValue = newWadDecayFactorValue;
+        emit DecayFactorValueUpdated(_asset, newWadDecayFactorValue);
     }
 
     function getSpreadTemporaryValue()

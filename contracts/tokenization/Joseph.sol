@@ -23,8 +23,11 @@ contract Joseph is Ownable, IJoseph {
 
     IIporConfiguration internal iporConfiguration;
 
-	//TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+    //TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration)
+        external
+        onlyOwner
+    {
         iporConfiguration = initialIporConfiguration;
     }
 
@@ -38,27 +41,20 @@ contract Joseph is Ownable, IJoseph {
         _provideLiquidity(
             asset,
             liquidityAmount,
-            iporAssetConfiguration.getMultiplicator(),
+            iporAssetConfiguration.getDecimals(),
             block.timestamp
         );
     }
 
     function redeem(address asset, uint256 ipTokenVolume) external override {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        _redeem(
-            asset,
-            ipTokenVolume,
-            iporAssetConfiguration.getMultiplicator(),
-            block.timestamp
-        );
+        _redeem(asset, ipTokenVolume, block.timestamp);
     }
 
+    //@param liquidityAmount in decimals like asset
     function _provideLiquidity(
         address asset,
         uint256 liquidityAmount,
-        uint256 multiplicator,
+        uint256 assetDecimals,
         uint256 timestamp
     ) internal {
         uint256 exchangeRate = IMilton(iporConfiguration.getMilton())
@@ -66,9 +62,14 @@ contract Joseph is Ownable, IJoseph {
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
+        uint256 wadLiquidityAmount = AmmMath.convertToWad(
+            liquidityAmount,
+            assetDecimals
+        );
+
         IMiltonStorage(iporConfiguration.getMiltonStorage()).addLiquidity(
             asset,
-            liquidityAmount
+            wadLiquidityAmount
         );
 
         //TODO: user Address from OZ and use call
@@ -89,17 +90,16 @@ contract Joseph is Ownable, IJoseph {
             ).mint(
                     msg.sender,
                     AmmMath.division(
-                        liquidityAmount * multiplicator,
+                        wadLiquidityAmount * Constants.D18,
                         exchangeRate
                     )
-                );	
+                );
         }
     }
 
     function _redeem(
         address asset,
         uint256 ipTokenVolume,
-        uint256 multiplicator,
         uint256 timestamp
     ) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
@@ -125,10 +125,13 @@ contract Joseph is Ownable, IJoseph {
                 .liquidityPool > ipTokenVolume,
             Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );
-
-        uint256 underlyingAmount = AmmMath.division(
+        uint256 wadUnderlyingAmount = AmmMath.division(
             ipTokenVolume * exchangeRate,
-            multiplicator
+            Constants.D18
+        );
+        uint256 underlyingAmount = AmmMath.convertWadToAssetDecimals(
+            wadUnderlyingAmount,
+            iporAssetConfiguration.getDecimals()
         );
 
         IIpToken(iporAssetConfiguration.getIpToken()).burn(
@@ -138,9 +141,9 @@ contract Joseph is Ownable, IJoseph {
         );
 
         IMiltonStorage(iporConfiguration.getMiltonStorage()).subtractLiquidity(
-                asset,
-                underlyingAmount
-            );
+            asset,
+            wadUnderlyingAmount
+        );
 
         IERC20(asset).safeTransferFrom(
             iporConfiguration.getMilton(),

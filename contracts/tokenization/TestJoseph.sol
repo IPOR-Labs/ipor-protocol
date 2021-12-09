@@ -25,7 +25,7 @@ contract TestJoseph is Joseph {
         _provideLiquidity(
             asset,
             liquidityAmount,
-            iporAssetConfiguration.getMultiplicator(),
+            iporAssetConfiguration.getDecimals(),
             timestamp
         );
     }
@@ -36,14 +36,6 @@ contract TestJoseph is Joseph {
         uint256 ipTokenVolume,
         uint256 timestamp
     ) external {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        _redeem(
-            asset,
-            ipTokenVolume,
-            iporAssetConfiguration.getMultiplicator(),
-            timestamp
-        );
+        _redeem(asset, ipTokenVolume, timestamp);
     }
 }
