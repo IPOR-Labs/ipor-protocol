@@ -79,7 +79,6 @@ contract IporLogicTest {
         uint256 exponentialMovingAverage = 3e16;
         uint256 indexValue = 5e16;
         uint256 decayFactor = 1e16;
-        uint256 multiplicator = 1e18;
         uint256 expectedExponentialMovingAverage = 30200000000000000;
 
         //when

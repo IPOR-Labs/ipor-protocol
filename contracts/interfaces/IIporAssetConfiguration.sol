@@ -110,8 +110,6 @@ interface IIporAssetConfiguration {
 
     function getDecimals() external view returns (uint8);
 
-    function getMultiplicator() external view returns (uint256);
-
     function getMaxSlippagePercentage() external view returns (uint256);
 
     function getIpToken() external view returns (address);

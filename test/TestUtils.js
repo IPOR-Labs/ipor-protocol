@@ -89,7 +89,6 @@ module.exports.COLLATERALIZATION_FACTOR_6DEC = BigInt("10000000");
 
 //data for Test Cases
 module.exports.TC_MULTIPLICATOR_18DEC = BigInt(1e18);
-module.exports.TC_MULTIPLICATOR_6DEC = BigInt(1e6);
 module.exports.TC_IBT_PRICE_DAI_18DEC = BigInt(1e18);
 module.exports.TC_IBT_PRICE_DAI_6DEC = BigInt(1e6);
 module.exports.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC = BigInt(

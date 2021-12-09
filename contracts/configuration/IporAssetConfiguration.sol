@@ -27,8 +27,6 @@ contract IporAssetConfiguration is
 
     uint8 private immutable _decimals;
 
-    uint256 private immutable _multiplicator;
-
     uint256 private immutable _maxSlippagePercentage;
 
     uint256 private minCollateralizationFactorValue;
@@ -76,19 +74,11 @@ contract IporAssetConfiguration is
         uint8 decimals = ERC20(asset).decimals();
         require(decimals > 0, Errors.CONFIG_ASSET_DECIMALS_TOO_LOW);
         _decimals = decimals;
-        uint256 multiplicator = 10**decimals;
-        _multiplicator = multiplicator;
 
         _maxSlippagePercentage = 100 * Constants.D18;
 
         //@notice taken after close position from participant who take income (trader or Milton)
         incomeTaxPercentage = AmmMath.division(Constants.D18, 10);
-
-        //TODO: add test when multiplicator lower than 10000
-        require(
-            multiplicator >= Constants.D4,
-            Errors.CONFIG_INCORRECT_MULTIPLICATOR
-        );
 
         //@notice taken after open position from participant who execute opening position,
         //paid after close position to participant who execute closing position
@@ -153,7 +143,7 @@ contract IporAssetConfiguration is
         uint256 newOpeningFeeForTreasuryPercentage
     ) external override onlyRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE) {
         require(
-            newOpeningFeeForTreasuryPercentage <=  Constants.D18,
+            newOpeningFeeForTreasuryPercentage <= Constants.D18,
             Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         openingFeeForTreasuryPercentage = newOpeningFeeForTreasuryPercentage;
@@ -195,7 +185,7 @@ contract IporAssetConfiguration is
         onlyRole(OPENING_FEE_PERCENTAGE_ROLE)
     {
         require(
-            newOpeningFeePercentage <=  Constants.D18,
+            newOpeningFeePercentage <= Constants.D18,
             Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         openingFeePercentage = newOpeningFeePercentage;
@@ -237,7 +227,7 @@ contract IporAssetConfiguration is
         onlyRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE)
     {
         require(
-            newLiquidityPoolMaxUtilizationPercentage <=  Constants.D18,
+            newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
             Errors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
@@ -303,10 +293,6 @@ contract IporAssetConfiguration is
 
     function getDecimals() external view override returns (uint8) {
         return _decimals;
-    }
-
-    function getMultiplicator() external view override returns (uint256) {
-        return _multiplicator;
     }
 
     function getMaxSlippagePercentage()

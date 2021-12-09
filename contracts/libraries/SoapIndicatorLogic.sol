@@ -19,7 +19,7 @@ library SoapIndicatorLogic {
             );
     }
 
-    //@notice For highest precision there is no division by multiplicator * multiplicator * Constants.YEAR_IN_SECONDS
+    //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,

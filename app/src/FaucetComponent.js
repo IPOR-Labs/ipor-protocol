@@ -1,9 +1,9 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 
-const {ContractData, ContractForm} = newContextComponents;
+const { ContractData, ContractForm } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div align="left">
         <table className="table" align="center">
             <tr>
@@ -11,22 +11,26 @@ export default ({drizzle, drizzleState}) => (
                 <th scope="col">ETH</th>
                 <th scope="col">
                     USDT
-                    <br/>
+                    <br />
                     {drizzle.contracts.UsdtMockedToken.address}
                 </th>
                 <th scope="col">
                     USDC
-                    <br/>
+                    <br />
                     {drizzle.contracts.UsdcMockedToken.address}
                 </th>
                 <th scope="col">
                     DAI
-                    <br/>
+                    <br />
                     {drizzle.contracts.DaiMockedToken.address}
                 </th>
             </tr>
             <tr>
-                <td><strong>Available Faucet balance</strong></td>
+                <td>
+                    <strong>Available Faucet balance</strong>
+                    <br />
+                    <small>Represented in decimals specific for asset</small>
+                </td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
@@ -35,7 +39,8 @@ export default ({drizzle, drizzleState}) => (
                         method="balanceOfEth"
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
+                                {value / 1000000000000000000}
+                                <br />
                                 <small>{value}</small>
                             </div>
                         )}
@@ -50,7 +55,8 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000}<br/>
+                                {value / 1000000}
+                                <br />
                                 <small>{value}</small>
                             </div>
                         )}
@@ -65,7 +71,8 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000}<br/>
+                                {value / 1000000}
+                                <br />
                                 <small>{value}</small>
                             </div>
                         )}
@@ -80,7 +87,8 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
+                                {value / 1000000000000000000}
+                                <br />
                                 <small>{value}</small>
                             </div>
                         )}
@@ -88,10 +96,12 @@ export default ({drizzle, drizzleState}) => (
                 </td>
             </tr>
             <tr>
-                <td><strong>My Total Balance</strong></td>
                 <td>
-                    Check your wallet :)
+                    <strong>My Total Balance</strong>
+                    <br />
+                    <small>Represented in decimals specific for asset</small>
                 </td>
+                <td>Check your wallet :)</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
@@ -101,7 +111,8 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000}<br/>
+                                {value / 1000000}
+                                <br />
                                 <small>{value}</small>
                             </div>
                         )}
@@ -116,7 +127,8 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000}<br/>
+                                {value / 1000000}
+                                <br />
                                 <small>{value}</small>
                             </div>
                         )}
@@ -131,7 +143,8 @@ export default ({drizzle, drizzleState}) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value / 1000000000000000000}<br/>
+                                {value / 1000000000000000000}
+                                <br />
                                 <small>{value}</small>
                             </div>
                         )}
@@ -142,6 +155,8 @@ export default ({drizzle, drizzleState}) => (
         <div className="row">
             <div className="col-md-6">
                 <strong>Transfer ETH to specific address</strong>
+				<br/>
+				<small>Value represented in WEI</small>
                 <ContractForm
                     drizzle={drizzle}
                     contract="MiltonFaucet"
@@ -150,11 +165,11 @@ export default ({drizzle, drizzleState}) => (
             </div>
             <div className="col-md-6">
                 <strong>Transfer TOKENS to your wallet</strong>
-                <br/>
-                <label>Max allowed value 1 000 000 USD</label>
-                <br/>
+                <br />
+                <label>Max allowed value $1 000 000 USD</label>
+                <br />
                 <small>Max in 6 decimals: 1000000000000</small>
-                <br/>
+                <br />
                 <small>Max in 18 decimals: 1000000000000000000000000</small>
                 <ContractForm
                     drizzle={drizzle}

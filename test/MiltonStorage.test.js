@@ -322,8 +322,7 @@ contract("MiltonStorage", (accounts) => {
                 ibtPrice: 123,
                 ibtQuantity: 123,
                 fixedInterestRate: 234,
-            },
-            multiplicator: testUtils.TC_MULTIPLICATOR_18DEC,
+            }
         };
     };
 });

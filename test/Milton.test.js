@@ -5819,9 +5819,23 @@ contract("Milton", (accounts) => {
 
         let balance = await testData.miltonStorage.balances(asset);
 
-        const actualMiltonUnderlyingTokenBalance = BigInt(
-            await data.miltonDevToolDataProvider.getMiltonTotalSupply(asset)
-        );
+        let actualMiltonUnderlyingTokenBalance = null;
+        if (testData.tokenDai && asset === testData.tokenDai.address) {
+            actualMiltonUnderlyingTokenBalance = BigInt(
+                await testData.tokenDai.balanceOf(data.milton.address)
+            );
+        }
+        if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+            actualMiltonUnderlyingTokenBalance = BigInt(
+                await testData.tokenUsdt.balanceOf(data.milton.address)
+            );
+        }
+        if (testData.tokenUsdc && asset === testData.tokenUsdc.address) {
+            actualMiltonUnderlyingTokenBalance = BigInt(
+                await testData.tokenUsdc.balanceOf(data.milton.address)
+            );
+        }
+
         const actualPayFixedDerivativesBalance = BigInt(
             balance.payFixedDerivatives
         );

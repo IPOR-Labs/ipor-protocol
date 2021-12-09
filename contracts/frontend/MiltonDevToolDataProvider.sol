@@ -13,17 +13,6 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
     constructor(IIporConfiguration iporConfiguration) {
         ADDRESSES_MANAGER = iporConfiguration;
     }
-
-    function getMiltonTotalSupply(address asset)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        IERC20 token = IERC20(asset);
-        return token.balanceOf(ADDRESSES_MANAGER.getMilton());
-    }
-
     function getMyIpTokenBalance(address asset)
         external
         view

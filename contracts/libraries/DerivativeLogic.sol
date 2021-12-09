@@ -7,7 +7,7 @@ import "./Constants.sol";
 import { Errors } from "../Errors.sol";
 
 library DerivativeLogic {
-    //@notice for final value divide by multiplicator* Constants.YEAR_IN_SECONDS
+    //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
         uint256 notionalAmount,
         uint256 derivativeFixedInterestRate,
@@ -21,7 +21,7 @@ library DerivativeLogic {
             derivativePeriodInSeconds;
     }
 
-    //@notice for final value divide by multiplicator * Constants.YEAR_IN_SECONDS
+    //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFloating(
         uint256 ibtQuantity,
         uint256 ibtCurrentPrice

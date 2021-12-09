@@ -30,7 +30,7 @@ library DataTypes {
 		//TODO: don't have to store - use two separate structure - one for pay fixe, one for rec fixed
         //leg
         DataTypes.DerivativeDirection direction;
-        //O_0, value without division by multiplicator * Constants.YEAR_IN_SECONDS
+        //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
         uint256 quasiHypotheticalInterestCumulative;
         //N_0
         uint256 totalNotional;
@@ -156,8 +156,5 @@ library DataTypes {
         //@notice Endind time of this Derivative
         uint256 endingTimestamp;
         IporDerivativeIndicator indicator;
-
-		//TODO: remove from storage, can be fetched from underlying asset
-        // uint256 multiplicator;
     }
 }
