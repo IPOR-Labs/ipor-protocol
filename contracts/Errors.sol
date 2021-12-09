@@ -160,17 +160,27 @@ library Errors {
     string public constant JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW =
         "IPOR_47";
 
-    //@notice Decay factor cannot be higher than 1 * multiplicator
+    //@notice Decay factor cannot be higher than 1 * D18
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
 
-	//@notice Multiplicator should be higher than Constants.D4
+    //@notice Multiplicator should be higher than Constants.D4
     string public constant CONFIG_INCORRECT_MULTIPLICATOR = "IPOR_49";
 
-	//@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
+    //@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
     string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_50";
 
-	//TODO: add test for this code
-	//@notice Liquidity Pool Max Utilization Percentage cannot be higher than 1 * multiplicator
-    string public constant CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH = "IPOR_51";
+    //TODO: add test for this code
+    //@notice Liquidity Pool Max Utilization Percentage cannot be higher than 1 * D18
+    string
+        public constant CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
+        "IPOR_51";
 
+    //TODO: add test for this
+    //@notice Asset has too low decimals
+    string public constant CONFIG_ASSET_DECIMALS_TOO_LOW = "IPOR_52";
+
+    //TODO: try to add test for this
+    //@notic Spread value cannot be higher than Ipor Index Value for particular asset
+    string public constant MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
+        "IPOR_53";
 }

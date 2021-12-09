@@ -37,31 +37,6 @@ contract SoapIndicatorLogicTest is TestData {
         );
     }
 
-    function testCalculateInterestRateWhenOpenPositionSimpleCaseDecimals6()
-        public
-    {
-        //given
-        DataTypes.SoapIndicator
-            memory soapIndicator = prepareSoapIndicatorPfCaseD6();
-        uint256 derivativeNotional = 10000 * Constants.D6;
-        uint256 derivativeFixedInterestRate = 4 * 1e4;
-
-        //when
-        uint256 actualInterestRate = soapIndicator
-            .calculateInterestRateWhenOpenPosition(
-                derivativeNotional,
-                derivativeFixedInterestRate
-            );
-
-        //then
-        uint256 expectedInterestRate = 66667;
-        Assert.equal(
-            expectedInterestRate,
-            actualInterestRate,
-            "Wrong interest rate when open position"
-        );
-    }
-
     function testCalculateInterestRateWhenClosePositionSimpleCaseDecimals18()
         public
     {
@@ -80,31 +55,6 @@ contract SoapIndicatorLogicTest is TestData {
 
         //then
         uint256 expectedInterestRate = 120000000000000000;
-        Assert.equal(
-            expectedInterestRate,
-            actualInterestRate,
-            "Wrong hypothetical interest rate when close position"
-        );
-    }
-
-    function testCalculateInterestRateWhenClosePositionSimpleCaseDecimals6()
-        public
-    {
-        //given
-        DataTypes.SoapIndicator
-            memory soapIndicator = prepareSoapIndicatorPfCaseD6();
-        uint256 derivativeNotional = 10000 * Constants.D6;
-        uint256 derivativeFixedInterestRate = 4 * 1e4;
-
-        //when
-        uint256 actualInterestRate = soapIndicator
-            .calculateInterestRateWhenClosePosition(
-                derivativeNotional,
-                derivativeFixedInterestRate
-            );
-
-        //then
-        uint256 expectedInterestRate = 120000;
         Assert.equal(
             expectedInterestRate,
             actualInterestRate,
@@ -137,31 +87,6 @@ contract SoapIndicatorLogicTest is TestData {
         }
     }
 
-    function testCalculateInterestRateWhenClosePositionDerivativeNotionalTooHighDecimals6()
-        public
-    {
-        //given
-        DataTypes.SoapIndicator
-            memory soapIndicator = prepareSoapIndicatorPfCaseD6();
-        uint256 derivativeNotional = 40000 * Constants.D6;
-        uint256 derivativeFixedInterestRate = 4 * 1e4;
-
-        //when
-        try
-            soapIndicator.calculateInterestRateWhenClosePosition(
-                derivativeNotional,
-                derivativeFixedInterestRate
-            )
-        returns (uint256) {} catch Error(string memory actualReason) {
-            //then
-            Assert.equal(
-                actualReason,
-                Errors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL,
-                "Wrong reason"
-            );
-        }
-    }
-
     function testCalculateInterestDeltaSimpleCaseD18() public {
         //given
         DataTypes.SoapIndicator
@@ -171,36 +96,13 @@ contract SoapIndicatorLogicTest is TestData {
 
         //when
         uint256 actualQuasiInterestRate = soapIndicator
-            .calculateQuasiHypotheticalInterestDelta(timestamp, Constants.D18);
+            .calculateQuasiHypotheticalInterestDelta(timestamp);
 
         //then
         uint256 expectedQuasiInterestDelta = 3456000000 *
             Constants.D18 *
             Constants.D18 *
             Constants.D18;
-        Assert.equal(
-            actualQuasiInterestRate,
-            expectedQuasiInterestDelta,
-            "Incorrect quasi interest in delta time"
-        );
-    }
-
-    function testCalculateInterestDeltaSimpleCaseD6() public {
-        //given
-        DataTypes.SoapIndicator
-            memory soapIndicator = prepareSoapIndicatorPfCaseD6();
-        uint256 timestamp = soapIndicator.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        //when
-        uint256 actualQuasiInterestRate = soapIndicator
-            .calculateQuasiHypotheticalInterestDelta(timestamp, Constants.D6);
-
-        //then
-        uint256 expectedQuasiInterestDelta = 3456000000 *
-            Constants.D6 *
-            Constants.D6 *
-            Constants.D6;
         Assert.equal(
             actualQuasiInterestRate,
             expectedQuasiInterestDelta,
@@ -217,37 +119,13 @@ contract SoapIndicatorLogicTest is TestData {
 
         //when
         uint256 actualQuasiHypotheticalInterestTotal = soapIndicator
-            .calculateQuasiHyphoteticalInterestTotal(timestamp, Constants.D18);
+            .calculateQuasiHyphoteticalInterestTotal(timestamp);
 
         //then
         uint256 expectedQuasiHypotheticalInterestTotal = 19224000000 *
             Constants.D18 *
             Constants.D18 *
             Constants.D18;
-
-        Assert.equal(
-            actualQuasiHypotheticalInterestTotal,
-            expectedQuasiHypotheticalInterestTotal,
-            "Incorrect hypothetical interest total quasi"
-        );
-    }
-
-    function testCalculateHyphoteticalInterestTotalCase1D6() public {
-        //given
-        DataTypes.SoapIndicator
-            memory soapIndicator = prepareSoapIndicatorPfCaseD6();
-        uint256 timestamp = soapIndicator.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        //when
-        uint256 actualQuasiHypotheticalInterestTotal = soapIndicator
-            .calculateQuasiHyphoteticalInterestTotal(timestamp, Constants.D6);
-
-        //then
-        uint256 expectedQuasiHypotheticalInterestTotal = 19224000000 *
-            Constants.D6 *
-            Constants.D6 *
-            Constants.D6;
 
         Assert.equal(
             actualQuasiHypotheticalInterestTotal,
@@ -270,37 +148,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestamp,
             derivativeNotional,
             derivativeFixedInterestRate,
-            derivativeIbtQuantity,
-            Constants.D18
-        );
-
-        //then
-        assertSoapIndicator(
-            siStorage,
-            rebalanceTimestamp,
-            derivativeNotional,
-            derivativeIbtQuantity,
-            derivativeFixedInterestRate,
-            0
-        );
-    }
-
-    function testRebalanceSoapIndicatorsWhenOpenFirstPositionD6() public {
-        //given
-        siStorage = prepareInitialDefaultSoapIndicator(block.timestamp);
-        uint256 rebalanceTimestamp = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotional = 10000 * Constants.D6;
-        uint256 derivativeFixedInterestRate = 5 * 1e4;
-        uint256 derivativeIbtQuantity = 95 * Constants.D6;
-
-        //when
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestamp,
-            derivativeNotional,
-            derivativeFixedInterestRate,
-            derivativeIbtQuantity,
-            Constants.D6
+            derivativeIbtQuantity
         );
 
         //then
@@ -327,8 +175,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D18
+            derivativeIbtQuantityFirst
         );
 
         uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp +
@@ -342,8 +189,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D18
+            derivativeIbtQuantitySecond
         );
 
         //then
@@ -355,58 +201,6 @@ contract SoapIndicatorLogicTest is TestData {
             Constants.D18 *
             Constants.D18 *
             Constants.D18;
-
-        assertSoapIndicator(
-            siStorage,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedQuasiHypotheticalInterestCumulative
-        );
-    }
-
-    function testRebalanceSoapIndicatorsWhenOpenSecondPositionD6() public {
-        //given
-        siStorage = prepareInitialDefaultSoapIndicator(block.timestamp);
-        uint256 rebalanceTimestampFirst = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotionalFirst = 10000 * Constants.D6;
-        uint256 derivativeFixedInterestRateFirst = 5 * 1e4;
-        uint256 derivativeIbtQuantityFirst = 95 * Constants.D6;
-
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestampFirst,
-            derivativeNotionalFirst,
-            derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D6
-        );
-
-        uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotionalSecond = 20000 * Constants.D6;
-        uint256 derivativeFixedInterestRateSecond = 8 * 1e4;
-        uint256 derivativeIbtQuantitySecond = 173 * Constants.D6;
-
-        //when
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestampSecond,
-            derivativeNotionalSecond,
-            derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D6
-        );
-
-        //then
-        uint256 expectedRebalanceTimestamp = rebalanceTimestampSecond;
-        uint256 expectedTotalNotional = 30000 * Constants.D6;
-        uint256 expectedTotalIbtQuantity = 268 * Constants.D6;
-        uint256 expectedAverageInterestRate = 7 * 1e4;
-        uint256 expectedQuasiHypotheticalInterestCumulative = 1080000000 *
-            Constants.D6 *
-            Constants.D6 *
-            Constants.D6;
 
         assertSoapIndicator(
             siStorage,
@@ -431,8 +225,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D18
+            derivativeIbtQuantityFirst
         );
 
         uint256 closeTimestamp = rebalanceTimestampFirst +
@@ -444,55 +237,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D18
-        );
-
-        //then
-        uint256 expectedRebalanceTimestamp = closeTimestamp;
-        uint256 expectedTotalNotional = 0;
-        uint256 expectedTotalIbtQuantity = 0;
-        uint256 expectedAverageInterestRate = 0;
-        uint256 expectedHypotheticalInterestCumulative = 0;
-
-        assertSoapIndicator(
-            siStorage,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
-        );
-    }
-
-    function testRebalanceSoapIndicatorsWhenCloseFirstPositionD6() public {
-        //given
-        siStorage = prepareInitialDefaultSoapIndicator(block.timestamp);
-        uint256 rebalanceTimestampFirst = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotionalFirst = 10000 * Constants.D6;
-        uint256 derivativeFixedInterestRateFirst = 5 * 1e4;
-        uint256 derivativeIbtQuantityFirst = 95 * Constants.D6;
-
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestampFirst,
-            derivativeNotionalFirst,
-            derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D6
-        );
-
-        uint256 closeTimestamp = rebalanceTimestampFirst +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        //when
-        siStorage.rebalanceWhenClosePosition(
-            closeTimestamp,
-            rebalanceTimestampFirst,
-            derivativeNotionalFirst,
-            derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D6
+            derivativeIbtQuantityFirst
         );
 
         //then
@@ -527,8 +272,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D18
+            derivativeIbtQuantityFirst
         );
 
         uint256 averageInterestRateAfterFirstOpen = siStorage
@@ -544,8 +288,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D18
+            derivativeIbtQuantitySecond
         );
 
         uint256 closeTimestamp = rebalanceTimestampSecond +
@@ -557,8 +300,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D18
+            derivativeIbtQuantitySecond
         );
 
         //then
@@ -570,75 +312,6 @@ contract SoapIndicatorLogicTest is TestData {
             Constants.D18 *
             Constants.D18 *
             Constants.D18;
-
-        assertSoapIndicator(
-            siStorage,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
-        );
-    }
-
-    function testRebalanceSoapIndicatorsWhenOpenTwoPositionCloseSecondPositionD6()
-        public
-    {
-        //given
-        siStorage = prepareInitialDefaultSoapIndicator(block.timestamp);
-        uint256 rebalanceTimestampFirst = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotionalFirst = 10000 * Constants.D6;
-        uint256 derivativeFixedInterestRateFirst = 5 * 1e4;
-        uint256 derivativeIbtQuantityFirst = 95 * Constants.D6;
-
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestampFirst,
-            derivativeNotionalFirst,
-            derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D6
-        );
-
-        uint256 averageInterestRateAfterFirstOpen = siStorage
-            .averageInterestRate;
-
-        uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotionalSecond = 20000 * Constants.D6;
-        uint256 derivativeFixedInterestRateSecond = 8 * 1e4;
-        uint256 derivativeIbtQuantitySecond = 173 * Constants.D6;
-
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestampSecond,
-            derivativeNotionalSecond,
-            derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D6
-        );
-
-        uint256 closeTimestamp = rebalanceTimestampSecond +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        //when
-        siStorage.rebalanceWhenClosePosition(
-            closeTimestamp,
-            rebalanceTimestampSecond,
-            derivativeNotionalSecond,
-            derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D6
-        );
-
-        //then
-        uint256 expectedRebalanceTimestamp = closeTimestamp;
-        uint256 expectedTotalNotional = 10000 * Constants.D6;
-        uint256 expectedTotalIbtQuantity = 95 * Constants.D6;
-        uint256 expectedAverageInterestRate = averageInterestRateAfterFirstOpen;
-        uint256 expectedHypotheticalInterestCumulative = 2160000000 *
-            Constants.D6 *
-            Constants.D6 *
-            Constants.D6;
 
         assertSoapIndicator(
             siStorage,
@@ -665,8 +338,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D18
+            derivativeIbtQuantityFirst
         );
 
         uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp +
@@ -679,8 +351,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D18
+            derivativeIbtQuantitySecond
         );
 
         uint256 closeTimestampSecondPosition = rebalanceTimestampSecond +
@@ -691,8 +362,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampSecond,
             derivativeNotionalSecond,
             derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D18
+            derivativeIbtQuantitySecond
         );
 
         uint256 closeTimestampFirstPosition = siStorage.rebalanceTimestamp +
@@ -704,83 +374,7 @@ contract SoapIndicatorLogicTest is TestData {
             rebalanceTimestampFirst,
             derivativeNotionalFirst,
             derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D18
-        );
-
-        //then
-        uint256 expectedRebalanceTimestamp = closeTimestampFirstPosition;
-        uint256 expectedTotalNotional = 0;
-        uint256 expectedTotalIbtQuantity = 0;
-        uint256 expectedAverageInterestRate = 0;
-        uint256 expectedHypotheticalInterestCumulative = 0;
-
-        assertSoapIndicator(
-            siStorage,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
-        );
-    }
-
-    function testRebalanceSoapIndicatorsWhenOpenTwoPositionCloseTwoPositionD6()
-        public
-    {
-        //given
-        siStorage = prepareInitialDefaultSoapIndicator(block.timestamp);
-        uint256 rebalanceTimestampFirst = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotionalFirst = 10000 * Constants.D6;
-        uint256 derivativeFixedInterestRateFirst = 5 * 1e4;
-        uint256 derivativeIbtQuantityFirst = 95 * Constants.D6;
-
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestampFirst,
-            derivativeNotionalFirst,
-            derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D6
-        );
-
-        uint256 rebalanceTimestampSecond = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-        uint256 derivativeNotionalSecond = 20000 * Constants.D6;
-        uint256 derivativeFixedInterestRateSecond = 8 * 1e4;
-        uint256 derivativeIbtQuantitySecond = 173 * Constants.D6;
-
-        siStorage.rebalanceWhenOpenPosition(
-            rebalanceTimestampSecond,
-            derivativeNotionalSecond,
-            derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D6
-        );
-
-        uint256 closeTimestampSecondPosition = rebalanceTimestampSecond +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        siStorage.rebalanceWhenClosePosition(
-            closeTimestampSecondPosition,
-            rebalanceTimestampSecond,
-            derivativeNotionalSecond,
-            derivativeFixedInterestRateSecond,
-            derivativeIbtQuantitySecond,
-            Constants.D6
-        );
-
-        uint256 closeTimestampFirstPosition = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        //when
-        siStorage.rebalanceWhenClosePosition(
-            closeTimestampFirstPosition,
-            rebalanceTimestampFirst,
-            derivativeNotionalFirst,
-            derivativeFixedInterestRateFirst,
-            derivativeIbtQuantityFirst,
-            Constants.D6
+            derivativeIbtQuantityFirst
         );
 
         //then
@@ -810,35 +404,11 @@ contract SoapIndicatorLogicTest is TestData {
         //when
         int256 actualSoapPf = siStorage.calculateSoap(
             ibtPrice,
-            calculationTimestamp,
-            Constants.D18
+            calculationTimestamp
         );
 
         //then
         int256 expectedSoapPf = -6109589041095890410958;
-        Assert.equal(
-            actualSoapPf,
-            expectedSoapPf,
-            "Incorrect SOAP for Pay Fixed Derivatives"
-        );
-    }
-
-    function testSoapPayFixedSimpleCaseD6() public {
-        //given
-        siStorage = prepareSoapIndicatorPfCaseD6();
-        uint256 ibtPrice = 145 * Constants.D6;
-        uint256 calculationTimestamp = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        //when
-        int256 actualSoapPf = siStorage.calculateSoap(
-            ibtPrice,
-            calculationTimestamp,
-            Constants.D6
-        );
-
-        //then
-        int256 expectedSoapPf = -6109589040;
         Assert.equal(
             actualSoapPf,
             expectedSoapPf,
@@ -856,35 +426,11 @@ contract SoapIndicatorLogicTest is TestData {
         //when
         int256 actualSoapPf = siStorage.calculateSoap(
             ibtPrice,
-            calculationTimestamp,
-            Constants.D18
+            calculationTimestamp
         );
 
         //then
         int256 expectedSoapPf = 6109589041095890410959;
-        Assert.equal(
-            actualSoapPf,
-            expectedSoapPf,
-            "Incorrect SOAP for Pay Fixed Derivatives"
-        );
-    }
-
-    function testSoapRecFixedSimpleCaseD6() public {
-        //given
-        siStorage = prepareSoapIndicatorRfCaseD6();
-        uint256 ibtPrice = 145 * Constants.D6;
-        uint256 calculationTimestamp = siStorage.rebalanceTimestamp +
-            PERIOD_25_DAYS_IN_SECONDS;
-
-        //when
-        int256 actualSoapPf = siStorage.calculateSoap(
-            ibtPrice,
-            calculationTimestamp,
-            Constants.D6
-        );
-
-        //then
-        int256 expectedSoapPf = 6109589041;
         Assert.equal(
             actualSoapPf,
             expectedSoapPf,

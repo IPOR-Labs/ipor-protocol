@@ -246,19 +246,19 @@ contract("Milton", (accounts) => {
             { from: userOne }
         );
 
-        let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
 
-        let expectedMiltonTokenBalance =
-            miltonBalanceBeforePayout + params.totalAmount;
-        let expectedLiquidityPoolTotalBalance =
-            miltonBalanceBeforePayout + openingFee;
-        let expectedDerivativesTotalBalance = collateral;
+        let expectedMiltonUnderlyingTokenBalance =
+            miltonBalanceBeforePayoutWad + params.totalAmount;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad + openingFee;
+        let expectedDerivativesTotalBalanceWad = collateralWad;
 
         //when
         await data.milton.test_openPosition(
@@ -277,11 +277,11 @@ contract("Milton", (accounts) => {
             params.asset,
             userTwo,
             userTwo,
-            miltonBalanceBeforePayout,
-            expectedMiltonTokenBalance,
+            miltonBalanceBeforePayoutWad,
+            expectedMiltonUnderlyingTokenBalance,
             BigInt("9990000000000000000000000"),
             BigInt("9990000000000000000000000"),
-            expectedLiquidityPoolTotalBalance,
+            expectedLiquidityPoolTotalBalanceWad,
             1,
             BigInt("9940179461615154536391"),
             testUtils.USD_20_18DEC,
@@ -301,8 +301,8 @@ contract("Milton", (accounts) => {
             actualPayFixDerivativesBalance + actualRecFixDerivativesBalance;
 
         assert(
-            expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
-            `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`
+            expectedDerivativesTotalBalanceWad === actualDerivativesTotalBalanceWad,
+            `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalanceWad}Wad`
         );
     });
 
@@ -328,17 +328,19 @@ contract("Milton", (accounts) => {
             testData
         );
 
-        let collateral = testUtils.USD_9063__63_6DEC;
-        let openingFee = testUtils.TC_OPENING_FEE_6DEC;
+        let collateralWad = testUtils.USD_9063__63_18DEC;
+        let openingFee = testUtils.TC_OPENING_FEE_18DEC;
 
         await data.warren.test_updateIndex(
             params.asset,
-            testUtils.PERCENTAGE_3_6DEC,
+            testUtils.PERCENTAGE_3_18DEC,
             params.openTimestamp,
             { from: userOne }
         );
 
         let miltonBalanceBeforePayout = testUtils.USD_14_000_6DEC;
+		let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
+
         await data.joseph.test_provideLiquidity(
             params.asset,
             miltonBalanceBeforePayout,
@@ -346,11 +348,11 @@ contract("Milton", (accounts) => {
             { from: liquidityProvider }
         );
 
-        let expectedMiltonTokenBalance =
+        let expectedMiltonUnderlyingTokenBalance =
             miltonBalanceBeforePayout + params.totalAmount;
-        let expectedLiquidityPoolTotalBalance =
-            miltonBalanceBeforePayout + openingFee;
-        let expectedDerivativesTotalBalance = collateral;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad + openingFee;
+        let expectedDerivativesTotalBalanceWad = collateralWad;
 
         //when
         await data.milton.test_openPosition(
@@ -370,33 +372,33 @@ contract("Milton", (accounts) => {
             userTwo,
             userTwo,
             miltonBalanceBeforePayout,
-            expectedMiltonTokenBalance,
+            expectedMiltonUnderlyingTokenBalance,
             BigInt("9990000000000"),
             BigInt("9990000000000"),
-            expectedLiquidityPoolTotalBalance,
+            expectedLiquidityPoolTotalBalanceWad,
             1,
-            BigInt("9940179462"),
-            testUtils.USD_20_6DEC,
+            testUtils.TC_COLLATERAL_18DEC,
+            testUtils.USD_20_18DEC,
             BigInt("0")
         );
-        const actualPayFixDerivativesBalance = BigInt(
+        const actualPayFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonStorage.balances(params.asset)
             ).payFixedDerivatives
         );
 
-        const actualRecFixDerivativesBalance = BigInt(
+        const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonStorage.balances(params.asset)
             ).recFixedDerivatives
         );
 
-        const actualDerivativesTotalBalance =
-            actualPayFixDerivativesBalance + actualRecFixDerivativesBalance;
+        const actualDerivativesTotalBalanceWad =
+            actualPayFixDerivativesBalanceWad + actualRecFixDerivativesBalanceWad;
 
         assert(
-            expectedDerivativesTotalBalance === actualDerivativesTotalBalance,
-            `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalance}, expected ${expectedDerivativesTotalBalance}`
+            expectedDerivativesTotalBalanceWad === actualDerivativesTotalBalanceWad,
+            `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalanceWad}, expected ${expectedDerivativesTotalBalanceWad}Wad`
         );
     });
 
@@ -417,10 +419,11 @@ contract("Milton", (accounts) => {
             testData
         );
 
-        let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
         let liquidationDepositAmount = testUtils.USD_20_18DEC;
 
         let incomeTax = BigInt("0");
+        let incomeTaxWad = BigInt("0");
 
         let totalAmount = testUtils.USD_10_000_18DEC;
         let collateral = testUtils.USD_9063__63_18DEC;
@@ -429,15 +432,15 @@ contract("Milton", (accounts) => {
         let diffAfterClose =
             totalAmount - collateral - liquidationDepositAmount;
 
-        let expectedOpenerUserTokenBalanceAfterPayOut =
+        let expectedOpenerUserUnderlyingTokenBalanceAfterPayOut =
             testUtils.USER_SUPPLY_18_DECIMALS - diffAfterClose;
-        let expectedCloserUserTokenBalanceAfterPayOut =
+        let expectedCloserUserUnderlyingTokenBalanceAfterPayOut =
             testUtils.USER_SUPPLY_18_DECIMALS - diffAfterClose;
 
-        let expectedMiltonTokenBalance =
-            miltonBalanceBeforePayout + diffAfterClose;
-        let expectedLiquidityPoolTotalBalance =
-            miltonBalanceBeforePayout + openingFee - incomeTax;
+        let expectedMiltonUnderlyingTokenBalance =
+            miltonBalanceBeforePayoutWad + diffAfterClose;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad + openingFee - incomeTax;
 
         await exetuceClosePositionTestCase(
             testData,
@@ -449,15 +452,17 @@ contract("Milton", (accounts) => {
             testUtils.PERCENTAGE_3_18DEC,
             testUtils.PERCENTAGE_3_18DEC,
             0,
-            miltonBalanceBeforePayout,
-            expectedMiltonTokenBalance,
-            expectedOpenerUserTokenBalanceAfterPayOut,
-            expectedCloserUserTokenBalanceAfterPayOut,
-            expectedLiquidityPoolTotalBalance,
+            miltonBalanceBeforePayoutWad,
+            expectedMiltonUnderlyingTokenBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+            expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
+            expectedLiquidityPoolTotalBalanceWad,
             0,
             testUtils.ZERO,
             testUtils.ZERO,
             incomeTax,
+    incomeTaxWad,
+            testUtils.ZERO,
             testUtils.ZERO,
             null
         );
@@ -481,7 +486,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("6808342096996681189");
+	    let incomeTaxWad = BigInt("6808342096996681189");
         let interestAmount = BigInt("68083420969966811892");
+	    let interestAmountWad = BigInt("68083420969966811892");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -496,11 +503,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -522,7 +531,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("6808342");
-        let interestAmount = BigInt("68083420");
+		let incomeTaxWad = BigInt("6808342096996681189");
+        let interestAmount = BigInt("68083421");
+		let interestAmountWad = BigInt("68083420969966811892");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -531,17 +542,19 @@ contract("Milton", (accounts) => {
             0,
             userTwo,
             userTwo,
-            testUtils.PERCENTAGE_365_6DEC,
-            testUtils.PERCENTAGE_365_6DEC,
+            testUtils.PERCENTAGE_365_18DEC,
+            testUtils.PERCENTAGE_365_18DEC,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+			incomeTaxWad,
+            interestAmount,
+			interestAmountWad
         );
     });
 
@@ -639,7 +652,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -654,11 +669,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -680,7 +697,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946");
+        let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_6DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -689,17 +708,19 @@ contract("Milton", (accounts) => {
             0,
             userTwo,
             userTwo,
-            testUtils.PERCENTAGE_160_6DEC,
-            testUtils.PERCENTAGE_5_6DEC,
+            testUtils.PERCENTAGE_160_18DEC,
+            testUtils.PERCENTAGE_5_18DEC,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -721,7 +742,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("789767683251615021364");
+        let incomeTaxWad = BigInt("789767683251615021364");
         let interestAmount = BigInt("7897676832516150213639");
+        let interestAmountWad = BigInt("7897676832516150213639");
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             testData.tokenDai.address,
@@ -735,11 +758,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -760,8 +785,11 @@ contract("Milton", (accounts) => {
             testData
         );
 
-        let incomeTax = BigInt("789764279");
-        let interestAmount = BigInt("7897642790");
+        let incomeTax = BigInt("789767683");
+        let incomeTaxWad = BigInt("789767683251615021364");
+        let interestAmount = BigInt("7897676833");
+        let interestAmountWad = BigInt("7897676832516150213639");
+
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             testData.tokenUsdt.address,
@@ -769,17 +797,19 @@ contract("Milton", (accounts) => {
             0,
             userTwo,
             userTwo,
-            testUtils.PERCENTAGE_120_6DEC,
-            testUtils.PERCENTAGE_5_6DEC,
+            testUtils.PERCENTAGE_120_18DEC,
+            testUtils.PERCENTAGE_5_18DEC,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -801,7 +831,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("854583100015023419750");
+        let incomeTaxWad = BigInt("854583100015023419750");
         let interestAmount = BigInt("8545831000150234197501");
+        let interestAmountWad = BigInt("8545831000150234197501");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -816,11 +848,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -842,7 +876,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+        let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -857,11 +893,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -883,7 +921,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946");
+        let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_6DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -892,17 +932,19 @@ contract("Milton", (accounts) => {
             0,
             userTwo,
             userTwo,
-            testUtils.PERCENTAGE_5_6DEC,
-            testUtils.PERCENTAGE_160_6DEC,
+            testUtils.PERCENTAGE_5_18DEC,
+            testUtils.PERCENTAGE_160_18DEC,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -924,7 +966,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("776150999057621653403");
+        let incomeTaxWad = BigInt("776150999057621653403");
         let interestAmount = BigInt("7761509990576216534025");
+        let interestAmountWad = BigInt("7761509990576216534025");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -939,11 +983,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -964,8 +1010,10 @@ contract("Milton", (accounts) => {
             testData
         );
 
-        let incomeTax = BigInt("776153178");
-        let interestAmount = BigInt("7761531778");
+        let incomeTax = BigInt("776150999");
+        let incomeTaxWad = BigInt("776150999057621653403");
+        let interestAmount = BigInt("7761509990");
+        let interestAmountWad = BigInt("7761509990576216534025");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -974,17 +1022,19 @@ contract("Milton", (accounts) => {
             0,
             userTwo,
             userTwo,
-            testUtils.PERCENTAGE_5_6DEC,
-            testUtils.PERCENTAGE_120_6DEC,
+            testUtils.PERCENTAGE_5_18DEC,
+            testUtils.PERCENTAGE_120_18DEC,
             testUtils.PERIOD_25_DAYS_IN_SECONDS,
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -1006,7 +1056,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+        let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1021,11 +1073,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -1047,7 +1101,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = testUtils.SPECIFIC_INCOME_TAX_CASE_1;
+        let incomeTaxWad = testUtils.SPECIFIC_INCOME_TAX_CASE_1;
         let interestAmount = testUtils.SPECIFIC_INTEREST_AMOUNT_CASE_1;
+        let interestAmountWad = testUtils.SPECIFIC_INTEREST_AMOUNT_CASE_1;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1062,11 +1118,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -1088,7 +1146,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+        let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1103,11 +1163,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -1195,7 +1257,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+        let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1210,11 +1274,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -1236,7 +1302,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("635082150807850422837");
+        let incomeTaxWad = BigInt("635082150807850422837");
         let interestAmount = BigInt("6350821508078504228366");
+        let interestAmountWad = BigInt("6350821508078504228366");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1251,11 +1319,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -1277,7 +1347,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+        let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1292,11 +1364,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
     });
 
@@ -1385,7 +1459,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("854583100015023419750");
+	    let incomeTaxWad = BigInt("854583100015023419750");
         let interestAmount = BigInt("8545831000150234197501");
+	    let interestAmountWad = BigInt("8545831000150234197501");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1400,11 +1476,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1426,7 +1504,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1441,11 +1521,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+        interestAmountWad
         );
     });
 
@@ -1467,7 +1549,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("6808342096996679147");
+	    let incomeTaxWad = BigInt("6808342096996679147");
         let interestAmount = BigInt("68083420969966791467");
+	    let interestAmountWad = BigInt("68083420969966791467");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1482,11 +1566,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1508,7 +1594,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("6808342096996681189");
+	    let incomeTaxWad = BigInt("6808342096996681189");
         let interestAmount = BigInt("68083420969966811892");
+	    let interestAmountWad = BigInt("68083420969966811892");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1523,11 +1611,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1549,7 +1639,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1564,11 +1656,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1590,7 +1684,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("279142025976863929170");
+	    let incomeTaxWad = BigInt("279142025976863929170");
         let interestAmount = BigInt("2791420259768639291701");
+	    let interestAmountWad = BigInt("2791420259768639291701");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1605,11 +1701,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1631,7 +1729,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1646,11 +1746,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1672,7 +1774,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("789767683251615015781");
+	    let incomeTaxWad = BigInt("789767683251615015781");
         let interestAmount = BigInt("7897676832516150157811");
+	    let interestAmountWad = BigInt("7897676832516150157811");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1687,11 +1791,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1713,7 +1819,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1728,11 +1836,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1754,7 +1864,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("839332413717750853886");
+	    let incomeTaxWad = BigInt("839332413717750853886");
         let interestAmount = BigInt("8393324137177508538862");
+	    let interestAmountWad = BigInt("8393324137177508538862");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1769,11 +1881,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1795,7 +1909,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1810,11 +1926,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1836,7 +1954,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("650332837105122988701");
+	    let incomeTaxWad = BigInt("650332837105122988701");
         let interestAmount = BigInt("6503328371051229887005");
+	    let interestAmountWad = BigInt("6503328371051229887005");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1851,11 +1971,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1877,7 +1999,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1892,11 +2016,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -1985,7 +2111,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -2000,11 +2128,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -2092,7 +2222,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -2107,11 +2239,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -2133,7 +2267,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("839332413717750853886");
+	    let incomeTaxWad = BigInt("839332413717750853886");
         let interestAmount = BigInt("8393324137177508538862");
+	    let interestAmountWad = BigInt("8393324137177508538862");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -2148,11 +2284,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -2174,7 +2312,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -2189,11 +2329,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -2215,7 +2357,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("650332837105122988701");
+	    let incomeTaxWad = BigInt("650332837105122988701");
         let interestAmount = BigInt("6503328371051229887005");
+	    let interestAmountWad = BigInt("6503328371051229887005");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -2230,11 +2374,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -2256,7 +2402,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("994017946161515453639");
+	    let incomeTaxWad = BigInt("994017946161515453639");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -2271,11 +2419,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -2623,13 +2773,13 @@ contract("Milton", (accounts) => {
         let iporValueAfterOpenPosition = testUtils.PERCENTAGE_50_18DEC;
         let periodOfTimeElapsedInSeconds = testUtils.PERIOD_50_DAYS_IN_SECONDS;
         let expectedOpenedPositions = 0;
-        let expectedDerivativesTotalBalance = testUtils.ZERO;
-        let expectedLiquidationDepositTotalBalance = testUtils.ZERO;
-        let expectedTreasuryTotalBalance = incomeTax;
+        let expectedDerivativesTotalBalanceWad = testUtils.ZEROWad;
+        let expectedLiquidationDepositTotalBalance = testUtils.ZEROWad;
+        let expectedTreasuryTotalBalanceWad = incomeTax;
         let expectedSoap = testUtils.ZERO;
         let openTimestamp = null;
 
-        let miltonBalanceBeforePayout =
+        let miltonBalanceBeforePayoutWad =
             testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
 
         let closerUserEarned = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
@@ -2652,23 +2802,23 @@ contract("Milton", (accounts) => {
         }
 
         let expectedMiltonUnderlyingTokenBalance =
-            miltonBalanceBeforePayout +
+            miltonBalanceBeforePayoutWad +
             testUtils.TC_OPENING_FEE_18DEC +
             testUtils.TC_IPOR_PUBLICATION_AMOUNT_18DEC -
             interestAmount +
             incomeTax;
 
-        let expectedOpenerUserTokenBalanceAfterClose =
+        let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
             testUtils.USER_SUPPLY_18_DECIMALS +
             openerUserEarned -
             openerUserLost;
-        let expectedCloserUserTokenBalanceAfterClose =
+        let expectedCloserUserUnderlyingTokenBalanceAfterClose =
             testUtils.USER_SUPPLY_18_DECIMALS +
             closerUserEarned -
             closerUserLost;
 
-        let expectedLiquidityPoolTotalBalance =
-            miltonBalanceBeforePayout -
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad -
             interestAmount +
             testUtils.TC_OPENING_FEE_18DEC;
 
@@ -2689,11 +2839,11 @@ contract("Milton", (accounts) => {
             from: openerUserAddress,
         };
 
-        if (miltonBalanceBeforePayout != null) {
+        if (miltonBalanceBeforePayoutWad != null) {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
             await data.joseph.test_provideLiquidity(
                 params.asset,
-                miltonBalanceBeforePayout,
+                miltonBalanceBeforePayoutWad,
                 params.openTimestamp,
                 { from: liquidityProvider }
             );
@@ -2733,15 +2883,15 @@ contract("Milton", (accounts) => {
             params.asset,
             openerUserAddress,
             closerUserAddress,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             expectedMiltonUnderlyingTokenBalance,
-            expectedOpenerUserTokenBalanceAfterClose,
-            expectedCloserUserTokenBalanceAfterClose,
-            expectedLiquidityPoolTotalBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+            expectedCloserUserUnderlyingTokenBalanceAfterClose,
+            expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
-            expectedDerivativesTotalBalance,
-            expectedLiquidationDepositTotalBalance,
-            expectedTreasuryTotalBalance
+            expectedDerivativesTotalBalanceWad,
+            expectedLiquidationDepositTotalBalanceWad,
+            expectedTreasuryTotalBalanceWad
         );
 
         const soapParams = {
@@ -3448,7 +3598,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("419666206858875426943");
+	    let incomeTaxWad = BigInt("419666206858875426943");
         let interestAmount = BigInt("8393324137177508538862");
+	    let interestAmountWad = BigInt("8393324137177508538862");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -3463,11 +3615,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_10_18DEC
@@ -3503,7 +3657,11 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("497008973080757726820");
+        let incomeTaxWad = BigInt("497008973080757726820");
+
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
+
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -3518,11 +3676,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
 
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
@@ -3560,7 +3720,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("394883841625807510682");
+	    let incomeTaxWad = BigInt("394883841625807510682");
         let interestAmount = BigInt("7897676832516150213639");
+	    let interestAmountWad = BigInt("7897676832516150213639");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -3575,11 +3737,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
 
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
@@ -3636,7 +3800,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("497008973080757726820");
+	    let incomeTaxWad = BigInt("497008973080757726820");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -3651,11 +3817,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_10_18DEC
@@ -3691,7 +3859,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("8393324137177508538862");
+        let incomeTaxWad = BigInt("8393324137177508538862");
         let interestAmount = BigInt("8393324137177508538862");
+        let interestAmountWad = BigInt("8393324137177508538862");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -3706,11 +3876,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_10_18DEC
@@ -3746,7 +3918,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("9940179461615154536391");
+        let incomeTaxWad = BigInt("9940179461615154536391");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+        let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -3761,11 +3935,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+            incomeTaxWad,
+            interestAmount,
+            interestAmountWad
         );
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
             testUtils.PERCENTAGE_10_18DEC
@@ -3801,7 +3977,9 @@ contract("Milton", (accounts) => {
             testUtils.PERCENTAGE_100_18DEC
         );
         let incomeTax = BigInt("7897676832516150213639");
+	    let incomeTaxWad = BigInt("7897676832516150213639");
         let interestAmount = BigInt("7897676832516150213639");
+	    let interestAmountWad = BigInt("7897676832516150213639");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -3816,11 +3994,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
 
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
@@ -3875,7 +4055,9 @@ contract("Milton", (accounts) => {
         );
 
         let incomeTax = BigInt("9940179461615154536391");
+	    let incomeTaxWad = BigInt("9940179461615154536391");
         let interestAmount = testUtils.TC_COLLATERAL_18DEC;
+	    let interestAmountWad = testUtils.TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -3890,11 +4072,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             null,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
 
         await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
@@ -3942,15 +4126,15 @@ contract("Milton", (accounts) => {
             BigInt("50000000000000000")
         );
 
-        let expectedOpeningFeeTotalBalance = testUtils.TC_OPENING_FEE_18DEC;
-        let expectedTreasuryTotalBalance = BigInt("1491026919242273180");
+        let expectedOpeningFeeTotalBalanceWad = testUtils.TC_OPENING_FEE_18DEC;
+        let expectedTreasuryTotalBalanceWad = BigInt("1491026919242273180");
 
-        let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
-        let expectedLiquidityPoolTotalBalance =
-            miltonBalanceBeforePayout + BigInt("28329511465603190429");
+        let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad + BigInt("28329511465603190429");
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -3970,24 +4154,24 @@ contract("Milton", (accounts) => {
         let balance = await testData.miltonStorage.balances(params.asset);
 
         const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
-        const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
-        const actualTreasuryTotalBalance = BigInt(balance.treasury);
+        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
 
         assert(
-            expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
+            expectedOpeningFeeTotalBalanceWad === actualOpeningFeeTotalBalance,
             `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
-            expected: ${expectedOpeningFeeTotalBalance}`
+            expected: ${expectedOpeningFeeTotalBalanceWad}`
         );
         assert(
-            expectedLiquidityPoolTotalBalance ===
-                actualLiquidityPoolTotalBalance,
-            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalance},
-            expected: ${expectedLiquidityPoolTotalBalance}`
+            expectedLiquidityPoolTotalBalanceWad ===
+                actualLiquidityPoolTotalBalanceWad,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
+            expected: ${expectedLiquidityPoolTotalBalanceWad}`
         );
         assert(
-            expectedTreasuryTotalBalance === actualTreasuryTotalBalance,
-            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance},
-            expected: ${expectedTreasuryTotalBalance}`
+            expectedTreasuryTotalBalanceWad === actualTreasuryTotalBalanceWad,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
+            expected: ${expectedTreasuryTotalBalanceWad}`
         );
 
         await testData.iporAssetConfigurationDai.setOpeningFeeForTreasuryPercentage(
@@ -4035,15 +4219,15 @@ contract("Milton", (accounts) => {
             BigInt("25000000000000000")
         );
 
-        let expectedOpeningFeeTotalBalance = testUtils.TC_OPENING_FEE_18DEC;
-        let expectedTreasuryTotalBalance = BigInt("745513459621136590");
+        let expectedOpeningFeeTotalBalanceWad = testUtils.TC_OPENING_FEE_18DEC;
+        let expectedTreasuryTotalBalanceWad = BigInt("745513459621136590");
 
-        let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
-        let expectedLiquidityPoolTotalBalance =
-            miltonBalanceBeforePayout + BigInt("29075024925224327019");
+        let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad + BigInt("29075024925224327019");
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -4063,24 +4247,24 @@ contract("Milton", (accounts) => {
         let balance = await testData.miltonStorage.balances(params.asset);
 
         const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
-        const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
-        const actualTreasuryTotalBalance = BigInt(balance.treasury);
+        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
 
         assert(
-            expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
+            expectedOpeningFeeTotalBalanceWad === actualOpeningFeeTotalBalance,
             `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
-            expected: ${expectedOpeningFeeTotalBalance}`
+            expected: ${expectedOpeningFeeTotalBalanceWad}`
         );
         assert(
-            expectedLiquidityPoolTotalBalance ===
-                actualLiquidityPoolTotalBalance,
-            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalance},
-            expected: ${expectedLiquidityPoolTotalBalance}`
+            expectedLiquidityPoolTotalBalanceWad ===
+                actualLiquidityPoolTotalBalanceWad,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
+            expected: ${expectedLiquidityPoolTotalBalanceWad}`
         );
         assert(
-            expectedTreasuryTotalBalance === actualTreasuryTotalBalance,
-            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalance},
-            expected: ${expectedTreasuryTotalBalance}`
+            expectedTreasuryTotalBalanceWad === actualTreasuryTotalBalanceWad,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
+            expected: ${expectedTreasuryTotalBalanceWad}`
         );
 
         await testData.iporAssetConfigurationDai.setOpeningFeeForTreasuryPercentage(
@@ -4533,33 +4717,33 @@ contract("Milton", (accounts) => {
         let closerUserLost = openerUserLost;
         let openerUserEarned = closerUserEarned;
 
-        let expectedOpenerUserTokenBalanceAfterClose =
+        let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
             testUtils.USER_SUPPLY_18_DECIMALS +
             openerUserEarned -
             openerUserLost;
-        let expectedCloserUserTokenBalanceAfterClose =
+        let expectedCloserUserUnderlyingTokenBalanceAfterClose =
             testUtils.USER_SUPPLY_18_DECIMALS +
             closerUserEarned -
             closerUserLost;
 
-        let miltonBalanceBeforePayout =
+        let miltonBalanceBeforePayoutWad =
             testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
 
         let expectedMiltonUnderlyingTokenBalance =
-            miltonBalanceBeforePayout +
+            miltonBalanceBeforePayoutWad +
             testUtils.TC_OPENING_FEE_18DEC +
             testUtils.TC_IPOR_PUBLICATION_AMOUNT_18DEC +
             testUtils.TC_COLLATERAL_18DEC +
             testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
 
-        let expectedLiquidityPoolTotalBalance =
-            miltonBalanceBeforePayout + testUtils.TC_OPENING_FEE_18DEC;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad + testUtils.TC_OPENING_FEE_18DEC;
 
         let oldLiquidityPoolMaxUtilizationPercentage =
             await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
@@ -4594,11 +4778,11 @@ contract("Milton", (accounts) => {
             params.asset,
             userTwo,
             userTwo,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             expectedMiltonUnderlyingTokenBalance,
-            expectedOpenerUserTokenBalanceAfterClose,
-            expectedCloserUserTokenBalanceAfterClose,
-            expectedLiquidityPoolTotalBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+            expectedCloserUserUnderlyingTokenBalanceAfterClose,
+            expectedLiquidityPoolTotalBalanceWad,
             1,
             testUtils.TC_COLLATERAL_18DEC,
             testUtils.USD_20_18DEC,
@@ -4648,11 +4832,11 @@ contract("Milton", (accounts) => {
             testData
         );
 
-        let miltonBalanceBeforePayout =
+        let miltonBalanceBeforePayoutWad =
             testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -4733,10 +4917,10 @@ contract("Milton", (accounts) => {
             { from: userOne }
         );
 
-        let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -4779,7 +4963,7 @@ contract("Milton", (accounts) => {
         );
     });
 
-	//TODO: clarify when spread equasion will be clarified
+    //TODO: clarify when spread equasion will be clarified
     // it("should NOT open pay fixed position - liquidity pool utilisation exceeded, liquidity pool and opening fee are ZERO", async () => {
     //     //given
     //     let testData = await testUtils.prepareTestData(
@@ -4879,7 +5063,9 @@ contract("Milton", (accounts) => {
 
         let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
         let incomeTax = ZERO;
+	    let incomeTaxWad = ZERO;
         let interestAmount = ZERO;
+	    let interestAmountWad = ZERO;
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -4894,11 +5080,13 @@ contract("Milton", (accounts) => {
             0,
             testUtils.ZERO,
             testUtils.ZERO,
-            incomeTax,
+            incomeTaxWad,
             testUtils.ZERO,
             veryLongTimeAgoTimestamp,
             incomeTax,
-            interestAmount
+	        incomeTaxWad,
+            interestAmount,
+	        interestAmountWad
         );
     });
 
@@ -4932,10 +5120,10 @@ contract("Milton", (accounts) => {
             { from: userOne }
         );
 
-        let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -4985,10 +5173,10 @@ contract("Milton", (accounts) => {
             params.openTimestamp,
             { from: userOne }
         );
-        let miltonBalanceBeforePayout = testUtils.USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = testUtils.USD_14_000_18DEC;
         await data.joseph.test_provideLiquidity(
             params.asset,
-            miltonBalanceBeforePayout,
+            miltonBalanceBeforePayoutWad,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -5118,23 +5306,31 @@ contract("Milton", (accounts) => {
         iporValueAfterOpenPosition,
         periodOfTimeElapsedInSeconds,
         expectedOpenedPositions,
-        expectedDerivativesTotalBalance,
-        expectedLiquidationDepositTotalBalance,
-        expectedTreasuryTotalBalance,
+        expectedDerivativesTotalBalanceWad,
+        expectedLiquidationDepositTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
         incomeTax,
-        interestAmount
+        incomeTaxWad,
+        interestAmount,
+        interestAmountWad
     ) {
         let miltonBalanceBeforePayout = null;
+        let miltonBalanceBeforePayoutWad =
+            testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         let openerUserLost = null;
         let openerUserEarned = null;
         let closerUserLost = null;
         let closerUserEarned = null;
-        let expectedOpenerUserTokenBalanceAfterClose = null;
-        let expectedCloserUserTokenBalanceAfterClose = null;
+        let expectedOpenerUserUnderlyingTokenBalanceAfterClose = null;
+        let expectedCloserUserUnderlyingTokenBalanceAfterClose = null;
         let expectedMiltonUnderlyingTokenBalance = null;
-        let expectedLiquidityPoolTotalBalance = null;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad +
+            testUtils.TC_OPENING_FEE_18DEC +
+            interestAmountWad -
+            incomeTaxWad;
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             miltonBalanceBeforePayout =
@@ -5154,25 +5350,19 @@ contract("Milton", (accounts) => {
                 openerUserEarned = ZERO;
             }
 
-            expectedOpenerUserTokenBalanceAfterClose =
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_18_DECIMALS +
                 openerUserEarned -
                 openerUserLost;
-            expectedCloserUserTokenBalanceAfterClose =
+            expectedCloserUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_18_DECIMALS +
                 closerUserEarned -
                 closerUserLost;
-
             expectedMiltonUnderlyingTokenBalance =
-                miltonBalanceBeforePayout +
+                testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
                 testUtils.TC_OPENING_FEE_18DEC +
                 testUtils.TC_IPOR_PUBLICATION_AMOUNT_18DEC +
                 interestAmount;
-            expectedLiquidityPoolTotalBalance =
-                miltonBalanceBeforePayout +
-                testUtils.TC_OPENING_FEE_18DEC +
-                interestAmount -
-                incomeTax;
         }
 
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
@@ -5193,25 +5383,19 @@ contract("Milton", (accounts) => {
                 openerUserEarned = ZERO;
             }
 
-            expectedOpenerUserTokenBalanceAfterClose =
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_6_DECIMALS +
                 openerUserEarned -
                 openerUserLost;
-            expectedCloserUserTokenBalanceAfterClose =
+            expectedCloserUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_6_DECIMALS +
                 closerUserEarned -
                 closerUserLost;
-
             expectedMiltonUnderlyingTokenBalance =
-                miltonBalanceBeforePayout +
+                testUtils.TC_LP_BALANCE_BEFORE_CLOSE_6DEC +
                 testUtils.TC_OPENING_FEE_6DEC +
                 testUtils.TC_IPOR_PUBLICATION_AMOUNT_6DEC +
                 interestAmount;
-            expectedLiquidityPoolTotalBalance =
-                miltonBalanceBeforePayout +
-                testUtils.TC_OPENING_FEE_6DEC +
-                interestAmount -
-                incomeTax;
         }
 
         await exetuceClosePositionTestCase(
@@ -5226,13 +5410,13 @@ contract("Milton", (accounts) => {
             periodOfTimeElapsedInSeconds,
             miltonBalanceBeforePayout,
             expectedMiltonUnderlyingTokenBalance,
-            expectedOpenerUserTokenBalanceAfterClose,
-            expectedCloserUserTokenBalanceAfterClose,
-            expectedLiquidityPoolTotalBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+            expectedCloserUserUnderlyingTokenBalanceAfterClose,
+            expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
-            expectedDerivativesTotalBalance,
-            expectedLiquidationDepositTotalBalance,
-            incomeTax,
+            expectedDerivativesTotalBalanceWad,
+            expectedLiquidationDepositTotalBalanceWad,
+            expectedTreasuryTotalBalanceWad,
             expectedSoap,
             openTimestamp
         );
@@ -5249,28 +5433,35 @@ contract("Milton", (accounts) => {
         iporValueAfterOpenPosition,
         periodOfTimeElapsedInSeconds,
         expectedOpenedPositions,
-        expectedDerivativesTotalBalance,
-        expectedLiquidationDepositTotalBalance,
-        expectedTreasuryTotalBalance,
+        expectedDerivativesTotalBalanceWad,
+        expectedLiquidationDepositTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
         incomeTax,
-        interestAmount
+        incomeTaxWad,
+        interestAmount,
+        interestAmountWad
     ) {
         let miltonBalanceBeforePayout = null;
+        let miltonBalanceBeforePayoutWad =
+            testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         let closerUserEarned = null;
         let openerUserLost = null;
         let closerUserLost = null;
         let openerUserEarned = null;
         let expectedMiltonUnderlyingTokenBalance = null;
-        let expectedOpenerUserTokenBalanceAfterClose = null;
-        let expectedCloserUserTokenBalanceAfterClose = null;
-        let expectedLiquidityPoolTotalBalance = null;
+        let expectedOpenerUserUnderlyingTokenBalanceAfterClose = null;
+        let expectedCloserUserUnderlyingTokenBalanceAfterClose = null;
+
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad -
+            interestAmountWad +
+            testUtils.TC_OPENING_FEE_18DEC;
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             miltonBalanceBeforePayout =
                 testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
-
             closerUserEarned = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
             openerUserLost =
                 testUtils.TC_OPENING_FEE_18DEC +
@@ -5288,31 +5479,24 @@ contract("Milton", (accounts) => {
             }
 
             expectedMiltonUnderlyingTokenBalance =
-                miltonBalanceBeforePayout +
+                testUtils.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
                 testUtils.TC_OPENING_FEE_18DEC +
                 testUtils.TC_IPOR_PUBLICATION_AMOUNT_18DEC -
                 interestAmount +
                 incomeTax;
-
-            expectedOpenerUserTokenBalanceAfterClose =
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_18_DECIMALS +
                 openerUserEarned -
                 openerUserLost;
-            expectedCloserUserTokenBalanceAfterClose =
+            expectedCloserUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_18_DECIMALS +
                 closerUserEarned -
                 closerUserLost;
-
-            expectedLiquidityPoolTotalBalance =
-                miltonBalanceBeforePayout -
-                interestAmount +
-                testUtils.TC_OPENING_FEE_18DEC;
         }
 
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
             miltonBalanceBeforePayout =
                 testUtils.TC_LP_BALANCE_BEFORE_CLOSE_6DEC;
-
             closerUserEarned = testUtils.TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC;
             openerUserLost =
                 testUtils.TC_OPENING_FEE_6DEC +
@@ -5330,24 +5514,19 @@ contract("Milton", (accounts) => {
             }
 
             expectedMiltonUnderlyingTokenBalance =
-                miltonBalanceBeforePayout +
+                testUtils.TC_LP_BALANCE_BEFORE_CLOSE_6DEC +
                 testUtils.TC_OPENING_FEE_6DEC +
                 testUtils.TC_IPOR_PUBLICATION_AMOUNT_6DEC -
                 interestAmount +
                 incomeTax;
-
-            expectedOpenerUserTokenBalanceAfterClose =
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_6_DECIMALS +
                 openerUserEarned -
                 openerUserLost;
-            expectedCloserUserTokenBalanceAfterClose =
+            expectedCloserUserUnderlyingTokenBalanceAfterClose =
                 testUtils.USER_SUPPLY_6_DECIMALS +
                 closerUserEarned -
                 closerUserLost;
-            expectedLiquidityPoolTotalBalance =
-                miltonBalanceBeforePayout -
-                interestAmount +
-                testUtils.TC_OPENING_FEE_6DEC;
         }
 
         await exetuceClosePositionTestCase(
@@ -5362,13 +5541,13 @@ contract("Milton", (accounts) => {
             periodOfTimeElapsedInSeconds,
             miltonBalanceBeforePayout,
             expectedMiltonUnderlyingTokenBalance,
-            expectedOpenerUserTokenBalanceAfterClose,
-            expectedCloserUserTokenBalanceAfterClose,
-            expectedLiquidityPoolTotalBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+            expectedCloserUserUnderlyingTokenBalanceAfterClose,
+            expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
-            expectedDerivativesTotalBalance,
-            expectedLiquidationDepositTotalBalance,
-            incomeTax,
+            expectedDerivativesTotalBalanceWad,
+            expectedLiquidationDepositTotalBalanceWad,
+            expectedTreasuryTotalBalanceWad,
             expectedSoap,
             openTimestamp
         );
@@ -5386,13 +5565,13 @@ contract("Milton", (accounts) => {
         periodOfTimeElapsedInSeconds,
         providedLiquidityAmount,
         expectedMiltonUnderlyingTokenBalance,
-        expectedOpenerUserTokenBalanceAfterPayOut,
-        expectedCloserUserTokenBalanceAfterPayOut,
-        expectedLiquidityPoolTotalBalance,
+        expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+        expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
+        expectedLiquidityPoolTotalBalanceWad,
         expectedOpenedPositions,
-        expectedDerivativesTotalBalance,
-        expectedLiquidationDepositTotalBalance,
-        expectedTreasuryTotalBalance,
+        expectedDerivativesTotalBalanceWad,
+        expectedLiquidationDepositTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp
     ) {
@@ -5463,13 +5642,13 @@ contract("Milton", (accounts) => {
             closerUserAddress,
             providedLiquidityAmount,
             expectedMiltonUnderlyingTokenBalance,
-            expectedOpenerUserTokenBalanceAfterPayOut,
-            expectedCloserUserTokenBalanceAfterPayOut,
-            expectedLiquidityPoolTotalBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+            expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
+            expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
-            expectedDerivativesTotalBalance,
-            expectedLiquidationDepositTotalBalance,
-            expectedTreasuryTotalBalance
+            expectedDerivativesTotalBalanceWad,
+            expectedLiquidationDepositTotalBalanceWad,
+            expectedTreasuryTotalBalanceWad
         );
 
         const soapParams = {
@@ -5488,13 +5667,13 @@ contract("Milton", (accounts) => {
         closerUserAddress,
         miltonBalanceBeforePayout,
         expectedMiltonUnderlyingTokenBalance,
-        expectedOpenerUserTokenBalanceAfterPayOut,
-        expectedCloserUserTokenBalanceAfterPayOut,
-        expectedLiquidityPoolTotalBalance,
+        expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+        expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
+        expectedLiquidityPoolTotalBalanceWad,
         expectedOpenedPositions,
-        expectedDerivativesTotalBalance,
-        expectedLiquidationDepositTotalBalance,
-        expectedTreasuryTotalBalance
+        expectedDerivativesTotalBalanceWad,
+        expectedLiquidationDepositTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad
     ) {
         let actualDerivatives = await testData.miltonStorage.getPositions();
         let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
@@ -5503,42 +5682,42 @@ contract("Milton", (accounts) => {
             `Incorrect number of opened derivatives, actual:  ${actualOpenPositionsVol}, expected: ${expectedOpenedPositions}`
         );
 
-        let expectedOpeningFeeTotalBalance = null;
-        let expectedPublicationFeeTotalBalance = null;
-        let openerUserTokenBalanceBeforePayout = null;
-        let closerUserTokenBalanceBeforePayout = null;
-        let ammTokenBalanceAfterPayout = null;
-        let openerUserTokenBalanceAfterPayout = null;
-        let closerUserTokenBalanceAfterPayout = null;
+        let expectedOpeningFeeTotalBalanceWad = testUtils.TC_OPENING_FEE_18DEC;
+        let expectedPublicationFeeTotalBalanceWad = testUtils.USD_10_18DEC;
+        let openerUserUnderlyingTokenBalanceBeforePayout = null;
+        let closerUserUnderlyingTokenBalanceBeforePayout = null;
+        let miltonUnderlyingTokenBalanceAfterPayout = null;
+        let openerUserUnderlyingTokenBalanceAfterPayout = null;
+        let closerUserUnderlyingTokenBalanceAfterPayout = null;
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
-            expectedOpeningFeeTotalBalance = testUtils.TC_OPENING_FEE_18DEC;
-            expectedPublicationFeeTotalBalance = testUtils.USD_10_18DEC;
-            openerUserTokenBalanceBeforePayout = testUtils.USD_10_000_000_18DEC;
-            closerUserTokenBalanceBeforePayout = testUtils.USD_10_000_000_18DEC;
-            ammTokenBalanceAfterPayout = BigInt(
+            openerUserUnderlyingTokenBalanceBeforePayout =
+                testUtils.USD_10_000_000_18DEC;
+            closerUserUnderlyingTokenBalanceBeforePayout =
+                testUtils.USD_10_000_000_18DEC;
+            miltonUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenDai.balanceOf(data.milton.address)
             );
-            openerUserTokenBalanceAfterPayout = BigInt(
+            openerUserUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenDai.balanceOf(openerUserAddress)
             );
-            closerUserTokenBalanceAfterPayout = BigInt(
+            closerUserUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenDai.balanceOf(closerUserAddress)
             );
         }
 
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
-            expectedOpeningFeeTotalBalance = testUtils.TC_OPENING_FEE_6DEC;
-            expectedPublicationFeeTotalBalance = testUtils.USD_10_6DEC;
-            openerUserTokenBalanceBeforePayout = testUtils.USD_10_000_000_6DEC;
-            closerUserTokenBalanceBeforePayout = testUtils.USD_10_000_000_6DEC;
-            ammTokenBalanceAfterPayout = BigInt(
+            openerUserUnderlyingTokenBalanceBeforePayout =
+                testUtils.USD_10_000_000_6DEC;
+            closerUserUnderlyingTokenBalanceBeforePayout =
+                testUtils.USD_10_000_000_6DEC;
+            miltonUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenUsdt.balanceOf(data.milton.address)
             );
-            openerUserTokenBalanceAfterPayout = BigInt(
+            openerUserUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenUsdt.balanceOf(openerUserAddress)
             );
-            closerUserTokenBalanceAfterPayout = BigInt(
+            closerUserUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenUsdt.balanceOf(closerUserAddress)
             );
         }
@@ -5548,15 +5727,15 @@ contract("Milton", (accounts) => {
             asset,
             openerUserAddress,
             closerUserAddress,
-            expectedOpenerUserTokenBalanceAfterPayOut,
-            expectedCloserUserTokenBalanceAfterPayOut,
+            expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+            expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
             expectedMiltonUnderlyingTokenBalance,
-            expectedDerivativesTotalBalance,
-            expectedOpeningFeeTotalBalance,
-            expectedLiquidationDepositTotalBalance,
-            expectedPublicationFeeTotalBalance,
-            expectedLiquidityPoolTotalBalance,
-            expectedTreasuryTotalBalance
+            expectedDerivativesTotalBalanceWad,
+            expectedOpeningFeeTotalBalanceWad,
+            expectedLiquidationDepositTotalBalanceWad,
+            expectedPublicationFeeTotalBalanceWad,
+            expectedLiquidityPoolTotalBalanceWad,
+            expectedTreasuryTotalBalanceWad
         );
 
         let expectedSumOfBalancesBeforePayout = null;
@@ -5564,18 +5743,20 @@ contract("Milton", (accounts) => {
 
         if (openerUserAddress === closerUserAddress) {
             expectedSumOfBalancesBeforePayout =
-                miltonBalanceBeforePayout + openerUserTokenBalanceBeforePayout;
+                miltonBalanceBeforePayout +
+                openerUserUnderlyingTokenBalanceBeforePayout;
             actualSumOfBalances =
-                openerUserTokenBalanceAfterPayout + ammTokenBalanceAfterPayout;
+                openerUserUnderlyingTokenBalanceAfterPayout +
+                miltonUnderlyingTokenBalanceAfterPayout;
         } else {
             expectedSumOfBalancesBeforePayout =
                 miltonBalanceBeforePayout +
-                openerUserTokenBalanceBeforePayout +
-                closerUserTokenBalanceBeforePayout;
+                openerUserUnderlyingTokenBalanceBeforePayout +
+                closerUserUnderlyingTokenBalanceBeforePayout;
             actualSumOfBalances =
-                openerUserTokenBalanceAfterPayout +
-                closerUserTokenBalanceAfterPayout +
-                ammTokenBalanceAfterPayout;
+                openerUserUnderlyingTokenBalanceAfterPayout +
+                closerUserUnderlyingTokenBalanceAfterPayout +
+                miltonUnderlyingTokenBalanceAfterPayout;
         }
 
         assert(
@@ -5600,33 +5781,33 @@ contract("Milton", (accounts) => {
         asset,
         openerUserAddress,
         closerUserAddress,
-        expectedOpenerUserTokenBalance,
-        expectedCloserUserTokenBalance,
+        expectedOpenerUserUnderlyingTokenBalance,
+        expectedCloserUserUnderlyingTokenBalance,
         expectedMiltonUnderlyingTokenBalance,
-        expectedDerivativesTotalBalance,
-        expectedOpeningFeeTotalBalance,
-        expectedLiquidationDepositTotalBalance,
-        expectedPublicationFeeTotalBalance,
-        expectedLiquidityPoolTotalBalance,
-        expectedTreasuryTotalBalance
+        expectedDerivativesTotalBalanceWad,
+        expectedOpeningFeeTotalBalanceWad,
+        expectedLiquidationDepositTotalBalanceWad,
+        expectedPublicationFeeTotalBalanceWad,
+        expectedLiquidityPoolTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad
     ) => {
-        let actualOpenerUserTokenBalance = null;
-        let actualCloserUserTokenBalance = null;
+        let actualOpenerUserUnderlyingTokenBalance = null;
+        let actualCloserUserUnderlyingTokenBalance = null;
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
-            actualOpenerUserTokenBalance = BigInt(
+            actualOpenerUserUnderlyingTokenBalance = BigInt(
                 await testData.tokenDai.balanceOf(openerUserAddress)
             );
-            actualCloserUserTokenBalance = BigInt(
+            actualCloserUserUnderlyingTokenBalance = BigInt(
                 await testData.tokenDai.balanceOf(closerUserAddress)
             );
         }
 
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
-            actualOpenerUserTokenBalance = BigInt(
+            actualOpenerUserUnderlyingTokenBalance = BigInt(
                 await testData.tokenUsdt.balanceOf(openerUserAddress)
             );
-            actualCloserUserTokenBalance = BigInt(
+            actualCloserUserUnderlyingTokenBalance = BigInt(
                 await testData.tokenUsdt.balanceOf(closerUserAddress)
             );
         }
@@ -5651,8 +5832,10 @@ contract("Milton", (accounts) => {
         const actualPublicationFeeTotalBalance = BigInt(
             balance.iporPublicationFee
         );
-        const actualLiquidityPoolTotalBalance = BigInt(balance.liquidityPool);
-        const actualTreasuryTotalBalance = BigInt(balance.treasury);
+        const actualLiquidityPoolTotalBalanceWad = BigInt(
+            balance.liquidityPool
+        );
+        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
 
         if (expectedMiltonUnderlyingTokenBalance !== null) {
             assert(
@@ -5662,63 +5845,67 @@ contract("Milton", (accounts) => {
             );
         }
 
-        if (expectedOpenerUserTokenBalance != null) {
+        if (expectedOpenerUserUnderlyingTokenBalance != null) {
             assert(
-                actualOpenerUserTokenBalance === expectedOpenerUserTokenBalance,
-                `Incorrect token balance for ${asset} in Opener User address, actual: ${actualOpenerUserTokenBalance}, expected: ${expectedOpenerUserTokenBalance}`
+                actualOpenerUserUnderlyingTokenBalance ===
+                    expectedOpenerUserUnderlyingTokenBalance,
+                `Incorrect token balance for ${asset} in Opener User address, actual: ${actualOpenerUserUnderlyingTokenBalance}, expected: ${expectedOpenerUserUnderlyingTokenBalance}`
             );
         }
 
-        if (expectedCloserUserTokenBalance != null) {
+        if (expectedCloserUserUnderlyingTokenBalance != null) {
             assert(
-                actualCloserUserTokenBalance === expectedCloserUserTokenBalance,
-                `Incorrect token balance for ${asset} in Closer User address, actual: ${actualCloserUserTokenBalance}, expected: ${expectedCloserUserTokenBalance}`
+                actualCloserUserUnderlyingTokenBalance ===
+                    expectedCloserUserUnderlyingTokenBalance,
+                `Incorrect token balance for ${asset} in Closer User address, actual: ${actualCloserUserUnderlyingTokenBalance}, expected: ${expectedCloserUserUnderlyingTokenBalance}`
             );
         }
 
-        if (expectedDerivativesTotalBalance != null) {
+        if (expectedDerivativesTotalBalanceWad != null) {
             assert(
-                expectedDerivativesTotalBalance ===
+                expectedDerivativesTotalBalanceWad ===
                     actualDerivativesTotalBalance,
-                `Incorrect derivatives total balance for ${asset}, actual:  ${actualDerivativesTotalBalance}, expected: ${expectedDerivativesTotalBalance}`
+                `Incorrect derivatives total balance for ${asset}, actual:  ${actualDerivativesTotalBalance}, expected: ${expectedDerivativesTotalBalanceWad}`
             );
         }
 
-        if (expectedOpeningFeeTotalBalance != null) {
+        if (expectedOpeningFeeTotalBalanceWad != null) {
             assert(
-                expectedOpeningFeeTotalBalance === actualOpeningFeeTotalBalance,
-                `Incorrect opening fee total balance for ${asset}, actual:  ${actualOpeningFeeTotalBalance}, expected: ${expectedOpeningFeeTotalBalance}`
+                expectedOpeningFeeTotalBalanceWad ===
+                    actualOpeningFeeTotalBalance,
+                `Incorrect opening fee total balance for ${asset}, actual:  ${actualOpeningFeeTotalBalance}, expected: ${expectedOpeningFeeTotalBalanceWad}`
             );
         }
 
-        if (expectedLiquidationDepositTotalBalance !== null) {
+        if (expectedLiquidationDepositTotalBalanceWad !== null) {
             assert(
-                expectedLiquidationDepositTotalBalance ===
+                expectedLiquidationDepositTotalBalanceWad ===
                     actualLiquidationDepositTotalBalance,
-                `Incorrect liquidation deposit fee total balance for ${asset}, actual:  ${actualLiquidationDepositTotalBalance}, expected: ${expectedLiquidationDepositTotalBalance}`
+                `Incorrect liquidation deposit fee total balance for ${asset}, actual:  ${actualLiquidationDepositTotalBalance}, expected: ${expectedLiquidationDepositTotalBalanceWad}`
             );
         }
 
-        if (expectedPublicationFeeTotalBalance != null) {
+        if (expectedPublicationFeeTotalBalanceWad != null) {
             assert(
-                expectedPublicationFeeTotalBalance ===
+                expectedPublicationFeeTotalBalanceWad ===
                     actualPublicationFeeTotalBalance,
-                `Incorrect ipor publication fee total balance for ${asset}, actual: ${actualPublicationFeeTotalBalance}, expected: ${expectedPublicationFeeTotalBalance}`
+                `Incorrect ipor publication fee total balance for ${asset}, actual: ${actualPublicationFeeTotalBalance}, expected: ${expectedPublicationFeeTotalBalanceWad}`
             );
         }
 
-        if (expectedLiquidityPoolTotalBalance != null) {
+        if (expectedLiquidityPoolTotalBalanceWad != null) {
             assert(
-                expectedLiquidityPoolTotalBalance ===
-                    actualLiquidityPoolTotalBalance,
-                `Incorrect Liquidity Pool total balance for ${asset}, actual:  ${actualLiquidityPoolTotalBalance}, expected: ${expectedLiquidityPoolTotalBalance}`
+                expectedLiquidityPoolTotalBalanceWad ===
+                    actualLiquidityPoolTotalBalanceWad,
+                `Incorrect Liquidity Pool total balance for ${asset}, actual:  ${actualLiquidityPoolTotalBalanceWad}, expected: ${expectedLiquidityPoolTotalBalanceWad}`
             );
         }
 
-        if (expectedTreasuryTotalBalance != null) {
+        if (expectedTreasuryTotalBalanceWad != null) {
             assert(
-                expectedTreasuryTotalBalance === actualTreasuryTotalBalance,
-                `Incorrect Treasury total balance for ${asset}, actual:  ${actualTreasuryTotalBalance}, expected: ${expectedTreasuryTotalBalance}`
+                expectedTreasuryTotalBalanceWad ===
+                    actualTreasuryTotalBalanceWad,
+                `Incorrect Treasury total balance for ${asset}, actual:  ${actualTreasuryTotalBalanceWad}, expected: ${expectedTreasuryTotalBalanceWad}`
             );
         }
     };

@@ -9,27 +9,25 @@ import { Errors } from "../Errors.sol";
 library DerivativeLogic {
     //@notice for final value divide by multiplicator* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
-        uint256 mdNotionalAmount,
-        uint256 mdDerivativeFixedInterestRate,
-        uint256 derivativePeriodInSeconds,
-        uint256 multiplicator
+        uint256 notionalAmount,
+        uint256 derivativeFixedInterestRate,
+        uint256 derivativePeriodInSeconds
     ) internal pure returns (uint256) {
         return
-            mdNotionalAmount *
-            multiplicator *
-            Constants.YEAR_IN_SECONDS +
-            mdNotionalAmount *
-            mdDerivativeFixedInterestRate *
+            notionalAmount *
+            Constants.WAD_YEAR_IN_SECONDS +
+            notionalAmount *
+            derivativeFixedInterestRate *
             derivativePeriodInSeconds;
     }
 
     //@notice for final value divide by multiplicator * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFloating(
-        uint256 mdIbtQuantity,
-        uint256 mdIbtCurrentPrice
+        uint256 ibtQuantity,
+        uint256 ibtCurrentPrice
     ) internal pure returns (uint256) {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
-        return mdIbtQuantity * mdIbtCurrentPrice * Constants.YEAR_IN_SECONDS;
+        return ibtQuantity * ibtCurrentPrice * Constants.YEAR_IN_SECONDS;
     }
 
     function calculateInterest(
@@ -59,8 +57,7 @@ library DerivativeLogic {
         uint256 quasiIFixed = calculateQuasiInterestFixed(
             derivative.notionalAmount,
             derivative.indicator.fixedInterestRate,
-            calculatedPeriodInSeconds,
-            derivative.multiplicator
+            calculatedPeriodInSeconds
         );
         uint256 quasiIFloating = calculateQuasiInterestFloating(
             derivative.indicator.ibtQuantity,
@@ -72,7 +69,7 @@ library DerivativeLogic {
                 uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
                 ? int256(quasiIFloating) - int256(quasiIFixed)
                 : int256(quasiIFixed) - int256(quasiIFloating),
-            int256(derivative.multiplicator * Constants.YEAR_IN_SECONDS)
+            Constants.WAD_YEAR_IN_SECONDS_INT
         );
 
         return

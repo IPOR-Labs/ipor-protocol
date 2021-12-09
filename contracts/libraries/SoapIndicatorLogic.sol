@@ -10,15 +10,12 @@ library SoapIndicatorLogic {
     function calculateSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,
-        uint256 timestamp,
-        uint256 multiplicator
+        uint256 timestamp
     ) internal view returns (int256) {
         return
             AmmMath.divisionInt(
-                calculateQuasiSoap(si, ibtPrice, timestamp, multiplicator),
-                int256(
-                    multiplicator * multiplicator * Constants.YEAR_IN_SECONDS
-                )
+                calculateQuasiSoap(si, ibtPrice, timestamp),
+                Constants.WAD_P2_YEAR_IN_SECONDS_INT
             );
     }
 
@@ -26,8 +23,7 @@ library SoapIndicatorLogic {
     function calculateQuasiSoap(
         DataTypes.SoapIndicator storage si,
         uint256 ibtPrice,
-        uint256 timestamp,
-        uint256 multiplicator
+        uint256 timestamp
     ) internal view returns (int256) {
         if (
             si.direction ==
@@ -37,38 +33,24 @@ library SoapIndicatorLogic {
                 int256(
                     si.totalIbtQuantity *
                         ibtPrice *
-                        multiplicator *
-                        Constants.YEAR_IN_SECONDS
+                        Constants.WAD_YEAR_IN_SECONDS
                 ) -
                 int256(
                     si.totalNotional *
-                        multiplicator *
-                        multiplicator *
-                        Constants.YEAR_IN_SECONDS +
-                        calculateQuasiHyphoteticalInterestTotal(
-                            si,
-                            timestamp,
-                            multiplicator
-                        )
+                        Constants.WAD_P2_YEAR_IN_SECONDS +
+                        calculateQuasiHyphoteticalInterestTotal(si, timestamp)
                 );
         } else {
             return
                 int256(
                     si.totalNotional *
-                        multiplicator *
-                        multiplicator *
-                        Constants.YEAR_IN_SECONDS +
-                        calculateQuasiHyphoteticalInterestTotal(
-                            si,
-                            timestamp,
-                            multiplicator
-                        )
+                        Constants.WAD_P2_YEAR_IN_SECONDS +
+                        calculateQuasiHyphoteticalInterestTotal(si, timestamp)
                 ) -
                 int256(
                     si.totalIbtQuantity *
                         ibtPrice *
-                        multiplicator *
-                        Constants.YEAR_IN_SECONDS
+                        Constants.WAD_YEAR_IN_SECONDS
                 );
         }
     }
@@ -76,26 +58,24 @@ library SoapIndicatorLogic {
     function rebalanceWhenOpenPosition(
         DataTypes.SoapIndicator storage si,
         uint256 rebalanceTimestamp,
-        uint256 mdDerivativeNotional,
-        uint256 mdDerivativeFixedInterestRate,
-        uint256 mdDerivativeIbtQuantity,
-        uint256 multiplicator
+        uint256 derivativeNotional,
+        uint256 derivativeFixedInterestRate,
+        uint256 derivativeIbtQuantity
     ) internal {
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
             si,
-            mdDerivativeNotional,
-            mdDerivativeFixedInterestRate
+            derivativeNotional,
+            derivativeFixedInterestRate
         );
         uint256 quasiHypotheticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
-                rebalanceTimestamp,
-                multiplicator
+                rebalanceTimestamp
             );
 
         si.rebalanceTimestamp = rebalanceTimestamp;
-        si.totalNotional = si.totalNotional + mdDerivativeNotional;
-        si.totalIbtQuantity = si.totalIbtQuantity + mdDerivativeIbtQuantity;
+        si.totalNotional = si.totalNotional + derivativeNotional;
+        si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
     }
@@ -106,21 +86,18 @@ library SoapIndicatorLogic {
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
-        uint256 derivativeIbtQuantity,
-        uint256 multiplicator
+        uint256 derivativeIbtQuantity
     ) external {
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
-                rebalanceTimestamp,
-                multiplicator
+                rebalanceTimestamp
             );
 
         uint256 quasiInterestPaidOut = calculateQuasiInterestPaidOut(
             rebalanceTimestamp,
             derivativeOpenTimestamp,
             derivativeNotional,
-            derivativeFixedInterestRate,
-            multiplicator
+            derivativeFixedInterestRate
         );
 
         uint256 quasiHypotheticalInterestTotal = currentQuasiHypoteticalInterestTotal -
@@ -144,8 +121,7 @@ library SoapIndicatorLogic {
         uint256 calculateTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
-        uint256 multiplicator
+        uint256 derivativeFixedInterestRate
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
@@ -155,28 +131,22 @@ library SoapIndicatorLogic {
             derivativeNotional *
             derivativeFixedInterestRate *
             (calculateTimestamp - derivativeOpenTimestamp) *
-            multiplicator;
+            Constants.D18;
     }
 
     function calculateQuasiHyphoteticalInterestTotal(
         DataTypes.SoapIndicator memory si,
-        uint256 timestamp,
-        uint256 multiplicator
+        uint256 timestamp
     ) internal pure returns (uint256) {
         return
             si.quasiHypotheticalInterestCumulative +
-            calculateQuasiHypotheticalInterestDelta(
-                si,
-                timestamp,
-                multiplicator
-            );
+            calculateQuasiHypotheticalInterestDelta(si, timestamp);
     }
 
     //division by Constants.YEAR_IN_SECONDS * 1e54 postponed at the end of calculation
     function calculateQuasiHypotheticalInterestDelta(
         DataTypes.SoapIndicator memory si,
-        uint256 timestamp,
-        uint256 multiplicator
+        uint256 timestamp
     ) internal pure returns (uint256) {
         require(
             timestamp >= si.rebalanceTimestamp,
@@ -186,7 +156,7 @@ library SoapIndicatorLogic {
         return
             si.totalNotional *
             si.averageInterestRate *
-            ((timestamp - si.rebalanceTimestamp) * multiplicator);
+            ((timestamp - si.rebalanceTimestamp) * Constants.D18);
     }
 
     function calculateInterestRateWhenOpenPosition(

@@ -14,7 +14,7 @@ import "../interfaces/IIporConfiguration.sol";
  * @title Ipor Oracle Storage initial version
  * @author IPOR Labs
  */
- //TODO: [gas-opt] use with Warren as inheritance
+//TODO: [gas-opt] use with Warren as inheritance
 contract WarrenStorage is Ownable, IWarrenStorage {
     using IporLogic for DataTypes.IPOR;
 
@@ -45,8 +45,11 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 
     IIporConfiguration private iporConfiguration;
 
-	//TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+    //TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration)
+        external
+        onlyOwner
+    {
         iporConfiguration = initialIporConfiguration;
     }
 
@@ -63,6 +66,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         return indexes[asset];
     }
 
+    //@notice indexValues with decimals same like in asset
     function updateIndexes(
         address[] memory assetList,
         uint256[] memory indexValues,
@@ -73,7 +77,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
             Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
         );
         for (uint256 i = 0; i < assetList.length; i++) {
-			//TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
+            //TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
             require(
                 iporConfiguration.assetSupported(assetList[i]) == 1,
                 Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
@@ -135,9 +139,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 
         if (!assetExists) {
             assets.push(asset);
-            newQuasiIbtPrice =
-                iporAssetConfiguration.getMultiplicator() *
-                Constants.YEAR_IN_SECONDS;
+            newQuasiIbtPrice = Constants.WAD_YEAR_IN_SECONDS;
             newExponentialMovingAverage = indexValue;
         } else {
             newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(
@@ -147,8 +149,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
                 .calculateExponentialMovingAverage(
                     indexes[asset].exponentialMovingAverage,
                     indexValue,
-                    iporAssetConfiguration.getDecayFactorValue(),
-                    iporAssetConfiguration.getMultiplicator()
+                    iporAssetConfiguration.getDecayFactorValue()
                 );
         }
         indexes[asset] = DataTypes.IPOR(

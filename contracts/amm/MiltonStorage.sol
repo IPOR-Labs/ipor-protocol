@@ -11,11 +11,12 @@ import "../interfaces/IIporConfiguration.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
+import "../libraries/Constants.sol";
 
 contract MiltonStorage is Ownable, IMiltonStorage {
-	//TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
+    //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using DerivativeLogic for DataTypes.IporDerivative;
-    using SoapIndicatorLogic for DataTypes.SoapIndicator;    
+    using SoapIndicatorLogic for DataTypes.SoapIndicator;
     using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
@@ -62,7 +63,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 0
             )
         );
-
     }
 
     function getBalance(address asset)
@@ -138,8 +138,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             iporDerivative.asset,
             iporDerivative.direction,
             iporDerivative.collateral,
-            iporDerivative.fee.openingAmount,
-            iporDerivative.multiplicator
+            iporDerivative.fee.openingAmount
         );
         _updateSoapIndicatorsWhenOpenPosition(iporDerivative);
     }
@@ -210,7 +209,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 iporConfiguration.getIporAssetConfiguration(asset)
             ).getSpreadTemporaryValue(),
             spreadRecFixedValue = IIporAssetConfiguration(
-				iporConfiguration.getIporAssetConfiguration(asset)
+                iporConfiguration.getIporAssetConfiguration(asset)
             ).getSpreadTemporaryValue()
         );
     }
@@ -229,32 +228,32 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             int256 soap
         )
     {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        uint256 multiplicator = iporAssetConfiguration.getMultiplicator();
-
         (int256 qSoapPf, int256 qSoapRf, int256 qSoap) = _calculateQuasiSoap(
             asset,
             ibtPrice,
-            calculateTimestamp,
-            multiplicator
+            calculateTimestamp
         );
-        int256 p2YearInSeconds = int256(
-            multiplicator * multiplicator * Constants.YEAR_IN_SECONDS
-        );
+
         return (
-            soapPf = AmmMath.divisionInt(qSoapPf, p2YearInSeconds),
-            soapRf = AmmMath.divisionInt(qSoapRf, p2YearInSeconds),
-            soap = AmmMath.divisionInt(qSoap, p2YearInSeconds)
+            soapPf = AmmMath.divisionInt(
+                qSoapPf,
+                Constants.WAD_P2_YEAR_IN_SECONDS_INT
+            ),
+            soapRf = AmmMath.divisionInt(
+                qSoapRf,
+                Constants.WAD_P2_YEAR_IN_SECONDS_INT
+            ),
+            soap = AmmMath.divisionInt(
+                qSoap,
+                Constants.WAD_P2_YEAR_IN_SECONDS_INT
+            )
         );
     }
 
     function _calculateQuasiSoap(
         address asset,
         uint256 ibtPrice,
-        uint256 calculateTimestamp,
-        uint256 multiplicator
+        uint256 calculateTimestamp
     )
         internal
         view
@@ -265,7 +264,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         )
     {
         (int256 _soapPf, int256 _soapRf) = soapIndicators[asset]
-            .calculateQuasiSoap(calculateTimestamp, ibtPrice, multiplicator);
+            .calculateQuasiSoap(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
 
@@ -273,8 +272,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address asset,
         uint8 direction,
         uint256 collateral,
-        uint256 openingFeeAmount,
-        uint256 multiplicator
+        uint256 openingFeeAmount
     ) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
@@ -310,8 +308,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             uint256 openingFeeTreasuryValue
         ) = _splitOpeningFeeAmount(
                 openingFeeAmount,
-                openingFeeForTreasurePercentage,
-                multiplicator
+                openingFeeForTreasurePercentage
             );
         balances[asset].liquidityPool =
             balances[asset].liquidityPool +
@@ -323,8 +320,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _splitOpeningFeeAmount(
         uint256 openingFeeAmount,
-        uint256 openingFeeForTreasurePercentage,
-        uint256 multiplicator
+        uint256 openingFeeForTreasurePercentage
     )
         internal
         pure
@@ -332,10 +328,13 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     {
         treasuryValue = AmmMath.division(
             openingFeeAmount * openingFeeForTreasurePercentage,
-            multiplicator
+            Constants.D18
         );
         liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
+
+    event LogDebug(string name, uint256 value);
+	event LogDebugInt(string name, int256 value);
 
     function _updateBalancesWhenClosePosition(
         address user,
@@ -389,13 +388,15 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 iporConfiguration.getIporAssetConfiguration(
                     derivativeItem.item.asset
                 )
-            ).getIncomeTaxPercentage(),
-            derivativeItem.item.multiplicator
+            ).getIncomeTaxPercentage()
         );
 
         balances[derivativeItem.item.asset].treasury =
             balances[derivativeItem.item.asset].treasury +
             incomeTax;
+
+        emit LogDebug("incomeTax", incomeTax);
+        emit LogDebugInt("positionValue", positionValue);
 
         if (positionValue > 0) {
             require(
@@ -487,8 +488,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             iporDerivative.startingTimestamp,
             iporDerivative.notionalAmount,
             iporDerivative.indicator.fixedInterestRate,
-            iporDerivative.indicator.ibtQuantity,
-            iporDerivative.multiplicator
+            iporDerivative.indicator.ibtQuantity
         );
     }
 
@@ -503,8 +503,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.notionalAmount,
                 derivativeItem.item.indicator.fixedInterestRate,
-                derivativeItem.item.indicator.ibtQuantity,
-                derivativeItem.item.multiplicator
+                derivativeItem.item.indicator.ibtQuantity
             );
     }
 

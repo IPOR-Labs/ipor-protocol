@@ -31,11 +31,14 @@ contract IpToken is Ownable, IIpToken, ERC20 {
     ) ERC20(aTokenName, aTokenSymbol) {
         require(address(0) != underlyingAsset, Errors.WRONG_ADDRESS);
         _underlyingAsset = underlyingAsset;
-        _decimals = ERC20(underlyingAsset).decimals();
+        _decimals = 18;
     }
 
-	//TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
+    //TODO: initialization only once
+    function initialize(IIporConfiguration initialIporConfiguration)
+        external
+        onlyOwner
+    {
         iporConfiguration = initialIporConfiguration;
     }
 
@@ -43,11 +46,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         return _decimals;
     }
 
-    function mint(address user, uint256 amount)
-        external
-        override
-        onlyJoseph
-    {        
+    function mint(address user, uint256 amount) external override onlyJoseph {
         require(amount > 0, Errors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(user, amount);
         emit Transfer(address(0), user, amount);

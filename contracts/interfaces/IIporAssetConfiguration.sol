@@ -82,7 +82,7 @@ interface IIporAssetConfiguration {
         view
         returns (uint256);
 
-    function setLiquidityPoolMaxUtilizationPercentage(		
+    function setLiquidityPoolMaxUtilizationPercentage(
         uint256 liquidityPoolMaxUtilizationPercentage
     ) external;
 
@@ -107,6 +107,8 @@ interface IIporAssetConfiguration {
     function setMinCollateralizationFactorValue(
         uint256 minCollateralizationFactorValue
     ) external;
+
+    function getDecimals() external view returns (uint8);
 
     function getMultiplicator() external view returns (uint256);
 

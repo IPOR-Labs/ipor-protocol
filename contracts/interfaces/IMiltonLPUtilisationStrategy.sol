@@ -8,7 +8,6 @@ interface IMiltonLPUtilizationStrategy {
     function calculateTotalUtilizationRate(
         address asset,
         uint256 deposit,
-        uint256 openingFee,
-        uint256 multiplicator
+        uint256 openingFee
     ) external view returns (uint256);
 }

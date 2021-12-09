@@ -65,6 +65,7 @@ module.exports.PERCENTAGE_6_6DEC = BigInt("60000");
 module.exports.PERCENTAGE_7_18DEC = BigInt("70000000000000000");
 module.exports.PERCENTAGE_7_6DEC = BigInt("70000");
 module.exports.PERCENTAGE_8_18DEC = BigInt("80000000000000000");
+module.exports.PERCENTAGE_8_6DEC = BigInt("80000");
 module.exports.PERCENTAGE_10_18DEC = BigInt("100000000000000000");
 module.exports.PERCENTAGE_20_18DEC = BigInt("200000000000000000");
 module.exports.PERCENTAGE_50_18DEC = BigInt("500000000000000000");
@@ -265,7 +266,7 @@ module.exports.prepareData = async () => {
     );
     let warren = await TestWarren.new();
     let milton = await TestMilton.new();
-    let joseph = await TestJoseph.new();	
+    let joseph = await TestJoseph.new();
 
     await iporConfiguration.setWarren(await warren.address);
     await iporConfiguration.setMilton(await milton.address);
@@ -274,7 +275,6 @@ module.exports.prepareData = async () => {
     await warren.initialize(iporConfiguration.address);
     await milton.initialize(iporConfiguration.address);
     await joseph.initialize(iporConfiguration.address);
-	
 
     let data = {
         warren: warren,
@@ -299,7 +299,7 @@ module.exports.prepareTestData = async (accounts, assets, data) => {
 
     let miltonStorage = await MiltonStorage.new();
     let warrenStorage = await WarrenStorage.new();
-	let miltonSpread = await MiltonSpreadStrategy.new();
+    let miltonSpread = await MiltonSpreadStrategy.new();
 
     await warrenStorage.addUpdater(accounts[1]);
     await warrenStorage.addUpdater(data.warren.address);
@@ -309,7 +309,7 @@ module.exports.prepareTestData = async (accounts, assets, data) => {
 
     await miltonStorage.initialize(data.iporConfiguration.address);
     await warrenStorage.initialize(data.iporConfiguration.address);
-	await miltonSpread.initialize(data.iporConfiguration.address);
+    await miltonSpread.initialize(data.iporConfiguration.address);
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -381,7 +381,7 @@ module.exports.prepareTestData = async (accounts, assets, data) => {
         iporAssetConfigurationUsdc: iporAssetConfigurationUsdc,
         iporAssetConfigurationDai: iporAssetConfigurationDai,
         miltonStorage: miltonStorage,
-		miltonSpread: miltonSpread,
+        miltonSpread: miltonSpread,
         warrenStorage: warrenStorage,
     };
     return testData;

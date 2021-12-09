@@ -46,13 +46,14 @@ library DataTypes {
 
     //@notice IPOR Structure
     struct IPOR {
+		//TODO: remove it - redundant information
         //@notice Asset Symbol like USDT, USDC, DAI etc.
         address asset;
-        //@notice IPOR Index Value
+        //@notice IPOR Index Value shown as WAD 
         uint256 indexValue;
-        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds
+        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds, shown as WAD 
         uint256 quasiIbtPrice;
-        //@notice exponential moving average - required for calculating SPREAD in Milton
+        //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD 
         uint256 exponentialMovingAverage;
         //@notice block timestamp
         uint256 blockTimestamp;
@@ -157,6 +158,6 @@ library DataTypes {
         IporDerivativeIndicator indicator;
 
 		//TODO: remove from storage, can be fetched from underlying asset
-        uint256 multiplicator;
+        // uint256 multiplicator;
     }
 }
