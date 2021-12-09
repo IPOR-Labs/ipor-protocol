@@ -292,7 +292,7 @@ contract("Milton", (accounts) => {
                 await testData.miltonStorage.balances(params.asset)
             ).payFixedDerivatives
         );
-        const actualRecFixDerivativesBalance = BigInt(
+        const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonStorage.balances(params.asset)
             ).recFixedDerivatives
