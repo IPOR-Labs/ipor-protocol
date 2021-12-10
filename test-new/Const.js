@@ -62,3 +62,5 @@ module.exports.TC_COLLATERAL_18DEC = BigInt("9940179461615154536391");
 module.exports.TC_COLLATERAL_6DEC = BigInt("9940179462");
 module.exports.TC_OPENING_FEE_18DEC = BigInt("29820538384845463609");
 module.exports.TC_OPENING_FEE_6DEC = BigInt("29820538");
+
+module.exports.MINDELAY = BigInt("86400");
