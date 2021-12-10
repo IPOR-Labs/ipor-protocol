@@ -10,6 +10,7 @@ const {
     USER_SUPPLY_18_DECIMALS,
     USER_SUPPLY_6_DECIMALS,
 } = require("./Const.js");
+const { ethers } = require("hardhat");
 
 module.exports.assertError = async (promise, error) => {
     try {
@@ -331,16 +332,43 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             );
             await miltonStorage.addAsset(tokenUsdt.address);
         }
-        // if (assets[k] === "USDC") {
-        //     tokenUsdc = await UsdcMockedToken.new(TOTAL_SUPPLY_6_DECIMALS, 6);
-        //     await data.iporConfiguration.addAsset(tokenUsdc.address);
-        //     await data.milton.authorizeJoseph(tokenUsdc.address);
-        //     ipTokenUsdc = await IpToken.new(tokenUsdc.address, "IP USDC", "ipUSDC");
-        //     ipTokenUsdc.initialize(data.iporConfiguration.address);
-        //     iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.new(tokenUsdc.address, ipTokenUsdc.address);
-        //     await data.iporConfiguration.setIporAssetConfiguration(tokenUsdc.address, await iporAssetConfigurationUsdc.address);
-        //     await miltonStorage.addAsset(tokenUsdc.address);
-        // }
+        if (assets[k] === "USDC") {
+            const UsdcMockedToken = await ethers.getContractFactory(
+                "UsdcMockedToken"
+            );
+            tokenUsdc = await UsdcMockedToken.deploy(
+                TOTAL_SUPPLY_6_DECIMALS,
+                6
+            );
+            tokenUsdc.deployed();
+
+            await data.iporConfiguration.addAsset(tokenUsdc.address);
+            await data.milton.authorizeJoseph(tokenUsdc.address);
+
+            const IpToken = await ethers.getContractFactory("IpToken");
+            ipTokenUsdc = await IpToken.deploy(
+                tokenUsdc.address,
+                "IP USDC",
+                "ipUSDC"
+            );
+            ipTokenUsdc.deployed();
+            ipTokenUsdc.initialize(data.iporConfiguration.address);
+
+            const IporAssetConfigurationUsdc = await ethers.getContractFactory(
+                "IporAssetConfiguration"
+            );
+            iporAssetConfigurationUsdc =
+                await IporAssetConfigurationUsdc.deploy(
+                    tokenUsdc.address,
+                    ipTokenUsdc.address
+                );
+            iporAssetConfigurationUsdc.deployed();
+            await data.iporConfiguration.setIporAssetConfiguration(
+                tokenUsdc.address,
+                await iporAssetConfigurationUsdc.address
+            );
+            await miltonStorage.addAsset(tokenUsdc.address);
+        }
         if (assets[k] === "DAI") {
             const DaiMockedToken = await ethers.getContractFactory(
                 "DaiMockedToken"
