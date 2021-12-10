@@ -12,7 +12,9 @@ const {
     TC_IBT_PRICE_DAI_18DEC,
     TC_IBT_PRICE_DAI_6DEC,
     PERCENTAGE_5_6DEC,
+    PERCENTAGE_5_18DEC,
     PERCENTAGE_6_6DEC,
+    PERCENTAGE_6_18DEC,
     PERCENTAGE_7_18DEC,
     PERCENTAGE_8_18DEC,
     PERCENTAGE_50_18DEC,
@@ -215,7 +217,7 @@ describe("Warren", () => {
         const asset = testData.tokenUsdt.address;
         await testData.warrenStorage.addUpdater(userOne.address);
         await testData.warrenStorage.addUpdater(data.warren.address);
-        const iporIndexValue = BigInt("500000000");
+        const iporIndexValue = BigInt("500000000000000000000");
 
         //when
         await data.warren.connect(userOne).updateIndex(asset, iporIndexValue);
@@ -228,7 +230,7 @@ describe("Warren", () => {
         expect(
             actualIbtPrice,
             `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${TC_IBT_PRICE_DAI_6DEC}`
-        ).to.be.eql(TC_IBT_PRICE_DAI_6DEC);
+        ).to.be.eql(TC_IBT_PRICE_DAI_18DEC);
         expect(
             actualIndexValue,
             `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${iporIndexValue}`
@@ -243,10 +245,10 @@ describe("Warren", () => {
         const updateDate = Math.floor(Date.now() / 1000);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_6DEC, updateDate);
+            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         const updateDateSecond = updateDate + YEAR_IN_SECONDS;
 
-        const iporIndexSecondValue = BigInt("51000");
+        const iporIndexSecondValue = BigInt("51000000000000000");
 
         //when
         await data.warren
@@ -257,7 +259,7 @@ describe("Warren", () => {
         const iporIndex = await data.warren.getIndex(asset);
         const actualIbtPrice = BigInt(iporIndex.ibtPrice);
         const actualIndexValue = BigInt(iporIndex.indexValue);
-        const expectedIbtPrice = BigInt("1050000");
+        const expectedIbtPrice = BigInt("1050000000000000000");
 
         expect(
             actualIbtPrice,
@@ -277,7 +279,7 @@ describe("Warren", () => {
         await testData.warrenStorage.addUpdater(data.warren.address);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_6DEC, updateDate);
+            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         updateDate = updateDate + MONTH_IN_SECONDS;
         const iporIndexSecondValue = PERCENTAGE_6_6DEC;
 
@@ -291,7 +293,7 @@ describe("Warren", () => {
         const actualIbtPrice = BigInt(iporIndex.ibtPrice);
         const actualIndexValue = BigInt(iporIndex.indexValue);
 
-        const expectedIbtPrice = BigInt("1004110");
+        const expectedIbtPrice = BigInt("1004109589041095890");
 
         expect(
             actualIbtPrice,
@@ -304,6 +306,84 @@ describe("Warren", () => {
         ).to.be.eql(iporIndexSecondValue);
     });
 
+    it("should calculate DIFFERENT Interest Bearing Token Price  - ONE SECOND period, same IPOR Index value, 6 decimals asset", async () => {
+        //given
+        const asset = testData.tokenUsdt.address;
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(userOne.address);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        await data.warren
+            .connect(userOne)
+            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+
+        const actualFirstIporIndex = await data.warren.getIndex(asset);
+        const actualFirstIbtPrice = BigInt(actualFirstIporIndex.ibtPrice);
+        const actualFirstIndexValue = BigInt(actualFirstIporIndex.indexValue);
+
+        updateDate = updateDate + 1;
+
+        const iporIndexSecondValue = PERCENTAGE_5_18DEC;
+
+        //when
+        await data.warren
+            .connect(userOne)
+            .test_updateIndex(asset, iporIndexSecondValue, updateDate);
+
+        //then
+        const actualSecondIporIndex = await data.warren.getIndex(asset);
+        const actualSecondIbtPrice = BigInt(actualSecondIporIndex.ibtPrice);
+        const actualSecondIndexValue = BigInt(actualSecondIporIndex.indexValue);
+
+        expect(
+            actualFirstIbtPrice,
+            `Actual Interest Bearing Token Price should be different than previous one, actual: ${actualSecondIbtPrice}, expected: ${actualFirstIbtPrice}`
+        ).to.not.equal(actualSecondIbtPrice);
+
+        expect(
+            actualSecondIndexValue,
+            `Actual IPOR Index Value is incorrect, actual: ${actualSecondIndexValue}, expected: ${actualFirstIndexValue}`
+        ).to.equal(actualFirstIndexValue);
+    });
+
+    it("should calculate DIFFERENT Interest Bearing Token Price  - ONE SECOND period, same IPOR Index value, 18 decimals asset", async () => {
+        //given
+        const asset = testData.tokenDai.address;
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(userOne.address);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        await data.warren
+            .connect(userOne)
+            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+
+        const actualFirstIporIndex = await data.warren.getIndex(asset);
+        const actualFirstIbtPrice = BigInt(actualFirstIporIndex.ibtPrice);
+        const actualFirstIndexValue = BigInt(actualFirstIporIndex.indexValue);
+
+        updateDate = updateDate + 1;
+
+        const iporIndexSecondValue = PERCENTAGE_5_18DEC;
+
+        //when
+        await data.warren
+            .connect(userOne)
+            .test_updateIndex(asset, iporIndexSecondValue, updateDate);
+
+        //then
+        const actualSecondIporIndex = await data.warren.getIndex(asset);
+        const actualSecondIbtPrice = BigInt(actualSecondIporIndex.ibtPrice);
+        const actualSecondIndexValue = BigInt(actualSecondIporIndex.indexValue);
+
+        expect(
+            actualFirstIbtPrice,
+            `Actual Interest Bearing Token Price should be different than previous one, actual: ${actualSecondIbtPrice}, expected: ${actualFirstIbtPrice}`
+        ).to.not.equal(actualSecondIbtPrice);
+
+        expect(
+            actualSecondIndexValue,
+            `Actual IPOR Index Value is incorrect, actual: ${actualSecondIndexValue}, expected: ${actualFirstIndexValue}`
+        ).to.equal(actualFirstIndexValue);
+    });
+
     it("should calculate next after next Interest Bearing Token Price - half year and three months snapshots", async () => {
         //given
         const asset = testData.tokenUsdt.address;
@@ -312,11 +392,11 @@ describe("Warren", () => {
         let updateDate = Math.floor(Date.now() / 1000);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_6DEC, updateDate);
+            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         updateDate = updateDate + YEAR_IN_SECONDS / 2;
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_6_6DEC, updateDate);
+            .test_updateIndex(asset, PERCENTAGE_6_18DEC, updateDate);
         updateDate = updateDate + YEAR_IN_SECONDS / 4;
 
         let iporIndexThirdValue = PERCENTAGE_7_18DEC;
@@ -331,7 +411,7 @@ describe("Warren", () => {
 
         const actualIbtPrice = BigInt(iporIndex.ibtPrice);
         const actualIndexValue = BigInt(iporIndex.indexValue);
-        const expectedIbtPrice = BigInt("1040000");
+        const expectedIbtPrice = BigInt("1040000000000000000");
 
         expect(
             actualIbtPrice,
