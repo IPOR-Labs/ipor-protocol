@@ -1,9 +1,9 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 
-const {ContractData} = newContextComponents;
+const { ContractData } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div>
         <table className="table" align="center">
             <tr>
@@ -15,196 +15,250 @@ export default ({drizzle, drizzleState}) => (
             <tr>
                 <td>SPREAD Pay Fixed</td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
+                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="TestMilton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdtMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadPayFixedValue / 1000000}<br/>
+                                    {item.spreadPayFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadPayFixedValue}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="Milton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdtMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadPayFixedValue / 1000000}<br/>
+                                    {item.spreadPayFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadPayFixedValue}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
+                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="TestMilton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdcMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadPayFixedValue / 1000000}<br/>
+                                    {item.spreadPayFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadPayFixedValue}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="Milton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdcMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadPayFixedValue / 1000000}<br/>
+                                    {item.spreadPayFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadPayFixedValue}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
+                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="TestMilton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.DaiMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadPayFixedValue / 1000000000000000000}<br/>
+                                    {item.spreadPayFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadPayFixedValue}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="Milton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.DaiMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadPayFixedValue / 1000000000000000000}<br/>
+                                    {item.spreadPayFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadPayFixedValue}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
             </tr>
             <tr>
                 <td>SPREAD Receive Fixed</td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
+                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="TestMilton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdtMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadRecFixedValue / 1000000}<br/>
+                                    {item.spreadRecFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadRecFixedValue}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="Milton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdtMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadRecFixedValue / 1000000}<br/>
+                                    {item.spreadRecFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadRecFixedValue}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
+                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="TestMilton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdcMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadRecFixedValue / 1000000}<br/>
+                                    {item.spreadRecFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadRecFixedValue}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="Milton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.UsdcMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadRecFixedValue / 1000000}<br/>
+                                    {item.spreadRecFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadRecFixedValue}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
+                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="TestMilton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.DaiMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadRecFixedValue / 1000000000000000000}<br/>
+                                    {item.spreadRecFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadRecFixedValue}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="Milton"
                             method="calculateSpread"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                            methodArgs={[
+                                drizzle.contracts.DaiMockedToken.address,
+                            ]}
                             render={(item) => (
                                 <div>
-                                    {item.spreadRecFixedValue / 1000000000000000000}<br/>
+                                    {item.spreadRecFixedValue /
+                                        1000000000000000000}
+                                    <br />
                                     <small>{item.spreadRecFixedValue}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
             </tr>
         </table>
-        <hr/>
+        <hr />
     </div>
 );

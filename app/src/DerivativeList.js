@@ -36,44 +36,44 @@ export default (derivatives) => (
                                 <td>{derivative.buyer}</td>
                                 <td>{derivative.asset}</td>
                                 <td>{derivative.direction}</td>
-                                <td>{derivative.collateral / derivative.multiplicator}<br/><small>{derivative.collateral}</small>
+                                <td>{derivative.collateral / 1000000000000000000}<br/><small>{derivative.collateral}</small>
                                 </td>
                                 <td>
                                     {derivative.collateralizationFactor}
                                 </td>
                                 <td>
-                                    {derivative.notionalAmount / derivative.multiplicator}
+                                    {derivative.notionalAmount / 1000000000000000000}
                                     <br/><small>{derivative.notionalAmount}</small>
                                 </td>
                                 <td>
-                                    {derivative.fee.liquidationDepositAmount / derivative.multiplicator}
+                                    {derivative.fee.liquidationDepositAmount / 1000000000000000000}
                                     <br/><small>{derivative.fee.liquidationDepositAmount}</small>
                                 </td>
                                 <td>
-                                    {derivative.fee.openingAmount / derivative.multiplicator}
+                                    {derivative.fee.openingAmount / 1000000000000000000}
                                     <br/><small>{derivative.fee.openingAmount}</small>
                                 </td>
                                 <td>
-                                    {derivative.fee.iporPublicationAmount / derivative.multiplicator}
+                                    {derivative.fee.iporPublicationAmount / 1000000000000000000}
                                     <br/><small>{derivative.fee.iporPublicationAmount}</small>
                                 </td>
                                 <td>
-                                    {derivative.fee.spreadPercentage / derivative.multiplicator}
+                                    {derivative.fee.spreadPercentage / 1000000000000000000}
                                     <br/><small>{derivative.fee.spreadPercentage}</small>
                                 </td>
                                 <td>
-                                    {derivative.indicator.iporIndexValue / derivative.multiplicator}
+                                    {derivative.indicator.iporIndexValue / 1000000000000000000}
                                     <br/><small>{derivative.indicator.iporIndexValue}</small>
                                 </td>
                                 <td>
-                                    {derivative.indicator.ibtPrice / derivative.multiplicator}
+                                    {derivative.indicator.ibtPrice / 1000000000000000000}
                                     <br/><small>{derivative.indicator.ibtPrice}</small></td>
                                 <td>
-                                    {derivative.indicator.ibtQuantity / derivative.multiplicator}
+                                    {derivative.indicator.ibtQuantity / 1000000000000000000}
                                     <br/><small>{derivative.indicator.ibtQuantity}</small>
                                 </td>
                                 <td>
-                                    {derivative.indicator.fixedInterestRate / derivative.multiplicator}
+                                    {derivative.indicator.fixedInterestRate / 1000000000000000000}
                                     <br/><small>{derivative.indicator.fixedInterestRate}</small>
                                 </td>
                                 <td>{toDate(derivative.startingTimestamp)}</td>

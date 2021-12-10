@@ -30,7 +30,7 @@ library DataTypes {
 		//TODO: don't have to store - use two separate structure - one for pay fixe, one for rec fixed
         //leg
         DataTypes.DerivativeDirection direction;
-        //O_0, value without division by multiplicator * Constants.YEAR_IN_SECONDS
+        //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
         uint256 quasiHypotheticalInterestCumulative;
         //N_0
         uint256 totalNotional;
@@ -46,13 +46,14 @@ library DataTypes {
 
     //@notice IPOR Structure
     struct IPOR {
+		//TODO: remove it - redundant information
         //@notice Asset Symbol like USDT, USDC, DAI etc.
         address asset;
-        //@notice IPOR Index Value
+        //@notice IPOR Index Value shown as WAD 
         uint256 indexValue;
-        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds
+        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds, shown as WAD 
         uint256 quasiIbtPrice;
-        //@notice exponential moving average - required for calculating SPREAD in Milton
+        //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD 
         uint256 exponentialMovingAverage;
         //@notice block timestamp
         uint256 blockTimestamp;
@@ -155,8 +156,5 @@ library DataTypes {
         //@notice Endind time of this Derivative
         uint256 endingTimestamp;
         IporDerivativeIndicator indicator;
-
-		//TODO: remove from storage, can be fetched from underlying asset
-        uint256 multiplicator;
     }
 }

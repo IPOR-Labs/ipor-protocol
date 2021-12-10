@@ -183,7 +183,7 @@ contract("MiltonStorage", (accounts) => {
 
         await data.warren.test_updateIndex(
             derivativeParams.asset,
-            testUtils.PERCENTAGE_5_6DEC,
+            testUtils.PERCENTAGE_5_18DEC,
             derivativeParams.openTimestamp,
             { from: userOne }
         );
@@ -322,8 +322,7 @@ contract("MiltonStorage", (accounts) => {
                 ibtPrice: 123,
                 ibtQuantity: 123,
                 fixedInterestRate: 234,
-            },
-            multiplicator: testUtils.TC_MULTIPLICATOR_18DEC,
+            }
         };
     };
 });

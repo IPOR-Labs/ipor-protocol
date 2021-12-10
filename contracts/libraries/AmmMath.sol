@@ -14,20 +14,47 @@ library AmmMath {
         z = (x + (y / 2)) / y;
     }
 
-    function calculateIncomeTax(
-        uint256 derivativeProfit,
-        uint256 incomeTaxPercentage,
-        uint256 multiplicator
-    ) internal pure returns (uint256) {
-        return division(derivativeProfit * incomeTaxPercentage, multiplicator);
+    function convertWadToAssetDecimals(uint256 value, uint256 assetDecimals)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (assetDecimals == 18) {
+            return value;
+        } else if (assetDecimals > 18) {
+            return value * 10**(assetDecimals - 18);
+        } else {
+            return division(value, 10**(18 - assetDecimals));
+        }
     }
 
-    function calculateIbtQuantity(
-        uint256 notionalAmount,
-        uint256 ibtPrice,
-        uint256 multiplicator
+    function convertToWad(uint256 value, uint256 assetDecimals)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (assetDecimals == 18) {
+            return value;
+        } else if (assetDecimals > 18) {
+            return division(value, 10**(assetDecimals - 18));
+        } else {
+            return value * 10**(18 - assetDecimals);
+        }
+    }
+
+    function calculateIncomeTax(
+        uint256 derivativeProfit,
+        uint256 incomeTaxPercentage
     ) internal pure returns (uint256) {
-        return division(notionalAmount * multiplicator, ibtPrice);
+        return division(derivativeProfit * incomeTaxPercentage, Constants.D18);
+    }
+
+    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice)
+        internal
+        pure
+        returns (uint256)
+    {
+        return division(notionalAmount * Constants.D18, ibtPrice);
     }
 
     function calculateDerivativeAmount(
@@ -35,26 +62,25 @@ library AmmMath {
         uint256 collateralizationFactor,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
-        uint256 openingFeePercentage,
-        uint256 multiplicator
+        uint256 openingFeePercentage
     ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
         uint256 collateral = division(
             (totalAmount -
                 liquidationDepositAmount -
-                iporPublicationFeeAmount) * multiplicator,
-            multiplicator +
+                iporPublicationFeeAmount) * Constants.D18,
+            Constants.D18 +
                 division(
                     collateralizationFactor * openingFeePercentage,
-                    multiplicator
+                    Constants.D18
                 )
         );
         uint256 notional = division(
             collateralizationFactor * collateral,
-            multiplicator
+            Constants.D18
         );
         uint256 openingFeeAmount = division(
             notional * openingFeePercentage,
-            multiplicator
+            Constants.D18
         );
         return
             DataTypes.IporDerivativeAmount(
@@ -64,9 +90,7 @@ library AmmMath {
             );
     }
 
-
     function absoluteValue(int256 value) internal pure returns (uint256) {
         return (uint256)(value < 0 ? -value : value);
     }
-	
 }

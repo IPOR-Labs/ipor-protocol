@@ -141,9 +141,10 @@ describe("Joseph", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
         const liquidityAmount = USD_14_000_6DEC;
+        const wadLiquidityAmount = USD_14_000_18DEC;
 
         const expectedLiquidityProviderStableBalance = BigInt("9986000000000");
-        const expectedLiquidityPoolBalanceMilton = USD_14_000_6DEC;
+        const expectedLiquidityPoolBalanceMilton = USD_14_000_18DEC;
 
         //when
         await data.joseph
@@ -171,13 +172,13 @@ describe("Joseph", () => {
         );
 
         expect(
-            liquidityAmount,
-            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${liquidityAmount.address}`
+            wadLiquidityAmount,
+            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${wadLiquidityAmount}`
         ).to.be.eql(actualIpTokenBalanceSender);
 
         expect(
             liquidityAmount,
-            `Incorrect USDT balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${liquidityAmount.address}`
+            `Incorrect USDT balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${liquidityAmount}`
         ).to.be.eql(actualUnderlyingBalanceMilton);
 
         expect(
@@ -292,11 +293,13 @@ describe("Joseph", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
         const liquidityAmount = USD_14_000_6DEC;
-        const withdrawAmount = USD_10_000_6DEC;
-        const expectedIpTokenBalanceSender = BigInt("4000000000");
+        const withdrawIpTokenAmount = USD_10_000_18DEC;
+        const expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         const expectedStableBalanceMilton = BigInt("4000000000");
         const expectedLiquidityProviderStableBalance = BigInt("9996000000000");
-        const expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
+        const expectedLiquidityPoolBalanceMilton = BigInt(
+            "4000000000000000000000"
+        );
 
         await data.joseph
             .connect(liquidityProvider)
@@ -309,7 +312,11 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(params.asset, withdrawAmount, params.openTimestamp);
+            .test_redeem(
+                params.asset,
+                withdrawIpTokenAmount,
+                params.openTimestamp
+            );
 
         //then
         const actualIpTokenBalanceSender = BigInt(
@@ -455,7 +462,7 @@ describe("Joseph", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
 
-        const expectedExchangeRate = BigInt("1000000");
+        const expectedExchangeRate = BigInt("1000000000000000000");
 
         await data.joseph
             .connect(liquidityProvider)
@@ -622,13 +629,13 @@ describe("Joseph", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000748");
+        let expectedExchangeRate = BigInt("1000747756729810568");
 
         await data.warren
             .connect(userOne)
             .test_updateIndex(
                 params.asset,
-                PERCENTAGE_3_6DEC,
+                PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
         await data.joseph
@@ -1001,7 +1008,7 @@ describe("Joseph", () => {
             .connect(userOne)
             .test_updateIndex(
                 params.asset,
-                PERCENTAGE_3_6DEC,
+                PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
         await data.joseph
@@ -1010,7 +1017,7 @@ describe("Joseph", () => {
         const oldOpeningFeePercentage =
             await testData.iporAssetConfigurationUsdt.getOpeningFeePercentage();
         await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(
-            BigInt("600000")
+            BigInt("600000000000000000")
         );
 
         //open position to have something in Liquidity Pool
@@ -1026,7 +1033,7 @@ describe("Joseph", () => {
             );
 
         //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714286");
+        const expectedExchangeRate = BigInt("1714285714285714286");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await data.milton.calculateExchangeRate(
                 params.asset,
@@ -1047,7 +1054,7 @@ describe("Joseph", () => {
             .connect(userThree)
             .test_redeem(
                 params.asset,
-                BigInt("874999854"),
+                BigInt("874999999999999999854"),
                 params.openTimestamp
             );
 
@@ -1489,7 +1496,7 @@ describe("Joseph", () => {
         const withdrawAmountDAI = USD_10_000_18DEC;
 
         const liquidityAmountUSDT = USD_14_000_6DEC;
-        const withdrawAmountUSDT = USD_10_000_6DEC;
+        const withdrawIpTokenAmountUSDT = USD_10_000_18DEC;
 
         const expectedipDAIBalanceSender = BigInt("4000000000000000000000");
         const expectedDAIBalanceMilton = BigInt("4000000000000000000000");
@@ -1498,11 +1505,12 @@ describe("Joseph", () => {
         );
         const expectedLiquidityPoolDAIBalanceMilton = expectedDAIBalanceMilton;
 
-        const expectedipUSDTBalanceSender = BigInt("4000000000");
+        const expectedipUSDTBalanceSender = BigInt("4000000000000000000000");
         const expectedUSDTBalanceMilton = BigInt("4000000000");
         const expectedLiquidityProviderUSDTBalance = BigInt("9996000000000");
-        const expectedLiquidityPoolUSDTBalanceMilton =
-            expectedUSDTBalanceMilton;
+        const expectedLiquidityPoolUSDTBalanceMilton = BigInt(
+            "4000000000000000000000"
+        );
 
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -1533,7 +1541,7 @@ describe("Joseph", () => {
             .connect(liquidityProvider)
             .test_redeem(
                 testData.tokenUsdt.address,
-                withdrawAmountUSDT,
+                withdrawIpTokenAmountUSDT,
                 timestamp
             );
 
@@ -1646,7 +1654,7 @@ describe("Joseph", () => {
         const liquidityAmountDAI = USD_14_000_18DEC;
         const withdrawAmountDAI = USD_10_000_18DEC;
         const liquidityAmountUSDT = USD_14_000_6DEC;
-        const withdrawAmountUSDT = USD_10_000_6DEC;
+        const withdrawIpTokenAmountUSDT = USD_10_000_18DEC;
 
         const expectedipDAIBalanceSender = BigInt("4000000000000000000000");
         const expectedDAIBalanceMilton = BigInt("4000000000000000000000");
@@ -1655,11 +1663,12 @@ describe("Joseph", () => {
         );
         const expectedLiquidityPoolDAIBalanceMilton = expectedDAIBalanceMilton;
 
-        const expectedipUSDTBalanceSender = BigInt("4000000000");
+        const expectedipUSDTBalanceSender = BigInt("4000000000000000000000");
         const expectedUSDTBalanceMilton = BigInt("4000000000");
         const expectedLiquidityProviderUSDTBalance = BigInt("9996000000000");
-        const expectedLiquidityPoolUSDTBalanceMilton =
-            expectedUSDTBalanceMilton;
+        const expectedLiquidityPoolUSDTBalanceMilton = BigInt(
+            "4000000000000000000000"
+        );
 
         const daiUser = userOne;
         const usdtUser = userTwo;
@@ -1693,7 +1702,7 @@ describe("Joseph", () => {
             .connect(usdtUser)
             .test_redeem(
                 testData.tokenUsdt.address,
-                withdrawAmountUSDT,
+                withdrawIpTokenAmountUSDT,
                 timestamp
             );
 

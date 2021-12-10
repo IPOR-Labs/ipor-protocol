@@ -225,52 +225,7 @@ contract TestData {
             collateral * collateralizationFactor,
             block.timestamp,
             block.timestamp + 60 * 60 * 24 * 28,
-            indicator,
-            Constants.D18
-        );
-
-        return derivative;
-    }
-
-    function prepareDerivativeCase2(uint256 fixedInterestRate)
-        public
-        view
-        returns (DataTypes.IporDerivative memory)
-    {
-        uint256 ibtPriceFirst = 100 * Constants.D6;
-        uint256 collateral = 9870300000;
-        uint256 collateralizationFactor = 10;
-
-        DataTypes.IporDerivativeIndicator memory indicator = DataTypes
-            .IporDerivativeIndicator(
-                3 * 1e4, //ipor index value
-                ibtPriceFirst,
-                987030000, //ibtQuantity
-                fixedInterestRate
-            );
-
-        DataTypes.IporDerivativeFee memory fee = DataTypes.IporDerivativeFee(
-            20 * Constants.D6, //liquidation deposit amount
-            99700000, //opening fee amount
-            10 * Constants.D6, //ipor publication amount
-            1e4, // spread percentege
-            1e4 // spread percentege
-        );
-
-        DataTypes.IporDerivative memory derivative = DataTypes.IporDerivative(
-            0,
-            DataTypes.DerivativeState.ACTIVE,
-            msg.sender,
-            address(daiMockedToken),
-            0, //Pay Fixed, Receive Floating (long position)
-            collateral,
-            fee,
-            collateralizationFactor,
-            collateral * collateralizationFactor,
-            block.timestamp,
-            block.timestamp + 60 * 60 * 24 * 28,
-            indicator,
-            Constants.D6
+            indicator
         );
 
         return derivative;

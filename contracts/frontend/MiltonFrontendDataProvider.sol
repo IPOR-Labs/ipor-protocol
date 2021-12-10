@@ -18,13 +18,14 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
     }
 
     function getIpTokenExchangeRate(address asset)
-        external view
+        external
+        view
         override
         returns (uint256)
     {
         IMilton milton = IMilton(iporConfiguration.getMilton());
         uint256 result = milton.calculateExchangeRate(asset, block.timestamp);
-		return result;
+        return result;
     }
 
     function getTotalOutstandingNotional(address asset)
@@ -70,8 +71,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 milton.calculatePositionValue(derivativeItem.item),
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.endingTimestamp,
-                derivativeItem.item.fee.liquidationDepositAmount,
-                derivativeItem.item.multiplicator
+                derivativeItem.item.fee.liquidationDepositAmount
             );
         }
 

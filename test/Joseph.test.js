@@ -111,9 +111,10 @@ contract("Joseph", (accounts) => {
             testData
         );
         let liquidityAmount = testUtils.USD_14_000_6DEC;
+		let wadLiquidityAmount = testUtils.USD_14_000_18DEC;
 
         let expectedLiquidityProviderStableBalance = BigInt("9986000000000");
-        let expectedLiquidityPoolBalanceMilton = testUtils.USD_14_000_6DEC;
+        let expectedLiquidityPoolBalanceMilton = testUtils.USD_14_000_18DEC;
 
         //when
         await data.joseph.test_provideLiquidity(
@@ -140,8 +141,8 @@ contract("Joseph", (accounts) => {
         );
 
         assert(
-            liquidityAmount === actualIpTokenBalanceSender,
-            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${liquidityAmount}`
+            wadLiquidityAmount === actualIpTokenBalanceSender,
+            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${wadLiquidityAmount}`
         );
 
         assert(
@@ -186,7 +187,7 @@ contract("Joseph", (accounts) => {
         );
 
         let liquidityAmount = testUtils.USD_14_000_18DEC;
-        let withdrawAmount = testUtils.USD_10_000_18DEC;
+        let withdrawIpTokenAmount = testUtils.USD_10_000_18DEC;
         let expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         let expectedStableBalanceMilton = BigInt("4000000000000000000000");
         let expectedLiquidityProviderStableBalance = BigInt(
@@ -204,7 +205,7 @@ contract("Joseph", (accounts) => {
         //when
         await data.joseph.test_redeem(
             params.asset,
-            withdrawAmount,
+            withdrawIpTokenAmount,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -272,11 +273,11 @@ contract("Joseph", (accounts) => {
             testData
         );
         let liquidityAmount = testUtils.USD_14_000_6DEC;
-        let withdrawAmount = testUtils.USD_10_000_6DEC;
-        let expectedIpTokenBalanceSender = BigInt("4000000000");
+        let withdrawIpTokenAmount = testUtils.USD_10_000_18DEC;
+        let expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         let expectedStableBalanceMilton = BigInt("4000000000");
         let expectedLiquidityProviderStableBalance = BigInt("9996000000000");
-        let expectedLiquidityPoolBalanceMilton = expectedStableBalanceMilton;
+        let expectedLiquidityPoolBalanceMilton = BigInt("4000000000000000000000");
 
         await data.joseph.test_provideLiquidity(
             params.asset,
@@ -288,7 +289,7 @@ contract("Joseph", (accounts) => {
         //when
         await data.joseph.test_redeem(
             params.asset,
-            withdrawAmount,
+            withdrawIpTokenAmount,
             params.openTimestamp,
             { from: liquidityProvider }
         );
@@ -441,7 +442,7 @@ contract("Joseph", (accounts) => {
             testData
         );
 
-        let expectedExchangeRate = BigInt("1000000");
+        let expectedExchangeRate = BigInt("1000000000000000000");
 
         await data.joseph.test_provideLiquidity(
             params.asset,
@@ -588,22 +589,22 @@ contract("Joseph", (accounts) => {
         );
     });
 
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals", async () => {
         //given
@@ -628,11 +629,11 @@ contract("Joseph", (accounts) => {
             testData
         );
 
-        let expectedExchangeRate = BigInt("1000748");
+        let expectedExchangeRate = BigInt("1000747756729810568");
 
         await data.warren.test_updateIndex(
             params.asset,
-            testUtils.PERCENTAGE_3_6DEC,
+            testUtils.PERCENTAGE_3_18DEC,
             params.openTimestamp,
             { from: userOne }
         );
@@ -1015,7 +1016,7 @@ contract("Joseph", (accounts) => {
         let amount = BigInt("180000000");
         await data.warren.test_updateIndex(
             params.asset,
-            testUtils.PERCENTAGE_3_6DEC,
+            testUtils.PERCENTAGE_3_18DEC,
             params.openTimestamp,
             { from: userOne }
         );
@@ -1028,7 +1029,7 @@ contract("Joseph", (accounts) => {
         let oldOpeningFeePercentage =
             await testData.iporAssetConfigurationUsdt.getOpeningFeePercentage();
         await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(
-            BigInt("600000")
+            BigInt("600000000000000000")
         );
 
         //open position to have something in Liquidity Pool
@@ -1043,7 +1044,7 @@ contract("Joseph", (accounts) => {
         );
 
         //after this withdraw initial exchange rate is 1,5
-        let expectedExchangeRate = BigInt("1714286");
+        let expectedExchangeRate = BigInt("1714285714285714286");
         let exchangeRateBeforeProvideLiquidity = BigInt(
             await data.milton.calculateExchangeRate.call(
                 params.asset,
@@ -1061,7 +1062,7 @@ contract("Joseph", (accounts) => {
         );
         await data.joseph.test_redeem(
             params.asset,
-            BigInt("874999854"),
+            BigInt("874999999999999999854"),
             params.openTimestamp,
             { from: userThree }
         );
@@ -1324,7 +1325,7 @@ contract("Joseph", (accounts) => {
         await testUtils.setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
 
         let liquidityAmount = testUtils.USD_14_000_18DEC;
-        let withdrawAmount = testUtils.USD_10_000_18DEC;
+        let withdrawIpTokenAmount = testUtils.USD_10_000_18DEC;
 
         let timestamp = Math.floor(Date.now() / 1000);
 
@@ -1338,7 +1339,7 @@ contract("Joseph", (accounts) => {
         //when
         await data.joseph.test_redeem(
             testData.tokenDai.address,
-            withdrawAmount,
+            withdrawIpTokenAmount,
             timestamp,
             { from: liquidityProvider }
         );
@@ -1508,10 +1509,10 @@ contract("Joseph", (accounts) => {
         await testUtils.setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
 
         let liquidityAmountDAI = testUtils.USD_14_000_18DEC;
-        let withdrawAmountDAI = testUtils.USD_10_000_18DEC;
+        let withdrawIpTokenAmountDAI = testUtils.USD_10_000_18DEC;
 
         let liquidityAmountUSDT = testUtils.USD_14_000_6DEC;
-        let withdrawAmountUSDT = testUtils.USD_10_000_6DEC;
+        let withdrawIpTokenAmountUSDT = testUtils.USD_10_000_18DEC;
 
         let expectedipDAIBalanceSender = BigInt("4000000000000000000000");
         let expectedDAIBalanceMilton = BigInt("4000000000000000000000");
@@ -1520,10 +1521,10 @@ contract("Joseph", (accounts) => {
         );
         let expectedLiquidityPoolDAIBalanceMilton = expectedDAIBalanceMilton;
 
-        let expectedipUSDTBalanceSender = BigInt("4000000000");
+        let expectedipUSDTBalanceSender = BigInt("4000000000000000000000");
         let expectedUSDTBalanceMilton = BigInt("4000000000");
         let expectedLiquidityProviderUSDTBalance = BigInt("9996000000000");
-        let expectedLiquidityPoolUSDTBalanceMilton = expectedUSDTBalanceMilton;
+        let expectedLiquidityPoolUSDTBalanceMilton = BigInt("4000000000000000000000");
 
         let timestamp = Math.floor(Date.now() / 1000);
 
@@ -1543,13 +1544,13 @@ contract("Joseph", (accounts) => {
         //when
         await data.joseph.test_redeem(
             testData.tokenDai.address,
-            withdrawAmountDAI,
+            withdrawIpTokenAmountDAI,
             timestamp,
             { from: liquidityProvider }
         );
         await data.joseph.test_redeem(
             testData.tokenUsdt.address,
-            withdrawAmountUSDT,
+            withdrawIpTokenAmountUSDT,
             timestamp,
             { from: liquidityProvider }
         );
@@ -1662,9 +1663,9 @@ contract("Joseph", (accounts) => {
         await testUtils.setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
 
         let liquidityAmountDAI = testUtils.USD_14_000_18DEC;
-        let withdrawAmountDAI = testUtils.USD_10_000_18DEC;
+        let withdrawIpTokenAmountDAI = testUtils.USD_10_000_18DEC;
         let liquidityAmountUSDT = testUtils.USD_14_000_6DEC;
-        let withdrawAmountUSDT = testUtils.USD_10_000_6DEC;
+        let withdrawIpTokenAmountUSDT = testUtils.USD_10_000_18DEC;
 
         let expectedipDAIBalanceSender = BigInt("4000000000000000000000");
         let expectedDAIBalanceMilton = BigInt("4000000000000000000000");
@@ -1673,10 +1674,10 @@ contract("Joseph", (accounts) => {
         );
         let expectedLiquidityPoolDAIBalanceMilton = expectedDAIBalanceMilton;
 
-        let expectedipUSDTBalanceSender = BigInt("4000000000");
+        let expectedipUSDTBalanceSender = BigInt("4000000000000000000000");
         let expectedUSDTBalanceMilton = BigInt("4000000000");
         let expectedLiquidityProviderUSDTBalance = BigInt("9996000000000");
-        let expectedLiquidityPoolUSDTBalanceMilton = expectedUSDTBalanceMilton;
+        let expectedLiquidityPoolUSDTBalanceMilton = BigInt("4000000000000000000000");
 
         let daiUser = userOne;
         let usdtUser = userTwo;
@@ -1699,13 +1700,13 @@ contract("Joseph", (accounts) => {
         //when
         await data.joseph.test_redeem(
             testData.tokenDai.address,
-            withdrawAmountDAI,
+            withdrawIpTokenAmountDAI,
             timestamp,
             { from: daiUser }
         );
         await data.joseph.test_redeem(
             testData.tokenUsdt.address,
-            withdrawAmountUSDT,
+            withdrawIpTokenAmountUSDT,
             timestamp,
             { from: usdtUser }
         );
