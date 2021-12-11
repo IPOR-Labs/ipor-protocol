@@ -12,6 +12,10 @@ const {
 } = require("./Const.js");
 const { ethers } = require("hardhat");
 
+BigInt.prototype.toJSON = function () {
+    return this.toString();
+};
+
 module.exports.assertError = async (promise, error) => {
     try {
         await promise;
@@ -30,6 +34,10 @@ module.exports.getLibraries = async () => {
     const derivativeLogic = await DerivativeLogic.deploy();
     await derivativeLogic.deployed();
 
+    const DerivativesView = await ethers.getContractFactory("DerivativesView");
+    const derivativesView = await DerivativesView.deploy();
+    await derivativesView.deployed();
+
     const SoapIndicatorLogic = await ethers.getContractFactory(
         "SoapIndicatorLogic"
     );
@@ -44,6 +52,7 @@ module.exports.getLibraries = async () => {
 
     return {
         derivativeLogic,
+        derivativesView,
         totalSoapIndicatorLogic,
         soapIndicatorLogic,
     };
@@ -253,7 +262,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
 
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage", {
         libraries: {
-            DerivativesView: lib.derivativeLogic.address,
+            DerivativesView: lib.derivativesView.address,
             SoapIndicatorLogic: lib.soapIndicatorLogic.address,
         },
     });
@@ -290,12 +299,11 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     const MiltonSpreadStrategy = await ethers.getContractFactory(
         "MiltonSpreadStrategy"
     );
-    const miltonSpreadStrategy = await MiltonSpreadStrategy.deploy();
-    await miltonSpreadStrategy.deployed();
-    await miltonSpreadStrategy.initialize(data.iporConfiguration.address);
-    await data.iporConfiguration.setMiltonSpreadStrategy(
-        miltonSpreadStrategy.address
-    );
+    const miltonSpread = await MiltonSpreadStrategy.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize(data.iporConfiguration.address);
+    await data.iporConfiguration.setMiltonSpreadStrategy(miltonSpread.address);
+    await miltonSpread.initialize(data.iporConfiguration.address);
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -418,6 +426,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
         iporAssetConfigurationUsdc,
         iporAssetConfigurationDai,
         miltonStorage,
+        miltonSpread,
         warrenStorage,
     };
 };
@@ -467,4 +476,28 @@ module.exports.setupTokenUsdtInitialValuesForUsers = async (
             USER_SUPPLY_6_DECIMALS
         );
     }
+};
+
+module.exports.getPayFixedDerivativeParamsDAICase1 = (user, testData) => {
+    return {
+        asset: testData.tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        slippageValue: 3,
+        collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+        direction: 0,
+        openTimestamp: Math.floor(Date.now() / 1000),
+        from: user,
+    };
+};
+
+module.exports.getPayFixedDerivativeParamsUSDTCase1 = (user, testData) => {
+    return {
+        asset: testData.tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        slippageValue: 3,
+        collateralizationFactor: BigInt(10000000),
+        direction: 0,
+        openTimestamp: Math.floor(Date.now() / 1000),
+        from: user,
+    };
 };
