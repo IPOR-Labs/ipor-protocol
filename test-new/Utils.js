@@ -299,12 +299,11 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     const MiltonSpreadStrategy = await ethers.getContractFactory(
         "MiltonSpreadStrategy"
     );
-    const miltonSpreadStrategy = await MiltonSpreadStrategy.deploy();
-    await miltonSpreadStrategy.deployed();
-    await miltonSpreadStrategy.initialize(data.iporConfiguration.address);
-    await data.iporConfiguration.setMiltonSpreadStrategy(
-        miltonSpreadStrategy.address
-    );
+    const miltonSpread = await MiltonSpreadStrategy.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize(data.iporConfiguration.address);
+    await data.iporConfiguration.setMiltonSpreadStrategy(miltonSpread.address);
+    await miltonSpread.initialize(data.iporConfiguration.address);
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -427,6 +426,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
         iporAssetConfigurationUsdc,
         iporAssetConfigurationDai,
         miltonStorage,
+        miltonSpread,
         warrenStorage,
     };
 };
