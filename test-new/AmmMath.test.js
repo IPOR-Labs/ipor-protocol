@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 
 const ONE_18DEC = BigInt("1000000000000000000");
 
-describe("IporAssetConfiguration", () => {
+describe("AmmMath", () => {
     // let ammMath = null;
     let ammMath;
 
@@ -50,7 +50,7 @@ describe("IporAssetConfiguration", () => {
         );
     });
 
-    it("Calculate Derivative Amount Casec1", async () => {
+    it("Calculate Derivative Amount Case 1", async () => {
         //given
         const totalAmount = BigInt(10180) * ONE_18DEC;
         const collateralizationFactor = BigInt(50) * ONE_18DEC;
