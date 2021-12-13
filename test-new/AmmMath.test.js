@@ -3,15 +3,11 @@ const { ethers } = require("hardhat");
 
 const ONE_18DEC = BigInt("1000000000000000000");
 
-describe("IporAssetConfiguration", () => {
+describe("AmmMath", () => {
     // let ammMath = null;
     let ammMath;
 
     before(async () => {
-        const AmmMath = await ethers.getContractFactory("AmmMath");
-        const aM = await AmmMath.deploy();
-        await aM.deployed();
-
         AmmMathTest = await ethers.getContractFactory("MockAmmMath");
         ammMath = await AmmMathTest.deploy();
         await ammMath.deployed();

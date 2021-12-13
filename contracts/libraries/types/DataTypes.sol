@@ -26,8 +26,7 @@ library DataTypes {
     //soap payfixed and soap recfixed indicators
     struct SoapIndicator {
         uint256 rebalanceTimestamp;
-
-		//TODO: don't have to store - use two separate structure - one for pay fixe, one for rec fixed
+        //TODO: don't have to store - use two separate structure - one for pay fixe, one for rec fixed
         //leg
         DataTypes.DerivativeDirection direction;
         //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
@@ -38,22 +37,21 @@ library DataTypes {
         uint256 averageInterestRate;
         //TT
         uint256 totalIbtQuantity;
-
-		//TODO: don't have to store this - can be calculated in runtime
+        //TODO: don't have to store this - can be calculated in runtime
         //SOAP
         int256 soap;
     }
 
     //@notice IPOR Structure
     struct IPOR {
-		//TODO: remove it - redundant information
+        //TODO: remove it - redundant information
         //@notice Asset Symbol like USDT, USDC, DAI etc.
         address asset;
-        //@notice IPOR Index Value shown as WAD 
+        //@notice IPOR Index Value shown as WAD
         uint256 indexValue;
-        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds, shown as WAD 
+        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds, shown as WAD
         uint256 quasiIbtPrice;
-        //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD 
+        //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD
         uint256 exponentialMovingAverage;
         //@notice block timestamp
         uint256 blockTimestamp;
@@ -99,18 +97,15 @@ library DataTypes {
     struct IporDerivativeFee {
         //@notice amount
         uint256 liquidationDepositAmount;
-
-		//TODO: probably don't have to store, add to event
+        //TODO: probably don't have to store, add to event
         //@notice amount calculated based on deposit amount
         uint256 openingAmount;
-
-		//TODO: probably don't have to store, add to event
+        //TODO: probably don't have to store, add to event
         uint256 iporPublicationAmount;
-
-		//TODO: probably don't have to store, add to event
+        //TODO: probably don't have to store, add to event
         //@notice value are basis points
         uint256 spreadPayFixedValue;
-		//TODO: probably don't have to store, add to event
+        //TODO: probably don't have to store, add to event
         //@notice value are basis points
         uint256 spreadRecFixedValue;
     }
@@ -137,8 +132,7 @@ library DataTypes {
         DerivativeState state;
         //@notice Buyer of this derivative
         address buyer;
-
-		//TODO: asset can be removed from storage when Milton per asset
+        //TODO: asset can be removed from storage when Milton per asset
         //@notice the name of the asset to which the derivative relates
         address asset;
         //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
@@ -147,8 +141,7 @@ library DataTypes {
         uint256 collateral;
         IporDerivativeFee fee;
         uint256 collateralizationFactor;
-
-		//TODO: remove from storage, can be calculated
+        //TODO: remove from storage, can be calculated
         //@notice Notional Principal Amount
         uint256 notionalAmount;
         //@notice Starting time of this Derivative
