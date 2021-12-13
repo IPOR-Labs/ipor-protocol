@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "../libraries/Constants.sol";
+import "../libraries/AmmMath.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IIporConfiguration.sol";
@@ -29,32 +30,104 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                 .calculateSpread(asset, calculateTimestamp);
     }
 
-    function calculateAtParComponentPayFixed(address asset)
-        external
-        view
-        returns (uint256)
-    {
+    function calculateAtParComponentPayFixed(
+        address asset,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    ) external view returns (uint256) {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
         uint256 kVol = iporAssetConfiguration
             .getSpreadAtParComponentKVolValue();
+
         uint256 kHist = iporAssetConfiguration
             .getSpreadAtParComponentKHistValue();
+
+        return
+            AmmMath.division(
+                kVol,
+                Constants.D18 - exponentialWeightedMovingVariance
+            ) +
+            calculateHistoricalDeviationPayFixed(
+                kHist,
+                iporIndexValue,
+                exponentialMovingAverage
+            );
     }
 
-    function calculateAtParComponentRecFixed(address asset)
-        external
-        view
-        returns (uint256)
-    {
+    function calculateAtParComponentRecFixed(
+        address asset,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    ) external view returns (uint256) {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
         uint256 kVol = iporAssetConfiguration
             .getSpreadAtParComponentKVolValue();
+
         uint256 kHist = iporAssetConfiguration
             .getSpreadAtParComponentKHistValue();
+
+        return
+            AmmMath.division(
+                kVol,
+                Constants.D18 - exponentialWeightedMovingVariance
+            ) +
+            calculateHistoricalDeviationRecFixed(
+                kHist,
+                iporIndexValue,
+                exponentialMovingAverage
+            );
+    }
+
+    function calculateHistoricalDeviationPayFixed(
+        uint256 kHist,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (exponentialMovingAverage < iporIndexValue) {
+            return 0;
+        } else {
+            return
+                AmmMath.division(
+                    kHist,
+                    Constants.D18 -
+                        AmmMath.absoluteValue(
+                            int256(exponentialMovingAverage) -
+                                int256(iporIndexValue)
+                        )
+                );
+        }
+    }
+
+    function calculateHistoricalDeviationRecFixed(
+        uint256 kHist,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (exponentialMovingAverage > iporIndexValue) {
+            return 0;
+        } else {
+            return
+                AmmMath.division(
+                    kHist,
+                    Constants.D18 -
+                        AmmMath.absoluteValue(
+                            int256(exponentialMovingAverage) -
+                                int256(iporIndexValue)
+                        )
+                );
+        }
+    }
+
+    function calculateAtParComponentVolatility(
+        uint256 exponentialWeightedMovingVariance
+    ) internal pure returns (uint256) {
+        return AmmMath.sqrt(exponentialWeightedMovingVariance);
     }
 
     function calculateDemandComponentPayFixed(
