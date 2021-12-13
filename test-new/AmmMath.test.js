@@ -46,7 +46,7 @@ describe("AmmMath", () => {
         );
     });
 
-    it("Calculate Derivative Amount Casec1", async () => {
+    it("Calculate Derivative Amount Case 1", async () => {
         //given
         const totalAmount = BigInt(10180) * ONE_18DEC;
         const collateralizationFactor = BigInt(50) * ONE_18DEC;
