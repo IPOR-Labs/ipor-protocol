@@ -86,6 +86,20 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         internal constant SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE =
         keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE");
 
+
+	bytes32 internal constant SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE =
+        keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE");    
+	bytes32
+        internal constant SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE =
+        keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE");
+
+	bytes32 internal constant SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE =
+        keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE");
+    bytes32
+        internal constant SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE =
+        keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE");
+
+
     constructor(address root) {
         _setupRole(ADMIN_ROLE, root);
         _setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
@@ -178,6 +192,7 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
             SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE,
             ADMIN_ROLE
         );
+		
         _setRoleAdmin(
             SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE,
             SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE
@@ -187,9 +202,20 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
             SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE,
             ADMIN_ROLE
         );
+
         _setRoleAdmin(
             SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE,
             SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE
+        );
+
+		_setRoleAdmin(
+            SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE,
+            SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE
+        );
+
+		_setRoleAdmin(
+            SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE,
+            SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE
         );
     }
 }

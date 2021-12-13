@@ -481,7 +481,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         returns (DataTypes.IporDerivativeIndicator memory indicator)
     {
         IWarren warren = IWarren(iporConfiguration.getWarren());
-        (uint256 indexValue, , , ) = warren.getIndex(asset);
+        (uint256 indexValue, , , ,) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
             asset,
             calculateTimestamp

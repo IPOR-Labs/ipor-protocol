@@ -22,7 +22,7 @@ library IporLogic {
 
     //@param indexValue indexValue represent in WAD
     //@param quasiIbtPrice quasiIbtPrice represent in WAD, quasi inform that IBT Price doesn't have final value, is required to divide by number of seconds in year
-	//@dev return value represented in WAD
+    //@dev return value represented in WAD
     function accrueQuasiIbtPrice(
         uint256 indexValue,
         uint256 quasiIbtPrice,
@@ -34,12 +34,11 @@ library IporLogic {
             Errors.WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
         return
-            quasiIbtPrice +
-            (indexValue * (accrueTimestamp - indexTimestamp));
+            quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
     }
 
     //@notice ExpMovAv(n) = ExpMovAv(n-1) * (1 - d) + IPOR * d
-	//@dev return value represented in WAD
+    //@dev return value represented in WAD
     function calculateExponentialMovingAverage(
         uint256 lastExponentialMovingAverage,
         uint256 indexValue,
@@ -51,6 +50,23 @@ library IporLogic {
                     (Constants.D18 - decayFactor) +
                     indexValue *
                     decayFactor,
+                Constants.D18
+            );
+    }
+
+    function calculateExponentialWeightedMovingVariance(
+        uint256 lastExponentialWeightedMovingVariance,
+        uint256 lastExponentialMovingAverage,
+        uint256 indexValue,
+        uint256 decayFactor
+    ) internal pure returns (uint256) {
+        return
+            AmmMath.division(
+                decayFactor *
+                    (lastExponentialWeightedMovingVariance +
+                        (Constants.D18 - decayFactor) *
+                        (indexValue - lastExponentialMovingAverage) *
+                        (indexValue - lastExponentialMovingAverage)),
                 Constants.D18
             );
     }

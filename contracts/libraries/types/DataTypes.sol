@@ -55,6 +55,8 @@ library DataTypes {
         uint256 quasiIbtPrice;
         //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD 
         uint256 exponentialMovingAverage;
+		//@notice exponential weighted moving variance - required for calculating SPREAD in Milton, shown as WAD 
+        uint256 exponentialWeightedMovingVariance;
         //@notice block timestamp
         uint256 blockTimestamp;
     }

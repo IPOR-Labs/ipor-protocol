@@ -46,9 +46,13 @@ interface IIporAssetConfiguration {
 
     event SpreadUtilizationComponentLambdaValueSet(
         uint256 newSpreadUtilizationComponentLambdaValue
-    );
+    );	
 
     event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);
+
+	event SpreadAtParComponentKVolValueSet(uint256 newSpreadAtParComponentKVolValue);
+
+	event SpreadAtParComponentKHistValueSet(uint256 newSpreadAtParComponentKHistValue);
 
     function getIncomeTaxPercentage() external view returns (uint256);
 
@@ -152,4 +156,21 @@ interface IIporAssetConfiguration {
     function setSpreadUtilizationComponentLambdaValue(
         uint256 newSpreadUtilizationComponentLambdaValue
     ) external;
+
+	function getSpreadAtParComponentKVolValue()
+        external
+        view
+        returns (uint256);
+
+    function setSpreadAtParComponentKVolValue(uint256 newSpreadAtParComponentKVolValue) external;
+
+	function getSpreadAtParComponentKHistValue()
+        external
+        view
+        returns (uint256);
+
+    function setSpreadAtParComponentKHistValue(
+        uint256 newSpreadAtParComponentKHistValue
+    ) external;
+     
 }

@@ -29,6 +29,34 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                 .calculateSpread(asset, calculateTimestamp);
     }
 
+    function calculateAtParComponentPayFixed(address asset)
+        external
+        view
+        returns (uint256)
+    {
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
+                iporConfiguration.getIporAssetConfiguration(asset)
+            );
+        uint256 kVol = iporAssetConfiguration
+            .getSpreadAtParComponentKVolValue();
+        uint256 kHist = iporAssetConfiguration
+            .getSpreadAtParComponentKHistValue();
+    }
+
+    function calculateAtParComponentRecFixed(address asset)
+        external
+        view
+        returns (uint256)
+    {
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
+                iporConfiguration.getIporAssetConfiguration(asset)
+            );
+        uint256 kVol = iporAssetConfiguration
+            .getSpreadAtParComponentKVolValue();
+        uint256 kHist = iporAssetConfiguration
+            .getSpreadAtParComponentKHistValue();
+    }
+
     function calculateDemandComponentPayFixed(
         address asset,
         uint256 derivativeDeposit,

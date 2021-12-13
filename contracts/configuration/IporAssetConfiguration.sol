@@ -59,6 +59,12 @@ contract IporAssetConfiguration is
     //@notice Part of Spread calculation - Utilization Component Lambda value - check Whitepaper
     uint256 private spreadUtilizationComponentLambdaValue;
 
+	//@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
+    uint256 private spreadAtParComponentKVolValue;
+
+    //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
+    uint256 private spreadAtParComponentKHistValue;
+
     uint256 private spreadTemporaryValue;
 
     address private assetManagementVault;
@@ -434,6 +440,52 @@ contract IporAssetConfiguration is
             newSpreadUtilizationComponentLambdaValue
         );
     }
+
+	function getSpreadAtParComponentKVolValue()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return spreadAtParComponentKVolValue;
+    }
+
+    function setSpreadAtParComponentKVolValue(
+        uint256 newSpreadAtParComponentKVolValue
+    )
+        external
+        override
+        onlyRole(SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE)
+    {
+        spreadAtParComponentKVolValue = newSpreadAtParComponentKVolValue;
+        emit SpreadAtParComponentKVolValueSet(
+            newSpreadAtParComponentKVolValue
+        );
+    }
+
+	function getSpreadAtParComponentKHistValue()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return spreadAtParComponentKHistValue;
+    }
+
+    function setSpreadAtParComponentKHistValue(
+        uint256 newSpreadAtParComponentKHistValue
+    )
+        external
+        override
+        onlyRole(SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE)
+    {
+        spreadAtParComponentKHistValue = newSpreadAtParComponentKHistValue;
+        emit SpreadAtParComponentKHistValueSet(
+            newSpreadAtParComponentKHistValue
+        );
+    }
+
+	
 }
 
 //TODO: remove drizzle from DevTool and remove this redundant smart contracts below:

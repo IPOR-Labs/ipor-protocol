@@ -60,6 +60,7 @@ contract Warren is Ownable, Pausable, IWarren {
             uint256 indexValue,
             uint256 ibtPrice,
             uint256 exponentialMovingAverage,
+			uint256 exponentialWeightedMovingVariance,
             uint256 blockTimestamp
         )
     {
@@ -73,6 +74,7 @@ contract Warren is Ownable, Pausable, IWarren {
                 Constants.YEAR_IN_SECONDS
             ),
             exponentialMovingAverage = iporIndex.exponentialMovingAverage,
+			exponentialWeightedMovingVariance = iporIndex.exponentialWeightedMovingVariance,
             blockTimestamp = iporIndex.blockTimestamp
         );
     }
