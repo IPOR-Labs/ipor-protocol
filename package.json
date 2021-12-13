@@ -11,8 +11,14 @@
     "ethers": "^5.5.1",
     "hardhat": "^2.7.0",
     "mocha-param": "^2.0.1",
+    "solhint": "^3.3.6",
     "solidity-coverage": "^0.7.17",
     "web3": "^1.6.1"
+  },
+  "scripts": {
+    "coverage": "npx hardhat coverage",
+    "test": "npx hardhat test",
+    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.0",
