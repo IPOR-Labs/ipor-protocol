@@ -615,4 +615,40 @@ contract("Warren", (accounts) => {
             `Actual weighted exponential moving variance is incorrect ${actualExponentialWeightedMovingVariance}, expected ${expectedWeightedExpoMovingVariance}`
         );
     });
+
+	it("should calculate initial Exponential Weighted Moving Variance - 2x IPOR Index updates - 18 decimals", async () => {
+		
+        //given
+        let updateDate = Math.floor(Date.now() / 1000);
+        await testData.warrenStorage.addUpdater(updaterOne);
+        await testData.warrenStorage.addUpdater(data.warren.address);
+        let assets = [testData.tokenDai.address];
+        let firstIndexValues = [testUtils.PERCENTAGE_7_18DEC];
+        let secondIndexValues = [testUtils.PERCENTAGE_50_18DEC];
+        let expectedWeightedExpoMovingVariance = BigInt("113000000000000000");
+
+        //when
+        await data.warren.test_updateIndexes(
+            assets,
+            firstIndexValues,
+            updateDate,
+            { from: updaterOne }
+        );
+        await data.warren.test_updateIndexes(
+            assets,
+            secondIndexValues,
+            updateDate,
+            { from: updaterOne }
+        );
+
+        //then
+        const iporIndex = await data.warren.getIndex(assets[0]);
+        let actualWeightedExpoMovingVariance = BigInt(
+            await iporIndex.exponentialWeightedMovingVariance
+        );
+        assert(
+            actualWeightedExpoMovingVariance === expectedWeightedExpoMovingVariance,
+            `Actual weighted exponential moving variance is incorrect ${actualWeightedExpoMovingVariance}, expected ${expectedWeightedExpoMovingVariance}`
+        );
+    });
 });

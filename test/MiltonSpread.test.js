@@ -557,4 +557,68 @@ contract("MiltonSpread", (accounts) => {
     // it("should NOT calculate spread - demand component - Rec Fixed Derivative, Adjusted Utilization Rate equal 1, demand component with denominator equal 0 ", async () => {
     //     //TODO: implement it
     // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator != 0", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator == 0", async () => {
+    //     //TODO: implement it
+    // });
 });

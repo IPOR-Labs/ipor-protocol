@@ -62,12 +62,8 @@ library IporLogic {
     ) internal pure returns (uint256) {
         return
             AmmMath.division(
-                decayFactor *
-                    (lastExponentialWeightedMovingVariance +
-                        (Constants.D18 - decayFactor) *
-                        (indexValue - lastExponentialMovingAverage) *
-                        (indexValue - lastExponentialMovingAverage)),
-                Constants.D18
+                decayFactor *(lastExponentialWeightedMovingVariance + (Constants.D18 - decayFactor) * (indexValue - lastExponentialMovingAverage) * (indexValue - lastExponentialMovingAverage)),
+                Constants.D18 * Constants.D18 * Constants.D18 
             );
     }
 }

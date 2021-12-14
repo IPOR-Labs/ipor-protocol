@@ -159,7 +159,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 			newExponentialWeightedMovingVariance = IporLogic
 			.calculateExponentialWeightedMovingVariance(
 				indexes[asset].exponentialWeightedMovingVariance,
-				indexes[asset].exponentialMovingAverage,
+				newExponentialMovingAverage,
 				indexValue,
 				//TODO: change decay factor to alfa which is calculated using tau and delta time
 				iporAssetConfiguration.getDecayFactorValue()
