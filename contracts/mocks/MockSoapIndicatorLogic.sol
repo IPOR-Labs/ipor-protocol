@@ -6,29 +6,29 @@ import "../libraries/SoapIndicatorLogic.sol";
 
 library MockSoapIndicatorLogic {
     function calculateSoap(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
-    ) public view returns (int256) {
+    ) public pure returns (int256) {
         return SoapIndicatorLogic.calculateSoap(si, ibtPrice, timestamp);
     }
 
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoap(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
-    ) public view returns (int256) {
+    ) public pure returns (int256) {
         return SoapIndicatorLogic.calculateQuasiSoap(si, ibtPrice, timestamp);
     }
 
     function rebalanceWhenOpenPosition(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) public {
+    ) public pure {
         return
             SoapIndicatorLogic.rebalanceWhenOpenPosition(
                 si,
@@ -40,13 +40,13 @@ library MockSoapIndicatorLogic {
     }
 
     function rebalanceWhenClosePosition(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) external {
+    ) external pure {
         return
             SoapIndicatorLogic.rebalanceWhenClosePosition(
                 si,

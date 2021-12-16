@@ -8,10 +8,10 @@ import { Constants } from "../libraries/Constants.sol";
 
 library SoapIndicatorLogic {
     function calculateSoap(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
-    ) internal view returns (int256) {
+    ) internal pure returns (int256) {
         return
             AmmMath.divisionInt(
                 calculateQuasiSoap(si, ibtPrice, timestamp),
@@ -21,10 +21,10 @@ library SoapIndicatorLogic {
 
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoap(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
-    ) internal view returns (int256) {
+    ) internal pure returns (int256) {
         if (
             si.direction ==
             DataTypes.DerivativeDirection.PayFixedReceiveFloating
@@ -56,12 +56,12 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenOpenPosition(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal {
+    ) pure internal {
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
             si,
@@ -81,13 +81,13 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenClosePosition(
-        DataTypes.SoapIndicator storage si,
+        DataTypes.SoapIndicator memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) external {
+    ) pure internal {
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
@@ -163,7 +163,7 @@ library SoapIndicatorLogic {
         DataTypes.SoapIndicator memory si,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         return
             AmmMath.division(
                 (si.totalNotional *
@@ -178,7 +178,7 @@ library SoapIndicatorLogic {
         DataTypes.SoapIndicator memory si,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         require(
             derivativeNotional <= si.totalNotional,
             Errors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL

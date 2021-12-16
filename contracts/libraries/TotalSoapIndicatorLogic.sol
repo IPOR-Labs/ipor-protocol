@@ -10,21 +10,22 @@ library TotalSoapIndicatorLogic {
     using SoapIndicatorLogic for DataTypes.SoapIndicator;
 
     function calculateSoap(
-        DataTypes.TotalSoapIndicator storage tsi,
+        DataTypes.TotalSoapIndicator memory tsi,
         uint256 calculationTimestamp,
         uint256 ibtPrice
-    ) internal view returns (int256 soapPf, int256 soapRf) {
+    ) internal pure returns (int256 soapPf, int256 soapRf) {
+		
         return (
-            soapPf = tsi.pf.calculateSoap(ibtPrice, calculationTimestamp),
-            soapRf = tsi.rf.calculateSoap(ibtPrice, calculationTimestamp)
+            soapPf = SoapIndicatorLogic.calculateSoap(tsi.pf, ibtPrice, calculationTimestamp),
+            soapRf = SoapIndicatorLogic.calculateSoap(tsi.rf, ibtPrice, calculationTimestamp)
         );
     }
 
     function calculateQuasiSoap(
-        DataTypes.TotalSoapIndicator storage tsi,
+        DataTypes.TotalSoapIndicator memory tsi,
         uint256 calculationTimestamp,
         uint256 ibtPrice
-    ) internal view returns (int256 soapPf, int256 soapRf) {
+    ) internal pure returns (int256 soapPf, int256 soapRf) {
         return (
             soapPf = tsi.pf.calculateQuasiSoap(ibtPrice, calculationTimestamp),
             soapRf = tsi.rf.calculateQuasiSoap(ibtPrice, calculationTimestamp)
@@ -32,13 +33,13 @@ library TotalSoapIndicatorLogic {
     }
 
     function rebalanceSoapWhenOpenPosition(
-        DataTypes.TotalSoapIndicator storage tsi,
+        DataTypes.TotalSoapIndicator memory tsi,
         uint8 direction,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal {
+    ) internal pure {
         if (
             direction ==
             uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
@@ -64,14 +65,14 @@ library TotalSoapIndicatorLogic {
     }
 
     function rebalanceSoapWhenClosePosition(
-        DataTypes.TotalSoapIndicator storage tsi,
+        DataTypes.TotalSoapIndicator memory tsi,
         uint8 direction,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal {
+    ) internal pure {
         if (
             direction ==
             uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)

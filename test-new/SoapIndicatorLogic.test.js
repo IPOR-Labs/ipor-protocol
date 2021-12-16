@@ -21,15 +21,15 @@ describe("SoapIndicatorLogic", () => {
         await mockSoapIndicatorLogic.deployed();
     });
 
-	// it("should calculate interest rate when open position - simple case - 18 decimals", async () => {
-	// 	//given
+    // it("should calculate interest rate when open position - simple case - 18 decimals", async () => {
+    //     //given
     //     const soapIndicator = prepareSoapIndicatorPfCaseD18();
-    //     const  derivativeNotional = BigInt(10000) * ONE_18DEC;
+    //     const derivativeNotional = BigInt(10000) * ONE_18DEC;
     //     const derivativeFixedInterestRate = BigInt(4) * ONE_16DEC;
 
     //     //when
-    //     const actualInterestRate = soapIndicator
-    //         .calculateInterestRateWhenOpenPosition(
+    //     const actualInterestRate =
+    //         soapIndicator.calculateInterestRateWhenOpenPosition(
     //             derivativeNotional,
     //             derivativeFixedInterestRate
     //         );
@@ -41,5 +41,5 @@ describe("SoapIndicatorLogic", () => {
     //         actualInterestRate,
     //         "Wrong interest rate when open position"
     //     );
-	// });
+    // });
 });
