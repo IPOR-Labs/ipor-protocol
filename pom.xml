@@ -147,6 +147,9 @@
                         <argument>${contracts.sources}/amm/MiltonSpreadStrategy.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/amm/TestMilton.sol</argument>
+                        <argument>${contracts.sources}/configuration/AccessControlAssetConfiguration.sol</argument>
+                        <argument>${contracts.sources}/configuration/AccessControlConfiguration.sol</argument>
+                        <argument>${contracts.sources}/configuration/AccessControlRevoke.sol</argument>
                         <argument>${contracts.sources}/configuration/IporAssetConfiguration.sol</argument>
                         <argument>${contracts.sources}/configuration/IporConfiguration.sol</argument>
                         <argument>${contracts.sources}/frontend/MiltonDevToolDataProvider.sol</argument>
@@ -173,7 +176,6 @@
                         <argument>${contracts.sources}/libraries/DerivativesView.sol</argument>
                         <argument>${contracts.sources}/libraries/IporLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/SoapIndicatorLogic.sol</argument>
-                        <argument>${contracts.sources}/libraries/SpreadIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/TotalSoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
                         <argument>${contracts.sources}/mocks/MiltonFaucet.sol</argument>
