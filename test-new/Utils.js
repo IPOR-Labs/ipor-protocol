@@ -281,10 +281,12 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     await miltonStorage.initialize(data.iporConfiguration.address);
     await warrenStorage.initialize(data.iporConfiguration.address);
 
-    const MiltonLPUtilizationStrategyCollateral = await ethers.getContractFactory(
-        "MiltonLPUtilizationStrategyCollateral"
-    );
-    const miltonLPUtilizationStrategyCollateral = await MiltonLPUtilizationStrategyCollateral.deploy();
+    const MiltonLPUtilizationStrategyCollateral =
+        await ethers.getContractFactory(
+            "MiltonLPUtilizationStrategyCollateral"
+        );
+    const miltonLPUtilizationStrategyCollateral =
+        await MiltonLPUtilizationStrategyCollateral.deploy();
     await miltonLPUtilizationStrategyCollateral.deployed();
     await miltonLPUtilizationStrategyCollateral.initialize(
         data.iporConfiguration.address
@@ -325,10 +327,11 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             const IporAssetConfigurationUsdt = await ethers.getContractFactory(
                 "IporAssetConfiguration"
             );
-            iporAssetConfigurationUsdt = await IporAssetConfigurationUsdt.deploy(
-                tokenUsdt.address,
-                ipTokenUsdt.address
-            );
+            iporAssetConfigurationUsdt =
+                await IporAssetConfigurationUsdt.deploy(
+                    tokenUsdt.address,
+                    ipTokenUsdt.address
+                );
             await iporAssetConfigurationUsdt.deployed();
             await data.iporConfiguration.setIporAssetConfiguration(
                 tokenUsdt.address,
@@ -361,10 +364,11 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             const IporAssetConfigurationUsdc = await ethers.getContractFactory(
                 "IporAssetConfiguration"
             );
-            iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.deploy(
-                tokenUsdc.address,
-                ipTokenUsdc.address
-            );
+            iporAssetConfigurationUsdc =
+                await IporAssetConfigurationUsdc.deploy(
+                    tokenUsdc.address,
+                    ipTokenUsdc.address
+                );
             iporAssetConfigurationUsdc.deployed();
             await data.iporConfiguration.setIporAssetConfiguration(
                 tokenUsdc.address,

@@ -1,6 +1,8 @@
 const { expect } = require("chai");
+const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
 const { YEARS_IN_SECONDS } = require("./Const.js");
+
 const ONE_18DEC = BigInt("1000000000000000000");
 const ONE_16DEC = BigInt("10000000000000000");
 
@@ -47,7 +49,7 @@ describe("SoapIndicatorLogic", () => {
     const prepareSoapIndicatorPfCaseD18 = async () => {
         return {
             rebalanceTimestamp: Math.floor(Date.now() / 1000),
-            direction: "0",
+            direction: BigNumber.from(0),
             quasiHypotheticalInterestCumulative:
                 BigInt("500") *
                 ONE_18DEC *

@@ -28,7 +28,7 @@ library DataTypes {
         uint256 rebalanceTimestamp;
         //TODO: don't have to store - use two separate structure - one for pay fixe, one for rec fixed
         //leg
-        uint256 direction;
+        DataTypes.DerivativeDirection  direction;
         //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
         uint256 quasiHypotheticalInterestCumulative;
         //N_0

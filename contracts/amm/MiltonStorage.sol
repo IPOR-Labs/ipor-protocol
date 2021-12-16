@@ -46,7 +46,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         soapIndicators[asset] = DataTypes.TotalSoapIndicator(
             DataTypes.SoapIndicator(
                 0,
-                0,
+                DataTypes.DerivativeDirection.PayFixedReceiveFloating,
                 0,
                 0,
                 0,
@@ -55,7 +55,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             ),
             DataTypes.SoapIndicator(
                 0,
-                1,
+                DataTypes.DerivativeDirection.PayFloatingReceiveFixed,
                 0,
                 0,
                 0,
