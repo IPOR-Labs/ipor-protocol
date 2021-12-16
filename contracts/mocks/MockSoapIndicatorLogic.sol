@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 
-library MockSoapIndicatorLogic {
+contract MockSoapIndicatorLogic {
     function calculateSoap(
         DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,

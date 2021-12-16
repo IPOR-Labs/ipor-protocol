@@ -26,8 +26,7 @@ library SoapIndicatorLogic {
         uint256 timestamp
     ) internal pure returns (int256) {
         if (
-            si.direction ==
-            DataTypes.DerivativeDirection.PayFixedReceiveFloating
+            si.direction == 0
         ) {
             return
                 int256(

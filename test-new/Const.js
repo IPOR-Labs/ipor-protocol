@@ -1,3 +1,4 @@
+module.exports.YEARS_IN_SECONDS = BigInt("31536000");
 module.exports.ZERO = BigInt("0");
 module.exports.PERIOD_1_DAY_IN_SECONDS = 60 * 60 * 24 * 1;
 module.exports.PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
