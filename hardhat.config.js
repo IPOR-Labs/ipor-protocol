@@ -1,14 +1,10 @@
 require("@nomiclabs/hardhat-waffle");
 require("solidity-coverage");
 require("@nomiclabs/hardhat-web3");
-
 require("dotenv").config();
-console.log("############################");
-console.log(process.env.REPORT_GAS);
 
 if (process.env.REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
-    console.log("############################");
 }
 
 // This is a sample Hardhat task. To learn how to create your own go to
