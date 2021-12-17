@@ -1,9 +1,11 @@
 const { expect } = require("chai");
 const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
+const { DerivativeState } = require("./enums.js");
 
 const DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
 const YEAR_IN_SECONDS = BigInt("31536000");
+const PERIOD_25_DAYS_IN_SECONDS = BigInt(60 * 60 * 24 * 25);
 
 const ONE_18DEC = BigInt("1000000000000000000");
 
@@ -37,17 +39,17 @@ const prepareDerivativeCase1 = async (fixedInterestRate, admin) => {
     const notionalAmount = collateral * collateralizationFactor;
     const derivative = {
         id: BigInt("0"),
-        state: "ACTIVE",
+        state: DerivativeState.ACTIVE,
         buyer: admin.address,
         asset: daiMockedToken.address,
         direction: BigInt("0"), //Pay Fixed, Receive Floating (long position)
         collateral: BigInt("0"),
         fee,
         collateralizationFactor: BigInt("0"),
-        notionalAmount: BigInt("0"),
-        startingTimestamp: BigInt("1639430306"), //BigInt(timeStamp),
-        endingTimestamp: BigInt("1639450306"), //BigInt(timeStamp + 60 * 60 * 24 * 28),
-        indicator: BigInt("0"),
+        notionalAmount,
+        startingTimestamp: BigInt(timeStamp),
+        endingTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
+        indicator,
     };
 
     return derivative;
@@ -191,286 +193,201 @@ describe("DerivativeLogic", () => {
             "4669046712000000000000000"
         );
     });
-    // FIXME :  fix test invalid BigNumber string
-    // it("Calculate Interest Case 1", async () => {
-    //     //given
-    //     const fixedInterestRate = BigInt("40000000000000000");
-    //     const derivative = await prepareDerivativeCase1(
-    //         fixedInterestRate,
-    //         admin
-    //     );
-    //     console.log(derivative);
-    //     //when
-    //     const derivativeInterest = await derivativeLogic.calculateInterest(
-    //         derivative,
-    //         BigInt("1639430306"),
-    //         BigInt(100) // * ONE_18DEC
-    //     );
-    //     console.log("----------------");
-    //     //then
-    //     expect(
-    //         derivativeInterest.quasiInterestFixed,
-    //         "Wrong interest fixed"
-    //     ).to.be.equal("111");
-    //     // expect(
-    //     //     AmmMath.division(
-    //     //         derivativeInterest.quasiInterestFloating,
-    //     //         Constants.YEAR_IN_SECONDS * Constants.D18
-    //     //     ),
-    //     //     98703 * Constants.D18,
-    //     //     "Wrong interest floating"
-    //     // );
-    //     // expect(
-    //     //     derivativeInterest.positionValue,
-    //     //     0,
-    //     //     "Wrong interest difference amount"
-    //     // );
-    // });
 
-    // function testCalculateInterestCase1() public {
-    //     //given
-    //     uint256 fixedInterestRate = 40000000000000000;
-    //     DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(
-    //         fixedInterestRate
-    //     );
+    it("Calculate Interest Case 1", async () => {
+        //given
+        const fixedInterestRate = BigInt("40000000000000000");
+        const derivative = await prepareDerivativeCase1(
+            fixedInterestRate,
+            admin
+        );
+        //when
+        const derivativeInterest = await derivativeLogic.calculateInterest(
+            derivative,
+            BigInt(Date.now() + 60 * 60 * 24 * 28),
+            ONE_18DEC
+        );
+        //then
+        expect(
+            derivativeInterest.quasiInterestFixed,
+            "Wrong interest fixed"
+        ).to.be.equal("3122249099904000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.quasiInterestFloating,
+            "Wrong interest floating"
+        ).to.be.equal(
+            BigInt("31126978080000000000000000000000000000000000000")
+        );
+        expect(
+            derivativeInterest.positionValue,
+            "Wrong interest difference amount"
+        ).to.be.equal(BigInt("-98018839479452054794520"));
+    });
 
-    //     //when
-    //     DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
-    //         .calculateInterest(
-    //             derivative.startingTimestamp,
-    //             100 * Constants.D18
-    //         );
+    it("Calculate Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
+        //given
+        const fixedInterestRate = BigInt("40000000000000000");
+        const derivative = await prepareDerivativeCase1(
+            fixedInterestRate,
+            admin
+        );
 
-    //     //then
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFixed,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         98703 * Constants.D18,
-    //         "Wrong interest fixed"
-    //     );
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFloating,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         98703 * Constants.D18,
-    //         "Wrong interest floating"
-    //     );
-    //     Assert.equal(
-    //         derivativeInterest.positionValue,
-    //         0,
-    //         "Wrong interest difference amount"
-    //     );
-    // }
+        const ibtPriceSecond = BigInt(125) * ONE_18DEC;
+        //when
+        const derivativeInterest = await derivativeLogic.calculateInterest(
+            derivative,
+            derivative.startingTimestamp,
+            ibtPriceSecond
+        );
 
-    // function testCalculateInterestCase2SameTimestampIBTPriceIncreaseDecimal18Case1()
-    //     public
-    // {
-    //     //given
-    //     uint256 fixedInterestRate = 40000000000000000;
-    //     DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(
-    //         fixedInterestRate
-    //     );
+        //then
+        expect(
+            derivativeInterest.quasiInterestFixed,
 
-    //     uint256 ibtPriceSecond = 125 * Constants.D18;
-    //     //when
-    //     DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
-    //         .calculateInterest(derivative.startingTimestamp, ibtPriceSecond);
+            "Wrong interest fixed"
+        ).to.be.equal("3112697808000000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.quasiInterestFloating,
+            "Wrong interest floating"
+        ).to.be.equal("3890872260000000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.positionValue,
+            "Wrong interest difference amount"
+        ).to.be.equal("24675750000000000000000");
+    });
 
-    //     //then
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFixed,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         98703 * Constants.D18,
-    //         "Wrong interest fixed"
-    //     );
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFloating,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         123378750000000000000000,
-    //         "Wrong interest floating"
-    //     );
-    //     Assert.equal(
-    //         derivativeInterest.positionValue,
-    //         24675750000000000000000,
-    //         "Wrong interest difference amount"
-    //     );
-    // }
+    it("Calculate Interest Case 25 days Later IBT Price Not Changed Decimal18", async () => {
+        //given
 
-    // function testCalculateInterestCase25daysLaterIBTPriceNotChangedDecimal18()
-    //     public
-    // {
-    //     //given
-    //     uint256 fixedInterestRate = 40000000000000000;
-    //     DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(
-    //         fixedInterestRate
-    //     );
+        const fixedInterestRate = BigInt("40000000000000000");
+        const derivative = await prepareDerivativeCase1(
+            fixedInterestRate,
+            admin
+        );
+        const ibtPriceSecond = BigInt(100) * ONE_18DEC;
 
-    //     uint256 ibtPriceSecond = 100 * Constants.D18;
+        //when
 
-    //     //when
-    //     DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
-    //         .calculateInterest(
-    //             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-    //             ibtPriceSecond
-    //         );
+        const derivativeInterest = await derivativeLogic.calculateInterest(
+            derivative,
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
 
-    //     //then
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFixed,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         98973419178082191780822,
-    //         "Wrong interest fixed"
-    //     );
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFloating,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         98703000000000000000000,
-    //         "Wrong interest floating"
-    //     );
-    //     Assert.equal(
-    //         derivativeInterest.positionValue,
-    //         -270419178082191780821,
-    //         "Wrong interest difference amount"
-    //     );
-    // }
+        //then
+        expect(
+            derivativeInterest.quasiInterestFixed,
+            "Wrong interest fixed"
+        ).to.be.equal("3121225747200000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.quasiInterestFloating,
+            "Wrong interest floating"
+        ).to.be.equal("3112697808000000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.positionValue,
+            "Wrong interest difference amount"
+        ).to.be.equal("-270419178082191780821");
+    });
 
-    // function testCalculateInterestCase25daysLaterIBTPriceChangedDecimals18()
-    //     public
-    // {
-    //     //given
-    //     uint256 fixedInterestRate = 40000000000000000;
-    //     DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(
-    //         fixedInterestRate
-    //     );
+    it("Calculate Interest Case 25 days Later IBT Price Changed Decimals 18", async () => {
+        const fixedInterestRate = BigInt("40000000000000000");
+        const derivative = await prepareDerivativeCase1(
+            fixedInterestRate,
+            admin
+        );
+        const ibtPriceSecond = BigInt(125) * ONE_18DEC;
 
-    //     uint256 ibtPriceSecond = 125 * Constants.D18;
+        //when
 
-    //     //when
-    //     DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
-    //         .calculateInterest(
-    //             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-    //             ibtPriceSecond
-    //         );
+        const derivativeInterest = await derivativeLogic.calculateInterest(
+            derivative,
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
 
-    //     //then
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFixed,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         98973419178082191780822,
-    //         "Wrong interest fixed"
-    //     );
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFloating,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         123378750000000000000000,
-    //         "Wrong interest floating"
-    //     );
-    //     Assert.equal(
-    //         derivativeInterest.positionValue,
-    //         24405330821917808219178,
-    //         "Wrong interest difference amount"
-    //     );
-    // }
+        //then
+        expect(
+            derivativeInterest.quasiInterestFixed,
+            "Wrong interest fixed"
+        ).to.be.equal("3121225747200000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.quasiInterestFloating,
+            "Wrong interest floating"
+        ).to.be.equal("3890872260000000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.positionValue,
+            "Wrong interest difference amount"
+        ).to.be.equal("24405330821917808219178");
+    });
 
-    // function testCalculateInterestCaseHugeIpor25daysLaterIBTPriceChangedUserLosesDecimals18()
-    //     public
-    // {
-    //     //given
-    //     uint256 iporIndex = 3650000000000000000;
-    //     uint256 spread = 10000000000000000;
-    //     uint256 fixedInterestRate = iporIndex + spread;
+    it("Calculate Interest Case Huge Ipor 25 days Later IBT Price Changed User Loses Decimals 18", async () => {
+        const iporIndex = BigInt(3650000000000000000);
+        const spread = BigInt(10000000000000000);
+        const fixedInterestRate = iporIndex + spread;
 
-    //     DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(
-    //         fixedInterestRate
-    //     );
+        const derivative = await prepareDerivativeCase1(
+            fixedInterestRate,
+            admin
+        );
 
-    //     uint256 ibtPriceSecond = 125 * Constants.D18;
+        const ibtPriceSecond = BigInt(125) * ONE_18DEC;
 
-    //     //when
-    //     DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
-    //         .calculateInterest(
-    //             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-    //             ibtPriceSecond
-    //         );
+        //when
+        const derivativeInterest = await derivativeLogic.calculateInterest(
+            derivative,
+            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
 
-    //     //then
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFixed,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         123446354794520547945205,
-    //         "Wrong interest fixed"
-    //     );
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFloating,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         123378750000000000000000,
-    //         "Wrong interest floating"
-    //     );
-    //     Assert.equal(
-    //         derivativeInterest.positionValue,
-    //         -67604794520547945204,
-    //         "Wrong interest difference amount"
-    //     );
-    // }
+        //then
+        expect(
+            derivativeInterest.quasiInterestFixed,
 
-    // function testCalculateInterestCase100daysLaterIBTPriceNotChangedDecimals18()
-    //     public
-    // {
-    //     //given
-    //     uint256 fixedInterestRate = 40000000000000000;
-    //     DataTypes.IporDerivative memory derivative = prepareDerivativeCase1(
-    //         fixedInterestRate
-    //     );
+            "Wrong interest fixed"
+        ).to.be.equal("3893004244800000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.quasiInterestFloating,
 
-    //     uint256 ibtPriceSecond = 100 * Constants.D18;
+            "Wrong interest floating"
+        ).to.be.equal("3890872260000000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.positionValue,
+            "Wrong interest difference amount"
+        ).to.be.equal("-67604794520547945204");
+    });
 
-    //     //when
-    //     DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
-    //         .calculateInterest(
-    //             derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * 4,
-    //             ibtPriceSecond
-    //         );
+    it("Calculate Interest Case 100 days Later IBT Price Not Changed Decimals 18", async () => {
+        //given
 
-    //     //then
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFixed,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         99005869479452054794521,
-    //         "Wrong interest fixed"
-    //     );
-    //     Assert.equal(
-    //         AmmMath.division(
-    //             derivativeInterest.quasiInterestFloating,
-    //             Constants.YEAR_IN_SECONDS * Constants.D18
-    //         ),
-    //         98703000000000000000000,
-    //         "Wrong interest floating"
-    //     );
-    //     Assert.equal(
-    //         derivativeInterest.positionValue,
-    //         -302869479452054794520,
-    //         "Wrong interest difference amount"
-    //     );
-    // }
+        const fixedInterestRate = BigInt("40000000000000000");
+        const derivative = await prepareDerivativeCase1(
+            fixedInterestRate,
+            admin
+        );
+        const ibtPriceSecond = BigInt(120) * ONE_18DEC;
+
+        //when
+
+        const derivativeInterest = await derivativeLogic.calculateInterest(
+            derivative,
+            derivative.startingTimestamp +
+                PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(
+            derivativeInterest.quasiInterestFixed,
+            "Wrong interest fixed"
+        ).to.be.equal("3122249099904000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.quasiInterestFloating,
+
+            "Wrong interest floating"
+        ).to.be.equal("3735237369600000000000000000000000000000000000000");
+        expect(
+            derivativeInterest.positionValue,
+            "Wrong interest difference amount"
+        ).to.be.equal("19437730520547945205479");
+    });
 });
