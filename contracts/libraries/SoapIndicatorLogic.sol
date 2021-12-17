@@ -60,7 +60,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) pure internal {
+    ) pure internal returns(DataTypes.SoapIndicator memory) {
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
             si,
@@ -77,6 +77,7 @@ library SoapIndicatorLogic {
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
+		return si;
     }
 
     function rebalanceWhenClosePosition(
@@ -86,7 +87,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) pure internal {
+    ) pure internal returns(DataTypes.SoapIndicator memory){
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
@@ -114,6 +115,7 @@ library SoapIndicatorLogic {
         si.totalNotional = si.totalNotional - derivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
+		return si;
     }
 
     function calculateQuasiInterestPaidOut(
