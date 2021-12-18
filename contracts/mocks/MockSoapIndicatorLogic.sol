@@ -28,7 +28,7 @@ contract MockSoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) public pure {
+    ) public pure returns(DataTypes.SoapIndicator memory){
         return
             SoapIndicatorLogic.rebalanceWhenOpenPosition(
                 si,
@@ -46,7 +46,7 @@ contract MockSoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) external pure {
+    ) external pure returns(DataTypes.SoapIndicator memory){
         return
             SoapIndicatorLogic.rebalanceWhenClosePosition(
                 si,

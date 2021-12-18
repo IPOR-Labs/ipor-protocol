@@ -434,7 +434,7 @@ contract SoapIndicatorLogicTest is TestData {
         Assert.equal(
             actualSoapPf,
             expectedSoapPf,
-            "Incorrect SOAP for Pay Fixed Derivatives"
+            "Incorrect SOAP for Rec Fixed Derivatives"
         );
     }
 }
