@@ -31,6 +31,30 @@ const prepareInitialTotalSoapIndicator = async (timestamp) => {
     );
     return { pf, rf };
 };
+
+const simulateOpenPayFixPositionCase1D18 = async (
+    deltaTimeInSeconds,
+    tsiStorage,
+    soapIndicatorLogic
+) => {
+    const rebalanceTimestamp =
+        tsiStorage.pf.rebalanceTimestamp + deltaTimeInSeconds;
+    const derivativeNotional = BigInt(10000) * ONE_18DEC;
+    const derivativeFixedInterestRate = BigInt(5 * 1e16);
+    const derivativeIbtQuantity = BigInt(95 * 1e18);
+    const si = tsiStorage.pf;
+
+    const siResult = await soapIndicatorLogic.rebalanceWhenOpenPosition(
+        si,
+        rebalanceTimestamp,
+        derivativeNotional,
+        derivativeFixedInterestRate,
+        derivativeIbtQuantity
+    );
+    tsiStorage.pf = siResult;
+    return tsiStorage;
+};
+
 const simulateOpenPayFixPositionCase2D18 = async (
     deltaTimeInSeconds,
     tsiStorage,
@@ -51,6 +75,28 @@ const simulateOpenPayFixPositionCase2D18 = async (
         derivativeIbtQuantity
     );
     tsiStorage.pf = siResult;
+    return tsiStorage;
+};
+
+const simulateOpenRecFixPositionCase1D18 = async (
+    deltaTimeInSeconds,
+    tsiStorage,
+    soapIndicatorLogic
+) => {
+    const rebalanceTimestamp =
+        tsiStorage.rf.rebalanceTimestamp + deltaTimeInSeconds;
+    const derivativeNotional = BigInt(10000) * ONE_18DEC;
+    const derivativeFixedInterestRate = BigInt(5 * 1e16);
+    const derivativeIbtQuantity = BigInt(95) * ONE_18DEC;
+    const si = tsiStorage.rf;
+    const siResult = await soapIndicatorLogic.rebalanceWhenOpenPosition(
+        si,
+        rebalanceTimestamp,
+        derivativeNotional,
+        derivativeFixedInterestRate,
+        derivativeIbtQuantity
+    );
+    tsiStorage.rf = siResult;
     return tsiStorage;
 };
 
@@ -108,12 +154,6 @@ describe("TotalSoapIndicatorLogic", () => {
     let soapIndicatorLogic;
 
     before(async () => {
-        // const TotalSoapIndicatorLogic = await ethers.getContractFactory(
-        //     "TotalSoapIndicatorLogic"
-        // );
-        // const totalSoapIndicatorLogic = await TotalSoapIndicatorLogic.deploy();
-        // await totalSoapIndicatorLogic.deployed();
-
         MockTotalSoapIndicatorLogic = await ethers.getContractFactory(
             "MockTotalSoapIndicatorLogic"
         );
@@ -219,14 +259,13 @@ describe("TotalSoapIndicatorLogic", () => {
         );
     });
 
-    // FIXME wrong results
     it("Rebalance Soap When Open Pay Fix Position D18", async () => {
         //given
         const timestamp = Date.now();
         const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
 
         //when
-        const tsiSimulatPf = await simulateOpenPayFixPositionCase2D18(
+        const tsiSimulatPf = await simulateOpenPayFixPositionCase1D18(
             PERIOD_25_DAYS_IN_SECONDS,
             tsiStorage,
             soapIndicatorLogic
@@ -234,12 +273,9 @@ describe("TotalSoapIndicatorLogic", () => {
 
         //then
         const expectedRebalanceTimestamp = tsiSimulatPf.pf.rebalanceTimestamp;
-        // const expectedTotalNotional = BigInt(10000) * ONE_18DEC;
-        const expectedTotalNotional = BigInt("98703000000000000000000");
-        // const expectedTotalIbtQuantity = BigInt(95) * ONE_18DEC;
-        const expectedTotalIbtQuantity = BigInt("987030000000000065536");
-        // const expectedAverageInterestRate = BigInt(5 * 1e16);
-        const expectedAverageInterestRate = BigInt(3 * 1e16);
+        const expectedTotalNotional = BigInt(10000) * ONE_18DEC;
+        const expectedTotalIbtQuantity = BigInt(95) * ONE_18DEC;
+        const expectedAverageInterestRate = BigInt(5 * 1e16);
         const expectedHypotheticalInterestCumulative = BigInt(0);
 
         assertSoapIndicator(
@@ -258,23 +294,16 @@ describe("TotalSoapIndicatorLogic", () => {
         const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
 
         //when
-        const tsiSimulatRf = await simulateOpenRecFixPositionCase2D18(
+        const tsiSimulatRf = await simulateOpenRecFixPositionCase1D18(
             PERIOD_25_DAYS_IN_SECONDS,
             tsiStorage,
             soapIndicatorLogic
         );
 
-        // FIXME
-        //     //then
-        //     uint256 expectedRebalanceTimestamp = tsiStorage.rf.rebalanceTimestamp;
-        //     uint256 expectedTotalNotional = 10000 * Constants.D18;
-        //     uint256 expectedTotalIbtQuantity = 95 * Constants.D18;
-        //     uint256 expectedAverageInterestRate = 5 * 1e16;
-        //     uint256 expectedHypotheticalInterestCumulative = 0;
         const expectedRebalanceTimestamp = tsiSimulatRf.rf.rebalanceTimestamp;
-        const expectedTotalNotional = BigInt("98703000000000000000000");
-        const expectedTotalIbtQuantity = BigInt("987030000000000065536");
-        const expectedAverageInterestRate = BigInt(3 * 1e16);
+        const expectedTotalNotional = BigInt("10000") * ONE_18DEC;
+        const expectedTotalIbtQuantity = BigInt("95") * ONE_18DEC;
+        const expectedAverageInterestRate = BigInt(5 * 1e16);
         const expectedHypotheticalInterestCumulative = BigInt(0);
 
         assertSoapIndicator(
@@ -292,30 +321,23 @@ describe("TotalSoapIndicatorLogic", () => {
         const timestamp = Date.now();
         const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
 
-        //     //when
-        //     simulateOpenPayFixPositionCase1D18(PERIOD_25_DAYS_IN_SECONDS);
-        //     simulateOpenRecFixPositionCase1D18(PERIOD_25_DAYS_IN_SECONDS);
-        const tsiSimulatPf = await simulateOpenPayFixPositionCase2D18(
+        //when
+        const tsiSimulatPf = await simulateOpenPayFixPositionCase1D18(
             PERIOD_25_DAYS_IN_SECONDS,
             tsiStorage,
             soapIndicatorLogic
         );
-        const tsiSimulatRf = await simulateOpenRecFixPositionCase2D18(
+        const tsiSimulatRf = await simulateOpenRecFixPositionCase1D18(
             PERIOD_25_DAYS_IN_SECONDS,
             tsiSimulatPf,
             soapIndicatorLogic
         );
 
-        //     //then
-        //     uint256 expectedRebalanceTimestamp = tsiStorage.pf.rebalanceTimestamp;
-        //     uint256 expectedTotalNotional = 10000 * Constants.D18;
-        //     uint256 expectedTotalIbtQuantity = 95 * Constants.D18;
-        //     uint256 expectedAverageInterestRate = 5 * 1e16;
-        //     uint256 expectedHypotheticalInterestCumulative = 0;
+        //then
         const expectedRebalanceTimestamp = tsiSimulatRf.pf.rebalanceTimestamp;
-        const expectedTotalNotional = BigInt("98703000000000000000000");
-        const expectedTotalIbtQuantity = BigInt("987030000000000065536");
-        const expectedAverageInterestRate = BigInt(3 * 1e16);
+        const expectedTotalNotional = BigInt("10000") * ONE_18DEC;
+        const expectedTotalIbtQuantity = BigInt("95") * ONE_18DEC;
+        const expectedAverageInterestRate = BigInt(5 * 1e16);
         const expectedHypotheticalInterestCumulative = BigInt(0);
 
         assertSoapIndicator(
