@@ -9,4 +9,8 @@ function Enum(...options) {
 module.exports = {
     Enum,
     DerivativeState: Enum("INACTIVE", "ACTIVE"),
+    DerivativeDirection: Enum(
+        "PayFixedReceiveFloating",
+        "PayFloatingReceiveFixed"
+    ),
 };
