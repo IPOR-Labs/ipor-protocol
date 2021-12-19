@@ -209,18 +209,18 @@ describe("TotalSoapIndicatorLogic", () => {
         );
 
         //when
-        const { soapPf, soapRf } = await totalSoapIndicatorLogic.calculateSoap(
-            tsiSimulatRf,
-            timestamp + PERIOD_25_DAYS_IN_SECONDS,
-            ibtPrice
-        );
-        // FIXME : in orginar test soapPf + soapRf = 0 ????
+        const { soapPf, soapRf } =
+            await totalSoapIndicatorLogic.calculateQuasiSoap(
+                tsiSimulatRf,
+                timestamp + PERIOD_25_DAYS_IN_SECONDS,
+                ibtPrice
+            );
         //then
         expect(soapPf, "Incorrect SOAP PF").to.be.equal(
-            "-202814383561637282015"
+            "-6395954399999793325670400000000000000000000000000000000000000000"
         );
         expect(soapRf, "Incorrect SOAP RF").to.be.equal(
-            "202814383561637282016"
+            "6395954399999793325670400000000000000000000000000000000000000000"
         );
     });
 
