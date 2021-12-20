@@ -483,21 +483,88 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     function _updateSoapIndicatorsWhenOpenPosition(
         DataTypes.IporDerivative memory iporDerivative
     ) internal {
-        soapIndicators[iporDerivative.asset].rebalanceSoapWhenOpenPosition(
+		DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
+			soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp,
+			soapIndicators[iporDerivative.asset].pf.direction,
+			soapIndicators[iporDerivative.asset].pf.quasiHypotheticalInterestCumulative,
+			soapIndicators[iporDerivative.asset].pf.totalNotional,
+			soapIndicators[iporDerivative.asset].pf.averageInterestRate,
+			soapIndicators[iporDerivative.asset].pf.totalIbtQuantity,
+			soapIndicators[iporDerivative.asset].pf.soap
+
+		);
+
+		DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
+			soapIndicators[iporDerivative.asset].rf.rebalanceTimestamp,
+			soapIndicators[iporDerivative.asset].rf.direction,
+			soapIndicators[iporDerivative.asset].rf.quasiHypotheticalInterestCumulative,
+			soapIndicators[iporDerivative.asset].rf.totalNotional,
+			soapIndicators[iporDerivative.asset].rf.averageInterestRate,
+			soapIndicators[iporDerivative.asset].rf.totalIbtQuantity,
+			soapIndicators[iporDerivative.asset].rf.soap
+		);
+
+		DataTypes.TotalSoapIndicator memory tsiMem = DataTypes.TotalSoapIndicator(pf, rf);
+
+		// DataTypes.TotalSoapIndicator memory tsi = soapIndicators[iporDerivative.asset];
+
+		TotalSoapIndicatorLogic.rebalanceSoapWhenOpenPosition(tsiMem,
             iporDerivative.direction,
             iporDerivative.startingTimestamp,
             iporDerivative.notionalAmount,
             iporDerivative.indicator.fixedInterestRate,
             iporDerivative.indicator.ibtQuantity
         );
+
+		soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp = tsiMem.pf.rebalanceTimestamp;
+		soapIndicators[iporDerivative.asset].pf.direction = tsiMem.pf.direction;
+		soapIndicators[iporDerivative.asset].pf.quasiHypotheticalInterestCumulative = tsiMem.pf.quasiHypotheticalInterestCumulative;
+		soapIndicators[iporDerivative.asset].pf.totalNotional = tsiMem.pf.totalNotional;
+		soapIndicators[iporDerivative.asset].pf.averageInterestRate = tsiMem.pf.averageInterestRate;
+		soapIndicators[iporDerivative.asset].pf.totalIbtQuantity = tsiMem.pf.totalIbtQuantity;
+		soapIndicators[iporDerivative.asset].pf.soap = tsiMem.pf.soap;
+
+		soapIndicators[iporDerivative.asset].rf.rebalanceTimestamp = tsiMem.rf.rebalanceTimestamp;
+		soapIndicators[iporDerivative.asset].rf.direction = tsiMem.rf.direction;
+		soapIndicators[iporDerivative.asset].rf.quasiHypotheticalInterestCumulative = tsiMem.rf.quasiHypotheticalInterestCumulative;
+		soapIndicators[iporDerivative.asset].rf.totalNotional = tsiMem.rf.totalNotional;
+		soapIndicators[iporDerivative.asset].rf.averageInterestRate = tsiMem.rf.averageInterestRate;
+		soapIndicators[iporDerivative.asset].rf.totalIbtQuantity = tsiMem.rf.totalIbtQuantity;
+		soapIndicators[iporDerivative.asset].rf.soap = tsiMem.rf.soap;
     }
 
     function _updateSoapIndicatorsWhenClosePosition(
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         uint256 closingTimestamp
     ) internal {
-        soapIndicators[derivativeItem.item.asset]
-            .rebalanceSoapWhenClosePosition(
+		// DataTypes.TotalSoapIndicator memory tsiStorage = soapIndicators[derivativeItem.item.asset];
+
+		DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
+			soapIndicators[derivativeItem.item.asset].pf.rebalanceTimestamp,
+			soapIndicators[derivativeItem.item.asset].pf.direction,
+			soapIndicators[derivativeItem.item.asset].pf.quasiHypotheticalInterestCumulative,
+			soapIndicators[derivativeItem.item.asset].pf.totalNotional,
+			soapIndicators[derivativeItem.item.asset].pf.averageInterestRate,
+			soapIndicators[derivativeItem.item.asset].pf.totalIbtQuantity,
+			soapIndicators[derivativeItem.item.asset].pf.soap
+
+		);
+
+		DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
+			soapIndicators[derivativeItem.item.asset].rf.rebalanceTimestamp,
+			soapIndicators[derivativeItem.item.asset].rf.direction,
+			soapIndicators[derivativeItem.item.asset].rf.quasiHypotheticalInterestCumulative,
+			soapIndicators[derivativeItem.item.asset].rf.totalNotional,
+			soapIndicators[derivativeItem.item.asset].rf.averageInterestRate,
+			soapIndicators[derivativeItem.item.asset].rf.totalIbtQuantity,
+			soapIndicators[derivativeItem.item.asset].rf.soap
+		);
+
+		DataTypes.TotalSoapIndicator memory tsiMem = DataTypes.TotalSoapIndicator(
+			pf, rf
+		);
+        
+		TotalSoapIndicatorLogic.rebalanceSoapWhenClosePosition(tsiMem,
                 derivativeItem.item.direction,
                 closingTimestamp,
                 derivativeItem.item.startingTimestamp,
@@ -505,6 +572,25 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 derivativeItem.item.indicator.fixedInterestRate,
                 derivativeItem.item.indicator.ibtQuantity
             );
+
+		soapIndicators[derivativeItem.item.asset].pf.rebalanceTimestamp = tsiMem.pf.rebalanceTimestamp;
+		soapIndicators[derivativeItem.item.asset].pf.direction = tsiMem.pf.direction;
+		soapIndicators[derivativeItem.item.asset].pf.quasiHypotheticalInterestCumulative = tsiMem.pf.quasiHypotheticalInterestCumulative;
+		soapIndicators[derivativeItem.item.asset].pf.totalNotional = tsiMem.pf.totalNotional;
+		soapIndicators[derivativeItem.item.asset].pf.averageInterestRate = tsiMem.pf.averageInterestRate;
+		soapIndicators[derivativeItem.item.asset].pf.totalIbtQuantity = tsiMem.pf.totalIbtQuantity;
+		soapIndicators[derivativeItem.item.asset].pf.soap = tsiMem.pf.soap;
+
+		soapIndicators[derivativeItem.item.asset].rf.rebalanceTimestamp = tsiMem.rf.rebalanceTimestamp;
+		soapIndicators[derivativeItem.item.asset].rf.direction = tsiMem.rf.direction;
+		soapIndicators[derivativeItem.item.asset].rf.quasiHypotheticalInterestCumulative = tsiMem.rf.quasiHypotheticalInterestCumulative;
+		soapIndicators[derivativeItem.item.asset].rf.totalNotional = tsiMem.rf.totalNotional;
+		soapIndicators[derivativeItem.item.asset].rf.averageInterestRate = tsiMem.rf.averageInterestRate;
+		soapIndicators[derivativeItem.item.asset].rf.totalIbtQuantity = tsiMem.rf.totalIbtQuantity;
+		soapIndicators[derivativeItem.item.asset].rf.soap = tsiMem.rf.soap;
+
+			
+		
     }
 
     modifier onlyMilton() {

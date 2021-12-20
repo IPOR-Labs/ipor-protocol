@@ -589,22 +589,22 @@ contract("Joseph", (accounts) => {
         );
     });
 
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
-    //
-    // it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance', async () => {
-    //     //TODO: add this test
-    // });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
+    
+    it('should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance', async () => {
+        //TODO: add this test
+    });
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals", async () => {
         //given

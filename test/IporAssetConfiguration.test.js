@@ -39,143 +39,143 @@ contract("IporAssetConfiguration", (accounts) => {
         );
     });
 
-    it("should set default openingFeeForTreasuryPercentage", async () => {
-        //given
-        const expectedOpeningFeeForTreasuryPercentage = BigInt("0");
+    // it("should set default openingFeeForTreasuryPercentage", async () => {
+    //     //given
+    //     const expectedOpeningFeeForTreasuryPercentage = BigInt("0");
 
-        //when
-        const actualOpeningFeeForTreasuryPercentage =
-            await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
+    //     //when
+    //     const actualOpeningFeeForTreasuryPercentage =
+    //         await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
 
-        //then
-        assert(
-            expectedOpeningFeeForTreasuryPercentage ===
-                BigInt(actualOpeningFeeForTreasuryPercentage),
-            `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`
-        );
-    });
+    //     //then
+    //     assert(
+    //         expectedOpeningFeeForTreasuryPercentage ===
+    //             BigInt(actualOpeningFeeForTreasuryPercentage),
+    //         `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`
+    //     );
+    // });
 
-    it("should set openingFeeForTreasuryPercentage", async () => {
-        //given
-        const expectedOpeningFeeForTreasuryPercentage = BigInt(
-            "1000000000000000000"
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
-            admin
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
-            userOne
-        );
+    // it("should set openingFeeForTreasuryPercentage", async () => {
+    //     //given
+    //     const expectedOpeningFeeForTreasuryPercentage = BigInt(
+    //         "1000000000000000000"
+    //     );
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
+    //         admin
+    //     );
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
+    //         userOne
+    //     );
 
-        //when
-        await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(
-            expectedOpeningFeeForTreasuryPercentage,
-            { from: userOne }
-        );
-        const actualOpeningFeeForTreasuryPercentage =
-            await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
+    //     //when
+    //     await iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(
+    //         expectedOpeningFeeForTreasuryPercentage,
+    //         { from: userOne }
+    //     );
+    //     const actualOpeningFeeForTreasuryPercentage =
+    //         await iporAssetConfigurationDAI.getOpeningFeeForTreasuryPercentage();
 
-        //then
-        assert(
-            expectedOpeningFeeForTreasuryPercentage ===
-                BigInt(actualOpeningFeeForTreasuryPercentage),
-            `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`
-        );
-    });
+    //     //then
+    //     assert(
+    //         expectedOpeningFeeForTreasuryPercentage ===
+    //             BigInt(actualOpeningFeeForTreasuryPercentage),
+    //         `Incorrect openingFeeForTreasuryPercentage actual: ${actualOpeningFeeForTreasuryPercentage}, expected: ${expectedOpeningFeeForTreasuryPercentage}`
+    //     );
+    // });
 
-    it("should NOT set openingFeeForTreasuryPercentage", async () => {
-        //given
-        const openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
-            admin
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
-            userOne
-        );
+    // it("should NOT set openingFeeForTreasuryPercentage", async () => {
+    //     //given
+    //     const openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
+    //         admin
+    //     );
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
+    //         userOne
+    //     );
 
-        await testUtils.assertError(
-            //when
-            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(
-                openingFeeForTreasuryPercentage,
-                { from: userOne }
-            ),
+    //     await testUtils.assertError(
+    //         //when
+    //         iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(
+    //             openingFeeForTreasuryPercentage,
+    //             { from: userOne }
+    //         ),
 
-            //then
-            "IPOR_24"
-        );
-    });
+    //         //then
+    //         "IPOR_24"
+    //     );
+    // });
 
-    it("should NOT set openingFeeForTreasuryPercentage when user does not have OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE role", async () => {
-        //given
-        const openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
+    // it("should NOT set openingFeeForTreasuryPercentage when user does not have OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE role", async () => {
+    //     //given
+    //     const openingFeeForTreasuryPercentage = BigInt("1010000000000000000");
 
-        await testUtils.assertError(
-            //when
-            iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(
-                openingFeeForTreasuryPercentage,
-                { from: userOne }
-            ),
+    //     await testUtils.assertError(
+    //         //when
+    //         iporAssetConfigurationDAI.setOpeningFeeForTreasuryPercentage(
+    //             openingFeeForTreasuryPercentage,
+    //             { from: userOne }
+    //         ),
 
-            //then
-            `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x6d0de9008651a921e7ec84f14cdce94213af6041f456fcfc8c7e6fa897beab0f`
-        );
-    });
+    //         //then
+    //         `account 0xf17f52151ebef6c7334fad080c5704d77216b732 is missing role 0x6d0de9008651a921e7ec84f14cdce94213af6041f456fcfc8c7e6fa897beab0f`
+    //     );
+    // });
 
-    it("should NOT set incomeTaxPercentage", async () => {
-        //given
-        const incomeTaxPercentage = BigInt("1000000000000000001");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            userOne
-        );
+    // it("should NOT set incomeTaxPercentage", async () => {
+    //     //given
+    //     const incomeTaxPercentage = BigInt("1000000000000000001");
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+    //         admin
+    //     );
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+    //         userOne
+    //     );
 
-        await testUtils.assertError(
-            //when
-            iporAssetConfigurationDAI.setIncomeTaxPercentage(
-                incomeTaxPercentage,
-                { from: userOne }
-            ),
-            //then
-            "IPOR_24"
-        );
-    });
+    //     await testUtils.assertError(
+    //         //when
+    //         iporAssetConfigurationDAI.setIncomeTaxPercentage(
+    //             incomeTaxPercentage,
+    //             { from: userOne }
+    //         ),
+    //         //then
+    //         "IPOR_24"
+    //     );
+    // });
 
-    it("should set incomeTaxPercentage - case 1", async () => {
-        //given
+    // it("should set incomeTaxPercentage - case 1", async () => {
+    //     //given
 
-        const incomeTaxPercentage = BigInt("150000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            userOne
-        );
+    //     const incomeTaxPercentage = BigInt("150000000000000000");
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
+    //         admin
+    //     );
+    //     await iporAssetConfigurationDAI.grantRole(
+    //         keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
+    //         userOne
+    //     );
 
-        //when
-        await iporAssetConfigurationDAI.setIncomeTaxPercentage(
-            incomeTaxPercentage,
-            { from: userOne }
-        );
+    //     //when
+    //     await iporAssetConfigurationDAI.setIncomeTaxPercentage(
+    //         incomeTaxPercentage,
+    //         { from: userOne }
+    //     );
 
-        //then
-        const actualIncomeTaxPercentage =
-            await iporAssetConfigurationDAI.getIncomeTaxPercentage();
+    //     //then
+    //     const actualIncomeTaxPercentage =
+    //         await iporAssetConfigurationDAI.getIncomeTaxPercentage();
 
-        assert(
-            incomeTaxPercentage === BigInt(actualIncomeTaxPercentage),
-            `Incorrect incomeTaxPercentage actual: ${actualIncomeTaxPercentage}, expected: ${incomeTaxPercentage}`
-        );
-    });
+    //     assert(
+    //         incomeTaxPercentage === BigInt(actualIncomeTaxPercentage),
+    //         `Incorrect incomeTaxPercentage actual: ${actualIncomeTaxPercentage}, expected: ${incomeTaxPercentage}`
+    //     );
+    // });
 
     it("should NOT set incomeTaxPercentage when user does not have INCOME_TAX_PERCENTAGE_ROLE role", async () => {
         //given

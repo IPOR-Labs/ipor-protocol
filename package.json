@@ -1,43 +1,30 @@
 {
-  "name": "drizzle-box",
-  "version": "1.0.0",
-  "description": "",
-  "main": "truffle-config.js",
-  "directories": {
-    "test": "test"
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@nomiclabs/hardhat-web3": "^2.0.0",
+    "@openzeppelin/hardhat-upgrades": "^1.12.0",
+    "@openzeppelin/test-helpers": "^0.5.15",
+	"@truffle/hdwallet-provider": "^1.5.0",
+    "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.5.1",
+    "hardhat": "^2.7.0",
+    "hardhat-gas-reporter": "^1.0.6",
+    "mocha-param": "^2.0.1",
+    "solhint": "^3.3.6",
+    "solidity-coverage": "^0.7.17",
+    "web3": "^1.6.1"
   },
   "scripts": {
-    "coverage": "truffle run coverage",
-    "test": "truffle test --stacktrace-extra"
+    "coverage": "npx hardhat coverage",
+    "test": "npx hardhat test",
+    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/truffle-box/drizzle-box.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/truffle-box/drizzle-box/issues"
-  },
-  "homepage": "https://github.com/truffle-box/drizzle-box#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.3.2",
-    "@truffle/hdwallet-provider": "^1.5.0",
-    "dotenv": "^10.0.0",
-    "keccak256": "^1.0.3",
-    "solc": "0.8.9",
-    "truffle": "^5.4.22",
-    "truffle-assertions": "^0.9.2",
-    "truffle-contract-size": "^2.0.1"
-  },
-  "devDependencies": {
-    "@openzeppelin/test-helpers": "^0.5.13",
-    "buidler-gas-reporter": "^0.1.4",
-    "eth-gas-reporter": "^0.2.22",
-    "nyc": "^15.1.0",
-    "prettier": "^2.5.0",
-    "prettier-plugin-solidity": "^1.0.0-beta.19",
-    "solidity-coverage": "^0.7.17"
+    "@openzeppelin/contracts": "^4.4.0",
+    "keccak256": "^1.0.3"
   }
 }
