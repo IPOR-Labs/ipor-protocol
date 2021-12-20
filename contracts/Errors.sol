@@ -180,7 +180,15 @@ library Errors {
     string public constant CONFIG_ASSET_DECIMALS_TOO_LOW = "IPOR_52";
 
     //TODO: try to add test for this
-    //@notic Spread value cannot be higher than Ipor Index Value for particular asset
+    //@notice Spread value cannot be higher than Ipor Index Value for particular asset
     string public constant MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
         "IPOR_53";
+
+	//@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1
+	string public constant MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE =
+        "IPOR_54";
+
+	//@notice During spread calculation - Alfa param which  cannot be higher than 1
+	string public constant MILTON_SPREAD_ALFA_CANNOT_BE_HIGHER_THAN_ONE =
+        "IPOR_55";
 }

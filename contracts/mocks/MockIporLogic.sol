@@ -39,4 +39,19 @@ contract MockIporLogic {
                 decayFactor
             );
     }
+
+	function calculateExponentialWeightedMovingVariance(
+        uint256 lastExponentialWeightedMovingVariance,
+        uint256 exponentialMovingAverage,
+        uint256 indexValue,
+        uint256 alfa
+    )public pure returns (uint256) {
+		return
+            IporLogic.calculateExponentialWeightedMovingVariance(
+				 lastExponentialWeightedMovingVariance,
+				 exponentialMovingAverage,
+				 indexValue,
+				 alfa
+            );
+	}
 }

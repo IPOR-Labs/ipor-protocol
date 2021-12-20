@@ -56,14 +56,28 @@ library IporLogic {
 
     function calculateExponentialWeightedMovingVariance(
         uint256 lastExponentialWeightedMovingVariance,
-        uint256 lastExponentialMovingAverage,
+        uint256 exponentialMovingAverage,
         uint256 indexValue,
-        uint256 decayFactor
-    ) internal pure returns (uint256) {
-        return  0;//TODO: implement
-			//AmmMath.division(
-              //   decayFactor *(lastExponentialWeightedMovingVariance + (Constants.D18 - decayFactor) * (indexValue - lastExponentialMovingAverage) * (indexValue - lastExponentialMovingAverage)),
-              //   Constants.D18 * Constants.D18 * Constants.D18 
-             //);
+        uint256 alfa
+    ) internal pure returns (uint256 result) {		
+
+		require(alfa <= Constants.D18, Errors.MILTON_SPREAD_ALFA_CANNOT_BE_HIGHER_THAN_ONE);
+
+		if (indexValue > exponentialMovingAverage) {
+			result = AmmMath.division(
+				alfa *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
+						+ (Constants.D18 - alfa) * (indexValue - exponentialMovingAverage) * (indexValue - exponentialMovingAverage)),
+					 Constants.D18 * Constants.D18 * Constants.D18 
+				 );
+		} else {
+			result = AmmMath.division(
+				alfa *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
+						+ (Constants.D18 - alfa) * (exponentialMovingAverage - indexValue) * (exponentialMovingAverage-indexValue)),
+					 Constants.D18 * Constants.D18 * Constants.D18 
+				 );
+		}
+
+		require(result <= Constants.D18, Errors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE);
+        
     }
 }
