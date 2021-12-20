@@ -17,6 +17,7 @@ import "../libraries/DerivativesView.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "./AccessControlAssetConfiguration.sol";
 
+//TODO: combine with MiltonStorage to minimize external calls in modifiers and simplify code
 contract IporAssetConfiguration is
     AccessControlAssetConfiguration(msg.sender),
     IIporAssetConfiguration

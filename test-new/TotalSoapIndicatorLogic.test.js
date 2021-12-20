@@ -4,6 +4,7 @@ const { DerivativeDirection } = require("./enums.js");
 const {
     PERIOD_1_DAY_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
+    ZERO,
 } = require("./Const.js");
 const ONE_18DEC = BigInt("1000000000000000000");
 
@@ -209,19 +210,16 @@ describe("TotalSoapIndicatorLogic", () => {
         );
 
         //when
-        const { soapPf, soapRf } = await totalSoapIndicatorLogic.calculateSoap(
-            tsiSimulatRf,
-            timestamp + PERIOD_25_DAYS_IN_SECONDS,
-            ibtPrice
-        );
-        // FIXME : in orginar test soapPf + soapRf = 0 ????
+        const { soapPf, soapRf } =
+            await totalSoapIndicatorLogic.calculateQuasiSoap(
+                tsiSimulatRf,
+                timestamp + PERIOD_25_DAYS_IN_SECONDS,
+                ibtPrice
+            );
+
         //then
-        expect(soapPf, "Incorrect SOAP PF").to.be.equal(
-            "-202814383561637282015"
-        );
-        expect(soapRf, "Incorrect SOAP RF").to.be.equal(
-            "202814383561637282016"
-        );
+        const soap = BigInt(soapPf) + BigInt(soapRf);
+        expect(soap, "Incorrect SOAP PF").to.be.equal(ZERO);
     });
 
     it("Calculate Soap When Open Pay Fix And Rec Fix Position Same Notional Different Moment D18", async () => {
