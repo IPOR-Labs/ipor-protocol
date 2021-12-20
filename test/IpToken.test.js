@@ -1,31 +1,51 @@
-const testUtils = require("./TestUtils.js");
-const truffleAssert = require("truffle-assertions");
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-contract("IpToken", (accounts) => {
-    const [admin, userOne, userTwo, userThree, liquidityProvider, _] = accounts;
+const {
+    assertError,
+    prepareData,
+    prepareTestData,
+    getLibraries,
+} = require("./Utils");
 
+const { USD_10_000_18DEC } = require("./Const.js");
+
+describe("IpToken", () => {
+    let admin, userOne, userTwo, userThree, liquidityProvider;
     let data = null;
     let testData;
+    let libraries;
 
     before(async () => {
-        data = await testUtils.prepareData();
+        libraries = await getLibraries();
+
+        [admin, userOne, userTwo, userThree, liquidityProvider] =
+            await ethers.getSigners();
+        data = await prepareData(libraries, [
+            admin,
+            userOne,
+            userTwo,
+            userThree,
+            liquidityProvider,
+        ]);
     });
 
     beforeEach(async () => {
-        testData = await testUtils.prepareTestData(
+        testData = await prepareTestData(
             [userTwo, liquidityProvider],
             ["DAI"],
-            data
+            data,
+            libraries
         );
     });
 
     it("should NOT mint ipToken if not a Liquidity Pool", async () => {
         //when
-        await testUtils.assertError(
+        await assertError(
             //when
-            testData.ipTokenDai.mint(userOne, testUtils.USD_10_000_18DEC, {
-                from: userTwo,
-            }),
+            testData.ipTokenDai
+                .connect(userTwo)
+                .mint(userOne.address, USD_10_000_18DEC),
             //then
             "IPOR_46"
         );
@@ -33,14 +53,11 @@ contract("IpToken", (accounts) => {
 
     it("should NOT burn ipToken if not a Liquidity Pool", async () => {
         //when
-        await testUtils.assertError(
+        await assertError(
             //when
-            testData.ipTokenDai.burn(
-                userOne,
-                userTwo,
-                testUtils.USD_10_000_18DEC,
-                { from: userTwo }
-            ),
+            testData.ipTokenDai
+                .connect(userTwo)
+                .burn(userOne.address, userTwo.address, USD_10_000_18DEC),
             //then
             "IPOR_46"
         );
@@ -48,36 +65,29 @@ contract("IpToken", (accounts) => {
 
     it("should emit event", async () => {
         //given
-        await data.iporConfiguration.setJoseph(admin);
+        await data.iporConfiguration.setJoseph(admin.address);
 
-        //when
-        let tx = await testData.ipTokenDai.mint(
-            userOne,
-            testUtils.USD_10_000_18DEC,
-            { from: admin }
-        );
+        await expect(
+            testData.ipTokenDai.mint(userOne.address, USD_10_000_18DEC)
+        )
+            .to.emit(testData.ipTokenDai, "Mint")
+            .withArgs(userOne.address, USD_10_000_18DEC);
 
-        //then
-        truffleAssert.eventEmitted(tx, "Mint", (ev) => {
-            return ev.user == userOne && ev.value == testUtils.USD_10_000_18DEC;
-        });
         await data.iporConfiguration.setJoseph(data.joseph.address);
     });
 
     it("should contain 18 decimals", async () => {
         //given
-        await data.iporConfiguration.setJoseph(admin);
+        await data.iporConfiguration.setJoseph(admin.address);
         const expectedDecimals = BigInt("18");
         //when
-        let actualDecimals = BigInt(
-            await testData.ipTokenDai.decimals({ from: admin })
-        );
+        let actualDecimals = BigInt(await testData.ipTokenDai.decimals());
 
         //then
-        assert(
-            expectedDecimals === actualDecimals,
+        expect(
+            expectedDecimals,
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
-        );
+        ).to.be.eql(actualDecimals);
 
         await data.iporConfiguration.setJoseph(data.joseph.address);
     });
@@ -87,14 +97,12 @@ contract("IpToken", (accounts) => {
         const expectedUnderlyingTokenAddress = testData.tokenDai.address;
         //when
         let actualUnderlyingTokenAddress =
-            await testData.ipTokenDai.getUnderlyingAssetAddress({
-                from: admin,
-            });
+            await testData.ipTokenDai.getUnderlyingAssetAddress();
 
         //then
-        assert(
-            expectedUnderlyingTokenAddress === actualUnderlyingTokenAddress,
+        expect(
+            expectedUnderlyingTokenAddress,
             `Incorrect underlying token address actual: ${actualUnderlyingTokenAddress}, expected: ${expectedUnderlyingTokenAddress}`
-        );
+        ).to.be.eql(actualUnderlyingTokenAddress);
     });
 });

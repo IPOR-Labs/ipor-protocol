@@ -60,10 +60,10 @@ library IporLogic {
         uint256 indexValue,
         uint256 decayFactor
     ) internal pure returns (uint256) {
-        return
-            AmmMath.division(
-                decayFactor *(lastExponentialWeightedMovingVariance + (Constants.D18 - decayFactor) * (indexValue - lastExponentialMovingAverage) * (indexValue - lastExponentialMovingAverage)),
-                Constants.D18 * Constants.D18 * Constants.D18 
-            );
+        return  0;//TODO: implement
+			//AmmMath.division(
+              //   decayFactor *(lastExponentialWeightedMovingVariance + (Constants.D18 - decayFactor) * (indexValue - lastExponentialMovingAverage) * (indexValue - lastExponentialMovingAverage)),
+              //   Constants.D18 * Constants.D18 * Constants.D18 
+             //);
     }
 }

@@ -111,6 +111,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
         miltonStorage.updateStorageWhenTransferPublicationFee(asset, amount);
         //TODO: user Address from OZ and use call
+		//TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
         IERC20(asset).safeTransfer(charlieTreasurer, amount);
     }
 
@@ -617,7 +618,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 transferAmount +
                 derivativeItem.item.fee.liquidationDepositAmount;
         } else {
-            //TODO: don't use transer but call
+            //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             //transfer liquidation deposit amount from Milton to Sender
             IERC20(derivativeItem.item.asset).safeTransfer(
                 msg.sender,
@@ -630,6 +631,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         if (transferAmount > 0) {
             //transfer from Milton to Trader
+			//TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             IERC20(derivativeItem.item.asset).safeTransfer(
                 derivativeItem.item.buyer,
                 AmmMath.convertWadToAssetDecimals(transferAmount, assetDecimals)

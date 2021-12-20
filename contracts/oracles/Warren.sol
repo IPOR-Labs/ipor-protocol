@@ -27,6 +27,7 @@ contract Warren is Ownable, Pausable, IWarren {
     modifier onlyUpdater() {
         bool allowed = false;
         address[] memory updaters = IWarrenStorage(
+			//TODO: avoid external call
             iporConfiguration.getWarrenStorage()
         ).getUpdaters();
         for (uint256 i = 0; i < updaters.length; i++) {

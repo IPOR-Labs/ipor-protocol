@@ -18,6 +18,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
 
     modifier onlyJoseph() {
         require(
+			//TODO: avoid external call
             msg.sender == iporConfiguration.getJoseph(),
             Errors.MILTON_CALLER_NOT_JOSEPH
         );
