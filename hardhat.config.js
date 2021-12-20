@@ -34,6 +34,6 @@ module.exports = {
         },
     },
     paths: {
-        tests: "./test-new",
+        tests: "./test",
     },
 };
