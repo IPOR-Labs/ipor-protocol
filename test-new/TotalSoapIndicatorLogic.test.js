@@ -216,10 +216,13 @@ describe("TotalSoapIndicatorLogic", () => {
                 timestamp + PERIOD_25_DAYS_IN_SECONDS,
                 ibtPrice
             );
-
         //then
-        const soap = BigInt(soapPf) + BigInt(soapRf);
-        expect(soap, "Incorrect SOAP PF").to.be.equal(ZERO);
+        expect(soapPf, "Incorrect SOAP PF").to.be.equal(
+            "-6395954399999793325670400000000000000000000000000000000000000000"
+        );
+        expect(soapRf, "Incorrect SOAP RF").to.be.equal(
+            "6395954399999793325670400000000000000000000000000000000000000000"
+        );
     });
 
     it("Calculate Soap When Open Pay Fix And Rec Fix Position Same Notional Different Moment D18", async () => {
