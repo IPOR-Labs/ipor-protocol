@@ -1,4 +1,5 @@
 import Warren from "./contracts/Warren.json";
+import TestWarren from "./contracts/TestWarren.json";
 import WarrenStorage from "./contracts/WarrenStorage.json";
 import WarrenDevToolDataProvider from "./contracts/WarrenDevToolDataProvider.json";
 import Milton from "./contracts/Milton.json";
@@ -31,6 +32,7 @@ const options = {
         Joseph,
         TestJoseph,
         Warren,
+        TestWarren,
         WarrenStorage,
         WarrenDevToolDataProvider,
         Milton,

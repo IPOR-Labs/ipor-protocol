@@ -158,7 +158,44 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </div>
         </div>
-
+        <hr/>
+        <div className="row">
+            <div className="col-md-2">Warren</div>
+            <div className="col-md-10">
+                {drizzle.contracts.Warren.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">Test Warren</div>
+            <div className="col-md-10">
+                {drizzle.contracts.TestWarren.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">Milton</div>
+            <div className="col-md-10">
+                {drizzle.contracts.Milton.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">Test Milton</div>
+            <div className="col-md-10">
+                {drizzle.contracts.TestMilton.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">Joseph</div>
+            <div className="col-md-10">
+                {drizzle.contracts.Joseph.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">Test Joseph</div>
+            <div className="col-md-10">
+                {drizzle.contracts.TestJoseph.address}
+            </div>
+        </div>
+        <hr/>
         <div className="row">
             <div className="col-md-2">Grant role to user</div>
             <div className="col-md-3">

@@ -906,7 +906,7 @@ module.exports = async function (deployer, _network, addresses) {
                 await iporConfiguration.setMilton(milton.address);
                 await iporConfiguration.setJoseph(joseph.address);
             }
-
+            await testWarren.initialize(iporConfiguration.address);
             await testMilton.initialize(iporConfiguration.address);
             await testJoseph.initialize(iporConfiguration.address);
         } else {

@@ -8,8 +8,12 @@ export default ({drizzle, drizzleState}) => (
     <div>
         <div class="section">
             <p>
-                <strong>Add IPOR Index</strong>
+                <strong>Add IPOR Index (Warren)</strong>
                 <ContractForm drizzle={drizzle} contract="Warren" method="updateIndex"/>
+            </p>
+            <p>
+                <strong>Add IPOR Index (TestWarren)</strong>
+                <ContractForm drizzle={drizzle} contract="TestWarren" method="updateIndex"/>
             </p>
             <p>
                 <strong>Add updater</strong>
