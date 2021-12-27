@@ -54,17 +54,20 @@ contract IporAssetConfiguration is
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint256 private wadDecayFactorValue;
 
-    //@notice Part of Spread calculation - Utilization Component Kf value - check Whitepaper
-    uint256 private spreadUtilizationComponentKfValue;
+    //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
+    uint256 private spreadDemandComponentKfValue;
 
-    //@notice Part of Spread calculation - Utilization Component Lambda value - check Whitepaper
-    uint256 private spreadUtilizationComponentLambdaValue;
+    //@notice Part of Spread calculation - Demand Component Lambda value - check Whitepaper
+    uint256 private spreadDemandComponentKOmegaValue;
 
 	//@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
     uint256 private spreadAtParComponentKVolValue;
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
     uint256 private spreadAtParComponentKHistValue;
+
+	//@notice Spread Max Value
+    uint256 private spreadMaxValue;
 
     uint256 private spreadTemporaryValue;
 
@@ -110,14 +113,32 @@ contract IporAssetConfiguration is
 
         wadDecayFactorValue = 1e17;
 
-        spreadUtilizationComponentKfValue = AmmMath.division(
+        spreadDemandComponentKfValue = AmmMath.division(
             1 * Constants.D18,
             1000
         );
-        spreadUtilizationComponentLambdaValue = AmmMath.division(
+        spreadDemandComponentKOmegaValue = AmmMath.division(
             3 * Constants.D18,
             10
         );
+
+		//TODO: clarify initial value
+		spreadAtParComponentKVolValue = AmmMath.division(
+            3 * Constants.D18,
+            100
+        );
+
+		//TODO: clarify initial value
+		spreadAtParComponentKHistValue = AmmMath.division(
+            3 * Constants.D18,
+            100
+        );
+
+		spreadMaxValue = AmmMath.division(
+            3 * Constants.D18,
+            10
+        );
+
     }
 
     function getIncomeTaxPercentage() external view override returns (uint256) {
@@ -402,43 +423,43 @@ contract IporAssetConfiguration is
         spreadTemporaryValue = newSpreadTemporaryVale;
     }
 
-    function getSpreadUtilizationComponentKfValue()
+    function getSpreadDemandComponentKfValue()
         external
         view
         override
         returns (uint256)
     {
-        return spreadUtilizationComponentKfValue;
+        return spreadDemandComponentKfValue;
     }
 
-    function setSpreadUtilizationComponentKfValue(
-        uint256 newSpreadUtilizationComponentKfValue
-    ) external override onlyRole(SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE) {
-        spreadUtilizationComponentKfValue = newSpreadUtilizationComponentKfValue;
-        emit SpreadUtilizationComponentKfValueSet(
-            newSpreadUtilizationComponentKfValue
+    function setSpreadDemandComponentKfValue(
+        uint256 newSpreadDemandComponentKfValue
+    ) external override onlyRole(SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE) {
+        spreadDemandComponentKfValue = newSpreadDemandComponentKfValue;
+        emit SpreadDemandComponentKfValueSet(
+            newSpreadDemandComponentKfValue
         );
     }
 
-    function getSpreadUtilizationComponentLambdaValue()
+    function getSpreadDemandComponentKOmegaValue()
         external
         view
         override
         returns (uint256)
     {
-        return spreadUtilizationComponentLambdaValue;
+        return spreadDemandComponentKOmegaValue;
     }
 
-    function setSpreadUtilizationComponentLambdaValue(
-        uint256 newSpreadUtilizationComponentLambdaValue
+    function setSpreadDemandComponentKOmegaValue(
+        uint256 newSpreadDemandComponentKOmegaValue
     )
         external
         override
-        onlyRole(SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE)
+        onlyRole(SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE)
     {
-        spreadUtilizationComponentLambdaValue = newSpreadUtilizationComponentLambdaValue;
-        emit SpreadUtilizationComponentLambdaValueSet(
-            newSpreadUtilizationComponentLambdaValue
+        spreadDemandComponentKOmegaValue = newSpreadDemandComponentKOmegaValue;
+        emit SpreadDemandComponentKOmegaValueSet(
+            newSpreadDemandComponentKOmegaValue
         );
     }
 
@@ -483,6 +504,28 @@ contract IporAssetConfiguration is
         spreadAtParComponentKHistValue = newSpreadAtParComponentKHistValue;
         emit SpreadAtParComponentKHistValueSet(
             newSpreadAtParComponentKHistValue
+        );
+    }
+
+	function getSpreadMaxValue()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return spreadMaxValue;
+    }
+
+    function setSpreadMaxValue(
+        uint256 newSpreadMaxValue
+    )
+        external
+        override
+        onlyRole(SPREAD_MAX_VALUE_ROLE)
+    {
+        spreadMaxValue = newSpreadMaxValue;
+        emit SpreadMaxValueSet(
+            newSpreadMaxValue
         );
     }
 

@@ -40,12 +40,16 @@ interface IIporAssetConfiguration {
         address indexed newTreasureTreasurer
     );
 
-    event SpreadUtilizationComponentKfValueSet(
-        uint256 newSpreadUtilizationComponentKfValue
+    event SpreadDemandComponentKfValueSet(
+        uint256 newSpreadDemandComponentKfValue
     );
 
-    event SpreadUtilizationComponentLambdaValueSet(
-        uint256 newSpreadUtilizationComponentLambdaValue
+    event SpreadDemandComponentKOmegaValueSet(
+        uint256 newSpreadDemandComponentKOmegaValue
+    );	
+
+	event SpreadMaxValueSet(
+        uint256 newSpreadMaxValue
     );	
 
     event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);
@@ -139,22 +143,22 @@ interface IIporAssetConfiguration {
 
     function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale) external;
 
-    function getSpreadUtilizationComponentKfValue()
+    function getSpreadDemandComponentKfValue()
         external
         view
         returns (uint256);
 
-    function setSpreadUtilizationComponentKfValue(
-        uint256 newSpreadUtilizationComponentKfValue
+    function setSpreadDemandComponentKfValue(
+        uint256 newSpreadDemandComponentKfValue
     ) external;
 
-    function getSpreadUtilizationComponentLambdaValue()
+    function getSpreadDemandComponentKOmegaValue()
         external
         view
         returns (uint256);
 
-    function setSpreadUtilizationComponentLambdaValue(
-        uint256 newSpreadUtilizationComponentLambdaValue
+    function setSpreadDemandComponentKOmegaValue(
+        uint256 newSpreadDemandComponentKOmegaValue
     ) external;
 
 	function getSpreadAtParComponentKVolValue()
@@ -171,6 +175,15 @@ interface IIporAssetConfiguration {
 
     function setSpreadAtParComponentKHistValue(
         uint256 newSpreadAtParComponentKHistValue
+    ) external;
+
+	function getSpreadMaxValue()
+        external
+        view
+        returns (uint256);
+
+    function setSpreadMaxValue(
+        uint256 newSpreadMaxValue
     ) external;
      
 }

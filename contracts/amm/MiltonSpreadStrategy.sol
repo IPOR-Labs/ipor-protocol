@@ -36,6 +36,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
     ) external view returns (uint256) {
+		
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
@@ -44,17 +45,31 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
 
         uint256 kHist = iporAssetConfiguration
             .getSpreadAtParComponentKHistValue();
+		
+		uint256 maxSpreadValue = iporAssetConfiguration.getSpreadMaxValue();
 
-        return
-            AmmMath.division(
-                kVol,
-                Constants.D18 - exponentialWeightedMovingVariance
-            ) +
-            calculateHistoricalDeviationPayFixed(
+		if (exponentialWeightedMovingVariance == Constants.D18) {
+			return maxSpreadValue;
+		} else {
+			uint256 historicalDeviation = calculateHistoricalDeviationPayFixed(
                 kHist,
                 iporIndexValue,
-                exponentialMovingAverage
+                exponentialMovingAverage,
+				maxSpreadValue
             );
+			if (historicalDeviation >= maxSpreadValue) {
+				return maxSpreadValue;
+			} else {
+				return
+				AmmMath.division(
+					kVol * Constants.D18,
+					Constants.D18 - exponentialWeightedMovingVariance
+				) + historicalDeviation;
+			}
+			
+		}
+
+        
     }
 
     function calculateAtParComponentRecFixed(
@@ -72,55 +87,79 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         uint256 kHist = iporAssetConfiguration
             .getSpreadAtParComponentKHistValue();
 
-        return
-            AmmMath.division(
-                kVol,
-                Constants.D18 - exponentialWeightedMovingVariance
-            ) +
-            calculateHistoricalDeviationRecFixed(
+		uint256 maxSpreadValue = iporAssetConfiguration.getSpreadMaxValue();
+
+		if (exponentialWeightedMovingVariance == Constants.D18) {
+			return maxSpreadValue;
+		} else {
+			uint256 historicalDeviation = calculateHistoricalDeviationRecFixed(
                 kHist,
                 iporIndexValue,
-                exponentialMovingAverage
+                exponentialMovingAverage,
+				maxSpreadValue
             );
+			if (historicalDeviation >= maxSpreadValue) {
+				return maxSpreadValue;
+			} else {
+				return
+				AmmMath.division(
+					kVol * Constants.D18,
+					Constants.D18 - exponentialWeightedMovingVariance
+				) + historicalDeviation;
+			}
+			
+		}
+        
     }
 
     function calculateHistoricalDeviationPayFixed(
         uint256 kHist,
         uint256 iporIndexValue,
-        uint256 exponentialMovingAverage
+        uint256 exponentialMovingAverage,
+		uint256 maxSpreadValue
     ) internal pure returns (uint256) {
         if (exponentialMovingAverage < iporIndexValue) {
             return 0;
         } else {
-            return
+			uint256 mu = AmmMath.absoluteValue(
+				int256(exponentialMovingAverage) -
+					int256(iporIndexValue)
+			);
+			if (mu == Constants.D18) {
+				return maxSpreadValue;
+			} else {
+				return
                 AmmMath.division(
-                    kHist,
-                    Constants.D18 -
-                        AmmMath.absoluteValue(
-                            int256(exponentialMovingAverage) -
-                                int256(iporIndexValue)
-                        )
+                    kHist * Constants.D18,
+                    Constants.D18 - mu
                 );
+			}
+            
         }
     }
 
     function calculateHistoricalDeviationRecFixed(
         uint256 kHist,
         uint256 iporIndexValue,
-        uint256 exponentialMovingAverage
+        uint256 exponentialMovingAverage,
+		uint256 maxSpreadValue
     ) internal pure returns (uint256) {
         if (exponentialMovingAverage > iporIndexValue) {
             return 0;
         } else {
-            return
+			uint256 mu = AmmMath.absoluteValue(
+				int256(exponentialMovingAverage) -
+					int256(iporIndexValue)
+			);
+			if (mu == Constants.D18) {
+				return maxSpreadValue;
+			} else {
+				return
                 AmmMath.division(
-                    kHist,
-                    Constants.D18 -
-                        AmmMath.absoluteValue(
-                            int256(exponentialMovingAverage) -
-                                int256(iporIndexValue)
-                        )
+                    kHist * Constants.D18,
+                    Constants.D18 - mu
                 );
+			}            
         }
     }
 
@@ -142,10 +181,10 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
         uint256 kf = iporAssetConfiguration
-            .getSpreadUtilizationComponentKfValue();
+            .getSpreadDemandComponentKfValue();
 
-        uint256 lambda = iporAssetConfiguration
-            .getSpreadUtilizationComponentLambdaValue();
+        uint256 kOmega = iporAssetConfiguration
+            .getSpreadDemandComponentKOmegaValue();
 
         return
             AmmMath.division(
@@ -157,7 +196,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                         liquidityPool,
                         payFixedDerivativesBalance,
                         recFixedDerivativesBalance,
-                        lambda
+                        kOmega
                     )
             );
     }
@@ -174,10 +213,10 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                 iporConfiguration.getIporAssetConfiguration(asset)
             );
         uint256 kf = iporAssetConfiguration
-            .getSpreadUtilizationComponentKfValue();
+            .getSpreadDemandComponentKfValue();
 
         uint256 lambda = iporAssetConfiguration
-            .getSpreadUtilizationComponentLambdaValue();
+            .getSpreadDemandComponentKOmegaValue();
 
         return
             AmmMath.division(
@@ -201,7 +240,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         uint256 liquidityPool,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
-        uint256 lambda
+        uint256 kOmega
     ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = calculateUtilizationRateWithoutPosition(
                 derivativeOpeningFee,
@@ -217,10 +256,10 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
             );
 
         return
-            calculateImbalanceFactorWithLambda(
+            calculateImbalanceFactorWithKOmega(
                 utilizationRatePayFixedWithPosition,
                 utilizationRateRecFixed,
-                lambda
+                kOmega
             );
     }
 
@@ -244,7 +283,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                 liquidityPool,
                 recFixedDerivativesBalance
             );
-        uint256 adjustedUtilizationRate = calculateImbalanceFactorWithLambda(
+        uint256 adjustedUtilizationRate = calculateImbalanceFactorWithKOmega(
             utilizationRateRecFixedWithPosition,
             utilizationRatePayFixed,
             lambda
@@ -253,10 +292,10 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         return adjustedUtilizationRate;
     }
 
-    function calculateImbalanceFactorWithLambda(
+    function calculateImbalanceFactorWithKOmega(
         uint256 utilizationRateLegWithPosition,
         uint256 utilizationRateLegWithoutPosition,
-        uint256 lambda
+        uint256 kOmega
     ) internal pure returns (uint256) {
         if (
             utilizationRateLegWithPosition >= utilizationRateLegWithoutPosition
@@ -267,7 +306,7 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
                 Constants.D18 -
                 (utilizationRateLegWithPosition -
                     AmmMath.division(
-                        lambda *
+                        kOmega *
                             (utilizationRateLegWithoutPosition -
                                 utilizationRateLegWithPosition),
                         Constants.D18

@@ -1112,33 +1112,33 @@ describe("IporAssetConfiguration", () => {
         );
     });
 
-    it("should set SpreadUtilizationComponentKfValue", async () => {
+    it("should set SpreadDemandComponentKfValue", async () => {
         //given
         const expectedValue = BigInt("1234000000000000000000");
         await iporAssetConfigurationDAI.grantRole(
-            keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE"),
+            keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
             admin.address
         );
-        const role = keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE");
+        const role = keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne.address);
 
         //when
         await iporAssetConfigurationDAI
             .connect(userOne)
-            .setSpreadUtilizationComponentKfValue(expectedValue);
+            .setSpreadDemandComponentKfValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await iporAssetConfigurationDAI.getSpreadUtilizationComponentKfValue()
+            await iporAssetConfigurationDAI.getSpreadDemandComponentKfValue()
         );
 
         expect(
             expectedValue,
-            `Incorrect  SpreadUtilizationComponentKfValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
+            `Incorrect  SpreadDemandComponentKfValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
         ).to.be.eql(actualValue);
     });
 
-    it("should NOT set SpreadUtilizationComponentKfValue when user does not have SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE role", async () => {
+    it("should NOT set SpreadDemandComponentKfValue when user does not have SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE role", async () => {
         //given
         const expectedValue = BigInt("1234000000000000000000");
 
@@ -1146,42 +1146,42 @@ describe("IporAssetConfiguration", () => {
             //when
             iporAssetConfigurationDAI
                 .connect(userOne)
-                .setSpreadUtilizationComponentKfValue(expectedValue),
+                .setSpreadDemandComponentKfValue(expectedValue),
 
             //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x59542b17ceec8a6f8b1bb7b3e5ec973b56689fbcced2a9d87bb75563f9a53956`
+            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xa3398f01fb1ec4a3bb19698f87225bd824cc0c1d4f362a6b56fddc0006bab61f`
         );
     });
 
-    it("should set SpreadUtilizationComponentLambdaValue", async () => {
+    it("should set SpreadDemandComponentKOmegaValue", async () => {
         //given
         const expectedValue = BigInt("1234000000000000000000");
         await iporAssetConfigurationDAI.grantRole(
-            keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
+            keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
             admin.address
         );
         const role = keccak256(
-            "SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE"
+            "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE"
         );
         await iporAssetConfigurationDAI.grantRole(role, userOne.address);
 
         //when
         await iporAssetConfigurationDAI
             .connect(userOne)
-            .setSpreadUtilizationComponentLambdaValue(expectedValue);
+            .setSpreadDemandComponentKOmegaValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await iporAssetConfigurationDAI.getSpreadUtilizationComponentLambdaValue()
+            await iporAssetConfigurationDAI.getSpreadDemandComponentKOmegaValue()
         );
 
         expect(
             expectedValue,
-            `Incorrect  SpreadUtilizationComponentLambdaValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
+            `Incorrect  SpreadDemandComponentKOmegaValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
         ).to.be.eql(actualValue);
     });
 
-    it("should NOT set SpreadUtilizationComponentLambdaValue when user does not have SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE role", async () => {
+    it("should NOT set SpreadDemandComponentKOmegaValue when user does not have SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE role", async () => {
         //given
         const expectedValue = BigInt("1234000000000000000000");
 
@@ -1189,10 +1189,10 @@ describe("IporAssetConfiguration", () => {
             //when
             iporAssetConfigurationDAI
                 .connect(userOne)
-                .setSpreadUtilizationComponentLambdaValue(expectedValue),
+                .setSpreadDemandComponentKOmegaValue(expectedValue),
 
             //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xeec7cc7aa729979c27c0c22d8699c9207ef8923ec66180dd8e0b68e1a3d1ce9f`
+            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x637ba89bee1cd75c66353215d464266e9edf15bc34e82be6a9605aac890faa3d`
         );
     });
 });

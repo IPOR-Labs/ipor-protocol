@@ -2,6 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 const keccak256 = require("keccak256");
+const { utils } = require("web3");
 
 const {
     USER_SUPPLY_6_DECIMALS,
@@ -20,7 +21,7 @@ const {
     PERCENTAGE_160_18DEC,
     PERCENTAGE_365_18DEC,
     USD_10_6DEC,
-    USD_10_18DEC,
+    USD_1_18DEC,
     USD_20_18DEC,
     USD_10_000_18DEC,
     USD_10_000_6DEC,
@@ -65,6 +66,7 @@ const {
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
+    grantAllSpreadRolesForDAI,
 } = require("./Utils");
 
 describe("MiltonSpread", () => {
@@ -641,71 +643,873 @@ describe("MiltonSpread", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    // it("should NOT calculate spread - demand component - Rec Fixed Derivative, Adjusted Utilization Rate equal 1, demand component with denominator equal 0 ", async () => {
+    // it("should calculate spread - demand component - Rec Fixed Derivative, Adjusted Utilization Rate equal M, demand component with denominator equal 0 ", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator != 0", async () => {
+    it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator != 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("30000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = BigInt("46265766473020359");
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const maxSpreadValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(maxSpreadValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("50000000000000000");
+        const exponentialMovingAverage = BigInt("1050000000000000000");
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = maxSpreadValue;
+
+        //then
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator != 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const maxSpreadValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(maxSpreadValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("30000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = maxSpreadValue;
+
+        //then
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const maxSpreadValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(maxSpreadValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("50000000000000000");
+        const exponentialMovingAverage = BigInt("1050000000000000000");
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = maxSpreadValue;
+
+        //then
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator != 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("60000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = BigInt("32124352331606218");
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("60000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator != 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("60000000000000000");
+        const exponentialMovingAverage = iporIndexValue;
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = BigInt("46124352331606218");
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("60000000000000000");
+        const exponentialMovingAverage = iporIndexValue;
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentPayFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator != 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("60000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = BigInt("46410066617320504");
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("1050000000000000000");
+        const exponentialMovingAverage = BigInt("50000000000000000");
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator != 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("60000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("1050000000000000000");
+        const exponentialMovingAverage = BigInt("50000000000000000");
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator != 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("33000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = BigInt("32124352331606218");
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("33000000000000000");
+        const exponentialMovingAverage = BigInt("40000000000000000");
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator != 0", async () => {
+		//given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("33000000000000000");
+        const exponentialMovingAverage = iporIndexValue;
+        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = BigInt("46124352331606218");
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator == 0", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKVolValue(BigInt("31000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadAtParComponentKHistValue(BigInt("14000000000000000"));
+
+        const asset = await testData.tokenDai.address;
+        const iporIndexValue = BigInt("33000000000000000");
+        const exponentialMovingAverage = iporIndexValue;
+        const exponentialWeightedMovingVariance = USD_1_18DEC;
+
+        //when
+        let actualSpreadAtParComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(userOne)
+                .calculateAtParComponentRecFixed(
+                    asset,
+                    iporIndexValue,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
+                )
+        );
+
+        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        //then
+
+        expect(
+            actualSpreadAtParComponentValue,
+            `Incorrect spread at par component value actual: ${actualSpreadAtParComponentValue}, expected: ${expectedSpreadAtParComponentValue}`
+        ).to.be.eq(expectedSpreadAtParComponentValue);
+    });
+
+    // it("should calculate spread equal max value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator == 0", async () => {
+    // it("should calculate spread equal max value - Kf denominator = 0, Komega denominator = 0, KVol denominator != 0, KHist denominator != 0", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator != 0", async () => {
+    // it("should calculate spread equal max value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator == 0", async () => {
+    // it("should calculate spread equal max value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator != 0", async () => {
+    // it("should calculate spread equal max value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator == 0", async () => {
+    // it("should calculate spread equal max value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator != 0", async () => {
+    // it("should calculate spread equal max value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator == 0", async () => {
+    // it("should calculate spread equal max value - Kf part very high, Komega part normal, KVol part normal, KHist part normal", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator != 0", async () => {
+    // it("should calculate spread equal max value - Kf part normal, Komega part very high, KVol part normal, KHist part normal", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator == 0", async () => {
+    // it("should calculate spread equal max value - Kf part normal, Komega part normal, KVol part very high, KHist part normal", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator != 0", async () => {
+    // it("should calculate spread equal max value - Kf part normal, Komega part normal, KVol part normal, KHist very high", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator == 0", async () => {
+    // it("should calculate spread equal max value - Kf part + Komega part + KVol part + KHist > Spread Max Value", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator != 0", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator == 0", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator != 0", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator == 0", async () => {
+    // it("should calculate spread - Kf part + Komega part + KVol part + KHist < Spread Max Value", async () => {
     //     //TODO: implement it
     // });
 });

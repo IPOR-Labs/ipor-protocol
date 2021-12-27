@@ -430,6 +430,56 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     };
 };
 
+module.exports.grantAllSpreadRolesForDAI = async (testData, admin, userOne) => {
+    await testData.iporAssetConfigurationDai.grantRole(
+        keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
+        admin.address
+    );
+    const roleKf = keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE");
+    await testData.iporAssetConfigurationDai.grantRole(roleKf, userOne.address);
+
+    await testData.iporAssetConfigurationDai.grantRole(
+        keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
+        admin.address
+    );
+
+    const roleKOmega = keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE");
+    await testData.iporAssetConfigurationDai.grantRole(
+        roleKOmega,
+        userOne.address
+    );
+
+    await testData.iporAssetConfigurationDai.grantRole(
+        keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE"),
+        admin.address
+    );
+    const roleKvol = keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE");
+    await testData.iporAssetConfigurationDai.grantRole(
+        roleKvol,
+        userOne.address
+    );
+
+    await testData.iporAssetConfigurationDai.grantRole(
+        keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE"),
+        admin.address
+    );
+    const roleKHist = keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE");
+    await testData.iporAssetConfigurationDai.grantRole(
+        roleKHist,
+        userOne.address
+    );
+
+	await testData.iporAssetConfigurationDai.grantRole(
+        keccak256("SPREAD_MAX_VALUE_ADMIN_ROLE"),
+        admin.address
+    );
+    const roleSpreadMax = keccak256("SPREAD_MAX_VALUE_ROLE");
+    await testData.iporAssetConfigurationDai.grantRole(
+        roleSpreadMax,
+        userOne.address
+    );
+};
+
 module.exports.setupIpTokenDaiInitialValues = async (
     liquidityProvider,
     initialAmount

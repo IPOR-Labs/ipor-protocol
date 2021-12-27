@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+	// SPDX-License-Identifier: agpl-3.0
 pragma solidity >=0.8.4 <0.9.0;
 
 import "./AccessControlRevoke.sol";
@@ -75,16 +75,16 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
     bytes32 internal constant DECAY_FACTOR_VALUE_ADMIN_ROLE =
         keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE");
 
-    bytes32 internal constant SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE =
-        keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE");
-    bytes32 internal constant SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE =
-        keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE");
+    bytes32 internal constant SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE =
+        keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE");
+    bytes32 internal constant SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE =
+        keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE");
 
-    bytes32 internal constant SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE =
-        keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE");
+    bytes32 internal constant SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE =
+        keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE");
     bytes32
-        internal constant SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE =
-        keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE");
+        internal constant SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE =
+        keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE");
 
 
 	bytes32 internal constant SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE =
@@ -99,6 +99,11 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         internal constant SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE =
         keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE");
 
+	bytes32 internal constant SPREAD_MAX_VALUE_ROLE =
+        keccak256("SPREAD_MAX_VALUE_ROLE");
+    bytes32
+        internal constant SPREAD_MAX_VALUE_ADMIN_ROLE =
+        keccak256("SPREAD_MAX_VALUE_ADMIN_ROLE");
 
     constructor(address root) {
         _setupRole(ADMIN_ROLE, root);
@@ -189,23 +194,28 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(DECAY_FACTOR_VALUE_ROLE, DECAY_FACTOR_VALUE_ADMIN_ROLE);
 
         _setRoleAdmin(
-            SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE,
+            SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE,
             ADMIN_ROLE
         );
 		
         _setRoleAdmin(
-            SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE,
-            SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE
+            SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE,
+            SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE
         );
 
         _setRoleAdmin(
-            SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE,
+            SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE,
             ADMIN_ROLE
         );
 
         _setRoleAdmin(
-            SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE,
-            SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE
+            SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE,
+            SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE
+        );
+
+		_setRoleAdmin(
+            SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE,
+            ADMIN_ROLE
         );
 
 		_setRoleAdmin(
@@ -214,8 +224,23 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         );
 
 		_setRoleAdmin(
+            SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE,
+            ADMIN_ROLE
+        );
+
+		_setRoleAdmin(
             SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE,
             SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE
+        );
+
+		_setRoleAdmin(
+            SPREAD_MAX_VALUE_ADMIN_ROLE,
+            ADMIN_ROLE
+        );
+
+		_setRoleAdmin(
+            SPREAD_MAX_VALUE_ROLE,
+            SPREAD_MAX_VALUE_ADMIN_ROLE
         );
     }
 }

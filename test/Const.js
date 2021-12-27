@@ -5,6 +5,7 @@ module.exports.PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
 module.exports.PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;
 module.exports.PERIOD_28_DAYS_IN_SECONDS = 60 * 60 * 24 * 28;
 module.exports.PERIOD_50_DAYS_IN_SECONDS = 60 * 60 * 24 * 50;
+module.exports.USD_1_18DEC = BigInt("1000000000000000000");
 module.exports.USD_10_18DEC = BigInt("10000000000000000000");
 module.exports.USD_10_6DEC = BigInt("10000000");
 module.exports.USD_20_18DEC = BigInt("20000000000000000000");
