@@ -57,8 +57,11 @@ contract IporAssetConfiguration is
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
     uint256 private spreadDemandComponentKfValue;
 
-    //@notice Part of Spread calculation - Demand Component Lambda value - check Whitepaper
+    //@notice Part of Spread calculation - Demand Component KOmega value - check Whitepaper
     uint256 private spreadDemandComponentKOmegaValue;
+
+	//@notice Part of Spread calculation - Demand Component Max Liquidity Redemption Value - check Whitepaper
+    uint256 private spreadDemandComponentMaxLiquidityRedemptionValue;
 
 	//@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
     uint256 private spreadAtParComponentKVolValue;
@@ -68,6 +71,8 @@ contract IporAssetConfiguration is
 
 	//@notice Spread Max Value
     uint256 private spreadMaxValue;
+
+	//TODO: rename DemandComponent to DC, AtParComponent to PC or DemandC, AtParC
 
     uint256 private spreadTemporaryValue;
 
@@ -121,6 +126,8 @@ contract IporAssetConfiguration is
             3 * Constants.D18,
             10
         );
+
+		spreadDemandComponentMaxLiquidityRedemptionValue = Constants.D18;
 
 		//TODO: clarify initial value
 		spreadAtParComponentKVolValue = AmmMath.division(
@@ -460,6 +467,28 @@ contract IporAssetConfiguration is
         spreadDemandComponentKOmegaValue = newSpreadDemandComponentKOmegaValue;
         emit SpreadDemandComponentKOmegaValueSet(
             newSpreadDemandComponentKOmegaValue
+        );
+    }
+
+	function getSpreadDemandComponentMaxLiquidityRedemptionValue()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return spreadDemandComponentMaxLiquidityRedemptionValue;
+    }
+
+    function setSpreadDemandComponentMaxLiquidityRedemptionValue(
+        uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue
+    )
+        external
+        override
+        onlyRole(SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE)
+    {
+        spreadDemandComponentMaxLiquidityRedemptionValue = newSpreadDemandComponentMaxLiquidityRedemptionValue;
+        emit SpreadDemandComponentMaxLiquidityRedemptionValueSet(
+            newSpreadDemandComponentMaxLiquidityRedemptionValue
         );
     }
 

@@ -85,16 +85,12 @@ const roles = [
     },
     {
         name: "SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE",
-        adminRole: keccak256(
-            "SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"
-        ),
+        adminRole: keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
         role: keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE"),
     },
     {
         name: "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE",
-        adminRole: keccak256(
-            "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"
-        ),
+        adminRole: keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
         role: keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE"),
     },
 ];
@@ -269,6 +265,13 @@ const rolesNotGrant = [
         name: "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
+    },
+    {
+        name: "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE",
+        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
+        role: keccak256(
+            "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE"
+        ),
     },
 ];
 

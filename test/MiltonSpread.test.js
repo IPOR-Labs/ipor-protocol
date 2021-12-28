@@ -96,6 +96,28 @@ describe("MiltonSpread", () => {
             libraries
         );
 
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                BigInt("1000000000000000000")
+            );
+
         const asset = await testData.tokenDai.address;
         const derivativeDeposit = USD_10_000_18DEC;
         const derivativeOpeningFee = USD_20_18DEC;
@@ -134,6 +156,27 @@ describe("MiltonSpread", () => {
             data,
             libraries
         );
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                BigInt("1000000000000000000")
+            );
 
         const asset = await testData.tokenDai.address;
         const derivativeDeposit = USD_10_000_18DEC;
@@ -174,6 +217,27 @@ describe("MiltonSpread", () => {
             data,
             libraries
         );
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                BigInt("1000000000000000000")
+            );
 
         const asset = await testData.tokenDai.address;
         const derivativeDeposit = USD_10_000_18DEC;
@@ -214,6 +278,27 @@ describe("MiltonSpread", () => {
             data,
             libraries
         );
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                BigInt("1000000000000000000")
+            );
 
         const asset = await testData.tokenDai.address;
         const derivativeDeposit = BigInt("1000000000000000000000");
@@ -253,6 +338,27 @@ describe("MiltonSpread", () => {
             data,
             libraries
         );
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                BigInt("1000000000000000000")
+            );
 
         const asset = await testData.tokenDai.address;
         const derivativeDeposit = BigInt("10000000000000000000000");
@@ -292,6 +398,27 @@ describe("MiltonSpread", () => {
             data,
             libraries
         );
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                BigInt("1000000000000000000")
+            );
 
         const asset = await testData.tokenDai.address;
         const derivativeDeposit = BigInt("10000000000000000000000");
@@ -331,6 +458,27 @@ describe("MiltonSpread", () => {
             data,
             libraries
         );
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                BigInt("1000000000000000000")
+            );
 
         const asset = await testData.tokenDai.address;
         const derivativeDeposit = BigInt("10000000000000000000000");
@@ -362,9 +510,68 @@ describe("MiltonSpread", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    // it("should NOT calculate spread - demand component - Pay Fixed Derivative, Adjusted Utilization Rate equal 1, demand component with denominator equal 0 ", async () => {
-    //     //TODO: implement it
-    // });
+    it("should calculate spread - demand component - Pay Fixed Derivative, Adjusted Utilization Rate equal M , Kf denominator = 0 ", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+
+        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+        const spreadMaxValue = BigInt("300000000000000000");
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadMaxValue(spreadMaxValue);
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKfValue(BigInt("1000000000000000"));
+
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+		const maxLiquidityRedemptionValue = BigInt("1230000000000000000");
+        await testData.iporAssetConfigurationDai
+            .connect(userOne)
+            .setSpreadDemandComponentMaxLiquidityRedemptionValue(
+                maxLiquidityRedemptionValue
+            );
+			
+
+        const asset = await testData.tokenDai.address;
+        const derivativeDeposit = USD_10_000_18DEC;
+        const derivativeOpeningFee = USD_20_18DEC;
+        const liquidityPool = BigInt("1000000000000000000000000");
+        const payFixedDerivativesBalance = BigInt("2000000000000000000000");
+        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const expectedSpreadDemandComponentValue = BigInt("83335000000000000");
+
+        //when
+        let actualSpreadDemandComponentValue = BigInt(
+            await testData.miltonSpread
+                .connect(liquidityProvider)
+                .calculateDemandComponentPayFixed(
+                    asset,
+                    derivativeDeposit,
+                    derivativeOpeningFee,
+                    liquidityPool,
+                    payFixedDerivativesBalance,
+                    recFixedDerivativesBalance
+                )
+        );
+
+        //then
+
+        expect(
+            expectedSpreadDemandComponentValue,
+            `Incorrect spread demand component value actual: ${actualSpreadDemandComponentValue}, expected: ${expectedSpreadDemandComponentValue}`
+        ).to.be.eq(actualSpreadDemandComponentValue);
+    });
 
     it("should calculate spread - demand component - Rec Fixed Derivative, PayFix Balance > RecFix Balance", async () => {
         //given
@@ -643,7 +850,11 @@ describe("MiltonSpread", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    // it("should calculate spread - demand component - Rec Fixed Derivative, Adjusted Utilization Rate equal M, demand component with denominator equal 0 ", async () => {
+    // it("should calculate spread - demand component - Rec Fixed Derivative, Adjusted Utilization Rate equal M , Kf denominator = 0 ", async () => {
+    //     //TODO: implement it
+    // });
+
+    // it("should calculate spread - demand component - Pay Fixed Derivative, Adjusted Utilization Rate equal M , Kf denominator = 0 ", async () => {
     //     //TODO: implement it
     // });
 
@@ -1360,7 +1571,7 @@ describe("MiltonSpread", () => {
     });
 
     it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator != 0", async () => {
-		//given
+        //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],

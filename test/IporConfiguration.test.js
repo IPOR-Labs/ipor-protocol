@@ -70,7 +70,7 @@ describe("IporAssetConfiguration", () => {
             [userTwo.address]
         );
         await timelockController.deployed();
-    });
+    });	
 
     it("should set IporAssetConfiguration for supported asset", async () => {
         //given

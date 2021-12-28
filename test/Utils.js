@@ -449,6 +449,16 @@ module.exports.grantAllSpreadRolesForDAI = async (testData, admin, userOne) => {
         userOne.address
     );
 
+	await testData.iporAssetConfigurationDai.grantRole(
+        keccak256("SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE"),
+        admin.address
+    );
+	const roleM = keccak256("SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE");
+    await testData.iporAssetConfigurationDai.grantRole(
+        roleM,
+        userOne.address
+    );
+
     await testData.iporAssetConfigurationDai.grantRole(
         keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE"),
         admin.address

@@ -58,6 +58,8 @@ describe("IporAssetConfiguration", () => {
         iporAssetConfigurationDAI.deployed();
     });
 
+	//TODO: add tests which checks initial values for every param
+
     it("should set default openingFeeForTreasuryPercentage", async () => {
         //given
         const expectedOpeningFeeForTreasuryPercentage = BigInt("0");

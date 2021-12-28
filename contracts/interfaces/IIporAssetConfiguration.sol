@@ -48,6 +48,10 @@ interface IIporAssetConfiguration {
         uint256 newSpreadDemandComponentKOmegaValue
     );	
 
+	event SpreadDemandComponentMaxLiquidityRedemptionValueSet(
+		uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue
+	);
+
 	event SpreadMaxValueSet(
         uint256 newSpreadMaxValue
     );	
@@ -160,6 +164,14 @@ interface IIporAssetConfiguration {
     function setSpreadDemandComponentKOmegaValue(
         uint256 newSpreadDemandComponentKOmegaValue
     ) external;
+
+	function getSpreadDemandComponentMaxLiquidityRedemptionValue()
+        external
+        view
+        returns (uint256);
+
+    function setSpreadDemandComponentMaxLiquidityRedemptionValue(
+        uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue )external;
 
 	function getSpreadAtParComponentKVolValue()
         external

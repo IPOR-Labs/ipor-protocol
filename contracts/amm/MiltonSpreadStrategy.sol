@@ -186,10 +186,12 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         uint256 kOmega = iporAssetConfiguration
             .getSpreadDemandComponentKOmegaValue();
 
+		uint256 maxLiquidityRedemptionValue = iporAssetConfiguration.getSpreadDemandComponentMaxLiquidityRedemptionValue();
+
         return
             AmmMath.division(
                 kf * Constants.D18,
-                Constants.D18 -
+                maxLiquidityRedemptionValue -
                     calculatePayFixedAdjustedUtilizationRate(
                         derivativeDeposit,
                         derivativeOpeningFee,
@@ -218,10 +220,12 @@ contract MiltonSpreadStrategy is IMiltonSpreadStrategy {
         uint256 lambda = iporAssetConfiguration
             .getSpreadDemandComponentKOmegaValue();
 
+		uint256 maxLiquidityRedemptionValue = iporAssetConfiguration.getSpreadDemandComponentMaxLiquidityRedemptionValue();
+
         return
             AmmMath.division(
                 kf * Constants.D18,
-                Constants.D18 -
+                maxLiquidityRedemptionValue -
                     calculateRecFixedAdjustedUtilizationRate(
                         derivativeDeposit,
                         derivativeOpeningFee,
