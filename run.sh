@@ -92,7 +92,7 @@ done
 function set_smart_contract_address_in_env_config_file(){
   local VAR_NAME="${1}"
   local VAR_VALUE="${2}"
-  sed -i "s/${VAR_NAME}.*/${VAR_NAME}: ${VAR_VALUE}/" "${ENV_CONFIG_FILE_DEST}"
+  sed -i "s/${VAR_NAME}.*/${VAR_NAME}: \"${VAR_VALUE}\"/" "${ENV_CONFIG_FILE_DEST}"
 }
 
 function get_smart_contract_address_from_json_file(){
