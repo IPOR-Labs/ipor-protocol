@@ -139,7 +139,7 @@ function get_smart_contract_address_from_eth_method(){
   local RESULT=$(call_smart_contract_method "${SMART_CONTRACT_ADDRESS}" "${METHOD_SIGNATURE}")
 
   local RESULT_ADDRESS=$(echo "${RESULT}" | jq -r ".result")
-  echo "0x${RESULT_ADDRESS:(-41)}"
+  echo "0x${RESULT_ADDRESS:(-40)}"
 }
 
 function set_smart_contract_address_from_eth_method(){
