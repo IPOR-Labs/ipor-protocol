@@ -85,7 +85,7 @@ library DataTypes {
         uint256 openingFee;
     }
 
-    struct IporDerivativeIndicator {
+    struct IporDerivativeIndicator {		
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
         //@notice IPOR Interest Bearing Token price

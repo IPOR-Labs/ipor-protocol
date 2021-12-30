@@ -33,8 +33,9 @@ library Errors {
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_LOW = "IPOR_12";
 
     //@notice Trader doesnt have enought tokens to execute transaction
-    string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW = "IPOR_13";
-
+    string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW
+	 = "IPOR_13";
+	
     //@notice Derivative cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
     string
         public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW =
