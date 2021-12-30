@@ -80,6 +80,12 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
     bytes32 internal constant SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE =
         keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE");
 
+	bytes32 internal constant SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE =
+        keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE");
+    bytes32
+        internal constant SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE =
+        keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE");
+
     bytes32 internal constant SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE =
         keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE");
     bytes32
@@ -206,6 +212,16 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(
             SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE,
             SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE
+        );
+
+		_setRoleAdmin(
+            SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE,
+            ADMIN_ROLE
+        );
+
+        _setRoleAdmin(
+            SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE,
+            SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE
         );
 
         _setRoleAdmin(

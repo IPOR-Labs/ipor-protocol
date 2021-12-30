@@ -44,6 +44,10 @@ interface IIporAssetConfiguration {
         uint256 newSpreadDemandComponentKfValue
     );
 
+	event SpreadDemandComponentLambdaValueSet(
+        uint256 newSpreadDemandComponentLambdaValue
+    );
+
     event SpreadDemandComponentKOmegaValueSet(
         uint256 newSpreadDemandComponentKOmegaValue
     );	
@@ -155,6 +159,15 @@ interface IIporAssetConfiguration {
     function setSpreadDemandComponentKfValue(
         uint256 newSpreadDemandComponentKfValue
     ) external;
+
+	function getSpreadDemandComponentLambdaValue()
+        external
+        view        
+        returns (uint256);
+
+    function setSpreadDemandComponentLambdaValue(
+        uint256 newSpreadDemandComponentLambdaValue
+    )external;
 
     function getSpreadDemandComponentKOmegaValue()
         external

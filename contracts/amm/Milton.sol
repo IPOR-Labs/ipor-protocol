@@ -20,7 +20,7 @@ import "../tokenization/IpToken.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
-import "../interfaces/IMiltonSpreadStrategy.sol";
+import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
 
 /**
@@ -260,7 +260,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         return
-            IMiltonSpreadStrategy(iporConfiguration.getMiltonSpreadStrategy())
+            IMiltonSpreadModel(iporConfiguration.getMiltonSpreadModel())
                 .calculateSpread(asset, calculateTimestamp);
     }
 
@@ -297,6 +297,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             address(iporConfiguration) != address(0),
             Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS
         );
+		//TODO: consider remove this requirements
         require(asset != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
         require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);

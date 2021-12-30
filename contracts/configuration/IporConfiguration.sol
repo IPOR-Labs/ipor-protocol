@@ -33,8 +33,8 @@ contract IporConfiguration is
         keccak256("MILTON_LP_UTILIZATION_STRATEGY");
 
 	//TODO: move to MiltonConfiguration
-    bytes32 private constant MILTON_SPREAD_STRATEGY =
-        keccak256("MILTON_SPREAD_STRATEGY");
+    bytes32 private constant MILTON_SPREAD_MODEL =
+        keccak256("MILTON_SPREAD_MODEL");
     bytes32 private constant MILTON_PUBLICATION_FEE_TRANSFERER =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
 
@@ -99,22 +99,22 @@ contract IporConfiguration is
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
     }
 
-    function getMiltonSpreadStrategy()
+    function getMiltonSpreadModel()
         external
         view
         override
         returns (address)
     {
-        return _addresses[MILTON_SPREAD_STRATEGY];
+        return _addresses[MILTON_SPREAD_MODEL];
     }
 
-    function setMiltonSpreadStrategy(address miltonSpreadStrategy)
+    function setMiltonSpreadModel(address miltonSpreadModel)
         external
         override
-        onlyRole(MILTON_SPREAD_STRATEGY_ROLE)
+        onlyRole(MILTON_SPREAD_MODEL_ROLE)
     {
-        _addresses[MILTON_SPREAD_STRATEGY] = miltonSpreadStrategy;
-        emit MiltonSpreadStrategyUpdated(miltonSpreadStrategy);
+        _addresses[MILTON_SPREAD_MODEL] = miltonSpreadModel;
+        emit MiltonSpreadModelUpdated(miltonSpreadModel);
     }
 
     function getIporAssetConfiguration(address asset)

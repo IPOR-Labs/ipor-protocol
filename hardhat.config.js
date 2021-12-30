@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("hardhat-tracer");
 require("solidity-coverage");
 require("@nomiclabs/hardhat-web3");
 require("dotenv").config();

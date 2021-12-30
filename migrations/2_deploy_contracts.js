@@ -43,7 +43,7 @@ const MiltonFrontendDataProvider = artifacts.require(
 const MiltonLPUtilizationStrategyCollateral = artifacts.require(
     "MiltonLPUtilizationStrategyCollateral"
 );
-const MiltonSpreadStrategy = artifacts.require("MiltonSpreadStrategy");
+const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 const Joseph = artifacts.require("Joseph");
 
 module.exports = async function (deployer, _network, addresses) {
@@ -125,8 +125,8 @@ module.exports = async function (deployer, _network, addresses) {
     const MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE = keccak256(
         "MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"
     );
-    const MILTON_SPREAD_STRATEGY_ADMIN_ROLE = keccak256(
-        "MILTON_SPREAD_STRATEGY_ADMIN_ROLE"
+    const MILTON_SPREAD_MODEL_ADMIN_ROLE = keccak256(
+        "MILTON_SPREAD_MODEL_ADMIN_ROLE"
     );
     const IPOR_ASSET_CONFIGURATION_ADMIN_ROLE = keccak256(
         "IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"
@@ -145,8 +145,8 @@ module.exports = async function (deployer, _network, addresses) {
     const MILTON_LP_UTILIZATION_STRATEGY_ROLE = keccak256(
         "MILTON_LP_UTILIZATION_STRATEGY_ROLE"
     );
-    const MILTON_SPREAD_STRATEGY_ROLE = keccak256(
-        "MILTON_SPREAD_STRATEGY_ROLE"
+    const MILTON_SPREAD_MODEL_ROLE = keccak256(
+        "MILTON_SPREAD_MODEL_ROLE"
     );
     const IPOR_ASSET_CONFIGURATION_ROLE = keccak256(
         "IPOR_ASSET_CONFIGURATION_ROLE"
@@ -183,8 +183,8 @@ module.exports = async function (deployer, _network, addresses) {
         admin
     );
 
-    await iporConfiguration.grantRole(MILTON_SPREAD_STRATEGY_ADMIN_ROLE, admin);
-    await iporConfiguration.grantRole(MILTON_SPREAD_STRATEGY_ROLE, admin);
+    await iporConfiguration.grantRole(MILTON_SPREAD_MODEL_ADMIN_ROLE, admin);
+    await iporConfiguration.grantRole(MILTON_SPREAD_MODEL_ROLE, admin);
 
     await iporConfiguration.grantRole(
         IPOR_ASSET_CONFIGURATION_ADMIN_ROLE,
@@ -233,14 +233,14 @@ module.exports = async function (deployer, _network, addresses) {
         miltonLPUtilizationStrategyCollateral.address
     );
 
-    await deployer.deploy(MiltonSpreadStrategy);
-    let miltonSpreadStrategy = await MiltonSpreadStrategy.deployed();
+    await deployer.deploy(MiltonSpreadModel);
+    let miltonSpreadModel = await MiltonSpreadModel.deployed();
     await iporConfiguration.grantRole(
-        keccak256("MILTON_SPREAD_STRATEGY_ROLE"),
+        keccak256("MILTON_SPREAD_MODEL_ROLE"),
         admin
     );
-    await iporConfiguration.setMiltonSpreadStrategy(
-        miltonSpreadStrategy.address
+    await iporConfiguration.setMiltonSpreadModel(
+        miltonSpreadModel.address
     );
 
     // prepare ERC20 mocked tokens...
@@ -1044,5 +1044,5 @@ module.exports = async function (deployer, _network, addresses) {
     await miltonLPUtilizationStrategyCollateral.initialize(
         iporConfiguration.address
     );
-    await miltonSpreadStrategy.initialize(iporConfiguration.address);
+    await miltonSpreadModel.initialize(iporConfiguration.address);
 };

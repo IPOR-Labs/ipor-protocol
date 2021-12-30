@@ -128,14 +128,14 @@ export default ({ drizzle, drizzleState }) => (
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="IporConfiguration"
-                    method="getMiltonSpreadStrategy"
+                    method="getMiltonSpreadModel"
                 />
             </div>
             <div className="col-md-7">
                 <ContractForm
                     drizzle={drizzle}
                     contract="IporConfiguration"
-                    method="setMiltonSpreadStrategy"
+                    method="setMiltonSpreadModel"
                 />
             </div>
         </div>
@@ -289,15 +289,15 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>MILTON_SPREAD_STRATEGY_ROLE</td>
+                        <td>MILTON_SPREAD_MODEL_ROLE</td>
                         <td>
-                            0xdf80c0078aae521b601e4fddc35fbb2871ffaa4e22d30b53745545184b3cff3e
+                            0xc769312598bcfa61b1f22ed091835eefa5a0d9a37ea7646f63bfd88a3dd04878
                         </td>
                     </tr>
                     <tr>
-                        <td>MILTON_SPREAD_STRATEGY_ADMIN_ROLE</td>
+                        <td>MILTON_SPREAD_MODEL_ADMIN_ROLE</td>
                         <td>
-                            0x4a48b7c468d48efb15988e82311c6880af84ff7b6fe0e097f58073c7e794cf45
+                            0x869c6dda984481cbeefdaab23aeff7b5cae8e04a57bb6bc44608ea47966b45ac
                         </td>
                     </tr>
                     <tr>

@@ -6,7 +6,7 @@ import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
-import "../interfaces/IMiltonSpreadStrategy.sol";
+import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMilton.sol";
 import "../amm/MiltonStorage.sol";
 
@@ -90,8 +90,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 assets.length
             );
 
-        IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(
-            iporConfiguration.getMiltonSpreadStrategy()
+        IMiltonSpreadModel spreadStrategy = IMiltonSpreadModel(
+            iporConfiguration.getMiltonSpreadModel()
         );
 
         for (uint256 i = 0; i < assets.length; i++) {

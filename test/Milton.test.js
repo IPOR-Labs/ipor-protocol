@@ -6004,6 +6004,8 @@ describe("Milton", () => {
     };
 });
 
+//TODO: !!!! add test when before open position liquidity pool is empty and opening fee is zero - then spread cannot be calculated in correct way!!!
+
 //TODO: !!!! add test when closing derivative, Milton lost, Trader earn, but milton don't have enough balance to withdraw during closing position
 
 //TODO: check initial IBT

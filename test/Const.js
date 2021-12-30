@@ -13,6 +13,7 @@ module.exports.USD_20_6DEC = BigInt("20000000");
 module.exports.USD_99__7_18DEC = BigInt("99700000000000000000");
 module.exports.USD_9063__63_18DEC = BigInt("9940179461615154536391"); //9063,(63) USD
 module.exports.USD_9063__63_6DEC = BigInt("9940179462"); //9063,(63) USD
+module.exports.USD_2_000_18DEC = BigInt("2000000000000000000000");
 module.exports.USD_10_000_18DEC = BigInt("10000000000000000000000");
 module.exports.USD_10_000_6DEC = BigInt("10000000000");
 module.exports.USD_10_400_18DEC = BigInt("10400000000000000000000");

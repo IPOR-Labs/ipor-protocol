@@ -3,8 +3,8 @@ pragma solidity >=0.8.4 <0.9.0;
 
 import "./AccessControlRevoke.sol";
 
-abstract contract AccessControlConfiguration is AccessControlRevoke {
-    bytes32 internal constant IPOR_ASSETS_ROLE = keccak256("IPOR_ASSETS_ROLE");
+abstract contract AccessControlMiltonSpreadModelConfiguration is AccessControlRevoke {
+	bytes32 internal constant IPOR_ASSETS_ROLE = keccak256("IPOR_ASSETS_ROLE");
     bytes32 internal constant IPOR_ASSETS_ADMIN_ROLE =
         keccak256("IPOR_ASSETS_ADMIN_ROLE");
 
