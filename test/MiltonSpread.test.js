@@ -70,7 +70,7 @@ const {
     grantAllSpreadRolesForDAI,
 } = require("./Utils");
 
-describe("MiltonSpreadModel", () => {
+describe("MiltonAssetSpreadModel", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
     let libraries;

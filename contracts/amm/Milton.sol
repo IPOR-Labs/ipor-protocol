@@ -20,7 +20,7 @@ import "../tokenization/IpToken.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
+import "../interfaces/IMiltonAssetSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
 
 /**

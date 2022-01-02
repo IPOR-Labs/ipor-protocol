@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../amm/MiltonSpreadModel.sol";
+import "../amm/MiltonAssetSpreadModel.sol";
 
-contract MockMiltonSpreadModel is MiltonSpreadModel {
+contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
 	
-	constructor(address asset, address iporConfiguration) MiltonSpreadModel(asset, iporConfiguration){		
+	constructor(address asset, address iporConfiguration) MiltonAssetSpreadModel(asset, iporConfiguration){		
 	}
 
     function calculateDemandComponentPayFixed(

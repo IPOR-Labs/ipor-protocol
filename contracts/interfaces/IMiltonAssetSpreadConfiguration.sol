@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 
-interface IMiltonSpreadConfiguration {
+interface IMiltonAssetSpreadConfiguration {
     event SpreadDemandComponentKfValueSet(
         uint256 newSpreadDemandComponentKfValue
     );

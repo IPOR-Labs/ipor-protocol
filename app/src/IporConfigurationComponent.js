@@ -128,14 +128,14 @@ export default ({ drizzle, drizzleState }) => (
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="IporConfiguration"
-                    method="getMiltonSpreadModel"
+                    method="getMiltonAssetSpreadModel"
                 />
             </div>
             <div className="col-md-7">
                 <ContractForm
                     drizzle={drizzle}
                     contract="IporConfiguration"
-                    method="setMiltonSpreadModel"
+                    method="setMiltonAssetSpreadModel"
                 />
             </div>
         </div>
@@ -158,12 +158,10 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </div>
         </div>
-        <hr/>
+        <hr />
         <div className="row">
             <div className="col-md-2">Warren</div>
-            <div className="col-md-10">
-                {drizzle.contracts.Warren.address}
-            </div>
+            <div className="col-md-10">{drizzle.contracts.Warren.address}</div>
         </div>
         <div className="row">
             <div className="col-md-2">Test Warren</div>
@@ -173,9 +171,7 @@ export default ({ drizzle, drizzleState }) => (
         </div>
         <div className="row">
             <div className="col-md-2">Milton</div>
-            <div className="col-md-10">
-                {drizzle.contracts.Milton.address}
-            </div>
+            <div className="col-md-10">{drizzle.contracts.Milton.address}</div>
         </div>
         <div className="row">
             <div className="col-md-2">Test Milton</div>
@@ -185,9 +181,7 @@ export default ({ drizzle, drizzleState }) => (
         </div>
         <div className="row">
             <div className="col-md-2">Joseph</div>
-            <div className="col-md-10">
-                {drizzle.contracts.Joseph.address}
-            </div>
+            <div className="col-md-10">{drizzle.contracts.Joseph.address}</div>
         </div>
         <div className="row">
             <div className="col-md-2">Test Joseph</div>
@@ -195,7 +189,7 @@ export default ({ drizzle, drizzleState }) => (
                 {drizzle.contracts.TestJoseph.address}
             </div>
         </div>
-        <hr/>
+        <hr />
         <div className="row">
             <div className="col-md-2">Grant role to user</div>
             <div className="col-md-3">
@@ -228,7 +222,7 @@ export default ({ drizzle, drizzleState }) => (
                             0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
                         </td>
                     </tr>
-					<tr>
+                    <tr>
                         <td>ROLES_INFO_ROLE</td>
                         <td>
                             0xc878cde3567a457053651a2406e31db6dbb9207b6d5eedb081ef807beaaf5444

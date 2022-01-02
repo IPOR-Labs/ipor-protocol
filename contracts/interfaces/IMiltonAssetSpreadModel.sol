@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 
-interface IMiltonSpreadModel {
+interface IMiltonAssetSpreadModel {
     function calculateSpread(
         uint256 calculateTimestamp,
         address asset,

@@ -145,7 +145,7 @@
                         <argument>${contracts.sources}/amm/IMiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonLPUtilizationStrategyCollateral.sol</argument>
-                        <argument>${contracts.sources}/amm/MiltonSpreadModel.sol</argument>
+                        <argument>${contracts.sources}/amm/MiltonAssetSpreadModel.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/amm/TestMilton.sol</argument>
                         <argument>${contracts.sources}/configuration/AccessControlAssetConfiguration.sol</argument>
@@ -165,7 +165,7 @@
                         <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonLPUtilisationStrategy.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonSpreadModel.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonAssetSpreadModel.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarrenDevToolDataProvider.sol</argument>

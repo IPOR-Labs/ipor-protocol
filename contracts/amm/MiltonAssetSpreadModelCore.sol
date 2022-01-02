@@ -9,10 +9,10 @@ import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from "../libraries/AmmMath.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
+import "../interfaces/IMiltonAssetSpreadModel.sol";
 import {Errors} from "../Errors.sol";
 
-contract MiltonSpreadModelCore {
+contract MiltonAssetSpreadModelCore {
 
 	function _calculateSoapPlus(int256 soap, uint256 derivativesBalance)
         internal
@@ -29,7 +29,7 @@ contract MiltonSpreadModelCore {
             return 0;
         }
     }
-	
+
 	function _calculateImbalanceFactorWithLambda(
         uint256 utilizationRateLegWithPosition,
         uint256 utilizationRateLegWithoutPosition,

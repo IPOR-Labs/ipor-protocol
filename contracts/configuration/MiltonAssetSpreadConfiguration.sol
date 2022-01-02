@@ -2,12 +2,12 @@
 pragma solidity 0.8.9;
 import "../libraries/Constants.sol";
 import "../libraries/AmmMath.sol";
-import "../interfaces/IMiltonSpreadConfiguration.sol";
-import "./AccessControlMiltonSpreadConfiguration.sol";
+import "../interfaces/IMiltonAssetSpreadConfiguration.sol";
+import "./AccessControlMiltonAssetSpreadConfiguration.sol";
 
-contract MiltonSpreadConfiguration is
-    AccessControlMiltonSpreadConfiguration(msg.sender),
-    IMiltonSpreadConfiguration
+contract MiltonAssetSpreadConfiguration is
+    AccessControlMiltonAssetSpreadConfiguration(msg.sender),
+    IMiltonAssetSpreadConfiguration
 {
 
 	address private immutable _asset;

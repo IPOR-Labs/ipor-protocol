@@ -9,19 +9,19 @@ import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from "../libraries/AmmMath.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
+import "../interfaces/IMiltonAssetSpreadModel.sol";
 import {Errors} from "../Errors.sol";
-import "./MiltonSpreadModelCore.sol";
-import "../configuration/MiltonSpreadConfiguration.sol";
+import "./MiltonAssetSpreadModelCore.sol";
+import "../configuration/MiltonAssetSpreadConfiguration.sol";
 
-contract MiltonSpreadModel is
-    MiltonSpreadModelCore,
-    MiltonSpreadConfiguration,
-    IMiltonSpreadModel
+contract MiltonAssetSpreadModel is
+    MiltonAssetSpreadModelCore,
+    MiltonAssetSpreadConfiguration,
+    IMiltonAssetSpreadModel
 {
     IIporConfiguration internal _iporConfiguration;
 
-	constructor(address asset, address iporConfiguration) MiltonSpreadConfiguration(asset){		
+	constructor(address asset, address iporConfiguration) MiltonAssetSpreadConfiguration(asset){		
 		_iporConfiguration = IIporConfiguration(iporConfiguration);
 	}
 	
@@ -327,14 +327,14 @@ contract MiltonSpreadModel is
     }
 }
 
-// contract MiltonSpreadModelUsdt is MiltonSpreadModel {
-//     constructor(address asset) MiltonSpreadModel(asset) {}
+// contract MiltonAssetSpreadModelUsdt is MiltonAssetSpreadModel {
+//     constructor(address asset) MiltonAssetSpreadModel(asset) {}
 // }
 
-// contract MiltonSpreadModelUsdc is MiltonSpreadModel {
-//     constructor(address asset) MiltonSpreadModel(asset) {}
+// contract MiltonAssetSpreadModelUsdc is MiltonAssetSpreadModel {
+//     constructor(address asset) MiltonAssetSpreadModel(asset) {}
 // }
 
-// contract MiltonSpreadModelDai is MiltonSpreadModel {
-//     constructor(address asset) MiltonSpreadModel(asset) {}
+// contract MiltonAssetSpreadModelDai is MiltonAssetSpreadModel {
+//     constructor(address asset) MiltonAssetSpreadModel(asset) {}
 // }

@@ -298,8 +298,8 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
         miltonLPUtilizationStrategyCollateral.address
     );
 
-    const MockMiltonSpreadModel = await ethers.getContractFactory(
-        "MockMiltonSpreadModel"
+    const MockMiltonAssetSpreadModel = await ethers.getContractFactory(
+        "MockMiltonAssetSpreadModel"
     );
 
     for (let k = 0; k < assets.length; k++) {
@@ -337,11 +337,11 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             );
             await miltonStorage.addAsset(tokenUsdt.address);
 
-            miltonSpreadUsdt = await MockMiltonSpreadModel.deploy(
-				iporAssetConfigurationUsdt.address,
+            miltonSpreadUsdt = await MockMiltonAssetSpreadModel.deploy(
+                iporAssetConfigurationUsdt.address,
                 data.iporConfiguration.address
             );
-            await miltonSpreadUsdt.deployed();  			          
+            await miltonSpreadUsdt.deployed();
         }
         if (assets[k] === "USDC") {
             const UsdcMockedToken = await ethers.getContractFactory(
@@ -380,8 +380,8 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             );
             await miltonStorage.addAsset(tokenUsdc.address);
 
-			miltonSpreadUsdc = await MockMiltonSpreadModel.deploy(
-				iporAssetConfigurationUsdc.address,
+            miltonSpreadUsdc = await MockMiltonAssetSpreadModel.deploy(
+                iporAssetConfigurationUsdc.address,
                 data.iporConfiguration.address
             );
             await miltonSpreadUsdc.deployed();
@@ -422,8 +422,8 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             );
             await miltonStorage.addAsset(tokenDai.address);
 
-			miltonSpreadDai = await MockMiltonSpreadModel.deploy(
-				iporAssetConfigurationDai.address,
+            miltonSpreadDai = await MockMiltonAssetSpreadModel.deploy(
+                iporAssetConfigurationDai.address,
                 data.iporConfiguration.address
             );
             await miltonSpreadDai.deployed();
@@ -462,10 +462,7 @@ module.exports.grantAllSpreadRolesForDAI = async (testData, admin, userOne) => {
     );
 
     const roleLambda = keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE");
-    await testData.miltonSpreadDai.grantRole(
-        roleLambda,
-        userOne.address
-    );
+    await testData.miltonSpreadDai.grantRole(roleLambda, userOne.address);
 
     await testData.miltonSpreadDai.grantRole(
         keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
@@ -473,10 +470,7 @@ module.exports.grantAllSpreadRolesForDAI = async (testData, admin, userOne) => {
     );
 
     const roleKOmega = keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE");
-    await testData.miltonSpreadDai.grantRole(
-        roleKOmega,
-        userOne.address
-    );
+    await testData.miltonSpreadDai.grantRole(roleKOmega, userOne.address);
 
     await testData.miltonSpreadDai.grantRole(
         keccak256(
@@ -494,30 +488,21 @@ module.exports.grantAllSpreadRolesForDAI = async (testData, admin, userOne) => {
         admin.address
     );
     const roleKvol = keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE");
-    await testData.miltonSpreadDai.grantRole(
-        roleKvol,
-        userOne.address
-    );
+    await testData.miltonSpreadDai.grantRole(roleKvol, userOne.address);
 
     await testData.miltonSpreadDai.grantRole(
         keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE"),
         admin.address
     );
     const roleKHist = keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE");
-    await testData.miltonSpreadDai.grantRole(
-        roleKHist,
-        userOne.address
-    );
+    await testData.miltonSpreadDai.grantRole(roleKHist, userOne.address);
 
     await testData.miltonSpreadDai.grantRole(
         keccak256("SPREAD_MAX_VALUE_ADMIN_ROLE"),
         admin.address
     );
     const roleSpreadMax = keccak256("SPREAD_MAX_VALUE_ROLE");
-    await testData.miltonSpreadDai.grantRole(
-        roleSpreadMax,
-        userOne.address
-    );
+    await testData.miltonSpreadDai.grantRole(roleSpreadMax, userOne.address);
 };
 
 module.exports.setupIpTokenDaiInitialValues = async (
