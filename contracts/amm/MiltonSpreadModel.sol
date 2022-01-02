@@ -101,14 +101,14 @@ contract MiltonSpreadModel is
         uint256 recFixedDerivativesBalance,
         int256 soapPayFixed
     ) internal view returns (uint256) {
-        uint256 kfDenominator = _spreadDemandComponentMaxLiquidityRedemptionValue -
+        uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
                 _calculateAdjustedUtilizationRatePayFixed(
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
-                    _spreadDemandComponentLambdaValue
+                    _demandComponentLambdaValue
                 );
 
         if (kfDenominator > 0) {
@@ -117,18 +117,18 @@ contract MiltonSpreadModel is
             if (kOmegaDenominator > 0) {
                 return
                     AmmMath.division(
-                        _spreadDemandComponentKfValue * Constants.D18,
+                        _demandComponentKfValue * Constants.D18,
                         kfDenominator
                     ) +
                     AmmMath.division(
-                        _spreadDemandComponentKOmegaValue * Constants.D18,
+                        _demandComponentKOmegaValue * Constants.D18,
                         kOmegaDenominator
                     );
             } else {
-                return _spreadMaxValue;
+                return _maxValue;
             }
         } else {
-            return _spreadMaxValue;
+            return _maxValue;
         }
     }
 
@@ -138,20 +138,20 @@ contract MiltonSpreadModel is
         uint256 exponentialWeightedMovingVariance
     ) internal view returns (uint256) {
         if (exponentialWeightedMovingVariance == Constants.D18) {
-            return _spreadMaxValue;
+            return _maxValue;
         } else {
             uint256 historicalDeviation = _calculateHistoricalDeviationPayFixed(
-                _spreadAtParComponentKHistValue,
+                _atParComponentKHistValue,
                 iporIndexValue,
                 exponentialMovingAverage,
-                _spreadMaxValue
+                _maxValue
             );
-            if (historicalDeviation >= _spreadMaxValue) {
-                return _spreadMaxValue;
+            if (historicalDeviation >= _maxValue) {
+                return _maxValue;
             } else {
                 return
                     AmmMath.division(
-                        _spreadAtParComponentKVolValue * Constants.D18,
+                        _atParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
             }
@@ -218,14 +218,14 @@ contract MiltonSpreadModel is
         uint256 recFixedDerivativesBalance,
         int256 soapRecFixed
     ) internal view returns (uint256) {
-        uint256 kfDenominator = _spreadDemandComponentMaxLiquidityRedemptionValue -
+        uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
                 _calculateAdjustedUtilizationRateRecFixed(
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
-                    _spreadDemandComponentKOmegaValue
+                    _demandComponentKOmegaValue
                 );
 
         if (kfDenominator > 0) {
@@ -234,18 +234,18 @@ contract MiltonSpreadModel is
             if (kOmegaDenominator > 0) {
                 return
                     AmmMath.division(
-                        _spreadDemandComponentKfValue * Constants.D18,
+                        _demandComponentKfValue * Constants.D18,
                         kfDenominator
                     ) +
                     AmmMath.division(
-                        _spreadDemandComponentKOmegaValue * Constants.D18,
+                        _demandComponentKOmegaValue * Constants.D18,
                         kOmegaDenominator
                     );
             } else {
-                return _spreadMaxValue;
+                return _maxValue;
             }
         } else {
-            return _spreadMaxValue;
+            return _maxValue;
         }
     }
 
@@ -254,23 +254,23 @@ contract MiltonSpreadModel is
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
     ) internal view returns (uint256) {
-        uint256 maxSpreadValue = _spreadMaxValue;
+        uint256 maxSpreadValue = _maxValue;
 
         if (exponentialWeightedMovingVariance == Constants.D18) {
             return maxSpreadValue;
         } else {
             uint256 historicalDeviation = _calculateHistoricalDeviationRecFixed(
-                _spreadAtParComponentKHistValue,
+                _atParComponentKHistValue,
                 iporIndexValue,
                 exponentialMovingAverage,
                 maxSpreadValue
             );
-            if (historicalDeviation >= _spreadMaxValue) {
-                return _spreadMaxValue;
+            if (historicalDeviation >= _maxValue) {
+                return _maxValue;
             } else {
                 return
                     AmmMath.division(
-                        _spreadAtParComponentKVolValue * Constants.D18,
+                        _atParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
             }

@@ -13,56 +13,56 @@ contract MiltonSpreadConfiguration is
 	address private immutable _asset;
 	
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
-    uint256 internal _spreadDemandComponentKfValue;
+    uint256 internal _demandComponentKfValue;
 
     //@notice Part of Spread calculation - Demand Component Lambda value - check Whitepaper
-    uint256 internal _spreadDemandComponentLambdaValue;
+    uint256 internal _demandComponentLambdaValue;
 
     //@notice Part of Spread calculation - Demand Component KOmega value - check Whitepaper
-    uint256 internal _spreadDemandComponentKOmegaValue;
+    uint256 internal _demandComponentKOmegaValue;
 
     //@notice Part of Spread calculation - Demand Component Max Liquidity Redemption Value - check Whitepaper
-    uint256 internal _spreadDemandComponentMaxLiquidityRedemptionValue;
+    uint256 internal _demandComponentMaxLiquidityRedemptionValue;
 
     //@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
-    uint256 internal _spreadAtParComponentKVolValue;
+    uint256 internal _atParComponentKVolValue;
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
-    uint256 internal _spreadAtParComponentKHistValue;
+    uint256 internal _atParComponentKHistValue;
 
     //@notice Spread Max Value
-    uint256 internal _spreadMaxValue;
+    uint256 internal _maxValue;
 
     constructor(address asset) {
 		_asset = asset;
-        _spreadDemandComponentKfValue = AmmMath.division(
+        _demandComponentKfValue = AmmMath.division(
             1 * Constants.D18,
             1000
         );
-        _spreadDemandComponentLambdaValue = AmmMath.division(
+        _demandComponentLambdaValue = AmmMath.division(
             1 * Constants.D18,
             1000
         );
-        _spreadDemandComponentKOmegaValue = AmmMath.division(
+        _demandComponentKOmegaValue = AmmMath.division(
             3 * Constants.D18,
             10
         );
 
-        _spreadDemandComponentMaxLiquidityRedemptionValue = Constants.D18;
+        _demandComponentMaxLiquidityRedemptionValue = Constants.D18;
 
         //TODO: clarify initial value
-        _spreadAtParComponentKVolValue = AmmMath.division(
+        _atParComponentKVolValue = AmmMath.division(
             3 * Constants.D18,
             100
         );
 
         //TODO: clarify initial value
-        _spreadAtParComponentKHistValue = AmmMath.division(
+        _atParComponentKHistValue = AmmMath.division(
             3 * Constants.D18,
             100
         );
 
-        _spreadMaxValue = AmmMath.division(3 * Constants.D18, 10);
+        _maxValue = AmmMath.division(3 * Constants.D18, 10);
     }
 
     function getSpreadDemandComponentKfValue()
@@ -71,13 +71,13 @@ contract MiltonSpreadConfiguration is
         override
         returns (uint256)
     {
-        return _spreadDemandComponentKfValue;
+        return _demandComponentKfValue;
     }
 
     function setSpreadDemandComponentKfValue(
         uint256 newSpreadDemandComponentKfValue
     ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE) {
-        _spreadDemandComponentKfValue = newSpreadDemandComponentKfValue;
+        _demandComponentKfValue = newSpreadDemandComponentKfValue;
         emit SpreadDemandComponentKfValueSet(newSpreadDemandComponentKfValue);
     }
 
@@ -87,13 +87,13 @@ contract MiltonSpreadConfiguration is
         override
         returns (uint256)
     {
-        return _spreadDemandComponentLambdaValue;
+        return _demandComponentLambdaValue;
     }
 
     function setSpreadDemandComponentLambdaValue(
         uint256 newSpreadDemandComponentLambdaValue
     ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE) {
-        _spreadDemandComponentLambdaValue = newSpreadDemandComponentLambdaValue;
+        _demandComponentLambdaValue = newSpreadDemandComponentLambdaValue;
         emit SpreadDemandComponentLambdaValueSet(
             newSpreadDemandComponentLambdaValue
         );
@@ -105,13 +105,13 @@ contract MiltonSpreadConfiguration is
         override
         returns (uint256)
     {
-        return _spreadDemandComponentKOmegaValue;
+        return _demandComponentKOmegaValue;
     }
 
     function setSpreadDemandComponentKOmegaValue(
         uint256 newSpreadDemandComponentKOmegaValue
     ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE) {
-        _spreadDemandComponentKOmegaValue = newSpreadDemandComponentKOmegaValue;
+        _demandComponentKOmegaValue = newSpreadDemandComponentKOmegaValue;
         emit SpreadDemandComponentKOmegaValueSet(
             newSpreadDemandComponentKOmegaValue
         );
@@ -123,7 +123,7 @@ contract MiltonSpreadConfiguration is
         override
         returns (uint256)
     {
-        return _spreadDemandComponentMaxLiquidityRedemptionValue;
+        return _demandComponentMaxLiquidityRedemptionValue;
     }
 
     function setSpreadDemandComponentMaxLiquidityRedemptionValue(
@@ -133,7 +133,7 @@ contract MiltonSpreadConfiguration is
         override
         onlyRole(_SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE)
     {
-        _spreadDemandComponentMaxLiquidityRedemptionValue = newSpreadDemandComponentMaxLiquidityRedemptionValue;
+        _demandComponentMaxLiquidityRedemptionValue = newSpreadDemandComponentMaxLiquidityRedemptionValue;
         emit SpreadDemandComponentMaxLiquidityRedemptionValueSet(
             newSpreadDemandComponentMaxLiquidityRedemptionValue
         );
@@ -145,13 +145,13 @@ contract MiltonSpreadConfiguration is
         override
         returns (uint256)
     {
-        return _spreadAtParComponentKVolValue;
+        return _atParComponentKVolValue;
     }
 
     function setSpreadAtParComponentKVolValue(
         uint256 newSpreadAtParComponentKVolValue
     ) external override onlyRole(_SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE) {
-        _spreadAtParComponentKVolValue = newSpreadAtParComponentKVolValue;
+        _atParComponentKVolValue = newSpreadAtParComponentKVolValue;
         emit SpreadAtParComponentKVolValueSet(newSpreadAtParComponentKVolValue);
     }
 
@@ -161,20 +161,20 @@ contract MiltonSpreadConfiguration is
         override
         returns (uint256)
     {
-        return _spreadAtParComponentKHistValue;
+        return _atParComponentKHistValue;
     }
 
     function setSpreadAtParComponentKHistValue(
         uint256 newSpreadAtParComponentKHistValue
     ) external override onlyRole(_SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE) {
-        _spreadAtParComponentKHistValue = newSpreadAtParComponentKHistValue;
+        _atParComponentKHistValue = newSpreadAtParComponentKHistValue;
         emit SpreadAtParComponentKHistValueSet(
             newSpreadAtParComponentKHistValue
         );
     }
 
     function getSpreadMaxValue() external view override returns (uint256) {
-        return _spreadMaxValue;
+        return _maxValue;
     }
 
     function setSpreadMaxValue(uint256 newSpreadMaxValue)
@@ -182,7 +182,7 @@ contract MiltonSpreadConfiguration is
         override
         onlyRole(_SPREAD_MAX_VALUE_ROLE)
     {
-        _spreadMaxValue = newSpreadMaxValue;
+        _maxValue = newSpreadMaxValue;
         emit SpreadMaxValueSet(newSpreadMaxValue);
     }
 }
