@@ -11,96 +11,147 @@ import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from "../libraries/AmmMath.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import {Errors} from "../Errors.sol";
+import "./MiltonSpreadModelCore.sol";
+import "../configuration/MiltonSpreadConfiguration.sol";
 
-contract MiltonSpreadModel is IMiltonSpreadModel {
+contract MiltonSpreadModel is
+    MiltonSpreadModelCore,
+    MiltonSpreadConfiguration,
+    IMiltonSpreadModel
+{
     IIporConfiguration internal _iporConfiguration;
 
-    //TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration) external {
-        _iporConfiguration = initialIporConfiguration;
-    }
+	constructor(address asset, address iporConfiguration) MiltonSpreadConfiguration(asset){		
+		_iporConfiguration = IIporConfiguration(iporConfiguration);
+	}
+	
 
-    function calculateSpread(address asset, uint256 calculateTimestamp)
+    function calculateSpread(
+        uint256 calculateTimestamp,
+        address asset,
+        uint8 derivativeDirection,
+        uint256 derivativeDeposit,
+        uint256 derivativeOpeningFee
+    )
         external
         view
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
-    {
-        return
-            IMiltonStorage(_iporConfiguration.getMiltonStorage())
-                .calculateSpread(asset, calculateTimestamp);
-    }
+    {}
 
-    function calculateAtParComponentPayFixed(
-        address asset,
+    function calculateSpreadPayFixed(
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
-    ) external view returns (uint256) {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        uint256 kVol = iporAssetConfiguration
-            .getSpreadAtParComponentKVolValue();
-
-        uint256 kHist = iporAssetConfiguration
-            .getSpreadAtParComponentKHistValue();
-
-        uint256 maxSpreadValue = iporAssetConfiguration.getSpreadMaxValue();
-
-        if (exponentialWeightedMovingVariance == Constants.D18) {
-            return maxSpreadValue;
-        } else {
-            uint256 historicalDeviation = _calculateHistoricalDeviationPayFixed(
-                kHist,
+        uint256 exponentialWeightedMovingVariance,
+        uint256 derivativeDeposit,
+        uint256 derivativeOpeningFee,
+        uint256 liquidityPool,
+        uint256 payFixedDerivativesBalance,
+        uint256 recFixedDerivativesBalance,
+        int256 soap
+    ) external view override returns (uint256 spreadValue) {
+        spreadValue =
+            _calculateDemandComponentPayFixed(
+                derivativeDeposit,
+                derivativeOpeningFee,
+                liquidityPool,
+                payFixedDerivativesBalance,
+                recFixedDerivativesBalance,
+                soap
+            ) +
+            _calculateAtParComponentPayFixed(
                 iporIndexValue,
                 exponentialMovingAverage,
-                maxSpreadValue
+                exponentialWeightedMovingVariance
             );
-            if (historicalDeviation >= maxSpreadValue) {
-                return maxSpreadValue;
-            } else {
+    }
+
+    function calculateSpreadRecFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
+        uint256 derivativeDeposit,
+        uint256 derivativeOpeningFee,
+        uint256 liquidityPool,
+        uint256 payFixedDerivativesBalance,
+        uint256 recFixedDerivativesBalance,
+        int256 soap
+    ) external view override returns (uint256 spreadValue) {
+        spreadValue =
+            _calculateDemandComponentRecFixed(
+                derivativeDeposit,
+                derivativeOpeningFee,
+                liquidityPool,
+                payFixedDerivativesBalance,
+                recFixedDerivativesBalance,
+                soap
+            ) +
+            _calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
+    }
+
+    function _calculateDemandComponentPayFixed(
+        uint256 derivativeDeposit,
+        uint256 derivativeOpeningFee,
+        uint256 liquidityPool,
+        uint256 payFixedDerivativesBalance,
+        uint256 recFixedDerivativesBalance,
+        int256 soapPayFixed
+    ) internal view returns (uint256) {
+        uint256 kfDenominator = _spreadDemandComponentMaxLiquidityRedemptionValue -
+                _calculateAdjustedUtilizationRatePayFixed(
+                    derivativeDeposit,
+                    derivativeOpeningFee,
+                    liquidityPool,
+                    payFixedDerivativesBalance,
+                    recFixedDerivativesBalance,
+                    _spreadDemandComponentLambdaValue
+                );
+
+        if (kfDenominator > 0) {
+            uint256 kOmegaDenominator = Constants.D18 -
+                _calculateSoapPlus(soapPayFixed, payFixedDerivativesBalance);
+            if (kOmegaDenominator > 0) {
                 return
                     AmmMath.division(
-                        kVol * Constants.D18,
-                        Constants.D18 - exponentialWeightedMovingVariance
-                    ) + historicalDeviation;
+                        _spreadDemandComponentKfValue * Constants.D18,
+                        kfDenominator
+                    ) +
+                    AmmMath.division(
+                        _spreadDemandComponentKOmegaValue * Constants.D18,
+                        kOmegaDenominator
+                    );
+            } else {
+                return _spreadMaxValue;
             }
+        } else {
+            return _spreadMaxValue;
         }
     }
 
-    function calculateAtParComponentRecFixed(
-        address asset,
+    function _calculateAtParComponentPayFixed(
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) external view returns (uint256) {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        uint256 kVol = iporAssetConfiguration
-            .getSpreadAtParComponentKVolValue();
-
-        uint256 kHist = iporAssetConfiguration
-            .getSpreadAtParComponentKHistValue();
-
-        uint256 maxSpreadValue = iporAssetConfiguration.getSpreadMaxValue();
-
+    ) internal view returns (uint256) {
         if (exponentialWeightedMovingVariance == Constants.D18) {
-            return maxSpreadValue;
+            return _spreadMaxValue;
         } else {
-            uint256 historicalDeviation = _calculateHistoricalDeviationRecFixed(
-                kHist,
+            uint256 historicalDeviation = _calculateHistoricalDeviationPayFixed(
+                _spreadAtParComponentKHistValue,
                 iporIndexValue,
                 exponentialMovingAverage,
-                maxSpreadValue
+                _spreadMaxValue
             );
-            if (historicalDeviation >= maxSpreadValue) {
-                return maxSpreadValue;
+            if (historicalDeviation >= _spreadMaxValue) {
+                return _spreadMaxValue;
             } else {
                 return
                     AmmMath.division(
-                        kVol * Constants.D18,
+                        _spreadAtParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
             }
@@ -128,158 +179,8 @@ contract MiltonSpreadModel is IMiltonSpreadModel {
         }
     }
 
-    function _calculateHistoricalDeviationRecFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) internal pure returns (uint256) {
-        if (exponentialMovingAverage > iporIndexValue) {
-            return 0;
-        } else {
-            uint256 mu = AmmMath.absoluteValue(
-                int256(exponentialMovingAverage) - int256(iporIndexValue)
-            );
-            if (mu == Constants.D18) {
-                return maxSpreadValue;
-            } else {
-                return
-                    AmmMath.division(kHist * Constants.D18, Constants.D18 - mu);
-            }
-        }
-    }
-
-    function _calculateAtParComponentVolatility(
-        uint256 exponentialWeightedMovingVariance
-    ) internal pure returns (uint256) {
-        return AmmMath.sqrt(exponentialWeightedMovingVariance);
-    }
-
-    function calculateDemandComponentPayFixed(
-        address asset,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
-        int256 soapPayFixed
-    ) external view returns (uint256) {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        uint256 kf = iporAssetConfiguration.getSpreadDemandComponentKfValue();
-
-        uint256 lambda = iporAssetConfiguration
-            .getSpreadDemandComponentLambdaValue();
-
-        uint256 kOmega = iporAssetConfiguration
-            .getSpreadDemandComponentKOmegaValue();
-
-        uint256 maxLiquidityRedemptionValue = iporAssetConfiguration
-            .getSpreadDemandComponentMaxLiquidityRedemptionValue();
-
-        uint256 maxSpreadValue = iporAssetConfiguration.getSpreadMaxValue();
-
-        uint256 kfDenominator = maxLiquidityRedemptionValue -
-            _calculatePayFixedAdjustedUtilizationRate(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
-                lambda
-            );
-
-        if (kfDenominator > 0) {
-            uint256 kOmegaDenominator = Constants.D18 -
-                _calculateSoapPlus(soapPayFixed, payFixedDerivativesBalance);
-            if (kOmegaDenominator > 0) {
-                return
-                    AmmMath.division(kf * Constants.D18, kfDenominator) +
-                    AmmMath.division(kOmega * Constants.D18, kOmegaDenominator);
-            } else {
-                return maxSpreadValue;
-            }
-        } else {
-            return maxSpreadValue;
-        }
-    }
-
-    function calculateDemandComponentRecFixed(
-        address asset,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
-        int256 soapRecFixed
-    ) external view returns (uint256) {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        uint256 kf = iporAssetConfiguration.getSpreadDemandComponentKfValue();
-
-        uint256 lambda = iporAssetConfiguration
-            .getSpreadDemandComponentKOmegaValue();
-
-        uint256 kOmega = iporAssetConfiguration
-            .getSpreadDemandComponentKOmegaValue();
-
-        uint256 maxLiquidityRedemptionValue = iporAssetConfiguration
-            .getSpreadDemandComponentMaxLiquidityRedemptionValue();
-
-        uint256 maxSpreadValue = iporAssetConfiguration.getSpreadMaxValue();
-
-        uint256 kfDenominator = maxLiquidityRedemptionValue -
-            _calculateRecFixedAdjustedUtilizationRate(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
-                lambda
-            );
-
-        if (kfDenominator > 0) {
-			uint256 kOmegaDenominator = Constants.D18 -
-			_calculateSoapPlus(
-				soapRecFixed,
-				recFixedDerivativesBalance
-			);
-			if (kOmegaDenominator > 0) {
-				return
-                AmmMath.division(kf * Constants.D18, kfDenominator) +
-                AmmMath.division(
-                    kOmega * Constants.D18,
-                    kOmegaDenominator
-                );
-			} else {
-				return maxSpreadValue;
-			}
-            
-        } else {
-            return maxSpreadValue;
-        }
-    }
-
-    function _calculateSoapPlus(int256 soap, uint256 derivativesBalance)
-        internal
-        pure
-        returns (uint256)
-    {
-        if (soap > 0) {
-            return
-                AmmMath.division(
-                    uint256(soap) * Constants.D18,
-                    derivativesBalance
-                );
-        } else {
-            return 0;
-        }
-    }
-
     //URlambda_leg(M0)
-    function _calculatePayFixedAdjustedUtilizationRate(
+    function _calculateAdjustedUtilizationRatePayFixed(
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee,
         uint256 liquidityPool,
@@ -309,7 +210,95 @@ contract MiltonSpreadModel is IMiltonSpreadModel {
         return adjustedUtilizationRate;
     }
 
-    function _calculateRecFixedAdjustedUtilizationRate(
+    function _calculateDemandComponentRecFixed(
+        uint256 derivativeDeposit,
+        uint256 derivativeOpeningFee,
+        uint256 liquidityPool,
+        uint256 payFixedDerivativesBalance,
+        uint256 recFixedDerivativesBalance,
+        int256 soapRecFixed
+    ) internal view returns (uint256) {
+        uint256 kfDenominator = _spreadDemandComponentMaxLiquidityRedemptionValue -
+                _calculateAdjustedUtilizationRateRecFixed(
+                    derivativeDeposit,
+                    derivativeOpeningFee,
+                    liquidityPool,
+                    payFixedDerivativesBalance,
+                    recFixedDerivativesBalance,
+                    _spreadDemandComponentKOmegaValue
+                );
+
+        if (kfDenominator > 0) {
+            uint256 kOmegaDenominator = Constants.D18 -
+                _calculateSoapPlus(soapRecFixed, recFixedDerivativesBalance);
+            if (kOmegaDenominator > 0) {
+                return
+                    AmmMath.division(
+                        _spreadDemandComponentKfValue * Constants.D18,
+                        kfDenominator
+                    ) +
+                    AmmMath.division(
+                        _spreadDemandComponentKOmegaValue * Constants.D18,
+                        kOmegaDenominator
+                    );
+            } else {
+                return _spreadMaxValue;
+            }
+        } else {
+            return _spreadMaxValue;
+        }
+    }
+
+    function _calculateAtParComponentRecFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    ) internal view returns (uint256) {
+        uint256 maxSpreadValue = _spreadMaxValue;
+
+        if (exponentialWeightedMovingVariance == Constants.D18) {
+            return maxSpreadValue;
+        } else {
+            uint256 historicalDeviation = _calculateHistoricalDeviationRecFixed(
+                _spreadAtParComponentKHistValue,
+                iporIndexValue,
+                exponentialMovingAverage,
+                maxSpreadValue
+            );
+            if (historicalDeviation >= _spreadMaxValue) {
+                return _spreadMaxValue;
+            } else {
+                return
+                    AmmMath.division(
+                        _spreadAtParComponentKVolValue * Constants.D18,
+                        Constants.D18 - exponentialWeightedMovingVariance
+                    ) + historicalDeviation;
+            }
+        }
+    }
+
+    function _calculateHistoricalDeviationRecFixed(
+        uint256 kHist,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 maxSpreadValue
+    ) internal pure returns (uint256) {
+        if (exponentialMovingAverage > iporIndexValue) {
+            return 0;
+        } else {
+            uint256 mu = AmmMath.absoluteValue(
+                int256(exponentialMovingAverage) - int256(iporIndexValue)
+            );
+            if (mu == Constants.D18) {
+                return maxSpreadValue;
+            } else {
+                return
+                    AmmMath.division(kHist * Constants.D18, Constants.D18 - mu);
+            }
+        }
+    }
+
+    function _calculateAdjustedUtilizationRateRecFixed(
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee,
         uint256 liquidityPool,
@@ -336,55 +325,16 @@ contract MiltonSpreadModel is IMiltonSpreadModel {
         );
         return adjustedUtilizationRate;
     }
-
-    event LogDebug(string name, uint256 value);
-
-    function _calculateImbalanceFactorWithLambda(
-        uint256 utilizationRateLegWithPosition,
-        uint256 utilizationRateLegWithoutPosition,
-        uint256 lambda
-    ) internal pure returns (uint256) {
-        if (
-            utilizationRateLegWithPosition >= utilizationRateLegWithoutPosition
-        ) {
-            return Constants.D18 - utilizationRateLegWithPosition;
-        } else {
-            return
-                Constants.D18 -
-                (utilizationRateLegWithPosition -
-                    AmmMath.division(
-                        lambda *
-                            (utilizationRateLegWithoutPosition -
-                                utilizationRateLegWithPosition),
-                        Constants.D18
-                    ));
-        }
-    }
-
-    //@notice Calculates utilization rate including position which is opened
-    function _calculateUtilizationRateWithPosition(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPoolBalance,
-        uint256 derivativesBalance
-    ) internal pure returns (uint256) {
-        return
-            AmmMath.division(
-                (derivativesBalance + derivativeDeposit) * Constants.D18,
-                liquidityPoolBalance + derivativeOpeningFee
-            );
-    }
-
-    //URleg(0)
-    function _calculateUtilizationRateWithoutPosition(
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPoolBalance,
-        uint256 derivativesBalance
-    ) internal pure returns (uint256) {
-        return
-            AmmMath.division(
-                derivativesBalance * Constants.D18,
-                liquidityPoolBalance + derivativeOpeningFee
-            );
-    }
 }
+
+// contract MiltonSpreadModelUsdt is MiltonSpreadModel {
+//     constructor(address asset) MiltonSpreadModel(asset) {}
+// }
+
+// contract MiltonSpreadModelUsdc is MiltonSpreadModel {
+//     constructor(address asset) MiltonSpreadModel(asset) {}
+// }
+
+// contract MiltonSpreadModelDai is MiltonSpreadModel {
+//     constructor(address asset) MiltonSpreadModel(asset) {}
+// }

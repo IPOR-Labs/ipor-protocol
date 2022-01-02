@@ -53,34 +53,8 @@ contract IporAssetConfiguration is
 
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint256 private _wadDecayFactorValue;
-
-	//TODO: move spread params to IporSpreadConfiguration smart contract
-
-    //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
-    uint256 private _spreadDemandComponentKfValue;
-
-	//@notice Part of Spread calculation - Demand Component Lambda value - check Whitepaper
-    uint256 private _spreadDemandComponentLambdaValue;
-
-    //@notice Part of Spread calculation - Demand Component KOmega value - check Whitepaper
-    uint256 private _spreadDemandComponentKOmegaValue;
-
-	//@notice Part of Spread calculation - Demand Component Max Liquidity Redemption Value - check Whitepaper
-    uint256 private _spreadDemandComponentMaxLiquidityRedemptionValue;
-
-	//@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
-    uint256 private _spreadAtParComponentKVolValue;
-
-    //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
-    uint256 private _spreadAtParComponentKHistValue;
-
-	//@notice Spread Max Value
-    uint256 private _spreadMaxValue;
-
+    
 	//TODO: rename DemandComponent to DC, AtParComponent to PC or DemandC, AtParC
-
-    uint256 private _spreadTemporaryValue;
-
     address private _assetManagementVault;
 
     address private _charlieTreasurer;
@@ -120,40 +94,7 @@ contract IporAssetConfiguration is
 		_minCollateralizationFactorValue = 10 * Constants.D18;
 		_maxCollateralizationFactorValue = 50 * Constants.D18;
 
-		_spreadTemporaryValue = AmmMath.division(Constants.D18, 100);
-
-		_wadDecayFactorValue = 1e17;
-
-        _spreadDemandComponentKfValue = AmmMath.division(
-            1 * Constants.D18,
-            1000
-        );
-		_spreadDemandComponentLambdaValue = AmmMath.division(
-            1 * Constants.D18,
-            1000
-        );
-        _spreadDemandComponentKOmegaValue = AmmMath.division(3 * Constants.D18,
-            10
-        );
-
-		_spreadDemandComponentMaxLiquidityRedemptionValue = Constants.D18;
-
-		//TODO: clarify initial value
-		_spreadAtParComponentKVolValue = AmmMath.division(
-            3 * Constants.D18,
-            100
-        );
-
-		//TODO: clarify initial value
-		_spreadAtParComponentKHistValue = AmmMath.division(			
-			3 * Constants.D18,
-            100
-        );
-
-		_spreadMaxValue = AmmMath.division(
-            3 * Constants.D18,
-            10
-        );
+		_wadDecayFactorValue = 1e17;        
 
     }
 
@@ -164,7 +105,7 @@ contract IporAssetConfiguration is
     function setIncomeTaxPercentage(uint256 newIncomeTaxPercentage)
         external
         override
-        onlyRole(INCOME_TAX_PERCENTAGE_ROLE)
+        onlyRole(_INCOME_TAX_PERCENTAGE_ROLE)
     {
         require(
             newIncomeTaxPercentage <= Constants.D18,
@@ -185,7 +126,7 @@ contract IporAssetConfiguration is
 
     function setOpeningFeeForTreasuryPercentage(
         uint256 newOpeningFeeForTreasuryPercentage
-    ) external override onlyRole(OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE) {
+    ) external override onlyRole(_OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE) {
         require(
             newOpeningFeeForTreasuryPercentage <= Constants.D18,
             Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
@@ -208,7 +149,7 @@ contract IporAssetConfiguration is
     function setLiquidationDepositAmount(uint256 newLiquidationDepositAmount)
         external
         override
-        onlyRole(LIQUIDATION_DEPOSIT_AMOUNT_ROLE)
+        onlyRole(_LIQUIDATION_DEPOSIT_AMOUNT_ROLE)
     {
         _liquidationDepositAmount = newLiquidationDepositAmount;
         emit LiquidationDepositAmountSet(newLiquidationDepositAmount);
@@ -226,7 +167,7 @@ contract IporAssetConfiguration is
     function setOpeningFeePercentage(uint256 newOpeningFeePercentage)
         external
         override
-        onlyRole(OPENING_FEE_PERCENTAGE_ROLE)
+        onlyRole(_OPENING_FEE_PERCENTAGE_ROLE)
     {
         require(
             newOpeningFeePercentage <= Constants.D18,
@@ -248,7 +189,7 @@ contract IporAssetConfiguration is
     function setIporPublicationFeeAmount(uint256 newIporPublicationFeeAmount)
         external
         override
-        onlyRole(IPOR_PUBLICATION_FEE_AMOUNT_ROLE)
+        onlyRole(_IPOR_PUBLICATION_FEE_AMOUNT_ROLE)
     {
         _iporPublicationFeeAmount = newIporPublicationFeeAmount;
         emit IporPublicationFeeAmountSet(newIporPublicationFeeAmount);
@@ -268,7 +209,7 @@ contract IporAssetConfiguration is
     )
         external
         override
-        onlyRole(LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE)
+        onlyRole(_LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE)
     {
         require(
             newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
@@ -293,7 +234,7 @@ contract IporAssetConfiguration is
     function setMaxPositionTotalAmount(uint256 newMaxPositionTotalAmount)
         external
         override
-        onlyRole(MAX_POSITION_TOTAL_AMOUNT_ROLE)
+        onlyRole(_MAX_POSITION_TOTAL_AMOUNT_ROLE)
     {
         _maxPositionTotalAmount = newMaxPositionTotalAmount;
         emit MaxPositionTotalAmountSet(newMaxPositionTotalAmount);
@@ -310,7 +251,7 @@ contract IporAssetConfiguration is
 
     function setMaxCollateralizationFactorValue(
         uint256 newMaxCollateralizationFactorValue
-    ) external override onlyRole(COLLATERALIZATION_FACTOR_VALUE_ROLE) {
+    ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
         _maxCollateralizationFactorValue = newMaxCollateralizationFactorValue;
         emit MaxCollateralizationFactorValueSet(
             newMaxCollateralizationFactorValue
@@ -328,7 +269,7 @@ contract IporAssetConfiguration is
 
     function setMinCollateralizationFactorValue(
         uint256 newMinCollateralizationFactorValue
-    ) external override onlyRole(COLLATERALIZATION_FACTOR_VALUE_ROLE) {
+    ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
         _minCollateralizationFactorValue = newMinCollateralizationFactorValue;
         emit MinCollateralizationFactorValueSet(
             newMinCollateralizationFactorValue
@@ -355,7 +296,7 @@ contract IporAssetConfiguration is
     function setCharlieTreasurer(address newCharlieTreasurer)
         external
         override
-        onlyRole(CHARLIE_TREASURER_ROLE)
+        onlyRole(_CHARLIE_TREASURER_ROLE)
     {
         require(newCharlieTreasurer != address(0), Errors.WRONG_ADDRESS);
         _charlieTreasurer = newCharlieTreasurer;
@@ -369,7 +310,7 @@ contract IporAssetConfiguration is
     function setTreasureTreasurer(address newTreasureTreasurer)
         external
         override
-        onlyRole(TREASURE_TREASURER_ROLE)
+        onlyRole(_TREASURE_TREASURER_ROLE)
     {
         require(newTreasureTreasurer != address(0), Errors.WRONG_ADDRESS);
         _treasureTreasurer = newTreasureTreasurer;
@@ -392,7 +333,7 @@ contract IporAssetConfiguration is
     function setAssetManagementVault(address newAssetManagementVaultAddress)
         external
         override
-        onlyRole(ASSET_MANAGEMENT_VAULT_ROLE)
+        onlyRole(_ASSET_MANAGEMENT_VAULT_ROLE)
     {
         require(
             newAssetManagementVaultAddress != address(0),
@@ -413,7 +354,7 @@ contract IporAssetConfiguration is
     function setDecayFactorValue(uint256 newWadDecayFactorValue)
         external
         override
-        onlyRole(DECAY_FACTOR_VALUE_ROLE)
+        onlyRole(_DECAY_FACTOR_VALUE_ROLE)
     {
         require(
             newWadDecayFactorValue <= Constants.D18,
@@ -423,171 +364,7 @@ contract IporAssetConfiguration is
         emit DecayFactorValueUpdated(_asset, newWadDecayFactorValue);
     }
 
-    function getSpreadTemporaryValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadTemporaryValue;
-    }
-
-    function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale)
-        external
-        override
-    {
-        _spreadTemporaryValue = newSpreadTemporaryVale;
-    }
-
-    function getSpreadDemandComponentKfValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadDemandComponentKfValue;
-    }
-
-    function setSpreadDemandComponentKfValue(
-        uint256 newSpreadDemandComponentKfValue
-    ) external override onlyRole(SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE) {
-        _spreadDemandComponentKfValue = newSpreadDemandComponentKfValue;
-        emit SpreadDemandComponentKfValueSet(
-            newSpreadDemandComponentKfValue
-        );
-    }
-
-	function getSpreadDemandComponentLambdaValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadDemandComponentLambdaValue;
-    }
-
-    function setSpreadDemandComponentLambdaValue(
-        uint256 newSpreadDemandComponentLambdaValue
-    )
-        external
-        override
-        onlyRole(SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE)
-    {
-        _spreadDemandComponentLambdaValue = newSpreadDemandComponentLambdaValue;
-        emit SpreadDemandComponentLambdaValueSet(
-            newSpreadDemandComponentLambdaValue
-        );
-    }
-
-    function getSpreadDemandComponentKOmegaValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadDemandComponentKOmegaValue;
-    }
-
-    function setSpreadDemandComponentKOmegaValue(
-        uint256 newSpreadDemandComponentKOmegaValue
-    )
-        external
-        override
-        onlyRole(SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE)
-    {
-        _spreadDemandComponentKOmegaValue = newSpreadDemandComponentKOmegaValue;
-        emit SpreadDemandComponentKOmegaValueSet(
-            newSpreadDemandComponentKOmegaValue
-        );
-    }
-
-	function getSpreadDemandComponentMaxLiquidityRedemptionValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadDemandComponentMaxLiquidityRedemptionValue;
-    }
-
-    function setSpreadDemandComponentMaxLiquidityRedemptionValue(
-        uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue
-    )
-        external
-        override
-        onlyRole(SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE)
-    {
-        _spreadDemandComponentMaxLiquidityRedemptionValue = newSpreadDemandComponentMaxLiquidityRedemptionValue;
-        emit SpreadDemandComponentMaxLiquidityRedemptionValueSet(
-            newSpreadDemandComponentMaxLiquidityRedemptionValue
-        );
-    }
-
-	function getSpreadAtParComponentKVolValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadAtParComponentKVolValue;
-    }
-
-    function setSpreadAtParComponentKVolValue(
-        uint256 newSpreadAtParComponentKVolValue
-    )
-        external
-        override
-        onlyRole(SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE)
-    {
-        _spreadAtParComponentKVolValue = newSpreadAtParComponentKVolValue;
-        emit SpreadAtParComponentKVolValueSet(
-            newSpreadAtParComponentKVolValue
-        );
-    }
-
-	function getSpreadAtParComponentKHistValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadAtParComponentKHistValue;
-    }
-
-    function setSpreadAtParComponentKHistValue(
-        uint256 newSpreadAtParComponentKHistValue
-    )
-        external
-        override
-        onlyRole(SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE)
-    {
-        _spreadAtParComponentKHistValue = newSpreadAtParComponentKHistValue;
-        emit SpreadAtParComponentKHistValueSet(
-            newSpreadAtParComponentKHistValue
-        );
-    }
-
-	function getSpreadMaxValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _spreadMaxValue;
-    }
-
-    function setSpreadMaxValue(
-        uint256 newSpreadMaxValue
-    )
-        external
-        override
-        onlyRole(SPREAD_MAX_VALUE_ROLE)
-    {
-        _spreadMaxValue = newSpreadMaxValue;
-        emit SpreadMaxValueSet(
-            newSpreadMaxValue
-        );
-    }
+    
 
 	
 }

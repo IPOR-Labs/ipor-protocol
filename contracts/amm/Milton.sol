@@ -150,14 +150,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
-        (
-            uint256 _spreadPayFixedValue,
-            uint256 _spreadRecFixedValue
-        ) = _calculateSpread(asset, block.timestamp);
-        return (
-            spreadPayFixedValue = _spreadPayFixedValue,
-            spreadRecFixedValue = _spreadRecFixedValue
-        );
+		spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
+		spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
     }
 
     function calculateSoap(address asset)
@@ -252,16 +246,6 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 return derivativeInterest.positionValue;
             }
         }
-    }
-
-    function _calculateSpread(address asset, uint256 calculateTimestamp)
-        internal
-        view
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
-    {
-        return
-            IMiltonSpreadModel(iporConfiguration.getMiltonSpreadModel())
-                .calculateSpread(asset, calculateTimestamp);
     }
 
     function _calculateSoap(address asset, uint256 calculateTimestamp)
@@ -397,10 +381,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED
         );
 
-        (
-            uint256 spreadPayFixedValue,
-            uint256 spreadRecFixedValue
-        ) = _calculateSpread(asset, openTimestamp);
+		
+        
+        uint256 spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
+        uint256 spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
 
         IMiltonStorage miltonStorage = IMiltonStorage(
             iporConfiguration.getMiltonStorage()
@@ -489,10 +473,11 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             calculateTimestamp
         );
         require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
-        (
-            uint256 spreadPayFixedValue,
-            uint256 spreadRecFixedValue
-        ) = _calculateSpread(asset, block.timestamp);
+
+        
+            uint256 spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
+            uint256 spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
+        
 
         require(
             indexValue >= spreadRecFixedValue,

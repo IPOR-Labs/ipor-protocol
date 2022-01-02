@@ -38,33 +38,9 @@ interface IIporAssetConfiguration {
     event TreasureTreasurerUpdated(
         address asset,
         address indexed newTreasureTreasurer
-    );
+    );    
 
-    event SpreadDemandComponentKfValueSet(
-        uint256 newSpreadDemandComponentKfValue
-    );
-
-	event SpreadDemandComponentLambdaValueSet(
-        uint256 newSpreadDemandComponentLambdaValue
-    );
-
-    event SpreadDemandComponentKOmegaValueSet(
-        uint256 newSpreadDemandComponentKOmegaValue
-    );	
-
-	event SpreadDemandComponentMaxLiquidityRedemptionValueSet(
-		uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue
-	);
-
-	event SpreadMaxValueSet(
-        uint256 newSpreadMaxValue
-    );	
-
-    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);
-
-	event SpreadAtParComponentKVolValueSet(uint256 newSpreadAtParComponentKVolValue);
-
-	event SpreadAtParComponentKHistValueSet(uint256 newSpreadAtParComponentKHistValue);
+    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);	
 
     function getIncomeTaxPercentage() external view returns (uint256);
 
@@ -145,70 +121,6 @@ interface IIporAssetConfiguration {
 
     function getDecayFactorValue() external view returns (uint256);
 
-    function setDecayFactorValue(uint256 newDecayFactorValue) external;
-
-    function getSpreadTemporaryValue() external view returns (uint256);
-
-    function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale) external;
-
-    function getSpreadDemandComponentKfValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadDemandComponentKfValue(
-        uint256 newSpreadDemandComponentKfValue
-    ) external;
-
-	function getSpreadDemandComponentLambdaValue()
-        external
-        view        
-        returns (uint256);
-
-    function setSpreadDemandComponentLambdaValue(
-        uint256 newSpreadDemandComponentLambdaValue
-    )external;
-
-    function getSpreadDemandComponentKOmegaValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadDemandComponentKOmegaValue(
-        uint256 newSpreadDemandComponentKOmegaValue
-    ) external;
-
-	function getSpreadDemandComponentMaxLiquidityRedemptionValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadDemandComponentMaxLiquidityRedemptionValue(
-        uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue )external;
-
-	function getSpreadAtParComponentKVolValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadAtParComponentKVolValue(uint256 newSpreadAtParComponentKVolValue) external;
-
-	function getSpreadAtParComponentKHistValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadAtParComponentKHistValue(
-        uint256 newSpreadAtParComponentKHistValue
-    ) external;
-
-	function getSpreadMaxValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadMaxValue(
-        uint256 newSpreadMaxValue
-    ) external;
+    function setDecayFactorValue(uint256 newDecayFactorValue) external;    
      
 }

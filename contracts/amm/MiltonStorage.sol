@@ -197,23 +197,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     {
         return derivatives.userDerivativeIds[userAddress];
     }
-
-    function calculateSpread(address asset, uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
-    {
-        return (
-            spreadPayFixedValue = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadTemporaryValue(),
-            spreadRecFixedValue = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadTemporaryValue()
-        );
-    }
-
     function calculateSoap(
         address asset,
         uint256 ibtPrice,
@@ -515,7 +498,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             iporDerivative.indicator.fixedInterestRate,
             iporDerivative.indicator.ibtQuantity
         );
-
+		//TODO: consider if it is required to rebalance both sides!
 		soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp = tsiMem.pf.rebalanceTimestamp;
 		soapIndicators[iporDerivative.asset].pf.direction = tsiMem.pf.direction;
 		soapIndicators[iporDerivative.asset].pf.quasiHypotheticalInterestCumulative = tsiMem.pf.quasiHypotheticalInterestCumulative;

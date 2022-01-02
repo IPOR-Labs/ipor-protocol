@@ -58,11 +58,6 @@ interface IMiltonStorage {
         view
         returns (uint256[] memory);
 
-    function calculateSpread(address asset, uint256 calculateTimestamp)
-        external
-        view
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue);
-
     function calculateSoap(
         address asset,
         uint256 ibtPrice,
