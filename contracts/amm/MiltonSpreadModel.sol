@@ -115,7 +115,7 @@ contract MiltonSpreadModel is
                 recFixedDerivativesBalance,
                 _demandComponentLambdaValue
             );
-
+		emit LogDebug("kfDenominator", kfDenominator);
         if (kfDenominator > 0) {
             uint256 kOmegaDenominator = Constants.D18 -
                 _calculateSoapPlus(soapPayFixed, payFixedDerivativesBalance);

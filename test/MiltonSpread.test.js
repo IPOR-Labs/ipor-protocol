@@ -2170,7 +2170,7 @@ describe("MiltonSpreadModel", () => {
     //     ).to.be.eq(expectedSpreadAtParComponentValue);
     // });
 
-    // it("should calculate Spread Pay Fixed Value - Kf part + Komega part + KVol part + KHist < Spread Max Value", async () => {
+    // it("should calculate Spread Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
     //     //given
     //     let testData = await prepareTestData(
     //         [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2334,7 +2334,7 @@ describe("MiltonSpreadModel", () => {
     //     ).to.be.eq(expectedSpreadValue);
     // });
 
-    // it("should calculate Spread Pay Fixed equal max value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
     //     //given
     //     let testData = await prepareTestData(
     //         [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2416,7 +2416,7 @@ describe("MiltonSpreadModel", () => {
     //     ).to.be.eq(expectedSpreadValue);
     // });
 
-    // it("should calculate Spread Rec Fixed equal max value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
     //     //given
     //     let testData = await prepareTestData(
     //         [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2498,8 +2498,7 @@ describe("MiltonSpreadModel", () => {
     //     ).to.be.eq(expectedSpreadValue);
     // });
 
-    
-    // it("should calculate Spread Pay Fixed equal max value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
     //     //given
     //     let testData = await prepareTestData(
     //         [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2561,7 +2560,7 @@ describe("MiltonSpreadModel", () => {
     //     let actualSpreadValue = BigInt(
     //         await testData.miltonSpread
     //             .connect(userOne)
-	// 			// .callStatic
+    // 			// .callStatic
     //             .calculateSpreadPayFixed(
     //                 iporIndexValue,
     //                 exponentialMovingAverage,
@@ -2582,126 +2581,1266 @@ describe("MiltonSpreadModel", () => {
     //     ).to.be.eq(expectedSpreadValue);
     // });
 
-	it("should calculate Spread Pay Fixed equal max value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
-        //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
-        const spreadMaxValue = BigInt("300000000000000000");
+    //     const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("307589880159786950")
-            );
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("307589880159786950")
+    //         );
 
-        await testData.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
-        const soap = BigInt("500000000000000000000");
+    //     const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage = BigInt("40000000000000000");
+    //     const exponentialWeightedMovingVariance = BigInt("35000000000000000");
 
-        const expectedSpreadValue = spreadMaxValue;
+    //     const expectedSpreadValue = spreadMaxValue;
 
-        //when
-        let actualSpreadValue = BigInt(
-            await testData.miltonSpread
-                .connect(userOne)
-				// .callStatic
-                .calculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
-                    soap
-                )
-        );
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    // 			// .callStatic
+    //             .calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
 
-        //then
-        expect(
-            actualSpreadValue,
-            `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
-        ).to.be.eq(expectedSpreadValue);
-    });
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
 
-    // it("should calculate spread equal max value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("307589880159786950")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("1000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+
+    //     const soap = payFixedDerivativesBalance;
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage = BigInt("40000000000000000");
+    //     const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    // 			.callStatic
+    //             .calculateSpreadPayFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("307589880159786950")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+
+    //     const soap = recFixedDerivativesBalance;
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage = BigInt("40000000000000000");
+    //     const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    // 			.callStatic
+    //             .calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("307589880159786950")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("1000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+
+    //     const soap = payFixedDerivativesBalance;
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage = BigInt("40000000000000000");
+    //     const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadPayFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("307589880159786950")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+
+    //     const soap = recFixedDerivativesBalance;
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage = BigInt("40000000000000000");
+    //     const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("307589880159786950")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("1000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+
+    //     const soap = payFixedDerivativesBalance;
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage =
+    //         BigInt("1000000000000000000") + iporIndexValue;
+    //     const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadPayFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("307589880159786950")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+
+    //     const soap = recFixedDerivativesBalance;
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage =
+    //         BigInt("1000000000000000000") + iporIndexValue;
+    //     const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Rec Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    // //given
+    // let testData = await prepareTestData(
+    // 	[admin, userOne, userTwo, userThree, liquidityProvider],
+    // 	["DAI"],
+    // 	data,
+    // 	libraries
+    // );
+
+    // await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    // const spreadMaxValue = BigInt("300000000000000000");
+
+    // await testData.miltonSpread
+    // 	.connect(userOne)
+    // 	.setSpreadMaxValue(spreadMaxValue);
+
+    // await testData.miltonSpread
+    // 	.connect(userOne)
+    // 	.setDemandComponentMaxLiquidityRedemptionValue(
+    // 		BigInt("1000000000000000000")
+    // 	);
+
+    // await testData.miltonSpread
+    // 	.connect(userOne)
+    // 	.setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    // await testData.miltonSpread
+    // 	.connect(userOne)
+    // 	.setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    // await testData.miltonSpread
+    // 	.connect(userOne)
+    // 	.setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    // await testData.miltonSpread
+    // 	.connect(userOne)
+    // 	.setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    // await testData.miltonSpread
+    // 	.connect(userOne)
+    // 	.setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    // const liquidityPool = BigInt("15000000000000000000000");
+    // const derivativeDeposit = BigInt("10000000000000000000000");
+    // const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    // const payFixedDerivativesBalance = BigInt("1000000000000000000000");
+    // const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+
+    // const soap = payFixedDerivativesBalance;
+
+    // const iporIndexValue = BigInt("30000000000000000");
+    // const exponentialMovingAverage =
+    // 	BigInt("1000000000000000000") + iporIndexValue;
+    // const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    // const expectedSpreadValue = spreadMaxValue;
+
+    // //when
+    // let actualSpreadValue = BigInt(
+    // 	await testData.miltonSpread
+    // 		.connect(userOne)
+    // 		.callStatic.calculateSpreadPayFixed(
+    // 			iporIndexValue,
+    // 			exponentialMovingAverage,
+    // 			exponentialWeightedMovingVariance,
+    // 			derivativeDeposit,
+    // 			derivativeOpeningFee,
+    // 			liquidityPool,
+    // 			payFixedDerivativesBalance,
+    // 			recFixedDerivativesBalance,
+    // 			soap
+    // 		)
+    // );
+
+    // //then
+    // expect(
+    // 	actualSpreadValue,
+    // 	`Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    // ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("1000000000000000000")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+
+    //     const soap = recFixedDerivativesBalance;
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage =
+    //         BigInt("1000000000000000000") + iporIndexValue;
+    //     const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Rec Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("1000000000000000000")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("1000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+
+    //     const soap = BigInt("500000000000000000000");
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage =
+    //         BigInt("1000000000000000000") + iporIndexValue;
+    //     const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadPayFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("1000000000000000000")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+
+    //     const soap = BigInt("500000000000000000000");
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage =
+    //         BigInt("1000000000000000000") + iporIndexValue;
+    //     const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Rec Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("1000000000000000000")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("1000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+
+    //     const soap = BigInt("500000000000000000000");
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage =
+    //         BigInt("1000000000000000000") + iporIndexValue;
+    //     const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadPayFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("1000000000000000000")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("15000000000000000000000");
+    //     const derivativeDeposit = BigInt("10000000000000000000000");
+    //     const derivativeOpeningFee = BigInt("20000000000000000000");
+
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+
+    //     const soap = BigInt("500000000000000000000");
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage =
+    //         BigInt("1000000000000000000") + iporIndexValue;
+    //     const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+    //     const expectedSpreadValue = spreadMaxValue;
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)
+    //             .callStatic.calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Rec Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf part very high, Komega part normal, KVol part normal, KHist part normal", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("1000000000000000000")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("0"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("1000000000000000000000");
+    //     const derivativeDeposit = BigInt("1");
+    //     const derivativeOpeningFee = BigInt("1000");
+
+    //     const payFixedDerivativesBalance = BigInt("1000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+
+    //     const soap = BigInt("500000000000000000000");
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage = BigInt("40000000000000000");
+    //     const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+    //     const expectedSpreadValue = BigInt("107265766473020359");
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)		
+	// 			.callStatic		
+    //             .calculateSpreadPayFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Pay Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+	// it("should calculate Spread Rec Fixed = Spread Max Value - Kf part very high, KOmega part normal, KVol part normal, KHist part normal", async () => {
+    //     //given
+    //     let testData = await prepareTestData(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         ["DAI"],
+    //         data,
+    //         libraries
+    //     );
+
+    //     await grantAllSpreadRolesForDAI(testData, admin, userOne);
+
+    //     const spreadMaxValue = BigInt("300000000000000000");
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setSpreadMaxValue(spreadMaxValue);
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentMaxLiquidityRedemptionValue(
+    //             BigInt("1000000000000000000")
+    //         );
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentLambdaValue(BigInt("0"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKfValue(BigInt("1000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKVolValue(BigInt("31000000000000000"));
+
+    //     await testData.miltonSpread
+    //         .connect(userOne)
+    //         .setAtParComponentKHistValue(BigInt("14000000000000000"));
+
+    //     const liquidityPool = BigInt("1000000000000000000000");
+    //     const derivativeDeposit = BigInt("1");
+    //     const derivativeOpeningFee = BigInt("1000");
+
+    //     const payFixedDerivativesBalance = BigInt("13000000000000000000000");
+    //     const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+
+    //     const soap = BigInt("500000000000000000000");
+
+    //     const iporIndexValue = BigInt("30000000000000000");
+    //     const exponentialMovingAverage = BigInt("40000000000000000");
+    //     const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+    //     const expectedSpreadValue = BigInt("93686852331606218");
+
+    //     //when
+    //     let actualSpreadValue = BigInt(
+    //         await testData.miltonSpread
+    //             .connect(userOne)		
+	// 			.callStatic		
+    //             .calculateSpreadRecFixed(
+    //                 iporIndexValue,
+    //                 exponentialMovingAverage,
+    //                 exponentialWeightedMovingVariance,
+    //                 derivativeDeposit,
+    //                 derivativeOpeningFee,
+    //                 liquidityPool,
+    //                 payFixedDerivativesBalance,
+    //                 recFixedDerivativesBalance,
+    //                 soap
+    //             )
+    //     );
+
+    //     //then
+    //     expect(
+    //         actualSpreadValue,
+    //         `Incorrect Rec Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
+    //     ).to.be.eq(expectedSpreadValue);
+    // });
+
+    // it("should calculate Spread Rec Fixed = Spread Max Value - Kf part very high, KOmega part normal, KVol part normal, KHist part normal", async () => {
+    //    TODO:
+    // });
+
+    // it("should calculate Spread Pay Fixed = Spread Max Value - Kf part normal, KOmega part very high, KVol part normal, KHist part normal", async () => {
+		//TODO:
+    // });
+
+    // it("should calculate spread = Spread Max Value - Kf part normal, KOmega part normal, KVol part very high, KHist part normal", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread equal max value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    // it("should calculate spread = Spread Max Value - Kf part normal, KOmega part normal, KVol part normal, KHist very high", async () => {
     //     //TODO: implement it
     // });
 
-    // it("should calculate spread equal max value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread equal max value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread equal max value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread equal max value - Kf part very high, Komega part normal, KVol part normal, KHist part normal", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread equal max value - Kf part normal, Komega part very high, KVol part normal, KHist part normal", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread equal max value - Kf part normal, Komega part normal, KVol part very high, KHist part normal", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread equal max value - Kf part normal, Komega part normal, KVol part normal, KHist very high", async () => {
-    //     //TODO: implement it
-    // });
-
-    // it("should calculate spread equal max value - Kf part + Komega part + KVol part + KHist > Spread Max Value", async () => {
+    // it("should calculate spread = Spread Max Value - Kf part + KOmega part + KVol part + KHist > Spread Max Value", async () => {
     //     //TODO: implement it
     // });
 
