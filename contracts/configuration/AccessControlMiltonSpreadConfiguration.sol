@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "./AccessControlRevoke.sol";
 
-abstract contract AccessControlMiltonAssetSpreadConfiguration is
+abstract contract AccessControlMiltonSpreadConfiguration is
     AccessControlRevoke
 {
     bytes32 internal constant _SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE =

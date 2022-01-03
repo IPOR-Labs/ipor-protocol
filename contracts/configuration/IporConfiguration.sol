@@ -103,17 +103,17 @@ contract IporConfiguration is
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
     }
 
-    function getMiltonAssetSpreadModel() external view override returns (address) {
+    function getMiltonSpreadModel() external view override returns (address) {
         return _addresses[_MILTON_SPREAD_MODEL];
     }
 
-    function setMiltonAssetSpreadModel(address MiltonAssetSpreadModel)
+    function setMiltonSpreadModel(address MiltonSpreadModel)
         external
         override
         onlyRole(_MILTON_SPREAD_MODEL_ROLE)
     {
-        _addresses[_MILTON_SPREAD_MODEL] = MiltonAssetSpreadModel;
-        emit MiltonAssetSpreadModelUpdated(MiltonAssetSpreadModel);
+        _addresses[_MILTON_SPREAD_MODEL] = MiltonSpreadModel;
+        emit MiltonSpreadModelUpdated(MiltonSpreadModel);
     }
 
     function getIporAssetConfiguration(address asset)

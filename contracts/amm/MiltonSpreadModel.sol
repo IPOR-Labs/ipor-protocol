@@ -9,22 +9,21 @@ import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from "../libraries/AmmMath.sol";
-import "../interfaces/IMiltonAssetSpreadModel.sol";
+import "../interfaces/IMiltonSpreadModel.sol";
 import {Errors} from "../Errors.sol";
-import "./MiltonAssetSpreadModelCore.sol";
-import "../configuration/MiltonAssetSpreadConfiguration.sol";
+import "./MiltonSpreadModelCore.sol";
+import "../configuration/MiltonSpreadConfiguration.sol";
 
-contract MiltonAssetSpreadModel is
-    MiltonAssetSpreadModelCore,
-    MiltonAssetSpreadConfiguration,
-    IMiltonAssetSpreadModel
+contract MiltonSpreadModel is
+    MiltonSpreadModelCore,
+    MiltonSpreadConfiguration,
+    IMiltonSpreadModel
 {
     IIporConfiguration internal _iporConfiguration;
 
-	constructor(address asset, address iporConfiguration) MiltonAssetSpreadConfiguration(asset){		
-		_iporConfiguration = IIporConfiguration(iporConfiguration);
-	}
-	
+    constructor(address iporConfiguration) {
+        _iporConfiguration = IIporConfiguration(iporConfiguration);
+    }
 
     function calculateSpread(
         uint256 calculateTimestamp,
@@ -49,8 +48,8 @@ contract MiltonAssetSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
-    ) external view override returns (uint256 spreadValue) {
-        spreadValue =
+    ) external override returns (uint256 spreadValue) {
+        uint256 result =
             _calculateDemandComponentPayFixed(
                 derivativeDeposit,
                 derivativeOpeningFee,
@@ -64,6 +63,9 @@ contract MiltonAssetSpreadModel is
                 exponentialMovingAverage,
                 exponentialWeightedMovingVariance
             );
+		
+		spreadValue = result < _maxValue ? result: _maxValue;
+		emit LogDebug("spreadValue", spreadValue);
     }
 
     function calculateSpreadRecFixed(
@@ -76,8 +78,8 @@ contract MiltonAssetSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
-    ) external view override returns (uint256 spreadValue) {
-        spreadValue =
+    ) external override returns (uint256 spreadValue) {
+        uint256 result =
             _calculateDemandComponentRecFixed(
                 derivativeDeposit,
                 derivativeOpeningFee,
@@ -91,6 +93,9 @@ contract MiltonAssetSpreadModel is
                 exponentialMovingAverage,
                 exponentialWeightedMovingVariance
             );
+
+		spreadValue = result < _maxValue ? result: _maxValue;
+		emit LogDebug("spreadValue", spreadValue);
     }
 
     function _calculateDemandComponentPayFixed(
@@ -100,26 +105,25 @@ contract MiltonAssetSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapPayFixed
-    ) internal view returns (uint256) {
+    ) internal returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
-                _calculateAdjustedUtilizationRatePayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
-                    _demandComponentLambdaValue
-                );
+            _calculateAdjustedUtilizationRatePayFixed(
+                derivativeDeposit,
+                derivativeOpeningFee,
+                liquidityPool,
+                payFixedDerivativesBalance,
+                recFixedDerivativesBalance,
+                _demandComponentLambdaValue
+            );
 
         if (kfDenominator > 0) {
             uint256 kOmegaDenominator = Constants.D18 -
                 _calculateSoapPlus(soapPayFixed, payFixedDerivativesBalance);
             if (kOmegaDenominator > 0) {
-                return
-                    AmmMath.division(
-                        _demandComponentKfValue * Constants.D18,
-                        kfDenominator
-                    ) +
+                return AmmMath.division(
+                    _demandComponentKfValue * Constants.D18,
+                    kfDenominator
+                ) +
                     AmmMath.division(
                         _demandComponentKOmegaValue * Constants.D18,
                         kOmegaDenominator
@@ -136,7 +140,7 @@ contract MiltonAssetSpreadModel is
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) internal view returns (uint256) {
+    ) internal returns (uint256) {
         if (exponentialWeightedMovingVariance == Constants.D18) {
             return _maxValue;
         } else {
@@ -146,14 +150,14 @@ contract MiltonAssetSpreadModel is
                 exponentialMovingAverage,
                 _maxValue
             );
-            if (historicalDeviation >= _maxValue) {
-                return _maxValue;
-            } else {
+            if (historicalDeviation < _maxValue) {
                 return
                     AmmMath.division(
                         _atParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
+            } else {
+                return _maxValue;
             }
         }
     }
@@ -163,7 +167,7 @@ contract MiltonAssetSpreadModel is
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 maxSpreadValue
-    ) internal pure returns (uint256) {
+    ) internal returns (uint256) {
         if (exponentialMovingAverage < iporIndexValue) {
             return 0;
         } else {
@@ -187,7 +191,7 @@ contract MiltonAssetSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
-    ) internal pure returns (uint256) {
+    ) internal returns (uint256) {
         uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutPosition(
                 derivativeOpeningFee,
                 liquidityPool,
@@ -206,7 +210,7 @@ contract MiltonAssetSpreadModel is
             utilizationRateRecFixed,
             lambda
         );
-
+		emit LogDebug("adjustedUtilizationRate", adjustedUtilizationRate);
         return adjustedUtilizationRate;
     }
 
@@ -217,30 +221,30 @@ contract MiltonAssetSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapRecFixed
-    ) internal view returns (uint256) {
+    ) internal returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
-                _calculateAdjustedUtilizationRateRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
-                    _demandComponentKOmegaValue
-                );
+            _calculateAdjustedUtilizationRateRecFixed(
+                derivativeDeposit,
+                derivativeOpeningFee,
+                liquidityPool,
+                payFixedDerivativesBalance,
+                recFixedDerivativesBalance,
+                _demandComponentKOmegaValue
+            );
 
         if (kfDenominator > 0) {
             uint256 kOmegaDenominator = Constants.D18 -
                 _calculateSoapPlus(soapRecFixed, recFixedDerivativesBalance);
             if (kOmegaDenominator > 0) {
-                return
-                    AmmMath.division(
-                        _demandComponentKfValue * Constants.D18,
-                        kfDenominator
-                    ) +
+                return AmmMath.division(
+                    _demandComponentKfValue * Constants.D18,
+                    kfDenominator
+                ) +
                     AmmMath.division(
                         _demandComponentKOmegaValue * Constants.D18,
                         kOmegaDenominator
                     );
+
             } else {
                 return _maxValue;
             }
@@ -265,14 +269,14 @@ contract MiltonAssetSpreadModel is
                 exponentialMovingAverage,
                 maxSpreadValue
             );
-            if (historicalDeviation >= _maxValue) {
-                return _maxValue;
-            } else {
+            if (historicalDeviation < _maxValue) {
                 return
                     AmmMath.division(
                         _atParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
+            } else {
+                return _maxValue;
             }
         }
     }
@@ -297,6 +301,7 @@ contract MiltonAssetSpreadModel is
             }
         }
     }
+	event LogDebug(string name, uint256 value);
 
     function _calculateAdjustedUtilizationRateRecFixed(
         uint256 derivativeDeposit,
@@ -305,7 +310,7 @@ contract MiltonAssetSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
-    ) internal pure returns (uint256) {
+    ) internal returns (uint256) {
         uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutPosition(
                 derivativeOpeningFee,
                 liquidityPool,
@@ -323,18 +328,7 @@ contract MiltonAssetSpreadModel is
             utilizationRatePayFixed,
             lambda
         );
+		emit LogDebug("adjustedUtilizationRate", adjustedUtilizationRate);
         return adjustedUtilizationRate;
     }
 }
-
-// contract MiltonAssetSpreadModelUsdt is MiltonAssetSpreadModel {
-//     constructor(address asset) MiltonAssetSpreadModel(asset) {}
-// }
-
-// contract MiltonAssetSpreadModelUsdc is MiltonAssetSpreadModel {
-//     constructor(address asset) MiltonAssetSpreadModel(asset) {}
-// }
-
-// contract MiltonAssetSpreadModelDai is MiltonAssetSpreadModel {
-//     constructor(address asset) MiltonAssetSpreadModel(asset) {}
-// }

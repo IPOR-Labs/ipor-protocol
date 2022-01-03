@@ -43,7 +43,7 @@ const MiltonFrontendDataProvider = artifacts.require(
 const MiltonLPUtilizationStrategyCollateral = artifacts.require(
     "MiltonLPUtilizationStrategyCollateral"
 );
-const MiltonAssetSpreadModel = artifacts.require("MiltonAssetSpreadModel");
+const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 const Joseph = artifacts.require("Joseph");
 
 module.exports = async function (deployer, _network, addresses) {
@@ -231,15 +231,13 @@ module.exports = async function (deployer, _network, addresses) {
         miltonLPUtilizationStrategyCollateral.address
     );
 
-    await deployer.deploy(MiltonAssetSpreadModel);
-    let MiltonAssetSpreadModel = await MiltonAssetSpreadModel.deployed();
+    await deployer.deploy(MiltonSpreadModel);
+    let MiltonSpreadModel = await MiltonSpreadModel.deployed();
     await iporConfiguration.grantRole(
         keccak256("MILTON_SPREAD_MODEL_ROLE"),
         admin
     );
-    await iporConfiguration.setMiltonAssetSpreadModel(
-        MiltonAssetSpreadModel.address
-    );
+    await iporConfiguration.setMiltonSpreadModel(MiltonSpreadModel.address);
 
     // prepare ERC20 mocked tokens...
     if (
@@ -1042,5 +1040,5 @@ module.exports = async function (deployer, _network, addresses) {
     await miltonLPUtilizationStrategyCollateral.initialize(
         iporConfiguration.address
     );
-    await MiltonAssetSpreadModel.initialize(iporConfiguration.address);
+    await MiltonSpreadModel.initialize(iporConfiguration.address);
 };

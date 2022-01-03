@@ -58,7 +58,7 @@ describe("IporAssetConfiguration", () => {
         iporAssetConfigurationDAI.deployed();
     });
 
-	//TODO: add tests which checks initial values for every param
+    //TODO: add tests which checks initial values for every param
 
     it("should set default openingFeeForTreasuryPercentage", async () => {
         //given
@@ -1127,7 +1127,7 @@ describe("IporAssetConfiguration", () => {
         //when
         await iporAssetConfigurationDAI
             .connect(userOne)
-            .setSpreadDemandComponentKfValue(expectedValue);
+            .setDemandComponentKfValue(expectedValue);
 
         //then
         const actualValue = BigInt(
@@ -1148,7 +1148,7 @@ describe("IporAssetConfiguration", () => {
             //when
             iporAssetConfigurationDAI
                 .connect(userOne)
-                .setSpreadDemandComponentKfValue(expectedValue),
+                .setDemandComponentKfValue(expectedValue),
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xa3398f01fb1ec4a3bb19698f87225bd824cc0c1d4f362a6b56fddc0006bab61f`
@@ -1162,15 +1162,13 @@ describe("IporAssetConfiguration", () => {
             keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
             admin.address
         );
-        const role = keccak256(
-            "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE"
-        );
+        const role = keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE");
         await iporAssetConfigurationDAI.grantRole(role, userOne.address);
 
         //when
         await iporAssetConfigurationDAI
             .connect(userOne)
-            .setSpreadDemandComponentKOmegaValue(expectedValue);
+            .setDemandComponentKOmegaValue(expectedValue);
 
         //then
         const actualValue = BigInt(
@@ -1191,7 +1189,7 @@ describe("IporAssetConfiguration", () => {
             //when
             iporAssetConfigurationDAI
                 .connect(userOne)
-                .setSpreadDemandComponentKOmegaValue(expectedValue),
+                .setDemandComponentKOmegaValue(expectedValue),
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x637ba89bee1cd75c66353215d464266e9edf15bc34e82be6a9605aac890faa3d`

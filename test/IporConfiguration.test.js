@@ -365,10 +365,10 @@ describe("IporAssetConfiguration", () => {
         await iporConfiguration.grantRole(role, admin.address);
 
         //when
-        await iporConfiguration.setMiltonAssetSpreadModel(mockAddress);
+        await iporConfiguration.setMiltonSpreadModel(mockAddress);
 
         //then
-        const result = await iporConfiguration.getMiltonAssetSpreadModel();
+        const result = await iporConfiguration.getMiltonSpreadModel();
         expect(mockAddress).to.be.eql(result);
     });
 
@@ -377,7 +377,7 @@ describe("IporAssetConfiguration", () => {
 
         await assertError(
             //when
-            iporConfiguration.setMiltonAssetSpreadModel(mockAddress),
+            iporConfiguration.setMiltonSpreadModel(mockAddress),
 
             //then
             `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xdf80c0078aae521b601e4fddc35fbb2871ffaa4e22d30b53745545184b3cff3e`

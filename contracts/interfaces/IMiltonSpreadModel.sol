@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 
-interface IMiltonAssetSpreadModel {
+interface IMiltonSpreadModel {
     function calculateSpread(
         uint256 calculateTimestamp,
         address asset,
@@ -25,7 +25,7 @@ interface IMiltonAssetSpreadModel {
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
-    ) external view returns (uint256 spreadValue);
+    ) external returns (uint256 spreadValue);
 
     function calculateSpreadRecFixed(
         uint256 iporIndexValue,
@@ -37,5 +37,5 @@ interface IMiltonAssetSpreadModel {
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
-    ) external view returns (uint256 spreadValue);
+    ) external returns (uint256 spreadValue);
 }

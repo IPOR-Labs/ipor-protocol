@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 
-interface IMiltonAssetSpreadConfiguration {
+interface IMiltonSpreadConfiguration {
     event SpreadDemandComponentKfValueSet(
         uint256 newSpreadDemandComponentKfValue
     );
@@ -32,7 +32,7 @@ interface IMiltonAssetSpreadConfiguration {
 
     function getSpreadDemandComponentKfValue() external view returns (uint256);
 
-    function setSpreadDemandComponentKfValue(
+    function setDemandComponentKfValue(
         uint256 newSpreadDemandComponentKfValue
     ) external;
 
@@ -41,7 +41,7 @@ interface IMiltonAssetSpreadConfiguration {
         view
         returns (uint256);
 
-    function setSpreadDemandComponentLambdaValue(
+    function setDemandComponentLambdaValue(
         uint256 newSpreadDemandComponentLambdaValue
     ) external;
 
@@ -50,7 +50,7 @@ interface IMiltonAssetSpreadConfiguration {
         view
         returns (uint256);
 
-    function setSpreadDemandComponentKOmegaValue(
+    function setDemandComponentKOmegaValue(
         uint256 newSpreadDemandComponentKOmegaValue
     ) external;
 
@@ -59,13 +59,13 @@ interface IMiltonAssetSpreadConfiguration {
         view
         returns (uint256);
 
-    function setSpreadDemandComponentMaxLiquidityRedemptionValue(
+    function setDemandComponentMaxLiquidityRedemptionValue(
         uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue
     ) external;
 
     function getSpreadAtParComponentKVolValue() external view returns (uint256);
 
-    function setSpreadAtParComponentKVolValue(
+    function setAtParComponentKVolValue(
         uint256 newSpreadAtParComponentKVolValue
     ) external;
 
@@ -74,7 +74,7 @@ interface IMiltonAssetSpreadConfiguration {
         view
         returns (uint256);
 
-    function setSpreadAtParComponentKHistValue(
+    function setAtParComponentKHistValue(
         uint256 newSpreadAtParComponentKHistValue
     ) external;
 

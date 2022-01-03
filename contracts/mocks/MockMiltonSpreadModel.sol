@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../amm/MiltonAssetSpreadModel.sol";
+import "../amm/MiltonSpreadModel.sol";
 
-contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
+contract MockMiltonSpreadModel is MiltonSpreadModel {
 	
-	constructor(address asset, address iporConfiguration) MiltonAssetSpreadModel(asset, iporConfiguration){		
+	constructor(address iporConfiguration) MiltonSpreadModel(iporConfiguration){		
 	}
 
     function calculateDemandComponentPayFixed(
@@ -15,7 +15,7 @@ contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapPayFixed
-    ) public view returns (uint256) {
+    ) public returns (uint256) {
         return
             _calculateDemandComponentPayFixed(
                 derivativeDeposit,
@@ -31,7 +31,7 @@ contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) public view returns (uint256) {
+    ) public returns (uint256) {
         return
             _calculateAtParComponentPayFixed(
                 iporIndexValue,
@@ -45,7 +45,7 @@ contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 maxSpreadValue
-    ) public pure returns (uint256) {
+    ) public returns (uint256) {
         return
             _calculateHistoricalDeviationPayFixed(
                 kHist,
@@ -62,7 +62,7 @@ contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
-    ) public pure returns (uint256) {
+    ) public returns (uint256) {
         return
             _calculateAdjustedUtilizationRatePayFixed(
                 derivativeDeposit,
@@ -81,7 +81,7 @@ contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapRecFixed
-    ) public view returns (uint256) {
+    ) public returns (uint256) {
         return
             _calculateDemandComponentRecFixed(
                 derivativeDeposit,
@@ -111,7 +111,7 @@ contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 maxSpreadValue
-    ) public pure returns (uint256) {
+    ) public returns (uint256) {
         return
             _calculateHistoricalDeviationRecFixed(
                 kHist,
@@ -128,7 +128,7 @@ contract MockMiltonAssetSpreadModel is MiltonAssetSpreadModel {
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
-    ) public pure returns (uint256) {
+    ) public returns (uint256) {
         return
             _calculateAdjustedUtilizationRateRecFixed(
                 derivativeDeposit,

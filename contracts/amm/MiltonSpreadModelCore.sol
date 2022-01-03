@@ -9,10 +9,10 @@ import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {AmmMath} from "../libraries/AmmMath.sol";
-import "../interfaces/IMiltonAssetSpreadModel.sol";
+import "../interfaces/IMiltonSpreadModel.sol";
 import {Errors} from "../Errors.sol";
 
-contract MiltonAssetSpreadModelCore {
+contract MiltonSpreadModelCore {
 
 	function _calculateSoapPlus(int256 soap, uint256 derivativesBalance)
         internal
