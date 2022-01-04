@@ -316,9 +316,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
 
-    event LogDebug(string name, uint256 value);
-	event LogDebugInt(string name, int256 value);
-
     function _updateBalancesWhenClosePosition(
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
@@ -377,9 +374,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         balances[derivativeItem.item.asset].treasury =
             balances[derivativeItem.item.asset].treasury +
             incomeTax;
-
-        emit LogDebug("incomeTax", incomeTax);
-        emit LogDebugInt("positionValue", positionValue);
 
         if (positionValue > 0) {
             require(

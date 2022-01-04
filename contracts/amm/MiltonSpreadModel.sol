@@ -48,24 +48,26 @@ contract MiltonSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
-    ) external override returns (uint256 spreadValue) {
-        uint256 result =
-            _calculateDemandComponentPayFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
-                soap
-            ) +
+    ) external view override returns (uint256 spreadValue) {
+        require(
+            liquidityPool + derivativeOpeningFee > 0,
+            Errors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+        );
+        uint256 result = _calculateDemandComponentPayFixed(
+            derivativeDeposit,
+            derivativeOpeningFee,
+            liquidityPool,
+            payFixedDerivativesBalance,
+            recFixedDerivativesBalance,
+            soap
+        ) +
             _calculateAtParComponentPayFixed(
                 iporIndexValue,
                 exponentialMovingAverage,
                 exponentialWeightedMovingVariance
             );
-		
-		spreadValue = result < _maxValue ? result: _maxValue;
-		emit LogDebug("spreadValue", spreadValue);
+
+        spreadValue = result < _maxValue ? result : _maxValue;
     }
 
     function calculateSpreadRecFixed(
@@ -78,24 +80,26 @@ contract MiltonSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
-    ) external override returns (uint256 spreadValue) {
-        uint256 result =
-            _calculateDemandComponentRecFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
-                soap
-            ) +
+    ) external view override returns (uint256 spreadValue) {
+        require(
+            liquidityPool + derivativeOpeningFee > 0,
+            Errors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+        );
+        uint256 result = _calculateDemandComponentRecFixed(
+            derivativeDeposit,
+            derivativeOpeningFee,
+            liquidityPool,
+            payFixedDerivativesBalance,
+            recFixedDerivativesBalance,
+            soap
+        ) +
             _calculateAtParComponentRecFixed(
                 iporIndexValue,
                 exponentialMovingAverage,
                 exponentialWeightedMovingVariance
             );
 
-		spreadValue = result < _maxValue ? result: _maxValue;
-		emit LogDebug("spreadValue", spreadValue);
+        spreadValue = result < _maxValue ? result : _maxValue;
     }
 
     function _calculateDemandComponentPayFixed(
@@ -105,7 +109,7 @@ contract MiltonSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapPayFixed
-    ) internal returns (uint256) {
+    ) internal view returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
             _calculateAdjustedUtilizationRatePayFixed(
                 derivativeDeposit,
@@ -115,15 +119,17 @@ contract MiltonSpreadModel is
                 recFixedDerivativesBalance,
                 _demandComponentLambdaValue
             );
-		emit LogDebug("kfDenominator", kfDenominator);
+
         if (kfDenominator > 0) {
             uint256 kOmegaDenominator = Constants.D18 -
                 _calculateSoapPlus(soapPayFixed, payFixedDerivativesBalance);
+
             if (kOmegaDenominator > 0) {
-                return AmmMath.division(
-                    _demandComponentKfValue * Constants.D18,
-                    kfDenominator
-                ) +
+                return
+                    AmmMath.division(
+                        _demandComponentKfValue * Constants.D18,
+                        kfDenominator
+                    ) +
                     AmmMath.division(
                         _demandComponentKOmegaValue * Constants.D18,
                         kOmegaDenominator
@@ -140,7 +146,7 @@ contract MiltonSpreadModel is
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) internal returns (uint256) {
+    ) internal view returns (uint256) {
         if (exponentialWeightedMovingVariance == Constants.D18) {
             return _maxValue;
         } else {
@@ -150,6 +156,7 @@ contract MiltonSpreadModel is
                 exponentialMovingAverage,
                 _maxValue
             );
+
             if (historicalDeviation < _maxValue) {
                 return
                     AmmMath.division(
@@ -167,7 +174,7 @@ contract MiltonSpreadModel is
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 maxSpreadValue
-    ) internal returns (uint256) {
+    ) internal pure returns (uint256) {
         if (exponentialMovingAverage < iporIndexValue) {
             return 0;
         } else {
@@ -191,7 +198,7 @@ contract MiltonSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
-    ) internal returns (uint256) {
+    ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutPosition(
                 derivativeOpeningFee,
                 liquidityPool,
@@ -210,7 +217,6 @@ contract MiltonSpreadModel is
             utilizationRateRecFixed,
             lambda
         );
-		emit LogDebug("adjustedUtilizationRate", adjustedUtilizationRate);
         return adjustedUtilizationRate;
     }
 
@@ -221,7 +227,7 @@ contract MiltonSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapRecFixed
-    ) internal returns (uint256) {
+    ) internal view returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
             _calculateAdjustedUtilizationRateRecFixed(
                 derivativeDeposit,
@@ -229,22 +235,21 @@ contract MiltonSpreadModel is
                 liquidityPool,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
-                _demandComponentKOmegaValue
+                _demandComponentLambdaValue
             );
-
         if (kfDenominator > 0) {
             uint256 kOmegaDenominator = Constants.D18 -
                 _calculateSoapPlus(soapRecFixed, recFixedDerivativesBalance);
             if (kOmegaDenominator > 0) {
-                return AmmMath.division(
-                    _demandComponentKfValue * Constants.D18,
-                    kfDenominator
-                ) +
+                return
+                    AmmMath.division(
+                        _demandComponentKfValue * Constants.D18,
+                        kfDenominator
+                    ) +
                     AmmMath.division(
                         _demandComponentKOmegaValue * Constants.D18,
                         kOmegaDenominator
                     );
-
             } else {
                 return _maxValue;
             }
@@ -301,7 +306,6 @@ contract MiltonSpreadModel is
             }
         }
     }
-	event LogDebug(string name, uint256 value);
 
     function _calculateAdjustedUtilizationRateRecFixed(
         uint256 derivativeDeposit,
@@ -310,7 +314,7 @@ contract MiltonSpreadModel is
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
-    ) internal returns (uint256) {
+    ) internal pure returns (uint256) {
         uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutPosition(
                 derivativeOpeningFee,
                 liquidityPool,
@@ -323,12 +327,12 @@ contract MiltonSpreadModel is
                 liquidityPool,
                 recFixedDerivativesBalance
             );
+
         uint256 adjustedUtilizationRate = _calculateImbalanceFactorWithLambda(
             utilizationRateRecFixedWithPosition,
             utilizationRatePayFixed,
             lambda
         );
-		emit LogDebug("adjustedUtilizationRate", adjustedUtilizationRate);
         return adjustedUtilizationRate;
     }
 }

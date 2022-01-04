@@ -40,15 +40,18 @@ contract MiltonSpreadModelCore {
         ) {
             return Constants.D18 - utilizationRateLegWithPosition;
         } else {
-            return
-                Constants.D18 -
-                (utilizationRateLegWithPosition -
+			//TODO: clarify with quants if this value can be higher than 1 if yes then use int256 instead uint256 and prepare test for it
+             return
+                 Constants.D18 -
+                 (utilizationRateLegWithPosition 
+					 -
                     AmmMath.division(
                         lambda *
                             (utilizationRateLegWithoutPosition -
                                 utilizationRateLegWithPosition),
                         Constants.D18
-                    ));
+                    )
+				);
         }
     }
 	
