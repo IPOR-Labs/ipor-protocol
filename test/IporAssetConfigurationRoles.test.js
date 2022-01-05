@@ -47,17 +47,7 @@ const roles = [
         name: "MAX_POSITION_TOTAL_AMOUNT_ROLE",
         adminRole: keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
         role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
-    },
-    {
-        name: "SPREAD_PAY_FIXED_VALUE_ROLE",
-        adminRole: keccak256("SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE"),
-        role: keccak256("SPREAD_PAY_FIXED_VALUE_ROLE"),
-    },
-    {
-        name: "SPREAD_REC_FIXED_VALUE_ROLE",
-        adminRole: keccak256("SPREAD_REC_FIXED_VALUE_ADMIN_ROLE"),
-        role: keccak256("SPREAD_REC_FIXED_VALUE_ROLE"),
-    },
+    },   
     {
         name: "COLLATERALIZATION_FACTOR_VALUE_ROLE",
         adminRole: keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"),
@@ -82,17 +72,7 @@ const roles = [
         name: "DECAY_FACTOR_VALUE_ROLE",
         adminRole: keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
         role: keccak256("DECAY_FACTOR_VALUE_ROLE"),
-    },
-    {
-        name: "SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE",
-        adminRole: keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
-        role: keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE"),
-    },
-    {
-        name: "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE",
-        adminRole: keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
-        role: keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE"),
-    },
+    },   
 ];
 
 const rolesNotGrant = [
@@ -136,16 +116,7 @@ const rolesNotGrant = [
         code: "0x7c8d8e1bbd6d112e40e3f26d08aabeb9e7e37771bd3877eb3850332e23f7c782",
         role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
     },
-    {
-        name: "SPREAD_PAY_FIXED_VALUE_ROLE",
-        code: "0x25c5c866e37916853ee1e8f7a6086f59f8a91e8d956b88c76e2da4a4757464a5",
-        role: keccak256("SPREAD_PAY_FIXED_VALUE_ROLE"),
-    },
-    {
-        name: "SPREAD_REC_FIXED_VALUE_ROLE",
-        code: "0xe7ab403030c879418b4aa67684f7df144efdfece247774c9ad62a204ee842e47",
-        role: keccak256("SPREAD_REC_FIXED_VALUE_ROLE"),
-    },
+    
     {
         name: "COLLATERALIZATION_FACTOR_VALUE_ROLE",
         code: "0xc73b383cc34ef691c51adf836f82981b87c968081f10ae91077611045805b35e",
@@ -170,17 +141,7 @@ const rolesNotGrant = [
         name: "DECAY_FACTOR_VALUE_ROLE",
         code: "0xed044c57d37423bb4623f9110729ee31cae04cae931fe5ab3b24fc2e474fbb70",
         role: keccak256("DECAY_FACTOR_VALUE_ROLE"),
-    },
-    {
-        name: "SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE",
-        code: "0x535fa1a8b46c5ac24ca523a0fecbea2eef851695b9833f8ec25b9296a155a55e",
-        role: keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE"),
-    },
-    {
-        name: "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE",
-        code: "0x8a92933037b88f51a66db44f2de47a243ede378bceacc6b5f0cf5fea0e402c47",
-        role: keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE"),
-    },
+    },    
     {
         name: "ROLES_INFO_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
@@ -220,17 +181,7 @@ const rolesNotGrant = [
         name: "MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
-    },
-    {
-        name: "SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE"),
-    },
-    {
-        name: "SPREAD_REC_FIXED_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("SPREAD_REC_FIXED_VALUE_ADMIN_ROLE"),
-    },
+    },    
     {
         name: "COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
@@ -255,29 +206,7 @@ const rolesNotGrant = [
         name: "DECAY_FACTOR_VALUE_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
-    },
-    {
-        name: "SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
-    },
-	{
-        name: "SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
-    },
-    {
-        name: "SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
-    },
-    {
-        name: "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256(
-            "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE"
-        ),
-    },
+    },    
 ];
 
 describe("IporAssetConfigurationRoles", () => {

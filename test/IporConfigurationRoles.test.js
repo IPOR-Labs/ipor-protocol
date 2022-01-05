@@ -133,7 +133,7 @@ const rolesNotGrant = [
     },
     {
         name: "MILTON_SPREAD_MODEL_ROLE",
-        code: "0x4a48b7c468d48efb15988e82311c6880af84ff7b6fe0e097f58073c7e794cf45",
+        code: "0x869c6dda984481cbeefdaab23aeff7b5cae8e04a57bb6bc44608ea47966b45ac",
         role: keccak256("MILTON_SPREAD_MODEL_ROLE"),
     },
     {

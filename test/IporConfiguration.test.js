@@ -380,7 +380,7 @@ describe("IporAssetConfiguration", () => {
             iporConfiguration.setMiltonSpreadModel(mockAddress),
 
             //then
-            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xdf80c0078aae521b601e4fddc35fbb2871ffaa4e22d30b53745545184b3cff3e`
+            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xc769312598bcfa61b1f22ed091835eefa5a0d9a37ea7646f63bfd88a3dd04878`
         );
     });
 

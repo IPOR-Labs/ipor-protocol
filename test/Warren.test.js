@@ -189,8 +189,8 @@ describe("Warren", () => {
     it("should update existing IPOR Index", async () => {
         //given
         const asset = testData.tokenUsdt.address;
-        const expectedIndexValueOne = BigInt("123000000000000000000");
-        const expectedIndexValueTwo = BigInt("321000000000000000000");
+        const expectedIndexValueOne = BigInt("123000000000000000");
+        const expectedIndexValueTwo = BigInt("321000000000000000");
         await testData.warrenStorage.addUpdater(userOne.address);
         await testData.warrenStorage.addUpdater(data.warren.address);
 
