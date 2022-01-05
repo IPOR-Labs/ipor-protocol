@@ -42,14 +42,14 @@ library IporLogic {
     function calculateExponentialMovingAverage(
         uint256 lastExponentialMovingAverage,
         uint256 indexValue,
-        uint256 decayFactor
+        uint256 alpha
     ) internal pure returns (uint256) {
         return
             AmmMath.division(
                 lastExponentialMovingAverage *
-                    (Constants.D18 - decayFactor) +
+                    (Constants.D18 - alpha) +
                     indexValue *
-                    decayFactor,
+                    alpha,
                 Constants.D18
             );
     }
@@ -58,21 +58,21 @@ library IporLogic {
         uint256 lastExponentialWeightedMovingVariance,
         uint256 exponentialMovingAverage,
         uint256 indexValue,
-        uint256 alfa
+        uint256 alpha
     ) internal pure returns (uint256 result) {		
 
-		require(alfa <= Constants.D18, Errors.MILTON_SPREAD_ALFA_CANNOT_BE_HIGHER_THAN_ONE);
+		require(alpha <= Constants.D18, Errors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
 
 		if (indexValue > exponentialMovingAverage) {
 			result = AmmMath.division(
-				alfa *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
-						+ (Constants.D18 - alfa) * (indexValue - exponentialMovingAverage) * (indexValue - exponentialMovingAverage)),
+				alpha *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
+						+ (Constants.D18 - alpha) * (indexValue - exponentialMovingAverage) * (indexValue - exponentialMovingAverage)),
 					 Constants.D18 * Constants.D18 * Constants.D18 
 				 );
 		} else {
 			result = AmmMath.division(
-				alfa *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
-						+ (Constants.D18 - alfa) * (exponentialMovingAverage - indexValue) * (exponentialMovingAverage-indexValue)),
+				alpha *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
+						+ (Constants.D18 - alpha) * (exponentialMovingAverage - indexValue) * (exponentialMovingAverage-indexValue)),
 					 Constants.D18 * Constants.D18 * Constants.D18 
 				 );
 		}

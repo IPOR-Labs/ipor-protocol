@@ -190,7 +190,7 @@ library Errors {
 	string public constant MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE =
         "IPOR_54";
 
-	//@notice During spread calculation - Alfa param which  cannot be higher than 1
-	string public constant MILTON_SPREAD_ALFA_CANNOT_BE_HIGHER_THAN_ONE =
+	//@notice During spread calculation - Alpha param which  cannot be higher than 1
+	string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
         "IPOR_55";
 }

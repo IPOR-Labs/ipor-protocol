@@ -121,21 +121,31 @@ contract MiltonSpreadModel is
             );
 
         if (kfDenominator > 0) {
-            uint256 kOmegaDenominator = Constants.D18 -
-                _calculateSoapPlus(soapPayFixed, payFixedDerivativesBalance);
-
-            if (kOmegaDenominator > 0) {
+            if (soapPayFixed > 0) {
+                uint256 kOmegaDenominator = Constants.D18 -
+                    _calculateSoapPlus(
+                        soapPayFixed,
+                        payFixedDerivativesBalance
+                    );
+                if (kOmegaDenominator > 0) {
+                    return
+                        AmmMath.division(
+                            _demandComponentKfValue * Constants.D18,
+                            kfDenominator
+                        ) +
+                        AmmMath.division(
+                            _demandComponentKOmegaValue * Constants.D18,
+                            kOmegaDenominator
+                        );
+                } else {
+                    return _maxValue;
+                }
+            } else {
                 return
                     AmmMath.division(
                         _demandComponentKfValue * Constants.D18,
                         kfDenominator
-                    ) +
-                    AmmMath.division(
-                        _demandComponentKOmegaValue * Constants.D18,
-                        kOmegaDenominator
-                    );
-            } else {
-                return _maxValue;
+                    ) + _demandComponentKOmegaValue;
             }
         } else {
             return _maxValue;
@@ -238,20 +248,31 @@ contract MiltonSpreadModel is
                 _demandComponentLambdaValue
             );
         if (kfDenominator > 0) {
-            uint256 kOmegaDenominator = Constants.D18 -
-                _calculateSoapPlus(soapRecFixed, recFixedDerivativesBalance);
-            if (kOmegaDenominator > 0) {
+            if (soapRecFixed > 0) {
+                uint256 kOmegaDenominator = Constants.D18 -
+                    _calculateSoapPlus(
+                        soapRecFixed,
+                        recFixedDerivativesBalance
+                    );
+                if (kOmegaDenominator > 0) {
+                    return
+                        AmmMath.division(
+                            _demandComponentKfValue * Constants.D18,
+                            kfDenominator
+                        ) +
+                        AmmMath.division(
+                            _demandComponentKOmegaValue * Constants.D18,
+                            kOmegaDenominator
+                        );
+                } else {
+                    return _maxValue;
+                }
+            } else {
                 return
                     AmmMath.division(
                         _demandComponentKfValue * Constants.D18,
                         kfDenominator
-                    ) +
-                    AmmMath.division(
-                        _demandComponentKOmegaValue * Constants.D18,
-                        kOmegaDenominator
-                    );
-            } else {
-                return _maxValue;
+                    ) + _demandComponentKOmegaValue;
             }
         } else {
             return _maxValue;

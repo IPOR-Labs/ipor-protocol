@@ -133,11 +133,14 @@ contract WarrenStorage is Ownable, IWarrenStorage {
             if (assets[i] == asset) {
                 assetExists = true;
             }
-        }
-
+        }		
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
 		uint256 newExponentialWeightedMovingVariance;
+		// uint256 power = AmmMath.division((updateTimestamp-indexes[asset].blockTimestamp)*Constants.D18, iporAssetConfiguration.getDecayFactorValue());
+		// uint256 alpha = AmmMath.division(Constants.D18, Constants.E_VALUE ** power); 
+		//TODO: figure out how to calculate alpha???
+		uint256 alpha = iporAssetConfiguration.getDecayFactorValue();
 
         if (!assetExists) {
             assets.push(asset);
@@ -152,7 +155,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
                 .calculateExponentialMovingAverage(
                     indexes[asset].exponentialMovingAverage,
                     indexValue,
-                    iporAssetConfiguration.getDecayFactorValue()
+                    alpha
                 );
 
 			
@@ -161,8 +164,8 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 				indexes[asset].exponentialWeightedMovingVariance,
 				newExponentialMovingAverage,
 				indexValue,
-				//TODO: change decay factor to alfa which is calculated using tau and delta time
-				iporAssetConfiguration.getDecayFactorValue()
+				alpha
+
 			);
         }
         indexes[asset] = DataTypes.IPOR(
