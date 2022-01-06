@@ -30,13 +30,13 @@ interface IMiltonSpreadConfiguration {
 
     event SpreadMaxValueSet(uint256 newSpreadMaxValue);
 
-    function getSpreadDemandComponentKfValue() external view returns (uint256);
+    function getDemandComponentKfValue() external view returns (uint256);
 
     function setDemandComponentKfValue(
         uint256 newSpreadDemandComponentKfValue
     ) external;
 
-    function getSpreadDemandComponentLambdaValue()
+    function getDemandComponentLambdaValue()
         external
         view
         returns (uint256);
@@ -45,7 +45,7 @@ interface IMiltonSpreadConfiguration {
         uint256 newSpreadDemandComponentLambdaValue
     ) external;
 
-    function getSpreadDemandComponentKOmegaValue()
+    function getDemandComponentKOmegaValue()
         external
         view
         returns (uint256);
@@ -54,7 +54,7 @@ interface IMiltonSpreadConfiguration {
         uint256 newSpreadDemandComponentKOmegaValue
     ) external;
 
-    function getSpreadDemandComponentMaxLiquidityRedemptionValue()
+    function getDemandComponentMaxLiquidityRedemptionValue()
         external
         view
         returns (uint256);
@@ -63,13 +63,13 @@ interface IMiltonSpreadConfiguration {
         uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue
     ) external;
 
-    function getSpreadAtParComponentKVolValue() external view returns (uint256);
+    function getAtParComponentKVolValue() external view returns (uint256);
 
     function setAtParComponentKVolValue(
         uint256 newSpreadAtParComponentKVolValue
     ) external;
 
-    function getSpreadAtParComponentKHistValue()
+    function getAtParComponentKHistValue()
         external
         view
         returns (uint256);

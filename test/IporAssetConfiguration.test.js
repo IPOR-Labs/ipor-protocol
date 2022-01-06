@@ -350,11 +350,11 @@ describe("IporAssetConfiguration", () => {
     //         "99000000000000000000"
     //     );
     //     await iporAssetConfigurationDAI.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
     //         admin
     //     );
     //     await iporAssetConfigurationDAI.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
     //         userOne
     //     );
 
@@ -396,11 +396,11 @@ describe("IporAssetConfiguration", () => {
         const liquidityPoolMaxUtilizationPercentage =
             BigInt("90000000000000000");
         await iporAssetConfigurationDAI.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await iporAssetConfigurationDAI.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             userOne.address
         );
 
@@ -420,7 +420,7 @@ describe("IporAssetConfiguration", () => {
         ).to.be.eql(BigInt(actualLiquidityPoolMaxUtilizationPercentage));
     });
 
-    it("should NOT set liquidityPoolMaxUtilizationPercentage when user does not have LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE role", async () => {
+    it("should NOT set liquidityPoolMaxUtilizationPercentage when user does not have LP_MAX_UTILIZATION_PERCENTAGE_ROLE role", async () => {
         //given
         const liquidityPoolMaxUtilizationPercentage =
             BigInt("90000000000000000");
@@ -1113,5 +1113,4 @@ describe("IporAssetConfiguration", () => {
             "IPOR_48"
         );
     });
-    
 });

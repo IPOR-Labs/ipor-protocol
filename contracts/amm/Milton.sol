@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import { Errors } from "../Errors.sol";
-import { DataTypes } from "../libraries/types/DataTypes.sol";
+import {Errors} from "../Errors.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../oracles/WarrenStorage.sol";
 import "./MiltonStorage.sol";
@@ -111,7 +111,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
         miltonStorage.updateStorageWhenTransferPublicationFee(asset, amount);
         //TODO: user Address from OZ and use call
-		//TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
+        //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
         IERC20(asset).safeTransfer(charlieTreasurer, amount);
     }
 
@@ -149,10 +149,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         view
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
-    {
+    {		
 		spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
-		spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
-    }
+        spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
+    }    
 
     function calculateSoap(address asset)
         external
@@ -281,7 +281,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             address(iporConfiguration) != address(0),
             Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS
         );
-		//TODO: consider remove this requirements
+        //TODO: consider remove this requirements
         require(asset != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
         require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
@@ -381,10 +381,25 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED
         );
 
-		
-        
-        uint256 spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
-        uint256 spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
+		uint256 spreadValue;
+		IMiltonSpreadModel spreadModel = IMiltonSpreadModel(iporConfiguration.getMiltonSpreadModel());
+
+		if (direction == 0) {
+			spreadValue = spreadModel.calculateSpreadPayFixed(
+				openTimestamp,
+				asset,
+				derivativeAmount.deposit,
+				derivativeAmount.openingFee
+			);
+		} else {
+			spreadValue = spreadModel.calculateSpreadRecFixed(
+				openTimestamp,
+				asset,
+				derivativeAmount.deposit,
+				derivativeAmount.openingFee
+			);
+		}
+       
 
         IMiltonStorage miltonStorage = IMiltonStorage(
             iporConfiguration.getMiltonStorage()
@@ -402,8 +417,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                     iporAssetConfiguration.getLiquidationDepositAmount(),
                     derivativeAmount.openingFee,
                     iporAssetConfiguration.getIporPublicationFeeAmount(),
-                    spreadPayFixedValue,
-                    spreadRecFixedValue
+                    spreadValue
                 ),
                 collateralizationFactor,
                 derivativeAmount.notional,
@@ -413,7 +427,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                     openTimestamp,
                     asset,
                     direction,
-                    derivativeAmount.notional
+                    derivativeAmount.notional,
+					spreadValue
                 )
             );
 
@@ -460,27 +475,23 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 calculateTimestamp,
         address asset,
         uint8 direction,
-        uint256 notionalAmount
+        uint256 notionalAmount,
+		uint256 spreadValue
     )
         internal
         view
         returns (DataTypes.IporDerivativeIndicator memory indicator)
     {
         IWarren warren = IWarren(iporConfiguration.getWarren());
-        (uint256 indexValue, , , ,) = warren.getIndex(asset);
+        (uint256 indexValue, , , , ) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
             asset,
             calculateTimestamp
         );
         require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
 
-        
-            uint256 spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
-            uint256 spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
-        
-
         require(
-            indexValue >= spreadRecFixedValue,
+            indexValue >= spreadValue,
             Errors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
@@ -489,8 +500,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             accruedIbtPrice,
             AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
             direction == 0
-                ? (indexValue + spreadPayFixedValue)
-                : (indexValue - spreadRecFixedValue)
+                ? (indexValue + spreadValue)
+                : indexValue > spreadValue ? (indexValue - spreadValue) : 0
         );
     }
 
@@ -617,7 +628,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         if (transferAmount > 0) {
             //transfer from Milton to Trader
-			//TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
+            //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             IERC20(derivativeItem.item.asset).safeTransfer(
                 derivativeItem.item.buyer,
                 AmmMath.convertWadToAssetDecimals(transferAmount, assetDecimals)

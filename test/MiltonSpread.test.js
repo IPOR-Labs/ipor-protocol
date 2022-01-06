@@ -2232,7 +2232,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2314,7 +2314,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2396,7 +2396,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2478,7 +2478,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2560,7 +2560,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2724,7 +2724,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2888,7 +2888,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3053,7 +3053,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3219,7 +3219,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3385,7 +3385,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3551,7 +3551,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3717,7 +3717,7 @@ describe("MiltonSpreadModel", () => {
             await testData.miltonSpread
                 .connect(userOne)
                 // .callStatic
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3881,7 +3881,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4045,7 +4045,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4210,7 +4210,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4374,7 +4374,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4456,7 +4456,7 @@ describe("MiltonSpreadModel", () => {
         let actualSpreadValue = BigInt(
             await testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4536,7 +4536,7 @@ describe("MiltonSpreadModel", () => {
             //when
             testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadPayFixed(
+                .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4613,7 +4613,7 @@ describe("MiltonSpreadModel", () => {
             //when
             testData.miltonSpread
                 .connect(userOne)
-                .calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,

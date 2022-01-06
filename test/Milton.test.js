@@ -4846,11 +4846,11 @@ describe("Milton", () => {
             libraries
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             admin.address
         );
         await prepareApproveForUsers(
@@ -4967,11 +4967,11 @@ describe("Milton", () => {
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             admin.address
         );
         await prepareApproveForUsers(
@@ -5043,11 +5043,11 @@ describe("Milton", () => {
             libraries
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             admin.address
         );
         await prepareApproveForUsers(
@@ -5138,11 +5138,11 @@ describe("Milton", () => {
     //         admin.address
     //     );
     //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
     //         admin.address
     //     );
     //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
     //         admin.address
     //     );
     //     await prepareApproveForUsers(

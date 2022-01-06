@@ -9,7 +9,10 @@ contract MiltonSpreadConfiguration is
     AccessControlMiltonSpreadConfiguration(msg.sender),
     IMiltonSpreadConfiguration
 {
-	
+
+	//@notice Spread Max Value
+    uint256 internal _maxValue;
+
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
     uint256 internal _demandComponentKfValue;
 
@@ -26,10 +29,7 @@ contract MiltonSpreadConfiguration is
     uint256 internal _atParComponentKVolValue;
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
-    uint256 internal _atParComponentKHistValue;
-
-    //@notice Spread Max Value
-    uint256 internal _maxValue;
+    uint256 internal _atParComponentKHistValue;    
 
     constructor() {
         _demandComponentKfValue = AmmMath.division(
@@ -62,7 +62,20 @@ contract MiltonSpreadConfiguration is
         _maxValue = AmmMath.division(3 * Constants.D18, 10);
     }
 
-    function getSpreadDemandComponentKfValue()
+	function getSpreadMaxValue() external view override returns (uint256) {
+        return _maxValue;
+    }
+
+    function setSpreadMaxValue(uint256 newSpreadMaxValue)
+        external
+        override
+        onlyRole(_SPREAD_MAX_VALUE_ROLE)
+    {
+        _maxValue = newSpreadMaxValue;
+        emit SpreadMaxValueSet(newSpreadMaxValue);
+    }
+
+    function getDemandComponentKfValue()
         external
         view
         override
@@ -78,7 +91,7 @@ contract MiltonSpreadConfiguration is
         emit SpreadDemandComponentKfValueSet(newSpreadDemandComponentKfValue);
     }
 
-    function getSpreadDemandComponentLambdaValue()
+    function getDemandComponentLambdaValue()
         external
         view
         override
@@ -96,7 +109,7 @@ contract MiltonSpreadConfiguration is
         );
     }
 
-    function getSpreadDemandComponentKOmegaValue()
+    function getDemandComponentKOmegaValue()
         external
         view
         override
@@ -114,7 +127,7 @@ contract MiltonSpreadConfiguration is
         );
     }
 
-    function getSpreadDemandComponentMaxLiquidityRedemptionValue()
+    function getDemandComponentMaxLiquidityRedemptionValue()
         external
         view
         override
@@ -136,7 +149,7 @@ contract MiltonSpreadConfiguration is
         );
     }
 
-    function getSpreadAtParComponentKVolValue()
+    function getAtParComponentKVolValue()
         external
         view
         override
@@ -152,7 +165,7 @@ contract MiltonSpreadConfiguration is
         emit SpreadAtParComponentKVolValueSet(newSpreadAtParComponentKVolValue);
     }
 
-    function getSpreadAtParComponentKHistValue()
+    function getAtParComponentKHistValue()
         external
         view
         override
@@ -168,18 +181,5 @@ contract MiltonSpreadConfiguration is
         emit SpreadAtParComponentKHistValueSet(
             newSpreadAtParComponentKHistValue
         );
-    }
-
-    function getSpreadMaxValue() external view override returns (uint256) {
-        return _maxValue;
-    }
-
-    function setSpreadMaxValue(uint256 newSpreadMaxValue)
-        external
-        override
-        onlyRole(_SPREAD_MAX_VALUE_ROLE)
-    {
-        _maxValue = newSpreadMaxValue;
-        emit SpreadMaxValueSet(newSpreadMaxValue);
-    }
+    }    
 }

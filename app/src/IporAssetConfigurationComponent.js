@@ -846,15 +846,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>ROLES_INFO_ROLE</td>
+                        <td>INCOME_TAX_PERCENTAGE_ADMIN_ROLE</td>
                         <td>
-                            0xc878cde3567a457053651a2406e31db6dbb9207b6d5eedb081ef807beaaf5444
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>ROLES_INFO_ADMIN_ROLE</td>
-                        <td>
-                            0xfb1902cbac4bf447ada58dff398caab7aa9089eba1be77a2833d9e08dbe8664c
+                            0xcaa6983304bafc9d674310f90270b5949e0bb6e51e706428584d7da457ddeccd
                         </td>
                     </tr>
                     <tr>
@@ -864,9 +858,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>INCOME_TAX_PERCENTAGE_ADMIN_ROLE</td>
+                        <td>OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE</td>
                         <td>
-                            0xcaa6983304bafc9d674310f90270b5949e0bb6e51e706428584d7da457ddeccd
+                            0xebe66983650b4d8b57cb18fe7c97cdfe49625e06d8c6e70e646beb3a8ae73dd6
                         </td>
                     </tr>
                     <tr>
@@ -876,9 +870,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE</td>
+                        <td>LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE</td>
                         <td>
-                            0xebe66983650b4d8b57cb18fe7c97cdfe49625e06d8c6e70e646beb3a8ae73dd6
+                            0xe7cc2a3bd9f3d49de9396c60dc8e9969986ea020b9bf72f8ab3527c64c7cbcf3
                         </td>
                     </tr>
                     <tr>
@@ -888,9 +882,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE</td>
+                        <td>OPENING_FEE_PERCENTAGE_ADMIN_ROLE</td>
                         <td>
-                            0xe7cc2a3bd9f3d49de9396c60dc8e9969986ea020b9bf72f8ab3527c64c7cbcf3
+                            0x8714c5b454a0d07dd83274b33d478ceb04fb8767fe2079073b335f6e3a9feb14
                         </td>
                     </tr>
                     <tr>
@@ -900,41 +894,27 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>OPENING_FEE_PERCENTAGE_ADMIN_ROLE</td>
-                        <td>
-                            0x8714c5b454a0d07dd83274b33d478ceb04fb8767fe2079073b335f6e3a9feb14
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>IPOR_PUBLICATION_FEE_AMOUNT_ROLE</td>
-                        <td>
-                            0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1
-                        </td>
-                    </tr>
-                    <tr>
                         <td>IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE</td>
                         <td>
                             0x789f25814c078f5d3a73f07837d3717096a7f31ff58dc1f3971a1aed3a8054d0
                         </td>
                     </tr>
                     <tr>
-                        <td>LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE</td>
+                        <td>IPOR_PUBLICATION_FEE_AMOUNT_ROLE</td>
                         <td>
-                            0x53e7faacb3381a7b6b7185a9fc96bd9430da87ec709e6d3e0f009ed7c71e45ef
+                            0x87e18aa327ccd4d81c21e01f67f40625d9ff672710aef2d923eb2f030013dc94
                         </td>
                     </tr>
                     <tr>
+                        <td>LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE</td>
                         <td>
-                            LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE
-                        </td>
-                        <td>
-                            0x9390cd14c303a3aaaa87f1f63728f95f237300898d55577f06a9b2f83904e4bd
+                            0xa4c64c3339465ad53a61eda2523e5cb6e0da178b7008bcea975b07e07810b588
                         </td>
                     </tr>
                     <tr>
-                        <td>MAX_POSITION_TOTAL_AMOUNT_ROLE</td>
+                        <td>LP_MAX_UTILIZATION_PERCENTAGE_ROLE</td>
                         <td>
-                            0xbd6e7260790b38b2aece87cbeb2f1d97be9c3b1eb157efb80e7b3c341450caf2
+                            0x1f68aca9d1b8ff5a2094c405f4385604851afa04a50632f403d9ae378700825e
                         </td>
                     </tr>
                     <tr>
@@ -944,21 +924,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>SPREAD_PAY_FIXED_VALUE_ROLE</td>
+                        <td>MAX_POSITION_TOTAL_AMOUNT_ROLE</td>
                         <td>
-                            0x83d7135b2dfb3276d590bad8848fb596869644b2f5a647ccbdba6f13e445fb46
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>SPREAD_PAY_FIXED_VALUE_ADMIN_ROLE</td>
-                        <td>
-                            0x25c5c866e37916853ee1e8f7a6086f59f8a91e8d956b88c76e2da4a4757464a5
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>COLLATERALIZATION_FACTOR_VALUE_ROLE</td>
-                        <td>
-                            0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e
+                            0xbd6e7260790b38b2aece87cbeb2f1d97be9c3b1eb157efb80e7b3c341450caf2
                         </td>
                     </tr>
                     <tr>
@@ -968,9 +936,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>CHARLIE_TREASURER_ROLE</td>
+                        <td>COLLATERALIZATION_FACTOR_VALUE_ROLE</td>
                         <td>
-                            0x21b203ce7b3398e0ad35c938bc2c62a805ef17dc57de85e9d29052eac6d9d6f7
+                            0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e
                         </td>
                     </tr>
                     <tr>
@@ -980,9 +948,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>TREASURE_TREASURER_ROLE</td>
+                        <td>CHARLIE_TREASURER_ROLE</td>
                         <td>
-                            0x9cdee4e06275597b667c73a5eb52ed89fe6acbbd36bd9fa38146b1316abfbbc4
+                            0x21b203ce7b3398e0ad35c938bc2c62a805ef17dc57de85e9d29052eac6d9d6f7
                         </td>
                     </tr>
                     <tr>
@@ -992,9 +960,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>ASSET_MANAGEMENT_VAULT_ROLE</td>
+                        <td>TREASURE_TREASURER_ROLE</td>
                         <td>
-                            0x2a7b2b7d358f8b11f783d1505af660b492b725a034776176adc7c268915d5bd8
+                            0x9cdee4e06275597b667c73a5eb52ed89fe6acbbd36bd9fa38146b1316abfbbc4
                         </td>
                     </tr>
                     <tr>
@@ -1004,9 +972,9 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>DECAY_FACTOR_VALUE_ROLE</td>
+                        <td>ASSET_MANAGEMENT_VAULT_ROLE</td>
                         <td>
-                            0x94c58a89ab11d8b2894ecfbd6cb5c324f772536d0ea878a10cee7effe8ce98d0
+                            0x2a7b2b7d358f8b11f783d1505af660b492b725a034776176adc7c268915d5bd8
                         </td>
                     </tr>
                     <tr>
@@ -1016,33 +984,24 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE</td>
+                        <td>DECAY_FACTOR_VALUE_ROLE</td>
                         <td>
-                            59542b17ceec8a6f8b1bb7b3e5ec973b56689fbcced2a9d87bb75563f9a53956
+                            0x94c58a89ab11d8b2894ecfbd6cb5c324f772536d0ea878a10cee7effe8ce98d0
+                        </td>
+                    </tr>
+					<tr>
+                        <td>ROLES_INFO_ADMIN_ROLE</td>
+                        <td>
+                            0xfb1902cbac4bf447ada58dff398caab7aa9089eba1be77a2833d9e08dbe8664c
                         </td>
                     </tr>
                     <tr>
+                        <td>ROLES_INFO_ROLE</td>
                         <td>
-                            SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE
-                        </td>
-                        <td>
-                            1c9b0d8b08ffbdf9b98505e7cf1f9e06651991e756457077322da759fd3d7c0e
+                            0xc878cde3567a457053651a2406e31db6dbb9207b6d5eedb081ef807beaaf5444
                         </td>
                     </tr>
-                    <tr>
-                        <td>SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE</td>
-                        <td>
-                            eec7cc7aa729979c27c0c22d8699c9207ef8923ec66180dd8e0b68e1a3d1ce9f
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE
-                        </td>
-                        <td>
-                            224acf7ed8de77b69b931434110da49f990b16f168d2cc437ca7086e3dd981ce
-                        </td>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>

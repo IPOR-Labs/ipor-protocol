@@ -51,7 +51,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getSpreadDemandComponentKfValue()
+            await miltonSpreadConfiguration.getDemandComponentKfValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -89,7 +89,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getSpreadDemandComponentLambdaValue()
+            await miltonSpreadConfiguration.getDemandComponentLambdaValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -127,7 +127,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getSpreadDemandComponentKOmegaValue()
+            await miltonSpreadConfiguration.getDemandComponentKOmegaValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -169,7 +169,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getSpreadDemandComponentMaxLiquidityRedemptionValue()
+            await miltonSpreadConfiguration.getDemandComponentMaxLiquidityRedemptionValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -207,7 +207,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getSpreadAtParComponentKVolValue()
+            await miltonSpreadConfiguration.getAtParComponentKVolValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -245,7 +245,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getSpreadAtParComponentKHistValue()
+            await miltonSpreadConfiguration.getAtParComponentKHistValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);

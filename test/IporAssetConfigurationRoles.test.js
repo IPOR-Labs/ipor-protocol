@@ -37,17 +37,15 @@ const roles = [
         role: keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"),
     },
     {
-        name: "LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE",
-        adminRole: keccak256(
-            "LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"
-        ),
-        role: keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+        name: "LP_MAX_UTILIZATION_PERCENTAGE_ROLE",
+        adminRole: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+        role: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
     },
     {
         name: "MAX_POSITION_TOTAL_AMOUNT_ROLE",
         adminRole: keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
         role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
-    },   
+    },
     {
         name: "COLLATERALIZATION_FACTOR_VALUE_ROLE",
         adminRole: keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"),
@@ -72,7 +70,7 @@ const roles = [
         name: "DECAY_FACTOR_VALUE_ROLE",
         adminRole: keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
         role: keccak256("DECAY_FACTOR_VALUE_ROLE"),
-    },   
+    },
 ];
 
 const rolesNotGrant = [
@@ -107,16 +105,16 @@ const rolesNotGrant = [
         role: keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"),
     },
     {
-        name: "LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE",
+        name: "LP_MAX_UTILIZATION_PERCENTAGE_ROLE",
         code: "0x9390cd14c303a3aaaa87f1f63728f95f237300898d55577f06a9b2f83904e4bd",
-        role: keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+        role: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
     },
     {
         name: "MAX_POSITION_TOTAL_AMOUNT_ROLE",
         code: "0x7c8d8e1bbd6d112e40e3f26d08aabeb9e7e37771bd3877eb3850332e23f7c782",
         role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
     },
-    
+
     {
         name: "COLLATERALIZATION_FACTOR_VALUE_ROLE",
         code: "0xc73b383cc34ef691c51adf836f82981b87c968081f10ae91077611045805b35e",
@@ -141,7 +139,7 @@ const rolesNotGrant = [
         name: "DECAY_FACTOR_VALUE_ROLE",
         code: "0xed044c57d37423bb4623f9110729ee31cae04cae931fe5ab3b24fc2e474fbb70",
         role: keccak256("DECAY_FACTOR_VALUE_ROLE"),
-    },    
+    },
     {
         name: "ROLES_INFO_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
@@ -173,15 +171,15 @@ const rolesNotGrant = [
         role: keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE"),
     },
     {
-        name: "LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE",
+        name: "LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+        role: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
     },
     {
         name: "MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
-    },    
+    },
     {
         name: "COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
@@ -206,7 +204,7 @@ const rolesNotGrant = [
         name: "DECAY_FACTOR_VALUE_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
-    },    
+    },
 ];
 
 describe("IporAssetConfigurationRoles", () => {

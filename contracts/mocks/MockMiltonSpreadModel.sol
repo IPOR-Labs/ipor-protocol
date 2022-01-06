@@ -8,6 +8,54 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         MiltonSpreadModel(iporConfiguration)
     {}
 
+	function testCalculateSpreadPayFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
+        uint256 derivativeDeposit,
+        uint256 derivativeOpeningFee,
+        uint256 liquidityPool,
+        uint256 payFixedDerivativesBalance,
+        uint256 recFixedDerivativesBalance,
+        int256 soap
+    ) public view returns (uint256 spreadValue) {
+		return _calculateSpreadPayFixed(
+			 iporIndexValue,
+			 exponentialMovingAverage,
+			 exponentialWeightedMovingVariance,
+			 derivativeDeposit,
+			 derivativeOpeningFee,
+			 liquidityPool,
+			 payFixedDerivativesBalance,
+			 recFixedDerivativesBalance,
+			 soap
+		);
+	}
+
+	function testCalculateSpreadRecFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
+        uint256 derivativeDeposit,
+        uint256 derivativeOpeningFee,
+        uint256 liquidityPool,
+        uint256 payFixedDerivativesBalance,
+        uint256 recFixedDerivativesBalance,
+        int256 soap
+    ) public view returns (uint256 spreadValue) {
+		return _calculateSpreadRecFixed(
+			 iporIndexValue,
+			 exponentialMovingAverage,
+			 exponentialWeightedMovingVariance,
+			 derivativeDeposit,
+			 derivativeOpeningFee,
+			 liquidityPool,
+			 payFixedDerivativesBalance,
+			 recFixedDerivativesBalance,
+			 soap
+		);
+	}
+
     function calculateDemandComponentPayFixed(
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee,

@@ -209,7 +209,7 @@ contract IporAssetConfiguration is
     )
         external
         override
-        onlyRole(_LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE)
+        onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE)
     {
         require(
             newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,

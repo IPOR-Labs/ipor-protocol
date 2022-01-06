@@ -106,10 +106,8 @@ library DataTypes {
         uint256 iporPublicationAmount;
         //TODO: probably don't have to store, add to event
         //@notice value are basis points
-        uint256 spreadPayFixedValue;
-        //TODO: probably don't have to store, add to event
-        //@notice value are basis points
-        uint256 spreadRecFixedValue;
+        uint256 spreadValue;
+        //TODO: probably don't have to store, add to event        
     }
 
     struct MiltonDerivatives {
