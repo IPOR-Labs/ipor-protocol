@@ -67,7 +67,7 @@ const {
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
-    grantAllSpreadRolesForDAI,
+    grantAllSpreadRoles,
 } = require("./Utils");
 
 describe("MiltonSpreadModel", () => {
@@ -86,6 +86,7 @@ describe("MiltonSpreadModel", () => {
             userThree,
             liquidityProvider,
         ]);
+        await grantAllSpreadRoles(data, admin, userOne);
     });
 
     it("should calculate spread - demand component - Pay Fixed Derivative, PayFix Balance > RecFix Balance, SOAP+=0", async () => {
@@ -97,27 +98,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -134,7 +133,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -162,27 +161,26 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -199,7 +197,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -227,27 +225,26 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -264,7 +261,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -292,23 +289,22 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -325,7 +321,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -352,27 +348,26 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -389,7 +384,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -416,27 +411,26 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -453,7 +447,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -480,27 +474,26 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -516,7 +509,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -543,27 +536,26 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -580,7 +572,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -607,27 +599,26 @@ describe("MiltonSpreadModel", () => {
             data,
             libraries
         );
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
 
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -644,7 +635,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -672,29 +663,27 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
         //Max Liquidity Redemption Value equal to Adjusted Utilization Rate
         const maxLiquidityRedemptionValue = BigInt("144079885877318117");
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 maxLiquidityRedemptionValue
@@ -711,7 +700,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         const actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     derivativeDeposit,
@@ -740,27 +729,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -777,7 +764,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -806,27 +793,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -843,7 +828,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -872,27 +857,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -909,7 +892,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -938,27 +921,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -975,7 +956,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -1004,27 +985,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -1041,7 +1020,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -1069,27 +1048,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -1106,7 +1083,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -1134,27 +1111,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -1171,7 +1146,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -1199,27 +1174,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -1236,7 +1209,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -1264,27 +1237,25 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("3210000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
@@ -1301,7 +1272,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -1329,29 +1300,27 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
         //Max Liquidity Redemption Value equal to Adjusted Utilization Rate value=215406562054208274
         const maxLiquidityRedemptionValue = BigInt("215406562054208274");
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 maxLiquidityRedemptionValue
@@ -1368,7 +1337,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         const actualSpreadDemandComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentRecFixed(
                     derivativeDeposit,
@@ -1397,17 +1366,15 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1417,7 +1384,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1444,19 +1411,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const maxSpreadValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(maxSpreadValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1466,7 +1431,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1493,19 +1458,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const maxSpreadValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(maxSpreadValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1515,7 +1478,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1542,19 +1505,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const maxSpreadValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(maxSpreadValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1564,7 +1525,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1591,19 +1552,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1613,7 +1572,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1640,19 +1599,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1662,7 +1619,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1689,19 +1646,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1711,7 +1666,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1738,19 +1693,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1760,7 +1713,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentPayFixed(
                     iporIndexValue,
@@ -1787,19 +1740,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1809,7 +1760,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -1836,19 +1787,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1858,7 +1807,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -1885,19 +1834,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1907,7 +1854,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -1934,19 +1881,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -1956,7 +1901,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -1983,19 +1928,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2005,7 +1948,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -2032,19 +1975,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2054,7 +1995,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -2081,19 +2022,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2103,7 +2042,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -2130,19 +2069,17 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2152,7 +2089,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .calculateAtParComponentRecFixed(
                     iporIndexValue,
@@ -2179,37 +2116,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2230,7 +2165,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -2261,37 +2196,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2312,7 +2245,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
                     iporIndexValue,
@@ -2343,37 +2276,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2394,7 +2325,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -2425,37 +2356,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2476,7 +2405,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
                     iporIndexValue,
@@ -2507,37 +2436,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2558,7 +2485,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -2589,37 +2516,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2640,9 +2565,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2671,37 +2596,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2722,7 +2645,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -2753,37 +2676,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2804,9 +2725,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2835,37 +2756,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2886,7 +2805,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -2917,37 +2836,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -2968,9 +2885,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -2999,37 +2916,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3051,7 +2966,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -3082,37 +2997,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("307589880159786950")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3134,9 +3047,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3165,37 +3078,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3217,7 +3128,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -3248,37 +3159,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3300,9 +3209,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3331,37 +3240,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3383,7 +3290,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -3414,37 +3321,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3466,9 +3371,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3497,37 +3402,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3549,7 +3452,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -3580,37 +3483,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3632,9 +3533,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3663,37 +3564,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("0"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3714,7 +3613,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 // .callStatic
                 .testCalculateSpreadPayFixed(
@@ -3746,37 +3645,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("0"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3797,9 +3694,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3828,37 +3725,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3879,7 +3774,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -3910,37 +3805,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -3961,9 +3854,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .callStatic.calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -3992,37 +3885,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4043,7 +3934,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -4074,37 +3965,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4126,9 +4015,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4157,37 +4046,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4208,7 +4095,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -4239,37 +4126,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4290,9 +4175,9 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
-                .calculateSpreadRecFixed(
+                .testCalculateSpreadRecFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
                     exponentialWeightedMovingVariance,
@@ -4321,37 +4206,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000009000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4372,7 +4255,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -4403,37 +4286,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("300000000600000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4454,7 +4335,7 @@ describe("MiltonSpreadModel", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await testData.miltonSpread
+            await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
                     iporIndexValue,
@@ -4485,37 +4366,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4534,7 +4413,7 @@ describe("MiltonSpreadModel", () => {
 
         await assertError(
             //when
-            testData.miltonSpread
+            data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
@@ -4561,37 +4440,35 @@ describe("MiltonSpreadModel", () => {
             libraries
         );
 
-        await grantAllSpreadRolesForDAI(testData, admin, userOne);
-
         const spreadMaxValue = BigInt("300000000000000000");
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setSpreadMaxValue(spreadMaxValue);
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentLambdaValue(BigInt("300000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKfValue(BigInt("1000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKVolValue(BigInt("31000000000000000"));
 
-        await testData.miltonSpread
+        await data.miltonSpread
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
@@ -4611,7 +4488,7 @@ describe("MiltonSpreadModel", () => {
         //when
         await assertError(
             //when
-            testData.miltonSpread
+            data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
                     iporIndexValue,

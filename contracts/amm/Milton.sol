@@ -469,8 +469,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             iporDerivative.endingTimestamp,
             iporDerivative.indicator
         );
-    }
-
+    }	
     function _calculateDerivativeIndicators(
         uint256 calculateTimestamp,
         address asset,
@@ -478,8 +477,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 notionalAmount,
 		uint256 spreadValue
     )
-        internal
-        view
+        internal view
+        
         returns (DataTypes.IporDerivativeIndicator memory indicator)
     {
         IWarren warren = IWarren(iporConfiguration.getWarren());
@@ -488,8 +487,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             asset,
             calculateTimestamp
         );
-        require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
-
+        require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);		
         require(
             indexValue >= spreadValue,
             Errors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX

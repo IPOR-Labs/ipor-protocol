@@ -434,7 +434,7 @@ describe("IporAssetConfiguration", () => {
                 ),
 
             //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x53e7faacb3381a7b6b7185a9fc96bd9430da87ec709e6d3e0f009ed7c71e45ef`
+            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x1f68aca9d1b8ff5a2094c405f4385604851afa04a50632f403d9ae378700825e`
         );
     });
 

@@ -110,13 +110,13 @@ contract IporConfiguration is
         return _addresses[_MILTON_SPREAD_MODEL];
     }
 
-    function setMiltonSpreadModel(address MiltonSpreadModel)
+    function setMiltonSpreadModel(address miltonSpreadModel)
         external
         override
         onlyRole(_MILTON_SPREAD_MODEL_ROLE)
     {
-        _addresses[_MILTON_SPREAD_MODEL] = MiltonSpreadModel;
-        emit MiltonSpreadModelUpdated(MiltonSpreadModel);
+        _addresses[_MILTON_SPREAD_MODEL] = miltonSpreadModel;
+        emit MiltonSpreadModelUpdated(miltonSpreadModel);
     }
 
     function getMiltonLPUtilizationStrategy()

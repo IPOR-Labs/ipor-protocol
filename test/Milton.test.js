@@ -57,8 +57,8 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    setupIpTokenDaiInitialValues,
-    setupIpTokenUsdtInitialValues,
+    grantAllSpreadRoles,
+    setupDefaultSpreadConstants,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
@@ -79,6 +79,8 @@ describe("Milton", () => {
             userThree,
             liquidityProvider,
         ]);
+		await grantAllSpreadRoles(data, admin, userOne);
+        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should NOT open position because deposit amount too low", async () => {

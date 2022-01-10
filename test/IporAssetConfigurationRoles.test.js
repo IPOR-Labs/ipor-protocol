@@ -106,7 +106,7 @@ const rolesNotGrant = [
     },
     {
         name: "LP_MAX_UTILIZATION_PERCENTAGE_ROLE",
-        code: "0x9390cd14c303a3aaaa87f1f63728f95f237300898d55577f06a9b2f83904e4bd",
+        code: "0xa4c64c3339465ad53a61eda2523e5cb6e0da178b7008bcea975b07e07810b588",
         role: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
     },
     {
