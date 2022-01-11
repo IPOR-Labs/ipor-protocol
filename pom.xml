@@ -31,7 +31,7 @@
         <!-- LIBS VERSION -->
         <web3j.version>4.8.7</web3j.version>
         <gitexe.version>1.11.2</gitexe.version>
-        <log4j2.version>2.16.0</log4j2.version>
+        <log4j2.version>2.17.1</log4j2.version>
 
         <!-- PLUGINS VERSION -->
         <exec-plugin.version>3.0.0</exec-plugin.version>
