@@ -518,7 +518,7 @@ describe("IporAssetConfiguration", () => {
     it("should get initial maxCollateralizationFactorValue", async () => {
         //given
         const expectedMaxCollateralizationFactorValue = BigInt(
-            "50000000000000000000"
+            "1000000000000000000000"
         );
 
         //when

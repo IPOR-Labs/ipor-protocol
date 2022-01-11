@@ -46,10 +46,11 @@ const options = {
         IporAssetConfigurationDai,
         IporAssetConfigurationUsdt,
         IporAssetConfigurationUsdc,
-		MiltonSpreadModel],
+        MiltonSpreadModel,
+    ],
     events: {
-        WarrenStorage: ["IporIndexUpdate"]
-    }
+        WarrenStorage: ["IporIndexUpdate"],
+    },
 };
 
 export default options;

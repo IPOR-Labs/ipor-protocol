@@ -197,6 +197,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     {
         return derivatives.userDerivativeIds[userAddress];
     }
+	//TODO: separate soap to MiltonSoapModel smart contract
     function calculateSoap(
         address asset,
         uint256 ibtPrice,

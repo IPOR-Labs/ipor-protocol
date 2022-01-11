@@ -500,6 +500,10 @@ module.exports = async function (deployer, _network, addresses) {
             WarrenDevToolDataProvider,
             iporConfiguration.address
         );
+		await deployer.deploy(
+            MiltonDevToolDataProvider,
+            iporConfiguration.address
+        );
     } else {
         if (_network !== "test") {
             //PUBLIC TEST NETWORK AND PRODUCTION
@@ -659,13 +663,6 @@ module.exports = async function (deployer, _network, addresses) {
         await milton.initialize(iporConfiguration.address);
         await miltonStorage.initialize(iporConfiguration.address);
         await joseph.initialize(iporConfiguration.address);
-    } else {
-        await deployer.link(IporLogic, TestWarren);
-        await deployer.link(DerivativeLogic, TestMilton);
-        await deployer.deploy(
-            WarrenDevToolDataProvider,
-            iporConfiguration.address
-        );
     }
 
     //Prepare tokens for initial accounts...

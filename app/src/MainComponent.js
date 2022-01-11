@@ -1,8 +1,8 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 import logo from "./logo.png";
-import {Container, Navbar, Tabs} from "react-bootstrap";
-import {Tab} from "bootstrap";
+import { Container, Navbar, Tabs } from "react-bootstrap";
+import { Tab } from "bootstrap";
 import IporIndexComponent from "./WarrenComponent";
 import MiltonComponent from "./MiltonComponent";
 import MyPositions from "./MyPositions";
@@ -12,10 +12,10 @@ import IporConfigurationComponent from "./IporConfigurationComponent";
 import FaucetComponent from "./FaucetComponent";
 import FrontendComponent from "./FrontendComponent";
 
-require('dotenv').config({path: '../../.env'});
-const {AccountData, ContractData, ContractForm} = newContextComponents;
+require("dotenv").config({ path: "../../.env" });
+const { AccountData, ContractData, ContractForm } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => {
+export default ({ drizzle, drizzleState }) => {
     return (
         <div className="App">
             <Container>
@@ -27,7 +27,7 @@ export default ({drizzle, drizzleState}) => {
                             width="30"
                             height="30"
                             className="d-inline-block align-top ipor-navbar"
-                        />{' '}
+                        />{" "}
                         IPOR Protocol - MILTON Dev Tool
                     </Navbar.Brand>
                 </Navbar>
@@ -41,7 +41,6 @@ export default ({drizzle, drizzleState}) => {
                     accountIndex={0}
                     units="ether"
                     precision={3}
-
                 />
             </div>
 
@@ -70,7 +69,7 @@ export default ({drizzle, drizzleState}) => {
                         drizzleState={drizzleState}
                     />
                 </Tab>
-				<Tab eventKey="spreadConfig" title="Spread Configuration">
+                <Tab eventKey="spreadConfig" title="Spread Configuration">
                     <MiltonSpreadConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
@@ -97,4 +96,4 @@ export default ({drizzle, drizzleState}) => {
             </Tabs>
         </div>
     );
-}
+};

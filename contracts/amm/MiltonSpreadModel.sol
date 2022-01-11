@@ -26,36 +26,72 @@ contract MiltonSpreadModel is
         _iporConfiguration = IIporConfiguration(iporConfiguration);
     }
 
+    function calculatePartialSpreadPayFixed(
+        uint256 calculateTimestamp,
+        address asset
+    ) external view override returns (uint256 spreadValue) {
+        (
+            uint256 iporIndexValue,
+            uint256 accruedIbtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance
+        ) = _prepareIporIndex(calculateTimestamp, asset);
+
+        IMiltonStorage miltonStorage = IMiltonStorage(
+            _iporConfiguration.getMiltonStorage()
+        );
+
+        (int256 _soapPf, , ) = miltonStorage.calculateSoap(
+            asset,
+            accruedIbtPrice,
+            calculateTimestamp
+        );
+
+        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+            asset
+        );
+
+        //TODO: this particular spread where collateral - 0 should be calculated in more optimal way, verify it and change
+        return
+            _calculateSpreadPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance,
+                0,
+                0,
+                balance.liquidityPool,
+                balance.payFixedDerivatives,
+                balance.recFixedDerivatives,
+                _soapPf
+            );
+    }
+
     function calculateSpreadPayFixed(
         uint256 calculateTimestamp,
         address asset,
         uint256 derivativeCollateral,
         uint256 derivativeOpeningFee
     ) external view override returns (uint256 spreadValue) {
-        IWarren warren = IWarren(_iporConfiguration.getWarren());
+        (
+            uint256 iporIndexValue,
+            uint256 accruedIbtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance
+        ) = _prepareIporIndex(calculateTimestamp, asset);
+
         IMiltonStorage miltonStorage = IMiltonStorage(
             _iporConfiguration.getMiltonStorage()
         );
 
-        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
+        (int256 _soapPf, , ) = miltonStorage.calculateSoap(
             asset,
+            accruedIbtPrice,
             calculateTimestamp
         );
-
-        (int256 _soapPf, , ) = miltonStorage
-            .calculateSoap(asset, accruedIbtPrice, calculateTimestamp);
 
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
             asset
         );
-
-        (
-            uint256 iporIndexValue,
-            ,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
-
-        ) = warren.getIndex(asset);
 
         return
             _calculateSpreadPayFixed(
@@ -71,37 +107,72 @@ contract MiltonSpreadModel is
             );
     }
 
+    function calculatePartialSpreadRecFixed(
+        uint256 calculateTimestamp,
+        address asset
+    ) external view override returns (uint256 spreadValue) {
+        (
+            uint256 iporIndexValue,
+            uint256 accruedIbtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance
+        ) = _prepareIporIndex(calculateTimestamp, asset);
+
+        IMiltonStorage miltonStorage = IMiltonStorage(
+            _iporConfiguration.getMiltonStorage()
+        );
+
+        (, int256 _soapRf, ) = miltonStorage.calculateSoap(
+            asset,
+            accruedIbtPrice,
+            calculateTimestamp
+        );
+
+        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+            asset
+        );
+
+        //TODO: this particular spread where collateral - 0 should be calculated in more optimal way, verify it and change
+        return
+            _calculateSpreadRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance,
+                0,
+                0,
+                balance.liquidityPool,
+                balance.payFixedDerivatives,
+                balance.recFixedDerivatives,
+                _soapRf
+            );
+    }
+
     function calculateSpreadRecFixed(
         uint256 calculateTimestamp,
         address asset,
         uint256 derivativeCollateral,
         uint256 derivativeOpeningFee
     ) external view override returns (uint256 spreadValue) {
+        (
+            uint256 iporIndexValue,
+            uint256 accruedIbtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance
+        ) = _prepareIporIndex(calculateTimestamp, asset);
 
-		IWarren warren = IWarren(_iporConfiguration.getWarren());
         IMiltonStorage miltonStorage = IMiltonStorage(
             _iporConfiguration.getMiltonStorage()
         );
 
-        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
+        (, int256 _soapRf, ) = miltonStorage.calculateSoap(
             asset,
+            accruedIbtPrice,
             calculateTimestamp
         );
-
-        (, int256 _soapRf, ) = miltonStorage
-            .calculateSoap(asset, accruedIbtPrice, calculateTimestamp);
 
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
             asset
         );
-
-        (
-            uint256 iporIndexValue,
-            ,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
-
-        ) = warren.getIndex(asset);
 
         return
             _calculateSpreadRecFixed(
@@ -115,7 +186,33 @@ contract MiltonSpreadModel is
                 balance.recFixedDerivatives,
                 _soapRf
             );
-	}
+    }
+
+    function _prepareIporIndex(uint256 calculateTimestamp, address asset)
+        internal
+        view
+        returns (
+            uint256 iporIndexValue,
+            uint256 accruedIbtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance
+        )
+    {
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
+
+        accruedIbtPrice = warren.calculateAccruedIbtPrice(
+            asset,
+            calculateTimestamp
+        );
+
+        (
+            iporIndexValue,
+            ,
+            exponentialMovingAverage,
+            exponentialWeightedMovingVariance,
+
+        ) = warren.getIndex(asset);
+    }
 
     function _calculateSpreadPayFixed(
         uint256 iporIndexValue,

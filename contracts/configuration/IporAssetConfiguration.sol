@@ -92,7 +92,7 @@ contract IporAssetConfiguration is
 		_maxPositionTotalAmount = 1e5 * Constants.D18;
 
 		_minCollateralizationFactorValue = 10 * Constants.D18;
-		_maxCollateralizationFactorValue = 50 * Constants.D18;
+		_maxCollateralizationFactorValue = 1000 * Constants.D18;
 
 		_wadDecayFactorValue = 1e17;        
 

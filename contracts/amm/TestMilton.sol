@@ -5,9 +5,8 @@ import "./Milton.sol";
 
 //TODO:  move to mock/test/itf folder
 contract TestMilton is Milton {
-
-	//TODO: change name to openPosition, align ITF 
-	function test_openPosition(
+    //TODO: change name to openPosition, align ITF
+    function test_openPosition(
         uint256 openTimestamp,
         address asset,
         uint256 totalAmount,
@@ -26,14 +25,14 @@ contract TestMilton is Milton {
             );
     }
 
-	//TODO: change name to closePosition, align ITF 
+    //TODO: change name to closePosition, align ITF
     function test_closePosition(uint256 derivativeId, uint256 closeTimestamp)
         external
     {
         _closePosition(derivativeId, closeTimestamp);
     }
 
-	//TODO: change name to calculateSoap, align ITF 
+    //TODO: change name to calculateSoap, align ITF
     function test_calculateSoap(address asset, uint256 calculateTimestamp)
         external
         view
@@ -46,22 +45,20 @@ contract TestMilton is Milton {
         return _calculateSoap(asset, calculateTimestamp);
     }
 
-	//TODO: change name to calculateSpread, align ITF 
+    //TODO: change name to calculateSpread, align ITF
     function test_calculateSpread(address asset, uint256 calculateTimestamp)
         external
         view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
-		spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
-		spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
+        (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(asset, calculateTimestamp);
     }
 
-	//TODO: change name to calculatePositionValue, align ITF 
+    //TODO: change name to calculatePositionValue, align ITF
     function test_calculatePositionValue(
         uint256 calculateTimestamp,
         DataTypes.IporDerivative memory derivative
     ) external view returns (int256) {
         return _calculatePositionValue(calculateTimestamp, derivative);
     }
-
 }

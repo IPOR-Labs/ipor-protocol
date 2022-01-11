@@ -149,10 +149,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         view
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
-    {		
-		spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
-        spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
-    }    
+    {
+        (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(
+            asset,
+            block.timestamp
+        );
+    }
 
     function calculateSoap(address asset)
         external
@@ -245,6 +247,38 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             } else {
                 return derivativeInterest.positionValue;
             }
+        }
+    }
+
+    function _calculateSpread(address asset, uint256 calculateTimestamp)
+        internal
+        view
+        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
+    {
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+            iporConfiguration.getMiltonSpreadModel()
+        );
+
+        try
+            spreadModel.calculatePartialSpreadPayFixed(
+                calculateTimestamp,
+                asset
+            )
+        returns (uint256 _spreadPayFixedValue) {
+            spreadPayFixedValue = _spreadPayFixedValue;
+        } catch {
+            spreadPayFixedValue = 0;
+        }
+
+        try
+            spreadModel.calculatePartialSpreadRecFixed(
+                calculateTimestamp,
+                asset
+            )
+        returns (uint256 _spreadRecFixedValue) {
+            spreadRecFixedValue = _spreadRecFixedValue;
+        } catch {
+            spreadRecFixedValue = 0;
         }
     }
 
@@ -381,25 +415,26 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED
         );
 
-		uint256 spreadValue;
-		IMiltonSpreadModel spreadModel = IMiltonSpreadModel(iporConfiguration.getMiltonSpreadModel());
+        uint256 spreadValue;
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+            iporConfiguration.getMiltonSpreadModel()
+        );
 
-		if (direction == 0) {
-			spreadValue = spreadModel.calculateSpreadPayFixed(
-				openTimestamp,
-				asset,
-				derivativeAmount.deposit,
-				derivativeAmount.openingFee
-			);
-		} else {
-			spreadValue = spreadModel.calculateSpreadRecFixed(
-				openTimestamp,
-				asset,
-				derivativeAmount.deposit,
-				derivativeAmount.openingFee
-			);
-		}
-       
+        if (direction == 0) {
+            spreadValue = spreadModel.calculateSpreadPayFixed(
+                openTimestamp,
+                asset,
+                derivativeAmount.deposit,
+                derivativeAmount.openingFee
+            );
+        } else {
+            spreadValue = spreadModel.calculateSpreadRecFixed(
+                openTimestamp,
+                asset,
+                derivativeAmount.deposit,
+                derivativeAmount.openingFee
+            );
+        }
 
         IMiltonStorage miltonStorage = IMiltonStorage(
             iporConfiguration.getMiltonStorage()
@@ -428,7 +463,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                     asset,
                     direction,
                     derivativeAmount.notional,
-					spreadValue
+                    spreadValue
                 )
             );
 
@@ -469,16 +504,17 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             iporDerivative.endingTimestamp,
             iporDerivative.indicator
         );
-    }	
+    }
+
     function _calculateDerivativeIndicators(
         uint256 calculateTimestamp,
         address asset,
         uint8 direction,
         uint256 notionalAmount,
-		uint256 spreadValue
+        uint256 spreadValue
     )
-        internal view
-        
+        internal
+        view
         returns (DataTypes.IporDerivativeIndicator memory indicator)
     {
         IWarren warren = IWarren(iporConfiguration.getWarren());
@@ -487,7 +523,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             asset,
             calculateTimestamp
         );
-        require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);		
+        require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
         require(
             indexValue >= spreadValue,
             Errors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
@@ -499,7 +535,9 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
             direction == 0
                 ? (indexValue + spreadValue)
-                : indexValue > spreadValue ? (indexValue - spreadValue) : 0
+                : indexValue > spreadValue
+                ? (indexValue - spreadValue)
+                : 0
         );
     }
 

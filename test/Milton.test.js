@@ -4737,7 +4737,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt("50000000000000000001"),
+            collateralizationFactor: BigInt("1000000000000000000001"),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -6006,6 +6006,8 @@ describe("Milton", () => {
     };
 });
 
+//TODO: add test when spread is calculated 1 pay fixed 0 rec fixed, 0 pay fixed 1 rec fixed
+
 //TODO: !!!! add test when before open position liquidity pool is empty and opening fee is zero - then spread cannot be calculated in correct way!!!
 
 //TODO: !!!! add test when closing derivative, Milton lost, Trader earn, but milton don't have enough balance to withdraw during closing position
@@ -6029,3 +6031,4 @@ describe("Milton", () => {
 //TODO: add test when user try to send eth on milton
 //TODO: add test where milton storage is changing - how balance behave
 //TODO: add tests for pausable methods
+

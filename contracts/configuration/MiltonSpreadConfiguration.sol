@@ -59,7 +59,7 @@ contract MiltonSpreadConfiguration is
             100
         );
 
-        _maxValue = AmmMath.division(3 * Constants.D18, 10);
+        _maxValue = AmmMath.division(3 * Constants.D16, 10);
     }
 
 	function getSpreadMaxValue() external view override returns (uint256) {

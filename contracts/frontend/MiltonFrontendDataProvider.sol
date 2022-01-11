@@ -90,16 +90,36 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 assets.length
             );
 
-        IMiltonSpreadModel spreadStrategy = IMiltonSpreadModel(
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
             iporConfiguration.getMiltonSpreadModel()
         );
-		uint256 spreadPayFixedValue = AmmMath.division(Constants.D18, 100);
-		uint256 spreadRecFixedValue = AmmMath.division(Constants.D18, 100);
 
-        for (uint256 i = 0; i < assets.length; i++) {            
+        uint256 timestamp = block.timestamp;
+
+
+		uint256 spreadPayFixedValue;
+		uint256 spreadRecFixedValue;
+
+        for (uint256 i = 0; i < assets.length; i++) {
             IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                     iporConfiguration.getIporAssetConfiguration(assets[i])
-                );
+               );
+
+            try
+                spreadModel.calculatePartialSpreadPayFixed(timestamp, assets[i])
+            returns (uint256 _spreadPayFixedValue) {
+                spreadPayFixedValue = _spreadPayFixedValue;
+            } catch {
+                spreadPayFixedValue = 0;
+            }
+
+            try
+                spreadModel.calculatePartialSpreadRecFixed(timestamp, assets[i])
+            returns (uint256 _spreadRecFixedValue) {
+                spreadRecFixedValue = _spreadRecFixedValue;
+            } catch {
+                spreadRecFixedValue = 0;
+            }
 
             iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
                 assets[i],
