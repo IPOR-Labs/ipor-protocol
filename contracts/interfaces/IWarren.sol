@@ -15,6 +15,7 @@ interface IWarren {
             uint256 value,
             uint256 ibtPrice,
             uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance,
             uint256 date
         );
 

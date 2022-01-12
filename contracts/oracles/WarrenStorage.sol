@@ -24,6 +24,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 indexValue,
         uint256 quasiIbtPrice,
         uint256 exponentialMovingAverage,
+		uint256 newExponentialWeightedMovingVariance,
         uint256 date
     );
 
@@ -132,15 +133,20 @@ contract WarrenStorage is Ownable, IWarrenStorage {
             if (assets[i] == asset) {
                 assetExists = true;
             }
-        }
-
+        }		
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
+		uint256 newExponentialWeightedMovingVariance;
+		// uint256 power = AmmMath.division((updateTimestamp-indexes[asset].blockTimestamp)*Constants.D18, iporAssetConfiguration.getDecayFactorValue());
+		// uint256 alpha = AmmMath.division(Constants.D18, Constants.E_VALUE ** power); 
+		//TODO: figure out how to calculate alpha???
+		uint256 alpha = iporAssetConfiguration.getDecayFactorValue();
 
         if (!assetExists) {
             assets.push(asset);
             newQuasiIbtPrice = Constants.WAD_YEAR_IN_SECONDS;
             newExponentialMovingAverage = indexValue;
+			newExponentialWeightedMovingVariance = 0;
         } else {
             newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(
                 updateTimestamp
@@ -149,14 +155,25 @@ contract WarrenStorage is Ownable, IWarrenStorage {
                 .calculateExponentialMovingAverage(
                     indexes[asset].exponentialMovingAverage,
                     indexValue,
-                    iporAssetConfiguration.getDecayFactorValue()
+                    alpha
                 );
+
+			
+			newExponentialWeightedMovingVariance = IporLogic
+			.calculateExponentialWeightedMovingVariance(
+				indexes[asset].exponentialWeightedMovingVariance,
+				newExponentialMovingAverage,
+				indexValue,
+				alpha
+
+			);
         }
         indexes[asset] = DataTypes.IPOR(
             asset,
             indexValue,
             newQuasiIbtPrice,
             newExponentialMovingAverage,
+			newExponentialWeightedMovingVariance,
             updateTimestamp
         );
         emit IporIndexUpdate(
@@ -164,6 +181,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
             indexValue,
             newQuasiIbtPrice,
             newExponentialMovingAverage,
+			newExponentialWeightedMovingVariance,
             updateTimestamp
         );
     }

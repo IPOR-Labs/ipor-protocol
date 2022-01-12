@@ -4,8 +4,11 @@ pragma solidity 0.8.9;
 import "./Warren.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
+//TODO:  move to mock/test/itf folder
 contract TestWarren is Warren {
-    function test_updateIndex(
+
+	//TODO: change name to updateIndex, align ITF
+	function test_updateIndex(
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
@@ -21,6 +24,7 @@ contract TestWarren is Warren {
         );
     }
 
+	//TODO: change name to updateIndexes, align ITF
     function test_updateIndexes(
         address[] memory assets,
         uint256[] memory indexValues,

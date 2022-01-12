@@ -53,6 +53,8 @@ library DataTypes {
         uint256 quasiIbtPrice;
         //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD
         uint256 exponentialMovingAverage;
+		//@notice exponential weighted moving variance - required for calculating SPREAD in Milton, shown as WAD 
+        uint256 exponentialWeightedMovingVariance;
         //@notice block timestamp
         uint256 blockTimestamp;
     }
@@ -83,14 +85,14 @@ library DataTypes {
         uint256 openingFee;
     }
 
-    struct IporDerivativeIndicator {
+    struct IporDerivativeIndicator {		
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
         //@notice IPOR Interest Bearing Token price
         uint256 ibtPrice;
         //@notice IPOR Interest Bearing Token quantity
         uint256 ibtQuantity;
-        //@notice Fixed interest rate at which the position has been locked (IPOR Index Vale +/- spread)
+        //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
     }
 
@@ -104,10 +106,8 @@ library DataTypes {
         uint256 iporPublicationAmount;
         //TODO: probably don't have to store, add to event
         //@notice value are basis points
-        uint256 spreadPayFixedValue;
-        //TODO: probably don't have to store, add to event
-        //@notice value are basis points
-        uint256 spreadRecFixedValue;
+        uint256 spreadValue;
+        //TODO: probably don't have to store, add to event        
     }
 
     struct MiltonDerivatives {

@@ -58,6 +58,8 @@ describe("IporAssetConfiguration", () => {
         iporAssetConfigurationDAI.deployed();
     });
 
+    //TODO: add tests which checks initial values for every param
+
     it("should set default openingFeeForTreasuryPercentage", async () => {
         //given
         const expectedOpeningFeeForTreasuryPercentage = BigInt("0");
@@ -348,11 +350,11 @@ describe("IporAssetConfiguration", () => {
     //         "99000000000000000000"
     //     );
     //     await iporAssetConfigurationDAI.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
     //         admin
     //     );
     //     await iporAssetConfigurationDAI.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
     //         userOne
     //     );
 
@@ -394,11 +396,11 @@ describe("IporAssetConfiguration", () => {
         const liquidityPoolMaxUtilizationPercentage =
             BigInt("90000000000000000");
         await iporAssetConfigurationDAI.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await iporAssetConfigurationDAI.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             userOne.address
         );
 
@@ -418,7 +420,7 @@ describe("IporAssetConfiguration", () => {
         ).to.be.eql(BigInt(actualLiquidityPoolMaxUtilizationPercentage));
     });
 
-    it("should NOT set liquidityPoolMaxUtilizationPercentage when user does not have LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE role", async () => {
+    it("should NOT set liquidityPoolMaxUtilizationPercentage when user does not have LP_MAX_UTILIZATION_PERCENTAGE_ROLE role", async () => {
         //given
         const liquidityPoolMaxUtilizationPercentage =
             BigInt("90000000000000000");
@@ -432,7 +434,7 @@ describe("IporAssetConfiguration", () => {
                 ),
 
             //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x53e7faacb3381a7b6b7185a9fc96bd9430da87ec709e6d3e0f009ed7c71e45ef`
+            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x1f68aca9d1b8ff5a2094c405f4385604851afa04a50632f403d9ae378700825e`
         );
     });
 
@@ -516,7 +518,7 @@ describe("IporAssetConfiguration", () => {
     it("should get initial maxCollateralizationFactorValue", async () => {
         //given
         const expectedMaxCollateralizationFactorValue = BigInt(
-            "50000000000000000000"
+            "1000000000000000000000"
         );
 
         //when
@@ -1109,90 +1111,6 @@ describe("IporAssetConfiguration", () => {
                 .setDecayFactorValue(decayFactorValue),
             //then
             "IPOR_48"
-        );
-    });
-
-    it("should set SpreadUtilizationComponentKfValue", async () => {
-        //given
-        const expectedValue = BigInt("1234000000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ADMIN_ROLE"),
-            admin.address
-        );
-        const role = keccak256("SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE");
-        await iporAssetConfigurationDAI.grantRole(role, userOne.address);
-
-        //when
-        await iporAssetConfigurationDAI
-            .connect(userOne)
-            .setSpreadUtilizationComponentKfValue(expectedValue);
-
-        //then
-        const actualValue = BigInt(
-            await iporAssetConfigurationDAI.getSpreadUtilizationComponentKfValue()
-        );
-
-        expect(
-            expectedValue,
-            `Incorrect  SpreadUtilizationComponentKfValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
-        ).to.be.eql(actualValue);
-    });
-
-    it("should NOT set SpreadUtilizationComponentKfValue when user does not have SPREAD_UTILIZATION_COMPONENT_KF_VALUE_ROLE role", async () => {
-        //given
-        const expectedValue = BigInt("1234000000000000000000");
-
-        await assertError(
-            //when
-            iporAssetConfigurationDAI
-                .connect(userOne)
-                .setSpreadUtilizationComponentKfValue(expectedValue),
-
-            //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x59542b17ceec8a6f8b1bb7b3e5ec973b56689fbcced2a9d87bb75563f9a53956`
-        );
-    });
-
-    it("should set SpreadUtilizationComponentLambdaValue", async () => {
-        //given
-        const expectedValue = BigInt("1234000000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
-            admin.address
-        );
-        const role = keccak256(
-            "SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE"
-        );
-        await iporAssetConfigurationDAI.grantRole(role, userOne.address);
-
-        //when
-        await iporAssetConfigurationDAI
-            .connect(userOne)
-            .setSpreadUtilizationComponentLambdaValue(expectedValue);
-
-        //then
-        const actualValue = BigInt(
-            await iporAssetConfigurationDAI.getSpreadUtilizationComponentLambdaValue()
-        );
-
-        expect(
-            expectedValue,
-            `Incorrect  SpreadUtilizationComponentLambdaValue for asset DAI, actual: ${actualValue}, expected: ${expectedValue}`
-        ).to.be.eql(actualValue);
-    });
-
-    it("should NOT set SpreadUtilizationComponentLambdaValue when user does not have SPREAD_UTILIZATION_COMPONENT_LAMBDA_VALUE_ROLE role", async () => {
-        //given
-        const expectedValue = BigInt("1234000000000000000000");
-
-        await assertError(
-            //when
-            iporAssetConfigurationDAI
-                .connect(userOne)
-                .setSpreadUtilizationComponentLambdaValue(expectedValue),
-
-            //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xeec7cc7aa729979c27c0c22d8699c9207ef8923ec66180dd8e0b68e1a3d1ce9f`
         );
     });
 });

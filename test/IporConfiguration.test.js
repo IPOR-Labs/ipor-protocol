@@ -359,28 +359,28 @@ describe("IporAssetConfiguration", () => {
 
     it("should set Milton Spread Strategy", async () => {
         //given
-        const role = keccak256("MILTON_SPREAD_STRATEGY_ROLE");
-        const adminRole = keccak256("MILTON_SPREAD_STRATEGY_ADMIN_ROLE");
+        const role = keccak256("MILTON_SPREAD_MODEL_ROLE");
+        const adminRole = keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE");
         await iporConfiguration.grantRole(adminRole, admin.address);
         await iporConfiguration.grantRole(role, admin.address);
 
         //when
-        await iporConfiguration.setMiltonSpreadStrategy(mockAddress);
+        await iporConfiguration.setMiltonSpreadModel(mockAddress);
 
         //then
-        const result = await iporConfiguration.getMiltonSpreadStrategy();
+        const result = await iporConfiguration.getMiltonSpreadModel();
         expect(mockAddress).to.be.eql(result);
     });
 
-    it("should NOT set Milton Spread Strategy when user does not have MILTON_SPREAD_STRATEGY_ROLE role", async () => {
+    it("should NOT set Milton Spread Strategy when user does not have MILTON_SPREAD_MODEL_ROLE role", async () => {
         //given
 
         await assertError(
             //when
-            iporConfiguration.setMiltonSpreadStrategy(mockAddress),
+            iporConfiguration.setMiltonSpreadModel(mockAddress),
 
             //then
-            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xdf80c0078aae521b601e4fddc35fbb2871ffaa4e22d30b53745545184b3cff3e`
+            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xc769312598bcfa61b1f22ed091835eefa5a0d9a37ea7646f63bfd88a3dd04878`
         );
     });
 

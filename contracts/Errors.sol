@@ -33,8 +33,9 @@ library Errors {
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_LOW = "IPOR_12";
 
     //@notice Trader doesnt have enought tokens to execute transaction
-    string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW = "IPOR_13";
-
+    string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW
+	 = "IPOR_13";
+	
     //@notice Derivative cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
     string
         public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW =
@@ -163,8 +164,9 @@ library Errors {
     //@notice Decay factor cannot be higher than 1 * D18
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
 
-	//TODO: use this number for something else
-    // string public constant CONFIG_INCORRECT_MULTIPLICATOR = "IPOR_49";
+	//@notice Liquiditiy
+	string public constant MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO =
+        "IPOR_49";
 
     //@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
     string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_50";
@@ -180,7 +182,15 @@ library Errors {
     string public constant CONFIG_ASSET_DECIMALS_TOO_LOW = "IPOR_52";
 
     //TODO: try to add test for this
-    //@notic Spread value cannot be higher than Ipor Index Value for particular asset
+    //@notice Spread value cannot be higher than Ipor Index Value for particular asset
     string public constant MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
         "IPOR_53";
+
+	//@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1
+	string public constant MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE =
+        "IPOR_54";
+
+	//@notice During spread calculation - Alpha param which  cannot be higher than 1
+	string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
+        "IPOR_55";
 }

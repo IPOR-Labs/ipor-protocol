@@ -31,9 +31,8 @@ const prepareDerivativeCase1 = async (fixedInterestRate, admin) => {
     const fee = {
         liquidationDepositAmount, //liquidation deposit amount
         openingAmount: BigInt("99700000000000000000"), //opening fee amount
-        iporPublicationAmount: BigInt("10"), // * ONE_18DEC, //ipor publication amount
-        spreadPayFixedValue: BigInt("10000000000000000"), // spread percentege
-        spreadRecFixedValue: BigInt("10000000000000000"), // spread percentege
+        iporPublicationAmount: BigInt("10"), // * ONE_18DEC, //ipor publication amount        
+        spreadValue: BigInt("10000000000000000"), // spread percentege
     };
     const timeStamp = Date.now();
     const notionalAmount = collateral * collateralizationFactor;

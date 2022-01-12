@@ -4,6 +4,7 @@ pragma solidity 0.8.9;
 import "./types/DataTypes.sol";
 import "./Constants.sol";
 
+//TODO: rename to IporMath
 library AmmMath {
     //@notice Division with rounding up on last position, x, and y is with MD
     function division(uint256 x, uint256 y) internal pure returns (uint256 z) {
@@ -12,6 +13,18 @@ library AmmMath {
 
     function divisionInt(int256 x, int256 y) internal pure returns (int256 z) {
         z = (x + (y / 2)) / y;
+    }
+
+	//@dev x represented as WAD
+	//@return y represented as WAD
+    function sqrt(uint256 xWad) internal pure returns (uint256 y) {
+		uint256 x = xWad * Constants.D18;
+        uint256 z = (x + 1) / 2;
+        y = x;
+        while (z < y) {
+            y = z;
+            z = (x / z + z) / 2;
+        }
     }
 
     function convertWadToAssetDecimals(uint256 value, uint256 assetDecimals)
@@ -42,6 +55,7 @@ library AmmMath {
         }
     }
 
+    //TODO: move to separate library
     function calculateIncomeTax(
         uint256 derivativeProfit,
         uint256 incomeTaxPercentage
@@ -49,6 +63,7 @@ library AmmMath {
         return division(derivativeProfit * incomeTaxPercentage, Constants.D18);
     }
 
+    //TODO: move to separate library
     function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice)
         internal
         pure
@@ -57,6 +72,7 @@ library AmmMath {
         return division(notionalAmount * Constants.D18, ibtPrice);
     }
 
+    //TODO: move to separate library
     function calculateDerivativeAmount(
         uint256 totalAmount,
         uint256 collateralizationFactor,

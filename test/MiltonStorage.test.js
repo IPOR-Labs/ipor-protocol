@@ -54,8 +54,8 @@ const {
 const {
     assertError,
     getLibraries,
-    getStandardDerivativeParamsDAI,
-    getStandardDerivativeParamsUSDT,
+    grantAllSpreadRoles,
+    setupTokenUsdtInitialValuesForUsers,
     getPayFixedDerivativeParamsDAICase1,
     getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
@@ -64,7 +64,7 @@ const {
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
-    setupTokenUsdtInitialValuesForUsers,
+    setupDefaultSpreadConstants,
 } = require("./Utils");
 
 describe("MiltonStorage", () => {
@@ -94,6 +94,8 @@ describe("MiltonStorage", () => {
             userThree,
             liquidityProvider,
         ]);
+        await grantAllSpreadRoles(data, admin, userOne);
+        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {
@@ -149,13 +151,14 @@ describe("MiltonStorage", () => {
             data,
             libraries
         );
+        const derivativeStruct = await preprareDerivativeStruct18DecSimpleCase1(
+            testData
+        );
         await assertError(
             //when
             testData.miltonStorage
                 .connect(userThree)
-                .updateStorageWhenOpenPosition(
-                    await preprareDerivativeStruct18DecSimpleCase1(testData)
-                ),
+                .callStatic.updateStorageWhenOpenPosition(derivativeStruct),
             //then
             "IPOR_1"
         );
@@ -176,6 +179,7 @@ describe("MiltonStorage", () => {
             data,
             libraries
         );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -247,6 +251,7 @@ describe("MiltonStorage", () => {
             data,
             libraries
         );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "USDT",
@@ -318,6 +323,7 @@ describe("MiltonStorage", () => {
             data,
             libraries
         );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -403,8 +409,7 @@ describe("MiltonStorage", () => {
                 liquidationDepositAmount: BigInt("20000000000000000000"),
                 openingAmount: 123,
                 iporPublicationAmount: 123,
-                spreadPayFixedValue: 123,
-                spreadRecFixedValue: 123,
+                spreadValue: 123,
             },
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             notionalAmount: 123,

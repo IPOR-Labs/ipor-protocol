@@ -12,6 +12,7 @@ import IporAssetConfigurationDai from "./contracts/IporAssetConfigurationDai";
 import DaiMockedToken from "./contracts/DaiMockedToken";
 import UsdcMockedToken from "./contracts/UsdcMockedToken";
 import UsdtMockedToken from "./contracts/UsdtMockedToken";
+import MiltonSpreadModel from "./contracts/MiltonSpreadModel";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider";
 import IporConfiguration from "./contracts/IporConfiguration";
@@ -44,10 +45,12 @@ const options = {
         MiltonFaucet,
         IporAssetConfigurationDai,
         IporAssetConfigurationUsdt,
-        IporAssetConfigurationUsdc],
+        IporAssetConfigurationUsdc,
+        MiltonSpreadModel,
+    ],
     events: {
-        WarrenStorage: ["IporIndexUpdate"]
-    }
+        WarrenStorage: ["IporIndexUpdate"],
+    },
 };
 
 export default options;

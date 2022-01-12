@@ -38,17 +38,9 @@ interface IIporAssetConfiguration {
     event TreasureTreasurerUpdated(
         address asset,
         address indexed newTreasureTreasurer
-    );
+    );    
 
-    event SpreadUtilizationComponentKfValueSet(
-        uint256 newSpreadUtilizationComponentKfValue
-    );
-
-    event SpreadUtilizationComponentLambdaValueSet(
-        uint256 newSpreadUtilizationComponentLambdaValue
-    );
-
-    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);
+    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);	
 
     function getIncomeTaxPercentage() external view returns (uint256);
 
@@ -129,27 +121,6 @@ interface IIporAssetConfiguration {
 
     function getDecayFactorValue() external view returns (uint256);
 
-    function setDecayFactorValue(uint256 newDecayFactorValue) external;
-
-    function getSpreadTemporaryValue() external view returns (uint256);
-
-    function setSpreadTemporaryValue(uint256 newSpreadTemporaryVale) external;
-
-    function getSpreadUtilizationComponentKfValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadUtilizationComponentKfValue(
-        uint256 newSpreadUtilizationComponentKfValue
-    ) external;
-
-    function getSpreadUtilizationComponentLambdaValue()
-        external
-        view
-        returns (uint256);
-
-    function setSpreadUtilizationComponentLambdaValue(
-        uint256 newSpreadUtilizationComponentLambdaValue
-    ) external;
+    function setDecayFactorValue(uint256 newDecayFactorValue) external;    
+     
 }

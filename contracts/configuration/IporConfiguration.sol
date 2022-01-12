@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import { Errors } from "../Errors.sol";
+import {Errors} from "../Errors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
@@ -21,64 +21,102 @@ contract IporConfiguration is
 
     mapping(bytes32 => address) private _addresses;
 
-    bytes32 private constant WARREN = keccak256("WARREN");
-    bytes32 private constant WARREN_STORAGE = keccak256("WARREN_STORAGE");
+    bytes32 private constant _WARREN = keccak256("WARREN");
+    bytes32 private constant _WARREN_STORAGE = keccak256("WARREN_STORAGE");
 
-    bytes32 private constant MILTON = keccak256("MILTON");
-    bytes32 private constant MILTON_STORAGE = keccak256("MILTON_STORAGE");
-    bytes32 private constant JOSEPH = keccak256("JOSEPH");
+    bytes32 private constant _MILTON = keccak256("MILTON");
+    bytes32 private constant _MILTON_STORAGE = keccak256("MILTON_STORAGE");
 
-	//TODO: move to MiltonConfiguration
-    bytes32 private constant MILTON_LP_UTILIZATION_STRATEGY =
+    bytes32 private constant _JOSEPH = keccak256("JOSEPH");
+
+    //TODO: move to MiltonConfiguration
+    bytes32 private constant _MILTON_SPREAD_MODEL =
+        keccak256("MILTON_SPREAD_MODEL");
+
+    //TODO: move to MiltonConfiguration
+    bytes32 private constant _MILTON_LP_UTILIZATION_STRATEGY =
         keccak256("MILTON_LP_UTILIZATION_STRATEGY");
 
-	//TODO: move to MiltonConfiguration
-    bytes32 private constant MILTON_SPREAD_STRATEGY =
-        keccak256("MILTON_SPREAD_STRATEGY");
-    bytes32 private constant MILTON_PUBLICATION_FEE_TRANSFERER =
+    bytes32 private constant _MILTON_PUBLICATION_FEE_TRANSFERER =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
 
-    function getMiltonPublicationFeeTransferer()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _addresses[MILTON_PUBLICATION_FEE_TRANSFERER];
+    function getWarren() external view override returns (address) {
+        return _addresses[_WARREN];
     }
 
-    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer)
+    function setWarren(address warren)
         external
         override
-        onlyRole(MILTON_PUBLICATION_FEE_TRANSFERER_ROLE)
+        onlyRole(_WARREN_ROLE)
     {
-        _addresses[
-            MILTON_PUBLICATION_FEE_TRANSFERER
-        ] = publicationFeeTransferer;
-        emit MiltonPublicationFeeTransfererUpdated(publicationFeeTransferer);
+        _addresses[_WARREN] = warren;
+        emit WarrenAddressUpdated(warren);
+    }
+
+    function getWarrenStorage() external view override returns (address) {
+        return _addresses[_WARREN_STORAGE];
+    }
+
+    function setWarrenStorage(address warrenStorage)
+        external
+        override
+        onlyRole(_WARREN_STORAGE_ROLE)
+    {
+        _addresses[_WARREN_STORAGE] = warrenStorage;
+        emit WarrenStorageAddressUpdated(warrenStorage);
     }
 
     function getMilton() external view override returns (address) {
-        return _addresses[MILTON];
+        return _addresses[_MILTON];
     }
 
-    function setMilton(address milton) external override onlyRole(MILTON_ROLE) {
+    function setMilton(address milton)
+        external
+        override
+        onlyRole(_MILTON_ROLE)
+    {
         //TODO: when Milton address is changing make sure than allowance on Josepth is set to 0 for old milton
-        _addresses[MILTON] = milton;
+        _addresses[_MILTON] = milton;
         emit MiltonAddressUpdated(milton);
     }
 
     function getMiltonStorage() external view override returns (address) {
-        return _addresses[MILTON_STORAGE];
+        return _addresses[_MILTON_STORAGE];
     }
 
     function setMiltonStorage(address miltonStorage)
         external
         override
-        onlyRole(MILTON_STORAGE_ROLE)
+        onlyRole(_MILTON_STORAGE_ROLE)
     {
-        _addresses[MILTON_STORAGE] = miltonStorage;
+        _addresses[_MILTON_STORAGE] = miltonStorage;
         emit MiltonStorageAddressUpdated(miltonStorage);
+    }
+
+    function getJoseph() external view override returns (address) {
+        return _addresses[_JOSEPH];
+    }
+
+    function setJoseph(address joseph)
+        external
+        override
+        onlyRole(_JOSEPH_ROLE)
+    {
+        _addresses[_JOSEPH] = joseph;
+        emit JosephAddressUpdated(joseph);
+    }
+
+    function getMiltonSpreadModel() external view override returns (address) {
+        return _addresses[_MILTON_SPREAD_MODEL];
+    }
+
+    function setMiltonSpreadModel(address miltonSpreadModel)
+        external
+        override
+        onlyRole(_MILTON_SPREAD_MODEL_ROLE)
+    {
+        _addresses[_MILTON_SPREAD_MODEL] = miltonSpreadModel;
+        emit MiltonSpreadModelUpdated(miltonSpreadModel);
     }
 
     function getMiltonLPUtilizationStrategy()
@@ -87,34 +125,36 @@ contract IporConfiguration is
         override
         returns (address)
     {
-        return _addresses[MILTON_LP_UTILIZATION_STRATEGY];
+        return _addresses[_MILTON_LP_UTILIZATION_STRATEGY];
     }
 
     function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy)
         external
         override
-        onlyRole(MILTON_LP_UTILIZATION_STRATEGY_ROLE)
+        onlyRole(_MILTON_LP_UTILIZATION_STRATEGY_ROLE)
     {
-        _addresses[MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
+        _addresses[_MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
     }
 
-    function getMiltonSpreadStrategy()
+    function getMiltonPublicationFeeTransferer()
         external
         view
         override
         returns (address)
     {
-        return _addresses[MILTON_SPREAD_STRATEGY];
+        return _addresses[_MILTON_PUBLICATION_FEE_TRANSFERER];
     }
 
-    function setMiltonSpreadStrategy(address miltonSpreadStrategy)
+    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer)
         external
         override
-        onlyRole(MILTON_SPREAD_STRATEGY_ROLE)
+        onlyRole(_MILTON_PUBLICATION_FEE_TRANSFERER_ROLE)
     {
-        _addresses[MILTON_SPREAD_STRATEGY] = miltonSpreadStrategy;
-        emit MiltonSpreadStrategyUpdated(miltonSpreadStrategy);
+        _addresses[
+            _MILTON_PUBLICATION_FEE_TRANSFERER
+        ] = publicationFeeTransferer;
+        emit MiltonPublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
 
     function getIporAssetConfiguration(address asset)
@@ -129,7 +169,7 @@ contract IporConfiguration is
     function setIporAssetConfiguration(address asset, address iporConfig)
         external
         override
-        onlyRole(IPOR_ASSET_CONFIGURATION_ROLE)
+        onlyRole(_IPOR_ASSET_CONFIGURATION_ROLE)
     {
         require(
             supportedAssets[asset] == 1,
@@ -139,15 +179,6 @@ contract IporConfiguration is
         emit IporAssetConfigurationAddressUpdated(asset, iporConfig);
     }
 
-    function getWarren() external view override returns (address) {
-        return _addresses[WARREN];
-    }
-
-    function setWarren(address warren) external override onlyRole(WARREN_ROLE) {
-        _addresses[WARREN] = warren;
-        emit WarrenAddressUpdated(warren);
-    }
-
     function getAssets() external view override returns (address[] memory) {
         return assets;
     }
@@ -155,7 +186,7 @@ contract IporConfiguration is
     function addAsset(address asset)
         external
         override
-        onlyRole(IPOR_ASSETS_ROLE)
+        onlyRole(_IPOR_ASSETS_ROLE)
     {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         bool assetExists = false;
@@ -174,7 +205,7 @@ contract IporConfiguration is
     function removeAsset(address asset)
         external
         override
-        onlyRole(IPOR_ASSETS_ROLE)
+        onlyRole(_IPOR_ASSETS_ROLE)
     {
         require(asset != address(0), Errors.WRONG_ADDRESS);
         for (uint256 i = 0; i < assets.length; i++) {
@@ -187,15 +218,6 @@ contract IporConfiguration is
         }
     }
 
-    function getJoseph() external view override returns (address) {
-        return _addresses[JOSEPH];
-    }
-
-    function setJoseph(address joseph) external override onlyRole(JOSEPH_ROLE) {
-        _addresses[JOSEPH] = joseph;
-        emit JosephAddressUpdated(joseph);
-    }
-
     function assetSupported(address asset)
         external
         view
@@ -203,18 +225,5 @@ contract IporConfiguration is
         returns (uint256)
     {
         return supportedAssets[asset];
-    }
-
-    function setWarrenStorage(address warrenStorage)
-        external
-        override
-        onlyRole(WARREN_STORAGE_ROLE)
-    {
-        _addresses[WARREN_STORAGE] = warrenStorage;
-        emit WarrenStorageAddressUpdated(warrenStorage);
-    }
-
-    function getWarrenStorage() external view override returns (address) {
-        return _addresses[WARREN_STORAGE];
     }
 }

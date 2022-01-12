@@ -3,7 +3,9 @@ pragma solidity 0.8.9;
 
 import "./Milton.sol";
 
+//TODO:  move to mock/test/itf folder
 contract TestMilton is Milton {
+    //TODO: change name to openPosition, align ITF
     function test_openPosition(
         uint256 openTimestamp,
         address asset,
@@ -23,12 +25,14 @@ contract TestMilton is Milton {
             );
     }
 
+    //TODO: change name to closePosition, align ITF
     function test_closePosition(uint256 derivativeId, uint256 closeTimestamp)
         external
     {
         _closePosition(derivativeId, closeTimestamp);
     }
 
+    //TODO: change name to calculateSoap, align ITF
     function test_calculateSoap(address asset, uint256 calculateTimestamp)
         external
         view
@@ -41,46 +45,20 @@ contract TestMilton is Milton {
         return _calculateSoap(asset, calculateTimestamp);
     }
 
+    //TODO: change name to calculateSpread, align ITF
     function test_calculateSpread(address asset, uint256 calculateTimestamp)
         external
         view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
-        return _calculateSpread(asset, calculateTimestamp);
+        (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(asset, calculateTimestamp);
     }
 
+    //TODO: change name to calculatePositionValue, align ITF
     function test_calculatePositionValue(
         uint256 calculateTimestamp,
         DataTypes.IporDerivative memory derivative
     ) external view returns (int256) {
         return _calculatePositionValue(calculateTimestamp, derivative);
-    }
-
-    function setSpreadPayFixed(address asset, uint256 value) external {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        iporAssetConfiguration.setSpreadTemporaryValue(value);
-    }
-
-    function getSpreadPayFixed(address asset) external view returns (uint256) {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        return iporAssetConfiguration.getSpreadTemporaryValue();
-    }
-
-    function setSpreadRecFixed(address asset, uint256 value) external {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        iporAssetConfiguration.setSpreadTemporaryValue(value);
-    }
-
-    function getSpreadRecFixed(address asset) external view returns (uint256) {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        return iporAssetConfiguration.getSpreadTemporaryValue();
     }
 }

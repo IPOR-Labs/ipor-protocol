@@ -5,7 +5,7 @@ interface IIporConfiguration {
     event MiltonAddressUpdated(address indexed newAddress);
     event MiltonStorageAddressUpdated(address indexed newAddress);
     event MiltonUtilizationStrategyUpdated(address indexed newAddress);
-    event MiltonSpreadStrategyUpdated(address indexed newAddress);
+    event MiltonSpreadModelUpdated(address indexed newAddress);
     event MiltonPublicationFeeTransfererUpdated(address indexed newAddress);
     event WarrenAddressUpdated(address indexed newAddress);
     event WarrenStorageAddressUpdated(address indexed newAddress);
@@ -39,9 +39,9 @@ interface IIporConfiguration {
     function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy)
         external;
 
-    function getMiltonSpreadStrategy() external view returns (address);
+    function getMiltonSpreadModel() external view returns (address);
 
-    function setMiltonSpreadStrategy(address miltonSpreadStrategy) external;
+    function setMiltonSpreadModel(address MiltonSpreadModel) external;
 
     function getIporAssetConfiguration(address asset)
         external

@@ -12,7 +12,9 @@ import { AmmMath } from "../libraries/AmmMath.sol";
 import "../libraries/Constants.sol";
 import "./Joseph.sol";
 
+//TODO:  move to mock/test/itf folder
 contract TestJoseph is Joseph {
+	//TODO: change name to provideLiquidity, align ITF 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
     function test_provideLiquidity(
         address asset,
@@ -30,6 +32,7 @@ contract TestJoseph is Joseph {
         );
     }
 
+	//TODO: change name to redeem, align ITF 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
     function test_redeem(
         address asset,

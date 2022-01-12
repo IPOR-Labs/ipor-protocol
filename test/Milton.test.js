@@ -57,8 +57,8 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    setupIpTokenDaiInitialValues,
-    setupIpTokenUsdtInitialValues,
+    grantAllSpreadRoles,
+    setupDefaultSpreadConstants,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
@@ -79,6 +79,8 @@ describe("Milton", () => {
             userThree,
             liquidityProvider,
         ]);
+        await grantAllSpreadRoles(data, admin, userOne);
+        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should NOT open position because deposit amount too low", async () => {
@@ -4735,7 +4737,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: BigInt("50000000000000000001"),
+            collateralizationFactor: BigInt("1000000000000000000001"),
             direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -4846,11 +4848,11 @@ describe("Milton", () => {
             libraries
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             admin.address
         );
         await prepareApproveForUsers(
@@ -4967,11 +4969,11 @@ describe("Milton", () => {
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             admin.address
         );
         await prepareApproveForUsers(
@@ -5043,11 +5045,11 @@ describe("Milton", () => {
             libraries
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
             admin.address
         );
         await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+            keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
             admin.address
         );
         await prepareApproveForUsers(
@@ -5138,11 +5140,11 @@ describe("Milton", () => {
     //         admin.address
     //     );
     //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
     //         admin.address
     //     );
     //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LIQUIDITY_POOLMAX_UTILIZATION_PERCENTAGE_ROLE"),
+    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
     //         admin.address
     //     );
     //     await prepareApproveForUsers(
@@ -6003,6 +6005,15 @@ describe("Milton", () => {
         }
     };
 });
+
+//TODO: add test where open Position Pay Fixed and EMA > Ipor
+//TODO: add test where open Position Pay Fixed and EMA < Ipor
+//TODO: add test where open Position Rec Fixed and EMA > Ipor
+//TODO: add test where open Position Rec Fixed and EMA < Ipor
+
+//TODO: add test when spread is calculated 1 pay fixed 0 rec fixed, 0 pay fixed 1 rec fixed
+
+//TODO: !!!! add test when before open position liquidity pool is empty and opening fee is zero - then spread cannot be calculated in correct way!!!
 
 //TODO: !!!! add test when closing derivative, Milton lost, Trader earn, but milton don't have enough balance to withdraw during closing position
 

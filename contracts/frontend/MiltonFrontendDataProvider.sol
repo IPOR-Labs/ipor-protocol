@@ -6,7 +6,7 @@ import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
-import "../interfaces/IMiltonSpreadStrategy.sol";
+import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMilton.sol";
 import "../amm/MiltonStorage.sol";
 
@@ -90,18 +90,36 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 assets.length
             );
 
-        IMiltonSpreadStrategy spreadStrategy = IMiltonSpreadStrategy(
-            iporConfiguration.getMiltonSpreadStrategy()
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+            iporConfiguration.getMiltonSpreadModel()
         );
 
+        uint256 timestamp = block.timestamp;
+
+
+		uint256 spreadPayFixedValue;
+		uint256 spreadRecFixedValue;
+
         for (uint256 i = 0; i < assets.length; i++) {
-            (
-                uint256 spreadPayFixedValue,
-                uint256 spreadRecFixedValue
-            ) = spreadStrategy.calculateSpread(assets[i], block.timestamp);
             IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                     iporConfiguration.getIporAssetConfiguration(assets[i])
-                );
+               );
+
+            try
+                spreadModel.calculatePartialSpreadPayFixed(timestamp, assets[i])
+            returns (uint256 _spreadPayFixedValue) {
+                spreadPayFixedValue = _spreadPayFixedValue;
+            } catch {
+                spreadPayFixedValue = 0;
+            }
+
+            try
+                spreadModel.calculatePartialSpreadRecFixed(timestamp, assets[i])
+            returns (uint256 _spreadRecFixedValue) {
+                spreadRecFixedValue = _spreadRecFixedValue;
+            } catch {
+                spreadRecFixedValue = 0;
+            }
 
             iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
                 assets[i],

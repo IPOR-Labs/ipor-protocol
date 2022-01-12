@@ -19,6 +19,18 @@
     - Enter Chain ID: `5777`
     - Click `Save`
 
+#### How to run all tests?
+
+`npx hardhat test`
+
+#### How to run tests for specific file?
+
+`npx hardhat test test/MiltonSpread.test.js`
+
+#### How to run all tests with additional logs?
+
+`npx hardhat test --logs`
+
 #### How to check contract size?
 
 Run in command line: `truffle run contract-size`

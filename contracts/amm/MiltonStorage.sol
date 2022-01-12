@@ -197,23 +197,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     {
         return derivatives.userDerivativeIds[userAddress];
     }
-
-    function calculateSpread(address asset, uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
-    {
-        return (
-            spreadPayFixedValue = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadTemporaryValue(),
-            spreadRecFixedValue = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            ).getSpreadTemporaryValue()
-        );
-    }
-
+	//TODO: separate soap to MiltonSoapModel smart contract
     function calculateSoap(
         address asset,
         uint256 ibtPrice,
@@ -333,9 +317,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
 
-    event LogDebug(string name, uint256 value);
-	event LogDebugInt(string name, int256 value);
-
     function _updateBalancesWhenClosePosition(
         address user,
         DataTypes.MiltonDerivativeItem memory derivativeItem,
@@ -394,9 +375,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         balances[derivativeItem.item.asset].treasury =
             balances[derivativeItem.item.asset].treasury +
             incomeTax;
-
-        emit LogDebug("incomeTax", incomeTax);
-        emit LogDebugInt("positionValue", positionValue);
 
         if (positionValue > 0) {
             require(
@@ -515,7 +493,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             iporDerivative.indicator.fixedInterestRate,
             iporDerivative.indicator.ibtQuantity
         );
-
+		//TODO: consider if it is required to rebalance both sides!
 		soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp = tsiMem.pf.rebalanceTimestamp;
 		soapIndicators[iporDerivative.asset].pf.direction = tsiMem.pf.direction;
 		soapIndicators[iporDerivative.asset].pf.quasiHypotheticalInterestCumulative = tsiMem.pf.quasiHypotheticalInterestCumulative;
