@@ -518,27 +518,61 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         returns (DataTypes.IporDerivativeIndicator memory indicator)
     {
         IWarren warren = IWarren(iporConfiguration.getWarren());
-        (uint256 indexValue, , , , ) = warren.getIndex(asset);
+        (
+            uint256 iporIndexValue,
+            ,
+            uint256 exponentialMovingAverage,
+            ,
+
+        ) = warren.getIndex(asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
             asset,
             calculateTimestamp
         );
         require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
         require(
-            indexValue >= spreadValue,
+            iporIndexValue >= spreadValue,
             Errors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
         indicator = DataTypes.IporDerivativeIndicator(
-            indexValue,
+            iporIndexValue,
             accruedIbtPrice,
             AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
             direction == 0
-                ? (indexValue + spreadValue)
-                : indexValue > spreadValue
-                ? (indexValue - spreadValue)
+                ? (_calculateReferenceLegPayFixed(
+                    iporIndexValue,
+                    exponentialMovingAverage
+                ) + spreadValue)
+                : iporIndexValue > spreadValue
+                ? (_calculateReferenceLegRecFixed(
+                    iporIndexValue,
+                    exponentialMovingAverage
+                ) - spreadValue)
                 : 0
         );
+    }
+
+    function _calculateReferenceLegPayFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue > exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
+    }
+
+    function _calculateReferenceLegRecFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue < exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
     }
 
     function _closePosition(uint256 derivativeId, uint256 closeTimestamp)

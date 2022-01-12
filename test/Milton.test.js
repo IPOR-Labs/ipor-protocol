@@ -79,7 +79,7 @@ describe("Milton", () => {
             userThree,
             liquidityProvider,
         ]);
-		await grantAllSpreadRoles(data, admin, userOne);
+        await grantAllSpreadRoles(data, admin, userOne);
         await setupDefaultSpreadConstants(data, userOne);
     });
 
@@ -6006,6 +6006,11 @@ describe("Milton", () => {
     };
 });
 
+//TODO: add test where open Position Pay Fixed and EMA > Ipor
+//TODO: add test where open Position Pay Fixed and EMA < Ipor
+//TODO: add test where open Position Rec Fixed and EMA > Ipor
+//TODO: add test where open Position Rec Fixed and EMA < Ipor
+
 //TODO: add test when spread is calculated 1 pay fixed 0 rec fixed, 0 pay fixed 1 rec fixed
 
 //TODO: !!!! add test when before open position liquidity pool is empty and opening fee is zero - then spread cannot be calculated in correct way!!!
@@ -6031,4 +6036,3 @@ describe("Milton", () => {
 //TODO: add test when user try to send eth on milton
 //TODO: add test where milton storage is changing - how balance behave
 //TODO: add tests for pausable methods
-
