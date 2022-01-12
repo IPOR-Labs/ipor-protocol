@@ -35,6 +35,9 @@ NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
 
 AWS_REGION="eu-central-1"
 
+ETH_BC_URL="http://localhost:9545"
+GET_IP_TOKEN_METHOD_SIGNATURE="0xf64de4ed"
+
 IS_MIGRATE_SC="NO"
 IS_BUILD_DOCKER="NO"
 IS_CLEAN_BC="NO"
@@ -86,34 +89,96 @@ done
 
 ################################### FUNCTIONS ###################################
 
-function set_smart_contract_address(){
+function set_smart_contract_address_in_env_config_file(){
+  local VAR_NAME="${1}"
+  local VAR_VALUE="${2}"
+  sed -i "s/${VAR_NAME}.*/${VAR_NAME}: \"${VAR_VALUE}\"/" "${ENV_CONFIG_FILE_DEST}"
+}
+
+function get_smart_contract_address_from_json_file(){
+  local FILE_NAME="${1}"
+  local VAR_VALUE=$(jq -r '.networks[].address' "${ENV_CONTRACTS_DIR}/${FILE_NAME}")
+  echo "${VAR_VALUE}"
+}
+
+function set_smart_contract_address_from_json_file(){
   local FILE_NAME="${1}"
   local VAR_NAME="${2}"
-  local VAR_VALUE=$(jq '.networks[].address' "${ENV_CONTRACTS_DIR}/${FILE_NAME}")
-  sed -i "s/${VAR_NAME}.*/${VAR_NAME}: ${VAR_VALUE}/" "${ENV_CONFIG_FILE_DEST}"
+  local VAR_VALUE=$(get_smart_contract_address_from_json_file "${FILE_NAME}")
+  set_smart_contract_address_in_env_config_file "${VAR_NAME}" "${VAR_VALUE}"
+  echo "${VAR_VALUE}"
+}
+
+function call_smart_contract_method(){
+  local SMART_CONTRACT_ADDRESS="${1}"
+  local METHOD_SIGNATURE="${2}"
+
+  local DATA_JSON=$(jq -n --arg SMART_CONTRACT_ADDRESS "${SMART_CONTRACT_ADDRESS}" --arg METHOD_SIGNATURE "${METHOD_SIGNATURE}" '{
+      "jsonrpc": "2.0",
+      "method": "eth_call",
+      "params": [
+          {
+              "to": $SMART_CONTRACT_ADDRESS,
+              "data": $METHOD_SIGNATURE
+          },
+          "latest"
+      ],
+      "id": 1
+  }') || exit
+
+  local RESULT=$(curl -s --location --request POST "${ETH_BC_URL}" \
+                       --header "Content-Type: application/json" \
+                       --data-raw "${DATA_JSON}")
+  echo "${RESULT}"
+}
+
+function get_smart_contract_address_from_eth_method(){
+  local SMART_CONTRACT_ADDRESS="${1}"
+  local METHOD_SIGNATURE="${2}"
+
+  local RESULT=$(call_smart_contract_method "${SMART_CONTRACT_ADDRESS}" "${METHOD_SIGNATURE}")
+
+  local RESULT_ADDRESS=$(echo "${RESULT}" | jq -r ".result")
+  echo "0x${RESULT_ADDRESS:(-40)}"
+}
+
+function set_smart_contract_address_from_eth_method(){
+  local SMART_CONTRACT_ADDRESS="${1}"
+  local METHOD_SIGNATURE="${2}"
+  local VAR_NAME="${3}"
+
+  local VAR_VALUE=$(get_smart_contract_address_from_eth_method "${SMART_CONTRACT_ADDRESS}" "${METHOD_SIGNATURE}")
+  set_smart_contract_address_in_env_config_file "${VAR_NAME}" "${VAR_VALUE}"
+  echo "${VAR_VALUE}"
 }
 
 function create_env_config_file(){
   cp "${ENV_CONFIG_FILE_SRC}" "${ENV_CONFIG_FILE_DEST}"
 
-  set_smart_contract_address "Milton.json" "milton_address"
-  set_smart_contract_address "Warren.json" "warren_address"
-  set_smart_contract_address "Joseph.json" "joseph_address"
-  set_smart_contract_address "TestMilton.json" "milton_test_address"
-  set_smart_contract_address "TestWarren.json" "warren_test_address"
-  set_smart_contract_address "TestJoseph.json" "joseph_test_address"
-  set_smart_contract_address "MiltonDevToolDataProvider.json" "milton_dev_tool_data_provider_address"
-  set_smart_contract_address "MiltonFrontendDataProvider.json" "milton_frontend_data_provider_address"
-  set_smart_contract_address "DaiMockedToken.json" "dai_mocked_address"
-  set_smart_contract_address "UsdcMockedToken.json" "usdc_mocked_address"
-  set_smart_contract_address "UsdtMockedToken.json" "usdt_mocked_address"
-  set_smart_contract_address "MiltonStorage.json" "milton_storage_address"
-  set_smart_contract_address "WarrenStorage.json" "warren_storage_address"
-  set_smart_contract_address "MiltonFaucet.json" "milton_faucet_address"
-  set_smart_contract_address "IporConfiguration.json" "ipor_configuration_address"
-  set_smart_contract_address "IporAssetConfigurationUsdc.json" "ipor_asset_configuration_usdc_address"
-  set_smart_contract_address "IporAssetConfigurationUsdt.json" "ipor_asset_configuration_usdt_address"
-  set_smart_contract_address "IporAssetConfigurationDai.json" "ipor_asset_configuration_dai_address"
+  local RESULT=""
+  RESULT=$(set_smart_contract_address_from_json_file "Milton.json" "milton_address")
+  RESULT=$(set_smart_contract_address_from_json_file "Warren.json" "warren_address")
+  RESULT=$(set_smart_contract_address_from_json_file "Joseph.json" "joseph_address")
+  RESULT=$(set_smart_contract_address_from_json_file "TestMilton.json" "milton_test_address")
+  RESULT=$(set_smart_contract_address_from_json_file "TestWarren.json" "warren_test_address")
+  RESULT=$(set_smart_contract_address_from_json_file "TestJoseph.json" "joseph_test_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonDevToolDataProvider.json" "milton_dev_tool_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonFrontendDataProvider.json" "milton_frontend_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "WarrenDevToolDataProvider.json" "warren_dev_tool_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "WarrenFrontendDataProvider.json" "warren_frontend_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "DaiMockedToken.json" "dai_mocked_address")
+  RESULT=$(set_smart_contract_address_from_json_file "UsdcMockedToken.json" "usdc_mocked_address")
+  RESULT=$(set_smart_contract_address_from_json_file "UsdtMockedToken.json" "usdt_mocked_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorage.json" "milton_storage_address")
+  RESULT=$(set_smart_contract_address_from_json_file "WarrenStorage.json" "warren_storage_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonFaucet.json" "milton_faucet_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IporConfiguration.json" "ipor_configuration_address")
+  local IPOR_ASSET_CONFIG_USDC=$(set_smart_contract_address_from_json_file "IporAssetConfigurationUsdc.json" "ipor_asset_configuration_usdc_address")
+  local IPOR_ASSET_CONFIG_USDT=$(set_smart_contract_address_from_json_file "IporAssetConfigurationUsdt.json" "ipor_asset_configuration_usdt_address")
+  local IPOR_ASSET_CONFIG_DAI=$(set_smart_contract_address_from_json_file "IporAssetConfigurationDai.json" "ipor_asset_configuration_dai_address")
+  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_USDC}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_usdc_address")
+  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_USDT}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_usdt_address")
+  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_DAI}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_dai_address")
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }
