@@ -30,15 +30,15 @@ contract IporAssetConfiguration is
 
     uint256 private immutable _maxSlippagePercentage;
 
-    uint256 private _minCollateralizationFactorValue;
+    uint256 private _openingFeePercentage;
+
+	uint256 private _minCollateralizationFactorValue;
 
     uint256 private _maxCollateralizationFactorValue;
 
     uint256 private _incomeTaxPercentage;
 
-    uint256 private _liquidationDepositAmount;
-
-    uint256 private _openingFeePercentage;
+    uint256 private _liquidationDepositAmount;    
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big
     //pie going to Treasury Balance
@@ -48,6 +48,7 @@ contract IporAssetConfiguration is
 
     uint256 private _liquidityPoolMaxUtilizationPercentage;
 
+	//TODO: change to "max collateral position value"
     //@notice max total amount used when opening position
     uint256 private _maxPositionTotalAmount;
 
@@ -98,6 +99,27 @@ contract IporAssetConfiguration is
 
     }
 
+	function getOpeningFeePercentage()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _openingFeePercentage;
+    }
+
+    function setOpeningFeePercentage(uint256 newOpeningFeePercentage)
+        external
+        override
+        onlyRole(_OPENING_FEE_PERCENTAGE_ROLE)
+    {
+        require(
+            newOpeningFeePercentage <= Constants.D18,
+            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
+        );
+        _openingFeePercentage = newOpeningFeePercentage;
+        emit OpeningFeePercentageSet(newOpeningFeePercentage);
+    }
     function getIncomeTaxPercentage() external view override returns (uint256) {
         return _incomeTaxPercentage;
     }
@@ -155,27 +177,7 @@ contract IporAssetConfiguration is
         emit LiquidationDepositAmountSet(newLiquidationDepositAmount);
     }
 
-    function getOpeningFeePercentage()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _openingFeePercentage;
-    }
-
-    function setOpeningFeePercentage(uint256 newOpeningFeePercentage)
-        external
-        override
-        onlyRole(_OPENING_FEE_PERCENTAGE_ROLE)
-    {
-        require(
-            newOpeningFeePercentage <= Constants.D18,
-            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
-        );
-        _openingFeePercentage = newOpeningFeePercentage;
-        emit OpeningFeePercentageSet(newOpeningFeePercentage);
-    }
+    
 
     function getIporPublicationFeeAmount()
         external

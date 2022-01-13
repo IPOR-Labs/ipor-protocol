@@ -170,6 +170,7 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "UsdcMockedToken.json" "usdc_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "UsdtMockedToken.json" "usdt_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorage.json" "milton_storage_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModel.json" "milton_spread_model_address")
   RESULT=$(set_smart_contract_address_from_json_file "WarrenStorage.json" "warren_storage_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonFaucet.json" "milton_faucet_address")
   RESULT=$(set_smart_contract_address_from_json_file "IporConfiguration.json" "ipor_configuration_address")
