@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 import "../libraries/Constants.sol";
-import "../libraries/AmmMath.sol";
+import "../libraries/IporMath.sol";
 import "../interfaces/IMiltonSpreadConfiguration.sol";
 import "./AccessControlMiltonSpreadConfiguration.sol";
 
@@ -32,15 +32,15 @@ contract MiltonSpreadConfiguration is
     uint256 internal _atParComponentKHistValue;    
 
     constructor() {
-        _demandComponentKfValue = AmmMath.division(
+        _demandComponentKfValue = IporMath.division(
             1 * Constants.D18,
             1000
         );
-        _demandComponentLambdaValue = AmmMath.division(
+        _demandComponentLambdaValue = IporMath.division(
             1 * Constants.D18,
             1000
         );
-        _demandComponentKOmegaValue = AmmMath.division(
+        _demandComponentKOmegaValue = IporMath.division(
             3 * Constants.D18,
             10
         );
@@ -48,18 +48,18 @@ contract MiltonSpreadConfiguration is
         _demandComponentMaxLiquidityRedemptionValue = Constants.D18;
 
         //TODO: clarify initial value
-        _atParComponentKVolValue = AmmMath.division(
+        _atParComponentKVolValue = IporMath.division(
             3 * Constants.D18,
             100
         );
 
         //TODO: clarify initial value
-        _atParComponentKHistValue = AmmMath.division(
+        _atParComponentKHistValue = IporMath.division(
             3 * Constants.D18,
             100
         );
 
-        _maxValue = AmmMath.division(3 * Constants.D16, 10);
+        _maxValue = IporMath.division(3 * Constants.D16, 10);
     }
 
 	function getSpreadMaxValue() external view override returns (uint256) {

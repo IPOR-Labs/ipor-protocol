@@ -2,14 +2,14 @@
 pragma solidity 0.8.9;
 
 import "../libraries/Constants.sol";
-import "../libraries/AmmMath.sol";
+import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IWarren.sol";
-import {AmmMath} from "../libraries/AmmMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import {Errors} from "../Errors.sol";
 import "./MiltonSpreadModelCore.sol";
@@ -305,11 +305,11 @@ contract MiltonSpreadModel is
                     );
                 if (kOmegaDenominator > 0) {
                     return
-                        AmmMath.division(
+                        IporMath.division(
                             _demandComponentKfValue * Constants.D18,
                             kfDenominator
                         ) +
-                        AmmMath.division(
+                        IporMath.division(
                             _demandComponentKOmegaValue * Constants.D18,
                             kOmegaDenominator
                         );
@@ -318,7 +318,7 @@ contract MiltonSpreadModel is
                 }
             } else {
                 return
-                    AmmMath.division(
+                    IporMath.division(
                         _demandComponentKfValue * Constants.D18,
                         kfDenominator
                     ) + _demandComponentKOmegaValue;
@@ -345,7 +345,7 @@ contract MiltonSpreadModel is
 
             if (historicalDeviation < _maxValue) {
                 return
-                    AmmMath.division(
+                    IporMath.division(
                         _atParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
@@ -364,14 +364,14 @@ contract MiltonSpreadModel is
         if (exponentialMovingAverage < iporIndexValue) {
             return 0;
         } else {
-            uint256 mu = AmmMath.absoluteValue(
+            uint256 mu = IporMath.absoluteValue(
                 int256(exponentialMovingAverage) - int256(iporIndexValue)
             );
             if (mu == Constants.D18) {
                 return maxSpreadValue;
             } else {
                 return
-                    AmmMath.division(kHist * Constants.D18, Constants.D18 - mu);
+                    IporMath.division(kHist * Constants.D18, Constants.D18 - mu);
             }
         }
     }
@@ -432,11 +432,11 @@ contract MiltonSpreadModel is
                     );
                 if (kOmegaDenominator > 0) {
                     return
-                        AmmMath.division(
+                        IporMath.division(
                             _demandComponentKfValue * Constants.D18,
                             kfDenominator
                         ) +
-                        AmmMath.division(
+                        IporMath.division(
                             _demandComponentKOmegaValue * Constants.D18,
                             kOmegaDenominator
                         );
@@ -445,7 +445,7 @@ contract MiltonSpreadModel is
                 }
             } else {
                 return
-                    AmmMath.division(
+                    IporMath.division(
                         _demandComponentKfValue * Constants.D18,
                         kfDenominator
                     ) + _demandComponentKOmegaValue;
@@ -473,7 +473,7 @@ contract MiltonSpreadModel is
             );
             if (historicalDeviation < _maxValue) {
                 return
-                    AmmMath.division(
+                    IporMath.division(
                         _atParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
@@ -492,14 +492,14 @@ contract MiltonSpreadModel is
         if (exponentialMovingAverage > iporIndexValue) {
             return 0;
         } else {
-            uint256 mu = AmmMath.absoluteValue(
+            uint256 mu = IporMath.absoluteValue(
                 int256(exponentialMovingAverage) - int256(iporIndexValue)
             );
             if (mu == Constants.D18) {
                 return maxSpreadValue;
             } else {
                 return
-                    AmmMath.division(kHist * Constants.D18, Constants.D18 - mu);
+                    IporMath.division(kHist * Constants.D18, Constants.D18 - mu);
             }
         }
     }

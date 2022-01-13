@@ -107,7 +107,6 @@ library DataTypes {
         //TODO: probably don't have to store, add to event
         //@notice value are basis points
         uint256 spreadValue;
-        //TODO: probably don't have to store, add to event        
     }
 
     struct MiltonDerivatives {

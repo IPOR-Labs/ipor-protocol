@@ -28,13 +28,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivatives public derivatives;
 
-    //TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration)
-        external
-        onlyOwner
-    {
-        _iporConfiguration = initialIporConfiguration;
-    }
+	constructor(address initialIporConfiguration) {
+		_iporConfiguration = IIporConfiguration(initialIporConfiguration);
+	}
 
     //@notice add asset address to MiltonStorage structures
     function addAsset(address asset) external override onlyOwner {
@@ -220,15 +216,15 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         );
 
         return (
-            soapPf = AmmMath.divisionInt(
+            soapPf = IporMath.divisionInt(
                 qSoapPf,
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             ),
-            soapRf = AmmMath.divisionInt(
+            soapRf = IporMath.divisionInt(
                 qSoapRf,
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             ),
-            soap = AmmMath.divisionInt(
+            soap = IporMath.divisionInt(
                 qSoap,
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             )
@@ -311,7 +307,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         pure
         returns (uint256 liquidityPoolValue, uint256 treasuryValue)
     {
-        treasuryValue = AmmMath.division(
+        treasuryValue = IporMath.division(
             openingFeeAmount * openingFeeForTreasurePercentage,
             Constants.D18
         );
@@ -324,7 +320,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         int256 positionValue,
         uint256 closingTimestamp
     ) internal {
-        uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
+        uint256 abspositionValue = IporMath.absoluteValue(positionValue);
 
         //decrease from balances the liquidation deposit
         require(
@@ -364,7 +360,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             }
         }
 
-        uint256 incomeTax = AmmMath.calculateIncomeTax(
+        uint256 incomeTax = IporMath.calculateIncomeTax(
             abspositionValue,
             IIporAssetConfiguration(
                 _iporConfiguration.getIporAssetConfiguration(

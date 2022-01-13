@@ -8,7 +8,7 @@ import "../interfaces/IWarren.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import {Constants} from "../libraries/Constants.sol";
 import "../libraries/IporLogic.sol";
-import {AmmMath} from "../libraries/AmmMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 import "../interfaces/IWarrenStorage.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
@@ -22,6 +22,10 @@ contract Warren is Ownable, Pausable, IWarren {
     using IporLogic for DataTypes.IPOR;
 
     IIporConfiguration internal _iporConfiguration;
+
+    constructor(address initialIporConfiguration) {
+        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
+    }
 
     modifier onlyUpdater() {
         bool allowed = false;
@@ -37,14 +41,6 @@ contract Warren is Ownable, Pausable, IWarren {
         }
         require(allowed, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
         _;
-    }
-
-    //TODO: initialization only once,
-    function initialize(IIporConfiguration initialIporConfiguration)
-        external
-        onlyOwner
-    {
-        _iporConfiguration = initialIporConfiguration;
     }
 
     function pause() external override onlyOwner {
@@ -72,7 +68,7 @@ contract Warren is Ownable, Pausable, IWarren {
         ).getIndex(asset);
         return (
             indexValue = iporIndex.indexValue,
-            ibtPrice = AmmMath.division(
+            ibtPrice = IporMath.division(
                 iporIndex.quasiIbtPrice,
                 Constants.YEAR_IN_SECONDS
             ),
@@ -118,7 +114,7 @@ contract Warren is Ownable, Pausable, IWarren {
         returns (uint256)
     {
         return
-            AmmMath.division(
+            IporMath.division(
                 IWarrenStorage(_iporConfiguration.getWarrenStorage())
                     .getIndex(asset)
                     .accrueQuasiIbtPrice(calculateTimestamp),

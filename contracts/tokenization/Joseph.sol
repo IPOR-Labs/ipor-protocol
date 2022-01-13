@@ -11,7 +11,7 @@ import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
 import {Errors} from "../Errors.sol";
 import "../interfaces/IMiltonStorage.sol";
-import {AmmMath} from "../libraries/AmmMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
@@ -23,13 +23,9 @@ contract Joseph is Ownable, IJoseph {
 
     IIporConfiguration internal _iporConfiguration;
 
-    //TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration)
-        external
-        onlyOwner
-    {
-        _iporConfiguration = initialIporConfiguration;
-    }
+	constructor (address initialIporConfiguration) {
+		_iporConfiguration = IIporConfiguration(initialIporConfiguration);
+	}    
 
     function provideLiquidity(address asset, uint256 liquidityAmount)
         external
@@ -62,7 +58,7 @@ contract Joseph is Ownable, IJoseph {
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        uint256 wadLiquidityAmount = AmmMath.convertToWad(
+        uint256 wadLiquidityAmount = IporMath.convertToWad(
             liquidityAmount,
             assetDecimals
         );
@@ -89,7 +85,7 @@ contract Joseph is Ownable, IJoseph {
                 ).getIpToken()
             ).mint(
                     msg.sender,
-                    AmmMath.division(
+                    IporMath.division(
                         wadLiquidityAmount * Constants.D18,
                         exchangeRate
                     )
@@ -125,11 +121,11 @@ contract Joseph is Ownable, IJoseph {
                 .liquidityPool > ipTokenVolume,
             Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );
-        uint256 wadUnderlyingAmount = AmmMath.division(
+        uint256 wadUnderlyingAmount = IporMath.division(
             ipTokenVolume * exchangeRate,
             Constants.D18
         );
-        uint256 underlyingAmount = AmmMath.convertWadToAssetDecimals(
+        uint256 underlyingAmount = IporMath.convertWadToAssetDecimals(
             wadUnderlyingAmount,
             iporAssetConfiguration.getDecimals()
         );

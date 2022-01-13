@@ -5,9 +5,7 @@ const keccak256 = require("keccak256");
 
 const {
     PERCENTAGE_3_18DEC,
-    PERCENTAGE_3_6DEC,
     USD_10_000_18DEC,
-    USD_10_000_6DEC,
     USD_10_18DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
@@ -81,7 +79,7 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 liquidityAmount,
                 params.openTimestamp
@@ -153,7 +151,7 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 liquidityAmount,
                 params.openTimestamp
@@ -227,7 +225,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 liquidityAmount,
                 params.openTimestamp
@@ -236,7 +234,7 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(params.asset, withdrawAmount, params.openTimestamp);
+            .itfRedeem(params.asset, withdrawAmount, params.openTimestamp);
 
         // //then
         const actualIpTokenBalanceSender = BigInt(
@@ -307,7 +305,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 liquidityAmount,
                 params.openTimestamp
@@ -316,7 +314,7 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(
+            .itfRedeem(
                 params.asset,
                 withdrawIpTokenAmount,
                 params.openTimestamp
@@ -423,7 +421,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
@@ -470,7 +468,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_6DEC,
                 params.openTimestamp
@@ -517,7 +515,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_10_000_18DEC,
                 params.openTimestamp
@@ -571,14 +569,14 @@ describe("Joseph", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 BigInt("40000000000000000000"),
                 params.openTimestamp
@@ -587,7 +585,7 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 BigInt("40000000000000000000"),
@@ -653,14 +651,14 @@ describe("Joseph", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 BigInt("40000000"),
                 params.openTimestamp
@@ -669,7 +667,7 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 BigInt("40000000"),
@@ -720,7 +718,7 @@ describe("Joseph", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -728,12 +726,12 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(params.asset, amount, params.openTimestamp);
+            .itfProvideLiquidity(params.asset, amount, params.openTimestamp);
 
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 amount,
@@ -744,7 +742,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(params.asset, amount, params.openTimestamp);
+            .itfRedeem(params.asset, amount, params.openTimestamp);
 
         //when
         let actualExchangeRate = BigInt(
@@ -794,14 +792,14 @@ describe("Joseph", () => {
         const amount = BigInt("180000000000000000000");
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(params.asset, amount, params.openTimestamp);
+            .itfProvideLiquidity(params.asset, amount, params.openTimestamp);
         const oldOpeningFeePercentage =
             await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
         await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
@@ -811,7 +809,7 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 amount,
@@ -835,7 +833,7 @@ describe("Joseph", () => {
         // //when
         await data.joseph
             .connect(userThree)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 BigInt("1500000000000000000000"),
                 params.openTimestamp
@@ -900,14 +898,14 @@ describe("Joseph", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(params.asset, amount, params.openTimestamp);
+            .itfProvideLiquidity(params.asset, amount, params.openTimestamp);
         const oldOpeningFeePercentage =
             await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
         await testData.iporAssetConfigurationDai.grantRole(
@@ -925,7 +923,7 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 amount,
@@ -947,14 +945,14 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(userThree)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 BigInt("1500000000000000000000"),
                 params.openTimestamp
             );
         await data.joseph
             .connect(userThree)
-            .test_redeem(
+            .itfRedeem(
                 params.asset,
                 BigInt("874999999999999999854"),
                 params.openTimestamp
@@ -1026,14 +1024,14 @@ describe("Joseph", () => {
         const amount = BigInt("180000000");
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(params.asset, amount, params.openTimestamp);
+            .itfProvideLiquidity(params.asset, amount, params.openTimestamp);
         const oldOpeningFeePercentage =
             await testData.iporAssetConfigurationUsdt.getOpeningFeePercentage();
         await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(
@@ -1043,7 +1041,7 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 amount,
@@ -1065,14 +1063,14 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(userThree)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 BigInt("1500000000"),
                 params.openTimestamp
             );
         await data.joseph
             .connect(userThree)
-            .test_redeem(
+            .itfRedeem(
                 params.asset,
                 BigInt("874999999999999999854"),
                 params.openTimestamp
@@ -1135,7 +1133,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 params.totalAmount,
                 params.openTimestamp
@@ -1153,7 +1151,7 @@ describe("Joseph", () => {
             //when
             data.joseph
                 .connect(liquidityProvider)
-                .test_redeem(
+                .itfRedeem(
                     params.asset,
                     BigInt("1000000000000000000000"),
                     params.openTimestamp
@@ -1186,7 +1184,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 params.totalAmount,
                 params.openTimestamp
@@ -1204,7 +1202,7 @@ describe("Joseph", () => {
             //when
             data.joseph
                 .connect(liquidityProvider)
-                .test_provideLiquidity(
+                .itfProvideLiquidity(
                     params.asset,
                     params.totalAmount,
                     params.openTimestamp
@@ -1237,7 +1235,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 params.totalAmount,
                 params.openTimestamp
@@ -1255,7 +1253,7 @@ describe("Joseph", () => {
             //when
             data.joseph
                 .connect(liquidityProvider)
-                .test_redeem(
+                .itfRedeem(
                     params.asset,
                     params.totalAmount,
                     params.openTimestamp
@@ -1288,7 +1286,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 params.totalAmount,
                 params.openTimestamp
@@ -1299,7 +1297,7 @@ describe("Joseph", () => {
             //when
             data.joseph
                 .connect(liquidityProvider)
-                .test_redeem(
+                .itfRedeem(
                     params.asset,
                     params.totalAmount,
                     params.openTimestamp
@@ -1336,7 +1334,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenDai.address,
                 liquidityAmount,
                 timestamp
@@ -1345,7 +1343,7 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(testData.tokenDai.address, withdrawAmount, timestamp);
+            .itfRedeem(testData.tokenDai.address, withdrawAmount, timestamp);
 
         const expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         const expectedStableBalanceMilton = BigInt("4000000000000000000000");
@@ -1414,14 +1412,14 @@ describe("Joseph", () => {
         const timestamp = Math.floor(Date.now() / 1000);
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenDai.address,
                 USD_10_000_18DEC,
                 timestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenDai.address,
                 USD_10_000_18DEC,
                 timestamp
@@ -1430,11 +1428,7 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(
-                testData.tokenDai.address,
-                USD_14_000_18DEC,
-                timestamp
-            );
+            .itfRedeem(testData.tokenDai.address, USD_14_000_18DEC, timestamp);
 
         //then
         const expectedIpTokenBalanceSender = BigInt("6000000000000000000000");
@@ -1536,14 +1530,14 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenDai.address,
                 liquidityAmountDAI,
                 timestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenUsdt.address,
                 liquidityAmountUSDT,
                 timestamp
@@ -1552,14 +1546,10 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(
-                testData.tokenDai.address,
-                withdrawAmountDAI,
-                timestamp
-            );
+            .itfRedeem(testData.tokenDai.address, withdrawAmountDAI, timestamp);
         await data.joseph
             .connect(liquidityProvider)
-            .test_redeem(
+            .itfRedeem(
                 testData.tokenUsdt.address,
                 withdrawIpTokenAmountUSDT,
                 timestamp
@@ -1697,14 +1687,14 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(daiUser)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenDai.address,
                 liquidityAmountDAI,
                 timestamp
             );
         await data.joseph
             .connect(usdtUser)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenUsdt.address,
                 liquidityAmountUSDT,
                 timestamp
@@ -1713,14 +1703,10 @@ describe("Joseph", () => {
         //when
         await data.joseph
             .connect(daiUser)
-            .test_redeem(
-                testData.tokenDai.address,
-                withdrawAmountDAI,
-                timestamp
-            );
+            .itfRedeem(testData.tokenDai.address, withdrawAmountDAI, timestamp);
         await data.joseph
             .connect(usdtUser)
-            .test_redeem(
+            .itfRedeem(
                 testData.tokenUsdt.address,
                 withdrawIpTokenAmountUSDT,
                 timestamp
@@ -1823,7 +1809,7 @@ describe("Joseph", () => {
         const timestamp = Math.floor(Date.now() / 1000);
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 testData.tokenDai.address,
                 USD_10_400_18DEC,
                 timestamp
@@ -1835,11 +1821,7 @@ describe("Joseph", () => {
 
         await data.joseph
             .connect(userThree)
-            .test_redeem(
-                testData.tokenDai.address,
-                USD_10_000_18DEC,
-                timestamp
-            );
+            .itfRedeem(testData.tokenDai.address, USD_10_000_18DEC, timestamp);
 
         const expectedDAIBalanceMilton = BigInt("400000000000000000000");
         const expectedDAIBalanceMiltonLiquidityPool = expectedDAIBalanceMilton;

@@ -7,17 +7,16 @@ import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
-import {AmmMath} from "../libraries/AmmMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 
 //@notice Milton utilization strategy which - for simplification - is based on Collateral
 //(collateral is a total balance of derivatives in Milton)
 contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
     IIporConfiguration internal _iporConfiguration;
 
-    //TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration) external {
-        _iporConfiguration = initialIporConfiguration;
-    }
+	constructor(address initialIporConfiguration) {
+        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
+	}
 
     function calculateTotalUtilizationRate(
         address asset,
@@ -33,7 +32,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
 
         if ((balance.liquidityPool + openingFee) != 0) {
             return
-                AmmMath.division(
+                IporMath.division(
                     (balance.payFixedDerivatives +
                         balance.recFixedDerivatives +
                         deposit) * Constants.D18,

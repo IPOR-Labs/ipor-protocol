@@ -245,7 +245,7 @@ describe("Warren", () => {
         const updateDate = Math.floor(Date.now() / 1000);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+            .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         const updateDateSecond = updateDate + YEAR_IN_SECONDS;
 
         const iporIndexSecondValue = BigInt("51000000000000000");
@@ -253,7 +253,7 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, iporIndexSecondValue, updateDateSecond);
+            .itfUpdateIndex(asset, iporIndexSecondValue, updateDateSecond);
 
         //then
         const iporIndex = await data.warren.getIndex(asset);
@@ -279,14 +279,14 @@ describe("Warren", () => {
         await testData.warrenStorage.addUpdater(data.warren.address);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+            .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         updateDate = updateDate + MONTH_IN_SECONDS;
         const iporIndexSecondValue = PERCENTAGE_6_6DEC;
 
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, iporIndexSecondValue, updateDate);
+            .itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
 
         //then
         const iporIndex = await data.warren.getIndex(asset);
@@ -314,7 +314,7 @@ describe("Warren", () => {
         await testData.warrenStorage.addUpdater(data.warren.address);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+            .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
 
         const actualFirstIporIndex = await data.warren.getIndex(asset);
         const actualFirstIbtPrice = BigInt(actualFirstIporIndex.ibtPrice);
@@ -327,7 +327,7 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, iporIndexSecondValue, updateDate);
+            .itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
 
         //then
         const actualSecondIporIndex = await data.warren.getIndex(asset);
@@ -353,7 +353,7 @@ describe("Warren", () => {
         await testData.warrenStorage.addUpdater(data.warren.address);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+            .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
 
         const actualFirstIporIndex = await data.warren.getIndex(asset);
         const actualFirstIbtPrice = BigInt(actualFirstIporIndex.ibtPrice);
@@ -366,7 +366,7 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, iporIndexSecondValue, updateDate);
+            .itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
 
         //then
         const actualSecondIporIndex = await data.warren.getIndex(asset);
@@ -392,11 +392,11 @@ describe("Warren", () => {
         let updateDate = Math.floor(Date.now() / 1000);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+            .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         updateDate = updateDate + YEAR_IN_SECONDS / 2;
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, PERCENTAGE_6_18DEC, updateDate);
+            .itfUpdateIndex(asset, PERCENTAGE_6_18DEC, updateDate);
         updateDate = updateDate + YEAR_IN_SECONDS / 4;
 
         let iporIndexThirdValue = PERCENTAGE_7_18DEC;
@@ -404,7 +404,7 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(asset, iporIndexThirdValue, updateDate);
+            .itfUpdateIndex(asset, iporIndexThirdValue, updateDate);
 
         //then
         const iporIndex = await data.warren.getIndex(asset);
@@ -435,7 +435,7 @@ describe("Warren", () => {
             //when
             data.warren
                 .connect(userOne)
-                .test_updateIndexes(assets, indexValues, updateDate),
+                .itfUpdateIndexes(assets, indexValues, updateDate),
             //then
             "IPOR_18"
         );
@@ -453,7 +453,7 @@ describe("Warren", () => {
         ];
         await data.warren
             .connect(userOne)
-            .test_updateIndexes(assets, indexValues, updateDate);
+            .itfUpdateIndexes(assets, indexValues, updateDate);
 
         const wrongUpdateDate = updateDate - 1;
 
@@ -462,7 +462,7 @@ describe("Warren", () => {
             //when
             data.warren
                 .connect(userOne)
-                .test_updateIndexes(assets, indexValues, wrongUpdateDate),
+                .itfUpdateIndexes(assets, indexValues, wrongUpdateDate),
             //then
             "IPOR_27"
         );
@@ -479,7 +479,7 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndexes(assets, indexValues, updateDate);
+            .itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
         for (let i = 0; i < assets.length; i++) {
@@ -503,7 +503,7 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndexes(assets, indexValues, updateDate);
+            .itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
         const iporIndex = await data.warren.getIndex(assets[0]);
@@ -529,10 +529,10 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndexes(assets, firstIndexValues, updateDate);
+            .itfUpdateIndexes(assets, firstIndexValues, updateDate);
         await data.warren
             .connect(userOne)
-            .test_updateIndexes(assets, secondIndexValues, updateDate);
+            .itfUpdateIndexes(assets, secondIndexValues, updateDate);
 
         //then
         const iporIndex = await data.warren.getIndex(assets[0]);
@@ -558,10 +558,10 @@ describe("Warren", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndexes(assets, firstIndexValues, updateDate);
+            .itfUpdateIndexes(assets, firstIndexValues, updateDate);
         await data.warren
             .connect(userOne)
-            .test_updateIndexes(assets, secondIndexValues, updateDate);
+            .itfUpdateIndexes(assets, secondIndexValues, updateDate);
 
         //then
         const iporIndex = await data.warren.getIndex(assets[0]);

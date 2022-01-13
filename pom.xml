@@ -147,7 +147,7 @@
                         <argument>${contracts.sources}/amm/MiltonLPUtilizationStrategyCollateral.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
-                        <argument>${contracts.sources}/amm/TestMilton.sol</argument>
+                        <argument>${contracts.sources}/itf/ItfMilton.sol</argument>
                         <argument>${contracts.sources}/configuration/AccessControlAssetConfiguration.sol</argument>
                         <argument>${contracts.sources}/configuration/AccessControlConfiguration.sol</argument>
                         <argument>${contracts.sources}/configuration/AccessControlRevoke.sol</argument>
@@ -171,7 +171,7 @@
                         <argument>${contracts.sources}/interfaces/IWarrenDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarrenFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarrenStorage.sol</argument>
-                        <argument>${contracts.sources}/libraries/AmmMath.sol</argument>
+                        <argument>${contracts.sources}/libraries/IporMath.sol</argument>
                         <argument>${contracts.sources}/libraries/Constants.sol</argument>
                         <argument>${contracts.sources}/libraries/DerivativeLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/DerivativesView.sol</argument>
@@ -186,12 +186,12 @@
                         <argument>${contracts.sources}/mocks/tokens/TusdMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/UsdcMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/UsdtMockedToken.sol</argument>
-                        <argument>${contracts.sources}/oracles/TestWarren.sol</argument>
+                        <argument>${contracts.sources}/itf/ItfWarren.sol</argument>
                         <argument>${contracts.sources}/oracles/Warren.sol</argument>
                         <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
                         <argument>${contracts.sources}/tokenization/IpToken.sol</argument>
                         <argument>${contracts.sources}/tokenization/Joseph.sol</argument>
-                        <argument>${contracts.sources}/tokenization/TestJoseph.sol</argument>
+                        <argument>${contracts.sources}/itf/ItfJoseph.sol</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -221,8 +221,8 @@
                             <include>MiltonDevToolDataProvider.abi</include>
                             <include>WarrenDevToolDataProvider.abi</include>
                             <include>MiltonEvents.abi</include>
-                            <include>TestMilton.abi</include>
-                            <include>TestWarren.abi</include>
+                            <include>ItfMilton.abi</include>
+                            <include>ItfWarren.abi</include>
                             <include>Warren.abi</include>
                             <!-- TODO: compile problem with MiltonFrontendDataProvider.abi: Unsupported type encountered: tuple -->
                             <!-- <include>MiltonFrontendDataProvider.abi</include>-->

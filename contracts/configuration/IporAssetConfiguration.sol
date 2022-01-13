@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
-import "../libraries/AmmMath.sol";
+import "../libraries/IporMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { Errors } from "../Errors.sol";
 import { DataTypes } from "../libraries/types/DataTypes.sol";
@@ -73,14 +73,14 @@ contract IporAssetConfiguration is
         _maxSlippagePercentage = 100 * Constants.D18;
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        _incomeTaxPercentage = AmmMath.division(Constants.D18, 10);
+        _incomeTaxPercentage = IporMath.division(Constants.D18, 10);
 
         //@notice taken after open position from participant who execute opening position,
         //paid after close position to participant who execute closing position
         _liquidationDepositAmount = 20 * Constants.D18;
 
         //@notice
-        _openingFeePercentage = AmmMath.division(
+        _openingFeePercentage = IporMath.division(
             3 * Constants.D18,
             Constants.D4
         );
@@ -88,7 +88,7 @@ contract IporAssetConfiguration is
         _iporPublicationFeeAmount = 10 * Constants.D18;
         _liquidityPoolMaxUtilizationPercentage =
             8 *
-            AmmMath.division(Constants.D18, 10);
+            IporMath.division(Constants.D18, 10);
 
 		_maxPositionTotalAmount = 1e5 * Constants.D18;
 

@@ -21,7 +21,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateExchangeRate"
                             methodArgs={[drizzle.contracts.UsdtMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
@@ -52,7 +52,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateExchangeRate"
                             methodArgs={[drizzle.contracts.UsdcMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
@@ -83,7 +83,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateExchangeRate"
                             methodArgs={[drizzle.contracts.DaiMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (
@@ -97,7 +97,7 @@ export default ({drizzle, drizzleState}) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateExchangeRate"
                             methodArgs={[drizzle.contracts.DaiMockedToken.address, Math.floor(Date.now() / 1000)]}
                             render={(value) => (

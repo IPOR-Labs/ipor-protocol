@@ -46,13 +46,9 @@ contract WarrenStorage is Ownable, IWarrenStorage {
 
     IIporConfiguration private _iporConfiguration;
 
-    //TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration)
-        external
-        onlyOwner
-    {
-        _iporConfiguration = initialIporConfiguration;
-    }
+	constructor (address initialIporConfiguration) {
+		_iporConfiguration = IIporConfiguration(initialIporConfiguration);
+	}    
 
     function getAssets() external view override returns (address[] memory) {
         return assets;
@@ -137,8 +133,8 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
         uint256 newExponentialWeightedMovingVariance;
-        // uint256 power = AmmMath.division((updateTimestamp-indexes[asset].blockTimestamp)*Constants.D18, iporAssetConfiguration.getDecayFactorValue());
-        // uint256 alpha = AmmMath.division(Constants.D18, Constants.E_VALUE ** power);
+        // uint256 power = IporMath.division((updateTimestamp-indexes[asset].blockTimestamp)*Constants.D18, iporAssetConfiguration.getDecayFactorValue());
+        // uint256 alpha = IporMath.division(Constants.D18, Constants.E_VALUE ** power);
         //TODO: figure out how to calculate alpha???
         uint256 alpha = iporAssetConfiguration.getDecayFactorValue();
 

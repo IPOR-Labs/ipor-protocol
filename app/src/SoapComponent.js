@@ -20,7 +20,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.UsdtMockedToken.address,
@@ -58,7 +58,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.UsdcMockedToken.address,
@@ -96,7 +96,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.DaiMockedToken.address,
@@ -137,7 +137,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.UsdtMockedToken.address,
@@ -175,7 +175,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.UsdcMockedToken.address,
@@ -213,7 +213,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.DaiMockedToken.address,
@@ -254,7 +254,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.UsdtMockedToken.address,
@@ -292,7 +292,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.UsdcMockedToken.address,
@@ -330,7 +330,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSoap"
                             methodArgs={[
                                 drizzle.contracts.DaiMockedToken.address,

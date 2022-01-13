@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../interfaces/IWarrenFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import {Constants} from "../libraries/Constants.sol";
-import {AmmMath} from "../libraries/AmmMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 import "../interfaces/IWarrenStorage.sol";
 
 contract WarrenFrontendDataProvider is IWarrenFrontendDataProvider {
@@ -26,7 +26,7 @@ contract WarrenFrontendDataProvider is IWarrenFrontendDataProvider {
             indexes[i] = IporFront(
                 IERC20Metadata(iporIndex.asset).symbol(),
                 iporIndex.indexValue,
-                AmmMath.division(
+                IporMath.division(
                     iporIndex.quasiIbtPrice,
                     Constants.YEAR_IN_SECONDS
                 ),

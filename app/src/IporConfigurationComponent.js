@@ -164,7 +164,7 @@ export default ({ drizzle, drizzleState }) => (
         <div className="row">
             <div className="col-md-2">Test Warren</div>
             <div className="col-md-10">
-                {drizzle.contracts.TestWarren.address}
+                {drizzle.contracts.ItfWarren.address}
             </div>
         </div>
         <div className="row">
@@ -174,7 +174,7 @@ export default ({ drizzle, drizzleState }) => (
         <div className="row">
             <div className="col-md-2">Test Milton</div>
             <div className="col-md-10">
-                {drizzle.contracts.TestMilton.address}
+                {drizzle.contracts.ItfMilton.address}
             </div>
         </div>
         <div className="row">
@@ -184,7 +184,7 @@ export default ({ drizzle, drizzleState }) => (
         <div className="row">
             <div className="col-md-2">Test Joseph</div>
             <div className="col-md-10">
-                {drizzle.contracts.TestJoseph.address}
+                {drizzle.contracts.ItfJoseph.address}
             </div>
         </div>
         <hr />

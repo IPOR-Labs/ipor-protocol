@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import { DataTypes } from "../libraries/types/DataTypes.sol";
 import { Errors } from "../Errors.sol";
 import { Constants } from "../libraries/Constants.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
+import { IporMath } from "../libraries/IporMath.sol";
 
 library IporLogic {
     function accrueQuasiIbtPrice(
@@ -45,7 +45,7 @@ library IporLogic {
         uint256 alpha
     ) internal pure returns (uint256) {
         return
-            AmmMath.division(
+            IporMath.division(
                 lastExponentialMovingAverage *
                     (Constants.D18 - alpha) +
                     indexValue *
@@ -64,13 +64,13 @@ library IporLogic {
 		require(alpha <= Constants.D18, Errors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
 
 		if (indexValue > exponentialMovingAverage) {
-			result = AmmMath.division(
+			result = IporMath.division(
 				alpha *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
 						+ (Constants.D18 - alpha) * (indexValue - exponentialMovingAverage) * (indexValue - exponentialMovingAverage)),
 					 Constants.D18 * Constants.D18 * Constants.D18 
 				 );
 		} else {
-			result = AmmMath.division(
+			result = IporMath.division(
 				alpha *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
 						+ (Constants.D18 - alpha) * (exponentialMovingAverage - indexValue) * (exponentialMovingAverage-indexValue)),
 					 Constants.D18 * Constants.D18 * Constants.D18 

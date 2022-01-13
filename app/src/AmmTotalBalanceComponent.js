@@ -33,7 +33,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="UsdtMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.TestMilton.address]}
+                            methodArgs={[drizzle.contracts.ItfMilton.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -67,7 +67,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="UsdcMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.TestMilton.address]}
+                            methodArgs={[drizzle.contracts.ItfMilton.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -101,7 +101,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DaiMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.TestMilton.address]}
+                            methodArgs={[drizzle.contracts.ItfMilton.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}

@@ -203,7 +203,7 @@ describe("MiltonStorage", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
@@ -211,7 +211,7 @@ describe("MiltonStorage", () => {
         await data.iporConfiguration.setMilton(data.milton.address);
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
@@ -275,7 +275,7 @@ describe("MiltonStorage", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
@@ -283,7 +283,7 @@ describe("MiltonStorage", () => {
         await data.iporConfiguration.setMilton(data.milton.address);
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_6DEC,
                 derivativeParams.openTimestamp
@@ -346,7 +346,7 @@ describe("MiltonStorage", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
@@ -354,7 +354,7 @@ describe("MiltonStorage", () => {
         await data.iporConfiguration.setMilton(data.milton.address);
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
@@ -384,7 +384,7 @@ describe("MiltonStorage", () => {
     const openPositionFunc = async (params) => {
         await data.milton
             .connect(params.from)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,

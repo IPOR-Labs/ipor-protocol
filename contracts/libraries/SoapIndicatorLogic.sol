@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import { DataTypes } from "../libraries/types/DataTypes.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
+import { IporMath } from "../libraries/IporMath.sol";
 import { Errors } from "../Errors.sol";
 import { Constants } from "../libraries/Constants.sol";
 
@@ -13,7 +13,7 @@ library SoapIndicatorLogic {
         uint256 timestamp
     ) internal pure returns (int256) {
         return
-            AmmMath.divisionInt(
+            IporMath.divisionInt(
                 calculateQuasiSoap(si, ibtPrice, timestamp),
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             );
@@ -87,7 +87,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal internal returns(DataTypes.SoapIndicator memory){
+    ) internal pure returns(DataTypes.SoapIndicator memory){
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
@@ -166,7 +166,7 @@ library SoapIndicatorLogic {
         uint256 derivativeFixedInterestRate
     ) internal pure returns (uint256) {
         return
-            AmmMath.division(
+            IporMath.division(
                 (si.totalNotional *
                     si.averageInterestRate +
                     derivativeNotional *
@@ -188,7 +188,7 @@ library SoapIndicatorLogic {
             return 0;
         } else {
             return
-                AmmMath.division(
+                IporMath.division(
                     (si.totalNotional *
                         si.averageInterestRate -
                         derivativeNotional *

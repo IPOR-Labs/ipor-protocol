@@ -4,60 +4,26 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 
 const {
-    USER_SUPPLY_6_DECIMALS,
-    USER_SUPPLY_18_DECIMALS,
     COLLATERALIZATION_FACTOR_6DEC,
     COLLATERALIZATION_FACTOR_18DEC,
     PERCENTAGE_3_18DEC,
-    PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_6_6DEC,
     PERCENTAGE_6_18DEC,
-    PERCENTAGE_10_18DEC,
-    PERCENTAGE_50_18DEC,
-    PERCENTAGE_100_18DEC,
     PERCENTAGE_120_18DEC,
-    PERCENTAGE_160_18DEC,
-    PERCENTAGE_365_18DEC,
-    USD_10_6DEC,
-    USD_10_18DEC,
-    USD_20_18DEC,
     USD_10_000_18DEC,
     USD_10_000_6DEC,
-    USD_10_400_18DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
-    USD_9063__63_18DEC,
-    USD_10_000_000_6DEC,
-
-    USD_10_000_000_18DEC,
-    TC_OPENING_FEE_6DEC,
-    TC_OPENING_FEE_18DEC,
-    TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_6DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_18DEC,
     ZERO,
-    SPECIFIC_INTEREST_AMOUNT_CASE_1,
-    SPECIFIC_INCOME_TAX_CASE_1,
     PERIOD_1_DAY_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_50_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
 const {
-    assertError,
     getLibraries,
-    getStandardDerivativeParamsDAI,
-    getStandardDerivativeParamsUSDT,
-    getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
@@ -83,7 +49,7 @@ describe("MiltonSoap", () => {
             userThree,
             liquidityProvider,
         ]);
-		await grantAllSpreadRoles(data, admin, userOne);
+        await grantAllSpreadRoles(data, admin, userOne);
         await setupDefaultSpreadConstants(data, userOne);
     });
     it("should calculate soap, no derivatives, soap equal 0", async () => {
@@ -119,7 +85,7 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             libraries
-        );        
+        );
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -148,14 +114,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -209,14 +175,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -271,14 +237,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -332,14 +298,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforOpenPosition,
                 derivativeParams.openTimestamp
@@ -395,14 +361,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforOpenPosition,
                 derivativeParams.openTimestamp
@@ -413,9 +379,7 @@ describe("MiltonSoap", () => {
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
 
         const expectedSoap = ZERO;
 
@@ -466,14 +430,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforOpenPosition,
                 derivativeParams.openTimestamp
@@ -487,16 +451,14 @@ describe("MiltonSoap", () => {
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_10_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -556,14 +518,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 firstDerivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 firstDerivativeParams.asset,
                 iporValueBeforOpenPosition,
                 openTimestamp
@@ -632,14 +594,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 firstDerivativeParams.asset,
                 BigInt(2) * USD_14_000_6DEC,
                 openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 firstDerivativeParams.asset,
                 iporValueBeforOpenPosition,
                 openTimestamp
@@ -719,28 +681,28 @@ describe("MiltonSoap", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeDAIParams.asset,
                 USD_14_000_18DEC,
                 openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeUSDTParams.asset,
                 USD_14_000_6DEC,
                 openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeDAIParams.asset,
                 iporValueBeforOpenPositionDAI,
                 derivativeDAIParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeUSDTParams.asset,
                 iporValueBeforOpenPositionUSDT,
                 derivativeUSDTParams.openTimestamp
@@ -823,14 +785,14 @@ describe("MiltonSoap", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 payFixDerivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 payFixDerivativeParams.asset,
                 iporValueBeforOpenPosition,
                 openTimestamp
@@ -842,9 +804,7 @@ describe("MiltonSoap", () => {
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(2, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(2, endTimestamp);
 
         //then
         const expectedSoap = BigInt("-68083420969966832317");
@@ -908,14 +868,14 @@ describe("MiltonSoap", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 payFixDerivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 payFixDerivativeParams.asset,
                 iporValueBeforOpenPosition,
                 openTimestamp
@@ -927,9 +887,7 @@ describe("MiltonSoap", () => {
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
 
         //then
         const expectedSoap = BigInt("-68083420969966791467");
@@ -1005,14 +963,14 @@ describe("MiltonSoap", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 payFixDerivativeDAIParams.asset,
                 USD_14_000_18DEC,
                 openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 recFixDerivativeUSDTParams.asset,
                 USD_14_000_6DEC,
                 openTimestamp
@@ -1020,14 +978,14 @@ describe("MiltonSoap", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 payFixDerivativeDAIParams.asset,
                 iporValueBeforOpenPositionDAI,
                 openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 recFixDerivativeUSDTParams.asset,
                 iporValueBeforOpenPositionUSDT,
                 openTimestamp
@@ -1039,7 +997,7 @@ describe("MiltonSoap", () => {
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 recFixDerivativeUSDTParams.asset,
                 USD_10_000_6DEC,
                 openTimestamp
@@ -1050,9 +1008,7 @@ describe("MiltonSoap", () => {
             PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(2, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(2, endTimestamp);
 
         //then
         const expectedSoapDAI = BigInt("-68083420969966832317");
@@ -1108,14 +1064,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -1123,14 +1079,14 @@ describe("MiltonSoap", () => {
         await openPositionFunc(derivativeParams);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueAfterOpenPosition,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_6_18DEC,
                 calculationTimestamp
@@ -1190,14 +1146,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_6DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -1207,14 +1163,14 @@ describe("MiltonSoap", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueAfterOpenPosition,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_6_6DEC,
                 calculationTimestamp
@@ -1278,14 +1234,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -1293,14 +1249,14 @@ describe("MiltonSoap", () => {
         await openPositionFunc(derivativeParams);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueAfterOpenPosition,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_6_18DEC,
                 calculationTimestamp25days
@@ -1376,7 +1332,7 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParamsFirst.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
@@ -1385,7 +1341,7 @@ describe("MiltonSoap", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
@@ -1452,7 +1408,7 @@ describe("MiltonSoap", () => {
             derivativeParams25days.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParamsFirst.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 openTimestamp
@@ -1461,7 +1417,7 @@ describe("MiltonSoap", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
@@ -1469,7 +1425,7 @@ describe("MiltonSoap", () => {
         await openPositionFunc(derivativeParamsFirst);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams25days.openTimestamp
@@ -1477,7 +1433,7 @@ describe("MiltonSoap", () => {
         await openPositionFunc(derivativeParams25days);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 calculationTimestamp50days
@@ -1544,7 +1500,7 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 USD_14_000_18DEC,
                 openTimestamp
@@ -1553,7 +1509,7 @@ describe("MiltonSoap", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -1565,7 +1521,7 @@ describe("MiltonSoap", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 calculationTimestamp25days
@@ -1577,7 +1533,7 @@ describe("MiltonSoap", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 calculationTimestamp50days
@@ -1646,14 +1602,14 @@ describe("MiltonSoap", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParamsFirst.asset,
                 USD_14_000_18DEC,
                 openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 firstUpdateIndexTimestamp
@@ -1663,7 +1619,7 @@ describe("MiltonSoap", () => {
         //when
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueAfterOpenPosition,
                 secondUpdateIndexTimestamp
@@ -1691,7 +1647,7 @@ describe("MiltonSoap", () => {
     const openPositionFunc = async (params) => {
         await data.milton
             .connect(params.from)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -1715,6 +1671,6 @@ describe("MiltonSoap", () => {
     const calculateSoap = async (params) => {
         return await data.milton
             .connect(params.from)
-            .test_calculateSoap(params.asset, params.calculateTimestamp);
+            .itfCalculateSoap(params.asset, params.calculateTimestamp);
     };
 });

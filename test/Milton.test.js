@@ -112,7 +112,7 @@ describe("Milton", () => {
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
             //when
-            data.milton.test_openPosition(
+            data.milton.itfOpenPosition(
                 timestamp,
                 asset,
                 collateral,
@@ -152,7 +152,7 @@ describe("Milton", () => {
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
             //when
-            data.milton.test_openPosition(
+            data.milton.itfOpenPosition(
                 timestamp,
                 asset,
                 collateral,
@@ -193,7 +193,7 @@ describe("Milton", () => {
 
         await assertError(
             //when
-            data.milton.test_openPosition(
+            data.milton.itfOpenPosition(
                 timestamp,
                 asset,
                 collateral,
@@ -234,7 +234,7 @@ describe("Milton", () => {
 
         await assertError(
             //when
-            data.milton.test_openPosition(
+            data.milton.itfOpenPosition(
                 timestamp,
                 asset,
                 collateral,
@@ -275,7 +275,7 @@ describe("Milton", () => {
 
         await assertError(
             //when
-            data.milton.test_openPosition(
+            data.milton.itfOpenPosition(
                 timestamp,
                 asset,
                 collateral,
@@ -313,7 +313,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -323,7 +323,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -338,7 +338,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -409,7 +409,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -420,7 +420,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayout,
                 params.openTimestamp
@@ -435,7 +435,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -672,7 +672,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
@@ -680,7 +680,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 BigInt("10000000000000000"),
                 params.openTimestamp
@@ -688,14 +688,14 @@ describe("Milton", () => {
         await openPositionFunc(params);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 BigInt("1600000000000000000"),
                 params.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 BigInt("50000000000000000"),
                 closePositionTimestamp
@@ -712,7 +712,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .test_closePosition(1, closePositionTimestamp),
+                .itfClosePosition(1, closePositionTimestamp),
             //then
             "IPOR_14"
         );
@@ -1299,14 +1299,14 @@ describe("Milton", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
@@ -1314,7 +1314,7 @@ describe("Milton", () => {
         await openPositionFunc(params);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
@@ -1322,12 +1322,12 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.warren
             .connect(userOne)
-            .test_updateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
         //when
         await assertError(
             //when
-            data.milton.connect(userThree).test_closePosition(1, endTimestamp),
+            data.milton.connect(userThree).itfClosePosition(1, endTimestamp),
             //then
             "IPOR_16"
         );
@@ -1502,14 +1502,14 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
@@ -1517,7 +1517,7 @@ describe("Milton", () => {
         await openPositionFunc(params);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
@@ -1525,12 +1525,12 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.warren
             .connect(userOne)
-            .test_updateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
         //when
         await assertError(
             //when
-            data.milton.connect(userThree).test_closePosition(1, endTimestamp),
+            data.milton.connect(userThree).itfClosePosition(1, endTimestamp),
             //then
             "IPOR_16"
         );
@@ -2165,14 +2165,14 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
@@ -2180,7 +2180,7 @@ describe("Milton", () => {
         await openPositionFunc(params);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
@@ -2188,12 +2188,12 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.warren
             .connect(userOne)
-            .test_updateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
         //when
         await assertError(
             //when
-            data.milton.connect(userThree).test_closePosition(1, endTimestamp),
+            data.milton.connect(userThree).itfClosePosition(1, endTimestamp),
             //then
             "IPOR_16"
         );
@@ -2275,14 +2275,14 @@ describe("Milton", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
@@ -2290,7 +2290,7 @@ describe("Milton", () => {
         await openPositionFunc(params);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
@@ -2298,12 +2298,12 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.warren
             .connect(userOne)
-            .test_updateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
         //when
         await assertError(
             //when
-            data.milton.connect(userThree).test_closePosition(1, endTimestamp),
+            data.milton.connect(userThree).itfClosePosition(1, endTimestamp),
             //then
             "IPOR_16"
         );
@@ -2575,14 +2575,14 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParamsFirst.asset,
                 USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
@@ -2593,10 +2593,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(closerUser)
-                .test_closePosition(
-                    0,
-                    openTimestamp + PERIOD_25_DAYS_IN_SECONDS
-                ),
+                .itfClosePosition(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
             //then
             "IPOR_22"
         );
@@ -2638,14 +2635,14 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParamsFirst.asset,
                 USD_14_000_18DEC + USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
@@ -2665,13 +2662,11 @@ describe("Milton", () => {
 
         let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
 
         await assertError(
             //when
-            data.milton.connect(closerUser).test_closePosition(1, endTimestamp),
+            data.milton.connect(closerUser).itfClosePosition(1, endTimestamp),
             //then
             "IPOR_23"
         );
@@ -2686,10 +2681,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(closerUser)
-                .test_closePosition(
-                    0,
-                    openTimestamp + PERIOD_25_DAYS_IN_SECONDS
-                ),
+                .itfClosePosition(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
             //then
             "IPOR_22"
         );
@@ -2731,14 +2723,14 @@ describe("Milton", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParamsFirst.asset,
                 USD_14_000_18DEC + USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
@@ -2760,9 +2752,7 @@ describe("Milton", () => {
         let expectedDerivativeId = BigInt(2);
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
 
         //then
         let actualDerivatives = await testData.miltonStorage.getPositions();
@@ -2817,14 +2807,14 @@ describe("Milton", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParamsFirst.asset,
                 USD_14_000_18DEC + USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
@@ -2846,9 +2836,7 @@ describe("Milton", () => {
         let expectedDerivativeId = BigInt(1);
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(2, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(2, endTimestamp);
 
         //then
         let actualDerivatives = await testData.miltonStorage.getPositions();
@@ -2961,7 +2949,7 @@ describe("Milton", () => {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
             await data.joseph
                 .connect(liquidityProvider)
-                .test_provideLiquidity(
+                .itfProvideLiquidity(
                     params.asset,
                     miltonBalanceBeforePayoutWad,
                     params.openTimestamp
@@ -2970,7 +2958,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 iporValueBeforeOpenPosition,
                 params.openTimestamp
@@ -2979,7 +2967,7 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 iporValueAfterOpenPosition,
                 params.openTimestamp
@@ -2988,16 +2976,14 @@ describe("Milton", () => {
         //Important difference in opposite to other standard test cases - ipor is calculated right before closing position.
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 iporValueAfterOpenPosition,
                 endTimestamp - 1
             );
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
 
         //then
         await assertExpectedValues(
@@ -3060,7 +3046,7 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -3071,7 +3057,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
@@ -3142,7 +3128,7 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -3154,7 +3140,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
@@ -3235,7 +3221,7 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -3247,7 +3233,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
@@ -3268,7 +3254,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 2,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
@@ -3334,7 +3320,7 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -3346,7 +3332,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
@@ -3367,13 +3353,13 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 2,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
         await data.milton
             .connect(userTwo)
-            .test_closePosition(
+            .itfClosePosition(
                 3,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
@@ -3438,14 +3424,14 @@ describe("Milton", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -3466,13 +3452,13 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 1,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 2,
                 derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS
             );
@@ -3533,14 +3519,14 @@ describe("Milton", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -3561,13 +3547,13 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 1,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 2,
                 derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS
             );
@@ -3628,14 +3614,14 @@ describe("Milton", () => {
         };
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 derivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
@@ -3659,7 +3645,7 @@ describe("Milton", () => {
 
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 1,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
@@ -3667,7 +3653,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userThree)
-            .test_closePosition(
+            .itfClosePosition(
                 2,
                 derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS
             );
@@ -4250,7 +4236,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4267,7 +4253,7 @@ describe("Milton", () => {
             miltonBalanceBeforePayoutWad + BigInt("28329511465603190429");
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -4276,7 +4262,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -4345,7 +4331,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4362,7 +4348,7 @@ describe("Milton", () => {
             miltonBalanceBeforePayoutWad + BigInt("29075024925224327019");
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -4371,7 +4357,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -4432,7 +4418,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4440,7 +4426,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
@@ -4448,7 +4434,7 @@ describe("Milton", () => {
 
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -4491,7 +4477,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4499,7 +4485,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
@@ -4507,7 +4493,7 @@ describe("Milton", () => {
 
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -4580,7 +4566,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4588,7 +4574,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
@@ -4596,7 +4582,7 @@ describe("Milton", () => {
 
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -4690,7 +4676,7 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4701,7 +4687,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .test_openPosition(
+                .itfOpenPosition(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
@@ -4744,7 +4730,7 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4755,7 +4741,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .test_openPosition(
+                .itfOpenPosition(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
@@ -4798,7 +4784,7 @@ describe("Milton", () => {
         };
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4806,7 +4792,7 @@ describe("Milton", () => {
 
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 USD_14_000_18DEC,
                 params.openTimestamp
@@ -4815,7 +4801,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -4885,7 +4871,7 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -4912,7 +4898,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -4921,7 +4907,7 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -4991,7 +4977,7 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -5008,7 +4994,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -5019,7 +5005,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .test_openPosition(
+                .itfOpenPosition(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
@@ -5068,7 +5054,7 @@ describe("Milton", () => {
             await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -5077,7 +5063,7 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -5091,7 +5077,7 @@ describe("Milton", () => {
         //First open position not exceeded liquidity utilization
         await data.milton
             .connect(userTwo)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -5106,7 +5092,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .test_openPosition(
+                .itfOpenPosition(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
@@ -5167,7 +5153,7 @@ describe("Milton", () => {
     //     let oldOpeningFeePercentage =
     //         await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
 
-    //     await data.warren.connect(userOne).test_updateIndex(
+    //     await data.warren.connect(userOne).itfUpdateIndex(
     //         params.asset,
     //         PERCENTAGE_3_18DEC,
     //         params.openTimestamp
@@ -5181,7 +5167,7 @@ describe("Milton", () => {
 
     //     await assertError(
     //         //when
-    //         data.milton.connect(userTwo).test_openPosition(
+    //         data.milton.connect(userTwo).itfOpenPosition(
     //             params.openTimestamp,
     //             params.asset,
     //             params.totalAmount,
@@ -5272,7 +5258,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -5281,7 +5267,7 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -5292,7 +5278,7 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .test_openPosition(
+                .itfOpenPosition(
                     params.openTimestamp,
                     liquidityProvider.address,
                     params.totalAmount,
@@ -5327,7 +5313,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
@@ -5335,7 +5321,7 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
         await data.joseph
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(
                 params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
@@ -5346,7 +5332,7 @@ describe("Milton", () => {
 
         //when
         let actualPositionValue = BigInt(
-            await data.milton.test_calculatePositionValue(
+            await data.milton.itfCalculatePositionValue(
                 params.openTimestamp + PERIOD_14_DAYS_IN_SECONDS,
                 derivativeItem.item
             )
@@ -5362,13 +5348,13 @@ describe("Milton", () => {
     const calculateSoap = async (params) => {
         return await data.milton
             .connect(params.from)
-            .test_calculateSoap(params.asset, params.calculateTimestamp);
+            .itfCalculateSoap(params.asset, params.calculateTimestamp);
     };
 
     const openPositionFunc = async (params) => {
         await data.milton
             .connect(params.from)
-            .test_openPosition(
+            .itfOpenPosition(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
@@ -5696,7 +5682,7 @@ describe("Milton", () => {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
             await data.joseph
                 .connect(liquidityProvider)
-                .test_provideLiquidity(
+                .itfProvideLiquidity(
                     params.asset,
                     providedLiquidityAmount,
                     params.openTimestamp
@@ -5705,7 +5691,7 @@ describe("Milton", () => {
 
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 iporValueBeforeOpenPosition,
                 params.openTimestamp
@@ -5713,7 +5699,7 @@ describe("Milton", () => {
         await openPositionFunc(params);
         await data.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 params.asset,
                 iporValueAfterOpenPosition,
                 params.openTimestamp
@@ -5722,9 +5708,7 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
 
         //when
-        await data.milton
-            .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
 
         //then
         await assertExpectedValues(

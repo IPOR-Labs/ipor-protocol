@@ -1,9 +1,9 @@
 import Warren from "./contracts/Warren.json";
-import TestWarren from "./contracts/TestWarren.json";
+import ItfWarren from "./contracts/ItfWarren.json";
 import WarrenStorage from "./contracts/WarrenStorage.json";
 import WarrenDevToolDataProvider from "./contracts/WarrenDevToolDataProvider.json";
 import Milton from "./contracts/Milton.json";
-import TestMilton from "./contracts/TestMilton.json";
+import ItfMilton from "./contracts/ItfMilton.json";
 import MiltonStorage from "./contracts/MiltonStorage.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
 import IporAssetConfigurationUsdt from "./contracts/IporAssetConfigurationUsdt";
@@ -17,7 +17,7 @@ import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider";
 import IporConfiguration from "./contracts/IporConfiguration";
 import Joseph from "./contracts/Joseph";
-import TestJoseph from "./contracts/TestJoseph";
+import ItfJoseph from "./contracts/ItfJoseph";
 const options = {
     web3: {
         fallback: {
@@ -31,13 +31,13 @@ const options = {
         MiltonFrontendDataProvider,
         IporConfiguration,
         Joseph,
-        TestJoseph,
+        ItfJoseph,
         Warren,
-        TestWarren,
+        ItfWarren,
         WarrenStorage,
         WarrenDevToolDataProvider,
         Milton,
-        TestMilton,
+        ItfMilton,
         MiltonStorage,
         DaiMockedToken,
         UsdtMockedToken,

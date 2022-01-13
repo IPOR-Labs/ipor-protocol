@@ -8,7 +8,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         MiltonSpreadModel(iporConfiguration)
     {}
 
-	function testCalculateSpreadPayFixed(
+    function testCalculateSpreadPayFixed(
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance,
@@ -19,20 +19,21 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 recFixedDerivativesBalance,
         int256 soap
     ) public view returns (uint256 spreadValue) {
-		return _calculateSpreadPayFixed(
-			 iporIndexValue,
-			 exponentialMovingAverage,
-			 exponentialWeightedMovingVariance,
-			 derivativeDeposit,
-			 derivativeOpeningFee,
-			 liquidityPool,
-			 payFixedDerivativesBalance,
-			 recFixedDerivativesBalance,
-			 soap
-		);
-	}
+        return
+            _calculateSpreadPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance,
+                derivativeDeposit,
+                derivativeOpeningFee,
+                liquidityPool,
+                payFixedDerivativesBalance,
+                recFixedDerivativesBalance,
+                soap
+            );
+    }
 
-	function testCalculateSpreadRecFixed(
+    function testCalculateSpreadRecFixed(
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance,
@@ -43,18 +44,19 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 recFixedDerivativesBalance,
         int256 soap
     ) public view returns (uint256 spreadValue) {
-		return _calculateSpreadRecFixed(
-			 iporIndexValue,
-			 exponentialMovingAverage,
-			 exponentialWeightedMovingVariance,
-			 derivativeDeposit,
-			 derivativeOpeningFee,
-			 liquidityPool,
-			 payFixedDerivativesBalance,
-			 recFixedDerivativesBalance,
-			 soap
-		);
-	}
+        return
+            _calculateSpreadRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance,
+                derivativeDeposit,
+                derivativeOpeningFee,
+                liquidityPool,
+                payFixedDerivativesBalance,
+                recFixedDerivativesBalance,
+                soap
+            );
+    }
 
     function calculateDemandComponentPayFixed(
         uint256 derivativeDeposit,

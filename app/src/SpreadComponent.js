@@ -20,7 +20,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSpread"
                             methodArgs={[
                                 drizzle.contracts.UsdtMockedToken.address,
@@ -60,7 +60,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSpread"
                             methodArgs={[
                                 drizzle.contracts.UsdcMockedToken.address,
@@ -100,7 +100,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSpread"
                             methodArgs={[
                                 drizzle.contracts.DaiMockedToken.address,
@@ -143,7 +143,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSpread"
                             methodArgs={[
                                 drizzle.contracts.UsdtMockedToken.address,
@@ -183,7 +183,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSpread"
                             methodArgs={[
                                 drizzle.contracts.UsdcMockedToken.address,
@@ -223,7 +223,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMilton"
                             method="calculateSpread"
                             methodArgs={[
                                 drizzle.contracts.DaiMockedToken.address,

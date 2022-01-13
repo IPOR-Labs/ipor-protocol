@@ -217,12 +217,12 @@ module.exports.prepareData = async (libraries, accounts) => {
     );
     await miltonDevToolDataProvider.deployed();
 
-    const TestWarren = await ethers.getContractFactory("TestWarren");
-    const warren = await TestWarren.deploy();
+    const ItfWarren = await ethers.getContractFactory("ItfWarren");
+    const warren = await ItfWarren.deploy(iporConfiguration.address);
     await warren.deployed();
 
-    const TestMilton = await ethers.getContractFactory("TestMilton");
-    const milton = await TestMilton.deploy();
+    const ItfMilton = await ethers.getContractFactory("ItfMilton");
+    const milton = await ItfMilton.deploy(iporConfiguration.address);
     await milton.deployed();
 
 	let miltonSpread = null;
@@ -238,17 +238,13 @@ module.exports.prepareData = async (libraries, accounts) => {
 
     await iporConfiguration.setMiltonSpreadModel(miltonSpread.address);
 
-    const TestJoseph = await ethers.getContractFactory("TestJoseph");
-    const joseph = await TestJoseph.deploy();
+    const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
+    const joseph = await ItfJoseph.deploy(iporConfiguration.address);
     await joseph.deployed();
 
     await iporConfiguration.setWarren(await warren.address);
     await iporConfiguration.setMilton(await milton.address);
-    await iporConfiguration.setJoseph(await joseph.address);
-
-    await warren.initialize(iporConfiguration.address);
-    await milton.initialize(iporConfiguration.address);
-    await joseph.initialize(iporConfiguration.address);
+    await iporConfiguration.setJoseph(await joseph.address);    
 
     let data = {
         warren,
@@ -280,11 +276,11 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             DerivativesView: lib.derivativesView.address,
         },
     });
-    const miltonStorage = await MiltonStorage.deploy();
+    const miltonStorage = await MiltonStorage.deploy(data.iporConfiguration.address);
     await miltonStorage.deployed();
 
     const WarrenStorage = await ethers.getContractFactory("WarrenStorage");
-    const warrenStorage = await WarrenStorage.deploy();
+    const warrenStorage = await WarrenStorage.deploy(data.iporConfiguration.address);
     await warrenStorage.deployed();
 
     await warrenStorage.addUpdater(accounts[1].address);
@@ -293,19 +289,14 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     await data.iporConfiguration.setMiltonStorage(miltonStorage.address);
     await data.iporConfiguration.setWarrenStorage(warrenStorage.address);
 
-    await miltonStorage.initialize(data.iporConfiguration.address);
-    await warrenStorage.initialize(data.iporConfiguration.address);
-
     const MiltonLPUtilizationStrategyCollateral =
         await ethers.getContractFactory(
             "MiltonLPUtilizationStrategyCollateral"
         );
     const miltonLPUtilizationStrategyCollateral =
-        await MiltonLPUtilizationStrategyCollateral.deploy();
+        await MiltonLPUtilizationStrategyCollateral.deploy(data.iporConfiguration.address);
     await miltonLPUtilizationStrategyCollateral.deployed();
-    await miltonLPUtilizationStrategyCollateral.initialize(
-        data.iporConfiguration.address
-    );
+    
     await data.iporConfiguration.setMiltonLPUtilizationStrategy(
         miltonLPUtilizationStrategyCollateral.address
     );

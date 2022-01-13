@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import "./types/DataTypes.sol";
-import "./AmmMath.sol";
+import "./IporMath.sol";
 import "./Constants.sol";
 import { Errors } from "../Errors.sol";
 
@@ -64,7 +64,7 @@ library DerivativeLogic {
             mdIbtPrice
         );
 
-        int256 positionValue = AmmMath.divisionInt(
+        int256 positionValue = IporMath.divisionInt(
             uint8(derivative.direction) ==
                 uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
                 ? int256(quasiIFloating) - int256(quasiIFixed)

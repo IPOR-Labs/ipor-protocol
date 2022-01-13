@@ -3,14 +3,14 @@ const { ethers } = require("hardhat");
 
 const ONE_18DEC = BigInt("1000000000000000000");
 
-describe("AmmMath", () => {
-    // let ammMath = null;
-    let ammMath;
+describe("IporMath", () => {
+    // let IporMath = null;
+    let IporMath;
 
     before(async () => {
-        AmmMathTest = await ethers.getContractFactory("MockAmmMath");
-        ammMath = await AmmMathTest.deploy();
-        await ammMath.deployed();
+        IporMathTest = await ethers.getContractFactory("MockIporMath");
+        IporMath = await IporMathTest.deploy();
+        await IporMath.deployed();
     });
 
     it("Calculate IbtQuantity case 1", async () => {
@@ -19,7 +19,7 @@ describe("AmmMath", () => {
         const ibtPrice = BigInt(100) * ONE_18DEC;
 
         //when
-        const ibtQuantity = await ammMath.calculateIbtQuantity(
+        const ibtQuantity = await IporMath.calculateIbtQuantity(
             notionalAmount,
             ibtPrice
         );
@@ -35,7 +35,7 @@ describe("AmmMath", () => {
         const percentage = (BigInt(6) * ONE_18DEC) / BigInt(100);
 
         //when
-        const actualIncomeTaxValue = await ammMath.calculateIncomeTax(
+        const actualIncomeTaxValue = await IporMath.calculateIncomeTax(
             profit,
             percentage
         );
@@ -55,7 +55,7 @@ describe("AmmMath", () => {
         const openingFeePercentage = BigInt(3) * BigInt(1e14);
 
         //when
-        const result = await ammMath.calculateDerivativeAmount(
+        const result = await IporMath.calculateDerivativeAmount(
             totalAmount,
             collateralizationFactor,
             liquidationDepositAmount,

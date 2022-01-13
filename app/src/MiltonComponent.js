@@ -28,10 +28,10 @@ export default ({drizzle, drizzleState}) => (
         <div class="row">
             {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
                 <div className="col-md-12">
-                    <strong>Open Position Form (TestMilton)</strong>
+                    <strong>Open Position Form (ItfMilton)</strong>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="TestMilton"
+                        contract="ItfMilton"
                         method="openPosition"/>
                 </div>
                 :
@@ -48,10 +48,10 @@ export default ({drizzle, drizzleState}) => (
         <div class="row">
             {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true" ?
                 <div className="col-md-4">
-                    <strong>Provide Liquidity (TestJoseph)</strong>
+                    <strong>Provide Liquidity (ItfJoseph)</strong>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="TestJoseph"
+                        contract="ItfJoseph"
                         method="provideLiquidity"/>
                 </div>
                 :
@@ -65,10 +65,10 @@ export default ({drizzle, drizzleState}) => (
             }
             {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true" ?
                 <div className="col-md-4">
-                    <strong>Redeem (TestJoseph)</strong>
+                    <strong>Redeem (ItfJoseph)</strong>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="TestJoseph"
+                        contract="ItfJoseph"
                         method="redeem"/>
                 </div>
                 :
@@ -82,10 +82,10 @@ export default ({drizzle, drizzleState}) => (
             }
             {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON === "true" ?
                 <div className="col-md-4">
-                    <strong>Close Position Form (TestMilton)</strong>
+                    <strong>Close Position Form (ItfMilton)</strong>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="TestMilton"
+                        contract="ItfMilton"
                         method="closePosition"/>
                 </div>
                 :

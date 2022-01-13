@@ -18,7 +18,7 @@ library Errors {
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_5";
 
     //@notice Liquidity Pool for given asset symbol not exists
-    string public constant MILTON_LIQUIDITY_POOL_NOT_EXISTS = "IPOR_7";
+    // string public constant MILTON_LIQUIDITY_POOL_NOT_EXISTS = "IPOR_7";
 
     //@notice Derivative direction not exists
     string public constant MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS = "IPOR_8";

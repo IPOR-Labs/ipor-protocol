@@ -12,8 +12,8 @@ export default ({drizzle, drizzleState}) => (
                 <ContractForm drizzle={drizzle} contract="Warren" method="updateIndex"/>
             </p>
             <p>
-                <strong>Add IPOR Index (TestWarren)</strong>
-                <ContractForm drizzle={drizzle} contract="TestWarren" method="updateIndex"/>
+                <strong>Add IPOR Index (ItfWarren)</strong>
+                <ContractForm drizzle={drizzle} contract="ItfWarren" method="updateIndex"/>
             </p>
             <p>
                 <strong>Add updater</strong>

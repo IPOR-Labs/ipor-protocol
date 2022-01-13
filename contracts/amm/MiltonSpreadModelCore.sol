@@ -2,13 +2,12 @@
 pragma solidity 0.8.9;
 
 import "../libraries/Constants.sol";
-import "../libraries/AmmMath.sol";
+import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
-import {AmmMath} from "../libraries/AmmMath.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import {Errors} from "../Errors.sol";
 
@@ -21,7 +20,7 @@ contract MiltonSpreadModelCore {
     {
         if (soap > 0) {
             return
-                AmmMath.division(
+                IporMath.division(
                     uint256(soap) * Constants.D18,
                     derivativesBalance
                 );
@@ -45,7 +44,7 @@ contract MiltonSpreadModelCore {
                  Constants.D18 -
                  (utilizationRateLegWithPosition 
 					 -
-                    AmmMath.division(
+                    IporMath.division(
                         lambda *
                             (utilizationRateLegWithoutPosition -
                                 utilizationRateLegWithPosition),
@@ -63,7 +62,7 @@ contract MiltonSpreadModelCore {
         uint256 derivativesBalance
     ) internal pure returns (uint256) {
         return
-            AmmMath.division(
+            IporMath.division(
                 (derivativesBalance + derivativeDeposit) * Constants.D18,
                 liquidityPoolBalance + derivativeOpeningFee
             );
@@ -76,7 +75,7 @@ contract MiltonSpreadModelCore {
         uint256 derivativesBalance
     ) internal pure returns (uint256) {
         return
-            AmmMath.division(
+            IporMath.division(
                 derivativesBalance * Constants.D18,
                 liquidityPoolBalance + derivativeOpeningFee
             );

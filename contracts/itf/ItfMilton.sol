@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "./Milton.sol";
+import "../amm/Milton.sol";
 
-//TODO:  move to mock/test/itf folder
-contract TestMilton is Milton {
-    //TODO: change name to openPosition, align ITF
-    function test_openPosition(
+contract ItfMilton is Milton {
+    constructor(address initialIporConfiguration)
+        Milton(initialIporConfiguration)
+    {}
+
+    function itfOpenPosition(
         uint256 openTimestamp,
         address asset,
         uint256 totalAmount,
@@ -25,15 +27,13 @@ contract TestMilton is Milton {
             );
     }
 
-    //TODO: change name to closePosition, align ITF
-    function test_closePosition(uint256 derivativeId, uint256 closeTimestamp)
+    function itfClosePosition(uint256 derivativeId, uint256 closeTimestamp)
         external
     {
         _closePosition(derivativeId, closeTimestamp);
     }
 
-    //TODO: change name to calculateSoap, align ITF
-    function test_calculateSoap(address asset, uint256 calculateTimestamp)
+    function itfCalculateSoap(address asset, uint256 calculateTimestamp)
         external
         view
         returns (
@@ -45,17 +45,18 @@ contract TestMilton is Milton {
         return _calculateSoap(asset, calculateTimestamp);
     }
 
-    //TODO: change name to calculateSpread, align ITF
-    function test_calculateSpread(address asset, uint256 calculateTimestamp)
+    function itfCalculateSpread(address asset, uint256 calculateTimestamp)
         external
         view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
-        (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(asset, calculateTimestamp);
+        (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(
+            asset,
+            calculateTimestamp
+        );
     }
 
-    //TODO: change name to calculatePositionValue, align ITF
-    function test_calculatePositionValue(
+    function itfCalculatePositionValue(
         uint256 calculateTimestamp,
         DataTypes.IporDerivative memory derivative
     ) external view returns (int256) {

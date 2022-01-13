@@ -5,9 +5,9 @@ const WarrenStorage = artifacts.require("WarrenStorage");
 const Milton = artifacts.require("Milton");
 const MiltonStorage = artifacts.require("MiltonStorage");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
-const TestWarren = artifacts.require("TestWarren");
-const TestMilton = artifacts.require("TestMilton");
-const TestJoseph = artifacts.require("TestJoseph");
+const ItfWarren = artifacts.require("ItfWarren");
+const ItfMilton = artifacts.require("ItfMilton");
+const ItfJoseph = artifacts.require("ItfJoseph");
 const IpToken = artifacts.require("IpToken");
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
@@ -26,7 +26,7 @@ const IporAssetConfigurationUsdc = artifacts.require(
 const IporAssetConfigurationDai = artifacts.require(
     "IporAssetConfigurationDai"
 );
-const AmmMath = artifacts.require("AmmMath");
+const IporMath = artifacts.require("IporMath");
 const IporConfiguration = artifacts.require("IporConfiguration");
 const MiltonDevToolDataProvider = artifacts.require(
     "MiltonDevToolDataProvider"
@@ -189,9 +189,9 @@ module.exports = async function (deployer, _network, addresses) {
     let mockedUsdc = null;
     let mockedDai = null;
     let milton = null;
-    let testMilton = null;
+    let itfMilton = null;
     let joseph = null;
-    let testJoseph = null;
+    let itfJoseph = null;
     let miltonStorage = null;
     let miltonFaucet = null;
     let iporAssetConfigurationUsdt = null;
@@ -199,18 +199,12 @@ module.exports = async function (deployer, _network, addresses) {
     let iporAssetConfigurationDai = null;
     let iporConfiguration = null;
 
-    await deployer.deploy(AmmMath);
+    await deployer.deploy(IporMath);
 
     await deployer.deploy(IporLogic);
 
     await deployer.link(IporLogic, Warren);
-    await deployer.link(IporLogic, WarrenStorage);
-
-    await deployer.deploy(WarrenStorage);
-    let warrenStorage = await WarrenStorage.deployed();
-
-    await deployer.deploy(Warren);
-    let warren = await Warren.deployed();
+    await deployer.link(IporLogic, WarrenStorage);    
 
     await deployer.deploy(DerivativeLogic);
 
@@ -230,19 +224,25 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(IporConfiguration);
     iporConfiguration = await IporConfiguration.deployed();
 
+	await deployer.deploy(WarrenStorage, iporConfiguration.address);
+    let warrenStorage = await WarrenStorage.deployed();
+
+    await deployer.deploy(Warren, iporConfiguration.address);
+    let warren = await Warren.deployed();
+
     await deployer.deploy(
         MiltonFrontendDataProvider,
         iporConfiguration.address
     );
 
-    // await deployer.link(AmmMath, WarrenFrontendDataProvider);
+    // await deployer.link(IporMath, WarrenFrontendDataProvider);
     await deployer.deploy(
         WarrenFrontendDataProvider,
         iporConfiguration.address
     );
 
-    // await deployer.link(AmmMath, MiltonLPUtilizationStrategyCollateral);
-    await deployer.deploy(MiltonLPUtilizationStrategyCollateral);
+    // await deployer.link(IporMath, MiltonLPUtilizationStrategyCollateral);
+    await deployer.deploy(MiltonLPUtilizationStrategyCollateral, iporConfiguration.address);
     let miltonLPUtilizationStrategyCollateral =
         await MiltonLPUtilizationStrategyCollateral.deployed();
 
@@ -500,7 +500,7 @@ module.exports = async function (deployer, _network, addresses) {
             WarrenDevToolDataProvider,
             iporConfiguration.address
         );
-		await deployer.deploy(
+        await deployer.deploy(
             MiltonDevToolDataProvider,
             iporConfiguration.address
         );
@@ -592,13 +592,13 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     if (_network !== "test") {
-        await deployer.deploy(Milton);
+        await deployer.deploy(Milton, iporConfiguration.address);
         milton = await Milton.deployed();
 
-        await deployer.deploy(Joseph);
+        await deployer.deploy(Joseph, iporConfiguration.address);
         joseph = await Joseph.deployed();
 
-        await deployer.deploy(MiltonStorage);
+        await deployer.deploy(MiltonStorage, iporConfiguration.address);
         miltonStorage = await MiltonStorage.deployed();
 
         //initial addresses setup
@@ -607,23 +607,23 @@ module.exports = async function (deployer, _network, addresses) {
         await iporConfiguration.setMiltonStorage(miltonStorage.address);
 
         if (isTestEnvironment === 1) {
-            //TestWarren
-            // await deployer.link(AmmMath, TestWarren);
-            await deployer.link(IporLogic, TestWarren);
-            await deployer.deploy(TestWarren, warrenStorage.address);
-            let testWarren = await TestWarren.deployed();
-            await warrenStorage.addUpdater(testWarren.address);
+            //ItfWarren
+            // await deployer.link(IporMath, ItfWarren);
+            await deployer.link(IporLogic, ItfWarren);
+            await deployer.deploy(ItfWarren, iporConfiguration.address);
+            let itfWarren = await ItfWarren.deployed();
+            await warrenStorage.addUpdater(itfWarren.address);
 
-            //TestMilton
-            // await deployer.link(AmmMath, TestMilton);
-            await deployer.link(DerivativeLogic, TestMilton);
-            await deployer.deploy(TestMilton);
-            testMilton = await TestMilton.deployed();
+            //ItfMilton
+            // await deployer.link(IporMath, ItfMilton);
+            await deployer.link(DerivativeLogic, ItfMilton);
+            await deployer.deploy(ItfMilton, iporConfiguration.address);
+            itfMilton = await ItfMilton.deployed();
 
-            //TestJoseph
-            // await deployer.link(AmmMath, TestJoseph);
-            await deployer.deploy(TestJoseph);
-            testJoseph = await TestJoseph.deployed();
+            //ItfJoseph
+            // await deployer.link(IporMath, ItfJoseph);
+            await deployer.deploy(ItfJoseph, iporConfiguration.address);
+            itfJoseph = await ItfJoseph.deployed();
 
             if (
                 _network === "develop" ||
@@ -634,7 +634,7 @@ module.exports = async function (deployer, _network, addresses) {
             ) {
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
                     //For IPOR Test Framework purposes
-                    await iporConfiguration.setMilton(testMilton.address);
+                    await iporConfiguration.setMilton(itfMilton.address);
                 } else {
                     //Web application, IPOR Dev Tool
                     await iporConfiguration.setMilton(milton.address);
@@ -642,7 +642,7 @@ module.exports = async function (deployer, _network, addresses) {
 
                 if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
                     //For IPOR Test Framework purposes
-                    await iporConfiguration.setJoseph(testJoseph.address);
+                    await iporConfiguration.setJoseph(itfJoseph.address);
                 } else {
                     //Web application, IPOR Dev Tool
                     await iporConfiguration.setJoseph(joseph.address);
@@ -651,18 +651,9 @@ module.exports = async function (deployer, _network, addresses) {
                 await iporConfiguration.setMilton(milton.address);
                 await iporConfiguration.setJoseph(joseph.address);
             }
-            await testWarren.initialize(iporConfiguration.address);
-            await testMilton.initialize(iporConfiguration.address);
-            await testJoseph.initialize(iporConfiguration.address);
         } else {
             await iporConfiguration.setMilton(milton.address);
         }
-
-        await warren.initialize(iporConfiguration.address);
-        await warrenStorage.initialize(iporConfiguration.address);
-        await milton.initialize(iporConfiguration.address);
-        await miltonStorage.initialize(iporConfiguration.address);
-        await joseph.initialize(iporConfiguration.address);
     }
 
     //Prepare tokens for initial accounts...
@@ -718,31 +709,31 @@ module.exports = async function (deployer, _network, addresses) {
             );
 
             if (isTestEnvironment === 1) {
-                mockedUsdt.approve(testMilton.address, totalSupply6Decimals, {
+                mockedUsdt.approve(itfMilton.address, totalSupply6Decimals, {
                     from: addresses[i],
                 });
-                mockedUsdc.approve(testMilton.address, totalSupply6Decimals, {
+                mockedUsdc.approve(itfMilton.address, totalSupply6Decimals, {
                     from: addresses[i],
                 });
-                mockedDai.approve(testMilton.address, totalSupply18Decimals, {
+                mockedDai.approve(itfMilton.address, totalSupply18Decimals, {
                     from: addresses[i],
                 });
 
-                mockedUsdt.approve(testJoseph.address, totalSupply6Decimals, {
+                mockedUsdt.approve(itfJoseph.address, totalSupply6Decimals, {
                     from: addresses[i],
                 });
-                mockedUsdc.approve(testJoseph.address, totalSupply6Decimals, {
+                mockedUsdc.approve(itfJoseph.address, totalSupply6Decimals, {
                     from: addresses[i],
                 });
-                mockedDai.approve(testJoseph.address, totalSupply18Decimals, {
+                mockedDai.approve(itfJoseph.address, totalSupply18Decimals, {
                     from: addresses[i],
                 });
 
                 console.log(
-                    `Account: ${addresses[i]} approve spender TestMilton ${testMilton.address} to spend tokens on behalf of user.`
+                    `Account: ${addresses[i]} approve spender ItfMilton ${itfMilton.address} to spend tokens on behalf of user.`
                 );
                 console.log(
-                    `Account: ${addresses[i]} approve spender TestJoseph ${testJoseph.address} to spend tokens on behalf of user.`
+                    `Account: ${addresses[i]} approve spender ItfJoseph ${itfJoseph.address} to spend tokens on behalf of user.`
                 );
             }
         }
@@ -751,9 +742,9 @@ module.exports = async function (deployer, _network, addresses) {
         await milton.authorizeJoseph(mockedUsdc.address);
         await milton.authorizeJoseph(mockedDai.address);
 
-        await testMilton.authorizeJoseph(mockedUsdt.address);
-        await testMilton.authorizeJoseph(mockedUsdc.address);
-        await testMilton.authorizeJoseph(mockedDai.address);
+        await itfMilton.authorizeJoseph(mockedUsdt.address);
+        await itfMilton.authorizeJoseph(mockedUsdc.address);
+        await itfMilton.authorizeJoseph(mockedDai.address);
 
         await miltonStorage.addAsset(mockedDai.address);
         await miltonStorage.addAsset(mockedUsdc.address);
@@ -774,8 +765,4 @@ module.exports = async function (deployer, _network, addresses) {
             );
         }
     }
-
-    await miltonLPUtilizationStrategyCollateral.initialize(
-        iporConfiguration.address
-    );
 };
