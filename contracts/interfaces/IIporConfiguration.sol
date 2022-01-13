@@ -41,7 +41,7 @@ interface IIporConfiguration {
 
     function getMiltonSpreadModel() external view returns (address);
 
-    function setMiltonSpreadModel(address MiltonSpreadModel) external;
+    function setMiltonSpreadModel(address miltonSpreadModel) external;
 
     function getIporAssetConfiguration(address asset)
         external

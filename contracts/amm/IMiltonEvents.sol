@@ -13,7 +13,6 @@ interface IMiltonEvents {
         uint256 collateral,
         DataTypes.IporDerivativeFee fee,
         uint256 collateralizationFactor,
-		
         uint256 notionalAmount,
         uint256 startingTimestamp,
         uint256 endingTimestamp,

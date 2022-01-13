@@ -6,19 +6,19 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
-import { Errors } from "../Errors.sol";
+import {Errors} from "../Errors.sol";
 
 contract IpToken is Ownable, IIpToken, ERC20 {
     using SafeERC20 for IERC20;
 
-    IIporConfiguration internal iporConfiguration;
+    IIporConfiguration internal _iporConfiguration;
 
     address private _underlyingAsset;
     uint8 private _decimals;
 
     modifier onlyJoseph() {
         require(
-			//TODO: avoid external call
+            //TODO: avoid external call
             msg.sender == iporConfiguration.getJoseph(),
             Errors.MILTON_CALLER_NOT_JOSEPH
         );
@@ -40,7 +40,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         external
         onlyOwner
     {
-        iporConfiguration = initialIporConfiguration;
+        _iporConfiguration = initialIporConfiguration;
     }
 
     function decimals() public view override returns (uint8) {

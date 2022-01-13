@@ -4,20 +4,20 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../interfaces/IWarrenDevToolDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
-import { Constants } from "../libraries/Constants.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
+import {Constants} from "../libraries/Constants.sol";
+import {AmmMath} from "../libraries/AmmMath.sol";
 import "../interfaces/IWarrenStorage.sol";
 
 contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
-    IIporConfiguration private immutable iporConfiguration;
+    IIporConfiguration private immutable _iporConfiguration;
 
     constructor(IIporConfiguration initialIporConfiguration) {
-        iporConfiguration = initialIporConfiguration;
+        _iporConfiguration = initialIporConfiguration;
     }
 
     function getIndexes() external view override returns (IporFront[] memory) {
         IWarrenStorage warrenStorage = IWarrenStorage(
-            iporConfiguration.getWarrenStorage()
+            _iporConfiguration.getWarrenStorage()
         );
         address[] memory assets = warrenStorage.getAssets();
         IporFront[] memory indexes = new IporFront[](assets.length);

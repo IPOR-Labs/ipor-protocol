@@ -9,9 +9,9 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
-import { Errors } from "../Errors.sol";
+import {Errors} from "../Errors.sol";
 import "../interfaces/IMiltonStorage.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
+import {AmmMath} from "../libraries/AmmMath.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
@@ -21,14 +21,14 @@ contract Joseph is Ownable, IJoseph {
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    IIporConfiguration internal iporConfiguration;
+    IIporConfiguration internal _iporConfiguration;
 
     //TODO: initialization only once
     function initialize(IIporConfiguration initialIporConfiguration)
         external
         onlyOwner
     {
-        iporConfiguration = initialIporConfiguration;
+        _iporConfiguration = initialIporConfiguration;
     }
 
     function provideLiquidity(address asset, uint256 liquidityAmount)
@@ -36,7 +36,7 @@ contract Joseph is Ownable, IJoseph {
         override
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
+                _iporConfiguration.getIporAssetConfiguration(asset)
             );
         _provideLiquidity(
             asset,
@@ -57,7 +57,7 @@ contract Joseph is Ownable, IJoseph {
         uint256 assetDecimals,
         uint256 timestamp
     ) internal {
-        uint256 exchangeRate = IMilton(iporConfiguration.getMilton())
+        uint256 exchangeRate = IMilton(_iporConfiguration.getMilton())
             .calculateExchangeRate(asset, timestamp);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
@@ -67,7 +67,7 @@ contract Joseph is Ownable, IJoseph {
             assetDecimals
         );
 
-        IMiltonStorage(iporConfiguration.getMiltonStorage()).addLiquidity(
+        IMiltonStorage(_iporConfiguration.getMiltonStorage()).addLiquidity(
             asset,
             wadLiquidityAmount
         );
@@ -78,14 +78,14 @@ contract Joseph is Ownable, IJoseph {
         //TODO: add from address to black list
         IERC20(asset).safeTransferFrom(
             msg.sender,
-            iporConfiguration.getMilton(),
+            _iporConfiguration.getMilton(),
             liquidityAmount
         );
 
         if (exchangeRate > 0) {
             IIpToken(
                 IIporAssetConfiguration(
-                    iporConfiguration.getIporAssetConfiguration(asset)
+                    _iporConfiguration.getIporAssetConfiguration(asset)
                 ).getIpToken()
             ).mint(
                     msg.sender,
@@ -103,7 +103,7 @@ contract Joseph is Ownable, IJoseph {
         uint256 timestamp
     ) internal {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
+                _iporConfiguration.getIporAssetConfiguration(asset)
             );
 
         require(
@@ -114,13 +114,13 @@ contract Joseph is Ownable, IJoseph {
             Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
 
-        uint256 exchangeRate = IMilton(iporConfiguration.getMilton())
+        uint256 exchangeRate = IMilton(_iporConfiguration.getMilton())
             .calculateExchangeRate(asset, timestamp);
 
         require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         require(
-            IMiltonStorage(iporConfiguration.getMiltonStorage())
+            IMiltonStorage(_iporConfiguration.getMiltonStorage())
                 .getBalance(asset)
                 .liquidityPool > ipTokenVolume,
             Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
@@ -140,13 +140,13 @@ contract Joseph is Ownable, IJoseph {
             ipTokenVolume
         );
 
-        IMiltonStorage(iporConfiguration.getMiltonStorage()).subtractLiquidity(
-            asset,
-            wadUnderlyingAmount
-        );
+        IMiltonStorage(_iporConfiguration.getMiltonStorage()).subtractLiquidity(
+                asset,
+                wadUnderlyingAmount
+            );
 
         IERC20(asset).safeTransferFrom(
-            iporConfiguration.getMilton(),
+            _iporConfiguration.getMilton(),
             msg.sender,
             underlyingAmount
         );

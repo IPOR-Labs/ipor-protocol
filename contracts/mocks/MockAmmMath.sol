@@ -6,16 +6,16 @@ import "../libraries/AmmMath.sol";
 
 contract MockAmmMath {
     //@notice Division with rounding up on last position, x, and y is with MD
-    function division(uint256 x, uint256 y) internal pure returns (uint256 z) {
+    function division(uint256 x, uint256 y) public pure returns (uint256 z) {
         return AmmMath.division(x, y);
     }
 
-    function divisionInt(int256 x, int256 y) internal pure returns (int256 z) {
+    function divisionInt(int256 x, int256 y) public pure returns (int256 z) {
         return AmmMath.divisionInt(x, y);
     }
 
     function convertWadToAssetDecimals(uint256 value, uint256 assetDecimals)
-        internal
+        public
         pure
         returns (uint256)
     {
@@ -23,7 +23,7 @@ contract MockAmmMath {
     }
 
     function convertToWad(uint256 value, uint256 assetDecimals)
-        internal
+        public
         pure
         returns (uint256)
     {
@@ -63,7 +63,7 @@ contract MockAmmMath {
             );
     }
 
-    function absoluteValue(int256 value) internal pure returns (uint256) {
+    function absoluteValue(int256 value) public pure returns (uint256) {
         return AmmMath.absoluteValue(value);
     }
 }

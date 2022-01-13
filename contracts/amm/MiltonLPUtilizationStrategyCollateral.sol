@@ -7,16 +7,16 @@ import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
+import {AmmMath} from "../libraries/AmmMath.sol";
 
 //@notice Milton utilization strategy which - for simplification - is based on Collateral
 //(collateral is a total balance of derivatives in Milton)
 contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
-    IIporConfiguration internal iporConfiguration;
+    IIporConfiguration internal _iporConfiguration;
 
     //TODO: initialization only once
     function initialize(IIporConfiguration initialIporConfiguration) external {
-        iporConfiguration = initialIporConfiguration;
+        _iporConfiguration = initialIporConfiguration;
     }
 
     function calculateTotalUtilizationRate(
@@ -25,7 +25,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         uint256 openingFee
     ) external view override returns (uint256) {
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporConfiguration.getMiltonStorage()
         );
         DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
             asset

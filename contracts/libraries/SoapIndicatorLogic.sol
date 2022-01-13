@@ -60,7 +60,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) pure internal returns(DataTypes.SoapIndicator memory) {
+    ) internal pure returns(DataTypes.SoapIndicator memory) {
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
             si,
@@ -87,7 +87,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) pure internal returns(DataTypes.SoapIndicator memory){
+    ) internal internal returns(DataTypes.SoapIndicator memory){
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp

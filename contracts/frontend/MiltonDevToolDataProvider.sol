@@ -8,10 +8,10 @@ import "../interfaces/IMiltonDevToolDataProvider.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
-    IIporConfiguration public immutable ADDRESSES_MANAGER;
+    IIporConfiguration private immutable _iporConfiguration;
 
     constructor(IIporConfiguration iporConfiguration) {
-        ADDRESSES_MANAGER = iporConfiguration;
+        _iporConfiguration = iporConfiguration;
     }
     function getMyIpTokenBalance(address asset)
         external
@@ -21,7 +21,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
     {
         IERC20 token = IERC20(
             IIporAssetConfiguration(
-                ADDRESSES_MANAGER.getIporAssetConfiguration(asset)
+                _iporConfiguration.getIporAssetConfiguration(asset)
             ).getIpToken()
         );
         return token.balanceOf(msg.sender);
@@ -44,7 +44,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         returns (uint256)
     {
         IERC20 token = IERC20(asset);
-        return token.allowance(msg.sender, ADDRESSES_MANAGER.getMilton());
+        return token.allowance(msg.sender, _iporConfiguration.getMilton());
     }
 
     function getMyAllowanceInJoseph(address asset)
@@ -54,7 +54,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         returns (uint256)
     {
         IERC20 token = IERC20(asset);
-        return token.allowance(msg.sender, ADDRESSES_MANAGER.getJoseph());
+        return token.allowance(msg.sender, _iporConfiguration.getJoseph());
     }
 
     function getPositions()
@@ -64,7 +64,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         returns (DataTypes.IporDerivative[] memory)
     {
         return
-            IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage()).getPositions();
+            IMiltonStorage(_iporConfiguration.getMiltonStorage()).getPositions();
     }
 
     function getMyPositions()
@@ -74,7 +74,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         returns (DataTypes.IporDerivative[] memory items)
     {
         return
-            IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage())
+            IMiltonStorage(_iporConfiguration.getMiltonStorage())
                 .getUserPositions(msg.sender);
     }
 

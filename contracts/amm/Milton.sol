@@ -36,11 +36,11 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     using DerivativeLogic for DataTypes.IporDerivative;
 
-    IIporConfiguration internal iporConfiguration;
+    IIporConfiguration internal _iporConfiguration;
 
     modifier onlyActiveDerivative(uint256 derivativeId) {
         require(
-            IMiltonStorage(iporConfiguration.getMiltonStorage())
+            IMiltonStorage(_iporConfiguration.getMiltonStorage())
                 .getDerivativeItem(derivativeId)
                 .item
                 .state == DataTypes.DerivativeState.ACTIVE,
@@ -51,7 +51,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     modifier onlyPublicationFeeTransferer() {
         require(
-            msg.sender == iporConfiguration.getMiltonPublicationFeeTransferer(),
+            msg.sender == _iporConfiguration.getMiltonPublicationFeeTransferer(),
             Errors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
         );
         _;
@@ -62,7 +62,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         external
         onlyOwner
     {
-        iporConfiguration = initialIporConfiguration;
+        _iporConfiguration = initialIporConfiguration;
     }
 
     function pause() external override onlyOwner {
@@ -84,7 +84,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         whenNotPaused
     {
         IERC20(asset).safeIncreaseAllowance(
-            iporConfiguration.getJoseph(),
+            _iporConfiguration.getJoseph(),
             Constants.MAX_VALUE
         );
     }
@@ -96,14 +96,14 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     {
         require(amount > 0, Errors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporConfiguration.getMiltonStorage()
         );
         require(
             amount <= miltonStorage.getBalance(asset).openingFee,
             Errors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
         );
         address charlieTreasurer = IIporAssetConfiguration(
-            iporConfiguration.getIporAssetConfiguration(asset)
+            _iporConfiguration.getIporAssetConfiguration(asset)
         ).getCharlieTreasurer();
         require(
             address(0) != charlieTreasurer,
@@ -190,11 +190,11 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         returns (uint256)
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
+                _iporConfiguration.getIporAssetConfiguration(asset)
             );
         IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporConfiguration.getMiltonStorage()
         );
         (, , int256 soap) = _calculateSoap(asset, calculateTimestamp);
         int256 balance = miltonStorage
@@ -224,7 +224,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
             .calculateInterest(
                 timestamp,
-                IWarren(iporConfiguration.getWarren()).calculateAccruedIbtPrice(
+                IWarren(_iporConfiguration.getWarren()).calculateAccruedIbtPrice(
                     derivative.asset,
                     timestamp
                 )
@@ -256,7 +256,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-            iporConfiguration.getMiltonSpreadModel()
+            _iporConfiguration.getMiltonSpreadModel()
         );
 
         try
@@ -291,13 +291,13 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             int256 soap
         )
     {
-        IWarren warren = IWarren(iporConfiguration.getWarren());
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
             asset,
             calculateTimestamp
         );
         (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporConfiguration.getMiltonStorage()
         ).calculateSoap(asset, accruedIbtPrice, calculateTimestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
@@ -312,7 +312,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     ) internal nonReentrant returns (uint256) {
         //TODO: consider remove this requirements
         require(
-            address(iporConfiguration) != address(0),
+            address(_iporConfiguration) != address(0),
             Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS
         );
         //TODO: consider remove this requirements
@@ -320,12 +320,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
         require(
-            iporConfiguration.assetSupported(asset) == 1,
+            _iporConfiguration.assetSupported(asset) == 1,
             Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
 
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
+                _iporConfiguration.getIporAssetConfiguration(asset)
             );
         require(
             address(iporAssetConfiguration) != address(0),
@@ -404,7 +404,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         require(
             IMiltonLPUtilizationStrategy(
-                iporConfiguration.getMiltonLPUtilizationStrategy()
+                _iporConfiguration.getMiltonLPUtilizationStrategy()
             ).calculateTotalUtilizationRate(
                     asset,
                     derivativeAmount.deposit,
@@ -417,7 +417,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         uint256 spreadValue;
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-            iporConfiguration.getMiltonSpreadModel()
+            _iporConfiguration.getMiltonSpreadModel()
         );
 
         if (direction == 0) {
@@ -437,7 +437,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         }
 
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporConfiguration.getMiltonStorage()
         );
 
         DataTypes.IporDerivative memory iporDerivative = DataTypes
@@ -517,7 +517,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         view
         returns (DataTypes.IporDerivativeIndicator memory indicator)
     {
-        IWarren warren = IWarren(iporConfiguration.getWarren());
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
         (
             uint256 iporIndexValue,
             ,
@@ -584,7 +584,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
 
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporConfiguration.getMiltonStorage()
         );
 
         DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
@@ -596,7 +596,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
 
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(
+                _iporConfiguration.getIporAssetConfiguration(
                     derivativeItem.item.asset
                 )
             );
