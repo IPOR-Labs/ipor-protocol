@@ -11,7 +11,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IWarren.sol";
 import {IporMath} from "../libraries/IporMath.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "./MiltonSpreadModelCore.sol";
 import "../configuration/MiltonSpreadConfiguration.sol";
 
@@ -23,6 +23,10 @@ contract MiltonSpreadModel is
     IIporConfiguration internal _iporConfiguration;
 
     constructor(address iporConfiguration) {
+		require(
+            address(iporConfiguration) != address(0),
+            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
+        );
         _iporConfiguration = IIporConfiguration(iporConfiguration);
     }
 
@@ -227,7 +231,7 @@ contract MiltonSpreadModel is
     ) internal view returns (uint256 spreadValue) {
         require(
             liquidityPool + derivativeOpeningFee > 0,
-            Errors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            IporErrors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
             derivativeDeposit,
@@ -259,7 +263,7 @@ contract MiltonSpreadModel is
     ) internal view returns (uint256 spreadValue) {
         require(
             liquidityPool + derivativeOpeningFee > 0,
-            Errors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            IporErrors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
             derivativeDeposit,

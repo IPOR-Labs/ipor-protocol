@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-library Errors {
+library IporErrors {
     //@notice The caller must be the Milton smart contract
     string public constant MILTON_CALLER_NOT_MILTON = "IPOR_1";
 
@@ -21,7 +21,7 @@ library Errors {
     // string public constant MILTON_LIQUIDITY_POOL_NOT_EXISTS = "IPOR_7";
 
     //@notice Derivative direction not exists
-    string public constant MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS = "IPOR_8";
+    // string public constant MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS = "IPOR_8";
 
     //@notice Maximum Slippage is too high
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_9";
@@ -112,8 +112,8 @@ library Errors {
     //@notice Incorrect IPOR Configuration address
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = "IPOR_32";
 
-    //@notice Incorrect IPOR Configuration address
-    string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS =
+    //@notice Incorrect IPOR Configuration address, address to global configuration
+    string public constant INCORRECT_IPOR_CONFIGURATION_ADDRESS =
         "IPOR_33";
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";

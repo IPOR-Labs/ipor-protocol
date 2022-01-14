@@ -457,7 +457,7 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        const actualSoapPf = await mockSoapIndicatorLogic.calculateSoap(
+        const actualSoapPf = await mockSoapIndicatorLogic.calculateSoapPayFixed(
             soapIndicator,
             ibtPrice,
             calculationTimestamp
@@ -480,7 +480,7 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        const actualSoapRf = await mockSoapIndicatorLogic.calculateSoap(
+        const actualSoapRf = await mockSoapIndicatorLogic.calculateSoapReceiveFixed(
             soapIndicator,
             ibtPrice,
             calculationTimestamp

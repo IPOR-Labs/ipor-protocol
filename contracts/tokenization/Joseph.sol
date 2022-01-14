@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
@@ -56,7 +56,7 @@ contract Joseph is Ownable, IJoseph {
         uint256 exchangeRate = IMilton(_iporConfiguration.getMilton())
             .calculateExchangeRate(asset, timestamp);
 
-        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadLiquidityAmount = IporMath.convertToWad(
             liquidityAmount,
@@ -107,19 +107,19 @@ contract Joseph is Ownable, IJoseph {
                 IIpToken(iporAssetConfiguration.getIpToken()).balanceOf(
                     msg.sender
                 ),
-            Errors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
+            IporErrors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
 
         uint256 exchangeRate = IMilton(_iporConfiguration.getMilton())
             .calculateExchangeRate(asset, timestamp);
 
-        require(exchangeRate > 0, Errors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         require(
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
                 .getBalance(asset)
                 .liquidityPool > ipTokenVolume,
-            Errors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
+            IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );
         uint256 wadUnderlyingAmount = IporMath.division(
             ipTokenVolume * exchangeRate,

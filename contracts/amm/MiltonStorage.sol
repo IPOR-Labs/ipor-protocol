@@ -28,36 +28,24 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivatives public derivatives;
 
-	constructor(address initialIporConfiguration) {
-		_iporConfiguration = IIporConfiguration(initialIporConfiguration);
-	}
+    constructor(address initialIporConfiguration) {
+        require(
+            address(initialIporConfiguration) != address(0),
+            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
+        );
+        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
+    }
 
     //@notice add asset address to MiltonStorage structures
     function addAsset(address asset) external override onlyOwner {
         require(
             _iporConfiguration.assetSupported(asset) == 1,
-            Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
 
         soapIndicators[asset] = DataTypes.TotalSoapIndicator(
-            DataTypes.SoapIndicator(
-                0,
-                DataTypes.DerivativeDirection.PayFixedReceiveFloating,
-                0,
-                0,
-                0,
-                0,
-                0
-            ),
-            DataTypes.SoapIndicator(
-                0,
-                DataTypes.DerivativeDirection.PayFloatingReceiveFixed,
-                0,
-                0,
-                0,
-                0,
-                0
-            )
+            DataTypes.SoapIndicator(0, 0, 0, 0, 0),
+            DataTypes.SoapIndicator(0, 0, 0, 0, 0)
         );
     }
 
@@ -92,7 +80,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         override
         onlyJoseph
     {
-        require(liquidityAmount > 0, Errors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
+        require(liquidityAmount > 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
         balances[asset].liquidityPool =
             balances[asset].liquidityPool +
             liquidityAmount;
@@ -127,14 +115,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     function updateStorageWhenOpenPosition(
-        DataTypes.IporDerivative memory iporDerivative
+        DataTypes.IporDerivative memory iporDerivative, uint256 openingAmount
     ) external override onlyMilton {
         _updateMiltonDerivativesWhenOpenPosition(iporDerivative);
         _updateBalancesWhenOpenPosition(
             iporDerivative.asset,
             iporDerivative.direction,
             iporDerivative.collateral,
-            iporDerivative.fee.openingAmount
+            openingAmount
         );
         _updateSoapIndicatorsWhenOpenPosition(iporDerivative);
     }
@@ -325,13 +313,13 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         //decrease from balances the liquidation deposit
         require(
             balances[derivativeItem.item.asset].liquidationDeposit >=
-                derivativeItem.item.fee.liquidationDepositAmount,
-            Errors
+                derivativeItem.item.liquidationDepositAmount,
+            IporErrors
                 .MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
         );
         balances[derivativeItem.item.asset].liquidationDeposit =
             balances[derivativeItem.item.asset].liquidationDeposit -
-            derivativeItem.item.fee.liquidationDepositAmount;
+            derivativeItem.item.liquidationDepositAmount;
 
         if (
             derivativeItem.item.direction ==
@@ -354,7 +342,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             if (user != derivativeItem.item.buyer) {
                 require(
                     closingTimestamp >= derivativeItem.item.endingTimestamp,
-                    Errors
+                    IporErrors
                         .MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY
                 );
             }
@@ -377,7 +365,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             require(
                 balances[derivativeItem.item.asset].liquidityPool >=
                     abspositionValue,
-                Errors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW
+                IporErrors
+                    .MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW
             );
 
             balances[derivativeItem.item.asset].liquidityPool =
@@ -409,11 +398,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     ) internal {
         require(
             derivativeItem.item.id > 0,
-            Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
         );
         require(
             derivativeItem.item.state != DataTypes.DerivativeState.INACTIVE,
-            Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
         uint256 idsIndexToDelete = derivativeItem.idsIndex;
 
@@ -458,83 +447,64 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     function _updateSoapIndicatorsWhenOpenPosition(
         DataTypes.IporDerivative memory iporDerivative
     ) internal {
-        DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
-            soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp,
-            soapIndicators[iporDerivative.asset].pf.direction,
+        if (iporDerivative.direction == 0) {
+            DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
+                soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp,
+                soapIndicators[iporDerivative.asset]
+                    .pf
+                    .quasiHypotheticalInterestCumulative,
+                soapIndicators[iporDerivative.asset].pf.totalNotional,
+                soapIndicators[iporDerivative.asset].pf.averageInterestRate,
+                soapIndicators[iporDerivative.asset].pf.totalIbtQuantity
+            );
+            pf.rebalanceWhenOpenPosition(
+                iporDerivative.startingTimestamp,
+                iporDerivative.notionalAmount,
+                iporDerivative.indicator.fixedInterestRate,
+                iporDerivative.indicator.ibtQuantity
+            );
+            soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp = pf
+                .rebalanceTimestamp;
             soapIndicators[iporDerivative.asset]
                 .pf
-                .quasiHypotheticalInterestCumulative,
-            soapIndicators[iporDerivative.asset].pf.totalNotional,
-            soapIndicators[iporDerivative.asset].pf.averageInterestRate,
-            soapIndicators[iporDerivative.asset].pf.totalIbtQuantity,
-            soapIndicators[iporDerivative.asset].pf.soap
-        );
+                .quasiHypotheticalInterestCumulative = pf
+                .quasiHypotheticalInterestCumulative;
+            soapIndicators[iporDerivative.asset].pf.totalNotional = pf
+                .totalNotional;
+            soapIndicators[iporDerivative.asset].pf.averageInterestRate = pf
+                .averageInterestRate;
+            soapIndicators[iporDerivative.asset].pf.totalIbtQuantity = pf
+                .totalIbtQuantity;
+        } else {
+            DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
+                soapIndicators[iporDerivative.asset].rf.rebalanceTimestamp,
+                soapIndicators[iporDerivative.asset]
+                    .rf
+                    .quasiHypotheticalInterestCumulative,
+                soapIndicators[iporDerivative.asset].rf.totalNotional,
+                soapIndicators[iporDerivative.asset].rf.averageInterestRate,
+                soapIndicators[iporDerivative.asset].rf.totalIbtQuantity
+            );
+            rf.rebalanceWhenOpenPosition(
+                iporDerivative.startingTimestamp,
+                iporDerivative.notionalAmount,
+                iporDerivative.indicator.fixedInterestRate,
+                iporDerivative.indicator.ibtQuantity
+            );
 
-        DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
-            soapIndicators[iporDerivative.asset].rf.rebalanceTimestamp,
-            soapIndicators[iporDerivative.asset].rf.direction,
+            soapIndicators[iporDerivative.asset].rf.rebalanceTimestamp = rf
+                .rebalanceTimestamp;
             soapIndicators[iporDerivative.asset]
                 .rf
-                .quasiHypotheticalInterestCumulative,
-            soapIndicators[iporDerivative.asset].rf.totalNotional,
-            soapIndicators[iporDerivative.asset].rf.averageInterestRate,
-            soapIndicators[iporDerivative.asset].rf.totalIbtQuantity,
-            soapIndicators[iporDerivative.asset].rf.soap
-        );
-
-        DataTypes.TotalSoapIndicator memory tsiMem = DataTypes
-            .TotalSoapIndicator(pf, rf);
-
-        // DataTypes.TotalSoapIndicator memory tsi = soapIndicators[iporDerivative.asset];
-
-        TotalSoapIndicatorLogic.rebalanceSoapWhenOpenPosition(
-            tsiMem,
-            iporDerivative.direction,
-            iporDerivative.startingTimestamp,
-            iporDerivative.notionalAmount,
-            iporDerivative.indicator.fixedInterestRate,
-            iporDerivative.indicator.ibtQuantity
-        );
-        //TODO: consider if it is required to rebalance both sides!
-        soapIndicators[iporDerivative.asset].pf.rebalanceTimestamp = tsiMem
-            .pf
-            .rebalanceTimestamp;
-        soapIndicators[iporDerivative.asset].pf.direction = tsiMem.pf.direction;
-        soapIndicators[iporDerivative.asset]
-            .pf
-            .quasiHypotheticalInterestCumulative = tsiMem
-            .pf
-            .quasiHypotheticalInterestCumulative;
-        soapIndicators[iporDerivative.asset].pf.totalNotional = tsiMem
-            .pf
-            .totalNotional;
-        soapIndicators[iporDerivative.asset].pf.averageInterestRate = tsiMem
-            .pf
-            .averageInterestRate;
-        soapIndicators[iporDerivative.asset].pf.totalIbtQuantity = tsiMem
-            .pf
-            .totalIbtQuantity;
-        soapIndicators[iporDerivative.asset].pf.soap = tsiMem.pf.soap;
-
-        soapIndicators[iporDerivative.asset].rf.rebalanceTimestamp = tsiMem
-            .rf
-            .rebalanceTimestamp;
-        soapIndicators[iporDerivative.asset].rf.direction = tsiMem.rf.direction;
-        soapIndicators[iporDerivative.asset]
-            .rf
-            .quasiHypotheticalInterestCumulative = tsiMem
-            .rf
-            .quasiHypotheticalInterestCumulative;
-        soapIndicators[iporDerivative.asset].rf.totalNotional = tsiMem
-            .rf
-            .totalNotional;
-        soapIndicators[iporDerivative.asset].rf.averageInterestRate = tsiMem
-            .rf
-            .averageInterestRate;
-        soapIndicators[iporDerivative.asset].rf.totalIbtQuantity = tsiMem
-            .rf
-            .totalIbtQuantity;
-        soapIndicators[iporDerivative.asset].rf.soap = tsiMem.rf.soap;
+                .quasiHypotheticalInterestCumulative = rf
+                .quasiHypotheticalInterestCumulative;
+            soapIndicators[iporDerivative.asset].rf.totalNotional = rf
+                .totalNotional;
+            soapIndicators[iporDerivative.asset].rf.averageInterestRate = rf
+                .averageInterestRate;
+            soapIndicators[iporDerivative.asset].rf.totalIbtQuantity = rf
+                .totalIbtQuantity;
+        }
     }
 
     function _updateSoapIndicatorsWhenClosePosition(
@@ -542,93 +512,82 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 closingTimestamp
     ) internal {
         // DataTypes.TotalSoapIndicator memory tsiStorage = soapIndicators[derivativeItem.item.asset];
+        if (derivativeItem.item.direction == 0) {
+            DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
+                soapIndicators[derivativeItem.item.asset].pf.rebalanceTimestamp,
+                soapIndicators[derivativeItem.item.asset]
+                    .pf
+                    .quasiHypotheticalInterestCumulative,
+                soapIndicators[derivativeItem.item.asset].pf.totalNotional,
+                soapIndicators[derivativeItem.item.asset]
+                    .pf
+                    .averageInterestRate,
+                soapIndicators[derivativeItem.item.asset].pf.totalIbtQuantity
+            );
 
-        DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
-            soapIndicators[derivativeItem.item.asset].pf.rebalanceTimestamp,
-            soapIndicators[derivativeItem.item.asset].pf.direction,
+            pf.rebalanceWhenClosePosition(
+                closingTimestamp,
+                derivativeItem.item.startingTimestamp,
+                derivativeItem.item.notionalAmount,
+                derivativeItem.item.indicator.fixedInterestRate,
+                derivativeItem.item.indicator.ibtQuantity
+            );
+
+            soapIndicators[derivativeItem.item.asset].pf.rebalanceTimestamp = pf
+                .rebalanceTimestamp;
             soapIndicators[derivativeItem.item.asset]
                 .pf
-                .quasiHypotheticalInterestCumulative,
-            soapIndicators[derivativeItem.item.asset].pf.totalNotional,
-            soapIndicators[derivativeItem.item.asset].pf.averageInterestRate,
-            soapIndicators[derivativeItem.item.asset].pf.totalIbtQuantity,
-            soapIndicators[derivativeItem.item.asset].pf.soap
-        );
+                .quasiHypotheticalInterestCumulative = pf
+                .quasiHypotheticalInterestCumulative;
+            soapIndicators[derivativeItem.item.asset].pf.totalNotional = pf
+                .totalNotional;
+            soapIndicators[derivativeItem.item.asset]
+                .pf
+                .averageInterestRate = pf.averageInterestRate;
+            soapIndicators[derivativeItem.item.asset].pf.totalIbtQuantity = pf
+                .totalIbtQuantity;
+        } else {
+            DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
+                soapIndicators[derivativeItem.item.asset].rf.rebalanceTimestamp,
+                soapIndicators[derivativeItem.item.asset]
+                    .rf
+                    .quasiHypotheticalInterestCumulative,
+                soapIndicators[derivativeItem.item.asset].rf.totalNotional,
+                soapIndicators[derivativeItem.item.asset]
+                    .rf
+                    .averageInterestRate,
+                soapIndicators[derivativeItem.item.asset].rf.totalIbtQuantity
+            );
 
-        DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
-            soapIndicators[derivativeItem.item.asset].rf.rebalanceTimestamp,
-            soapIndicators[derivativeItem.item.asset].rf.direction,
+            rf.rebalanceWhenClosePosition(
+                closingTimestamp,
+                derivativeItem.item.startingTimestamp,
+                derivativeItem.item.notionalAmount,
+                derivativeItem.item.indicator.fixedInterestRate,
+                derivativeItem.item.indicator.ibtQuantity
+            );
+
+            soapIndicators[derivativeItem.item.asset].rf.rebalanceTimestamp = rf
+                .rebalanceTimestamp;
+
             soapIndicators[derivativeItem.item.asset]
                 .rf
-                .quasiHypotheticalInterestCumulative,
-            soapIndicators[derivativeItem.item.asset].rf.totalNotional,
-            soapIndicators[derivativeItem.item.asset].rf.averageInterestRate,
-            soapIndicators[derivativeItem.item.asset].rf.totalIbtQuantity,
-            soapIndicators[derivativeItem.item.asset].rf.soap
-        );
-
-        DataTypes.TotalSoapIndicator memory tsiMem = DataTypes
-            .TotalSoapIndicator(pf, rf);
-
-        TotalSoapIndicatorLogic.rebalanceSoapWhenClosePosition(
-            tsiMem,
-            derivativeItem.item.direction,
-            closingTimestamp,
-            derivativeItem.item.startingTimestamp,
-            derivativeItem.item.notionalAmount,
-            derivativeItem.item.indicator.fixedInterestRate,
-            derivativeItem.item.indicator.ibtQuantity
-        );
-
-        soapIndicators[derivativeItem.item.asset].pf.rebalanceTimestamp = tsiMem
-            .pf
-            .rebalanceTimestamp;
-        soapIndicators[derivativeItem.item.asset].pf.direction = tsiMem
-            .pf
-            .direction;
-        soapIndicators[derivativeItem.item.asset]
-            .pf
-            .quasiHypotheticalInterestCumulative = tsiMem
-            .pf
-            .quasiHypotheticalInterestCumulative;
-        soapIndicators[derivativeItem.item.asset].pf.totalNotional = tsiMem
-            .pf
-            .totalNotional;
-        soapIndicators[derivativeItem.item.asset]
-            .pf
-            .averageInterestRate = tsiMem.pf.averageInterestRate;
-        soapIndicators[derivativeItem.item.asset].pf.totalIbtQuantity = tsiMem
-            .pf
-            .totalIbtQuantity;
-        soapIndicators[derivativeItem.item.asset].pf.soap = tsiMem.pf.soap;
-
-        soapIndicators[derivativeItem.item.asset].rf.rebalanceTimestamp = tsiMem
-            .rf
-            .rebalanceTimestamp;
-        soapIndicators[derivativeItem.item.asset].rf.direction = tsiMem
-            .rf
-            .direction;
-        soapIndicators[derivativeItem.item.asset]
-            .rf
-            .quasiHypotheticalInterestCumulative = tsiMem
-            .rf
-            .quasiHypotheticalInterestCumulative;
-        soapIndicators[derivativeItem.item.asset].rf.totalNotional = tsiMem
-            .rf
-            .totalNotional;
-        soapIndicators[derivativeItem.item.asset]
-            .rf
-            .averageInterestRate = tsiMem.rf.averageInterestRate;
-        soapIndicators[derivativeItem.item.asset].rf.totalIbtQuantity = tsiMem
-            .rf
-            .totalIbtQuantity;
-        soapIndicators[derivativeItem.item.asset].rf.soap = tsiMem.rf.soap;
+                .quasiHypotheticalInterestCumulative = rf
+                .quasiHypotheticalInterestCumulative;
+            soapIndicators[derivativeItem.item.asset].rf.totalNotional = rf
+                .totalNotional;
+            soapIndicators[derivativeItem.item.asset]
+                .rf
+                .averageInterestRate = rf.averageInterestRate;
+            soapIndicators[derivativeItem.item.asset].rf.totalIbtQuantity = rf
+                .totalIbtQuantity;
+        }
     }
 
     modifier onlyMilton() {
         require(
             msg.sender == _iporConfiguration.getMilton(),
-            Errors.MILTON_CALLER_NOT_MILTON
+            IporErrors.MILTON_CALLER_NOT_MILTON
         );
         _;
     }
@@ -636,7 +595,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     modifier onlyJoseph() {
         require(
             msg.sender == _iporConfiguration.getJoseph(),
-            Errors.MILTON_CALLER_NOT_JOSEPH
+            IporErrors.MILTON_CALLER_NOT_JOSEPH
         );
         _;
     }

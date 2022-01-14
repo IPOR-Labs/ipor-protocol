@@ -26,9 +26,6 @@ library DataTypes {
     //soap payfixed and soap recfixed indicators
     struct SoapIndicator {
         uint256 rebalanceTimestamp;
-        //TODO: don't have to store - use two separate structure - one for pay fixe, one for rec fixed
-        //leg
-        DataTypes.DerivativeDirection  direction;
         //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
         uint256 quasiHypotheticalInterestCumulative;
         //N_0
@@ -37,9 +34,6 @@ library DataTypes {
         uint256 averageInterestRate;
         //TT
         uint256 totalIbtQuantity;
-        //TODO: don't have to store this - can be calculated in runtime
-        //SOAP
-        int256 soap;
     }
 
     //@notice IPOR Structure
@@ -72,19 +66,22 @@ library DataTypes {
         ACTIVE
     }
 
+	struct BeforeOpenSwapStruct {
+		uint256 wadTotalAmount;
+		uint256 collateral;
+		uint256 notional;
+		uint256 openingFee;
+		uint256 liquidationDepositAmount;
+		uint256 decimals;
+		uint256 iporPublicationFeeAmount;
+	}
+
     struct IporDerivativeInterest {
         //TODO: reduce to one field the last one;
         uint256 quasiInterestFixed;
         uint256 quasiInterestFloating;
         int256 positionValue;
     }
-
-    struct IporDerivativeAmount {
-        uint256 deposit;
-        uint256 notional;
-        uint256 openingFee;
-    }
-
     struct IporDerivativeIndicator {		
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
@@ -95,20 +92,6 @@ library DataTypes {
         //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
     }
-
-    struct IporDerivativeFee {
-        //@notice amount
-        uint256 liquidationDepositAmount;
-        //TODO: probably don't have to store, add to event
-        //@notice amount calculated based on deposit amount
-        uint256 openingAmount;
-        //TODO: probably don't have to store, add to event
-        uint256 iporPublicationAmount;
-        //TODO: probably don't have to store, add to event
-        //@notice value are basis points
-        uint256 spreadValue;
-    }
-
     struct MiltonDerivatives {
         uint256 lastDerivativeId;
         mapping(uint256 => DataTypes.MiltonDerivativeItem) items;
@@ -138,9 +121,7 @@ library DataTypes {
         uint8 direction;
         //@notice Collateral
         uint256 collateral;
-        IporDerivativeFee fee;
-        uint256 collateralizationFactor;
-        //TODO: remove from storage, can be calculated
+		uint256 liquidationDepositAmount;
         //@notice Notional Principal Amount
         uint256 notionalAmount;
         //@notice Starting time of this Derivative

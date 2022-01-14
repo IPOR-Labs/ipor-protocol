@@ -5,7 +5,7 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/IporMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { Errors } from "../Errors.sol";
+import { IporErrors } from "../IporErrors.sol";
 import { DataTypes } from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
@@ -67,7 +67,7 @@ contract IporAssetConfiguration is
         _asset = asset;
         _ipToken = ipToken;
         uint8 decimals = ERC20(asset).decimals();
-        require(decimals > 0, Errors.CONFIG_ASSET_DECIMALS_TOO_LOW);
+        require(decimals > 0, IporErrors.CONFIG_ASSET_DECIMALS_TOO_LOW);
         _decimals = decimals;
 
         _maxSlippagePercentage = 100 * Constants.D18;
@@ -115,7 +115,7 @@ contract IporAssetConfiguration is
     {
         require(
             newOpeningFeePercentage <= Constants.D18,
-            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
+            IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         _openingFeePercentage = newOpeningFeePercentage;
         emit OpeningFeePercentageSet(newOpeningFeePercentage);
@@ -131,7 +131,7 @@ contract IporAssetConfiguration is
     {
         require(
             newIncomeTaxPercentage <= Constants.D18,
-            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
+            IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         _incomeTaxPercentage = newIncomeTaxPercentage;
         emit IncomeTaxPercentageSet(newIncomeTaxPercentage);
@@ -151,7 +151,7 @@ contract IporAssetConfiguration is
     ) external override onlyRole(_OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE) {
         require(
             newOpeningFeeForTreasuryPercentage <= Constants.D18,
-            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
+            IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
         _openingFeeForTreasuryPercentage = newOpeningFeeForTreasuryPercentage;
         emit OpeningFeeForTreasuryPercentageSet(
@@ -215,7 +215,7 @@ contract IporAssetConfiguration is
     {
         require(
             newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
-            Errors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
+            IporErrors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
         _liquidityPoolMaxUtilizationPercentage = newLiquidityPoolMaxUtilizationPercentage;
@@ -300,7 +300,7 @@ contract IporAssetConfiguration is
         override
         onlyRole(_CHARLIE_TREASURER_ROLE)
     {
-        require(newCharlieTreasurer != address(0), Errors.WRONG_ADDRESS);
+        require(newCharlieTreasurer != address(0), IporErrors.WRONG_ADDRESS);
         _charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }
@@ -314,7 +314,7 @@ contract IporAssetConfiguration is
         override
         onlyRole(_TREASURE_TREASURER_ROLE)
     {
-        require(newTreasureTreasurer != address(0), Errors.WRONG_ADDRESS);
+        require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
         _treasureTreasurer = newTreasureTreasurer;
         emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
     }
@@ -339,7 +339,7 @@ contract IporAssetConfiguration is
     {
         require(
             newAssetManagementVaultAddress != address(0),
-            Errors.WRONG_ADDRESS
+            IporErrors.WRONG_ADDRESS
         );
         _assetManagementVault = newAssetManagementVaultAddress;
         emit AssetManagementVaultUpdated(
@@ -360,7 +360,7 @@ contract IporAssetConfiguration is
     {
         require(
             newWadDecayFactorValue <= Constants.D18,
-            Errors.CONFIG_DECAY_FACTOR_TOO_HIGH
+            IporErrors.CONFIG_DECAY_FACTOR_TOO_HIGH
         );
         _wadDecayFactorValue = newWadDecayFactorValue;
         emit DecayFactorValueUpdated(_asset, newWadDecayFactorValue);

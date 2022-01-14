@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import { DataTypes } from "../libraries/types/DataTypes.sol";
-import { Errors } from "../Errors.sol";
+import { IporErrors } from "../IporErrors.sol";
 import { Constants } from "../libraries/Constants.sol";
 
 library DerivativesView {

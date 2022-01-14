@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import { DataTypes } from "../libraries/types/DataTypes.sol";
-import { Errors } from "../Errors.sol";
+import { IporErrors } from "../IporErrors.sol";
 import { Constants } from "../libraries/Constants.sol";
 import "./SoapIndicatorLogic.sol";
 
@@ -16,8 +16,8 @@ library TotalSoapIndicatorLogic {
     ) internal pure returns (int256 soapPf, int256 soapRf) {
 		
         return (
-            soapPf = SoapIndicatorLogic.calculateSoap(tsi.pf, ibtPrice, calculationTimestamp),
-            soapRf = SoapIndicatorLogic.calculateSoap(tsi.rf, ibtPrice, calculationTimestamp)
+            soapPf = SoapIndicatorLogic.calculateSoapPayFixed(tsi.pf, ibtPrice, calculationTimestamp),
+            soapRf = SoapIndicatorLogic.calculateSoapReceiveFixed(tsi.rf, ibtPrice, calculationTimestamp)
         );
     }
 
@@ -27,9 +27,39 @@ library TotalSoapIndicatorLogic {
         uint256 ibtPrice
     ) internal pure returns (int256 soapPf, int256 soapRf) {
         return (
-            soapPf = tsi.pf.calculateQuasiSoap(ibtPrice, calculationTimestamp),
-            soapRf = tsi.rf.calculateQuasiSoap(ibtPrice, calculationTimestamp)
+            soapPf = tsi.pf.calculateQuasiSoapPayFixed(ibtPrice, calculationTimestamp),
+            soapRf = tsi.rf.calculateQuasiSoapReceiveFixed(ibtPrice, calculationTimestamp)
         );
+    }
+
+	function rebalanceSoapWhenOpenSwapPayFixed(
+        DataTypes.TotalSoapIndicator memory tsi,
+        uint256 rebalanceTimestamp,
+        uint256 derivativeNotional,
+        uint256 derivativeFixedInterestRate,
+        uint256 derivativeIbtQuantity
+    ) internal pure {        
+		tsi.pf.rebalanceWhenOpenPosition(
+			rebalanceTimestamp,
+			derivativeNotional,
+			derivativeFixedInterestRate,
+			derivativeIbtQuantity
+		);        
+    }
+
+	function rebalanceSoapWhenOpenSwapReceiveFixed(
+        DataTypes.TotalSoapIndicator memory tsi,
+        uint256 rebalanceTimestamp,
+        uint256 derivativeNotional,
+        uint256 derivativeFixedInterestRate,
+        uint256 derivativeIbtQuantity
+    ) internal pure {        
+		tsi.rf.rebalanceWhenOpenPosition(
+			rebalanceTimestamp,
+			derivativeNotional,
+			derivativeFixedInterestRate,
+			derivativeIbtQuantity
+		);        
     }
 
     function rebalanceSoapWhenOpenPosition(

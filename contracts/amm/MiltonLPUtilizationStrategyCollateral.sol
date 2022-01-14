@@ -8,6 +8,7 @@ import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {IporMath} from "../libraries/IporMath.sol";
+import {IporErrors} from "../IporErrors.sol";
 
 //@notice Milton utilization strategy which - for simplification - is based on Collateral
 //(collateral is a total balance of derivatives in Milton)
@@ -15,6 +16,10 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
     IIporConfiguration internal _iporConfiguration;
 
 	constructor(address initialIporConfiguration) {
+		require(
+            address(initialIporConfiguration) != address(0),
+            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
+        );
         _iporConfiguration = IIporConfiguration(initialIporConfiguration);
 	}
 

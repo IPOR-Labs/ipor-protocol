@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarrenStorage.sol";
 import {Constants} from "../libraries/Constants.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "../libraries/IporLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IIporConfiguration.sol";
@@ -71,13 +71,13 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     ) external override onlyUpdater {
         require(
             assetList.length == indexValues.length,
-            Errors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
+            IporErrors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
         );
         for (uint256 i = 0; i < assetList.length; i++) {
             //TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
             require(
                 _iporConfiguration.assetSupported(assetList[i]) == 1,
-                Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+                IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
             );
             _updateIndex(assetList[i], indexValues[i], updateTimestamp);
         }
@@ -88,7 +88,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     }
 
     function removeUpdater(address updater) external override onlyOwner {
-        require(updater != address(0), Errors.WARREN_WRONG_UPDATER_ADDRESS);
+        require(updater != address(0), IporErrors.WARREN_WRONG_UPDATER_ADDRESS);
         for (uint256 i = 0; i < updaters.length; i++) {
             if (updaters[i] == updater) {
                 delete updaters[i];
@@ -102,7 +102,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     }
 
     function _addUpdater(address updater) internal {
-        require(updater != address(0), Errors.WARREN_WRONG_UPDATER_ADDRESS);
+        require(updater != address(0), IporErrors.WARREN_WRONG_UPDATER_ADDRESS);
         bool updaterExists = false;
         for (uint256 i = 0; i < updaters.length; i++) {
             if (updaters[i] == updater) {
@@ -189,7 +189,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
                 break;
             }
         }
-        require(allowed, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
+        require(allowed, IporErrors.WARREN_CALLER_NOT_WARREN_UPDATER);
         _;
     }
 }

@@ -11,44 +11,11 @@ const {
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
-    PERCENTAGE_6_6DEC,
-    PERCENTAGE_6_18DEC,
-    PERCENTAGE_10_18DEC,
-    PERCENTAGE_50_18DEC,
-    PERCENTAGE_100_18DEC,
-    PERCENTAGE_120_18DEC,
-    PERCENTAGE_160_18DEC,
-    PERCENTAGE_365_18DEC,
-    USD_10_6DEC,
-    USD_10_18DEC,
-    USD_20_18DEC,
     USD_10_000_18DEC,
     USD_10_000_6DEC,
-    USD_10_400_18DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
-    USD_9063__63_18DEC,
-    USD_10_000_000_6DEC,
-
-    USD_10_000_000_18DEC,
-    TC_OPENING_FEE_6DEC,
-    TC_OPENING_FEE_18DEC,
-    TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_6DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_18DEC,
-    ZERO,
-    SPECIFIC_INTEREST_AMOUNT_CASE_1,
-    SPECIFIC_INCOME_TAX_CASE_1,
-    PERIOD_1_DAY_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS,
-    PERIOD_28_DAYS_IN_SECONDS,
-    PERIOD_50_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
 const {
@@ -56,13 +23,9 @@ const {
     getLibraries,
     grantAllSpreadRoles,
     setupTokenUsdtInitialValuesForUsers,
-    getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    setupIpTokenDaiInitialValues,
-    setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupDefaultSpreadConstants,
 } = require("./Utils");
@@ -130,7 +93,7 @@ describe("MiltonStorage", () => {
         testData.miltonStorage
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenPosition(
-                await preprareDerivativeStruct18DecSimpleCase1(testData)
+                await preprareDerivativeStruct18DecSimpleCase1(testData), BigInt("1500000000000000000000")
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -158,7 +121,7 @@ describe("MiltonStorage", () => {
             //when
             testData.miltonStorage
                 .connect(userThree)
-                .callStatic.updateStorageWhenOpenPosition(derivativeStruct),
+                .updateStorageWhenOpenPosition(derivativeStruct, BigInt("1500000000000000000000")),
             //then
             "IPOR_1"
         );
@@ -196,7 +159,6 @@ describe("MiltonStorage", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -217,7 +179,7 @@ describe("MiltonStorage", () => {
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -267,8 +229,7 @@ describe("MiltonStorage", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: 0,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -289,7 +250,7 @@ describe("MiltonStorage", () => {
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -339,7 +300,6 @@ describe("MiltonStorage", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -360,7 +320,7 @@ describe("MiltonStorage", () => {
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -381,16 +341,27 @@ describe("MiltonStorage", () => {
         );
     });
 
-    const openPositionFunc = async (params) => {
+    const openSwapPayFixed = async (params) => {
         await data.milton
             .connect(params.from)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
+            );
+    };
+
+    const openSwapReceiveFixed = async (params) => {
+        await data.milton
+            .connect(params.from)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.asset,
+                params.totalAmount,
+                params.slippageValue,
+                params.collateralizationFactor
             );
     };
 
@@ -405,14 +376,8 @@ describe("MiltonStorage", () => {
             asset: testData.tokenDai.address,
             direction: 0,
             collateral: BigInt("1000000000000000000000"),
-            fee: {
-                liquidationDepositAmount: BigInt("20000000000000000000"),
-                openingAmount: 123,
-                iporPublicationAmount: 123,
-                spreadValue: 123,
-            },
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            notionalAmount: 123,
+            liquidationDepositAmount: BigInt("20000000000000000000"),
+            notionalAmount: BigInt("50000000000000000000000"),
             startingTimestamp: openingTimestamp,
             endingTimestamp: closePositionTimestamp,
             indicator: {

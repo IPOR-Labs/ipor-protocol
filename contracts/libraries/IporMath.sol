@@ -78,8 +78,12 @@ library IporMath {
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeePercentage
-    ) internal pure returns (DataTypes.IporDerivativeAmount memory) {
-        uint256 collateral = division(
+    ) internal pure returns (
+		uint256 collateral,
+		uint256 notional,
+		uint256 openingFee) {
+
+        collateral = division(
             (totalAmount -
                 liquidationDepositAmount -
                 iporPublicationFeeAmount) * Constants.D18,
@@ -89,20 +93,14 @@ library IporMath {
                     Constants.D18
                 )
         );
-        uint256 notional = division(
+        notional = division(
             collateralizationFactor * collateral,
             Constants.D18
         );
-        uint256 openingFeeAmount = division(
+        openingFee = division(
             notional * openingFeePercentage,
             Constants.D18
         );
-        return
-            DataTypes.IporDerivativeAmount(
-                collateral,
-                notional,
-                openingFeeAmount
-            );
     }
 
     function absoluteValue(int256 value) internal pure returns (uint256) {

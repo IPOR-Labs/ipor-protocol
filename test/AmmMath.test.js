@@ -70,7 +70,7 @@ describe("IporMath", () => {
         expect(result.openingFee, "Wrong Opening Fee Amount").to.be.equal(
             "150000000000000000000"
         );
-        expect(result.deposit, "Wrong Collateral").to.be.equal(
+        expect(result.collateral, "Wrong Collateral").to.be.equal(
             "10000000000000000000000"
         );
     });

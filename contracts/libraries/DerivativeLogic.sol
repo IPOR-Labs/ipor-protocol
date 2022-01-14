@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "./types/DataTypes.sol";
 import "./IporMath.sol";
 import "./Constants.sol";
-import { Errors } from "../Errors.sol";
+import { IporErrors } from "../IporErrors.sol";
 
 library DerivativeLogic {
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
@@ -38,7 +38,7 @@ library DerivativeLogic {
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
             closingTimestamp >= derivative.startingTimestamp,
-            Errors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP
+            IporErrors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP
         );
 
         uint256 calculatedPeriodInSeconds = 0;

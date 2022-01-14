@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 
 contract IpToken is Ownable, IIpToken, ERC20 {
     using SafeERC20 for IERC20;
@@ -20,7 +20,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         require(
             //TODO: avoid external call
             msg.sender == _iporConfiguration.getJoseph(),
-            Errors.MILTON_CALLER_NOT_JOSEPH
+            IporErrors.MILTON_CALLER_NOT_JOSEPH
         );
         _;
     }
@@ -30,7 +30,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         string memory aTokenName,
         string memory aTokenSymbol
     ) ERC20(aTokenName, aTokenSymbol) {
-        require(address(0) != underlyingAsset, Errors.WRONG_ADDRESS);
+        require(address(0) != underlyingAsset, IporErrors.WRONG_ADDRESS);
         _underlyingAsset = underlyingAsset;
         _decimals = 18;
     }
@@ -48,7 +48,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
     }
 
     function mint(address user, uint256 amount) external override onlyJoseph {
-        require(amount > 0, Errors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
+        require(amount > 0, IporErrors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(user, amount);
         emit Transfer(address(0), user, amount);
         emit Mint(user, amount);
@@ -59,7 +59,7 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         address receiverOfUnderlying,
         uint256 amount
     ) external override onlyJoseph {
-        require(amount > 0, Errors.MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW);
+        require(amount > 0, IporErrors.MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(user, amount);
 
         emit Transfer(user, address(0), amount);

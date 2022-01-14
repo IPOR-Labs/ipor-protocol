@@ -585,13 +585,12 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 BigInt("40000000000000000000"),
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //when
@@ -667,13 +666,12 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 BigInt("40000000"),
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //when
@@ -731,13 +729,12 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 amount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         await data.joseph
@@ -809,13 +806,12 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 amount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //after this withdraw initial exchange rate is 1,5
@@ -923,13 +919,12 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 amount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //after this withdraw initial exchange rate is 1,5
@@ -1041,13 +1036,12 @@ describe("Joseph", () => {
         //open position to have something in Liquidity Pool
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 amount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //after this withdraw initial exchange rate is 1,5

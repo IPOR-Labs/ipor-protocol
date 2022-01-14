@@ -65,13 +65,13 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 derivativeItem.item.asset,
                 derivativeItem.item.collateral,
                 derivativeItem.item.notionalAmount,
-                derivativeItem.item.collateralizationFactor,
+				IporMath.division(derivativeItem.item.notionalAmount * Constants.D18, derivativeItem.item.collateral),
                 derivativeItem.item.direction,
                 derivativeItem.item.indicator.fixedInterestRate,
                 milton.calculatePositionValue(derivativeItem.item),
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.endingTimestamp,
-                derivativeItem.item.fee.liquidationDepositAmount
+                derivativeItem.item.liquidationDepositAmount
             );
         }
 

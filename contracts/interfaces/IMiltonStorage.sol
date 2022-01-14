@@ -26,7 +26,7 @@ interface IMiltonStorage {
     ) external;
 
     function updateStorageWhenOpenPosition(
-        DataTypes.IporDerivative memory iporDerivative
+        DataTypes.IporDerivative memory iporDerivative, uint256 openingAmount
     ) external;
 
     function updateStorageWhenClosePosition(

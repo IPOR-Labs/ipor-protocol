@@ -3,31 +3,40 @@ pragma solidity 0.8.9;
 
 import { DataTypes } from "../libraries/types/DataTypes.sol";
 import { IporMath } from "../libraries/IporMath.sol";
-import { Errors } from "../Errors.sol";
+import { IporErrors } from "../IporErrors.sol";
 import { Constants } from "../libraries/Constants.sol";
 
 library SoapIndicatorLogic {
-    function calculateSoap(
+    function calculateSoapPayFixed(
         DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
     ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
-                calculateQuasiSoap(si, ibtPrice, timestamp),
+                calculateQuasiSoapPayFixed(si, ibtPrice, timestamp),
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             );
     }
 
-    //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
-    function calculateQuasiSoap(
+	function calculateSoapReceiveFixed(
         DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
     ) internal pure returns (int256) {
-        if (
-            si.direction == DataTypes.DerivativeDirection.PayFixedReceiveFloating
-        ) {
+        return
+            IporMath.divisionInt(
+                calculateQuasiSoapReceiveFixed(si, ibtPrice, timestamp),
+                Constants.WAD_P2_YEAR_IN_SECONDS_INT
+            );
+    }
+
+	function calculateQuasiSoapPayFixed(
+        DataTypes.SoapIndicator memory si,
+        uint256 ibtPrice,
+        uint256 timestamp
+    ) internal pure returns (int256) {
+
             return
                 int256(
                     si.totalIbtQuantity *
@@ -39,7 +48,15 @@ library SoapIndicatorLogic {
                         Constants.WAD_P2_YEAR_IN_SECONDS +
                         calculateQuasiHyphoteticalInterestTotal(si, timestamp)
                 );
-        } else {
+        
+    }
+    //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
+    function calculateQuasiSoapReceiveFixed(
+        DataTypes.SoapIndicator memory si,
+        uint256 ibtPrice,
+        uint256 timestamp
+    ) internal pure returns (int256) {
+        
             return
                 int256(
                     si.totalNotional *
@@ -51,7 +68,7 @@ library SoapIndicatorLogic {
                         ibtPrice *
                         Constants.WAD_YEAR_IN_SECONDS
                 );
-        }
+        
     }
 
     function rebalanceWhenOpenPosition(
@@ -126,7 +143,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
-            Errors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP
+            IporErrors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP
         );
         return
             derivativeNotional *
@@ -151,7 +168,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             timestamp >= si.rebalanceTimestamp,
-            Errors
+            IporErrors
                 .MILTON_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP
         );
         return
@@ -182,7 +199,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             derivativeNotional <= si.totalNotional,
-            Errors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
+            IporErrors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
         );
         if (derivativeNotional == si.totalNotional) {
             return 0;

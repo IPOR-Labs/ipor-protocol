@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
@@ -173,7 +173,7 @@ contract IporConfiguration is
     {
         require(
             supportedAssets[asset] == 1,
-            Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
         iporAssetConfigurations[asset] = iporConfig;
         emit IporAssetConfigurationAddressUpdated(asset, iporConfig);
@@ -188,7 +188,7 @@ contract IporConfiguration is
         override
         onlyRole(_IPOR_ASSETS_ROLE)
     {
-        require(asset != address(0), Errors.WRONG_ADDRESS);
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
         bool assetExists = false;
         for (uint256 i = 0; i < assets.length; i++) {
             if (assets[i] == asset) {
@@ -207,7 +207,7 @@ contract IporConfiguration is
         override
         onlyRole(_IPOR_ASSETS_ROLE)
     {
-        require(asset != address(0), Errors.WRONG_ADDRESS);
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
         for (uint256 i = 0; i < assets.length; i++) {
             if (assets[i] == asset) {
                 delete assets[i];

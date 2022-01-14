@@ -52,8 +52,11 @@ contract MockIporMath {
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeePercentage
-    ) public pure returns (DataTypes.IporDerivativeAmount memory) {
-        return
+    ) public pure returns (
+		uint256 collateral,
+		uint256 notional,
+		uint256 openingFee) {
+        (collateral,notional,openingFee) =
             IporMath.calculateDerivativeAmount(
                 totalAmount,
                 collateralizationFactor,

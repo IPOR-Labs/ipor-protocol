@@ -27,13 +27,6 @@ const prepareDerivativeCase1 = async (fixedInterestRate, admin) => {
         fixedInterestRate: fixedInterestRate,
     };
 
-    const liquidationDepositAmount = BigInt("20") * ONE_18DEC;
-    const fee = {
-        liquidationDepositAmount, //liquidation deposit amount
-        openingAmount: BigInt("99700000000000000000"), //opening fee amount
-        iporPublicationAmount: BigInt("10"), // * ONE_18DEC, //ipor publication amount        
-        spreadValue: BigInt("10000000000000000"), // spread percentege
-    };
     const timeStamp = Date.now();
     const notionalAmount = collateral * collateralizationFactor;
     const derivative = {
@@ -43,7 +36,7 @@ const prepareDerivativeCase1 = async (fixedInterestRate, admin) => {
         asset: daiMockedToken.address,
         direction: BigInt("0"), //Pay Fixed, Receive Floating (long position)
         collateral: BigInt("0"),
-        fee,
+        liquidationDepositAmount: BigInt("20") * ONE_18DEC,
         collateralizationFactor: BigInt("0"),
         notionalAmount,
         startingTimestamp: BigInt(timeStamp),

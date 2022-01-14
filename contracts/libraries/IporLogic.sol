@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import { DataTypes } from "../libraries/types/DataTypes.sol";
-import { Errors } from "../Errors.sol";
+import { IporErrors } from "../IporErrors.sol";
 import { Constants } from "../libraries/Constants.sol";
 import { IporMath } from "../libraries/IporMath.sol";
 
@@ -31,7 +31,7 @@ library IporLogic {
     ) internal pure returns (uint256) {
         require(
             accrueTimestamp >= indexTimestamp,
-            Errors.WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
+            IporErrors.WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
         return
             quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
@@ -61,7 +61,7 @@ library IporLogic {
         uint256 alpha
     ) internal pure returns (uint256 result) {		
 
-		require(alpha <= Constants.D18, Errors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
+		require(alpha <= Constants.D18, IporErrors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
 
 		if (indexValue > exponentialMovingAverage) {
 			result = IporMath.division(
@@ -77,7 +77,7 @@ library IporLogic {
 				 );
 		}
 
-		require(result <= Constants.D18, Errors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE);
+		require(result <= Constants.D18, IporErrors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE);
         
     }
 }

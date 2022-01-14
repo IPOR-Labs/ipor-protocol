@@ -11,12 +11,15 @@ interface IMiltonEvents {
         address asset,
         DataTypes.DerivativeDirection direction,
         uint256 collateral,
-        DataTypes.IporDerivativeFee fee,
-        uint256 collateralizationFactor,
+		uint256 liquidationDepositAmount,
         uint256 notionalAmount,
         uint256 startingTimestamp,
         uint256 endingTimestamp,
-        DataTypes.IporDerivativeIndicator indicator
+        DataTypes.IporDerivativeIndicator indicator,
+		uint256 openingAmount,
+		uint256 iporPublicationAmount,
+		uint256 spreadValue
+		
     );
 
     // @notice Close derivative position

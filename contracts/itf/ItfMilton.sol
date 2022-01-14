@@ -8,22 +8,37 @@ contract ItfMilton is Milton {
         Milton(initialIporConfiguration)
     {}
 
-    function itfOpenPosition(
+    function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint256 collateralizationFactor,
-        uint8 direction
+        uint256 collateralizationFactor
     ) external returns (uint256) {
         return
-            _openPosition(
+            _openSwapPayFixed(
                 openTimestamp,
                 asset,
                 totalAmount,
                 maximumSlippage,
-                collateralizationFactor,
-                direction
+                collateralizationFactor
+            );
+    }
+
+	function itfOpenSwapReceiveFixed(
+        uint256 openTimestamp,
+        address asset,
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) external returns (uint256) {
+        return
+            _openSwapReceiveFixed(
+                openTimestamp,
+                asset,
+                totalAmount,
+                maximumSlippage,
+                collateralizationFactor
             );
     }
 

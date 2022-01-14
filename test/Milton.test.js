@@ -7,8 +7,7 @@ const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_18_DECIMALS,
     COLLATERALIZATION_FACTOR_18DEC,
-    PERCENTAGE_3_18DEC,
-    PERCENTAGE_3_6DEC,
+    PERCENTAGE_3_18DEC,    
     PERCENTAGE_5_18DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_10_18DEC,
@@ -107,18 +106,16 @@ describe("Milton", () => {
         const asset = testData.tokenDai.address;
         const collateral = 0;
         const slippageValue = 3;
-        const direction = 0;
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
             //when
-            data.milton.itfOpenPosition(
+            data.milton.itfOpenSwapPayFixed(
                 timestamp,
                 asset,
                 collateral,
                 slippageValue,
-                collateralizationFactor,
-                direction
+                collateralizationFactor
             ),
             //then
             "IPOR_4"
@@ -147,18 +144,16 @@ describe("Milton", () => {
         const asset = testData.tokenDai.address;
         const collateral = BigInt("30000000000000000001");
         const slippageValue = 0;
-        const direction = 0;
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
             //when
-            data.milton.itfOpenPosition(
+            data.milton.itfOpenSwapPayFixed(
                 timestamp,
                 asset,
                 collateral,
                 slippageValue,
-                collateralizationFactor,
-                direction
+                collateralizationFactor
             ),
             //then
             "IPOR_5"
@@ -187,19 +182,17 @@ describe("Milton", () => {
         const asset = testData.tokenDai.address;
         const collateral = BigInt("30000000000000000001");
         const slippageValue = BigInt("100000000000000000001");
-        const direction = 0;
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
         await assertError(
             //when
-            data.milton.itfOpenPosition(
+            data.milton.itfOpenSwapPayFixed(
                 timestamp,
                 asset,
                 collateral,
                 slippageValue,
-                collateralizationFactor,
-                direction
+                collateralizationFactor
             ),
             //then
             "IPOR_9"
@@ -228,19 +221,17 @@ describe("Milton", () => {
         const asset = testData.tokenUsdt.address;
         const collateral = BigInt("30000001");
         const slippageValue = BigInt("100000000000000000001");
-        const direction = 0;
-        const collateralizationFactor = USD_10_6DEC;
+        const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
         await assertError(
             //when
-            data.milton.itfOpenPosition(
+            data.milton.itfOpenSwapPayFixed(
                 timestamp,
                 asset,
                 collateral,
                 slippageValue,
-                collateralizationFactor,
-                direction
+                collateralizationFactor
             ),
             //then
             "IPOR_9"
@@ -269,19 +260,17 @@ describe("Milton", () => {
         const asset = testData.tokenDai.address;
         const collateral = BigInt("1000000000000000000000001");
         const slippageValue = 3;
-        const direction = 0;
         const collateralizationFactor = BigInt(10000000000000000000);
         const timestamp = Math.floor(Date.now() / 1000);
 
         await assertError(
             //when
-            data.milton.itfOpenPosition(
+            data.milton.itfOpenSwapPayFixed(
                 timestamp,
                 asset,
                 collateral,
                 slippageValue,
-                collateralizationFactor,
-                direction
+                collateralizationFactor
             ),
             //then
             "IPOR_10"
@@ -338,13 +327,12 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //then
@@ -435,13 +423,12 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //then
@@ -619,7 +606,7 @@ describe("Milton", () => {
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             testData.tokenUsdt.address,
-            USD_10_6DEC,
+            USD_10_18DEC,
             0,
             userTwo,
             userTwo,
@@ -663,7 +650,6 @@ describe("Milton", () => {
             totalAmount: BigInt("10000000000000000000000"), //10 000 USD
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -685,7 +671,7 @@ describe("Milton", () => {
                 BigInt("10000000000000000"),
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+        await openSwapPayFixed(params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -790,7 +776,7 @@ describe("Milton", () => {
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             testData.tokenUsdt.address,
-            USD_10_6DEC,
+            USD_10_18DEC,
             0,
             userTwo,
             userTwo,
@@ -881,7 +867,7 @@ describe("Milton", () => {
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             testData.tokenUsdt.address,
-            USD_10_6DEC,
+            USD_10_18DEC,
             0,
             userTwo,
             userTwo,
@@ -1019,7 +1005,7 @@ describe("Milton", () => {
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             testData.tokenUsdt.address,
-            USD_10_6DEC,
+            USD_10_18DEC,
             0,
             userTwo,
             userTwo,
@@ -1111,7 +1097,7 @@ describe("Milton", () => {
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             testData.tokenUsdt.address,
-            USD_10_6DEC,
+            USD_10_18DEC,
             0,
             userTwo,
             userTwo,
@@ -1293,7 +1279,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -1311,7 +1296,7 @@ describe("Milton", () => {
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+        await openSwapPayFixed(params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1495,7 +1480,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -1514,7 +1498,7 @@ describe("Milton", () => {
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+        await openSwapPayFixed(params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2157,8 +2141,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
-            collateralizationFactor: USD_10_18DEC,
-            direction: 1,
+            collateralizationFactor: USD_10_18DEC,            
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -2177,7 +2160,7 @@ describe("Milton", () => {
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+        await openSwapReceiveFixed(params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2269,7 +2252,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: 1,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -2287,7 +2269,7 @@ describe("Milton", () => {
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+        await openSwapReceiveFixed(params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2558,7 +2540,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
@@ -2569,7 +2550,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2587,7 +2567,7 @@ describe("Milton", () => {
                 USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
+        await openSwapPayFixed(derivativeParamsFirst);
 
         await assertError(
             //when
@@ -2618,7 +2598,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
@@ -2629,7 +2608,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2647,18 +2625,17 @@ describe("Milton", () => {
                 USD_14_000_18DEC + USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
+        await openSwapPayFixed(derivativeParamsFirst);
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
-        await openPositionFunc(derivativeParams25days);
+        await openSwapPayFixed(derivativeParams25days);
 
         let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
@@ -2706,7 +2683,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
@@ -2717,7 +2693,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2735,18 +2710,17 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
+        await openSwapPayFixed(derivativeParamsFirst);
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
-        await openPositionFunc(derivativeParams25days);
+        await openSwapPayFixed(derivativeParams25days);
         let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
         let expectedOpenedPositionsVol = 1;
         let expectedDerivativeId = BigInt(2);
@@ -2790,7 +2764,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
@@ -2801,7 +2774,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2819,18 +2791,17 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
+        await openSwapPayFixed(derivativeParamsFirst);
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
-        await openPositionFunc(derivativeParams25days);
+        await openSwapPayFixed(derivativeParams25days);
         let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
         let expectedOpenedPositionsVol = 1;
         let expectedDerivativeId = BigInt(1);
@@ -2877,7 +2848,6 @@ describe("Milton", () => {
         let interestAmount = BigInt("6350821508078504228366");
         let asset = testData.tokenDai.address;
         let collateralizationFactor = USD_10_18DEC;
-        let direction = 0;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_5_18DEC;
@@ -2940,7 +2910,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: collateralizationFactor,
-            direction: direction,
             openTimestamp: localOpenTimestamp,
             from: openerUser,
         };
@@ -2963,7 +2932,7 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+        await openSwapPayFixed(params);
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
         await data.warren
             .connect(userOne)
@@ -3030,7 +2999,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -3040,7 +3008,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -3064,13 +3031,13 @@ describe("Milton", () => {
             );
 
         //when
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //then
         let actualUserDerivativeIds =
@@ -3113,7 +3080,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -3122,7 +3088,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: userTwo,
         };
@@ -3147,17 +3112,17 @@ describe("Milton", () => {
             );
 
         //when
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userTwo;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //then
         let actualUserDerivativeIdsFirst =
@@ -3206,7 +3171,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -3215,7 +3179,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: userTwo,
         };
@@ -3239,17 +3202,17 @@ describe("Milton", () => {
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userTwo;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //when
         await data.milton
@@ -3305,7 +3268,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -3314,7 +3276,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: userTwo,
         };
@@ -3338,17 +3299,17 @@ describe("Milton", () => {
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userTwo;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //when
         await data.milton
@@ -3408,8 +3369,6 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-
-        let direction = 0;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -3418,7 +3377,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: userThree,
         };
@@ -3442,12 +3400,12 @@ describe("Milton", () => {
         let expectedDerivativeIdsLength = 0;
 
         //position 1, user first
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //position 2, user second
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //when
         await data.milton
@@ -3504,7 +3462,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -3513,7 +3470,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: userThree,
         };
@@ -3537,12 +3493,12 @@ describe("Milton", () => {
         let expectedDerivativeIdsLength = 0;
 
         //position 1, user first
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //position 2, user second
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS - 3;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //when
         await data.milton
@@ -3599,7 +3555,6 @@ describe("Milton", () => {
             testData
         );
 
-        let direction = 0;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -3608,7 +3563,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: userThree,
         };
@@ -3633,15 +3587,13 @@ describe("Milton", () => {
 
         //position 1, user first
         derivativeParams.from = userThree;
-        derivativeParams.direction = 0;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         //position 2, user second
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        derivativeParams.direction = 0;
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         await data.milton
             .connect(userThree)
@@ -4262,13 +4214,12 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //then
@@ -4357,13 +4308,12 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //then
@@ -4434,13 +4384,12 @@ describe("Milton", () => {
 
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //when
@@ -4493,13 +4442,12 @@ describe("Milton", () => {
 
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         await data.iporConfiguration.grantRole(
@@ -4582,13 +4530,12 @@ describe("Milton", () => {
 
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         await data.iporConfiguration.setMiltonPublicationFeeTransferer(
@@ -4670,7 +4617,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(500),
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -4687,13 +4633,12 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .itfOpenPosition(
+                .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
                     params.slippageValue,
-                    params.collateralizationFactor,
-                    params.direction
+                    params.collateralizationFactor
                 ),
             //then
             "IPOR_12"
@@ -4724,7 +4669,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt("1000000000000000000001"),
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -4741,13 +4685,12 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .itfOpenPosition(
+                .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
                     params.slippageValue,
-                    params.collateralizationFactor,
-                    params.direction
+                    params.collateralizationFactor
                 ),
             //then
             "IPOR_34"
@@ -4778,7 +4721,6 @@ describe("Milton", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt("15125000000000000000"),
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -4801,13 +4743,12 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //then
@@ -4907,13 +4848,12 @@ describe("Milton", () => {
         //when
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //then
@@ -5005,13 +4945,12 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .itfOpenPosition(
+                .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
                     params.slippageValue,
-                    params.collateralizationFactor,
-                    params.direction
+                    params.collateralizationFactor
                 ),
             //then
             "IPOR_35"
@@ -5077,13 +5016,12 @@ describe("Milton", () => {
         //First open position not exceeded liquidity utilization
         await data.milton
             .connect(userTwo)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
             );
 
         //when
@@ -5092,13 +5030,12 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .itfOpenPosition(
+                .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.asset,
                     params.totalAmount,
                     params.slippageValue,
-                    params.collateralizationFactor,
-                    params.direction
+                    params.collateralizationFactor
                 ),
             //then
             "IPOR_35"
@@ -5278,13 +5215,12 @@ describe("Milton", () => {
             //when
             data.milton
                 .connect(userTwo)
-                .itfOpenPosition(
+                .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     liquidityProvider.address,
                     params.totalAmount,
                     params.slippageValue,
-                    params.collateralizationFactor,
-                    params.direction
+                    params.collateralizationFactor
                 ),
             //then
             "IPOR_39"
@@ -5326,7 +5262,7 @@ describe("Milton", () => {
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+        await openSwapPayFixed(params);
         let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
         let expectedPositionValue = BigInt("-38126715743181445978");
 
@@ -5351,16 +5287,26 @@ describe("Milton", () => {
             .itfCalculateSoap(params.asset, params.calculateTimestamp);
     };
 
-    const openPositionFunc = async (params) => {
+    const openSwapPayFixed = async (params) => {
         await data.milton
             .connect(params.from)
-            .itfOpenPosition(
+            .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
+            );
+    };
+	const openSwapReceiveFixed = async (params) => {
+        await data.milton
+            .connect(params.from)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.asset,
+                params.totalAmount,
+                params.slippageValue,
+                params.collateralizationFactor
             );
     };
 
@@ -5696,7 +5642,12 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 params.openTimestamp
             );
-        await openPositionFunc(params);
+		if (params.direction == 0) {
+			await openSwapPayFixed(params)
+		} else if (params.direction == 1){
+			await openSwapReceiveFixed(params);
+		}
+        
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(

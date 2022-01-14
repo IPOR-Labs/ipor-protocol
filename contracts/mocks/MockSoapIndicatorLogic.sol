@@ -5,21 +5,37 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 
 contract MockSoapIndicatorLogic {
-    function calculateSoap(
+    function calculateSoapPayFixed(
         DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
     ) public pure returns (int256) {
-        return SoapIndicatorLogic.calculateSoap(si, ibtPrice, timestamp);
+        return SoapIndicatorLogic.calculateSoapPayFixed(si, ibtPrice, timestamp);
+    }
+
+	function calculateSoapReceiveFixed(
+        DataTypes.SoapIndicator memory si,
+        uint256 ibtPrice,
+        uint256 timestamp
+    ) public pure returns (int256) {
+        return SoapIndicatorLogic.calculateSoapReceiveFixed(si, ibtPrice, timestamp);
     }
 
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
-    function calculateQuasiSoap(
+    function calculateQuasiSoapPayFixed(
         DataTypes.SoapIndicator memory si,
         uint256 ibtPrice,
         uint256 timestamp
     ) public pure returns (int256) {
-        return SoapIndicatorLogic.calculateQuasiSoap(si, ibtPrice, timestamp);
+        return SoapIndicatorLogic.calculateQuasiSoapPayFixed(si, ibtPrice, timestamp);
+    }
+
+	function calculateQuasiSoapReceiveFixed(
+        DataTypes.SoapIndicator memory si,
+        uint256 ibtPrice,
+        uint256 timestamp
+    ) public pure returns (int256) {
+        return SoapIndicatorLogic.calculateQuasiSoapReceiveFixed(si, ibtPrice, timestamp);
     }
 
     function rebalanceWhenOpenPosition(

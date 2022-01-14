@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IWarren.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import {Constants} from "../libraries/Constants.sol";
@@ -24,6 +24,10 @@ contract Warren is Ownable, Pausable, IWarren {
     IIporConfiguration internal _iporConfiguration;
 
     constructor(address initialIporConfiguration) {
+		require(
+            address(initialIporConfiguration) != address(0),
+            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
+        );
         _iporConfiguration = IIporConfiguration(initialIporConfiguration);
     }
 
@@ -39,7 +43,7 @@ contract Warren is Ownable, Pausable, IWarren {
                 break;
             }
         }
-        require(allowed, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
+        require(allowed, IporErrors.WARREN_CALLER_NOT_WARREN_UPDATER);
         _;
     }
 

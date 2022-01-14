@@ -98,7 +98,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUserAddress = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_5_18DEC;
 
@@ -107,7 +106,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress,
         };
@@ -126,7 +124,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         const expectedSoap = ZERO;
 
@@ -159,7 +157,6 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
 
@@ -168,7 +165,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -187,7 +183,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         const expectedSoap = BigInt("-68083420969966832317");
 
@@ -221,7 +217,6 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 1;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
 
@@ -230,7 +225,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -249,7 +243,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapReceiveFixed(derivativeParams);
 
         const expectedSoap = ZERO;
 
@@ -282,7 +276,6 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 1;
         let openerUser = userTwo;
         let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
 
@@ -291,7 +284,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -310,7 +302,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapReceiveFixed(derivativeParams);
 
         const expectedSoap = BigInt("-68083420969966791467");
 
@@ -344,7 +336,6 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 0;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
@@ -354,7 +345,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -373,7 +363,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         let endTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -413,7 +403,6 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 1;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
@@ -423,7 +412,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -442,7 +430,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapReceiveFixed(derivativeParams);
 
         const expectedSoap = ZERO;
         let endTimestamp =
@@ -489,8 +477,6 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let firstDerivativeDirection = 0;
-        let secondDerivativeDirection = 1;
 
         let openerUser = userTwo;
         let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
@@ -501,7 +487,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: firstDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -511,7 +496,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: secondDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -530,8 +514,8 @@ describe("MiltonSoap", () => {
                 iporValueBeforOpenPosition,
                 openTimestamp
             );
-        await openPositionFunc(firstDerivativeParams);
-        await openPositionFunc(secondDerivativeParams);
+        await openSwapPayFixed(firstDerivativeParams);
+        await openSwapReceiveFixed(secondDerivativeParams);
 
         const expectedSoap = BigInt("-136166841939933623785");
 
@@ -565,8 +549,6 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let firstDerivativeDirection = 0;
-        let secondDerivativeDirection = 1;
 
         let openerUser = userTwo;
         let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
@@ -576,8 +558,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: firstDerivativeDirection,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -586,8 +567,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: secondDerivativeDirection,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -606,8 +586,8 @@ describe("MiltonSoap", () => {
                 iporValueBeforOpenPosition,
                 openTimestamp
             );
-        await openPositionFunc(firstDerivativeParams);
-        await openPositionFunc(secondDerivativeParams);
+        await openSwapPayFixed(firstDerivativeParams);
+        await openSwapReceiveFixed(secondDerivativeParams);
 
         const expectedSoap = BigInt("-136166841939933623785");
 
@@ -652,7 +632,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
 
         let iporValueBeforOpenPositionDAI = PERCENTAGE_3_18DEC;
@@ -665,7 +644,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -674,8 +652,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: direction,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -709,8 +686,8 @@ describe("MiltonSoap", () => {
             );
 
         //when
-        await openPositionFunc(derivativeDAIParams);
-        await openPositionFunc(derivativeUSDTParams);
+        await openSwapPayFixed(derivativeDAIParams);
+        await openSwapPayFixed(derivativeUSDTParams);
 
         //then
         let expectedDAISoap = BigInt("-68083420969966832317");
@@ -756,9 +733,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let payFixDerivativeDirection = 0;
-        let recFixDerivativeDirection = 1;
-
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
@@ -769,7 +743,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -779,7 +752,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -797,8 +769,8 @@ describe("MiltonSoap", () => {
                 iporValueBeforOpenPosition,
                 openTimestamp
             );
-        await openPositionFunc(payFixDerivativeParams);
-        await openPositionFunc(recFixDerivativeParams);
+        await openSwapPayFixed(payFixDerivativeParams);
+        await openSwapReceiveFixed(recFixDerivativeParams);
 
         let endTimestamp =
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -839,9 +811,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let payFixDerivativeDirection = 0;
-        let recFixDerivativeDirection = 1;
-
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
@@ -852,7 +821,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -862,7 +830,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -880,8 +847,8 @@ describe("MiltonSoap", () => {
                 iporValueBeforOpenPosition,
                 openTimestamp
             );
-        await openPositionFunc(payFixDerivativeParams);
-        await openPositionFunc(recFixDerivativeParams);
+        await openSwapPayFixed(payFixDerivativeParams);
+        await openSwapReceiveFixed(recFixDerivativeParams);
 
         let endTimestamp =
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -932,9 +899,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let payFixDerivativeDAIDirection = 0;
-        let recFixDerivativeUSDTDirection = 1;
-
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforOpenPositionDAI = PERCENTAGE_3_18DEC;
@@ -947,7 +911,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: payFixDerivativeDAIDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -956,8 +919,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: recFixDerivativeUSDTDirection,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -991,8 +953,8 @@ describe("MiltonSoap", () => {
                 openTimestamp
             );
 
-        await openPositionFunc(payFixDerivativeDAIParams);
-        await openPositionFunc(recFixDerivativeUSDTParams);
+        await openSwapPayFixed(payFixDerivativeDAIParams);
+        await openSwapReceiveFixed(recFixDerivativeUSDTParams);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
         await data.joseph
@@ -1043,7 +1005,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
@@ -1054,7 +1015,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1076,7 +1036,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1125,7 +1085,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
@@ -1135,8 +1094,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: direction,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1159,7 +1117,7 @@ describe("MiltonSoap", () => {
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         await data.warren
             .connect(userOne)
@@ -1209,7 +1167,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
@@ -1220,7 +1177,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1246,7 +1202,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1304,7 +1260,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1314,7 +1269,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1323,7 +1277,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -1346,8 +1299,8 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
-        await openPositionFunc(derivativeParams25days);
+        await openSwapPayFixed(derivativeParamsFirst);
+        await openSwapPayFixed(derivativeParams25days);
 
         //then
         const expectedSoap = BigInt("-204669094617849711707");
@@ -1381,7 +1334,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1391,7 +1343,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1400,7 +1351,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -1422,7 +1372,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
+        await openSwapPayFixed(derivativeParamsFirst);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1430,7 +1380,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParams25days.openTimestamp
             );
-        await openPositionFunc(derivativeParams25days);
+        await openSwapPayFixed(derivativeParams25days);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1471,7 +1421,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -1481,7 +1430,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1514,7 +1462,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(derivativeParams);
 
         let soapBeforeUpdateIndexStruct = await calculateSoap(soapParams);
         soapBeforeUpdateIndex = BigInt(soapBeforeUpdateIndexStruct.soap);
@@ -1580,7 +1528,6 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
         let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
         let iporValueAfterOpenPosition = PERCENTAGE_3_18DEC;
@@ -1595,7 +1542,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUser,
         };
@@ -1614,7 +1560,7 @@ describe("MiltonSoap", () => {
                 iporValueBeforeOpenPosition,
                 firstUpdateIndexTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
+        await openSwapPayFixed(derivativeParamsFirst);
 
         //when
         await data.warren
@@ -1644,16 +1590,27 @@ describe("MiltonSoap", () => {
         );
     });
 
-    const openPositionFunc = async (params) => {
+    const openSwapReceiveFixed = async (params) => {
         await data.milton
             .connect(params.from)
-            .itfOpenPosition(
+            .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.asset,
                 params.totalAmount,
                 params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
+                params.collateralizationFactor
+            );
+    };
+
+    const openSwapPayFixed = async (params) => {
+        await data.milton
+            .connect(params.from)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.asset,
+                params.totalAmount,
+                params.slippageValue,
+                params.collateralizationFactor
             );
     };
 

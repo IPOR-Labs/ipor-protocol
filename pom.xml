@@ -141,7 +141,7 @@
                         <argument>${generated.sources.abi}</argument>
                         <argument>@openzeppelin/contracts=${PWD}/node_modules/@openzeppelin/contracts</argument>
                         <!-- INFO: wildcards not working here :( -->
-                        <argument>${contracts.sources}/Errors.sol</argument>
+                        <argument>${contracts.sources}/IporErrors.sol</argument>
                         <argument>${contracts.sources}/amm/IMiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonLPUtilizationStrategyCollateral.sol</argument>

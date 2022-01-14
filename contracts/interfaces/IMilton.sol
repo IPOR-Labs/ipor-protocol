@@ -10,13 +10,27 @@ interface IMilton {
 
     function unpause() external;
 
-    function openPosition(
+	function openSwapPayFixed(
         address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint256 collateralizationFactor,
-        uint8 direction
+        uint256 collateralizationFactor
     ) external returns (uint256);
+
+	function openSwapReceiveFixed(
+        address asset,
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) external returns (uint256);
+
+    // function openPosition(
+    //     address asset,
+    //     uint256 totalAmount,
+    //     uint256 maximumSlippage,
+    //     uint256 collateralizationFactor,
+    //     uint8 direction
+    // ) external returns (uint256);
 
     function closePosition(uint256 derivativeId) external;
 
