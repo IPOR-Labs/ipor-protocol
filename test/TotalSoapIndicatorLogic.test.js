@@ -168,195 +168,195 @@ describe("TotalSoapIndicatorLogic", () => {
         await soapIndicatorLogic.deployed();
     });
 
-    it("Calculate Soap When Open Pay Fix Position D18", async () => {
-        const ibtPrice = BigInt(100) * ONE_18DEC;
-        const timestamp = Date.now();
-        const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
+    // it("Calculate Soap When Open Pay Fix Position D18", async () => {
+    //     const ibtPrice = BigInt(100) * ONE_18DEC;
+    //     const timestamp = Date.now();
+    //     const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
 
-        const tsiSimulateOpenPayFixPosition =
-            await simulateOpenPayFixPositionCase2D18(
-                PERIOD_1_DAY_IN_SECONDS,
-                tsiStorage,
-                soapIndicatorLogic
-            );
+    //     const tsiSimulateOpenPayFixPosition =
+    //         await simulateOpenPayFixPositionCase2D18(
+    //             PERIOD_1_DAY_IN_SECONDS,
+    //             tsiStorage,
+    //             soapIndicatorLogic
+    //         );
 
-        //when
-        const { soapPf, soapRf } = await totalSoapIndicatorLogic.calculateSoap(
-            tsiSimulateOpenPayFixPosition,
-            timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS,
-            ibtPrice
-        );
-        //then
-        expect(soapPf, "Incorrect SOAP PF").to.be.equal(
-            "-202814383561637282015"
-        );
-        expect(soapRf, "Incorrect SOAP RF").to.be.equal("0");
-    });
+    //     //when
+    //     const { soapPf, soapRf } = await totalSoapIndicatorLogic.calculateSoap(
+    //         tsiSimulateOpenPayFixPosition,
+    //         timestamp + PERIOD_1_DAY_IN_SECONDS + PERIOD_25_DAYS_IN_SECONDS,
+    //         ibtPrice
+    //     );
+    //     //then
+    //     expect(soapPf, "Incorrect SOAP PF").to.be.equal(
+    //         "-202814383561637282015"
+    //     );
+    //     expect(soapRf, "Incorrect SOAP RF").to.be.equal("0");
+    // });
 
-    it("Calculate Soap When Open Pay Fix And Rec Fix Position Same Notional Same Moment D18", async () => {
-        //given
-        const ibtPrice = BigInt(100) * ONE_18DEC;
-        const timestamp = Date.now();
-        const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
-        const tsiSimulatPf = await simulateOpenPayFixPositionCase2D18(
-            0,
-            tsiStorage,
-            soapIndicatorLogic
-        );
-        const tsiSimulatRf = await simulateOpenRecFixPositionCase2D18(
-            0,
-            tsiSimulatPf,
-            soapIndicatorLogic
-        );
+    // it("Calculate Soap When Open Pay Fix And Rec Fix Position Same Notional Same Moment D18", async () => {
+    //     //given
+    //     const ibtPrice = BigInt(100) * ONE_18DEC;
+    //     const timestamp = Date.now();
+    //     const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
+    //     const tsiSimulatPf = await simulateOpenPayFixPositionCase2D18(
+    //         0,
+    //         tsiStorage,
+    //         soapIndicatorLogic
+    //     );
+    //     const tsiSimulatRf = await simulateOpenRecFixPositionCase2D18(
+    //         0,
+    //         tsiSimulatPf,
+    //         soapIndicatorLogic
+    //     );
 
-        //when
-        const { soapPf, soapRf } =
-            await totalSoapIndicatorLogic.calculateQuasiSoap(
-                tsiSimulatRf,
-                timestamp + PERIOD_25_DAYS_IN_SECONDS,
-                ibtPrice
-            );
-        //then
-        expect(soapPf, "Incorrect SOAP PF").to.be.equal(
-            "-6395954399999793325670400000000000000000000000000000000000000000"
-        );
-        expect(soapRf, "Incorrect SOAP RF").to.be.equal(
-            "6395954399999793325670400000000000000000000000000000000000000000"
-        );
-    });
+    //     //when
+    //     const { soapPf, soapRf } =
+    //         await totalSoapIndicatorLogic.calculateQuasiSoap(
+    //             tsiSimulatRf,
+    //             timestamp + PERIOD_25_DAYS_IN_SECONDS,
+    //             ibtPrice
+    //         );
+    //     //then
+    //     expect(soapPf, "Incorrect SOAP PF").to.be.equal(
+    //         "-6395954399999793325670400000000000000000000000000000000000000000"
+    //     );
+    //     expect(soapRf, "Incorrect SOAP RF").to.be.equal(
+    //         "6395954399999793325670400000000000000000000000000000000000000000"
+    //     );
+    // });
 
-    it("Calculate Soap When Open Pay Fix And Rec Fix Position Same Notional Different Moment D18", async () => {
-        //given
+    // it("Calculate Soap When Open Pay Fix And Rec Fix Position Same Notional Different Moment D18", async () => {
+    //     //given
 
-        const ibtPrice = BigInt(100) * ONE_18DEC;
-        const timestamp = Date.now();
-        const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
-        const tsiSimulatPf = await simulateOpenPayFixPositionCase2D18(
-            PERIOD_25_DAYS_IN_SECONDS,
-            tsiStorage,
-            soapIndicatorLogic
-        );
-        const tsiSimulatRf = await simulateOpenRecFixPositionCase2D18(
-            0,
-            tsiSimulatPf,
-            soapIndicatorLogic
-        );
+    //     const ibtPrice = BigInt(100) * ONE_18DEC;
+    //     const timestamp = Date.now();
+    //     const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
+    //     const tsiSimulatPf = await simulateOpenPayFixPositionCase2D18(
+    //         PERIOD_25_DAYS_IN_SECONDS,
+    //         tsiStorage,
+    //         soapIndicatorLogic
+    //     );
+    //     const tsiSimulatRf = await simulateOpenRecFixPositionCase2D18(
+    //         0,
+    //         tsiSimulatPf,
+    //         soapIndicatorLogic
+    //     );
 
-        //when
-        const { soapPf, soapRf } = await totalSoapIndicatorLogic.calculateSoap(
-            tsiSimulatRf,
-            timestamp + PERIOD_25_DAYS_IN_SECONDS,
-            ibtPrice
-        );
+    //     //when
+    //     const { soapPf, soapRf } = await totalSoapIndicatorLogic.calculateSoap(
+    //         tsiSimulatRf,
+    //         timestamp + PERIOD_25_DAYS_IN_SECONDS,
+    //         ibtPrice
+    //     );
 
-        //then
-        expect(soapPf, "Incorrect SOAP PF").to.be.equal("6553600");
-        expect(soapRf, "Incorrect SOAP RF").to.be.equal(
-            "202814383561637282016"
-        );
-        const result = BigInt(soapPf) + BigInt(soapRf);
-        expect(result, "Incorrect SOAP").to.be.equal(
-            BigInt("202814383561643835616")
-        );
-    });
+    //     //then
+    //     expect(soapPf, "Incorrect SOAP PF").to.be.equal("6553600");
+    //     expect(soapRf, "Incorrect SOAP RF").to.be.equal(
+    //         "202814383561637282016"
+    //     );
+    //     const result = BigInt(soapPf) + BigInt(soapRf);
+    //     expect(result, "Incorrect SOAP").to.be.equal(
+    //         BigInt("202814383561643835616")
+    //     );
+    // });
 
-    it("Rebalance Soap When Open Pay Fix Position D18", async () => {
-        //given
-        const timestamp = Date.now();
-        const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
+    // it("Rebalance Soap When Open Pay Fix Position D18", async () => {
+    //     //given
+    //     const timestamp = Date.now();
+    //     const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
 
-        //when
-        const tsiSimulatPf = await simulateOpenPayFixPositionCase1D18(
-            PERIOD_25_DAYS_IN_SECONDS,
-            tsiStorage,
-            soapIndicatorLogic
-        );
+    //     //when
+    //     const tsiSimulatPf = await simulateOpenPayFixPositionCase1D18(
+    //         PERIOD_25_DAYS_IN_SECONDS,
+    //         tsiStorage,
+    //         soapIndicatorLogic
+    //     );
 
-        //then
-        const expectedRebalanceTimestamp = tsiSimulatPf.pf.rebalanceTimestamp;
-        const expectedTotalNotional = BigInt(10000) * ONE_18DEC;
-        const expectedTotalIbtQuantity = BigInt(95) * ONE_18DEC;
-        const expectedAverageInterestRate = BigInt(5 * 1e16);
-        const expectedHypotheticalInterestCumulative = BigInt(0);
+    //     //then
+    //     const expectedRebalanceTimestamp = tsiSimulatPf.pf.rebalanceTimestamp;
+    //     const expectedTotalNotional = BigInt(10000) * ONE_18DEC;
+    //     const expectedTotalIbtQuantity = BigInt(95) * ONE_18DEC;
+    //     const expectedAverageInterestRate = BigInt(5 * 1e16);
+    //     const expectedHypotheticalInterestCumulative = BigInt(0);
 
-        assertSoapIndicator(
-            tsiSimulatPf.pf,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
-        );
-    });
+    //     assertSoapIndicator(
+    //         tsiSimulatPf.pf,
+    //         expectedRebalanceTimestamp,
+    //         expectedTotalNotional,
+    //         expectedTotalIbtQuantity,
+    //         expectedAverageInterestRate,
+    //         expectedHypotheticalInterestCumulative
+    //     );
+    // });
 
-    it("Rebalance Soap When Open Rec Fix Position D18", async () => {
-        //given
-        const timestamp = Date.now();
-        const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
+    // it("Rebalance Soap When Open Rec Fix Position D18", async () => {
+    //     //given
+    //     const timestamp = Date.now();
+    //     const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
 
-        //when
-        const tsiSimulatRf = await simulateOpenRecFixPositionCase1D18(
-            PERIOD_25_DAYS_IN_SECONDS,
-            tsiStorage,
-            soapIndicatorLogic
-        );
+    //     //when
+    //     const tsiSimulatRf = await simulateOpenRecFixPositionCase1D18(
+    //         PERIOD_25_DAYS_IN_SECONDS,
+    //         tsiStorage,
+    //         soapIndicatorLogic
+    //     );
 
-        const expectedRebalanceTimestamp = tsiSimulatRf.rf.rebalanceTimestamp;
-        const expectedTotalNotional = BigInt("10000") * ONE_18DEC;
-        const expectedTotalIbtQuantity = BigInt("95") * ONE_18DEC;
-        const expectedAverageInterestRate = BigInt(5 * 1e16);
-        const expectedHypotheticalInterestCumulative = BigInt(0);
+    //     const expectedRebalanceTimestamp = tsiSimulatRf.rf.rebalanceTimestamp;
+    //     const expectedTotalNotional = BigInt("10000") * ONE_18DEC;
+    //     const expectedTotalIbtQuantity = BigInt("95") * ONE_18DEC;
+    //     const expectedAverageInterestRate = BigInt(5 * 1e16);
+    //     const expectedHypotheticalInterestCumulative = BigInt(0);
 
-        assertSoapIndicator(
-            tsiStorage.rf,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
-        );
-    });
+    //     assertSoapIndicator(
+    //         tsiStorage.rf,
+    //         expectedRebalanceTimestamp,
+    //         expectedTotalNotional,
+    //         expectedTotalIbtQuantity,
+    //         expectedAverageInterestRate,
+    //         expectedHypotheticalInterestCumulative
+    //     );
+    // });
 
-    it("Rebalance Soap When Pay Fix And Rec Fix Position D18", async () => {
-        //given
-        const timestamp = Date.now();
-        const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
+    // it("Rebalance Soap When Pay Fix And Rec Fix Position D18", async () => {
+    //     //given
+    //     const timestamp = Date.now();
+    //     const tsiStorage = await prepareInitialTotalSoapIndicator(timestamp);
 
-        //when
-        const tsiSimulatPf = await simulateOpenPayFixPositionCase1D18(
-            PERIOD_25_DAYS_IN_SECONDS,
-            tsiStorage,
-            soapIndicatorLogic
-        );
-        const tsiSimulatRf = await simulateOpenRecFixPositionCase1D18(
-            PERIOD_25_DAYS_IN_SECONDS,
-            tsiSimulatPf,
-            soapIndicatorLogic
-        );
+    //     //when
+    //     const tsiSimulatPf = await simulateOpenPayFixPositionCase1D18(
+    //         PERIOD_25_DAYS_IN_SECONDS,
+    //         tsiStorage,
+    //         soapIndicatorLogic
+    //     );
+    //     const tsiSimulatRf = await simulateOpenRecFixPositionCase1D18(
+    //         PERIOD_25_DAYS_IN_SECONDS,
+    //         tsiSimulatPf,
+    //         soapIndicatorLogic
+    //     );
 
-        //then
-        const expectedRebalanceTimestamp = tsiSimulatRf.pf.rebalanceTimestamp;
-        const expectedTotalNotional = BigInt("10000") * ONE_18DEC;
-        const expectedTotalIbtQuantity = BigInt("95") * ONE_18DEC;
-        const expectedAverageInterestRate = BigInt(5 * 1e16);
-        const expectedHypotheticalInterestCumulative = BigInt(0);
+    //     //then
+    //     const expectedRebalanceTimestamp = tsiSimulatRf.pf.rebalanceTimestamp;
+    //     const expectedTotalNotional = BigInt("10000") * ONE_18DEC;
+    //     const expectedTotalIbtQuantity = BigInt("95") * ONE_18DEC;
+    //     const expectedAverageInterestRate = BigInt(5 * 1e16);
+    //     const expectedHypotheticalInterestCumulative = BigInt(0);
 
-        assertSoapIndicator(
-            tsiStorage.pf,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
-        );
+    //     assertSoapIndicator(
+    //         tsiStorage.pf,
+    //         expectedRebalanceTimestamp,
+    //         expectedTotalNotional,
+    //         expectedTotalIbtQuantity,
+    //         expectedAverageInterestRate,
+    //         expectedHypotheticalInterestCumulative
+    //     );
 
-        assertSoapIndicator(
-            tsiStorage.rf,
-            expectedRebalanceTimestamp,
-            expectedTotalNotional,
-            expectedTotalIbtQuantity,
-            expectedAverageInterestRate,
-            expectedHypotheticalInterestCumulative
-        );
-    });
+    //     assertSoapIndicator(
+    //         tsiStorage.rf,
+    //         expectedRebalanceTimestamp,
+    //         expectedTotalNotional,
+    //         expectedTotalIbtQuantity,
+    //         expectedAverageInterestRate,
+    //         expectedHypotheticalInterestCumulative
+    //     );
+    // });
 });

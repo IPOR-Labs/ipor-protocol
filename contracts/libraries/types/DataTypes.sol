@@ -18,10 +18,6 @@ library DataTypes {
         uint256 treasury;
     }
 
-    struct TotalSoapIndicator {
-        SoapIndicator pf;
-        SoapIndicator rf;
-    }
 
     //soap payfixed and soap recfixed indicators
     struct SoapIndicator {

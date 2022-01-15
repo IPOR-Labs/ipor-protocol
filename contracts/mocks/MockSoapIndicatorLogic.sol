@@ -7,35 +7,35 @@ import "../libraries/SoapIndicatorLogic.sol";
 contract MockSoapIndicatorLogic {
     function calculateSoapPayFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+        uint256 ibtPrice
     ) public pure returns (int256) {
-        return SoapIndicatorLogic.calculateSoapPayFixed(si, ibtPrice, timestamp);
+        return SoapIndicatorLogic.calculateSoapPayFixed(si, calculateTimestamp, ibtPrice);
     }
 
 	function calculateSoapReceiveFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 ibtPrice
     ) public pure returns (int256) {
-        return SoapIndicatorLogic.calculateSoapReceiveFixed(si, ibtPrice, timestamp);
+        return SoapIndicatorLogic.calculateSoapReceiveFixed(si, calculateTimestamp, ibtPrice);
     }
 
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapPayFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) public pure returns (int256) {
-        return SoapIndicatorLogic.calculateQuasiSoapPayFixed(si, ibtPrice, timestamp);
+        return SoapIndicatorLogic.calculateQuasiSoapPayFixed(si, calculateTimestamp, ibtPrice);
     }
 
 	function calculateQuasiSoapReceiveFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) public pure returns (int256) {
-        return SoapIndicatorLogic.calculateQuasiSoapReceiveFixed(si, ibtPrice, timestamp);
+        return SoapIndicatorLogic.calculateQuasiSoapReceiveFixed(si, calculateTimestamp, ibtPrice);
     }
 
     function rebalanceWhenOpenPosition(
@@ -91,24 +91,28 @@ contract MockSoapIndicatorLogic {
 
     function calculateQuasiHyphoteticalInterestTotal(
         DataTypes.SoapIndicator memory si,
-        uint256 timestamp
+        uint256 calculateTimestamp
     ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateQuasiHyphoteticalInterestTotal(
                 si,
-                timestamp
+                calculateTimestamp
             );
     }
 
     //division by Constants.YEAR_IN_SECONDS * 1e54 postponed at the end of calculation
     function calculateQuasiHypotheticalInterestDelta(
-        DataTypes.SoapIndicator memory si,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 lastRebalanceTimestamp,
+		uint256 totalNotional,
+		uint256 averageInterestRate        
     ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateQuasiHypotheticalInterestDelta(
-                si,
-                timestamp
+                calculateTimestamp,
+                lastRebalanceTimestamp,
+				totalNotional,
+				averageInterestRate
             );
     }
 

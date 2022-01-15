@@ -63,7 +63,7 @@ contract ItfMilton is Milton {
             int256 soap
         )
     {
-        return _calculateSoap(asset, calculateTimestamp);
+        (soapPf,soapRf, soap) = _calculateSoap(asset, calculateTimestamp);
     }
 
     function itfCalculateSpread(address asset, uint256 calculateTimestamp)

@@ -9,32 +9,32 @@ import { Constants } from "../libraries/Constants.sol";
 library SoapIndicatorLogic {
     function calculateSoapPayFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
-                calculateQuasiSoapPayFixed(si, ibtPrice, timestamp),
+                calculateQuasiSoapPayFixed(si, calculateTimestamp, ibtPrice),
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             );
     }
 
 	function calculateSoapReceiveFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) internal pure returns (int256) {
         return
             IporMath.divisionInt(
-                calculateQuasiSoapReceiveFixed(si, ibtPrice, timestamp),
+                calculateQuasiSoapReceiveFixed(si, calculateTimestamp, ibtPrice),
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             );
     }
 
 	function calculateQuasiSoapPayFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) internal pure returns (int256) {
 
             return
@@ -46,22 +46,22 @@ library SoapIndicatorLogic {
                 int256(
                     si.totalNotional *
                         Constants.WAD_P2_YEAR_IN_SECONDS +
-                        calculateQuasiHyphoteticalInterestTotal(si, timestamp)
+                        calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)
                 );
         
     }
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapReceiveFixed(
         DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) internal pure returns (int256) {
         
             return
                 int256(
                     si.totalNotional *
                         Constants.WAD_P2_YEAR_IN_SECONDS +
-                        calculateQuasiHyphoteticalInterestTotal(si, timestamp)
+                        calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)
                 ) -
                 int256(
                     si.totalIbtQuantity *
@@ -154,27 +154,34 @@ library SoapIndicatorLogic {
 
     function calculateQuasiHyphoteticalInterestTotal(
         DataTypes.SoapIndicator memory si,
-        uint256 timestamp
+        uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return
             si.quasiHypotheticalInterestCumulative +
-            calculateQuasiHypotheticalInterestDelta(si, timestamp);
+            calculateQuasiHypotheticalInterestDelta(
+				calculateTimestamp,
+				si.rebalanceTimestamp, 				
+				si.totalNotional,
+				si.averageInterestRate
+			);
     }
 
     //division by Constants.YEAR_IN_SECONDS * 1e54 postponed at the end of calculation
     function calculateQuasiHypotheticalInterestDelta(
-        DataTypes.SoapIndicator memory si,
-        uint256 timestamp
+		uint256 calculateTimestamp,
+		uint256 lastRebalanceTimestamp,
+		uint256 totalNotional,
+		uint256 averageInterestRate
     ) internal pure returns (uint256) {
         require(
-            timestamp >= si.rebalanceTimestamp,
+            calculateTimestamp >= lastRebalanceTimestamp,
             IporErrors
                 .MILTON_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP
         );
         return
-            si.totalNotional *
-            si.averageInterestRate *
-            ((timestamp - si.rebalanceTimestamp) * Constants.D18);
+            totalNotional *
+            averageInterestRate *
+            ((calculateTimestamp - lastRebalanceTimestamp) * Constants.D18);
     }
 
     function calculateInterestRateWhenOpenPosition(

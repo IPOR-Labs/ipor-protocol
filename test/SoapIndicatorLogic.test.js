@@ -105,8 +105,10 @@ describe("SoapIndicatorLogic", () => {
 
         const actualQuasiInterestRate =
             await mockSoapIndicatorLogic.calculateQuasiHypotheticalInterestDelta(
-                soapIndicator,
-                timestamp
+                timestamp,
+                soapIndicator.rebalanceTimestamp,
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate
             );
 
         //then
@@ -459,8 +461,8 @@ describe("SoapIndicatorLogic", () => {
         //when
         const actualSoapPf = await mockSoapIndicatorLogic.calculateSoapPayFixed(
             soapIndicator,
-            ibtPrice,
-            calculationTimestamp
+            calculationTimestamp,
+			ibtPrice            
         );
 
         //then
@@ -480,11 +482,12 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        const actualSoapRf = await mockSoapIndicatorLogic.calculateSoapReceiveFixed(
-            soapIndicator,
-            ibtPrice,
-            calculationTimestamp
-        );
+        const actualSoapRf =
+            await mockSoapIndicatorLogic.calculateSoapReceiveFixed(
+                soapIndicator,
+                calculationTimestamp,
+				ibtPrice                
+            );
 
         //then
         const expectedSoapRf = BigInt("6109589041095890410959");
