@@ -30,7 +30,7 @@ library DerivativeLogic {
         return ibtQuantity * ibtCurrentPrice * Constants.YEAR_IN_SECONDS;
     }
 
-    function calculateInterest(
+    function calculateInterestForSwapPayFixed(
         DataTypes.IporDerivative memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
@@ -56,19 +56,65 @@ library DerivativeLogic {
         //TODO: use SafeCast from openzeppelin
         uint256 quasiIFixed = calculateQuasiInterestFixed(
             derivative.notionalAmount,
-            derivative.indicator.fixedInterestRate,
+            derivative.fixedInterestRate,
             calculatedPeriodInSeconds
         );
         uint256 quasiIFloating = calculateQuasiInterestFloating(
-            derivative.indicator.ibtQuantity,
+            derivative.ibtQuantity,
             mdIbtPrice
         );
 
         int256 positionValue = IporMath.divisionInt(
-            uint8(derivative.direction) ==
-                uint8(DataTypes.DerivativeDirection.PayFixedReceiveFloating)
-                ? int256(quasiIFloating) - int256(quasiIFixed)
-                : int256(quasiIFixed) - int256(quasiIFloating),
+                 int256(quasiIFloating) - int256(quasiIFixed)
+                ,
+            Constants.WAD_YEAR_IN_SECONDS_INT
+        );
+
+        return
+            DataTypes.IporDerivativeInterest(
+                quasiIFixed,
+                quasiIFloating,
+                positionValue
+            );
+    }
+
+	function calculateInterestForSwapReceiveFixed(
+        DataTypes.IporDerivative memory derivative,
+        uint256 closingTimestamp,
+        uint256 mdIbtPrice
+    ) internal pure returns (DataTypes.IporDerivativeInterest memory) {
+		//TODO: remove duplicates calculateInterestForSwapPayFixed
+        //iFixed = fixed interest rate * notional amount * T / Ty
+        require(
+            closingTimestamp >= derivative.startingTimestamp,
+            IporErrors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP
+        );
+
+        uint256 calculatedPeriodInSeconds = 0;
+
+        //calculated period cannot be longer than whole derivative period
+        if (closingTimestamp > derivative.endingTimestamp) {
+            calculatedPeriodInSeconds =
+                derivative.endingTimestamp -
+                derivative.startingTimestamp;
+        } else {
+            calculatedPeriodInSeconds =
+                closingTimestamp -
+                derivative.startingTimestamp;
+        }
+        //TODO: use SafeCast from openzeppelin
+        uint256 quasiIFixed = calculateQuasiInterestFixed(
+            derivative.notionalAmount,
+            derivative.fixedInterestRate,
+            calculatedPeriodInSeconds
+        );
+        uint256 quasiIFloating = calculateQuasiInterestFloating(
+            derivative.ibtQuantity,
+            mdIbtPrice
+        );
+
+        int256 positionValue = IporMath.divisionInt(
+            int256(quasiIFixed) - int256(quasiIFloating),
             Constants.WAD_YEAR_IN_SECONDS_INT
         );
 

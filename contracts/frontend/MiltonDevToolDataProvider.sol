@@ -57,17 +57,26 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         return token.allowance(msg.sender, _iporConfiguration.getJoseph());
     }
 
-    function getPositions()
+    function getSwapsPayFixed()
         external
         view
         override
         returns (DataTypes.IporDerivative[] memory)
     {
         return
-            IMiltonStorage(_iporConfiguration.getMiltonStorage()).getPositions();
+            IMiltonStorage(_iporConfiguration.getMiltonStorage()).getSwapsPayFixed();
     }
 
-    function getMyPositions()
+	function getSwapsReceiveFixed()
+	external
+	view
+	override
+	returns (DataTypes.IporDerivative[] memory)
+{
+	return
+		IMiltonStorage(_iporConfiguration.getMiltonStorage()).getSwapsReceiveFixed();
+}
+    function getMySwapsPayFixed()
         external
         view
         override
@@ -75,8 +84,19 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
     {
         return
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
-                .getUserPositions(msg.sender);
+                .getUserSwapsPayFixed(msg.sender);
     }
+
+	function getMySwapsReceiveFixed()
+	external
+	view
+	override
+	returns (DataTypes.IporDerivative[] memory items)
+{
+	return
+		IMiltonStorage(_iporConfiguration.getMiltonStorage())
+			.getUserSwapsReceiveFixed(msg.sender);
+}
 
     //@notice FOR TEST ONLY
     //    function getOpenPosition(uint256 derivativeId) external view returns (DataTypes.IporDerivative memory) {

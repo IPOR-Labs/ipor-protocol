@@ -50,25 +50,46 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMiltonStorage miltonStorage = IMiltonStorage(
             iporConfiguration.getMiltonStorage()
         );
-        uint256[] memory userDerivativesIds = miltonStorage
-            .getUserDerivativeIds(msg.sender);
+        uint256[] memory userSwapPayFixedIds = miltonStorage
+            .getUserSwapPayFixedIds(msg.sender);
+		uint256[] memory userSwapReceiveFixedIds = miltonStorage
+            .getUserSwapPayFixedIds(msg.sender);
         IporDerivativeFront[]
             memory iporDerivatives = new IporDerivativeFront[](
-                userDerivativesIds.length
+                userSwapPayFixedIds.length + userSwapReceiveFixedIds.length
             );
         IMilton milton = IMilton(iporConfiguration.getMilton());
-        for (uint256 i = 0; i < userDerivativesIds.length; i++) {
+
+        for (uint256 i = 0; i < userSwapPayFixedIds.length; i++) {
             DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
-                .getDerivativeItem(userDerivativesIds[i]);
+                .getSwapPayFixedItem(userSwapPayFixedIds[i]);
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,
                 derivativeItem.item.asset,
                 derivativeItem.item.collateral,
                 derivativeItem.item.notionalAmount,
 				IporMath.division(derivativeItem.item.notionalAmount * Constants.D18, derivativeItem.item.collateral),
-                derivativeItem.item.direction,
-                derivativeItem.item.indicator.fixedInterestRate,
-                milton.calculatePositionValue(derivativeItem.item),
+                0,
+                derivativeItem.item.fixedInterestRate,
+                milton.calculateSwapPayFixedValue(derivativeItem.item),
+                derivativeItem.item.startingTimestamp,
+                derivativeItem.item.endingTimestamp,
+                derivativeItem.item.liquidationDepositAmount
+            );
+        }
+
+		for (uint256 i = 0; i < userSwapReceiveFixedIds.length; i++) {
+            DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
+                .getSwapReceiveFixedItem(userSwapReceiveFixedIds[i]);
+            iporDerivatives[i] = IporDerivativeFront(
+                derivativeItem.item.id,
+                derivativeItem.item.asset,
+                derivativeItem.item.collateral,
+                derivativeItem.item.notionalAmount,
+				IporMath.division(derivativeItem.item.notionalAmount * Constants.D18, derivativeItem.item.collateral),
+                1,
+                derivativeItem.item.fixedInterestRate,
+                milton.calculateSwapReceiveFixedValue(derivativeItem.item),
                 derivativeItem.item.startingTimestamp,
                 derivativeItem.item.endingTimestamp,
                 derivativeItem.item.liquidationDepositAmount

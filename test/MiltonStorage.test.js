@@ -92,8 +92,9 @@ describe("MiltonStorage", () => {
         //when
         testData.miltonStorage
             .connect(miltonStorageAddress)
-            .updateStorageWhenOpenPosition(
-                await preprareDerivativeStruct18DecSimpleCase1(testData), BigInt("1500000000000000000000")
+            .updateStorageWhenOpenSwapPayFixed(
+                await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
+                BigInt("1500000000000000000000")
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -114,14 +115,16 @@ describe("MiltonStorage", () => {
             data,
             libraries
         );
-        const derivativeStruct = await preprareDerivativeStruct18DecSimpleCase1(
-            testData
-        );
+        const derivativeStruct =
+            await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
         await assertError(
             //when
             testData.miltonStorage
                 .connect(userThree)
-                .updateStorageWhenOpenPosition(derivativeStruct, BigInt("1500000000000000000000")),
+                .updateStorageWhenOpenSwapPayFixed(
+                    derivativeStruct,
+                    BigInt("1500000000000000000000")
+                ),
             //then
             "IPOR_1"
         );
@@ -180,7 +183,9 @@ describe("MiltonStorage", () => {
             );
 
         await openSwapPayFixed(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
+        let derivativeItem = await testData.miltonStorage.getSwapPayFixedItem(
+            1
+        );
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.iporConfiguration.setMilton(miltonStorageAddress.address);
@@ -188,7 +193,7 @@ describe("MiltonStorage", () => {
         //when
         testData.miltonStorage
             .connect(miltonStorageAddress)
-            .updateStorageWhenClosePosition(
+            .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000000000000000"),
@@ -251,7 +256,9 @@ describe("MiltonStorage", () => {
             );
 
         await openSwapPayFixed(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
+        let derivativeItem = await testData.miltonStorage.getSwapPayFixedItem(
+            1
+        );
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.iporConfiguration.setMilton(miltonStorageAddress.address);
@@ -259,7 +266,7 @@ describe("MiltonStorage", () => {
         //when
         testData.miltonStorage
             .connect(miltonStorageAddress)
-            .updateStorageWhenClosePosition(
+            .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000"),
@@ -321,7 +328,9 @@ describe("MiltonStorage", () => {
             );
 
         await openSwapPayFixed(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
+        let derivativeItem = await testData.miltonStorage.getSwapPayFixedItem(
+            1
+        );
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await data.iporConfiguration.setMilton(miltonStorageAddress.address);
@@ -330,7 +339,7 @@ describe("MiltonStorage", () => {
         await assertError(
             testData.miltonStorage
                 .connect(userThree)
-                .updateStorageWhenClosePosition(
+                .updateStorageWhenCloseSwapPayFixed(
                     userTwo.address,
                     derivativeItem,
                     BigInt("10000000000000000000"),
@@ -365,7 +374,7 @@ describe("MiltonStorage", () => {
             );
     };
 
-    const preprareDerivativeStruct18DecSimpleCase1 = async (testData) => {
+    const preprareSwapPayFixedStruct18DecSimpleCase1 = async (testData) => {
         let openingTimestamp = Math.floor(Date.now() / 1000);
         let closePositionTimestamp =
             openingTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -374,18 +383,13 @@ describe("MiltonStorage", () => {
             state: 0,
             buyer: userTwo.address,
             asset: testData.tokenDai.address,
-            direction: 0,
             collateral: BigInt("1000000000000000000000"),
             liquidationDepositAmount: BigInt("20000000000000000000"),
             notionalAmount: BigInt("50000000000000000000000"),
             startingTimestamp: openingTimestamp,
             endingTimestamp: closePositionTimestamp,
-            indicator: {
-                iporIndexValue: 123,
-                ibtPrice: 123,
-                ibtQuantity: 123,
-                fixedInterestRate: 234,
-            },
+            ibtQuantity: 123,
+            fixedInterestRate: 234,
         };
     };
 });

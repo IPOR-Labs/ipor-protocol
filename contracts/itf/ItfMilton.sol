@@ -42,10 +42,16 @@ contract ItfMilton is Milton {
             );
     }
 
-    function itfClosePosition(uint256 derivativeId, uint256 closeTimestamp)
+    function itfCloseSwapPayFixed(uint256 derivativeId, uint256 closeTimestamp)
         external
     {
-        _closePosition(derivativeId, closeTimestamp);
+        _closeSwapPayFixed(derivativeId, closeTimestamp);
+    }
+
+	function itfCloseSwapReceiveFixed(uint256 derivativeId, uint256 closeTimestamp)
+        external
+    {
+        _closeSwapReceiveFixed(derivativeId, closeTimestamp);
     }
 
     function itfCalculateSoap(address asset, uint256 calculateTimestamp)
@@ -71,10 +77,17 @@ contract ItfMilton is Milton {
         );
     }
 
-    function itfCalculatePositionValue(
+    function itfCalculateSwapPayFixedValue(
         uint256 calculateTimestamp,
         DataTypes.IporDerivative memory derivative
     ) external view returns (int256) {
-        return _calculatePositionValue(calculateTimestamp, derivative);
+        return _calculateSwapPayFixedValue(calculateTimestamp, derivative);
+    }
+
+	function itfCalculateSwapReceiveFixedValue(
+        uint256 calculateTimestamp,
+        DataTypes.IporDerivative memory derivative
+    ) external view returns (int256) {
+        return _calculateSwapReceiveFixedValue(calculateTimestamp, derivative);
     }
 }

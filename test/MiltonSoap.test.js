@@ -369,7 +369,7 @@ describe("MiltonSoap", () => {
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
 
         const expectedSoap = ZERO;
 
@@ -446,7 +446,7 @@ describe("MiltonSoap", () => {
             );
 
         //when
-        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -776,7 +776,7 @@ describe("MiltonSoap", () => {
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton.connect(closerUser).itfClosePosition(2, endTimestamp);
+        await data.milton.connect(closerUser).itfCloseSwapReceiveFixed(2, endTimestamp);
 
         //then
         const expectedSoap = BigInt("-68083420969966832317");
@@ -854,7 +854,7 @@ describe("MiltonSoap", () => {
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton.connect(closerUser).itfClosePosition(1, endTimestamp);
+        await data.milton.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
         const expectedSoap = BigInt("-68083420969966791467");
@@ -970,7 +970,7 @@ describe("MiltonSoap", () => {
             PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton.connect(closerUser).itfClosePosition(2, endTimestamp);
+        await data.milton.connect(closerUser).itfCloseSwapReceiveFixed(2, endTimestamp);
 
         //then
         const expectedSoapDAI = BigInt("-68083420969966832317");

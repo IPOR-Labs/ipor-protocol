@@ -93,7 +93,6 @@ library DataTypes {
         uint256 fixedInterestRate;
     }
     struct MiltonDerivatives {
-        uint256 lastDerivativeId;
         mapping(uint256 => DataTypes.MiltonDerivativeItem) items;
         uint256[] ids;
         mapping(address => uint256[]) userDerivativeIds;
@@ -118,7 +117,7 @@ library DataTypes {
         //@notice the name of the asset to which the derivative relates
         address asset;
         //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
-        uint8 direction;
+        // uint8 direction;
         //@notice Collateral
         uint256 collateral;
 		uint256 liquidationDepositAmount;
@@ -128,6 +127,8 @@ library DataTypes {
         uint256 startingTimestamp;
         //@notice Endind time of this Derivative
         uint256 endingTimestamp;
-        IporDerivativeIndicator indicator;
+
+		uint256 fixedInterestRate;
+		uint256 ibtQuantity;
     }
 }

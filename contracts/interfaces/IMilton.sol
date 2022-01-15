@@ -32,7 +32,8 @@ interface IMilton {
     //     uint8 direction
     // ) external returns (uint256);
 
-    function closePosition(uint256 derivativeId) external;
+    function closeSwapPayFixed(uint256 derivativeId) external;
+	function closeSwapReceiveFixed(uint256 derivativeId) external;
 
     function calculateSoap(address asset)
         external
@@ -48,7 +49,11 @@ interface IMilton {
         view
         returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculatePositionValue(DataTypes.IporDerivative memory derivative)
+    function calculateSwapPayFixedValue(DataTypes.IporDerivative memory derivative)
+        external
+        view
+        returns (int256);
+	function calculateSwapReceiveFixedValue(DataTypes.IporDerivative memory derivative)
         external
         view
         returns (int256);

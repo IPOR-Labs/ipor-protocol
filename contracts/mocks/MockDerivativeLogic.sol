@@ -31,13 +31,26 @@ contract MockDerivativeLogic {
             );
     }
 
-    function calculateInterest(
+    function calculateInterestForSwapPayFixed(
         DataTypes.IporDerivative memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (DataTypes.IporDerivativeInterest memory) {
         return
-            DerivativeLogic.calculateInterest(
+            DerivativeLogic.calculateInterestForSwapPayFixed(
+                derivative,
+                closingTimestamp,
+                mdIbtPrice
+            );
+    }
+
+	function calculateInterestForSwapReceiveFixed(
+        DataTypes.IporDerivative memory derivative,
+        uint256 closingTimestamp,
+        uint256 mdIbtPrice
+    ) public pure returns (DataTypes.IporDerivativeInterest memory) {
+        return
+            DerivativeLogic.calculateInterestForSwapReceiveFixed(
                 derivative,
                 closingTimestamp,
                 mdIbtPrice
