@@ -61,7 +61,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMilton milton = IMilton(iporConfiguration.getMilton());
 
         for (uint256 i = 0; i < userSwapPayFixedIds.length; i++) {
-            DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
+            DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
                 .getSwapPayFixedItem(userSwapPayFixedIds[i]);
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,
@@ -79,7 +79,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         }
 
 		for (uint256 i = 0; i < userSwapReceiveFixedIds.length; i++) {
-            DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
+            DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
                 .getSwapReceiveFixedItem(userSwapReceiveFixedIds[i]);
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,

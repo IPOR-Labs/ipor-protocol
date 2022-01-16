@@ -32,7 +32,7 @@ contract MockDerivativeLogic {
     }
 
     function calculateInterestForSwapPayFixed(
-        DataTypes.IporDerivative memory derivative,
+        DataTypes.IporDerivativeMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (DataTypes.IporDerivativeInterest memory) {
@@ -45,7 +45,7 @@ contract MockDerivativeLogic {
     }
 
 	function calculateInterestForSwapReceiveFixed(
-        DataTypes.IporDerivative memory derivative,
+        DataTypes.IporDerivativeMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (DataTypes.IporDerivativeInterest memory) {

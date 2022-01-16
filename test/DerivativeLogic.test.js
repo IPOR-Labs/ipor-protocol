@@ -19,7 +19,7 @@ const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
     const collateral = BigInt("9870300000000000000000");
     const collateralizationFactor = BigInt("10");
 
-    const timeStamp = Date.now();
+    const timeStamp = Math.floor(Date.now() / 1000);
     const notionalAmount = collateral * collateralizationFactor;
     const derivative = {
         state: DerivativeState.ACTIVE,

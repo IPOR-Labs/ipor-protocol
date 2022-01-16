@@ -61,7 +61,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         external
         view
         override
-        returns (DataTypes.IporDerivative[] memory)
+        returns (DataTypes.IporDerivativeMemory[] memory)
     {
         return
             IMiltonStorage(_iporConfiguration.getMiltonStorage()).getSwapsPayFixed();
@@ -71,7 +71,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 	external
 	view
 	override
-	returns (DataTypes.IporDerivative[] memory)
+	returns (DataTypes.IporDerivativeMemory[] memory)
 {
 	return
 		IMiltonStorage(_iporConfiguration.getMiltonStorage()).getSwapsReceiveFixed();
@@ -80,7 +80,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         external
         view
         override
-        returns (DataTypes.IporDerivative[] memory items)
+        returns (DataTypes.IporDerivativeMemory[] memory items)
     {
         return
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
@@ -91,7 +91,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 	external
 	view
 	override
-	returns (DataTypes.IporDerivative[] memory items)
+	returns (DataTypes.IporDerivativeMemory[] memory items)
 {
 	return
 		IMiltonStorage(_iporConfiguration.getMiltonStorage())

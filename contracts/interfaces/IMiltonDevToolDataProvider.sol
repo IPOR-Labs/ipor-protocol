@@ -21,20 +21,20 @@ interface IMiltonDevToolDataProvider {
     function getSwapsPayFixed()
         external
         view
-        returns (DataTypes.IporDerivative[] memory);
+        returns (DataTypes.IporDerivativeMemory[] memory);
 
 		function getSwapsReceiveFixed()
         external
         view
-        returns (DataTypes.IporDerivative[] memory);
+        returns (DataTypes.IporDerivativeMemory[] memory);
 
     function getMySwapsPayFixed()
         external
         view
-        returns (DataTypes.IporDerivative[] memory items);
+        returns (DataTypes.IporDerivativeMemory[] memory items);
 
 		function getMySwapsReceiveFixed()
         external
         view
-        returns (DataTypes.IporDerivative[] memory items);
+        returns (DataTypes.IporDerivativeMemory[] memory items);
 }

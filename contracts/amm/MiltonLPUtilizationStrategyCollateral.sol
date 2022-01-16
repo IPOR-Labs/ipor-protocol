@@ -31,7 +31,7 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         IMiltonStorage miltonStorage = IMiltonStorage(
             _iporConfiguration.getMiltonStorage()
         );
-        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
             asset
         );
 

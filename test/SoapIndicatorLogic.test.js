@@ -508,7 +508,8 @@ describe("SoapIndicatorLogic", () => {
         expect(
             expectedRebalanceTimestamp,
             "Incorrect rebalance timestamp"
-        ).to.be.eq(actualSoapIndicator.rebalanceTimestamp);
+        ).to.be.eq(BigInt(actualSoapIndicator.rebalanceTimestamp));
+
         expect(expectedTotalNotional, "Incorrect total notional").to.be.eq(
             actualSoapIndicator.totalNotional
         );

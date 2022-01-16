@@ -32,9 +32,10 @@ import "../interfaces/IJoseph.sol";
 contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     using SafeERC20 for IERC20;
     using SafeCast for uint256;
+	using SafeCast for uint128;
     using SafeCast for int256;
 
-    using DerivativeLogic for DataTypes.IporDerivative;
+    using DerivativeLogic for DataTypes.IporDerivativeMemory;
 
     IIporConfiguration internal _iporConfiguration;
 
@@ -48,10 +49,11 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     modifier onlyActiveSwapPayFixed(uint256 derivativeId) {
         require(
+			//TODO: don't have to take whole item to check one field
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
                 .getSwapPayFixedItem(derivativeId)
                 .item
-                .state == DataTypes.DerivativeState.ACTIVE,
+                .state == uint256(DataTypes.DerivativeState.ACTIVE),
             IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
         );
         _;
@@ -59,10 +61,11 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     modifier onlyActiveSwapReceiveFixed(uint256 derivativeId) {
         require(
+			//TODO: don't have to take whole item to check one field
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
                 .getSwapReceiveFixedItem(derivativeId)
                 .item
-                .state == DataTypes.DerivativeState.ACTIVE,
+                .state == uint256(DataTypes.DerivativeState.ACTIVE),
             IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
         );
         _;
@@ -209,13 +212,13 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     }
 
     function calculateSwapPayFixedValue(
-        DataTypes.IporDerivative memory derivative
+        DataTypes.IporDerivativeMemory memory derivative
     ) external view override returns (int256) {
         return _calculateSwapPayFixedValue(block.timestamp, derivative);
     }
 
     function calculateSwapReceiveFixedValue(
-        DataTypes.IporDerivative memory derivative
+        DataTypes.IporDerivativeMemory memory derivative
     ) external view override returns (int256) {
         return _calculateSwapReceiveFixedValue(block.timestamp, derivative);
     }
@@ -257,7 +260,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     function _calculateSwapPayFixedValue(
         uint256 timestamp,
-        DataTypes.IporDerivative memory derivative
+        DataTypes.IporDerivativeMemory memory derivative
     ) internal view returns (int256) {
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
             .calculateInterestForSwapPayFixed(
@@ -289,7 +292,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     function _calculateSwapReceiveFixedValue(
         uint256 timestamp,
-        DataTypes.IporDerivative memory derivative
+        DataTypes.IporDerivativeMemory memory derivative
     ) internal view returns (int256) {
         DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
             .calculateInterestForSwapReceiveFixed(
@@ -519,22 +522,22 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             );
 
 		//TODO: separate to type with uint256 and without uint256 !!!
-        DataTypes.IporDerivative memory iporDerivative = DataTypes
-            .IporDerivative(
-                DataTypes.DerivativeState.ACTIVE,
+        DataTypes.IporDerivativeMemory memory iporDerivative = DataTypes
+            .IporDerivativeMemory(
+                uint256(DataTypes.DerivativeState.ACTIVE),
                 msg.sender,
                 asset,
-                uint32(openTimestamp),
-                uint32(
+                openTimestamp,
+                
                     openTimestamp +
                         Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-                ),
-                uint64(miltonStorage.getLastSwapId() + 1),
-                uint128(bosStruct.collateral),
-                uint128(bosStruct.liquidationDepositAmount),
-                uint128(bosStruct.notional),
-                uint128(indicator.fixedInterestRate),
-                uint128(indicator.ibtQuantity)
+                ,
+                miltonStorage.getLastSwapId() + 1,
+                bosStruct.collateral,
+                bosStruct.liquidationDepositAmount,
+                bosStruct.notional,
+                indicator.fixedInterestRate,
+                indicator.ibtQuantity
             );
 
         miltonStorage.updateStorageWhenOpenSwapPayFixed(
@@ -606,22 +609,22 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 spreadValue
             );
 
-        DataTypes.IporDerivative memory iporDerivative = DataTypes
-            .IporDerivative(
-                DataTypes.DerivativeState.ACTIVE,
+        DataTypes.IporDerivativeMemory memory iporDerivative = DataTypes
+            .IporDerivativeMemory(
+                uint256(DataTypes.DerivativeState.ACTIVE),
                 msg.sender,
                 asset,
-                uint32(openTimestamp),
-                uint32(
+                openTimestamp,
+                
                     openTimestamp +
                         Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-                ),
-                uint64(miltonStorage.getLastSwapId() + 1),
-                uint128(bosStruct.collateral),
-                uint128(bosStruct.liquidationDepositAmount),
-                uint128(bosStruct.notional),
-                uint128(indicator.fixedInterestRate),
-                uint128(indicator.ibtQuantity)
+                ,
+                miltonStorage.getLastSwapId() + 1,
+                bosStruct.collateral,
+                bosStruct.liquidationDepositAmount,
+                bosStruct.notional,
+                indicator.fixedInterestRate,
+                indicator.ibtQuantity
             );
 
         miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
@@ -653,7 +656,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     }
 
     function _emitOpenPositionEvent(
-        DataTypes.IporDerivative memory iporDerivative,
+        DataTypes.IporDerivativeMemory memory iporDerivative,
         DataTypes.IporDerivativeIndicator memory indicator,
         uint256 direction,
         uint256 openingAmount,
@@ -764,11 +767,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             _iporConfiguration.getMiltonStorage()
         );
 
-        DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
+		//TODO: clarify if needed whole item here??
+        DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
             .getSwapPayFixedItem(derivativeId);
 
         require(
-            derivativeItem.item.state == DataTypes.DerivativeState.ACTIVE,
+            derivativeItem.item.state == uint256(DataTypes.DerivativeState.ACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 
@@ -821,11 +825,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             _iporConfiguration.getMiltonStorage()
         );
 
-        DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
+		//TODO: clarify it whole item required?
+        DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
             .getSwapReceiveFixedItem(derivativeId);
 
         require(
-            derivativeItem.item.state == DataTypes.DerivativeState.ACTIVE,
+            derivativeItem.item.state == uint256(DataTypes.DerivativeState.ACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 
@@ -866,7 +871,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     }
 
     function _transferTokensBasedOnpositionValue(
-        DataTypes.MiltonDerivativeItem memory derivativeItem,
+        DataTypes.MiltonDerivativeItemMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
         uint256 incomeTaxPercentage,
@@ -910,7 +915,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     //Depends on condition transfer only to sender (when sender == buyer) or to sender and buyer
     function _transferDerivativeAmount(
-        DataTypes.MiltonDerivativeItem memory derivativeItem,
+        DataTypes.MiltonDerivativeItemMemory memory derivativeItem,
         uint256 transferAmount,
         uint256 assetDecimals
     ) internal {

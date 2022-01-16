@@ -49,11 +49,11 @@ interface IMilton {
         view
         returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculateSwapPayFixedValue(DataTypes.IporDerivative memory derivative)
+    function calculateSwapPayFixedValue(DataTypes.IporDerivativeMemory memory derivative)
         external
         view
         returns (int256);
-	function calculateSwapReceiveFixedValue(DataTypes.IporDerivative memory derivative)
+	function calculateSwapReceiveFixedValue(DataTypes.IporDerivativeMemory memory derivative)
         external
         view
         returns (int256);

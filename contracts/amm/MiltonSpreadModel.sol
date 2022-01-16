@@ -51,7 +51,7 @@ contract MiltonSpreadModel is
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
             asset
         );
 
@@ -93,7 +93,7 @@ contract MiltonSpreadModel is
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
             asset
         );
 
@@ -132,7 +132,7 @@ contract MiltonSpreadModel is
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
             asset
         );
 
@@ -174,7 +174,7 @@ contract MiltonSpreadModel is
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalance memory balance = miltonStorage.getBalance(
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
             asset
         );
 

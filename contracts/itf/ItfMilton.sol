@@ -79,14 +79,14 @@ contract ItfMilton is Milton {
 
     function itfCalculateSwapPayFixedValue(
         uint256 calculateTimestamp,
-        DataTypes.IporDerivative memory derivative
+        DataTypes.IporDerivativeMemory memory derivative
     ) external view returns (int256) {
         return _calculateSwapPayFixedValue(calculateTimestamp, derivative);
     }
 
 	function itfCalculateSwapReceiveFixedValue(
         uint256 calculateTimestamp,
-        DataTypes.IporDerivative memory derivative
+        DataTypes.IporDerivativeMemory memory derivative
     ) external view returns (int256) {
         return _calculateSwapReceiveFixedValue(calculateTimestamp, derivative);
     }

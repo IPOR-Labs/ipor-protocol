@@ -4,10 +4,11 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
+	
     function getBalance(address asset)
         external
         view
-        returns (DataTypes.MiltonTotalBalance memory);
+        returns (DataTypes.MiltonTotalBalanceMemory memory);
 
     function getTotalOutstandingNotional(address asset)
         external
@@ -26,22 +27,22 @@ interface IMiltonStorage {
     ) external;
 
     function updateStorageWhenOpenSwapPayFixed(
-        DataTypes.IporDerivative memory iporDerivative, uint256 openingAmount
+        DataTypes.IporDerivativeMemory memory iporDerivative, uint256 openingAmount
     ) external;
 	function updateStorageWhenOpenSwapReceiveFixed(
-        DataTypes.IporDerivative memory iporDerivative, uint256 openingAmount
+        DataTypes.IporDerivativeMemory memory iporDerivative, uint256 openingAmount
     ) external;
 
     function updateStorageWhenCloseSwapPayFixed(
         address user,
-        DataTypes.MiltonDerivativeItem memory derivativeItem,
+        DataTypes.MiltonDerivativeItemMemory memory derivativeItem,
         int256 positionValue,
         uint256 closingTimestamp
     ) external;
 
 	function updateStorageWhenCloseSwapReceiveFixed(
         address user,
-        DataTypes.MiltonDerivativeItem memory derivativeItem,
+        DataTypes.MiltonDerivativeItemMemory memory derivativeItem,
         int256 positionValue,
         uint256 closingTimestamp
     ) external;
@@ -49,32 +50,32 @@ interface IMiltonStorage {
     function getSwapPayFixedItem(uint256 derivativeId)
         external
         view
-        returns (DataTypes.MiltonDerivativeItem memory);
+        returns (DataTypes.MiltonDerivativeItemMemory memory);
 
 	function getSwapReceiveFixedItem(uint256 derivativeId)
         external
         view
-        returns (DataTypes.MiltonDerivativeItem memory);
+        returns (DataTypes.MiltonDerivativeItemMemory memory);
 
     function getSwapsPayFixed()
         external
         view
-        returns (DataTypes.IporDerivative[] memory);
+        returns (DataTypes.IporDerivativeMemory[] memory);
 
 	function getSwapsReceiveFixed()
         external
         view
-        returns (DataTypes.IporDerivative[] memory);
+        returns (DataTypes.IporDerivativeMemory[] memory);
 
     function getUserSwapsPayFixed(address user)
         external
         view
-        returns (DataTypes.IporDerivative[] memory);
+        returns (DataTypes.IporDerivativeMemory[] memory);
 
 	function getUserSwapsReceiveFixed(address user)
         external
         view
-        returns (DataTypes.IporDerivative[] memory);
+        returns (DataTypes.IporDerivativeMemory[] memory);
 
     function getSwapPayFixedIds() external view returns (uint256[] memory);
 	function getSwapReceiveFixedIds() external view returns (uint256[] memory);

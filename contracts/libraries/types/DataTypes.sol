@@ -2,7 +2,8 @@
 pragma solidity 0.8.9;
 
 library DataTypes {
-    struct MiltonTotalBalance {
+
+	struct MiltonTotalBalanceMemory {
 		//TODO: reduce to 128
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint256 payFixedDerivatives;
@@ -17,6 +18,22 @@ library DataTypes {
         //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 treasury;
+    }
+    struct MiltonTotalBalanceStorage {
+		//TODO: reduce to 128
+        //@notice derivatives balance for Pay Fixed & Receive Floating leg
+        uint128 payFixedDerivatives;
+        //@notice derivatives balance for Pay Floating & Receive Fixed leg
+        uint128 recFixedDerivatives;
+        uint128 openingFee;
+        uint128 liquidationDeposit;
+        uint128 iporPublicationFee;
+        //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
+        //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
+        uint128 liquidityPool;
+        //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
+        //configured here IporAssetConfiguration.openingFeeForTreasurePercentage
+        uint128 treasury;
     }
 
 
@@ -37,6 +54,7 @@ library DataTypes {
         uint256 quasiHypotheticalInterestCumulative;
         
     }
+	
 
     //@notice IPOR Structure
     struct IPOR {
@@ -96,24 +114,52 @@ library DataTypes {
         uint256 fixedInterestRate;
     }
 	
-    struct MiltonDerivatives {
-        mapping(uint256 => DataTypes.MiltonDerivativeItem) items;
+    struct MiltonDerivativesStorage {
+        mapping(uint256 => DataTypes.MiltonDerivativeItemStorage) items;
         uint256[] ids;
         mapping(address => uint256[]) userDerivativeIds;
     }
 
 	//TODO: move storage structure to storage smart contract
-    struct MiltonDerivativeItem {
-        DataTypes.IporDerivative item;
+    struct MiltonDerivativeItemStorage {
+        DataTypes.IporDerivativeStorage item;
         //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
         uint256 idsIndex;
         //position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
         uint256 userDerivativeIdsIndex;
     }
 
+	struct MiltonDerivativeItemMemory {
+        DataTypes.IporDerivativeMemory item;
+        //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
+        uint256 idsIndex;
+        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
+        uint256 userDerivativeIdsIndex;
+    }
+
+	struct IporDerivativeMemory {
+        uint256 state;
+		//@notice Buyer of this derivative
+        address buyer;
+        //TODO: asset can be removed from storage when Milton per asset
+        //@notice the name of the asset to which the derivative relates
+        address asset;
+		//@notice Starting time of this Derivative
+		uint256 startingTimestamp;
+		//@notice Endind time of this Derivative
+		uint256 endingTimestamp;
+		//@notice unique ID of this derivative
+        uint256 id;        
+        uint256 collateral;
+		uint256 liquidationDepositAmount;
+        //@notice Notional Principal Amount
+        uint256 notionalAmount;        
+		uint256 fixedInterestRate;
+		uint256 ibtQuantity;
+    }
     //@notice IPOR Derivative
 	//TODO: move storage structure to storage smart contract
-    struct IporDerivative {
+    struct IporDerivativeStorage {
         DerivativeState state;
 		//@notice Buyer of this derivative
         address buyer;

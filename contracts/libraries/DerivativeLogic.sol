@@ -31,7 +31,7 @@ library DerivativeLogic {
     }
 
     function calculateInterestForSwapPayFixed(
-        DataTypes.IporDerivative memory derivative,
+        DataTypes.IporDerivativeMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (DataTypes.IporDerivativeInterest memory) {
@@ -79,7 +79,7 @@ library DerivativeLogic {
     }
 
 	function calculateInterestForSwapReceiveFixed(
-        DataTypes.IporDerivative memory derivative,
+        DataTypes.IporDerivativeMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (DataTypes.IporDerivativeInterest memory) {
