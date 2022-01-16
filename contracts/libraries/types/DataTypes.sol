@@ -75,22 +75,18 @@ library DataTypes {
 
     //@notice IPOR Structure
     struct IPOR {
-		//TODO: reduce to 128
-        //TODO: remove it - redundant information
-        //@notice Asset Symbol like USDT, USDC, DAI etc.
-        address asset;
+		//@notice block timestamp
+        uint32 blockTimestamp;		
         //@notice IPOR Index Value shown as WAD
-        uint256 indexValue;
+        uint128 indexValue;
         //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds, shown as WAD
-        uint256 quasiIbtPrice;
+        uint128 quasiIbtPrice;
         //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD
-        uint256 exponentialMovingAverage;
+        uint128 exponentialMovingAverage;
 		//@notice exponential weighted moving variance - required for calculating SPREAD in Milton, shown as WAD 
-        uint256 exponentialWeightedMovingVariance;
-        //@notice block timestamp
-        uint256 blockTimestamp;
+        uint128 exponentialWeightedMovingVariance;
+        
     }
-
     //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum DerivativeDirection {
         //@notice In long position the trader will pay a fixed rate and receive a floating rate.

@@ -163,12 +163,12 @@ contract WarrenStorage is Ownable, IWarrenStorage {
                 );
         }
         indexes[asset] = DataTypes.IPOR(
-            asset,
-            indexValue,
-            newQuasiIbtPrice,
-            newExponentialMovingAverage,
-            newExponentialWeightedMovingVariance,
-            updateTimestamp
+            uint32(updateTimestamp),
+            uint128(indexValue),
+            uint128(newQuasiIbtPrice),
+            uint128(newExponentialMovingAverage),
+            uint128(newExponentialWeightedMovingVariance)
+            
         );
         emit IporIndexUpdate(
             asset,

@@ -22,9 +22,10 @@ contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
         address[] memory assets = warrenStorage.getAssets();
         IporFront[] memory indexes = new IporFront[](assets.length);
         for (uint256 i = 0; i < assets.length; i++) {
-            DataTypes.IPOR memory iporIndex = warrenStorage.getIndex(assets[i]);
+			address itAsset = assets[i];
+            DataTypes.IPOR memory iporIndex = warrenStorage.getIndex(itAsset);
             indexes[i] = IporFront(
-                IERC20Metadata(iporIndex.asset).symbol(),
+                IERC20Metadata(itAsset).symbol(),
                 iporIndex.indexValue,
                 IporMath.division(
                     iporIndex.quasiIbtPrice,
