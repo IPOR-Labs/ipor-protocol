@@ -15,24 +15,24 @@ const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
         BigInt("1000000000000000000"),
         18
     );
-    await daiMockedToken.deployed();    
+    await daiMockedToken.deployed();
     const collateral = BigInt("9870300000000000000000");
     const collateralizationFactor = BigInt("10");
 
     const timeStamp = Date.now();
     const notionalAmount = collateral * collateralizationFactor;
     const derivative = {
-        id: BigInt("0"),
         state: DerivativeState.ACTIVE,
         buyer: admin.address,
         asset: daiMockedToken.address,
-        collateral: BigInt("0"),
-        liquidationDepositAmount: BigInt("20") * ONE_18DEC,        
-        notionalAmount,
         startingTimestamp: BigInt(timeStamp),
         endingTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
+        id: BigInt("0"),
+        collateral: BigInt("0"),
+        liquidationDepositAmount: BigInt("20") * ONE_18DEC,
+        notionalAmount,
         ibtQuantity: BigInt("987030000000000000000"), //ibtQuantity
-        fixedInterestRate: fixedInterestRate
+        fixedInterestRate: fixedInterestRate,
     };
 
     return derivative;

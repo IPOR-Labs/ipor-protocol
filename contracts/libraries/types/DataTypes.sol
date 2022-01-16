@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 library DataTypes {
     struct MiltonTotalBalance {
+		//TODO: reduce to 128
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint256 payFixedDerivatives;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
@@ -21,19 +22,25 @@ library DataTypes {
 
     //soap payfixed and soap recfixed indicators
     struct SoapIndicator {
-        uint256 rebalanceTimestamp;
-        //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
-        uint256 quasiHypotheticalInterestCumulative;
+        uint32 rebalanceTimestamp;
         //N_0
-        uint256 totalNotional;
+        uint128 totalNotional;
         //I_0
+		//TODO: reduce to 128
         uint256 averageInterestRate;
         //TT
+		//TODO: reduce to 128
         uint256 totalIbtQuantity;
+
+		//O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
+		//TODO: reduce to 128
+        uint256 quasiHypotheticalInterestCumulative;
+        
     }
 
     //@notice IPOR Structure
     struct IPOR {
+		//TODO: reduce to 128
         //TODO: remove it - redundant information
         //@notice Asset Symbol like USDT, USDC, DAI etc.
         address asset;
@@ -88,12 +95,14 @@ library DataTypes {
         //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
     }
+	
     struct MiltonDerivatives {
         mapping(uint256 => DataTypes.MiltonDerivativeItem) items;
         uint256[] ids;
         mapping(address => uint256[]) userDerivativeIds;
     }
 
+	//TODO: move storage structure to storage smart contract
     struct MiltonDerivativeItem {
         DataTypes.IporDerivative item;
         //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
@@ -103,28 +112,25 @@ library DataTypes {
     }
 
     //@notice IPOR Derivative
+	//TODO: move storage structure to storage smart contract
     struct IporDerivative {
-        //@notice unique ID of this derivative
-        uint256 id;
         DerivativeState state;
-        //@notice Buyer of this derivative
+		//@notice Buyer of this derivative
         address buyer;
         //TODO: asset can be removed from storage when Milton per asset
         //@notice the name of the asset to which the derivative relates
         address asset;
-        //@notice derivative direction: pay fixed and receive a floating or receive fixed and pay a floating
-        // uint8 direction;
-        //@notice Collateral
-        uint256 collateral;
-		uint256 liquidationDepositAmount;
+		//@notice Starting time of this Derivative
+		uint32 startingTimestamp;
+		//@notice Endind time of this Derivative
+		uint32 endingTimestamp;
+		//@notice unique ID of this derivative
+        uint64 id;        
+        uint128 collateral;
+		uint128 liquidationDepositAmount;
         //@notice Notional Principal Amount
-        uint256 notionalAmount;
-        //@notice Starting time of this Derivative
-        uint256 startingTimestamp;
-        //@notice Endind time of this Derivative
-        uint256 endingTimestamp;
-
-		uint256 fixedInterestRate;
-		uint256 ibtQuantity;
+        uint128 notionalAmount;        
+		uint128 fixedInterestRate;
+		uint128 ibtQuantity;
     }
 }

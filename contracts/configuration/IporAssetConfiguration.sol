@@ -28,6 +28,7 @@ contract IporAssetConfiguration is
 
     uint8 private immutable _decimals;
 
+	//TODO: add structure for Milton Config Open Position
     uint256 private immutable _maxSlippagePercentage;
 
     uint256 private _openingFeePercentage;

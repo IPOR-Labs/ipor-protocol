@@ -89,8 +89,8 @@ library SoapIndicatorLogic {
                 rebalanceTimestamp
             );
 
-        si.rebalanceTimestamp = rebalanceTimestamp;
-        si.totalNotional = si.totalNotional + derivativeNotional;
+        si.rebalanceTimestamp = uint32(rebalanceTimestamp);
+        si.totalNotional = si.totalNotional + uint128(derivativeNotional);
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
@@ -128,8 +128,8 @@ library SoapIndicatorLogic {
             derivativeFixedInterestRate
         );
         //TODO: here potential re-entrancy
-        si.rebalanceTimestamp = rebalanceTimestamp;
-        si.totalNotional = si.totalNotional - derivativeNotional;
+        si.rebalanceTimestamp = uint32(rebalanceTimestamp);
+        si.totalNotional = si.totalNotional - uint128(derivativeNotional);
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
 		return si;

@@ -20,6 +20,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     // using TotalSoapIndicatorLogic for DataTypes.TotalSoapIndicator;
     using DerivativesView for DataTypes.MiltonDerivatives;
 
+    uint64 private _lastSwapId;
+
     IIporConfiguration internal _iporConfiguration;
 
     mapping(address => DataTypes.MiltonTotalBalance) public balances;
@@ -29,7 +31,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     mapping(address => DataTypes.SoapIndicator)
         public soapIndicatorsReceiveFixed;
 
-    uint256 private _lastSwapId;
     DataTypes.MiltonDerivatives internal _swapsPayFixed;
     DataTypes.MiltonDerivatives internal _swapsReceiveFixed;
 
@@ -694,12 +695,12 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         DataTypes.IporDerivative memory iporDerivative
     ) internal {
         DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
-            soapIndicatorsPayFixed[iporDerivative.asset].rebalanceTimestamp,
-            soapIndicatorsPayFixed[iporDerivative.asset]
-                .quasiHypotheticalInterestCumulative,
+            soapIndicatorsPayFixed[iporDerivative.asset].rebalanceTimestamp,            
             soapIndicatorsPayFixed[iporDerivative.asset].totalNotional,
             soapIndicatorsPayFixed[iporDerivative.asset].averageInterestRate,
-            soapIndicatorsPayFixed[iporDerivative.asset].totalIbtQuantity
+            soapIndicatorsPayFixed[iporDerivative.asset].totalIbtQuantity,
+			soapIndicatorsPayFixed[iporDerivative.asset]
+                .quasiHypotheticalInterestCumulative
         );
         pf.rebalanceWhenOpenPosition(
             iporDerivative.startingTimestamp,
@@ -724,13 +725,13 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         DataTypes.IporDerivative memory iporDerivative
     ) internal {
         DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
-            soapIndicatorsReceiveFixed[iporDerivative.asset].rebalanceTimestamp,
-            soapIndicatorsReceiveFixed[iporDerivative.asset]
-                .quasiHypotheticalInterestCumulative,
+            soapIndicatorsReceiveFixed[iporDerivative.asset].rebalanceTimestamp,            
             soapIndicatorsReceiveFixed[iporDerivative.asset].totalNotional,
             soapIndicatorsReceiveFixed[iporDerivative.asset]
                 .averageInterestRate,
-            soapIndicatorsReceiveFixed[iporDerivative.asset].totalIbtQuantity
+            soapIndicatorsReceiveFixed[iporDerivative.asset].totalIbtQuantity,
+			soapIndicatorsReceiveFixed[iporDerivative.asset]
+                .quasiHypotheticalInterestCumulative
         );
         rf.rebalanceWhenOpenPosition(
             iporDerivative.startingTimestamp,
@@ -756,15 +757,16 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         DataTypes.MiltonDerivativeItem memory derivativeItem,
         uint256 closingTimestamp
     ) internal {
+		//TODO: add SoapIndicator with uint256 and without uint256
         DataTypes.SoapIndicator memory pf = DataTypes.SoapIndicator(
             soapIndicatorsPayFixed[derivativeItem.item.asset]
-                .rebalanceTimestamp,
-            soapIndicatorsPayFixed[derivativeItem.item.asset]
-                .quasiHypotheticalInterestCumulative,
+                .rebalanceTimestamp,            
             soapIndicatorsPayFixed[derivativeItem.item.asset].totalNotional,
             soapIndicatorsPayFixed[derivativeItem.item.asset]
                 .averageInterestRate,
-            soapIndicatorsPayFixed[derivativeItem.item.asset].totalIbtQuantity
+            soapIndicatorsPayFixed[derivativeItem.item.asset].totalIbtQuantity,
+			soapIndicatorsPayFixed[derivativeItem.item.asset]
+                .quasiHypotheticalInterestCumulative
         );
 
         pf.rebalanceWhenClosePosition(
@@ -793,17 +795,17 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 closingTimestamp
     ) internal {
         // DataTypes.TotalSoapIndicator memory tsiStorage = soapIndicators[derivativeItem.item.asset];
-
+		//TODO: add SoapIndicator with uint256 and without uint256
         DataTypes.SoapIndicator memory rf = DataTypes.SoapIndicator(
             soapIndicatorsReceiveFixed[derivativeItem.item.asset]
-                .rebalanceTimestamp,
-            soapIndicatorsReceiveFixed[derivativeItem.item.asset]
-                .quasiHypotheticalInterestCumulative,
+                .rebalanceTimestamp,            
             soapIndicatorsReceiveFixed[derivativeItem.item.asset].totalNotional,
             soapIndicatorsReceiveFixed[derivativeItem.item.asset]
                 .averageInterestRate,
             soapIndicatorsReceiveFixed[derivativeItem.item.asset]
-                .totalIbtQuantity
+                .totalIbtQuantity,
+			soapIndicatorsReceiveFixed[derivativeItem.item.asset]
+                .quasiHypotheticalInterestCumulative
         );
 
         rf.rebalanceWhenClosePosition(

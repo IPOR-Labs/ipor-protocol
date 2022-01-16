@@ -57,7 +57,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         _;
     }
 
-	modifier onlyActiveSwapReceiveFixed(uint256 derivativeId) {
+    modifier onlyActiveSwapReceiveFixed(uint256 derivativeId) {
         require(
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
                 .getSwapReceiveFixedItem(derivativeId)
@@ -170,7 +170,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         _closeSwapPayFixed(swapId, block.timestamp);
     }
 
-	function closeSwapReceiveFixed(uint256 swapId)
+    function closeSwapReceiveFixed(uint256 swapId)
         external
         override
         onlyActiveSwapReceiveFixed(swapId)
@@ -208,21 +208,15 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function calculateSwapPayFixedValue(DataTypes.IporDerivative memory derivative)
-        external
-        view
-        override
-        returns (int256)
-    {
+    function calculateSwapPayFixedValue(
+        DataTypes.IporDerivative memory derivative
+    ) external view override returns (int256) {
         return _calculateSwapPayFixedValue(block.timestamp, derivative);
     }
 
-	function calculateSwapReceiveFixedValue(DataTypes.IporDerivative memory derivative)
-        external
-        view
-        override
-        returns (int256)
-    {
+    function calculateSwapReceiveFixedValue(
+        DataTypes.IporDerivative memory derivative
+    ) external view override returns (int256) {
         return _calculateSwapReceiveFixedValue(block.timestamp, derivative);
     }
 
@@ -271,28 +265,29 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 IWarren(_iporConfiguration.getWarren())
                     .calculateAccruedIbtPrice(derivative.asset, timestamp)
             );
-			//TODO: remove dublicates
+        //TODO: remove dublicates
         if (derivativeInterest.positionValue > 0) {
             if (
-                derivativeInterest.positionValue < int256(derivative.collateral)
+                derivativeInterest.positionValue <
+                int256(uint256(derivative.collateral))
             ) {
                 return derivativeInterest.positionValue;
             } else {
-                return int256(derivative.collateral);
+                return int256(uint256(derivative.collateral));
             }
         } else {
             if (
                 derivativeInterest.positionValue <
-                -int256(derivative.collateral)
+                -int256(uint256(derivative.collateral))
             ) {
-                return -int256(derivative.collateral);
+                return -int256(uint256(derivative.collateral));
             } else {
                 return derivativeInterest.positionValue;
             }
         }
     }
 
-	function _calculateSwapReceiveFixedValue(
+    function _calculateSwapReceiveFixedValue(
         uint256 timestamp,
         DataTypes.IporDerivative memory derivative
     ) internal view returns (int256) {
@@ -305,18 +300,19 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         if (derivativeInterest.positionValue > 0) {
             if (
-                derivativeInterest.positionValue < int256(derivative.collateral)
+                derivativeInterest.positionValue <
+                int256(uint256(derivative.collateral))
             ) {
                 return derivativeInterest.positionValue;
             } else {
-                return int256(derivative.collateral);
+                return int256(uint256(derivative.collateral));
             }
         } else {
             if (
                 derivativeInterest.positionValue <
-                -int256(derivative.collateral)
+                -int256(uint256(derivative.collateral))
             ) {
-                return -int256(derivative.collateral);
+                return -int256(uint256(derivative.collateral));
             } else {
                 return derivativeInterest.positionValue;
             }
@@ -522,19 +518,23 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 spreadValue
             );
 
+		//TODO: separate to type with uint256 and without uint256 !!!
         DataTypes.IporDerivative memory iporDerivative = DataTypes
             .IporDerivative(
-                miltonStorage.getLastSwapId() + 1,
                 DataTypes.DerivativeState.ACTIVE,
                 msg.sender,
                 asset,
-                bosStruct.collateral,
-                bosStruct.liquidationDepositAmount,
-                bosStruct.notional,
-                openTimestamp,
-                openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
-                indicator.fixedInterestRate,
-                indicator.ibtQuantity
+                uint32(openTimestamp),
+                uint32(
+                    openTimestamp +
+                        Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
+                ),
+                uint64(miltonStorage.getLastSwapId() + 1),
+                uint128(bosStruct.collateral),
+                uint128(bosStruct.liquidationDepositAmount),
+                uint128(bosStruct.notional),
+                uint128(indicator.fixedInterestRate),
+                uint128(indicator.ibtQuantity)
             );
 
         miltonStorage.updateStorageWhenOpenSwapPayFixed(
@@ -558,8 +558,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         _emitOpenPositionEvent(
             iporDerivative,
-            indicator, 
-			0,
+            indicator,
+            0,
             bosStruct.openingFee,
             bosStruct.iporPublicationFeeAmount,
             spreadValue
@@ -608,17 +608,20 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         DataTypes.IporDerivative memory iporDerivative = DataTypes
             .IporDerivative(
-                miltonStorage.getLastSwapId() + 1,
                 DataTypes.DerivativeState.ACTIVE,
                 msg.sender,
                 asset,
-                bosStruct.collateral,
-                bosStruct.liquidationDepositAmount,
-                bosStruct.notional,
-                openTimestamp,
-                openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
-                indicator.fixedInterestRate,
-                indicator.ibtQuantity
+                uint32(openTimestamp),
+                uint32(
+                    openTimestamp +
+                        Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
+                ),
+                uint64(miltonStorage.getLastSwapId() + 1),
+                uint128(bosStruct.collateral),
+                uint128(bosStruct.liquidationDepositAmount),
+                uint128(bosStruct.notional),
+                uint128(indicator.fixedInterestRate),
+                uint128(indicator.ibtQuantity)
             );
 
         miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
@@ -640,7 +643,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         _emitOpenPositionEvent(
             iporDerivative,
             indicator,
-			1,
+            1,
             bosStruct.openingFee,
             bosStruct.iporPublicationFeeAmount,
             spreadValue
@@ -652,7 +655,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     function _emitOpenPositionEvent(
         DataTypes.IporDerivative memory iporDerivative,
         DataTypes.IporDerivativeIndicator memory indicator,
-		uint256 direction,
+        uint256 direction,
         uint256 openingAmount,
         uint256 iporPublicationAmount,
         uint256 spreadValue
@@ -805,9 +808,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
     }
 
-	function _closeSwapReceiveFixed(uint256 derivativeId, uint256 closeTimestamp)
-        internal
-    {
+    function _closeSwapReceiveFixed(
+        uint256 derivativeId,
+        uint256 closeTimestamp
+    ) internal {
         require(
             derivativeId > 0,
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID

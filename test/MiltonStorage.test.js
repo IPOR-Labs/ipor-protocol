@@ -379,15 +379,15 @@ describe("MiltonStorage", () => {
         let closePositionTimestamp =
             openingTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         return {
-            id: 1,
             state: 0,
             buyer: userTwo.address,
             asset: testData.tokenDai.address,
+            startingTimestamp: openingTimestamp,
+            endingTimestamp: closePositionTimestamp,
+            id: 1,
             collateral: BigInt("1000000000000000000000"),
             liquidationDepositAmount: BigInt("20000000000000000000"),
             notionalAmount: BigInt("50000000000000000000000"),
-            startingTimestamp: openingTimestamp,
-            endingTimestamp: closePositionTimestamp,
             ibtQuantity: 123,
             fixedInterestRate: 234,
         };
