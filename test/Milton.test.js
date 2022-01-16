@@ -339,7 +339,7 @@ describe("Milton", () => {
         await assertExpectedValues(
             testData,
             params.asset,
-			0,
+            0,
             userTwo,
             userTwo,
             miltonBalanceBeforePayoutWad,
@@ -436,7 +436,7 @@ describe("Milton", () => {
         await assertExpectedValues(
             testData,
             params.asset,
-			0,
+            0,
             userTwo,
             userTwo,
             miltonBalanceBeforePayout,
@@ -2984,7 +2984,7 @@ describe("Milton", () => {
         await assertExpectedValues(
             testData,
             params.asset,
-			0,
+            0,
             openerUser,
             closerUser,
             miltonBalanceBeforePayoutWad,
@@ -3153,7 +3153,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualUserDerivativeIdsSecond =
             await testData.miltonStorage.getUserSwapPayFixedIds(
                 userThree.address
@@ -3251,7 +3253,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualUserDerivativeIdsSecond =
             await testData.miltonStorage.getUserSwapPayFixedIds(
                 userThree.address
@@ -3354,7 +3358,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualUserDerivativeIdsSecond =
             await testData.miltonStorage.getUserSwapPayFixedIds(
                 userThree.address
@@ -3378,6 +3384,7 @@ describe("Milton", () => {
         await assertMiltonDerivativeItem(testData, 1, 0, 0, 0);
     });
 
+    //TODO: debug case where SoapIndicatorStorage.quasiHypotheticalInterestCumulative is changed to uint128
     it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1", async () => {
         //given
         let testData = await prepareTestData(
@@ -3450,9 +3457,13 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualDerivativeIds =
             await testData.miltonStorage.getSwapPayFixedIds();
 
@@ -3543,9 +3554,13 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualDerivativeIds =
             await testData.miltonStorage.getSwapPayFixedIds();
 
@@ -3639,9 +3654,13 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(userTwo.address);
+            await testData.miltonStorage.getUserSwapPayFixedIds(
+                userTwo.address
+            );
         let actualDerivativeIds =
             await testData.miltonStorage.getSwapPayFixedIds();
 
@@ -4887,7 +4906,7 @@ describe("Milton", () => {
         await assertExpectedValues(
             testData,
             params.asset,
-			0,
+            0,
             userTwo,
             userTwo,
             miltonBalanceBeforePayoutWad,
@@ -5715,7 +5734,7 @@ describe("Milton", () => {
         await assertExpectedValues(
             testData,
             params.asset,
-			params.direction,
+            params.direction,
             openerUser,
             closerUser,
             providedLiquidityAmount,
@@ -5741,7 +5760,7 @@ describe("Milton", () => {
     const assertExpectedValues = async function (
         testData,
         asset,
-		direction,
+        direction,
         openerUser,
         closerUser,
         miltonBalanceBeforePayout,
@@ -5754,14 +5773,15 @@ describe("Milton", () => {
         expectedLiquidationDepositTotalBalanceWad,
         expectedTreasuryTotalBalanceWad
     ) {
-		let actualDerivatives = null;
+        let actualDerivatives = null;
 
-		if (direction == 0) {
-			actualDerivatives = await testData.miltonStorage.getSwapsPayFixed();
-		}
+        if (direction == 0) {
+            actualDerivatives = await testData.miltonStorage.getSwapsPayFixed();
+        }
         if (direction == 1) {
-			actualDerivatives = await testData.miltonStorage.getSwapsReceiveFixed();
-		}
+            actualDerivatives =
+                await testData.miltonStorage.getSwapsReceiveFixed();
+        }
 
         let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
 

@@ -38,10 +38,27 @@ library DataTypes {
 
 
     //soap payfixed and soap recfixed indicators
-    struct SoapIndicator {
+    struct SoapIndicatorStorage {
         uint32 rebalanceTimestamp;
         //N_0
         uint128 totalNotional;
+        //I_0
+		//TODO: reduce to 128
+        uint128 averageInterestRate;
+        //TT
+		//TODO: reduce to 128
+        uint128 totalIbtQuantity;
+
+		//O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
+		//TODO: reduce to 128
+        uint256 quasiHypotheticalInterestCumulative;
+        
+    }
+
+	struct SoapIndicatorMemory {
+        uint256 rebalanceTimestamp;
+        //N_0
+        uint256 totalNotional;
         //I_0
 		//TODO: reduce to 128
         uint256 averageInterestRate;
@@ -115,26 +132,26 @@ library DataTypes {
     }
 	
     struct MiltonDerivativesStorage {
-        mapping(uint256 => DataTypes.MiltonDerivativeItemStorage) items;
         uint256[] ids;
+		mapping(uint256 => DataTypes.MiltonDerivativeItemStorage) items;        
         mapping(address => uint256[]) userDerivativeIds;
     }
 
 	//TODO: move storage structure to storage smart contract
     struct MiltonDerivativeItemStorage {
-        DataTypes.IporDerivativeStorage item;
         //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
-        uint256 idsIndex;
-        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
-        uint256 userDerivativeIdsIndex;
+        uint64 idsIndex;
+		//position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
+        uint64 userDerivativeIdsIndex;
+		DataTypes.IporDerivativeStorage item;
     }
 
 	struct MiltonDerivativeItemMemory {
-        DataTypes.IporDerivativeMemory item;
         //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
         uint256 idsIndex;
-        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
+		//position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
         uint256 userDerivativeIdsIndex;
+		DataTypes.IporDerivativeMemory item;
     }
 
 	struct IporDerivativeMemory {

@@ -7,7 +7,7 @@ import { Constants } from "../libraries/Constants.sol";
 import "./SoapIndicatorLogic.sol";
 
 library TotalSoapIndicatorLogic {
-    using SoapIndicatorLogic for DataTypes.SoapIndicator;
+    using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
     // function calculateSoap(
     //     DataTypes.TotalSoapIndicator memory tsi,

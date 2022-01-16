@@ -19,7 +19,6 @@ library DerivativesView {
             );
         for (uint256 i = 0; i < miltonDerivatives.ids.length; i++) {
 			uint256 id = miltonDerivatives.ids[i];
-
             derivatives[i] = 
 			DataTypes.IporDerivativeMemory(
 				uint256(miltonDerivatives.items[id].item.state),	

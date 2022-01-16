@@ -8,7 +8,7 @@ import { Constants } from "../libraries/Constants.sol";
 
 library SoapIndicatorLogic {
     function calculateSoapPayFixed(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 calculateTimestamp,
 		uint256 ibtPrice        
     ) internal pure returns (int256) {
@@ -20,7 +20,7 @@ library SoapIndicatorLogic {
     }
 
 	function calculateSoapReceiveFixed(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 calculateTimestamp,
 		uint256 ibtPrice        
     ) internal pure returns (int256) {
@@ -32,7 +32,7 @@ library SoapIndicatorLogic {
     }
 
 	function calculateQuasiSoapPayFixed(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 calculateTimestamp,
 		uint256 ibtPrice        
     ) internal pure returns (int256) {
@@ -52,7 +52,7 @@ library SoapIndicatorLogic {
     }
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapReceiveFixed(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 calculateTimestamp,
 		uint256 ibtPrice        
     ) internal pure returns (int256) {
@@ -72,12 +72,12 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenOpenPosition(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns(DataTypes.SoapIndicator memory) {
+    ) internal pure returns(DataTypes.SoapIndicatorMemory memory) {
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
             si,
@@ -98,13 +98,13 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenClosePosition(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns(DataTypes.SoapIndicator memory){
+    ) internal pure returns(DataTypes.SoapIndicatorMemory memory){
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
@@ -153,7 +153,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateQuasiHyphoteticalInterestTotal(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return
@@ -185,7 +185,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateInterestRateWhenOpenPosition(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) internal pure returns (uint256) {
@@ -200,7 +200,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateInterestRateWhenClosePosition(
-        DataTypes.SoapIndicator memory si,
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) internal pure returns (uint256) {
