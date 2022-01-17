@@ -138,6 +138,13 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 			)
 		);
     }
+	function getSwapPayFixedState(uint256 swapId) external override view returns(uint256) {
+		return uint256(_swapsPayFixed.items[uint64(swapId)].item.state);
+	}
+
+	function getSwapReceiveFixedState(uint256 swapId) external override view returns(uint256) {
+		return uint256(_swapsReceiveFixed.items[uint64(swapId)].item.state);
+	}
 
     function getSwapReceiveFixedItem(uint256 swapId)
         external
@@ -839,7 +846,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         DataTypes.IporDerivativeMemory memory swap,
         uint256 closingTimestamp
     ) internal {
-        //TODO: add SoapIndicator with uint256 and without uint256
         DataTypes.SoapIndicatorMemory memory pf = DataTypes.SoapIndicatorMemory(
             soapIndicatorsPayFixed[swap.asset]
                 .rebalanceTimestamp,
@@ -878,7 +884,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 closingTimestamp
     ) internal {
         // DataTypes.TotalSoapIndicator memory tsiStorage = soapIndicators[derivativeItem.item.asset];
-        //TODO: add SoapIndicator with uint256 and without uint256
         DataTypes.SoapIndicatorMemory memory rf = DataTypes.SoapIndicatorMemory(
             soapIndicatorsReceiveFixed[swap.asset]
                 .rebalanceTimestamp,

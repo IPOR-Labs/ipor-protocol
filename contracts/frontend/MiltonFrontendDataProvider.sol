@@ -18,8 +18,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
     }
 
     function getIpTokenExchangeRate(address asset)
-        external
-        view
+        external   
+		view     
         override
         returns (uint256)
     {

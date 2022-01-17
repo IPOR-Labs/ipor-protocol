@@ -4,13 +4,19 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 
 const {
+    PERCENTAGE_2_18DEC,
+    PERCENTAGE_2_5_18DEC,
     PERCENTAGE_3_18DEC,
+    PERCENTAGE_8_18DEC,
+    PERCENTAGE_50_18DEC,
     USD_10_000_18DEC,
     USD_10_18DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
     ZERO,
+
+    PERIOD_25_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
 const {
@@ -609,22 +615,626 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
     });
 
-    it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance", async () => {
-        //TODO: add this test
+    it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        const expectedExchangeRate = BigInt("1006541660406907134");
+
+        //when
+        let actualExchangeRate = BigInt(
+            await data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            )
+        );
+
+        //then
+        expect(
+            expectedExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+        expected: ${expectedExchangeRate}`
+        ).to.be.eql(actualExchangeRate);
     });
 
-    it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance", async () => {
-        //TODO: add this test
+    it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_2_5_18DEC,
+                params.openTimestamp
+            );
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        const expectedExchangeRate = BigInt("1004267091419804516");
+
+        //when
+        let actualExchangeRate = BigInt(
+            await data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            )
+        );
+
+        //then
+        expect(
+            expectedExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+        expected: ${expectedExchangeRate}`
+        ).to.be.eql(actualExchangeRate);
     });
 
-    it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance", async () => {
-        //TODO: add this test
+    it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_8_18DEC,
+                params.openTimestamp
+            );
+
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        const expectedExchangeRate = BigInt("983795970535880939");
+
+        //when
+        let actualExchangeRate = BigInt(
+            await data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            )
+        );
+
+        //then
+        expect(
+            expectedExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+        expected: ${expectedExchangeRate}`
+        ).to.be.eql(actualExchangeRate);
     });
 
-    it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance", async () => {
-        //TODO: add this test
+    it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_8_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        const expectedExchangeRate = BigInt("983795970535880940");
+
+        //when
+        let actualExchangeRate = BigInt(
+            await data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            )
+        );
+
+        //then
+        expect(
+            expectedExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+        expected: ${expectedExchangeRate}`
+        ).to.be.eql(actualExchangeRate);
     });
 
+    it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfRedeem(
+                params.asset,
+                BigInt("48000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_50_18DEC,
+                params.openTimestamp
+            );
+
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        await assertError(
+            //when
+            data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            ),
+            //then
+            "IPOR_47"
+        );
+    });
+
+    it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_50_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfRedeem(
+                params.asset,
+                BigInt("48000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        await assertError(
+            //when
+            data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            ),
+            //then
+            "IPOR_47"
+        );
+    });
+
+    it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_50_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfRedeem(
+                params.asset,
+                BigInt("48000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        let actualExchangeRate = BigInt(
+            await data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            )
+        );
+        const expectedExchangeRate = BigInt("2093785636241959062");
+
+        // then
+        expect(
+            expectedExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+        expected: ${expectedExchangeRate}`
+        ).to.be.eql(actualExchangeRate);
+    });
+
+    it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        //required to have IBT Price higher than 0
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                params.asset,
+                BigInt("60000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.milton
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.asset,
+                BigInt("40000000000000000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await data.joseph
+            .connect(liquidityProvider)
+            .itfRedeem(
+                params.asset,
+                BigInt("48000000000000000000000"),
+                params.openTimestamp
+            );
+
+        await data.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_50_18DEC,
+                params.openTimestamp
+            );
+
+        const calculateTimestamp =
+            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        let actualExchangeRate = BigInt(
+            await data.milton.calculateExchangeRate(
+                testData.tokenDai.address,
+                calculateTimestamp
+            )
+        );
+        const expectedExchangeRate = BigInt("2093785636241959042");
+
+        // then
+        expect(
+            expectedExchangeRate,
+            `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+        expected: ${expectedExchangeRate}`
+        ).to.be.eql(actualExchangeRate);
+    });
     it("should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(

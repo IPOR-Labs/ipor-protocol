@@ -5,7 +5,7 @@ const keccak256 = require("keccak256");
 
 const {
     USER_SUPPLY_6_DECIMALS,
-    USER_SUPPLY_18_DECIMALS,
+    USER_SUPPLY_10MLN_18DEC,
     COLLATERALIZATION_FACTOR_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_5_18DEC,
@@ -503,9 +503,9 @@ describe("Milton", () => {
             totalAmount - collateral - liquidationDepositAmount;
 
         let expectedOpenerUserUnderlyingTokenBalanceAfterPayOut =
-            USER_SUPPLY_18_DECIMALS - diffAfterClose;
+            USER_SUPPLY_10MLN_18DEC - diffAfterClose;
         let expectedCloserUserUnderlyingTokenBalanceAfterPayOut =
-            USER_SUPPLY_18_DECIMALS - diffAfterClose;
+            USER_SUPPLY_10MLN_18DEC - diffAfterClose;
 
         let expectedMiltonUnderlyingTokenBalance =
             miltonBalanceBeforePayoutWad + diffAfterClose;
@@ -2913,9 +2913,9 @@ describe("Milton", () => {
             incomeTax;
 
         let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
-            USER_SUPPLY_18_DECIMALS + openerUserEarned - openerUserLost;
+            USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
         let expectedCloserUserUnderlyingTokenBalanceAfterClose =
-            USER_SUPPLY_18_DECIMALS + closerUserEarned - closerUserLost;
+            USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
 
         let expectedLiquidityPoolTotalBalanceWad =
             miltonBalanceBeforePayoutWad -
@@ -4603,7 +4603,7 @@ describe("Milton", () => {
         let balance = await testData.miltonStorage.balances(params.asset);
 
         let expectedErc20BalanceCharlieTreasurer =
-            USER_SUPPLY_18_DECIMALS + transferedAmount;
+            USER_SUPPLY_10MLN_18DEC + transferedAmount;
         let actualErc20BalanceCharlieTreasurer = BigInt(
             await testData.tokenDai.balanceOf(userThree.address)
         );
@@ -4851,9 +4851,9 @@ describe("Milton", () => {
         let openerUserEarned = closerUserEarned;
 
         let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
-            USER_SUPPLY_18_DECIMALS + openerUserEarned - openerUserLost;
+            USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
         let expectedCloserUserUnderlyingTokenBalanceAfterClose =
-            USER_SUPPLY_18_DECIMALS + closerUserEarned - closerUserLost;
+            USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
 
         let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
         await data.joseph
@@ -5453,9 +5453,9 @@ describe("Milton", () => {
             }
 
             expectedOpenerUserUnderlyingTokenBalanceAfterClose =
-                USER_SUPPLY_18_DECIMALS + openerUserEarned - openerUserLost;
+                USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
             expectedCloserUserUnderlyingTokenBalanceAfterClose =
-                USER_SUPPLY_18_DECIMALS + closerUserEarned - closerUserLost;
+                USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
             expectedMiltonUnderlyingTokenBalance =
                 TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
                 TC_OPENING_FEE_18DEC +
@@ -5576,9 +5576,9 @@ describe("Milton", () => {
                 interestAmount +
                 incomeTax;
             expectedOpenerUserUnderlyingTokenBalanceAfterClose =
-                USER_SUPPLY_18_DECIMALS + openerUserEarned - openerUserLost;
+                USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
             expectedCloserUserUnderlyingTokenBalanceAfterClose =
-                USER_SUPPLY_18_DECIMALS + closerUserEarned - closerUserLost;
+                USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
         }
 
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {

@@ -7,7 +7,7 @@ const {
     TOTAL_SUPPLY_6_DECIMALS,
     USD_10_000_18DEC,
     USD_10_000_6DEC,
-    USER_SUPPLY_18_DECIMALS,
+    USER_SUPPLY_10MLN_18DEC,
     USER_SUPPLY_6_DECIMALS,
 } = require("./Const.js");
 const { ethers } = require("hardhat");
@@ -548,7 +548,7 @@ module.exports.setupTokenDaiInitialValuesForUsers = async (users, testData) => {
     for (let i = 0; i < users.length; i++) {
         await testData.tokenDai.setupInitialAmount(
             users[i].address,
-            USER_SUPPLY_18_DECIMALS
+            USER_SUPPLY_10MLN_18DEC
         );
     }
 };

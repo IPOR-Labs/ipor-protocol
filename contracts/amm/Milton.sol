@@ -32,9 +32,8 @@ import "../interfaces/IJoseph.sol";
 contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     using SafeERC20 for IERC20;
     using SafeCast for uint256;
-	using SafeCast for uint128;
+    using SafeCast for uint128;
     using SafeCast for int256;
-
     using DerivativeLogic for DataTypes.IporDerivativeMemory;
 
     IIporConfiguration internal _iporConfiguration;
@@ -49,11 +48,9 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     modifier onlyActiveSwapPayFixed(uint256 derivativeId) {
         require(
-			//TODO: don't have to take whole item to check one field
+            //TODO: don't have to take whole item to check one field
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
-                .getSwapPayFixedItem(derivativeId)
-                .item
-                .state == uint256(DataTypes.DerivativeState.ACTIVE),
+                .getSwapPayFixedState(derivativeId) == 1,
             IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
         );
         _;
@@ -61,11 +58,9 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     modifier onlyActiveSwapReceiveFixed(uint256 derivativeId) {
         require(
-			//TODO: don't have to take whole item to check one field
+            //TODO: don't have to take whole item to check one field
             IMiltonStorage(_iporConfiguration.getMiltonStorage())
-                .getSwapReceiveFixedItem(derivativeId)
-                .item
-                .state == uint256(DataTypes.DerivativeState.ACTIVE),
+                .getSwapReceiveFixedState(derivativeId) == 0,
             IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
         );
         _;
@@ -238,10 +233,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             _iporConfiguration.getMiltonStorage()
         );
         (, , int256 soap) = _calculateSoap(asset, calculateTimestamp);
+
         int256 balance = miltonStorage
             .getBalance(asset)
             .liquidityPool
-            .toInt256() + soap;
+            .toInt256() - soap;
+
         require(
             balance >= 0,
             IporErrors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW
@@ -521,17 +518,14 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 spreadValue
             );
 
-		//TODO: separate to type with uint256 and without uint256 !!!
+        //TODO: separate to type with uint256 and without uint256 !!!
         DataTypes.IporDerivativeMemory memory iporDerivative = DataTypes
             .IporDerivativeMemory(
                 uint256(DataTypes.DerivativeState.ACTIVE),
                 msg.sender,
                 asset,
                 openTimestamp,
-                
-                    openTimestamp +
-                        Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-                ,
+                openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                 miltonStorage.getLastSwapId() + 1,
                 bosStruct.collateral,
                 bosStruct.liquidationDepositAmount,
@@ -615,10 +609,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 msg.sender,
                 asset,
                 openTimestamp,
-                
-                    openTimestamp +
-                        Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-                ,
+                openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                 miltonStorage.getLastSwapId() + 1,
                 bosStruct.collateral,
                 bosStruct.liquidationDepositAmount,
@@ -767,12 +758,15 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             _iporConfiguration.getMiltonStorage()
         );
 
-		//TODO: clarify if needed whole item here??
-        DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
-            .getSwapPayFixedItem(derivativeId);
+        //TODO: clarify if needed whole item here??
+        DataTypes.MiltonDerivativeItemMemory
+            memory derivativeItem = miltonStorage.getSwapPayFixedItem(
+                derivativeId
+            );
 
         require(
-            derivativeItem.item.state == uint256(DataTypes.DerivativeState.ACTIVE),
+            derivativeItem.item.state ==
+                uint256(DataTypes.DerivativeState.ACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 
@@ -825,12 +819,15 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             _iporConfiguration.getMiltonStorage()
         );
 
-		//TODO: clarify it whole item required?
-        DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
-            .getSwapReceiveFixedItem(derivativeId);
+        //TODO: clarify it whole item required?
+        DataTypes.MiltonDerivativeItemMemory
+            memory derivativeItem = miltonStorage.getSwapReceiveFixedItem(
+                derivativeId
+            );
 
         require(
-            derivativeItem.item.state == uint256(DataTypes.DerivativeState.ACTIVE),
+            derivativeItem.item.state ==
+                uint256(DataTypes.DerivativeState.ACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 

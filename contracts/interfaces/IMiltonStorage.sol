@@ -52,6 +52,8 @@ interface IMiltonStorage {
         view
         returns (DataTypes.MiltonDerivativeItemMemory memory);
 
+	function getSwapPayFixedState(uint256 swapId) external view returns(uint256);
+	function getSwapReceiveFixedState(uint256 swapId) external view returns(uint256);
 	function getSwapReceiveFixedItem(uint256 derivativeId)
         external
         view

@@ -824,7 +824,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await data.miltonSpread
                 .connect(userOne)
-                // .callStatic
                 .testCalculateSpreadPayFixed(
                     iporIndexValue,
                     exponentialMovingAverage,
