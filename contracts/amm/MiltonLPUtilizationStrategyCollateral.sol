@@ -28,12 +28,12 @@ contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
         uint256 deposit,
         uint256 openingFee
     ) external view override returns (uint256) {
+		//TODO: do in better way
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(
-            _iporConfiguration.getMiltonStorage()
+            assetConfiguration.getMiltonStorage()
         );
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
-            asset
-        );
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
 
         if ((balance.liquidityPool + openingFee) != 0) {
             return

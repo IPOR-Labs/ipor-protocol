@@ -177,7 +177,6 @@
                         <argument>${contracts.sources}/libraries/DerivativesView.sol</argument>
                         <argument>${contracts.sources}/libraries/IporLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/SoapIndicatorLogic.sol</argument>
-                        <argument>${contracts.sources}/libraries/TotalSoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
                         <argument>${contracts.sources}/mocks/MiltonFaucet.sol</argument>
                         <argument>${contracts.sources}/mocks/MockTimelockController.sol</argument>

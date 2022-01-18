@@ -24,11 +24,6 @@ contract IporConfiguration is
     bytes32 private constant _WARREN = keccak256("WARREN");
     bytes32 private constant _WARREN_STORAGE = keccak256("WARREN_STORAGE");
 
-    bytes32 private constant _MILTON = keccak256("MILTON");
-    bytes32 private constant _MILTON_STORAGE = keccak256("MILTON_STORAGE");
-
-    bytes32 private constant _JOSEPH = keccak256("JOSEPH");
-
     //TODO: move to MiltonConfiguration
     bytes32 private constant _MILTON_SPREAD_MODEL =
         keccak256("MILTON_SPREAD_MODEL");
@@ -64,47 +59,7 @@ contract IporConfiguration is
     {
         _addresses[_WARREN_STORAGE] = warrenStorage;
         emit WarrenStorageAddressUpdated(warrenStorage);
-    }
-
-    function getMilton() external view override returns (address) {
-        return _addresses[_MILTON];
-    }
-
-    function setMilton(address milton)
-        external
-        override
-        onlyRole(_MILTON_ROLE)
-    {
-        //TODO: when Milton address is changing make sure than allowance on Josepth is set to 0 for old milton
-        _addresses[_MILTON] = milton;
-        emit MiltonAddressUpdated(milton);
-    }
-
-    function getMiltonStorage() external view override returns (address) {
-        return _addresses[_MILTON_STORAGE];
-    }
-
-    function setMiltonStorage(address miltonStorage)
-        external
-        override
-        onlyRole(_MILTON_STORAGE_ROLE)
-    {
-        _addresses[_MILTON_STORAGE] = miltonStorage;
-        emit MiltonStorageAddressUpdated(miltonStorage);
-    }
-
-    function getJoseph() external view override returns (address) {
-        return _addresses[_JOSEPH];
-    }
-
-    function setJoseph(address joseph)
-        external
-        override
-        onlyRole(_JOSEPH_ROLE)
-    {
-        _addresses[_JOSEPH] = joseph;
-        emit JosephAddressUpdated(joseph);
-    }
+    }        
 
     function getMiltonSpreadModel() external view override returns (address) {
         return _addresses[_MILTON_SPREAD_MODEL];

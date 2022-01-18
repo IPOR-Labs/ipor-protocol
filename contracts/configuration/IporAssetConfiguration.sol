@@ -11,7 +11,6 @@ import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 import "../amm/IMiltonEvents.sol";
 import "../libraries/SoapIndicatorLogic.sol";
-import "../libraries/TotalSoapIndicatorLogic.sol";
 import "../libraries/DerivativesView.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
@@ -22,11 +21,17 @@ contract IporAssetConfiguration is
     AccessControlAssetConfiguration(msg.sender),
     IIporAssetConfiguration
 {
-    address private immutable _asset;
+    uint8 private immutable _decimals;
+
+	address private immutable _asset;
 
     address private immutable _ipToken;
+	
+	address private _milton;
 
-    uint8 private immutable _decimals;
+	address private _miltonStorage;	
+
+	address private _joseph;
 
 	//TODO: change uint256 to uint128 - consider changes - maybe it is not worth
 
@@ -65,8 +70,7 @@ contract IporAssetConfiguration is
 
     //TODO: fix this name; treasureManager
     address private _treasureTreasurer;
-
-    constructor(address asset, address ipToken) {
+   constructor(address asset, address ipToken) {
         _asset = asset;
         _ipToken = ipToken;
         uint8 decimals = ERC20(asset).decimals();
@@ -102,6 +106,45 @@ contract IporAssetConfiguration is
 
     }
 
+	function getMilton() external view override returns (address) {
+        return _milton;
+    }
+
+    function setMilton(address milton)
+        external
+        override
+        onlyRole(_MILTON_ROLE)
+    {
+        //TODO: when Milton address is changing make sure than allowance on Josepth is set to 0 for old milton
+        _milton = milton;
+        emit MiltonAddressUpdated(milton);
+    }
+
+    function getMiltonStorage() external view override returns (address) {
+        return _miltonStorage;
+    }
+
+    function setMiltonStorage(address miltonStorage)
+        external
+        override
+        onlyRole(_MILTON_STORAGE_ROLE)
+    {
+        _miltonStorage = miltonStorage;
+        emit MiltonStorageAddressUpdated(miltonStorage);
+    }
+
+	function getJoseph() external view override returns (address) {
+        return _joseph;
+    }
+
+    function setJoseph(address joseph)
+        external
+        override
+        onlyRole(_JOSEPH_ROLE)
+    {
+        _joseph = joseph;
+        emit JosephAddressUpdated(joseph);
+    }
 	function getOpeningFeePercentage()
         external
         view

@@ -89,6 +89,7 @@ library DataTypes {
     }
     //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum DerivativeDirection {
+		//TODO: use consistent names in enums
         //@notice In long position the trader will pay a fixed rate and receive a floating rate.
         PayFixedReceiveFloating,
         //@notice In short position the trader will receive fixed rate and pay a floating rate.
@@ -154,9 +155,6 @@ library DataTypes {
         uint256 state;
 		//@notice Buyer of this derivative
         address buyer;
-        //TODO: asset can be removed from storage when Milton per asset
-        //@notice the name of the asset to which the derivative relates
-        address asset;
 		//@notice Starting time of this Derivative
 		uint256 startingTimestamp;
 		//@notice Endind time of this Derivative
@@ -176,9 +174,6 @@ library DataTypes {
         DerivativeState state;
 		//@notice Buyer of this derivative
         address buyer;
-        //TODO: asset can be removed from storage when Milton per asset
-        //@notice the name of the asset to which the derivative relates
-        address asset;
 		//@notice Starting time of this Derivative
 		uint32 startingTimestamp;
 		//@notice Endind time of this Derivative

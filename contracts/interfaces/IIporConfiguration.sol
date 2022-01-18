@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-interface IIporConfiguration {
-    event MiltonAddressUpdated(address indexed newAddress);
-    event MiltonStorageAddressUpdated(address indexed newAddress);
+interface IIporConfiguration {    
     event MiltonUtilizationStrategyUpdated(address indexed newAddress);
     event MiltonSpreadModelUpdated(address indexed newAddress);
     event MiltonPublicationFeeTransfererUpdated(address indexed newAddress);
@@ -15,8 +13,7 @@ interface IIporConfiguration {
     );
     event ProxyCreated(string id, address indexed newAddress);
     event AssetAddressRemoved(address indexed asset);
-    event AssetAddressAdd(address newAddress);
-    event JosephAddressUpdated(address indexed newJosephAddress);
+    event AssetAddressAdd(address newAddress);    
 
     function getMiltonPublicationFeeTransferer()
         external
@@ -24,15 +21,7 @@ interface IIporConfiguration {
         returns (address);
 
     function setMiltonPublicationFeeTransferer(address publicationFeeTransferer)
-        external;
-
-    function getMilton() external view returns (address);
-
-    function setMilton(address milton) external;
-
-    function getMiltonStorage() external view returns (address);
-
-    function setMiltonStorage(address miltonStorage) external;
+        external;    
 
     function getMiltonLPUtilizationStrategy() external view returns (address);
 
@@ -67,7 +56,4 @@ interface IIporConfiguration {
 
     function removeAsset(address asset) external;
 
-    function getJoseph() external view returns (address);
-
-    function setJoseph(address joseph) external;
 }

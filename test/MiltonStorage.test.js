@@ -87,10 +87,8 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
-
         //when
-        testData.miltonStorage
+        testData.miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),

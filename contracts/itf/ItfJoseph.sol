@@ -14,19 +14,17 @@ import "../tokenization/Joseph.sol";
 
 contract ItfJoseph is Joseph {
 
-	constructor(address initialIporConfiguration) Joseph(initialIporConfiguration) {}
+	constructor(address asset, address initialIporConfiguration) Joseph(asset, initialIporConfiguration) {}
 	
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
     function itfProvideLiquidity(
-        address asset,
         uint256 liquidityAmount,
         uint256 timestamp
     ) external {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
+                _iporConfiguration.getIporAssetConfiguration(_asset)
             );
         _provideLiquidity(
-            asset,
             liquidityAmount,
             iporAssetConfiguration.getDecimals(),
             timestamp
@@ -35,10 +33,9 @@ contract ItfJoseph is Joseph {
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
     function itfRedeem(
-        address asset,
         uint256 ipTokenVolume,
         uint256 timestamp
     ) external {
-        _redeem(asset, ipTokenVolume, timestamp);
+        _redeem(ipTokenVolume, timestamp);
     }
 }

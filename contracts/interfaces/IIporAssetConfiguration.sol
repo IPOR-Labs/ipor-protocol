@@ -3,6 +3,9 @@ pragma solidity 0.8.9;
 
 interface IIporAssetConfiguration {
     //TODO: same order in interface and in implementation
+	event MiltonAddressUpdated(address indexed newAddress);
+    event MiltonStorageAddressUpdated(address indexed newAddress);
+	event JosephAddressUpdated(address indexed newJosephAddress);
 
     event IncomeTaxPercentageSet(uint256 newIncomeTaxPercentage);
     event LiquidationDepositAmountSet(uint256 newLiquidationDepositAmount);
@@ -42,6 +45,18 @@ interface IIporAssetConfiguration {
 
     event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);	
 
+	function getMilton() external view returns (address);
+
+    function setMilton(address milton) external;
+
+    function getMiltonStorage() external view returns (address);
+
+    function setMiltonStorage(address miltonStorage) external;
+
+	function getJoseph() external view returns (address);
+
+    function setJoseph(address joseph) external;
+	
     function getIncomeTaxPercentage() external view returns (uint256);
 
     function setIncomeTaxPercentage(uint256 incomeTaxPercentage) external;

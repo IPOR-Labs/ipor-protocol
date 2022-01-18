@@ -23,7 +23,6 @@ library DerivativesView {
 			DataTypes.IporDerivativeMemory(
 				uint256(miltonDerivatives.items[id].item.state),	
 				miltonDerivatives.items[id].item.buyer,
-				miltonDerivatives.items[id].item.asset,
 				miltonDerivatives.items[id].item.startingTimestamp,
 				miltonDerivatives.items[id].item.endingTimestamp,
 				miltonDerivatives.items[id].item.id,
@@ -56,7 +55,6 @@ library DerivativesView {
 				DataTypes.IporDerivativeMemory(
 					uint256(miltonDerivatives.items[id].item.state),
 					miltonDerivatives.items[id].item.buyer,
-					miltonDerivatives.items[id].item.asset,
 					miltonDerivatives.items[id].item.startingTimestamp,
 					miltonDerivatives.items[id].item.endingTimestamp,
 					miltonDerivatives.items[id].item.id,

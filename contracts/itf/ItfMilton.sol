@@ -4,13 +4,12 @@ pragma solidity 0.8.9;
 import "../amm/Milton.sol";
 
 contract ItfMilton is Milton {
-    constructor(address initialIporConfiguration)
-        Milton(initialIporConfiguration)
+    constructor(address asset,address initialIporConfiguration)
+        Milton(asset, initialIporConfiguration)
     {}
 
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
-        address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
@@ -18,7 +17,6 @@ contract ItfMilton is Milton {
         return
             _openSwapPayFixed(
                 openTimestamp,
-                asset,
                 totalAmount,
                 maximumSlippage,
                 collateralizationFactor
@@ -27,7 +25,6 @@ contract ItfMilton is Milton {
 
 	function itfOpenSwapReceiveFixed(
         uint256 openTimestamp,
-        address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
@@ -35,7 +32,6 @@ contract ItfMilton is Milton {
         return
             _openSwapReceiveFixed(
                 openTimestamp,
-                asset,
                 totalAmount,
                 maximumSlippage,
                 collateralizationFactor
@@ -54,7 +50,7 @@ contract ItfMilton is Milton {
         _closeSwapReceiveFixed(derivativeId, closeTimestamp);
     }
 
-    function itfCalculateSoap(address asset, uint256 calculateTimestamp)
+    function itfCalculateSoap(uint256 calculateTimestamp)
         external
         view
         returns (
@@ -63,16 +59,15 @@ contract ItfMilton is Milton {
             int256 soap
         )
     {
-        (soapPf,soapRf, soap) = _calculateSoap(asset, calculateTimestamp);
+        (soapPf,soapRf, soap) = _calculateSoap(calculateTimestamp);
     }
 
-    function itfCalculateSpread(address asset, uint256 calculateTimestamp)
+    function itfCalculateSpread(uint256 calculateTimestamp)
         external
         view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(
-            asset,
             calculateTimestamp
         );
     }

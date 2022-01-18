@@ -15,7 +15,6 @@ const DaiMockedToken = artifacts.require("DaiMockedToken");
 const IporLogic = artifacts.require("IporLogic");
 const DerivativeLogic = artifacts.require("DerivativeLogic");
 const SoapIndicatorLogic = artifacts.require("SoapIndicatorLogic");
-const TotalSoapIndicatorLogic = artifacts.require("TotalSoapIndicatorLogic");
 const DerivativesView = artifacts.require("DerivativesView");
 const IporAssetConfigurationUsdt = artifacts.require(
     "IporAssetConfigurationUsdt"
@@ -208,16 +207,12 @@ module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(DerivativeLogic);
 
-    await deployer.deploy(SoapIndicatorLogic);
-
-    await deployer.link(SoapIndicatorLogic, TotalSoapIndicatorLogic);
-    await deployer.deploy(TotalSoapIndicatorLogic);
+    await deployer.deploy(SoapIndicatorLogic);    
 
     await deployer.deploy(DerivativesView);
 
     await deployer.link(SoapIndicatorLogic, MiltonStorage);
-    await deployer.link(DerivativeLogic, MiltonStorage);
-    await deployer.link(TotalSoapIndicatorLogic, MiltonStorage);
+    await deployer.link(DerivativeLogic, MiltonStorage);    
     await deployer.link(DerivativesView, MiltonStorage);
     await deployer.link(DerivativeLogic, Milton);
 

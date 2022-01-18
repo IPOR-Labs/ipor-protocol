@@ -73,7 +73,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
         const liquidityAmount = USD_14_000_18DEC;
 
@@ -218,7 +218,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
         const liquidityAmount = USD_14_000_18DEC;
         const withdrawAmount = USD_10_000_18DEC;
@@ -382,7 +382,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
 
         const expectedExchangeRate = BigInt("1000000000000000000");
 
@@ -420,7 +420,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         const expectedExchangeRate = BigInt("1000000000000000000");
@@ -514,7 +514,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         const expectedExchangeRate = BigInt("0");
@@ -568,7 +568,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         let expectedExchangeRate = BigInt("1000747756729810568");
@@ -1318,7 +1318,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         const amount = BigInt("40000000000000000000");
@@ -1393,7 +1393,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         const amount = BigInt("180000000000000000000");
@@ -1497,7 +1497,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValuestestData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         const amount = BigInt("180000000000000000000");
@@ -1732,7 +1732,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         await data.joseph
@@ -1783,7 +1783,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         await data.joseph
@@ -1834,7 +1834,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         await data.joseph
@@ -1885,7 +1885,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         await data.joseph
@@ -1929,7 +1929,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
 
         const liquidityAmount = USD_14_000_18DEC;
         const withdrawAmount = USD_10_000_18DEC;
@@ -2012,7 +2012,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
         const timestamp = Math.floor(Date.now() / 1000);
         await data.joseph
             .connect(liquidityProvider)
@@ -2107,8 +2107,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
+        await setupIpTokenUsdtInitialValues(testData,liquidityProvider, ZERO);
 
         const liquidityAmountDAI = USD_14_000_18DEC;
         const withdrawAmountDAI = USD_10_000_18DEC;
@@ -2262,8 +2262,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
-        await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData,liquidityProvider, ZERO);
+        await setupIpTokenUsdtInitialValues(testData,liquidityProvider, ZERO);
 
         const liquidityAmountDAI = USD_14_000_18DEC;
         const withdrawAmountDAI = USD_10_000_18DEC;
@@ -2409,7 +2409,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        await setupIpTokenDaiInitialValues(liquidityProvider, ZERO);
+        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const timestamp = Math.floor(Date.now() / 1000);
         await data.joseph
             .connect(liquidityProvider)

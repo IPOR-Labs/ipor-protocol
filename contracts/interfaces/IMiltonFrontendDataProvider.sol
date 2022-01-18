@@ -36,7 +36,7 @@ interface IMiltonFrontendDataProvider {
         view
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
 
-    function getMyPositions()
+    function getMyPositions(address asset)
         external
         view
         returns (IporDerivativeFront[] memory items);

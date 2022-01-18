@@ -40,20 +40,17 @@ contract MiltonSpreadModel is
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance
         ) = _prepareIporIndex(calculateTimestamp, asset);
-
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(
-            _iporConfiguration.getMiltonStorage()
+            assetConfiguration.getMiltonStorage()
         );
 
         (int256 _soapPf, , ) = miltonStorage.calculateSoap(
-            asset,
             accruedIbtPrice,
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
-            asset
-        );
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
 
         //TODO: this particular spread where collateral - 0 should be calculated in more optimal way, verify it and change
         return
@@ -82,20 +79,17 @@ contract MiltonSpreadModel is
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance
         ) = _prepareIporIndex(calculateTimestamp, asset);
-
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(
-            _iporConfiguration.getMiltonStorage()
+            assetConfiguration.getMiltonStorage()
         );
 
         (int256 _soapPf, , ) = miltonStorage.calculateSoap(
-            asset,
             accruedIbtPrice,
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
-            asset
-        );
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
 
         return
             _calculateSpreadPayFixed(
@@ -121,20 +115,17 @@ contract MiltonSpreadModel is
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance
         ) = _prepareIporIndex(calculateTimestamp, asset);
-
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(
-            _iporConfiguration.getMiltonStorage()
+            assetConfiguration.getMiltonStorage()
         );
 
         (, int256 _soapRf, ) = miltonStorage.calculateSoap(
-            asset,
             accruedIbtPrice,
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
-            asset
-        );
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
 
         //TODO: this particular spread where collateral - 0 should be calculated in more optimal way, verify it and change
         return
@@ -163,20 +154,17 @@ contract MiltonSpreadModel is
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance
         ) = _prepareIporIndex(calculateTimestamp, asset);
-
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         IMiltonStorage miltonStorage = IMiltonStorage(
-            _iporConfiguration.getMiltonStorage()
+            assetConfiguration.getMiltonStorage()
         );
 
         (, int256 _soapRf, ) = miltonStorage.calculateSoap(
-            asset,
             accruedIbtPrice,
             calculateTimestamp
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance(
-            asset
-        );
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
 
         return
             _calculateSpreadRecFixed(
