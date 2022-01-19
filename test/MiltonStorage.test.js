@@ -87,8 +87,10 @@ describe("MiltonStorage", () => {
             testData
         );
 
+		await testData.iporAssetConfigurationDai.setMilton(miltonStorageAddress.address);
+
         //when
-        testData.miltonStorageDai
+        await testData.miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
@@ -422,10 +424,10 @@ describe("MiltonStorage", () => {
         let openingTimestamp = Math.floor(Date.now() / 1000);
         let closePositionTimestamp =
             openingTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
         return {
             state: 0,
             buyer: userTwo.address,
-            asset: testData.tokenDai.address,
             startingTimestamp: openingTimestamp,
             endingTimestamp: closePositionTimestamp,
             id: 1,

@@ -34,18 +34,18 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address updater);
 
-    /// @notice list of IPOR indexes for particular assets
-    mapping(address => DataTypes.IPOR) public indexes;
+	IIporConfiguration private _iporConfiguration;    
 
     /// @notice list of assets used in indexes mapping
     address[] public assets;
 
     //TODO: [gas-optimisation] move to mapping(address => uint1) where in value = 1 then is updater if value = 0 then is not updater
     /// @notice list of addresses which has rights to modify indexes mapping
-    address[] public updaters;
+    address[] public updaters;    
 
-    IIporConfiguration private _iporConfiguration;
-
+	/// @notice list of IPOR indexes for particular assets
+    mapping(address => DataTypes.IPOR) public indexes;
+	
 	constructor (address initialIporConfiguration) {
 		_iporConfiguration = IIporConfiguration(initialIporConfiguration);
 	}    

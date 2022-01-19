@@ -4,7 +4,6 @@ pragma solidity 0.8.9;
 library DataTypes {
 
 	struct MiltonTotalBalanceMemory {
-		//TODO: reduce to 128
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint256 payFixedDerivatives;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
@@ -20,7 +19,6 @@ library DataTypes {
         uint256 treasury;
     }
     struct MiltonTotalBalanceStorage {
-		//TODO: reduce to 128
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
          uint128 payFixedDerivatives;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
@@ -43,14 +41,11 @@ library DataTypes {
         //N_0
         uint128 totalNotional;
         //I_0
-		//TODO: reduce to 128
         uint128 averageInterestRate;
         //TT
-		//TODO: reduce to 128
         uint128 totalIbtQuantity;
 
 		//O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
-		//TODO: reduce to 128
         uint256 quasiHypotheticalInterestCumulative;
         
     }
@@ -60,14 +55,11 @@ library DataTypes {
         //N_0
         uint256 totalNotional;
         //I_0
-		//TODO: reduce to 128
         uint256 averageInterestRate;
         //TT
-		//TODO: reduce to 128
         uint256 totalIbtQuantity;
 
 		//O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
-		//TODO: reduce to 128
         uint256 quasiHypotheticalInterestCumulative;
         
     }

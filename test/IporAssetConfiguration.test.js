@@ -20,6 +20,7 @@ describe("IporAssetConfiguration", () => {
     let ipTokenDai = null;
     let iporAssetConfigurationDAI = null;
     let timelockController = null;
+	const mockAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] =
@@ -59,6 +60,232 @@ describe("IporAssetConfiguration", () => {
     });
 
     //TODO: add tests which checks initial values for every param
+
+    it("should set Milton ", async () => {
+        //given
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ADMIN_ROLE"),
+            admin.address
+        );
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ROLE"),
+            admin.address
+        );
+
+        //when
+        await iporAssetConfigurationDAI.setMilton(mockAddress);
+
+        //then
+        const result = await iporAssetConfigurationDAI.getMilton();
+        expect(mockAddress).to.be.eql(result);
+    });
+
+    it("should NOT set Milton  when user does not have MILTON__ROLE role", async () => {
+        //given
+
+        await assertError(
+            //when
+            iporAssetConfigurationDAI.setMilton(mockAddress),
+
+            //then
+            "account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0x57a20741ae1ee76695a182cdfb995538919da5f1f6a92bca097f37a35c4be803"
+        );
+    });
+
+    it("should set Milton Storage", async () => {
+        //given
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_STORAGE_ADMIN_ROLE"),
+            admin.address
+        );
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_STORAGE_ROLE"),
+            admin.address
+        );
+
+        //when
+        await iporAssetConfigurationDAI.setMiltonStorage(mockAddress);
+
+        //then
+        const result = await iporAssetConfigurationDAI.getMiltonStorage();
+        expect(mockAddress).to.be.eql(result);
+    });
+
+    it("should NOT set Milton storage when user does not have MILTON_STORAGE_ROLE role", async () => {
+        //given
+
+        await assertError(
+            //when
+            iporAssetConfigurationDAI.setMiltonStorage(mockAddress),
+
+            //then
+            "account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xb8f71ab818f476672f61fd76955446cd0045ed8ddb51f595d9e262b68d1157f6"
+        );
+    });
+
+    it("should set joseph", async () => {
+        //given
+        const adminRole = keccak256("JOSEPH_ADMIN_ROLE");
+        await iporAssetConfigurationDAI.grantRole(adminRole, admin.address);
+        const role = keccak256("JOSEPH_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, admin.address);
+
+        //when
+        await iporAssetConfigurationDAI.setJoseph(mockAddress);
+
+        //then
+        const result = await iporAssetConfigurationDAI.getJoseph();
+        expect(mockAddress).to.be.eql(result);
+    });
+
+    it("should NOT set Joseph when user does not have JOSEPH_ROLE role", async () => {
+        //given
+
+        await assertError(
+            //when
+            iporAssetConfigurationDAI.setJoseph(mockAddress),
+
+            //then
+            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0x2c03e103fc464998235bd7f80967993a1e6052d41cc085d3317ca8e301f51125`
+        );
+    });
+
+    it("should use Timelock Controller - simple case 1", async () => {
+        //given
+
+        const fnParamAddress = userThree.address;
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ADMIN_ROLE"),
+            admin.address
+        );
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ROLE"),
+            timelockController.address
+        );
+
+        const ABI = ["function setMilton(address milton) external"];
+        const iface = new ethers.utils.Interface(ABI);
+        const calldata = iface.encodeFunctionData("setMilton", [
+            fnParamAddress,
+        ]);
+
+        //when
+        await timelockController
+            .connect(userOne)
+            .schedule(
+                iporAssetConfigurationDAI.address,
+                "0x0",
+                calldata,
+                ZERO_BYTES32,
+                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+                MINDELAY
+            );
+
+        await time.increase(MINDELAY);
+
+        await timelockController
+            .connect(userTwo)
+            .execute(
+                iporAssetConfigurationDAI.address,
+                "0x0",
+                calldata,
+                ZERO_BYTES32,
+                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e"
+            );
+
+        //then
+        const actualMiltonAddress = await iporAssetConfigurationDAI.getMilton();
+
+        expect(
+            fnParamAddress,
+            `Incorrect Milton address actual: ${actualMiltonAddress}, expected: ${fnParamAddress}`
+        ).to.be.eql(actualMiltonAddress);
+    });
+
+    it("should FAIL when used Timelock Controller, when  user not exists on list of proposers", async () => {
+        //given
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ADMIN_ROLE"),
+            admin.address
+        );
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ROLE"),
+            timelockController.address
+        );
+        const fnParamAddress = userThree.address;
+
+        const ABI = ["function setMilton(address milton) external"];
+        const iface = new ethers.utils.Interface(ABI);
+        const calldata = iface.encodeFunctionData("setMilton", [
+            fnParamAddress,
+        ]);
+
+        await assertError(
+            //when
+            timelockController
+                .connect(userThree)
+                .schedule(
+                    iporAssetConfigurationDAI.address,
+                    "0x0",
+                    calldata,
+                    ZERO_BYTES32,
+                    "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+                    MINDELAY
+                ),
+
+            //then
+            "account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0xb09aa5aeb3702cfd50b6b62bc4532604938f21248a27a1d5ca736082b6819cc1"
+        );
+    });
+
+    it("should FAIL when used Timelock Controller, because user not exists on list of executors", async () => {
+        //given
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ADMIN_ROLE"),
+            admin.address
+        );
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("MILTON_ROLE"),
+            timelockController.address
+        );
+
+        const fnParamAddress = userThree.address;
+
+        const ABI = ["function setMilton(address milton) external"];
+        const iface = new ethers.utils.Interface(ABI);
+        const calldata = iface.encodeFunctionData("setMilton", [
+            fnParamAddress,
+        ]);
+
+        await timelockController
+            .connect(userOne)
+            .schedule(
+                iporAssetConfigurationDAI.address,
+                "0x0",
+                calldata,
+                ZERO_BYTES32,
+                "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e",
+                MINDELAY
+            );
+
+        await time.increase(MINDELAY);
+
+        await assertError(
+            //when
+            timelockController
+                .connect(userThree)
+                .execute(
+                    iporAssetConfigurationDAI.address,
+                    "0x0",
+                    calldata,
+                    ZERO_BYTES32,
+                    "0x60d9109846ab510ed75c15f979ae366a8a2ace11d34ba9788c13ac296db50e6e"
+                ),
+
+            //then
+            "account 0x90f79bf6eb2c4f870365e785982e1f101e93b906 is missing role 0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63"
+        );
+    });
 
     it("should set default openingFeeForTreasuryPercentage", async () => {
         //given

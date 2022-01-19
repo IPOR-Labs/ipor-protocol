@@ -20,13 +20,10 @@ contract ItfJoseph is Joseph {
     function itfProvideLiquidity(
         uint256 liquidityAmount,
         uint256 timestamp
-    ) external {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(_asset)
-            );
+    ) external {        
         _provideLiquidity(
             liquidityAmount,
-            iporAssetConfiguration.getDecimals(),
+            _iporAssetConfiguration.getDecimals(),
             timestamp
         );
     }

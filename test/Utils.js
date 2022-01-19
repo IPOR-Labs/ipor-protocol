@@ -265,17 +265,25 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     let miltonStorageDai = null;
     let josephDai = null;
 
+    const IporAssetConfiguration = await ethers.getContractFactory(
+        "IporAssetConfiguration"
+    );
+    const IpToken = await ethers.getContractFactory("IpToken");
+    const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
+    const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
+    const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
+    const ItfMilton = await ethers.getContractFactory("ItfMilton");
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage", {
         libraries: {
             DerivativesView: lib.derivativesView.address,
         },
     });
-
     const WarrenStorage = await ethers.getContractFactory("WarrenStorage");
+    const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
+
     const warrenStorage = await WarrenStorage.deploy(
         data.iporConfiguration.address
     );
-
     await warrenStorage.deployed();
 
     await warrenStorage.addUpdater(accounts[1].address);
@@ -296,24 +304,15 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     await data.iporConfiguration.setMiltonLPUtilizationStrategy(
         miltonLPUtilizationStrategyCollateral.address
     );
-    const IporAssetConfiguration = await ethers.getContractFactory(
-        "IporAssetConfiguration"
-    );
-    const IpToken = await ethers.getContractFactory("IpToken");
-    const ItfMilton = await ethers.getContractFactory("ItfMilton");
-    const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
-            const UsdtMockedToken = await ethers.getContractFactory(
-                "UsdtMockedToken"
-            );
             tokenUsdt = await UsdtMockedToken.deploy(
                 TOTAL_SUPPLY_6_DECIMALS,
                 6
             );
             await tokenUsdt.deployed();
-            await data.iporConfiguration.addAsset(tokenUsdt.address);            
+            await data.iporConfiguration.addAsset(tokenUsdt.address);
 
             ipTokenUsdt = await IpToken.deploy(
                 tokenUsdt.address,
@@ -364,12 +363,9 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             );
             await josephUsdt.deployed();
             await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
-			await miltonUsdt.authorizeJoseph();
+            await miltonUsdt.authorizeJoseph();
         }
         if (assets[k] === "USDC") {
-            const UsdcMockedToken = await ethers.getContractFactory(
-                "UsdcMockedToken"
-            );
             tokenUsdc = await UsdcMockedToken.deploy(
                 TOTAL_SUPPLY_6_DECIMALS,
                 6
@@ -377,7 +373,6 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             tokenUsdc.deployed();
 
             await data.iporConfiguration.addAsset(tokenUsdc.address);
-            
 
             ipTokenUsdc = await IpToken.deploy(
                 tokenUsdc.address,
@@ -416,30 +411,26 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
 
             miltonUsdc = await ItfMilton.deploy(
                 tokenUsdc.address,
-                iporConfiguration.address
+                data.iporConfiguration.address
             );
             await miltonUsdc.deployed();
             await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
 
             josephUsdc = await ItfJoseph.deploy(
                 tokenUsdc.address,
-                iporConfiguration.address
+                data.iporConfiguration.address
             );
             await josephUsdc.deployed();
             await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
-			await miltonUsdc.authorizeJoseph();
+            await miltonUsdc.authorizeJoseph();
         }
         if (assets[k] === "DAI") {
-            const DaiMockedToken = await ethers.getContractFactory(
-                "DaiMockedToken"
-            );
             tokenDai = await DaiMockedToken.deploy(
                 TOTAL_SUPPLY_18_DECIMALS,
                 18
             );
             await tokenDai.deployed();
             await data.iporConfiguration.addAsset(tokenDai.address);
-            
 
             ipTokenDai = await IpToken.deploy(
                 tokenDai.address,
@@ -447,7 +438,6 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
                 "ipDAI"
             );
             await ipTokenDai.deployed();
-            ipTokenDai.initialize(data.iporConfiguration.address);
 
             iporAssetConfigurationDai = await IporAssetConfiguration.deploy(
                 tokenDai.address,
@@ -490,7 +480,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             );
             await josephDai.deployed();
             await iporAssetConfigurationDai.setJoseph(josephDai.address);
-			await miltonDai.authorizeJoseph();
+            await miltonDai.authorizeJoseph();
         }
     }
 
