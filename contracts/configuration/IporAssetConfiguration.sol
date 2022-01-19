@@ -416,22 +416,3 @@ contract IporAssetConfiguration is
 
 	
 }
-
-//TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
-contract IporAssetConfigurationUsdt is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}
-
-contract IporAssetConfigurationUsdc is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}
-
-contract IporAssetConfigurationDai is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}

@@ -31,6 +31,7 @@ contract MiltonSpreadModel is
     }
 
     function calculatePartialSpreadPayFixed(
+		IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         address asset
     ) external view override returns (uint256 spreadValue) {
@@ -39,13 +40,9 @@ contract MiltonSpreadModel is
             uint256 accruedIbtPrice,
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance
-        ) = _prepareIporIndex(calculateTimestamp, asset);
-		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            assetConfiguration.getMiltonStorage()
-        );
+        ) = _prepareIporIndex(calculateTimestamp, asset);		
 
-        (int256 _soapPf, , ) = miltonStorage.calculateSoap(
+        int256 _soapPf = miltonStorage.calculateSoapPayFixed(
             accruedIbtPrice,
             calculateTimestamp
         );
@@ -84,7 +81,7 @@ contract MiltonSpreadModel is
             assetConfiguration.getMiltonStorage()
         );
 
-        (int256 _soapPf, , ) = miltonStorage.calculateSoap(
+        int256 _soapPf = miltonStorage.calculateSoapPayFixed(
             accruedIbtPrice,
             calculateTimestamp
         );
@@ -106,6 +103,7 @@ contract MiltonSpreadModel is
     }
 
     function calculatePartialSpreadRecFixed(
+		IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         address asset
     ) external view override returns (uint256 spreadValue) {
@@ -115,12 +113,8 @@ contract MiltonSpreadModel is
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance
         ) = _prepareIporIndex(calculateTimestamp, asset);
-		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            assetConfiguration.getMiltonStorage()
-        );
 
-        (, int256 _soapRf, ) = miltonStorage.calculateSoap(
+        int256 _soapRf = miltonStorage.calculateSoapReceiveFixed(
             accruedIbtPrice,
             calculateTimestamp
         );
@@ -159,7 +153,7 @@ contract MiltonSpreadModel is
             assetConfiguration.getMiltonStorage()
         );
 
-        (, int256 _soapRf, ) = miltonStorage.calculateSoap(
+        int256 _soapRf = miltonStorage.calculateSoapReceiveFixed(
             accruedIbtPrice,
             calculateTimestamp
         );

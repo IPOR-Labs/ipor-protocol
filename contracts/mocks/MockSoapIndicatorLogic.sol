@@ -117,26 +117,30 @@ contract MockSoapIndicatorLogic {
     }
 
     function calculateInterestRateWhenOpenPosition(
-        DataTypes.SoapIndicatorMemory memory si,
+        uint256 totalNotional,
+		uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateInterestRateWhenOpenPosition(
-                si,
+				totalNotional,
+				averageInterestRate,
                 derivativeNotional,
                 derivativeFixedInterestRate
             );
     }
 
     function calculateInterestRateWhenClosePosition(
-        DataTypes.SoapIndicatorMemory memory si,
+        uint256 totalNotional,
+		uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateInterestRateWhenClosePosition(
-                si,
+				totalNotional,
+				averageInterestRate,
                 derivativeNotional,
                 derivativeFixedInterestRate
             );

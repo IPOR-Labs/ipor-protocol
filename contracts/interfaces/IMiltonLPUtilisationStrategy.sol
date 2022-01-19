@@ -6,8 +6,10 @@ import "../libraries/types/DataTypes.sol";
 interface IMiltonLPUtilizationStrategy {
     //@notice deposit and openingFee is for this particular derivative
     function calculateTotalUtilizationRate(
-        address asset,
-        uint256 deposit,
+        uint256 liquidityPoolBalance,
+		uint256 swapsPayFixedBalance,
+		uint256 swapsReceiveFixedBalance,
+        uint256 collateral,
         uint256 openingFee
     ) external view returns (uint256);
 }

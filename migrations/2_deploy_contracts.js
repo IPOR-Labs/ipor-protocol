@@ -1,21 +1,45 @@
 require("dotenv").config({ path: "../.env" });
 const keccak256 = require("keccak256");
-const Warren = artifacts.require("Warren");
-const WarrenStorage = artifacts.require("WarrenStorage");
-const Milton = artifacts.require("Milton");
-const MiltonStorage = artifacts.require("MiltonStorage");
+
 const MiltonFaucet = artifacts.require("MiltonFaucet");
-const ItfWarren = artifacts.require("ItfWarren");
-const ItfMilton = artifacts.require("ItfMilton");
-const ItfJoseph = artifacts.require("ItfJoseph");
-const IpToken = artifacts.require("IpToken");
-const UsdtMockedToken = artifacts.require("UsdtMockedToken");
-const UsdcMockedToken = artifacts.require("UsdcMockedToken");
-const DaiMockedToken = artifacts.require("DaiMockedToken");
+
 const IporLogic = artifacts.require("IporLogic");
 const DerivativeLogic = artifacts.require("DerivativeLogic");
 const SoapIndicatorLogic = artifacts.require("SoapIndicatorLogic");
 const DerivativesView = artifacts.require("DerivativesView");
+const IporMath = artifacts.require("IporMath");
+const IporConfiguration = artifacts.require("IporConfiguration");
+
+const IpToken = artifacts.require("IpToken");
+const Warren = artifacts.require("Warren");
+const ItfWarren = artifacts.require("ItfWarren");
+const WarrenStorage = artifacts.require("WarrenStorage");
+const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
+const MiltonLPUtilizationStrategyCollateral = artifacts.require(
+    "MiltonLPUtilizationStrategyCollateral"
+);
+
+const MiltonUsdt = artifacts.require("MiltonUsdt");
+const MiltonUsdc = artifacts.require("MiltonUsdc");
+const MiltonDai = artifacts.require("MiltonDai");
+const ItfMiltonUsdt = artifacts.require("ItfMiltonUsdt");
+const ItfMiltonUsdc = artifacts.require("ItfMiltonUsdc");
+const ItfMiltonDai = artifacts.require("ItfMiltonDai");
+const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
+const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
+const MiltonStorageDai = artifacts.require("MiltonStorageDai");
+
+const JosephUsdt = artifacts.require("JosephUsdt");
+const JosephUsdc = artifacts.require("JosephUsdc");
+const JosephDai = artifacts.require("JosephDai");
+const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
+const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
+const ItfJosephDai = artifacts.require("ItfJosephDai");
+
+const UsdtMockedToken = artifacts.require("UsdtMockedToken");
+const UsdcMockedToken = artifacts.require("UsdcMockedToken");
+const DaiMockedToken = artifacts.require("DaiMockedToken");
+
 const IporAssetConfigurationUsdt = artifacts.require(
     "IporAssetConfigurationUsdt"
 );
@@ -25,8 +49,7 @@ const IporAssetConfigurationUsdc = artifacts.require(
 const IporAssetConfigurationDai = artifacts.require(
     "IporAssetConfigurationDai"
 );
-const IporMath = artifacts.require("IporMath");
-const IporConfiguration = artifacts.require("IporConfiguration");
+
 const MiltonDevToolDataProvider = artifacts.require(
     "MiltonDevToolDataProvider"
 );
@@ -39,11 +62,7 @@ const WarrenFrontendDataProvider = artifacts.require(
 const MiltonFrontendDataProvider = artifacts.require(
     "MiltonFrontendDataProvider"
 );
-const MiltonLPUtilizationStrategyCollateral = artifacts.require(
-    "MiltonLPUtilizationStrategyCollateral"
-);
-const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-const Joseph = artifacts.require("Joseph");
+
 
 async function grandRolesForAssetConfiguration(admin, iporAssetConfiguration) {
     await iporAssetConfiguration.grantRole(
@@ -203,23 +222,23 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(IporLogic);
 
     await deployer.link(IporLogic, Warren);
-    await deployer.link(IporLogic, WarrenStorage);    
+    await deployer.link(IporLogic, WarrenStorage);
 
     await deployer.deploy(DerivativeLogic);
 
-    await deployer.deploy(SoapIndicatorLogic);    
+    await deployer.deploy(SoapIndicatorLogic);
 
     await deployer.deploy(DerivativesView);
 
     await deployer.link(SoapIndicatorLogic, MiltonStorage);
-    await deployer.link(DerivativeLogic, MiltonStorage);    
+    await deployer.link(DerivativeLogic, MiltonStorage);
     await deployer.link(DerivativesView, MiltonStorage);
     await deployer.link(DerivativeLogic, Milton);
 
     await deployer.deploy(IporConfiguration);
     iporConfiguration = await IporConfiguration.deployed();
 
-	await deployer.deploy(WarrenStorage, iporConfiguration.address);
+    await deployer.deploy(WarrenStorage, iporConfiguration.address);
     let warrenStorage = await WarrenStorage.deployed();
 
     await deployer.deploy(Warren, iporConfiguration.address);
@@ -237,7 +256,10 @@ module.exports = async function (deployer, _network, addresses) {
     );
 
     // await deployer.link(IporMath, MiltonLPUtilizationStrategyCollateral);
-    await deployer.deploy(MiltonLPUtilizationStrategyCollateral, iporConfiguration.address);
+    await deployer.deploy(
+        MiltonLPUtilizationStrategyCollateral,
+        iporConfiguration.address
+    );
     let miltonLPUtilizationStrategyCollateral =
         await MiltonLPUtilizationStrategyCollateral.deployed();
 

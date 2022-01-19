@@ -296,9 +296,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             "MiltonLPUtilizationStrategyCollateral"
         );
     const miltonLPUtilizationStrategyCollateral =
-        await MiltonLPUtilizationStrategyCollateral.deploy(
-            data.iporConfiguration.address
-        );
+        await MiltonLPUtilizationStrategyCollateral.deploy();
     await miltonLPUtilizationStrategyCollateral.deployed();
 
     await data.iporConfiguration.setMiltonLPUtilizationStrategy(

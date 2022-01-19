@@ -39,7 +39,8 @@ describe("SoapIndicatorLogic", () => {
 
         const actualInterestRate =
             await mockSoapIndicatorLogic.calculateInterestRateWhenOpenPosition(
-                soapIndicator,
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
                 derivativeNotional,
                 derivativeFixedInterestRate
             );
@@ -62,7 +63,8 @@ describe("SoapIndicatorLogic", () => {
 
         const actualInterestRate =
             await mockSoapIndicatorLogic.calculateInterestRateWhenClosePosition(
-                soapIndicator,
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
                 derivativeNotional,
                 derivativeFixedInterestRate
             );
@@ -85,7 +87,8 @@ describe("SoapIndicatorLogic", () => {
         await assertError(
             //when
             mockSoapIndicatorLogic.calculateInterestRateWhenClosePosition(
-                soapIndicator,
+                soapIndicator.totalNotional,
+				soapIndicator.averageInterestRate,
                 derivativeNotional,
                 derivativeFixedInterestRate
             ),
@@ -462,7 +465,7 @@ describe("SoapIndicatorLogic", () => {
         const actualSoapPf = await mockSoapIndicatorLogic.calculateSoapPayFixed(
             soapIndicator,
             calculationTimestamp,
-			ibtPrice            
+            ibtPrice
         );
 
         //then
@@ -486,7 +489,7 @@ describe("SoapIndicatorLogic", () => {
             await mockSoapIndicatorLogic.calculateSoapReceiveFixed(
                 soapIndicator,
                 calculationTimestamp,
-				ibtPrice                
+                ibtPrice
             );
 
         //then

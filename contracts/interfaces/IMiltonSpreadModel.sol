@@ -2,9 +2,11 @@
 pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
+import "../interfaces/IMiltonStorage.sol";
 
 interface IMiltonSpreadModel {
     function calculatePartialSpreadPayFixed(
+		IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         address asset
     ) external view returns (uint256 spreadValue);
@@ -17,6 +19,7 @@ interface IMiltonSpreadModel {
     ) external view returns (uint256 spreadValue);
 
     function calculatePartialSpreadRecFixed(
+		IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         address asset
     ) external view returns (uint256 spreadValue);

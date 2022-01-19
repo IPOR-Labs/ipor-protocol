@@ -80,7 +80,8 @@ library SoapIndicatorLogic {
     ) internal pure returns(DataTypes.SoapIndicatorMemory memory) {
         //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
-            si,
+            si.totalNotional,
+			si.averageInterestRate,
             derivativeNotional,
             derivativeFixedInterestRate
         );
@@ -123,7 +124,8 @@ library SoapIndicatorLogic {
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
 
         uint256 averageInterestRate = calculateInterestRateWhenClosePosition(
-            si,
+			si.totalNotional,
+			si.averageInterestRate,
             derivativeNotional,
             derivativeFixedInterestRate
         );
@@ -185,39 +187,41 @@ library SoapIndicatorLogic {
     }
 
     function calculateInterestRateWhenOpenPosition(
-        DataTypes.SoapIndicatorMemory memory si,
+		uint256 totalNotional,
+		uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                (si.totalNotional *
-                    si.averageInterestRate +
+                (totalNotional *
+                    averageInterestRate +
                     derivativeNotional *
                     derivativeFixedInterestRate),
-                (si.totalNotional + derivativeNotional)
+                (totalNotional + derivativeNotional)
             );
     }
 
     function calculateInterestRateWhenClosePosition(
-        DataTypes.SoapIndicatorMemory memory si,
+		uint256 totalNotional,
+		uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) internal pure returns (uint256) {
         require(
-            derivativeNotional <= si.totalNotional,
+            derivativeNotional <= totalNotional,
             IporErrors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
         );
-        if (derivativeNotional == si.totalNotional) {
+        if (derivativeNotional == totalNotional) {
             return 0;
         } else {
             return
                 IporMath.division(
-                    (si.totalNotional *
-                        si.averageInterestRate -
+                    (totalNotional *
+                        averageInterestRate -
                         derivativeNotional *
                         derivativeFixedInterestRate),
-                    (si.totalNotional - derivativeNotional)
+                    (totalNotional - derivativeNotional)
                 );
         }
     }

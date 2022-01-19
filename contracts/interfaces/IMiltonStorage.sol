@@ -24,14 +24,14 @@ interface IMiltonStorage {
         external;
 
     function updateStorageWhenOpenSwapPayFixed(
-        DataTypes.IporDerivativeMemory memory iporDerivative,
+        DataTypes.NewSwap memory newSwap,
         uint256 openingAmount
-    ) external;
+    ) external returns(uint256);
 
     function updateStorageWhenOpenSwapReceiveFixed(
-        DataTypes.IporDerivativeMemory memory iporDerivative,
+        DataTypes.NewSwap memory newSwap,
         uint256 openingAmount
-    ) external;
+    ) external returns(uint256);
 
     function updateStorageWhenCloseSwapPayFixed(
         address user,
@@ -108,5 +108,17 @@ interface IMiltonStorage {
             int256 soapPf,
             int256 soapRf,
             int256 soap
+        );
+		function calculateSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
+        external
+        view
+        returns (
+            int256 soapPf
+        );
+		function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
+        external
+        view
+        returns (
+            int256 soapRf
         );
 }

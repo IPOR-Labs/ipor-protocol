@@ -18,12 +18,14 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
     }
 
     function getIpTokenExchangeRate(address asset)
-        external   
-		view     
+        external
+        view
         override
         returns (uint256)
     {
-		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
+            _iporConfiguration.getIporAssetConfiguration(asset)
+        );
         IMilton milton = IMilton(assetConfiguration.getMilton());
         uint256 result = milton.calculateExchangeRate(block.timestamp);
         return result;
@@ -35,7 +37,9 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         override
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional)
     {
-		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
+            _iporConfiguration.getIporAssetConfiguration(asset)
+        );
         IMiltonStorage miltonStorage = IMiltonStorage(
             assetConfiguration.getMiltonStorage()
         );
@@ -49,14 +53,16 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         override
         returns (IporDerivativeFront[] memory items)
     {
-		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-		
+        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
+            _iporConfiguration.getIporAssetConfiguration(asset)
+        );
+
         IMiltonStorage miltonStorage = IMiltonStorage(
             assetConfiguration.getMiltonStorage()
         );
         uint256[] memory userSwapPayFixedIds = miltonStorage
             .getUserSwapPayFixedIds(msg.sender);
-		uint256[] memory userSwapReceiveFixedIds = miltonStorage
+        uint256[] memory userSwapReceiveFixedIds = miltonStorage
             .getUserSwapPayFixedIds(msg.sender);
         IporDerivativeFront[]
             memory iporDerivatives = new IporDerivativeFront[](
@@ -65,14 +71,19 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMilton milton = IMilton(assetConfiguration.getMilton());
 
         for (uint256 i = 0; i < userSwapPayFixedIds.length; i++) {
-            DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
-                .getSwapPayFixedItem(userSwapPayFixedIds[i]);
+            DataTypes.MiltonDerivativeItemMemory
+                memory derivativeItem = miltonStorage.getSwapPayFixedItem(
+                    userSwapPayFixedIds[i]
+                );
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,
                 asset,
                 derivativeItem.item.collateral,
                 derivativeItem.item.notionalAmount,
-				IporMath.division(derivativeItem.item.notionalAmount * Constants.D18, derivativeItem.item.collateral),
+                IporMath.division(
+                    derivativeItem.item.notionalAmount * Constants.D18,
+                    derivativeItem.item.collateral
+                ),
                 0,
                 derivativeItem.item.fixedInterestRate,
                 milton.calculateSwapPayFixedValue(derivativeItem.item),
@@ -82,15 +93,20 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             );
         }
 
-		for (uint256 i = 0; i < userSwapReceiveFixedIds.length; i++) {
-            DataTypes.MiltonDerivativeItemMemory memory derivativeItem = miltonStorage
-                .getSwapReceiveFixedItem(userSwapReceiveFixedIds[i]);
+        for (uint256 i = 0; i < userSwapReceiveFixedIds.length; i++) {
+            DataTypes.MiltonDerivativeItemMemory
+                memory derivativeItem = miltonStorage.getSwapReceiveFixedItem(
+                    userSwapReceiveFixedIds[i]
+                );
             iporDerivatives[i] = IporDerivativeFront(
                 derivativeItem.item.id,
                 asset,
                 derivativeItem.item.collateral,
                 derivativeItem.item.notionalAmount,
-				IporMath.division(derivativeItem.item.notionalAmount * Constants.D18, derivativeItem.item.collateral),
+                IporMath.division(
+                    derivativeItem.item.notionalAmount * Constants.D18,
+                    derivativeItem.item.collateral
+                ),
                 1,
                 derivativeItem.item.fixedInterestRate,
                 milton.calculateSwapReceiveFixedValue(derivativeItem.item),
@@ -121,17 +137,22 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
         uint256 timestamp = block.timestamp;
 
-
-		uint256 spreadPayFixedValue;
-		uint256 spreadRecFixedValue;
+        uint256 spreadPayFixedValue;
+        uint256 spreadRecFixedValue;
 
         for (uint256 i = 0; i < assets.length; i++) {
             IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                     _iporConfiguration.getIporAssetConfiguration(assets[i])
-               );
-
+                );
+            IMiltonStorage miltonStorage = IMiltonStorage(
+                iporAssetConfiguration.getMiltonStorage()
+            );
             try
-                spreadModel.calculatePartialSpreadPayFixed(timestamp, assets[i])
+                spreadModel.calculatePartialSpreadPayFixed(
+                    miltonStorage,
+                    timestamp,
+                    assets[i]
+                )
             returns (uint256 _spreadPayFixedValue) {
                 spreadPayFixedValue = _spreadPayFixedValue;
             } catch {
@@ -139,7 +160,11 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             }
 
             try
-                spreadModel.calculatePartialSpreadRecFixed(timestamp, assets[i])
+                spreadModel.calculatePartialSpreadRecFixed(
+                    miltonStorage,
+                    timestamp,
+                    assets[i]
+                )
             returns (uint256 _spreadRecFixedValue) {
                 spreadRecFixedValue = _spreadRecFixedValue;
             } catch {

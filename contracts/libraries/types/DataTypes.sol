@@ -143,6 +143,15 @@ library DataTypes {
 		DataTypes.IporDerivativeMemory item;
     }
 
+	struct NewSwap {        
+        address buyer;		
+		uint256 startingTimestamp;				
+        uint256 collateral;
+		uint256 liquidationDepositAmount;        
+        uint256 notionalAmount;        
+		uint256 fixedInterestRate;
+		uint256 ibtQuantity;
+    }
 	struct IporDerivativeMemory {
         uint256 state;
 		//@notice Buyer of this derivative
