@@ -36,29 +36,35 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     using SafeCast for int256;
     using DerivativeLogic for DataTypes.IporDerivativeMemory;
 
-	address private _asset;
+    uint8 private immutable _decimals;
+    address private immutable _asset;
     IIporConfiguration internal _iporConfiguration;
-	IIporAssetConfiguration internal _iporAssetConfiguration;
+    IIporAssetConfiguration internal _iporAssetConfiguration;
+	
 
     constructor(address asset, address initialIporConfiguration) {
-		require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(
             address(initialIporConfiguration) != address(0),
             IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
         );
         _iporConfiguration = IIporConfiguration(initialIporConfiguration);
-		require(
+        require(
             _iporConfiguration.assetSupported(asset) == 1,
             IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
 
+        _asset = asset;
+
         _iporAssetConfiguration = IIporAssetConfiguration(
             _iporConfiguration.getIporAssetConfiguration(asset)
-        );
+        );		
+
+        _decimals = _iporAssetConfiguration.getDecimals();
     }
 
     modifier onlyActiveSwapPayFixed(uint256 derivativeId) {
-	require(
+        require(
             IMiltonStorage(_iporAssetConfiguration.getMiltonStorage())
                 .getSwapPayFixedState(derivativeId) == 1,
             IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
@@ -96,12 +102,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
-    function authorizeJoseph()
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function authorizeJoseph() external override onlyOwner whenNotPaused {
         IERC20(_asset).safeIncreaseAllowance(
             _iporAssetConfiguration.getJoseph(),
             Constants.MAX_VALUE
@@ -114,6 +115,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         onlyPublicationFeeTransferer
     {
         require(amount > 0, IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+
+        //TODO: consider save this address inside Milton, use MiltonStorage as proxy, and manage this address directly on Milton
         IMiltonStorage miltonStorage = IMiltonStorage(
             _iporAssetConfiguration.getMiltonStorage()
         );
@@ -121,7 +124,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             amount <= miltonStorage.getBalance().openingFee,
             IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
         );
-        address charlieTreasurer = _iporAssetConfiguration.getCharlieTreasurer();
+        address charlieTreasurer = _iporAssetConfiguration
+            .getCharlieTreasurer();
         require(
             address(0) != charlieTreasurer,
             IporErrors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS
@@ -225,17 +229,15 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         view
         override
         returns (uint256)
-    {        
+    {
         IIpToken ipToken = IIpToken(_iporAssetConfiguration.getIpToken());
         IMiltonStorage miltonStorage = IMiltonStorage(
             _iporAssetConfiguration.getMiltonStorage()
         );
         (, , int256 soap) = _calculateSoap(calculateTimestamp);
 
-        int256 balance = miltonStorage
-            .getBalance()
-            .liquidityPool
-            .toInt256() - soap;
+        int256 balance = miltonStorage.getBalance().liquidityPool.toInt256() -
+            soap;
 
         require(
             balance >= 0,
@@ -363,9 +365,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             _asset,
             calculateTimestamp
         );
-        (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(
-            _iporAssetConfiguration.getMiltonStorage()
-        ).calculateSoap(accruedIbtPrice, calculateTimestamp);
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(_iporAssetConfiguration.getMiltonStorage()).calculateSoap(accruedIbtPrice, calculateTimestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
@@ -384,8 +384,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             IERC20(_asset).balanceOf(msg.sender) >= totalAmount,
             IporErrors.MILTON_ASSET_BALANCE_OF_TOO_LOW
         );
-        uint256 decimals = _iporAssetConfiguration.getDecimals();
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
+
+        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _decimals);
 
         require(
             collateralizationFactor >=
@@ -455,7 +455,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 notional,
                 openingFee,
                 _iporAssetConfiguration.getLiquidationDepositAmount(),
-                decimals,
+                _decimals,
                 _iporAssetConfiguration.getIporPublicationFeeAmount()
             );
     }
@@ -495,7 +495,6 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 spreadValue
             );
 
-        //TODO: separate to type with uint256 and without uint256 !!!
         DataTypes.IporDerivativeMemory memory iporDerivative = DataTypes
             .IporDerivativeMemory(
                 uint256(DataTypes.DerivativeState.ACTIVE),
@@ -510,7 +509,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 indicator.ibtQuantity
             );
 
-        miltonStorage.updateStorageWhenOpenSwapPayFixed(
+			miltonStorage.updateStorageWhenOpenSwapPayFixed(
             iporDerivative,
             bosStruct.openingFee
         );
@@ -582,6 +581,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 msg.sender,
                 openTimestamp,
                 openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                //TODO: move this operation inside MiltonStorage
                 miltonStorage.getLastSwapId() + 1,
                 bosStruct.collateral,
                 bosStruct.liquidationDepositAmount,
@@ -590,7 +590,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 indicator.ibtQuantity
             );
 
-        miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
+			miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
             iporDerivative,
             bosStruct.openingFee
         );
@@ -760,15 +760,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             derivativeItem,
             positionValue,
             closeTimestamp,
-            incomeTaxPercentage,
-            _iporAssetConfiguration.getDecimals()
+            incomeTaxPercentage
         );
 
-        emit ClosePosition(
-            derivativeId,
-            _asset,
-            closeTimestamp
-        );
+        emit ClosePosition(derivativeId, _asset, closeTimestamp);
     }
 
     function _closeSwapReceiveFixed(
@@ -796,9 +791,6 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 
-        uint256 incomeTaxPercentage = _iporAssetConfiguration
-            .getIncomeTaxPercentage();
-
         int256 positionValue = _calculateSwapReceiveFixedValue(
             closeTimestamp,
             derivativeItem.item
@@ -815,23 +807,17 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             derivativeItem,
             positionValue,
             closeTimestamp,
-            incomeTaxPercentage,
-            _iporAssetConfiguration.getDecimals()
+            _iporAssetConfiguration.getIncomeTaxPercentage()
         );
 
-        emit ClosePosition(
-            derivativeId,
-            _asset,
-            closeTimestamp
-        );
+        emit ClosePosition(derivativeId, _asset, closeTimestamp);
     }
 
     function _transferTokensBasedOnpositionValue(
         DataTypes.MiltonDerivativeItemMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 incomeTaxPercentage,
-        uint256 assetDecimals
+        uint256 incomeTaxPercentage
     ) internal {
         uint256 abspositionValue = IporMath.absoluteValue(positionValue);
 
@@ -856,15 +842,13 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                     IporMath.calculateIncomeTax(
                         abspositionValue,
                         incomeTaxPercentage
-                    ),
-                assetDecimals
+                    )
             );
         } else {
             //Milton earn, Trader looseMiltonStorage
             _transferDerivativeAmount(
                 derivativeItem,
-                derivativeItem.item.collateral - abspositionValue,
-                assetDecimals
+                derivativeItem.item.collateral - abspositionValue
             );
         }
     }
@@ -872,8 +856,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     //Depends on condition transfer only to sender (when sender == buyer) or to sender and buyer
     function _transferDerivativeAmount(
         DataTypes.MiltonDerivativeItemMemory memory derivativeItem,
-        uint256 transferAmount,
-        uint256 assetDecimals
+        uint256 transferAmount
     ) internal {
         if (msg.sender == derivativeItem.item.buyer) {
             transferAmount =
@@ -886,7 +869,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 msg.sender,
                 IporMath.convertWadToAssetDecimals(
                     derivativeItem.item.liquidationDepositAmount,
-                    assetDecimals
+                    _decimals
                 )
             );
         }
@@ -896,10 +879,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             IERC20(_asset).safeTransfer(
                 derivativeItem.item.buyer,
-                IporMath.convertWadToAssetDecimals(
-                    transferAmount,
-                    assetDecimals
-                )
+                IporMath.convertWadToAssetDecimals(transferAmount, _decimals)
             );
         }
     }

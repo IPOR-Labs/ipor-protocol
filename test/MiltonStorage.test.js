@@ -117,7 +117,7 @@ describe("MiltonStorage", () => {
             await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
         await assertError(
             //when
-            testData.miltonStorage
+            testData.miltonStorageDai
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
@@ -171,25 +171,25 @@ describe("MiltonStorage", () => {
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph
+
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openSwapPayFixed(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getSwapPayFixedItem(
-            1
-        );
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem =
+            await testData.miltonStorageDai.getSwapPayFixedItem(1);
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationDai.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
-        testData.miltonStorage
+        testData.miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
@@ -244,25 +244,25 @@ describe("MiltonStorage", () => {
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph
+
+        await testData.josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 USD_14_000_6DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openSwapPayFixed(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getSwapPayFixedItem(
-            1
-        );
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem =
+            await testData.miltonStorageUsdt.getSwapPayFixedItem(1);
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationUsdt.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
-        testData.miltonStorage
+        testData.miltonStorageUsdt
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
@@ -316,26 +316,26 @@ describe("MiltonStorage", () => {
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph
+
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openSwapPayFixed(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getSwapPayFixedItem(
-            1
-        );
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem =
+            await testData.miltonStorageDai.getSwapPayFixedItem(1);
         let closePositionTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationDai.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
         await assertError(
-            testData.miltonStorage
+            testData.miltonStorageDai
                 .connect(userThree)
                 .updateStorageWhenCloseSwapPayFixed(
                     userTwo.address,
@@ -348,28 +348,74 @@ describe("MiltonStorage", () => {
         );
     });
 
-    const openSwapPayFixed = async (params) => {
-        await data.milton
-            .connect(params.from)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                params.asset,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor
-            );
+    const openSwapPayFixed = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
     };
 
-    const openSwapReceiveFixed = async (params) => {
-        await data.milton
-            .connect(params.from)
-            .itfOpenSwapReceiveFixed(
-                params.openTimestamp,
-                params.asset,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor
-            );
+    const openSwapReceiveFixed = async (testData, params) => {
+        if (params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
     };
 
     const preprareSwapPayFixedStruct18DecSimpleCase1 = async (testData) => {

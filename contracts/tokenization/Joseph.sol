@@ -21,6 +21,7 @@ contract Joseph is Ownable, IJoseph {
     using SafeCast for uint256;
     using SafeCast for int256;
 
+	uint8 private immutable _decimals;
 	address internal _asset;
 
 
@@ -43,6 +44,7 @@ contract Joseph is Ownable, IJoseph {
         _iporAssetConfiguration = IIporAssetConfiguration(
             _iporConfiguration.getIporAssetConfiguration(asset)
         );
+		_decimals = _iporAssetConfiguration.getDecimals();
 		
     }
 
@@ -52,7 +54,7 @@ contract Joseph is Ownable, IJoseph {
     {
         _provideLiquidity(
             liquidityAmount,
-            _iporAssetConfiguration.getDecimals(),
+            _decimals,
             block.timestamp
         );
     }
@@ -134,7 +136,7 @@ contract Joseph is Ownable, IJoseph {
         );
         uint256 underlyingAmount = IporMath.convertWadToAssetDecimals(
             wadUnderlyingAmount,
-            _iporAssetConfiguration.getDecimals()
+            _decimals
         );
 
         IIpToken(_iporAssetConfiguration.getIpToken()).burn(

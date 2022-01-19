@@ -18,12 +18,12 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
     using DerivativesView for DataTypes.MiltonDerivativesStorage;
 
-    uint64 private _lastSwapId;
-
     address private _asset;
-
     IIporConfiguration internal _iporConfiguration;
     IIporAssetConfiguration internal _iporAssetConfiguration;
+
+	// uint128 internal _balancePayFixedSwaps;
+	// uint128 internal _balanceReceiveFixedSwaps;
 
     DataTypes.MiltonTotalBalanceStorage public balances;
 
@@ -34,6 +34,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     DataTypes.MiltonDerivativesStorage internal _swapsPayFixed;
     DataTypes.MiltonDerivativesStorage internal _swapsReceiveFixed;
+
+    uint64 private _lastSwapId;
 
     constructor(address asset, address initialIporConfiguration) {
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
@@ -47,6 +49,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             _iporConfiguration.assetSupported(asset) == 1,
             IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
+
+        _asset = asset;
 
         _iporAssetConfiguration = IIporAssetConfiguration(
             _iporConfiguration.getIporAssetConfiguration(asset)

@@ -22,9 +22,9 @@ library DataTypes {
     struct MiltonTotalBalanceStorage {
 		//TODO: reduce to 128
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
-        uint128 payFixedDerivatives;
+         uint128 payFixedDerivatives;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
-        uint128 recFixedDerivatives;
+         uint128 recFixedDerivatives;
         uint128 openingFee;
         uint128 liquidationDeposit;
         uint128 iporPublicationFee;

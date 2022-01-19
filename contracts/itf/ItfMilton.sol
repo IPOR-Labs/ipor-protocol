@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../amm/Milton.sol";
 
 contract ItfMilton is Milton {
-    constructor(address asset,address initialIporConfiguration)
+    constructor(address asset, address initialIporConfiguration)
         Milton(asset, initialIporConfiguration)
     {}
 
@@ -23,7 +23,7 @@ contract ItfMilton is Milton {
             );
     }
 
-	function itfOpenSwapReceiveFixed(
+    function itfOpenSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 maximumSlippage,
@@ -44,9 +44,10 @@ contract ItfMilton is Milton {
         _closeSwapPayFixed(derivativeId, closeTimestamp);
     }
 
-	function itfCloseSwapReceiveFixed(uint256 derivativeId, uint256 closeTimestamp)
-        external
-    {
+    function itfCloseSwapReceiveFixed(
+        uint256 derivativeId,
+        uint256 closeTimestamp
+    ) external {
         _closeSwapReceiveFixed(derivativeId, closeTimestamp);
     }
 
@@ -59,7 +60,7 @@ contract ItfMilton is Milton {
             int256 soap
         )
     {
-        (soapPf,soapRf, soap) = _calculateSoap(calculateTimestamp);
+        (soapPf, soapRf, soap) = _calculateSoap(calculateTimestamp);
     }
 
     function itfCalculateSpread(uint256 calculateTimestamp)
@@ -79,7 +80,7 @@ contract ItfMilton is Milton {
         return _calculateSwapPayFixedValue(calculateTimestamp, derivative);
     }
 
-	function itfCalculateSwapReceiveFixedValue(
+    function itfCalculateSwapReceiveFixedValue(
         uint256 calculateTimestamp,
         DataTypes.IporDerivativeMemory memory derivative
     ) external view returns (int256) {

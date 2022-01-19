@@ -103,16 +103,14 @@ describe("Milton", () => {
             testData
         );
 
-        const asset = testData.tokenDai.address;
         const collateral = 0;
         const slippageValue = 3;
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
             //when
-            data.milton.itfOpenSwapPayFixed(
+            testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                asset,
                 collateral,
                 slippageValue,
                 collateralizationFactor
@@ -141,16 +139,14 @@ describe("Milton", () => {
             testData
         );
 
-        const asset = testData.tokenDai.address;
         const collateral = BigInt("30000000000000000001");
         const slippageValue = 0;
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
             //when
-            data.milton.itfOpenSwapPayFixed(
+            testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                asset,
                 collateral,
                 slippageValue,
                 collateralizationFactor
@@ -179,7 +175,6 @@ describe("Milton", () => {
             testData
         );
 
-        const asset = testData.tokenDai.address;
         const collateral = BigInt("30000000000000000001");
         const slippageValue = BigInt("100000000000000000001");
         const collateralizationFactor = USD_10_18DEC;
@@ -187,9 +182,8 @@ describe("Milton", () => {
 
         await assertError(
             //when
-            data.milton.itfOpenSwapPayFixed(
+            testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                asset,
                 collateral,
                 slippageValue,
                 collateralizationFactor
@@ -218,7 +212,6 @@ describe("Milton", () => {
             testData
         );
 
-        const asset = testData.tokenUsdt.address;
         const collateral = BigInt("30000001");
         const slippageValue = BigInt("100000000000000000001");
         const collateralizationFactor = USD_10_18DEC;
@@ -226,9 +219,8 @@ describe("Milton", () => {
 
         await assertError(
             //when
-            data.milton.itfOpenSwapPayFixed(
+            testData.miltonUsdt.itfOpenSwapPayFixed(
                 timestamp,
-                asset,
                 collateral,
                 slippageValue,
                 collateralizationFactor
@@ -257,7 +249,6 @@ describe("Milton", () => {
             testData
         );
 
-        const asset = testData.tokenDai.address;
         const collateral = BigInt("1000000000000000000000001");
         const slippageValue = 3;
         const collateralizationFactor = BigInt(10000000000000000000);
@@ -265,9 +256,8 @@ describe("Milton", () => {
 
         await assertError(
             //when
-            data.milton.itfOpenSwapPayFixed(
+            testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                asset,
                 collateral,
                 slippageValue,
                 collateralizationFactor
@@ -310,10 +300,9 @@ describe("Milton", () => {
 
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
@@ -325,11 +314,10 @@ describe("Milton", () => {
         let expectedDerivativesTotalBalanceWad = collateralWad;
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -355,12 +343,12 @@ describe("Milton", () => {
 
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorage.balances(params.asset)
+                await testData.miltonStorageDai.getBalance()
             ).payFixedDerivatives
         );
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorage.balances(params.asset)
+                await testData.miltonStorageDai.getBalance()
             ).recFixedDerivatives
         );
         const actualDerivativesTotalBalanceWad =
@@ -407,10 +395,9 @@ describe("Milton", () => {
         let miltonBalanceBeforePayout = USD_14_000_6DEC;
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
 
-        await data.joseph
+        await testData.josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayout,
                 params.openTimestamp
             );
@@ -422,11 +409,10 @@ describe("Milton", () => {
         let expectedDerivativesTotalBalanceWad = collateralWad;
 
         //when
-        await data.milton
+        await testData.miltonUsdt
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -451,13 +437,13 @@ describe("Milton", () => {
         );
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorage.balances(params.asset)
+                await testData.miltonStorageUsdt.getBalance()
             ).payFixedDerivatives
         );
 
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorage.balances(params.asset)
+                await testData.miltonStorageUsdt.getBalance()
             ).recFixedDerivatives
         );
 
@@ -658,13 +644,9 @@ describe("Milton", () => {
         let closePositionTimestamp =
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
 
         await data.warren
             .connect(userOne)
@@ -673,7 +655,7 @@ describe("Milton", () => {
                 BigInt("10000000000000000"),
                 params.openTimestamp
             );
-        await openSwapPayFixed(params);
+        await openSwapPayFixed(testData, params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -689,16 +671,18 @@ describe("Milton", () => {
                 closePositionTimestamp
             );
 
-        await data.iporConfiguration.setJoseph(userOne.address);
-        await testData.miltonStorage
+        await testData.iporAssetConfigurationDai.setJoseph(userOne.address);
+        await testData.miltonStorageDai
             .connect(userOne)
-            .subtractLiquidity(params.asset, params.totalAmount);
-        await data.iporConfiguration.setJoseph(data.joseph.address);
+            .subtractLiquidity(params.totalAmount);
+        await testData.iporAssetConfigurationDai.setJoseph(
+            testData.josephDai.address
+        );
 
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userTwo)
                 .itfCloseSwapPayFixed(1, closePositionTimestamp),
             //then
@@ -1284,13 +1268,9 @@ describe("Milton", () => {
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1298,7 +1278,7 @@ describe("Milton", () => {
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
             );
-        await openSwapPayFixed(params);
+        await openSwapPayFixed(testData, params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1314,7 +1294,7 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userThree)
                 .itfCloseSwapPayFixed(1, endTimestamp),
             //then
@@ -1488,13 +1468,9 @@ describe("Milton", () => {
             from: userTwo,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1502,7 +1478,7 @@ describe("Milton", () => {
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
             );
-        await openSwapPayFixed(params);
+        await openSwapPayFixed(testData, params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1518,7 +1494,7 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userThree)
                 .itfCloseSwapPayFixed(1, endTimestamp),
             //then
@@ -2152,13 +2128,9 @@ describe("Milton", () => {
             from: userTwo,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2166,7 +2138,7 @@ describe("Milton", () => {
                 PERCENTAGE_120_18DEC,
                 params.openTimestamp
             );
-        await openSwapReceiveFixed(params);
+        await openSwapReceiveFixed(testData, params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2182,7 +2154,7 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userThree)
                 .itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
@@ -2263,13 +2235,9 @@ describe("Milton", () => {
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2277,7 +2245,7 @@ describe("Milton", () => {
                 PERCENTAGE_5_18DEC,
                 params.openTimestamp
             );
-        await openSwapReceiveFixed(params);
+        await openSwapReceiveFixed(testData, params);
         await data.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2293,7 +2261,7 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userThree)
                 .itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
@@ -2570,18 +2538,17 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParamsFirst.asset,
                 USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
-        await openSwapPayFixed(derivativeParamsFirst);
+        await openSwapPayFixed(testData, derivativeParamsFirst);
 
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(closerUser)
                 .itfCloseSwapPayFixed(
                     0,
@@ -2631,14 +2598,13 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParamsFirst.asset,
                 USD_14_000_18DEC + USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
-        await openSwapPayFixed(derivativeParamsFirst);
+        await openSwapPayFixed(testData, derivativeParamsFirst);
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
@@ -2648,17 +2614,17 @@ describe("Milton", () => {
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
-        await openSwapPayFixed(derivativeParams25days);
+        await openSwapPayFixed(testData, derivativeParams25days);
 
         let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
             .itfCloseSwapPayFixed(1, endTimestamp);
 
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(closerUser)
                 .itfCloseSwapPayFixed(1, endTimestamp),
             //then
@@ -2668,12 +2634,18 @@ describe("Milton", () => {
 
     it("should NOT close position, because derivative not exists", async () => {
         //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
         let closerUser = userTwo;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(closerUser)
                 .itfCloseSwapPayFixed(
                     0,
@@ -2716,10 +2688,9 @@ describe("Milton", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParamsFirst.asset,
                 USD_14_000_18DEC + USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
@@ -2730,7 +2701,7 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await openSwapPayFixed(derivativeParamsFirst);
+        await openSwapPayFixed(testData, derivativeParamsFirst);
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
@@ -2740,18 +2711,19 @@ describe("Milton", () => {
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
-        await openSwapPayFixed(derivativeParams25days);
+        await openSwapPayFixed(testData, derivativeParams25days);
         let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
         let expectedOpenedPositionsVol = 1;
         let expectedDerivativeId = BigInt(2);
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
             .itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
-        let actualDerivatives = await testData.miltonStorage.getSwapsPayFixed();
+        let actualDerivatives =
+            await testData.miltonStorageDai.getSwapsPayFixed();
         let actualOpenedPositionsVol = countOpenPositions(actualDerivatives);
 
         expect(
@@ -2799,10 +2771,9 @@ describe("Milton", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParamsFirst.asset,
                 USD_14_000_18DEC + USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
@@ -2813,7 +2784,7 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 derivativeParamsFirst.openTimestamp
             );
-        await openSwapPayFixed(derivativeParamsFirst);
+        await openSwapPayFixed(testData, derivativeParamsFirst);
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
@@ -2823,18 +2794,19 @@ describe("Milton", () => {
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
-        await openSwapPayFixed(derivativeParams25days);
+        await openSwapPayFixed(testData, derivativeParams25days);
         let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
         let expectedOpenedPositionsVol = 1;
         let expectedDerivativeId = BigInt(1);
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
             .itfCloseSwapPayFixed(2, endTimestamp);
 
         //then
-        let actualDerivatives = await testData.miltonStorage.getSwapsPayFixed();
+        let actualDerivatives =
+            await testData.miltonStorageDai.getSwapsPayFixed();
         let actualOpenedPositionsVol = countOpenPositions(actualDerivatives);
 
         expect(
@@ -2870,7 +2842,6 @@ describe("Milton", () => {
 
         let incomeTax = BigInt("635082150807850422837");
         let interestAmount = BigInt("6350821508078504228366");
-        let asset = testData.tokenDai.address;
         let collateralizationFactor = USD_10_18DEC;
         let openerUser = userTwo;
         let closerUser = userTwo;
@@ -2930,7 +2901,7 @@ describe("Milton", () => {
             localOpenTimestamp = Math.floor(Date.now() / 1000);
         }
         const params = {
-            asset: asset,
+            asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: collateralizationFactor,
@@ -2940,10 +2911,9 @@ describe("Milton", () => {
 
         if (miltonBalanceBeforePayoutWad != null) {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
-            await data.joseph
+            await testData.josephDai
                 .connect(liquidityProvider)
                 .itfProvideLiquidity(
-                    params.asset,
                     miltonBalanceBeforePayoutWad,
                     params.openTimestamp
                 );
@@ -2956,7 +2926,7 @@ describe("Milton", () => {
                 iporValueBeforeOpenPosition,
                 params.openTimestamp
             );
-        await openSwapPayFixed(params);
+        await openSwapPayFixed(testData, params);
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
         await data.warren
             .connect(userOne)
@@ -2976,7 +2946,7 @@ describe("Milton", () => {
             );
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
             .itfCloseSwapPayFixed(1, endTimestamp);
 
@@ -3004,7 +2974,7 @@ describe("Milton", () => {
             expectedSoap: expectedSoap,
             from: openerUser,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should open many positions and arrays with ids have correct state, one user", async () => {
@@ -3049,30 +3019,29 @@ describe("Milton", () => {
         let expectedUserDerivativeIdsLength = 3;
         let expectedDerivativeIdsLength = 3;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
         //when
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //then
         let actualUserDerivativeIds =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 openerUser.address
             );
         let actualDerivativeIds =
-            await testData.miltonStorage.getSwapPayFixedIds();
+            await testData.miltonStorageDai.getSwapPayFixedIds();
 
         expect(
             expectedUserDerivativeIdsLength,
@@ -3083,9 +3052,9 @@ describe("Milton", () => {
             `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`
         ).to.be.eq(actualDerivativeIds.length);
 
-        await assertMiltonDerivativeItem(testData, 1, 0, 0, 0);
-        await assertMiltonDerivativeItem(testData, 2, 0, 1, 1);
-        await assertMiltonDerivativeItem(testData, 3, 0, 2, 2);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 1, 0, 0, 0);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 2, 0, 1, 1);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 3, 0, 2, 2);
     });
 
     it("should open many positions and arrays with ids have correct state, two users", async () => {
@@ -3130,38 +3099,37 @@ describe("Milton", () => {
         let expectedUserDerivativeIdsLengthSecond = 1;
         let expectedDerivativeIdsLength = 3;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
         //when
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userTwo;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userThree.address
             );
         let actualDerivativeIds =
-            await testData.miltonStorage.getSwapPayFixedIds();
+            await testData.miltonStorageDai.getSwapPayFixedIds();
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -3176,9 +3144,9 @@ describe("Milton", () => {
             `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`
         ).to.be.eq(actualDerivativeIds.length);
 
-        await assertMiltonDerivativeItem(testData, 1, 0, 0, 0);
-        await assertMiltonDerivativeItem(testData, 2, 0, 1, 0);
-        await assertMiltonDerivativeItem(testData, 3, 0, 2, 1);
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 2, 0, 1, 0);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 3, 0, 2, 1);
     });
 
     it("should open many positions and close one position and arrays with ids have correct state, two users", async () => {
@@ -3223,28 +3191,27 @@ describe("Milton", () => {
         let expectedUserDerivativeIdsLengthSecond = 0;
         let expectedDerivativeIdsLength = 2;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userTwo;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 2,
@@ -3253,15 +3220,15 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userThree.address
             );
         let actualDerivativeIds =
-            await testData.miltonStorage.getSwapPayFixedIds();
+            await testData.miltonStorageDai.getSwapPayFixedIds();
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -3276,8 +3243,8 @@ describe("Milton", () => {
             `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`
         ).to.be.eq(actualDerivativeIds.length);
 
-        await assertMiltonDerivativeItem(testData, 1, 0, 0, 0);
-        await assertMiltonDerivativeItem(testData, 3, 0, 1, 1);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 1, 0, 0, 0);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 3, 0, 1, 1);
     });
 
     it("should open many positions and close two positions and arrays with ids have correct state, two users", async () => {
@@ -3322,34 +3289,33 @@ describe("Milton", () => {
         let expectedUserDerivativeIdsLengthSecond = 0;
         let expectedDerivativeIdsLength = 1;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 BigInt(3) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userTwo;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 2,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfCloseSwapPayFixed(
                 3,
@@ -3358,15 +3324,15 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userThree.address
             );
         let actualDerivativeIds =
-            await testData.miltonStorage.getSwapPayFixedIds();
+            await testData.miltonStorageDai.getSwapPayFixedIds();
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -3381,7 +3347,7 @@ describe("Milton", () => {
             `Incorrect derivative ids length actual: ${actualDerivativeIds.length}, expected: ${expectedDerivativeIdsLength}`
         ).to.be.eq(actualDerivativeIds.length);
 
-        await assertMiltonDerivativeItem(testData, 1, 0, 0, 0);
+        await assertMiltonDerivativeItem(testData,  derivativeParams.asset, 1, 0, 0, 0);
     });
 
     //TODO: debug case where SoapIndicatorStorage.quasiHypotheticalInterestCumulative is changed to uint128
@@ -3414,10 +3380,9 @@ describe("Milton", () => {
             openTimestamp: openTimestamp,
             from: userThree,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
@@ -3434,21 +3399,21 @@ describe("Milton", () => {
         let expectedDerivativeIdsLength = 0;
 
         //position 1, user first
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //position 2, user second
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 1,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 2,
@@ -3457,15 +3422,15 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualDerivativeIds =
-            await testData.miltonStorage.getSwapPayFixedIds();
+            await testData.miltonStorageDai.getSwapPayFixedIds();
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -3511,10 +3476,9 @@ describe("Milton", () => {
             openTimestamp: openTimestamp,
             from: userThree,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
@@ -3531,21 +3495,21 @@ describe("Milton", () => {
         let expectedDerivativeIdsLength = 0;
 
         //position 1, user first
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //position 2, user second
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS - 3;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 1,
                 derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS
             );
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 2,
@@ -3554,15 +3518,15 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualDerivativeIds =
-            await testData.miltonStorage.getSwapPayFixedIds();
+            await testData.miltonStorageDai.getSwapPayFixedIds();
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -3608,10 +3572,9 @@ describe("Milton", () => {
             openTimestamp: openTimestamp,
             from: userThree,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                derivativeParams.asset,
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
@@ -3629,15 +3592,15 @@ describe("Milton", () => {
 
         //position 1, user first
         derivativeParams.from = userThree;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         //position 2, user second
         derivativeParams.openTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         derivativeParams.from = userThree;
-        await openSwapPayFixed(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 1,
@@ -3645,7 +3608,7 @@ describe("Milton", () => {
             );
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userThree)
             .itfCloseSwapPayFixed(
                 2,
@@ -3654,15 +3617,15 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorage.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getUserSwapPayFixedIds(
                 userTwo.address
             );
         let actualDerivativeIds =
-            await testData.miltonStorage.getSwapPayFixedIds();
+            await testData.miltonStorageDai.getSwapPayFixedIds();
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -4249,27 +4212,26 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
         let expectedLiquidityPoolTotalBalanceWad =
             miltonBalanceBeforePayoutWad + BigInt("28329511465603190429");
-        await data.joseph
+
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
             );
 
         //then
-        let balance = await testData.miltonStorage.balances(params.asset);
+        let balance = await testData.miltonStorageDai.getBalance();
 
         const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
         const actualLiquidityPoolTotalBalanceWad = BigInt(
@@ -4343,27 +4305,25 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
         let expectedLiquidityPoolTotalBalanceWad =
             miltonBalanceBeforePayoutWad + BigInt("29075024925224327019");
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
             );
 
         //then
-        let balance = await testData.miltonStorage.balances(params.asset);
+        let balance = await testData.miltonStorageDai.getBalance();
 
         const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
         const actualLiquidityPoolTotalBalanceWad = BigInt(
@@ -4420,19 +4380,14 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
 
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -4441,10 +4396,7 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton.transferPublicationFee(
-                testData.tokenDai.address,
-                BigInt("100")
-            ),
+            testData.miltonDai.transferPublicationFee(BigInt("100")),
             //then
             "IPOR_31"
         );
@@ -4478,19 +4430,14 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
 
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -4512,10 +4459,7 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton.transferPublicationFee(
-                testData.tokenDai.address,
-                BigInt("100")
-            ),
+            testData.miltonDai.transferPublicationFee(BigInt("100")),
             //then
             "IPOR_29"
         );
@@ -4566,19 +4510,14 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
 
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -4594,13 +4533,10 @@ describe("Milton", () => {
         const transferedAmount = BigInt("100");
 
         //when
-        await data.milton.transferPublicationFee(
-            testData.tokenDai.address,
-            transferedAmount
-        );
+        await testData.miltonDai.transferPublicationFee(transferedAmount);
 
         //then
-        let balance = await testData.miltonStorage.balances(params.asset);
+        let balance = await testData.miltonStorageDai.getBalance();
 
         let expectedErc20BalanceCharlieTreasurer =
             USER_SUPPLY_10MLN_18DEC + transferedAmount;
@@ -4611,7 +4547,7 @@ describe("Milton", () => {
         let expectedErc20BalanceMilton =
             USD_14_000_18DEC + USD_10_000_18DEC - transferedAmount;
         let actualErc20BalanceMilton = BigInt(
-            await testData.tokenDai.balanceOf(data.milton.address)
+            await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
 
         let expectedPublicationFeeBalanceMilton =
@@ -4677,11 +4613,10 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userTwo)
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
-                    params.asset,
                     params.totalAmount,
                     params.slippageValue,
                     params.collateralizationFactor
@@ -4729,11 +4664,10 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userTwo)
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
-                    params.asset,
                     params.totalAmount,
                     params.slippageValue,
                     params.collateralizationFactor
@@ -4778,20 +4712,15 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                USD_14_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -4799,7 +4728,7 @@ describe("Milton", () => {
 
         //then
         let actualDerivativeItem =
-            await testData.miltonStorage.getSwapPayFixedItem(1);
+            await testData.miltonStorageDai.getSwapPayFixedItem(1);
         let actualNotionalAmount = BigInt(
             actualDerivativeItem.item.notionalAmount
         );
@@ -4856,10 +4785,9 @@ describe("Milton", () => {
             USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
 
         let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
@@ -4892,11 +4820,10 @@ describe("Milton", () => {
             );
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -4962,10 +4889,9 @@ describe("Milton", () => {
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
 
         let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
@@ -4990,11 +4916,10 @@ describe("Milton", () => {
         //when
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userTwo)
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
-                    params.asset,
                     params.totalAmount,
                     params.slippageValue,
                     params.collateralizationFactor
@@ -5047,10 +4972,9 @@ describe("Milton", () => {
             );
 
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
@@ -5061,11 +4985,10 @@ describe("Milton", () => {
         );
 
         //First open position not exceeded liquidity utilization
-        await data.milton
+        await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                params.asset,
                 params.totalAmount,
                 params.slippageValue,
                 params.collateralizationFactor
@@ -5075,11 +4998,10 @@ describe("Milton", () => {
         //Second open position exceeded liquidity utilization
         await assertError(
             //when
-            data.milton
+            testData.miltonDai
                 .connect(userTwo)
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
-                    params.asset,
                     params.totalAmount,
                     params.slippageValue,
                     params.collateralizationFactor
@@ -5217,62 +5139,7 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-    });
-
-    it("should NOT open pay fixed position - asset address not supported", async () => {
-        //given
-
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-        await data.warren
-            .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
-
-        let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
-        await data.joseph
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                params.asset,
-                miltonBalanceBeforePayoutWad,
-                params.openTimestamp
-            );
-
-        //when
-        await assertError(
-            //when
-            data.milton
-                .connect(userTwo)
-                .itfOpenSwapPayFixed(
-                    params.openTimestamp,
-                    liquidityProvider.address,
-                    params.totalAmount,
-                    params.slippageValue,
-                    params.collateralizationFactor
-                ),
-            //then
-            "IPOR_39"
-        );
-    });
+    });    
 
     it("should calculate Position Value - simple case 1", async () => {
         //given
@@ -5302,22 +5169,20 @@ describe("Milton", () => {
                 params.openTimestamp
             );
         let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                params.asset,
                 miltonBalanceBeforePayoutWad,
                 params.openTimestamp
             );
-        await openSwapPayFixed(params);
-        let derivativeItem = await testData.miltonStorage.getSwapPayFixedItem(
-            1
-        );
+        await openSwapPayFixed(testData, params);
+        let derivativeItem =
+            await testData.miltonStorageDai.getSwapPayFixedItem(1);
         let expectedPositionValue = BigInt("-38126715743181445978");
 
         //when
         let actualPositionValue = BigInt(
-            await data.milton.itfCalculateSwapPayFixedValue(
+            await testData.miltonDai.itfCalculateSwapPayFixedValue(
                 params.openTimestamp + PERIOD_14_DAYS_IN_SECONDS,
                 derivativeItem.item
             )
@@ -5330,33 +5195,91 @@ describe("Milton", () => {
         ).to.be.eq(actualPositionValue);
     });
 
-    const calculateSoap = async (params) => {
-        return await data.milton
-            .connect(params.from)
-            .itfCalculateSoap(params.asset, params.calculateTimestamp);
+    const calculateSoap = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            return await testData.miltonUsdt
+                .connect(params.from)
+                .itfCalculateSoap(params.calculateTimestamp);
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            return await testData.miltonUsdc
+                .connect(params.from)
+                .itfCalculateSoap(params.calculateTimestamp);
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            return await testData.miltonDai
+                .connect(params.from)
+                .itfCalculateSoap(params.calculateTimestamp);
+        }
     };
 
-    const openSwapPayFixed = async (params) => {
-        await data.milton
-            .connect(params.from)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                params.asset,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor
-            );
+    const openSwapPayFixed = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
     };
-    const openSwapReceiveFixed = async (params) => {
-        await data.milton
-            .connect(params.from)
-            .itfOpenSwapReceiveFixed(
-                params.openTimestamp,
-                params.asset,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor
-            );
+    const openSwapReceiveFixed = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
     };
 
     const countOpenPositions = (derivatives) => {
@@ -5371,24 +5294,59 @@ describe("Milton", () => {
 
     const assertMiltonDerivativeItem = async (
         testData,
+        asset,
         derivativeId,
         direction,
         expectedIdsIndex,
         expectedUserDerivativeIdsIndex
     ) => {
         let actualDerivativeItem = null;
+        if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+            if (direction == 0) {
+                actualDerivativeItem =
+                    await testData.miltonStorageUsdt.getSwapPayFixedItem(
+                        derivativeId
+                    );
+            }
 
-        if (direction == 0) {
-            actualDerivativeItem =
-                await testData.miltonStorage.getSwapPayFixedItem(derivativeId);
+            if (direction == 1) {
+                actualDerivativeItem =
+                    await testData.miltonStorageUsdt.getSwapReceiveFixedItem(
+                        derivativeId
+                    );
+            }
+        }
+        if (testData.tokenUsdc && asset === testData.tokenUsdc.address) {
+            if (direction == 0) {
+                actualDerivativeItem =
+                    await testData.miltonStorageUsdc.getSwapPayFixedItem(
+                        derivativeId
+                    );
+            }
+
+            if (direction == 1) {
+                actualDerivativeItem =
+                    await testData.miltonStorageUsdc.getSwapReceiveFixedItem(
+                        derivativeId
+                    );
+            }
+        }
+        if (testData.tokenDai && asset === testData.tokenDai.address) {
+            if (direction == 0) {
+                actualDerivativeItem =
+                    await testData.miltonStorageDai.getSwapPayFixedItem(
+                        derivativeId
+                    );
+            }
+
+            if (direction == 1) {
+                actualDerivativeItem =
+                    await testData.miltonStorageDai.getSwapReceiveFixedItem(
+                        derivativeId
+                    );
+            }
         }
 
-        if (direction == 1) {
-            actualDerivativeItem =
-                await testData.miltonStorage.getSwapReceiveFixedItem(
-                    derivativeId
-                );
-        }
         expect(
             BigInt(expectedIdsIndex),
             `Incorrect idsIndex for derivative id ${actualDerivativeItem.item.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedIdsIndex}`
@@ -5687,13 +5645,39 @@ describe("Milton", () => {
 
         if (providedLiquidityAmount != null) {
             //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
-            await data.joseph
-                .connect(liquidityProvider)
-                .itfProvideLiquidity(
-                    params.asset,
-                    providedLiquidityAmount,
-                    params.openTimestamp
-                );
+            if (
+                testData.tokenUsdt &&
+                params.asset === testData.tokenUsdt.address
+            ) {
+                await testData.josephUsdt
+                    .connect(liquidityProvider)
+                    .itfProvideLiquidity(
+                        providedLiquidityAmount,
+                        params.openTimestamp
+                    );
+            }
+            if (
+                testData.tokenUsdc &&
+                params.asset === testData.tokenUsdc.address
+            ) {
+                await testData.josephUsdc
+                    .connect(liquidityProvider)
+                    .itfProvideLiquidity(
+                        providedLiquidityAmount,
+                        params.openTimestamp
+                    );
+            }
+            if (
+                testData.tokenDai &&
+                params.asset === testData.tokenDai.address
+            ) {
+                await testData.josephDai
+                    .connect(liquidityProvider)
+                    .itfProvideLiquidity(
+                        providedLiquidityAmount,
+                        params.openTimestamp
+                    );
+            }
         }
 
         await data.warren
@@ -5704,9 +5688,9 @@ describe("Milton", () => {
                 params.openTimestamp
             );
         if (params.direction == 0) {
-            await openSwapPayFixed(params);
+            await openSwapPayFixed(testData, params);
         } else if (params.direction == 1) {
-            await openSwapReceiveFixed(params);
+            await openSwapReceiveFixed(testData, params);
         }
 
         await data.warren
@@ -5720,14 +5704,40 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
 
         //when
-        if (params.direction == 0) {
-            await data.milton
-                .connect(closerUser)
-                .itfCloseSwapPayFixed(1, endTimestamp);
-        } else if (params.direction == 1) {
-            await data.milton
-                .connect(closerUser)
-                .itfCloseSwapReceiveFixed(1, endTimestamp);
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            if (params.direction == 0) {
+                await testData.miltonUsdt
+                    .connect(closerUser)
+                    .itfCloseSwapPayFixed(1, endTimestamp);
+            } else if (params.direction == 1) {
+                await testData.miltonUsdt
+                    .connect(closerUser)
+                    .itfCloseSwapReceiveFixed(1, endTimestamp);
+            }
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            if (params.direction == 0) {
+                await testData.miltonUsdc
+                    .connect(closerUser)
+                    .itfCloseSwapPayFixed(1, endTimestamp);
+            } else if (params.direction == 1) {
+                await testData.miltonUsdc
+                    .connect(closerUser)
+                    .itfCloseSwapReceiveFixed(1, endTimestamp);
+            }
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            if (params.direction == 0) {
+                await testData.miltonDai
+                    .connect(closerUser)
+                    .itfCloseSwapPayFixed(1, endTimestamp);
+            } else if (params.direction == 1) {
+                await testData.miltonDai
+                    .connect(closerUser)
+                    .itfCloseSwapReceiveFixed(1, endTimestamp);
+            }
         }
 
         //then
@@ -5754,7 +5764,7 @@ describe("Milton", () => {
             expectedSoap: expectedSoap,
             from: openerUser,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     };
 
     const assertExpectedValues = async function (
@@ -5774,13 +5784,37 @@ describe("Milton", () => {
         expectedTreasuryTotalBalanceWad
     ) {
         let actualDerivatives = null;
-
-        if (direction == 0) {
-            actualDerivatives = await testData.miltonStorage.getSwapsPayFixed();
+        if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+            if (direction == 0) {
+                actualDerivatives =
+                    await testData.miltonStorageUsdt.getSwapsPayFixed();
+            }
+            if (direction == 1) {
+                actualDerivatives =
+                    await testData.miltonStorageUsdt.getSwapsReceiveFixed();
+            }
         }
-        if (direction == 1) {
-            actualDerivatives =
-                await testData.miltonStorage.getSwapsReceiveFixed();
+
+        if (testData.tokenUsdc && asset === testData.tokenUsdc.address) {
+            if (direction == 0) {
+                actualDerivatives =
+                    await testData.miltonStorageUsdc.getSwapsPayFixed();
+            }
+            if (direction == 1) {
+                actualDerivatives =
+                    await testData.miltonStorageUsdc.getSwapsReceiveFixed();
+            }
+        }
+
+        if (testData.tokenDai && asset === testData.tokenDai.address) {
+            if (direction == 0) {
+                actualDerivatives =
+                    await testData.miltonStorageDai.getSwapsPayFixed();
+            }
+            if (direction == 1) {
+                actualDerivatives =
+                    await testData.miltonStorageDai.getSwapsReceiveFixed();
+            }
         }
 
         let actualOpenPositionsVol = countOpenPositions(actualDerivatives);
@@ -5803,7 +5837,7 @@ describe("Milton", () => {
             closerUserUnderlyingTokenBalanceBeforePayout = USD_10_000_000_18DEC;
 
             miltonUnderlyingTokenBalanceAfterPayout = BigInt(
-                await testData.tokenDai.balanceOf(data.milton.address)
+                await testData.tokenDai.balanceOf(testData.miltonDai.address)
             );
             openerUserUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenDai.balanceOf(openerUser.address)
@@ -5817,7 +5851,7 @@ describe("Milton", () => {
             openerUserUnderlyingTokenBalanceBeforePayout = USD_10_000_000_6DEC;
             closerUserUnderlyingTokenBalanceBeforePayout = USD_10_000_000_6DEC;
             miltonUnderlyingTokenBalanceAfterPayout = BigInt(
-                await testData.tokenUsdt.balanceOf(data.milton.address)
+                await testData.tokenUsdt.balanceOf(testData.miltonUsdt.address)
             );
             openerUserUnderlyingTokenBalanceAfterPayout = BigInt(
                 await testData.tokenUsdt.balanceOf(openerUser.address)
@@ -5870,8 +5904,8 @@ describe("Milton", () => {
         ).to.be.eql(actualSumOfBalances);
     };
 
-    const assertSoap = async (params) => {
-        let actualSoapStruct = await calculateSoap(params);
+    const assertSoap = async (testData, params) => {
+        let actualSoapStruct = await calculateSoap(testData, params);
         let actualSoap = BigInt(actualSoapStruct.soap);
 
         //then
@@ -5898,6 +5932,7 @@ describe("Milton", () => {
     ) => {
         let actualOpenerUserUnderlyingTokenBalance = null;
         let actualCloserUserUnderlyingTokenBalance = null;
+        let balance = null;
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             actualOpenerUserUnderlyingTokenBalance = BigInt(
@@ -5906,6 +5941,7 @@ describe("Milton", () => {
             actualCloserUserUnderlyingTokenBalance = BigInt(
                 await testData.tokenDai.balanceOf(closerUser.address)
             );
+            balance = await testData.miltonStorageDai.getBalance();
         }
 
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
@@ -5915,24 +5951,23 @@ describe("Milton", () => {
             actualCloserUserUnderlyingTokenBalance = BigInt(
                 await testData.tokenUsdt.balanceOf(closerUser.address)
             );
+            balance = await testData.miltonStorageUsdt.getBalance();
         }
-
-        let balance = await testData.miltonStorage.balances(asset);
 
         let actualMiltonUnderlyingTokenBalance = null;
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             actualMiltonUnderlyingTokenBalance = BigInt(
-                await testData.tokenDai.balanceOf(data.milton.address)
+                await testData.tokenDai.balanceOf(testData.miltonDai.address)
             );
         }
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
             actualMiltonUnderlyingTokenBalance = BigInt(
-                await testData.tokenUsdt.balanceOf(data.milton.address)
+                await testData.tokenUsdt.balanceOf(testData.miltonUsdt.address)
             );
         }
         if (testData.tokenUsdc && asset === testData.tokenUsdc.address) {
             actualMiltonUnderlyingTokenBalance = BigInt(
-                await testData.tokenUsdc.balanceOf(data.milton.address)
+                await testData.tokenUsdc.balanceOf(testData.miltonUsdc.address)
             );
         }
 
