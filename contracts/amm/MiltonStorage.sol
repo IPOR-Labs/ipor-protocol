@@ -94,7 +94,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         override
         onlyJoseph
     {
-        require(liquidityAmount > 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
+        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
         balances.liquidityPool =
             balances.liquidityPool +
             uint128(liquidityAmount);
@@ -747,7 +747,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         DataTypes.MiltonDerivativeItemMemory memory derivativeItem
     ) internal {
         require(
-            derivativeItem.item.id > 0,
+            derivativeItem.item.id != 0,
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
         );
         require(
@@ -801,7 +801,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         DataTypes.MiltonDerivativeItemMemory memory derivativeItem
     ) internal {
         require(
-            derivativeItem.item.id > 0,
+            derivativeItem.item.id != 0,
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
         );
         require(

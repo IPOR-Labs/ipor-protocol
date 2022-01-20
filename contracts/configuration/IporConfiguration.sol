@@ -145,7 +145,8 @@ contract IporConfiguration is
     {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         bool assetExists = false;
-        for (uint256 i = 0; i < assets.length; i++) {
+		uint256 i = 0;
+        for (i; i != assets.length; i++) {
             if (assets[i] == asset) {
                 assetExists = true;
             }
@@ -163,7 +164,8 @@ contract IporConfiguration is
         onlyRole(_IPOR_ASSETS_ROLE)
     {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        for (uint256 i = 0; i < assets.length; i++) {
+		uint256 i = 0;
+        for (i; i != assets.length; i++) {
             if (assets[i] == asset) {
                 delete assets[i];
                 supportedAssets[asset] = 0;

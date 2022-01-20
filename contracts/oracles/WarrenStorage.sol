@@ -39,10 +39,11 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
 
     /// @notice list of assets used in indexes mapping
     address[] internal _assets;
+    mapping(address => bool) internal _assetsMap;
 
-    //TODO: [gas-optimisation] move to mapping(address => uint1) where in value = 1 then is updater if value = 0 then is not updater
     /// @notice list of addresses which has rights to modify indexes mapping
-    address[] public updaters;
+    address[] internal _updaters;
+    mapping(address => bool) internal _updatersMap;
 
     /// @notice list of IPOR indexes for particular assets
     mapping(address => DataTypes.IPOR) internal _indexes;
@@ -57,18 +58,7 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
 
     function unpause() external override onlyOwner {
         _unpause();
-    }    
-
-    // function getIndex(address asset)
-    //     external
-    //     view
-    //     override
-    //     returns (DataTypes.IPOR memory)
-    // {
-    //     return indexes[asset];
-    // }
-
-    //@notice indexValues with decimals same like in asset
+    }
 
     function addUpdater(address updater) external override onlyOwner {
         _addUpdater(updater);
@@ -76,33 +66,31 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
 
     function removeUpdater(address updater) external override onlyOwner {
         require(updater != address(0), IporErrors.WARREN_WRONG_UPDATER_ADDRESS);
-        for (uint256 i = 0; i < updaters.length; i++) {
-            if (updaters[i] == updater) {
-                delete updaters[i];
+		uint256 i = 0;
+        for (i; i != _updaters.length; i++) {
+            if (_updaters[i] == updater) {
+                _updatersMap[updater] = false;
+                delete _updaters[i];
                 emit IporIndexUpdaterRemove(updater);
             }
         }
     }
 
     function getUpdaters() external view override returns (address[] memory) {
-        return updaters;
+        return _updaters;
     }
 
     function _addUpdater(address updater) internal {
         require(updater != address(0), IporErrors.WARREN_WRONG_UPDATER_ADDRESS);
-        bool updaterExists = false;
-        for (uint256 i = 0; i < updaters.length; i++) {
-            if (updaters[i] == updater) {
-                updaterExists = true;
-            }
-        }
-        if (!updaterExists) {
-            updaters.push(updater);
+
+        if (!_updatersMap[updater]) {
+            _updatersMap[updater] = true;
+            _updaters.push(updater);
             emit IporIndexUpdaterAdd(updater);
         }
     }
 
-    function _updateIndex(		
+    function _updateIndex(
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
@@ -111,12 +99,6 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
                 _iporConfiguration.getIporAssetConfiguration(asset)
             );
 
-        bool assetExists = false;
-        for (uint256 i = 0; i < _assets.length; i++) {
-            if (_assets[i] == asset) {
-                assetExists = true;
-            }
-        }
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
         uint256 newExponentialWeightedMovingVariance;
@@ -126,25 +108,29 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
         //TODO: move this const to Warren internally - dont use iporassetconfiguration in warren
         uint256 alpha = iporAssetConfiguration.getDecayFactorValue();
 
-        if (!assetExists) {
+        if (!_assetsMap[asset]) {
+            _assetsMap[asset] = true;
             _assets.push(asset);
             newQuasiIbtPrice = Constants.WAD_YEAR_IN_SECONDS;
             newExponentialMovingAverage = indexValue;
             newExponentialWeightedMovingVariance = 0;
         } else {
-            newQuasiIbtPrice = _indexes[asset].accrueQuasiIbtPrice(
+			DataTypes.IPOR memory ipor = _indexes[asset];
+
+            newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(
                 updateTimestamp
             );
+
             newExponentialMovingAverage = IporLogic
                 .calculateExponentialMovingAverage(
-                    _indexes[asset].exponentialMovingAverage,
+                    ipor.exponentialMovingAverage,
                     indexValue,
                     alpha
                 );
 
             newExponentialWeightedMovingVariance = IporLogic
                 .calculateExponentialWeightedMovingVariance(
-                    _indexes[asset].exponentialWeightedMovingVariance,
+                    ipor.exponentialWeightedMovingVariance,
                     newExponentialMovingAverage,
                     indexValue,
                     alpha
@@ -168,15 +154,10 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     }
 
     modifier onlyUpdater() {
-        bool allowed = false;
-        address[] memory _updaters = updaters;
-        for (uint256 i = 0; i < _updaters.length; i++) {
-            if (_updaters[i] == msg.sender) {
-                allowed = true;
-                break;
-            }
-        }
-        require(allowed, IporErrors.WARREN_CALLER_NOT_WARREN_UPDATER);
+        require(
+            _updatersMap[msg.sender],
+            IporErrors.WARREN_CALLER_NOT_WARREN_UPDATER
+        );
         _;
     }
 }

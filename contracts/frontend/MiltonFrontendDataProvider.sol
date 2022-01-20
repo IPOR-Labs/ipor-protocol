@@ -70,8 +70,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 userSwapPayFixedIds.length + userSwapReceiveFixedIds.length
             );
         IMilton milton = IMilton(assetConfiguration.getMilton());
-
-        for (uint256 i = 0; i < userSwapPayFixedIds.length; i++) {
+		uint256 i = 0;
+        for (i; i != userSwapPayFixedIds.length; i++) {
             DataTypes.MiltonDerivativeItemMemory
                 memory derivativeItem = miltonStorage.getSwapPayFixedItem(
                     userSwapPayFixedIds[i]
@@ -93,8 +93,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 derivativeItem.item.liquidationDepositAmount
             );
         }
-
-        for (uint256 i = 0; i < userSwapReceiveFixedIds.length; i++) {
+		i = 0;
+        for (i; i != userSwapReceiveFixedIds.length; i++) {
             DataTypes.MiltonDerivativeItemMemory
                 memory derivativeItem = miltonStorage.getSwapReceiveFixedItem(
                     userSwapReceiveFixedIds[i]
@@ -142,8 +142,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
         uint256 spreadPayFixedValue;
         uint256 spreadRecFixedValue;
-
-        for (uint256 i = 0; i < assets.length; i++) {
+		uint256 i = 0;
+        for (i; i != assets.length; i++) {
             IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                     _iporConfiguration.getIporAssetConfiguration(assets[i])
                 );

@@ -113,7 +113,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         external
         onlyPublicationFeeTransferer
     {
-        require(amount > 0, IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        require(amount != 0, IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
         //TODO: consider save this address inside Milton, use MiltonStorage as proxy, and manage this address directly on Milton
         IMiltonStorage miltonStorage = IMiltonStorage(
@@ -243,7 +243,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             IporErrors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW
         );
         uint256 ipTokenTotalSupply = ipToken.totalSupply();
-        if (ipTokenTotalSupply > 0) {
+        if (ipTokenTotalSupply != 0) {
             return
                 IporMath.division(
                     balance.toUint256() * Constants.D18,
@@ -386,10 +386,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {
         uint256 decimals = _decimals;
         require(
-            maximumSlippage > 0,
+            maximumSlippage != 0,
             IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW
         );
-        require(totalAmount > 0, IporErrors.MILTON_TOTAL_AMOUNT_TOO_LOW);
+        require(totalAmount != 0, IporErrors.MILTON_TOTAL_AMOUNT_TOO_LOW);
 
         require(
             IERC20(_asset).balanceOf(msg.sender) >= totalAmount,
@@ -703,7 +703,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             calculateTimestamp
         );
         require(
-            accruedIbtPrice > 0,
+            accruedIbtPrice != 0,
             IporErrors.MILTON_IBT_PRICE_CANNOT_BE_ZERO
         );
         require(
@@ -755,7 +755,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         internal
     {
         require(
-            derivativeId > 0,
+            derivativeId != 0,
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
         );
 
@@ -805,7 +805,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 closeTimestamp
     ) internal {
         require(
-            derivativeId > 0,
+            derivativeId != 0,
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
         );
 
@@ -908,7 +908,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             );
         }
 
-        if (transferAmount > 0) {
+        if (transferAmount != 0) {
             //transfer from Milton to Trader
             //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             IERC20(_asset).safeTransfer(

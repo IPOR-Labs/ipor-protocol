@@ -19,7 +19,8 @@ contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
         IWarren warren = IWarren(_iporConfiguration.getWarren());
         address[] memory assets = warren.getAssets();
         IporFront[] memory indexes = new IporFront[](assets.length);
-        for (uint256 i = 0; i < assets.length; i++) {
+		uint256 i = 0;
+        for (i; i != assets.length; i++) {
             (
                 uint256 value,
                 uint256 ibtPrice,

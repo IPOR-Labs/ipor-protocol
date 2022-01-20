@@ -21,7 +21,8 @@ contract WarrenFrontendDataProvider is IWarrenFrontendDataProvider {
         );
         address[] memory assets = warren.getAssets();
         IporFront[] memory indexes = new IporFront[](assets.length);
-        for (uint256 i = 0; i < assets.length; i++) {
+		uint256 i = 0;
+        for (i; i != assets.length; i++) {
             address itAsset = assets[i];
 			(
                 uint256 value,

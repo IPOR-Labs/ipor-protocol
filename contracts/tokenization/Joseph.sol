@@ -72,7 +72,7 @@ contract Joseph is Ownable, IJoseph {
         uint256 exchangeRate = IMilton(_iporAssetConfiguration.getMilton())
             .calculateExchangeRate(timestamp);
 
-        require(exchangeRate > 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadLiquidityAmount = IporMath.convertToWad(
             liquidityAmount,
@@ -93,7 +93,7 @@ contract Joseph is Ownable, IJoseph {
             liquidityAmount
         );
 
-        if (exchangeRate > 0) {
+        if (exchangeRate != 0) {
             IIpToken(
                 _iporAssetConfiguration.getIpToken()
             ).mint(
@@ -122,7 +122,7 @@ contract Joseph is Ownable, IJoseph {
         uint256 exchangeRate = IMilton(_iporAssetConfiguration.getMilton())
             .calculateExchangeRate(timestamp);
 
-        require(exchangeRate > 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         require(
             IMiltonStorage(_iporAssetConfiguration.getMiltonStorage())

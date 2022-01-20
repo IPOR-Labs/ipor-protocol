@@ -40,7 +40,8 @@ abstract contract AccessControlRevoke is AccessControl {
         uint8 i = 0;
         address[] memory tempMembers = _roleMembers[role];
         address[] memory usersWithRole = new address[](tempMembers.length - 1);
-        for (uint256 index = 0; index < usersWithRole.length; index++) {
+		uint256 index = 0;
+        for (index; index != usersWithRole.length; index++) {
             if (account == tempMembers[index]) {
                 i++;
             }
@@ -53,7 +54,8 @@ abstract contract AccessControlRevoke is AccessControl {
         uint8 i = 0;
         bytes32[] memory tempRoles = _userRoles[account];
         bytes32[] memory rolesWithUser = new bytes32[](tempRoles.length - 1);
-        for (uint256 index = 0; index < rolesWithUser.length; index++) {
+		uint256 index = 0;
+        for (index; index != rolesWithUser.length; index++) {
             if (role == tempRoles[index]) {
                 i++;
             }

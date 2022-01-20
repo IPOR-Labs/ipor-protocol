@@ -136,7 +136,7 @@ contract MiltonSpreadModel is
         int256 soap
     ) internal view returns (uint256 spreadValue) {
         require(
-            liquidityPool + derivativeOpeningFee > 0,
+            liquidityPool + derivativeOpeningFee != 0,
             IporErrors
                 .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
@@ -167,7 +167,7 @@ contract MiltonSpreadModel is
         int256 soap
     ) internal view returns (uint256 spreadValue) {
         require(
-            liquidityPool + derivativeOpeningFee > 0,
+            liquidityPool + derivativeOpeningFee != 0,
             IporErrors
                 .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
@@ -206,14 +206,14 @@ contract MiltonSpreadModel is
                 _demandComponentLambdaValue
             );
 
-        if (kfDenominator > 0) {
+        if (kfDenominator != 0) {
             if (soapPayFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
                     _calculateSoapPlus(
                         soapPayFixed,
                         payFixedDerivativesBalance
                     );
-                if (kOmegaDenominator > 0) {
+                if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
                             _demandComponentKfValue * Constants.D18,
@@ -336,14 +336,14 @@ contract MiltonSpreadModel is
                 recFixedDerivativesBalance,
                 _demandComponentLambdaValue
             );
-        if (kfDenominator > 0) {
+        if (kfDenominator != 0) {
             if (soapRecFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
                     _calculateSoapPlus(
                         soapRecFixed,
                         recFixedDerivativesBalance
                     );
-                if (kOmegaDenominator > 0) {
+                if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
                             _demandComponentKfValue * Constants.D18,

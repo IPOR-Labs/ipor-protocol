@@ -18,7 +18,8 @@ library DerivativesView {
             memory derivatives = new DataTypes.IporDerivativeMemory[](
                 miltonDerivatives.ids.length
             );
-        for (uint256 i = 0; i < miltonDerivatives.ids.length; i++) {
+			uint256 i = 0;
+        for (i; i != miltonDerivatives.ids.length; i++) {
 			uint256 id = miltonDerivatives.ids[i];
             derivatives[i] = 
 			DataTypes.IporDerivativeMemory(
@@ -46,9 +47,10 @@ library DerivativesView {
             memory derivatives = new DataTypes.IporDerivativeMemory[](
                 miltonDerivatives.userDerivativeIds[user].length
             );
+			uint256 i = 0;
         for (
-            uint256 i = 0;
-            i < miltonDerivatives.userDerivativeIds[user].length;
+            i;
+            i != miltonDerivatives.userDerivativeIds[user].length;
             i++
         ) {
 			uint256 id = miltonDerivatives.userDerivativeIds[user][i];

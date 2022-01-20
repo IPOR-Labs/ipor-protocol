@@ -120,7 +120,8 @@ contract Warren is WarrenStorage, IWarren {
             assets.length == indexValues.length,
             IporErrors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
         );
-        for (uint256 i = 0; i < assets.length; i++) {
+		uint256 i = 0;
+        for (i; i != assets.length; i++) {
             //TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
             require(
                 _iporConfiguration.assetSupported(assets[i]) == 1,

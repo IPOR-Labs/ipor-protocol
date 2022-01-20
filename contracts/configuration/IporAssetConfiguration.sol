@@ -74,7 +74,7 @@ contract IporAssetConfiguration is
         _asset = asset;
         _ipToken = ipToken;
         uint8 decimals = ERC20(asset).decimals();
-        require(decimals > 0, IporErrors.CONFIG_ASSET_DECIMALS_TOO_LOW);
+        require(decimals != 0, IporErrors.CONFIG_ASSET_DECIMALS_TOO_LOW);
         _decimals = decimals;
 
         _maxSlippagePercentage = 100 * Constants.D18;
