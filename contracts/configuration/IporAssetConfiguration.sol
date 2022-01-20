@@ -5,8 +5,8 @@ import "../libraries/types/DataTypes.sol";
 import "../libraries/DerivativeLogic.sol";
 import "../libraries/IporMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { IporErrors } from "../IporErrors.sol";
-import { DataTypes } from "../libraries/types/DataTypes.sol";
+import {IporErrors} from "../IporErrors.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 import "../amm/IMiltonEvents.sol";
@@ -23,90 +23,87 @@ contract IporAssetConfiguration is
 {
     uint8 private immutable _decimals;
 
-	address private immutable _asset;
+    //TODO: add structure for Milton Config Open Position
+    uint64 private immutable _maxSlippagePercentage;
 
-    address private immutable _ipToken;
-	
-	address private _milton;
+    uint64 private _openingFeePercentage;
 
-	address private _miltonStorage;	
-
-	address private _joseph;
-
-	//TODO: change uint256 to uint128 - consider changes - maybe it is not worth
-
-	//TODO: add structure for Milton Config Open Position
-    uint256 private immutable _maxSlippagePercentage;
-
-    uint256 private _openingFeePercentage;
-
-	uint256 private _minCollateralizationFactorValue;
-
-    uint256 private _maxCollateralizationFactorValue;
-
-    uint256 private _incomeTaxPercentage;
-
-    uint256 private _liquidationDepositAmount;    
+    uint64 private _incomeTaxPercentage;
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big
     //pie going to Treasury Balance
-    uint256 private _openingFeeForTreasuryPercentage;
+    uint64 private _openingFeeForTreasuryPercentage;
 
-    uint256 private _iporPublicationFeeAmount;
+    uint64 private _liquidityPoolMaxUtilizationPercentage;
 
-    uint256 private _liquidityPoolMaxUtilizationPercentage;
+    uint128 private _minCollateralizationFactorValue;
 
-	//TODO: change to "max collateral position value"
+    uint128 private _maxCollateralizationFactorValue;
+
+    uint128 private _liquidationDepositAmount;
+
+    uint128 private _iporPublicationFeeAmount;
+
+    //TODO: change to "max collateral position value"
     //@notice max total amount used when opening position
-    uint256 private _maxPositionTotalAmount;
+    uint128 private _maxPositionTotalAmount;
 
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
-    uint256 private _wadDecayFactorValue;
-    
-	//TODO: rename DemandComponent to DC, AtParComponent to PC or DemandC, AtParC
+    uint128 private _wadDecayFactorValue;
+
+    address private immutable _asset;
+
+    address private immutable _ipToken;
+
+    address private _milton;
+
+    address private _miltonStorage;
+
+    address private _joseph;
+
+    //TODO: rename DemandComponent to DC, AtParComponent to PC or DemandC, AtParC
     address private _assetManagementVault;
 
     address private _charlieTreasurer;
 
     //TODO: fix this name; treasureManager
     address private _treasureTreasurer;
-   constructor(address asset, address ipToken) {
+
+    constructor(address asset, address ipToken) {
         _asset = asset;
         _ipToken = ipToken;
         uint8 decimals = ERC20(asset).decimals();
         require(decimals != 0, IporErrors.CONFIG_ASSET_DECIMALS_TOO_LOW);
         _decimals = decimals;
 
-        _maxSlippagePercentage = 100 * Constants.D18;
+        _maxSlippagePercentage = uint64(100 * Constants.D18);
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        _incomeTaxPercentage = IporMath.division(Constants.D18, 10);
+        _incomeTaxPercentage = uint64(IporMath.division(Constants.D18, 10));
 
         //@notice taken after open position from participant who execute opening position,
         //paid after close position to participant who execute closing position
-        _liquidationDepositAmount = 20 * Constants.D18;
+        _liquidationDepositAmount = uint128(20 * Constants.D18);
 
         //@notice
-        _openingFeePercentage = IporMath.division(
-            3 * Constants.D18,
-            Constants.D4
+        _openingFeePercentage = uint64(
+            IporMath.division(3 * Constants.D18, Constants.D4)
         );
         _openingFeeForTreasuryPercentage = 0;
-        _iporPublicationFeeAmount = 10 * Constants.D18;
-        _liquidityPoolMaxUtilizationPercentage =
-            8 *
-            IporMath.division(Constants.D18, 10);
+        _iporPublicationFeeAmount = uint128(10 * Constants.D18);
+        _liquidityPoolMaxUtilizationPercentage = uint64(
+            8 * IporMath.division(Constants.D18, 10)
+        );
 
-		_maxPositionTotalAmount = 1e5 * Constants.D18;
+        _maxPositionTotalAmount = uint128(1e5 * Constants.D18);
 
-		_minCollateralizationFactorValue = 10 * Constants.D18;
-		_maxCollateralizationFactorValue = 1000 * Constants.D18;
+        _minCollateralizationFactorValue = uint128(10 * Constants.D18);
+        _maxCollateralizationFactorValue = uint128(1000 * Constants.D18);
 
-		_wadDecayFactorValue = 1e17;        
-
+        _wadDecayFactorValue = 1e17;
     }
 
-	function getMilton() external view override returns (address) {
+    function getMilton() external view override returns (address) {
         return _milton;
     }
 
@@ -133,7 +130,7 @@ contract IporAssetConfiguration is
         emit MiltonStorageAddressUpdated(miltonStorage);
     }
 
-	function getJoseph() external view override returns (address) {
+    function getJoseph() external view override returns (address) {
         return _joseph;
     }
 
@@ -145,7 +142,8 @@ contract IporAssetConfiguration is
         _joseph = joseph;
         emit JosephAddressUpdated(joseph);
     }
-	function getOpeningFeePercentage()
+
+    function getOpeningFeePercentage()
         external
         view
         override
@@ -163,9 +161,10 @@ contract IporAssetConfiguration is
             newOpeningFeePercentage <= Constants.D18,
             IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
-        _openingFeePercentage = newOpeningFeePercentage;
+        _openingFeePercentage = uint64(newOpeningFeePercentage);
         emit OpeningFeePercentageSet(newOpeningFeePercentage);
     }
+
     function getIncomeTaxPercentage() external view override returns (uint256) {
         return _incomeTaxPercentage;
     }
@@ -179,7 +178,7 @@ contract IporAssetConfiguration is
             newIncomeTaxPercentage <= Constants.D18,
             IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
-        _incomeTaxPercentage = newIncomeTaxPercentage;
+        _incomeTaxPercentage = uint64(newIncomeTaxPercentage);
         emit IncomeTaxPercentageSet(newIncomeTaxPercentage);
     }
 
@@ -199,7 +198,9 @@ contract IporAssetConfiguration is
             newOpeningFeeForTreasuryPercentage <= Constants.D18,
             IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
-        _openingFeeForTreasuryPercentage = newOpeningFeeForTreasuryPercentage;
+        _openingFeeForTreasuryPercentage = uint64(
+            newOpeningFeeForTreasuryPercentage
+        );
         emit OpeningFeeForTreasuryPercentageSet(
             newOpeningFeeForTreasuryPercentage
         );
@@ -219,11 +220,9 @@ contract IporAssetConfiguration is
         override
         onlyRole(_LIQUIDATION_DEPOSIT_AMOUNT_ROLE)
     {
-        _liquidationDepositAmount = newLiquidationDepositAmount;
+        _liquidationDepositAmount = uint128(newLiquidationDepositAmount);
         emit LiquidationDepositAmountSet(newLiquidationDepositAmount);
     }
-
-    
 
     function getIporPublicationFeeAmount()
         external
@@ -239,7 +238,7 @@ contract IporAssetConfiguration is
         override
         onlyRole(_IPOR_PUBLICATION_FEE_AMOUNT_ROLE)
     {
-        _iporPublicationFeeAmount = newIporPublicationFeeAmount;
+        _iporPublicationFeeAmount = uint128(newIporPublicationFeeAmount);
         emit IporPublicationFeeAmountSet(newIporPublicationFeeAmount);
     }
 
@@ -254,17 +253,15 @@ contract IporAssetConfiguration is
 
     function setLiquidityPoolMaxUtilizationPercentage(
         uint256 newLiquidityPoolMaxUtilizationPercentage
-    )
-        external
-        override
-        onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE)
-    {
+    ) external override onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE) {
         require(
             newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
             IporErrors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
-        _liquidityPoolMaxUtilizationPercentage = newLiquidityPoolMaxUtilizationPercentage;
+        _liquidityPoolMaxUtilizationPercentage = uint64(
+            newLiquidityPoolMaxUtilizationPercentage
+        );
         emit LiquidityPoolMaxUtilizationPercentageSet(
             newLiquidityPoolMaxUtilizationPercentage
         );
@@ -284,7 +281,7 @@ contract IporAssetConfiguration is
         override
         onlyRole(_MAX_POSITION_TOTAL_AMOUNT_ROLE)
     {
-        _maxPositionTotalAmount = newMaxPositionTotalAmount;
+        _maxPositionTotalAmount = uint128(newMaxPositionTotalAmount);
         emit MaxPositionTotalAmountSet(newMaxPositionTotalAmount);
     }
 
@@ -300,7 +297,9 @@ contract IporAssetConfiguration is
     function setMaxCollateralizationFactorValue(
         uint256 newMaxCollateralizationFactorValue
     ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
-        _maxCollateralizationFactorValue = newMaxCollateralizationFactorValue;
+        _maxCollateralizationFactorValue = uint128(
+            newMaxCollateralizationFactorValue
+        );
         emit MaxCollateralizationFactorValueSet(
             newMaxCollateralizationFactorValue
         );
@@ -318,7 +317,9 @@ contract IporAssetConfiguration is
     function setMinCollateralizationFactorValue(
         uint256 newMinCollateralizationFactorValue
     ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
-        _minCollateralizationFactorValue = newMinCollateralizationFactorValue;
+        _minCollateralizationFactorValue = uint128(
+            newMinCollateralizationFactorValue
+        );
         emit MinCollateralizationFactorValueSet(
             newMinCollateralizationFactorValue
         );
@@ -408,11 +409,7 @@ contract IporAssetConfiguration is
             newWadDecayFactorValue <= Constants.D18,
             IporErrors.CONFIG_DECAY_FACTOR_TOO_HIGH
         );
-        _wadDecayFactorValue = newWadDecayFactorValue;
+        _wadDecayFactorValue = uint128(newWadDecayFactorValue);
         emit DecayFactorValueUpdated(_asset, newWadDecayFactorValue);
     }
-
-    
-
-	
 }

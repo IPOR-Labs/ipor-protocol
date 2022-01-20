@@ -36,7 +36,7 @@ describe("MiltonSpreadConfiguration", () => {
 
     it("should set demandComponentKfValue", async () => {
         //given
-        const expectedValue = BigInt("1234000000000000000000");
+        const expectedValue = BigInt("12340000000000000000");
         await miltonSpreadConfiguration.grantRole(
             keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
             admin.address
@@ -74,7 +74,7 @@ describe("MiltonSpreadConfiguration", () => {
 
     it("should set demandComponentLambdaValue", async () => {
         //given
-        const expectedValue = BigInt("1234000000000000000000");
+        const expectedValue = BigInt("12000000000000000000");
         await miltonSpreadConfiguration.grantRole(
             keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
             admin.address
@@ -112,7 +112,7 @@ describe("MiltonSpreadConfiguration", () => {
 
     it("should set demandComponentKOmegaValue", async () => {
         //given
-        const expectedValue = BigInt("1234000000000000000000");
+        const expectedValue = BigInt("120000000000000000");
         await miltonSpreadConfiguration.grantRole(
             keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
             admin.address
@@ -150,7 +150,7 @@ describe("MiltonSpreadConfiguration", () => {
 
     it("should set demandComponentMaxLiquidityRedemptionValue", async () => {
         //given
-        const expectedValue = BigInt("1234000000000000000000");
+        const expectedValue = BigInt("12000000000000000000");
         await miltonSpreadConfiguration.grantRole(
             keccak256(
                 "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE"
@@ -192,7 +192,7 @@ describe("MiltonSpreadConfiguration", () => {
 
     it("should set atParComponentKVolValue", async () => {
         //given
-        const expectedValue = BigInt("1234000000000000000000");
+        const expectedValue = BigInt("12340000000000000000");
         await miltonSpreadConfiguration.grantRole(
             keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE"),
             admin.address
@@ -230,7 +230,7 @@ describe("MiltonSpreadConfiguration", () => {
 
     it("should set atParComponentKHistValue", async () => {
         //given
-        const expectedValue = BigInt("1234000000000000000000");
+        const expectedValue = BigInt("12340000000000000000");
         await miltonSpreadConfiguration.grantRole(
             keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE"),
             admin.address
@@ -268,7 +268,7 @@ describe("MiltonSpreadConfiguration", () => {
 
     it("should set spreadMaxValue", async () => {
         //given
-        const expectedValue = BigInt("1234000000000000000000");
+        const expectedValue = BigInt("12340000000000000000");
         await miltonSpreadConfiguration.grantRole(
             keccak256("SPREAD_MAX_VALUE_ADMIN_ROLE"),
             admin.address
