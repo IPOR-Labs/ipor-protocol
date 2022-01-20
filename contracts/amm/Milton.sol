@@ -326,15 +326,33 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
             _iporConfiguration.getMiltonSpreadModel()
         );
-		IMiltonStorage miltonStorage = IMiltonStorage(
+        IMiltonStorage miltonStorage = IMiltonStorage(
             _iporAssetConfiguration.getMiltonStorage()
         );
 
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
+
+        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
+            _asset,
+            calculateTimestamp
+        );
+
+        (
+            uint256 iporIndexValue,
+            ,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance,
+
+        ) = warren.getIndex(_asset);
+
         try
             spreadModel.calculatePartialSpreadPayFixed(
-				miltonStorage,
+                miltonStorage,
                 calculateTimestamp,
-                _asset
+                iporIndexValue,
+                accruedIbtPrice,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -344,9 +362,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         try
             spreadModel.calculatePartialSpreadRecFixed(
-				miltonStorage,
+                miltonStorage,
                 calculateTimestamp,
-                _asset
+                iporIndexValue,
+                accruedIbtPrice,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;
@@ -376,6 +397,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     }
 
     function _beforeOpenSwap(
+        uint256 openTimestamp,
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
@@ -440,6 +462,21 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
+
+        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
+            _asset,
+            openTimestamp
+        );
+
+        (
+            uint256 iporIndexValue,
+            ,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance,
+
+        ) = warren.getIndex(_asset);
+
         return
             DataTypes.BeforeOpenSwapStruct(
                 wadTotalAmount,
@@ -448,7 +485,11 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 openingFee,
                 _iporAssetConfiguration.getLiquidationDepositAmount(),
                 decimals,
-                _iporAssetConfiguration.getIporPublicationFeeAmount()
+                _iporAssetConfiguration.getIporPublicationFeeAmount(),
+                accruedIbtPrice,
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
             );
     }
 
@@ -459,6 +500,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 collateralizationFactor
     ) internal nonReentrant returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+            openTimestamp,
             totalAmount,
             maximumSlippage,
             collateralizationFactor
@@ -479,8 +521,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
 
         uint256 spreadValue = spreadModel.calculateSpreadPayFixed(
+            miltonStorage,
             openTimestamp,
-            _asset,
+            bosStruct.iporIndexValue,
+            bosStruct.accruedIbtPrice,
+            bosStruct.exponentialMovingAverage,
+            bosStruct.exponentialWeightedMovingVariance,
             bosStruct.collateral,
             bosStruct.openingFee
         );
@@ -542,6 +588,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 collateralizationFactor
     ) internal nonReentrant returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+            openTimestamp,
             totalAmount,
             maximumSlippage,
             collateralizationFactor
@@ -562,8 +609,12 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
 
         uint256 spreadValue = spreadModel.calculateSpreadRecFixed(
+            miltonStorage,
             openTimestamp,
-            _asset,
+            bosStruct.iporIndexValue,
+            bosStruct.accruedIbtPrice,
+            bosStruct.exponentialMovingAverage,
+            bosStruct.exponentialWeightedMovingVariance,
             bosStruct.collateral,
             bosStruct.openingFee
         );
@@ -760,7 +811,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         require(
             derivativeItem.item.state ==
-                uint256(DataTypes.DerivativeState.ACTIVE),
+                uint256(IMiltonStorage.DerivativeState.ACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 
@@ -810,7 +861,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         require(
             derivativeItem.item.state ==
-                uint256(DataTypes.DerivativeState.ACTIVE),
+                uint256(IMiltonStorage.DerivativeState.ACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 

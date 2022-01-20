@@ -16,7 +16,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using DerivativeLogic for DataTypes.IporDerivativeMemory;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
-    using DerivativesView for DataTypes.MiltonDerivativesStorage;
+    using DerivativesView for MiltonDerivativesStorage;
 
     address private _asset;
     IIporConfiguration internal _iporConfiguration;
@@ -32,8 +32,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
 
-    DataTypes.MiltonDerivativesStorage internal _swapsPayFixed;
-    DataTypes.MiltonDerivativesStorage internal _swapsReceiveFixed;
+    MiltonDerivativesStorage internal _swapsPayFixed;
+    MiltonDerivativesStorage internal _swapsReceiveFixed;
 
     uint64 private _lastSwapId;
 
@@ -125,7 +125,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                     uint256(_swapsPayFixed.items[id].item.state),
                     _swapsPayFixed.items[id].item.buyer,
                     _swapsPayFixed.items[id].item.startingTimestamp,
-                    _swapsPayFixed.items[id].item.endingTimestamp,
+                    _swapsPayFixed.items[id].item.startingTimestamp+ Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                     _swapsPayFixed.items[id].item.id,
                     _swapsPayFixed.items[id].item.collateral,
                     _swapsPayFixed.items[id].item.liquidationDepositAmount,
@@ -169,7 +169,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                     uint256(_swapsReceiveFixed.items[id].item.state),
                     _swapsReceiveFixed.items[id].item.buyer,
                     _swapsReceiveFixed.items[id].item.startingTimestamp,
-                    _swapsReceiveFixed.items[id].item.endingTimestamp,
+                    _swapsReceiveFixed.items[id].item.startingTimestamp+ Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                     _swapsReceiveFixed.items[id].item.id,
                     _swapsReceiveFixed.items[id].item.collateral,
                     _swapsReceiveFixed.items[id].item.liquidationDepositAmount,
@@ -661,15 +661,15 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         _lastSwapId++;
         uint64 id = _lastSwapId;
 
-        _swapsPayFixed.items[id].item.state = DataTypes.DerivativeState.ACTIVE;
+        _swapsPayFixed.items[id].item.state = DerivativeState.ACTIVE;
         _swapsPayFixed.items[id].item.buyer = newSwap.buyer;
         _swapsPayFixed.items[id].item.startingTimestamp = uint32(
             newSwap.startingTimestamp
         );
-        _swapsPayFixed.items[id].item.endingTimestamp = uint32(
-            newSwap.startingTimestamp +
-                Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-        );
+        // _swapsPayFixed.items[id].item.endingTimestamp = uint32(
+        //     newSwap.startingTimestamp +
+        //         Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
+        // );
         _swapsPayFixed.items[id].item.id = id;
         _swapsPayFixed.items[id].item.collateral = uint128(newSwap.collateral);
         _swapsPayFixed.items[id].item.liquidationDepositAmount = uint128(
@@ -703,17 +703,16 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         _lastSwapId++;
         uint64 id = _lastSwapId;
 
-        _swapsReceiveFixed.items[id].item.state = DataTypes
-            .DerivativeState
+        _swapsReceiveFixed.items[id].item.state = DerivativeState
             .ACTIVE;
         _swapsReceiveFixed.items[id].item.buyer = newSwap.buyer;
         _swapsReceiveFixed.items[id].item.startingTimestamp = uint32(
             newSwap.startingTimestamp
         );
-        _swapsReceiveFixed.items[id].item.endingTimestamp = uint32(
-            newSwap.startingTimestamp +
-                Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-        );
+        // _swapsReceiveFixed.items[id].item.endingTimestamp = uint32(
+        //     newSwap.startingTimestamp +
+        //         Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
+        // );
         _swapsReceiveFixed.items[id].item.id = id;
         _swapsReceiveFixed.items[id].item.collateral = uint128(
             newSwap.collateral
@@ -753,7 +752,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         );
         require(
             derivativeItem.item.state !=
-                uint256(DataTypes.DerivativeState.INACTIVE),
+                uint256(DerivativeState.INACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
         uint64 idsIndexToDelete = uint64(derivativeItem.idsIndex);
@@ -793,7 +792,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         _swapsPayFixed
             .items[uint64(derivativeItem.item.id)]
             .item
-            .state = DataTypes.DerivativeState.INACTIVE;
+            .state = DerivativeState.INACTIVE;
         _swapsPayFixed.ids.pop();
         _swapsPayFixed.userDerivativeIds[buyer].pop();
     }
@@ -807,7 +806,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         );
         require(
             derivativeItem.item.state !=
-                uint256(DataTypes.DerivativeState.INACTIVE),
+                uint256(DerivativeState.INACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
         uint64 idsIndexToDelete = uint64(derivativeItem.idsIndex);
@@ -848,7 +847,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         _swapsReceiveFixed
             .items[uint64(derivativeItem.item.id)]
             .item
-            .state = DataTypes.DerivativeState.INACTIVE;
+            .state = DerivativeState.INACTIVE;
         _swapsReceiveFixed.ids.pop();
         _swapsReceiveFixed.userDerivativeIds[buyer].pop();
     }

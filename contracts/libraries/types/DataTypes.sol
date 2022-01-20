@@ -2,8 +2,7 @@
 pragma solidity 0.8.9;
 
 library DataTypes {
-
-	struct MiltonTotalBalanceMemory {
+    struct MiltonTotalBalanceMemory {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint256 payFixedDerivatives;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
@@ -20,9 +19,9 @@ library DataTypes {
     }
     struct MiltonTotalBalanceStorage {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
-         uint128 payFixedDerivatives;
+        uint128 payFixedDerivatives;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
-         uint128 recFixedDerivatives;
+        uint128 recFixedDerivatives;
         uint128 openingFee;
         uint128 liquidationDeposit;
         uint128 iporPublicationFee;
@@ -34,7 +33,6 @@ library DataTypes {
         uint128 treasury;
     }
 
-
     //soap payfixed and soap recfixed indicators
     struct SoapIndicatorStorage {
         uint32 rebalanceTimestamp;
@@ -44,13 +42,11 @@ library DataTypes {
         uint128 averageInterestRate;
         //TT
         uint128 totalIbtQuantity;
-
-		//O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
+        //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
         uint256 quasiHypotheticalInterestCumulative;
-        
     }
 
-	struct SoapIndicatorMemory {
+    struct SoapIndicatorMemory {
         uint256 rebalanceTimestamp;
         //N_0
         uint256 totalNotional;
@@ -58,50 +54,49 @@ library DataTypes {
         uint256 averageInterestRate;
         //TT
         uint256 totalIbtQuantity;
-
-		//O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
+        //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
         uint256 quasiHypotheticalInterestCumulative;
-        
     }
-	
 
     //@notice IPOR Structure
     struct IPOR {
-		//@notice block timestamp
-        uint32 blockTimestamp;		
+        //@notice block timestamp
+        uint32 blockTimestamp;
         //@notice IPOR Index Value shown as WAD
         uint128 indexValue;
         //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds, shown as WAD
         uint128 quasiIbtPrice;
         //@notice exponential moving average - required for calculating SPREAD in Milton, shown as WAD
         uint128 exponentialMovingAverage;
-		//@notice exponential weighted moving variance - required for calculating SPREAD in Milton, shown as WAD 
+        //@notice exponential weighted moving variance - required for calculating SPREAD in Milton, shown as WAD
         uint128 exponentialWeightedMovingVariance;
-        
     }
+
+	struct AccruedIpor {
+		
+	}
     //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum DerivativeDirection {
-		//TODO: use consistent names in enums
+        //TODO: use consistent names in enums
         //@notice In long position the trader will pay a fixed rate and receive a floating rate.
         PayFixedReceiveFloating,
         //@notice In short position the trader will receive fixed rate and pay a floating rate.
         PayFloatingReceiveFixed
     }
 
-    enum DerivativeState {
-        INACTIVE,
-        ACTIVE
+    struct BeforeOpenSwapStruct {
+        uint256 wadTotalAmount;
+        uint256 collateral;
+        uint256 notional;
+        uint256 openingFee;
+        uint256 liquidationDepositAmount;
+        uint256 decimals;
+        uint256 iporPublicationFeeAmount;
+        uint256 accruedIbtPrice;
+        uint256 iporIndexValue;
+        uint256 exponentialMovingAverage;
+        uint256 exponentialWeightedMovingVariance;
     }
-
-	struct BeforeOpenSwapStruct {
-		uint256 wadTotalAmount;
-		uint256 collateral;
-		uint256 notional;
-		uint256 openingFee;
-		uint256 liquidationDepositAmount;
-		uint256 decimals;
-		uint256 iporPublicationFeeAmount;
-	}
 
     struct IporDerivativeInterest {
         //TODO: reduce to one field the last one;
@@ -109,7 +104,7 @@ library DataTypes {
         uint256 quasiInterestFloating;
         int256 positionValue;
     }
-    struct IporDerivativeIndicator {		
+    struct IporDerivativeIndicator {
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;
         //@notice IPOR Interest Bearing Token price
@@ -119,73 +114,39 @@ library DataTypes {
         //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
     }
-	
-    struct MiltonDerivativesStorage {
-        uint256[] ids;
-		mapping(uint256 => DataTypes.MiltonDerivativeItemStorage) items;        
-        mapping(address => uint256[]) userDerivativeIds;
-    }
 
-	//TODO: move storage structure to storage smart contract
-    struct MiltonDerivativeItemStorage {
-        //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
-        uint64 idsIndex;
-		//position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
-        uint64 userDerivativeIdsIndex;
-		DataTypes.IporDerivativeStorage item;
-    }
-
-	struct MiltonDerivativeItemMemory {
+    struct MiltonDerivativeItemMemory {
         //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
         uint256 idsIndex;
-		//position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
+        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
         uint256 userDerivativeIdsIndex;
-		DataTypes.IporDerivativeMemory item;
+        DataTypes.IporDerivativeMemory item;
     }
 
-	struct NewSwap {        
-        address buyer;		
-		uint256 startingTimestamp;				
+    struct NewSwap {
+        address buyer;
+        uint256 startingTimestamp;
         uint256 collateral;
-		uint256 liquidationDepositAmount;        
-        uint256 notionalAmount;        
-		uint256 fixedInterestRate;
-		uint256 ibtQuantity;
+        uint256 liquidationDepositAmount;
+        uint256 notionalAmount;
+        uint256 fixedInterestRate;
+        uint256 ibtQuantity;
     }
-	struct IporDerivativeMemory {
+    struct IporDerivativeMemory {
         uint256 state;
-		//@notice Buyer of this derivative
+        //@notice Buyer of this derivative
         address buyer;
-		//@notice Starting time of this Derivative
-		uint256 startingTimestamp;
-		//@notice Endind time of this Derivative
-		uint256 endingTimestamp;
-		//@notice unique ID of this derivative
-        uint256 id;        
+        //@notice Starting time of this Derivative
+        uint256 startingTimestamp;
+        //@notice Endind time of this Derivative
+        uint256 endingTimestamp;
+        //@notice unique ID of this derivative
+        uint256 id;
         uint256 collateral;
-		uint256 liquidationDepositAmount;
+        uint256 liquidationDepositAmount;
         //@notice Notional Principal Amount
-        uint256 notionalAmount;        
-		uint256 fixedInterestRate;
-		uint256 ibtQuantity;
-    }
-    //@notice IPOR Derivative
-	//TODO: move storage structure to storage smart contract
-    struct IporDerivativeStorage {
-        DerivativeState state;
-		//@notice Buyer of this derivative
-        address buyer;
-		//@notice Starting time of this Derivative
-		uint32 startingTimestamp;
-		//@notice Endind time of this Derivative
-		uint32 endingTimestamp;
-		//@notice unique ID of this derivative
-        uint64 id;        
-        uint128 collateral;
-		uint128 liquidationDepositAmount;
-        //@notice Notional Principal Amount
-        uint128 notionalAmount;        
-		uint128 fixedInterestRate;
-		uint128 ibtQuantity;
+        uint256 notionalAmount;
+        uint256 fixedInterestRate;
+        uint256 ibtQuantity;
     }
 }

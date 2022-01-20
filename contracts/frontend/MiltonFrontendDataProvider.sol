@@ -8,6 +8,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMilton.sol";
+import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 
 contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
@@ -135,6 +136,8 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             _iporConfiguration.getMiltonSpreadModel()
         );
 
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
+
         uint256 timestamp = block.timestamp;
 
         uint256 spreadPayFixedValue;
@@ -147,11 +150,27 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             IMiltonStorage miltonStorage = IMiltonStorage(
                 iporAssetConfiguration.getMiltonStorage()
             );
+            uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
+                assets[i],
+                timestamp
+            );
+
+            (
+                uint256 iporIndexValue,
+                ,
+                uint256 exponentialMovingAverage,
+                uint256 exponentialWeightedMovingVariance,
+
+            ) = warren.getIndex(assets[i]);
+
             try
                 spreadModel.calculatePartialSpreadPayFixed(
                     miltonStorage,
                     timestamp,
-                    assets[i]
+                    iporIndexValue,
+                    accruedIbtPrice,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
                 )
             returns (uint256 _spreadPayFixedValue) {
                 spreadPayFixedValue = _spreadPayFixedValue;
@@ -163,7 +182,10 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 spreadModel.calculatePartialSpreadRecFixed(
                     miltonStorage,
                     timestamp,
-                    assets[i]
+                    iporIndexValue,
+                    accruedIbtPrice,
+                    exponentialMovingAverage,
+                    exponentialWeightedMovingVariance
                 )
             returns (uint256 _spreadRecFixedValue) {
                 spreadRecFixedValue = _spreadRecFixedValue;

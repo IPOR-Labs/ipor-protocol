@@ -6,27 +6,41 @@ import "../interfaces/IMiltonStorage.sol";
 
 interface IMiltonSpreadModel {
     function calculatePartialSpreadPayFixed(
-		IMiltonStorage miltonStorage,
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset
+        uint256 iporIndexValue,
+        uint256 accruedIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
     ) external view returns (uint256 spreadValue);
 
     function calculateSpreadPayFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset,
+        uint256 iporIndexValue,
+        uint256 accruedIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee
     ) external view returns (uint256 spreadValue);
 
     function calculatePartialSpreadRecFixed(
-		IMiltonStorage miltonStorage,
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset
+        uint256 iporIndexValue,
+        uint256 accruedIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
     ) external view returns (uint256 spreadValue);
 
     function calculateSpreadRecFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset,
+        uint256 iporIndexValue,
+        uint256 accruedIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee
     ) external view returns (uint256 spreadValue);

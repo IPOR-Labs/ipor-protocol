@@ -4,6 +4,41 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
+
+	enum DerivativeState {
+        INACTIVE,
+        ACTIVE
+    }
+	struct MiltonDerivativesStorage {
+        uint256[] ids;
+		mapping(uint256 => MiltonDerivativeItemStorage) items;        
+        mapping(address => uint256[]) userDerivativeIds;
+    }
+
+	//TODO: move storage structure to storage smart contract
+    struct MiltonDerivativeItemStorage {
+        //position in MiltonDerivatives.ids array, can be changed when some derivative is closed
+        uint64 idsIndex;
+		//position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
+        uint64 userDerivativeIdsIndex;
+		IporDerivativeStorage item;
+    }
+	struct IporDerivativeStorage {
+        DerivativeState state;
+		//@notice Starting time of this Derivative
+		uint32 startingTimestamp;
+		//@notice unique ID of this derivative
+        uint64 id;        
+        uint128 collateral;
+		uint128 liquidationDepositAmount;
+        //@notice Notional Principal Amount
+        uint128 notionalAmount;        
+		uint128 fixedInterestRate;
+		uint128 ibtQuantity;
+		//@notice Buyer of this derivative
+        address buyer;
+    }
+
     function getBalance()
         external
         view

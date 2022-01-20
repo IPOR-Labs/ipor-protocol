@@ -23,7 +23,7 @@ contract MiltonSpreadModel is
     IIporConfiguration internal _iporConfiguration;
 
     constructor(address iporConfiguration) {
-		require(
+        require(
             address(iporConfiguration) != address(0),
             IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
         );
@@ -31,25 +31,16 @@ contract MiltonSpreadModel is
     }
 
     function calculatePartialSpreadPayFixed(
-		IMiltonStorage miltonStorage,
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset
+        uint256 iporIndexValue,
+        uint256 accruedIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
     ) external view override returns (uint256 spreadValue) {
-        (
-            uint256 iporIndexValue,
-            uint256 accruedIbtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance
-        ) = _prepareIporIndex(calculateTimestamp, asset);		
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+            .getBalance();
 
-        int256 _soapPf = miltonStorage.calculateSoapPayFixed(
-            accruedIbtPrice,
-            calculateTimestamp
-        );
-
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
-
-        //TODO: this particular spread where collateral - 0 should be calculated in more optimal way, verify it and change
         return
             _calculateSpreadPayFixed(
                 iporIndexValue,
@@ -60,33 +51,25 @@ contract MiltonSpreadModel is
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
-                _soapPf
+                miltonStorage.calculateSoapPayFixed(
+                    accruedIbtPrice,
+                    calculateTimestamp
+                )
             );
     }
 
     function calculateSpreadPayFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset,
+        uint256 iporIndexValue,
+        uint256 accruedIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
         uint256 derivativeCollateral,
         uint256 derivativeOpeningFee
     ) external view override returns (uint256 spreadValue) {
-        (
-            uint256 iporIndexValue,
-            uint256 accruedIbtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance
-        ) = _prepareIporIndex(calculateTimestamp, asset);
-		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            assetConfiguration.getMiltonStorage()
-        );
-
-        int256 _soapPf = miltonStorage.calculateSoapPayFixed(
-            accruedIbtPrice,
-            calculateTimestamp
-        );
-
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+            .getBalance();
 
         return
             _calculateSpreadPayFixed(
@@ -98,30 +81,24 @@ contract MiltonSpreadModel is
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
-                _soapPf
+                miltonStorage.calculateSoapPayFixed(
+                    accruedIbtPrice,
+                    calculateTimestamp
+                )
             );
     }
 
     function calculatePartialSpreadRecFixed(
-		IMiltonStorage miltonStorage,
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset
+        uint256 iporIndexValue,
+        uint256 accruedIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
     ) external view override returns (uint256 spreadValue) {
-        (
-            uint256 iporIndexValue,
-            uint256 accruedIbtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance
-        ) = _prepareIporIndex(calculateTimestamp, asset);
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+            .getBalance();
 
-        int256 _soapRf = miltonStorage.calculateSoapReceiveFixed(
-            accruedIbtPrice,
-            calculateTimestamp
-        );
-
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
-
-        //TODO: this particular spread where collateral - 0 should be calculated in more optimal way, verify it and change
         return
             _calculateSpreadRecFixed(
                 iporIndexValue,
@@ -132,33 +109,25 @@ contract MiltonSpreadModel is
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
-                _soapRf
+                miltonStorage.calculateSoapReceiveFixed(
+                    accruedIbtPrice,
+                    calculateTimestamp
+                )
             );
     }
 
     function calculateSpreadRecFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset,
+        uint256 accruedIbtPrice,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
         uint256 derivativeCollateral,
         uint256 derivativeOpeningFee
     ) external view override returns (uint256 spreadValue) {
-        (
-            uint256 iporIndexValue,
-            uint256 accruedIbtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance
-        ) = _prepareIporIndex(calculateTimestamp, asset);
-		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            assetConfiguration.getMiltonStorage()
-        );
-
-        int256 _soapRf = miltonStorage.calculateSoapReceiveFixed(
-            accruedIbtPrice,
-            calculateTimestamp
-        );
-
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage.getBalance();
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+            .getBalance();
 
         return
             _calculateSpreadRecFixed(
@@ -170,34 +139,11 @@ contract MiltonSpreadModel is
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
-                _soapRf
+                miltonStorage.calculateSoapReceiveFixed(
+                    accruedIbtPrice,
+                    calculateTimestamp
+                )
             );
-    }
-
-    function _prepareIporIndex(uint256 calculateTimestamp, address asset)
-        internal
-        view
-        returns (
-            uint256 iporIndexValue,
-            uint256 accruedIbtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance
-        )
-    {
-        IWarren warren = IWarren(_iporConfiguration.getWarren());
-
-        accruedIbtPrice = warren.calculateAccruedIbtPrice(
-            asset,
-            calculateTimestamp
-        );
-
-        (
-            iporIndexValue,
-            ,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
-
-        ) = warren.getIndex(asset);
     }
 
     function _calculateSpreadPayFixed(
@@ -213,7 +159,8 @@ contract MiltonSpreadModel is
     ) internal view returns (uint256 spreadValue) {
         require(
             liquidityPool + derivativeOpeningFee > 0,
-            IporErrors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            IporErrors
+                .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
             derivativeDeposit,
@@ -245,7 +192,8 @@ contract MiltonSpreadModel is
     ) internal view returns (uint256 spreadValue) {
         require(
             liquidityPool + derivativeOpeningFee > 0,
-            IporErrors.MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            IporErrors
+                .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
             derivativeDeposit,
@@ -357,7 +305,10 @@ contract MiltonSpreadModel is
                 return maxSpreadValue;
             } else {
                 return
-                    IporMath.division(kHist * Constants.D18, Constants.D18 - mu);
+                    IporMath.division(
+                        kHist * Constants.D18,
+                        Constants.D18 - mu
+                    );
             }
         }
     }
@@ -485,7 +436,10 @@ contract MiltonSpreadModel is
                 return maxSpreadValue;
             } else {
                 return
-                    IporMath.division(kHist * Constants.D18, Constants.D18 - mu);
+                    IporMath.division(
+                        kHist * Constants.D18,
+                        Constants.D18 - mu
+                    );
             }
         }
     }

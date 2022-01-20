@@ -83,6 +83,8 @@ contract Warren is Ownable, Pausable, IWarren {
         );
     }
 
+	function getAccruedIndex(uint256 calculateTimestamp, address asset) 
+
     //@notice indexValue value with number of decimals like in asset
     function updateIndex(address asset, uint256 indexValue)
         external
