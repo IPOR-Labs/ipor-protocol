@@ -125,7 +125,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                     uint256(_swapsPayFixed.items[id].item.state),
                     _swapsPayFixed.items[id].item.buyer,
                     _swapsPayFixed.items[id].item.startingTimestamp,
-                    _swapsPayFixed.items[id].item.startingTimestamp+ Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                    _swapsPayFixed.items[id].item.startingTimestamp +
+                        Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                     _swapsPayFixed.items[id].item.id,
                     _swapsPayFixed.items[id].item.collateral,
                     _swapsPayFixed.items[id].item.liquidationDepositAmount,
@@ -169,7 +170,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                     uint256(_swapsReceiveFixed.items[id].item.state),
                     _swapsReceiveFixed.items[id].item.buyer,
                     _swapsReceiveFixed.items[id].item.startingTimestamp,
-                    _swapsReceiveFixed.items[id].item.startingTimestamp+ Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                    _swapsReceiveFixed.items[id].item.startingTimestamp +
+                        Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
                     _swapsReceiveFixed.items[id].item.id,
                     _swapsReceiveFixed.items[id].item.collateral,
                     _swapsReceiveFixed.items[id].item.liquidationDepositAmount,
@@ -703,16 +705,12 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         _lastSwapId++;
         uint64 id = _lastSwapId;
 
-        _swapsReceiveFixed.items[id].item.state = DerivativeState
-            .ACTIVE;
+        _swapsReceiveFixed.items[id].item.state = DerivativeState.ACTIVE;
         _swapsReceiveFixed.items[id].item.buyer = newSwap.buyer;
         _swapsReceiveFixed.items[id].item.startingTimestamp = uint32(
             newSwap.startingTimestamp
         );
-        // _swapsReceiveFixed.items[id].item.endingTimestamp = uint32(
-        //     newSwap.startingTimestamp +
-        //         Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-        // );
+
         _swapsReceiveFixed.items[id].item.id = id;
         _swapsReceiveFixed.items[id].item.collateral = uint128(
             newSwap.collateral
@@ -751,8 +749,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
         );
         require(
-            derivativeItem.item.state !=
-                uint256(DerivativeState.INACTIVE),
+            derivativeItem.item.state != uint256(DerivativeState.INACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
         uint64 idsIndexToDelete = uint64(derivativeItem.idsIndex);
@@ -805,8 +802,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
         );
         require(
-            derivativeItem.item.state !=
-                uint256(DerivativeState.INACTIVE),
+            derivativeItem.item.state != uint256(DerivativeState.INACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
         uint64 idsIndexToDelete = uint64(derivativeItem.idsIndex);
@@ -934,18 +930,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             swap.ibtQuantity
         );
 
-        _soapIndicatorsPayFixed.rebalanceTimestamp = uint32(
-            pf.rebalanceTimestamp
+        _soapIndicatorsPayFixed = DataTypes.SoapIndicatorStorage(
+            uint32(pf.rebalanceTimestamp),
+            uint128(pf.totalNotional),
+            uint128(pf.averageInterestRate),
+            uint128(pf.totalIbtQuantity),
+            uint256(pf.quasiHypotheticalInterestCumulative)
         );
 
-        _soapIndicatorsPayFixed.totalNotional = uint128(pf.totalNotional);
-        _soapIndicatorsPayFixed.averageInterestRate = uint128(
-            pf.averageInterestRate
-        );
-        _soapIndicatorsPayFixed.totalIbtQuantity = uint128(pf.totalIbtQuantity);
-        _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative = uint256(
-            pf.quasiHypotheticalInterestCumulative
-        );
     }
 
     function _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
@@ -969,20 +961,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             swap.ibtQuantity
         );
 
-        _soapIndicatorsReceiveFixed.rebalanceTimestamp = uint32(
-            rf.rebalanceTimestamp
+        _soapIndicatorsReceiveFixed = DataTypes.SoapIndicatorStorage(
+            uint32(rf.rebalanceTimestamp),
+            uint128(rf.totalNotional),
+            uint128(rf.averageInterestRate),
+            uint128(rf.totalIbtQuantity),
+            uint256(rf.quasiHypotheticalInterestCumulative)
         );
-        _soapIndicatorsReceiveFixed.totalNotional = uint128(rf.totalNotional);
-        _soapIndicatorsReceiveFixed.averageInterestRate = uint128(
-            rf.averageInterestRate
-        );
-        _soapIndicatorsReceiveFixed.totalIbtQuantity = uint128(
-            rf.totalIbtQuantity
-        );
-        _soapIndicatorsReceiveFixed
-            .quasiHypotheticalInterestCumulative = uint256(
-            rf.quasiHypotheticalInterestCumulative
-        );
+
     }
 
     modifier onlyMilton() {

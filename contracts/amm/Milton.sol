@@ -331,7 +331,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
 
         IWarren warren = IWarren(_iporConfiguration.getWarren());
-		DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(calculateTimestamp, _asset);        
+        DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(
+            calculateTimestamp,
+            _asset
+        );
 
         try
             spreadModel.calculatePartialSpreadPayFixed(
@@ -385,6 +388,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 collateralizationFactor
     ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {
         uint256 decimals = _decimals;
+        IIporAssetConfiguration iac = _iporAssetConfiguration;
         require(
             maximumSlippage != 0,
             IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW
@@ -399,31 +403,27 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
 
         require(
-            collateralizationFactor >=
-                _iporAssetConfiguration.getMinCollateralizationFactorValue(),
+            collateralizationFactor >= iac.getMinCollateralizationFactorValue(),
             IporErrors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW
         );
         require(
-            collateralizationFactor <=
-                _iporAssetConfiguration.getMaxCollateralizationFactorValue(),
+            collateralizationFactor <= iac.getMaxCollateralizationFactorValue(),
             IporErrors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH
         );
 
         require(
             wadTotalAmount >
-                _iporAssetConfiguration.getLiquidationDepositAmount() +
-                    _iporAssetConfiguration.getIporPublicationFeeAmount(),
+                iac.getLiquidationDepositAmount() +
+                    iac.getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
         require(
-            wadTotalAmount <=
-                _iporAssetConfiguration.getMaxPositionTotalAmount(),
+            wadTotalAmount <= iac.getMaxPositionTotalAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_TOO_HIGH
         );
 
         require(
-            maximumSlippage <=
-                _iporAssetConfiguration.getMaxSlippagePercentage(),
+            maximumSlippage <= iac.getMaxSlippagePercentage(),
             IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH
         );
 
@@ -431,15 +431,15 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             .calculateDerivativeAmount(
                 wadTotalAmount,
                 collateralizationFactor,
-                _iporAssetConfiguration.getLiquidationDepositAmount(),
-                _iporAssetConfiguration.getIporPublicationFeeAmount(),
-                _iporAssetConfiguration.getOpeningFeePercentage()
+                iac.getLiquidationDepositAmount(),
+                iac.getIporPublicationFeeAmount(),
+                iac.getOpeningFeePercentage()
             );
 
         require(
             wadTotalAmount >
-                _iporAssetConfiguration.getLiquidationDepositAmount() +
-                    _iporAssetConfiguration.getIporPublicationFeeAmount() +
+                iac.getLiquidationDepositAmount() +
+                    iac.getIporPublicationFeeAmount() +
                     openingFee,
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
@@ -452,9 +452,9 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 collateral,
                 notional,
                 openingFee,
-                _iporAssetConfiguration.getLiquidationDepositAmount(),
+                iac.getLiquidationDepositAmount(),
                 decimals,
-                _iporAssetConfiguration.getIporPublicationFeeAmount(),
+                iac.getIporPublicationFeeAmount(),
                 warren.getAccruedIndex(openTimestamp, _asset)
             );
     }
