@@ -87,7 +87,9 @@ describe("MiltonStorage", () => {
             testData
         );
 
-		await testData.iporAssetConfigurationDai.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationDai.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
         await testData.miltonStorageDai
@@ -166,7 +168,7 @@ describe("MiltonStorage", () => {
             from: userTwo,
         };
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -239,7 +241,7 @@ describe("MiltonStorage", () => {
             from: userTwo,
         };
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -311,7 +313,7 @@ describe("MiltonStorage", () => {
             from: userTwo,
         };
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,

@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarrenStorage.sol";
 import {Constants} from "../libraries/Constants.sol";
@@ -15,7 +16,7 @@ import "../interfaces/IIporConfiguration.sol";
  * @author IPOR Labs
  */
 //TODO: [gas-opt] use with Warren as inheritance
-contract WarrenStorage is Ownable, IWarrenStorage {
+contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
@@ -34,54 +35,40 @@ contract WarrenStorage is Ownable, IWarrenStorage {
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address updater);
 
-	IIporConfiguration private _iporConfiguration;    
+    IIporConfiguration private _iporConfiguration;
 
     /// @notice list of assets used in indexes mapping
-    address[] public assets;
+    address[] internal _assets;
 
     //TODO: [gas-optimisation] move to mapping(address => uint1) where in value = 1 then is updater if value = 0 then is not updater
     /// @notice list of addresses which has rights to modify indexes mapping
-    address[] public updaters;    
+    address[] public updaters;
 
-	/// @notice list of IPOR indexes for particular assets
-    mapping(address => DataTypes.IPOR) public indexes;
-	
-	constructor (address initialIporConfiguration) {
-		_iporConfiguration = IIporConfiguration(initialIporConfiguration);
-	}    
+    /// @notice list of IPOR indexes for particular assets
+    mapping(address => DataTypes.IPOR) internal _indexes;
 
-    function getAssets() external view override returns (address[] memory) {
-        return assets;
+    constructor(address initialIporConfiguration) {
+        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
     }
 
-    function getIndex(address asset)
-        external
-        view
-        override
-        returns (DataTypes.IPOR memory)
-    {
-        return indexes[asset];
+    function pause() external override onlyOwner {
+        _pause();
     }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }    
+
+    // function getIndex(address asset)
+    //     external
+    //     view
+    //     override
+    //     returns (DataTypes.IPOR memory)
+    // {
+    //     return indexes[asset];
+    // }
 
     //@notice indexValues with decimals same like in asset
-    function updateIndexes(
-        address[] memory assetList,
-        uint256[] memory indexValues,
-        uint256 updateTimestamp
-    ) external override onlyUpdater {
-        require(
-            assetList.length == indexValues.length,
-            IporErrors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
-        );
-        for (uint256 i = 0; i < assetList.length; i++) {
-            //TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
-            require(
-                _iporConfiguration.assetSupported(assetList[i]) == 1,
-                IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-            );
-            _updateIndex(assetList[i], indexValues[i], updateTimestamp);
-        }
-    }
 
     function addUpdater(address updater) external override onlyOwner {
         _addUpdater(updater);
@@ -115,7 +102,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         }
     }
 
-    function _updateIndex(
+    function _updateIndex(		
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
@@ -125,8 +112,8 @@ contract WarrenStorage is Ownable, IWarrenStorage {
             );
 
         bool assetExists = false;
-        for (uint256 i = 0; i < assets.length; i++) {
-            if (assets[i] == asset) {
+        for (uint256 i = 0; i < _assets.length; i++) {
+            if (_assets[i] == asset) {
                 assetExists = true;
             }
         }
@@ -136,40 +123,39 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         // uint256 power = IporMath.division((updateTimestamp-indexes[asset].blockTimestamp)*Constants.D18, iporAssetConfiguration.getDecayFactorValue());
         // uint256 alpha = IporMath.division(Constants.D18, Constants.E_VALUE ** power);
         //TODO: figure out how to calculate alpha???
-		//TODO: move this const to Warren internally - dont use iporassetconfiguration in warren
+        //TODO: move this const to Warren internally - dont use iporassetconfiguration in warren
         uint256 alpha = iporAssetConfiguration.getDecayFactorValue();
 
         if (!assetExists) {
-            assets.push(asset);
+            _assets.push(asset);
             newQuasiIbtPrice = Constants.WAD_YEAR_IN_SECONDS;
             newExponentialMovingAverage = indexValue;
             newExponentialWeightedMovingVariance = 0;
         } else {
-            newQuasiIbtPrice = indexes[asset].accrueQuasiIbtPrice(
+            newQuasiIbtPrice = _indexes[asset].accrueQuasiIbtPrice(
                 updateTimestamp
             );
             newExponentialMovingAverage = IporLogic
                 .calculateExponentialMovingAverage(
-                    indexes[asset].exponentialMovingAverage,
+                    _indexes[asset].exponentialMovingAverage,
                     indexValue,
                     alpha
                 );
 
             newExponentialWeightedMovingVariance = IporLogic
                 .calculateExponentialWeightedMovingVariance(
-                    indexes[asset].exponentialWeightedMovingVariance,
+                    _indexes[asset].exponentialWeightedMovingVariance,
                     newExponentialMovingAverage,
                     indexValue,
                     alpha
                 );
         }
-        indexes[asset] = DataTypes.IPOR(
+        _indexes[asset] = DataTypes.IPOR(
             uint32(updateTimestamp),
             uint128(indexValue),
             uint128(newQuasiIbtPrice),
             uint128(newExponentialMovingAverage),
             uint128(newExponentialWeightedMovingVariance)
-            
         );
         emit IporIndexUpdate(
             asset,

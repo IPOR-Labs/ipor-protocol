@@ -3,11 +3,9 @@ pragma solidity 0.8.9;
 
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 
-interface IWarren {
-    function pause() external;
-
-    function unpause() external;
-
+interface IWarren {    
+	
+	function getAssets() external view returns (address[] memory);
     function getIndex(address asset)
         external
         view

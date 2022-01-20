@@ -214,11 +214,7 @@ module.exports.prepareData = async (libraries, accounts) => {
         iporConfiguration.address
     );
     await miltonDevToolDataProvider.deployed();
-
-    const ItfWarren = await ethers.getContractFactory("ItfWarren");
-    const warren = await ItfWarren.deploy(iporConfiguration.address);
-    await warren.deployed();
-
+    
     let miltonSpread = null;
 
     const MockMiltonSpreadModel = await ethers.getContractFactory(
@@ -232,10 +228,7 @@ module.exports.prepareData = async (libraries, accounts) => {
 
     await iporConfiguration.setMiltonSpreadModel(miltonSpread.address);
 
-    await iporConfiguration.setWarren(await warren.address);
-
     let data = {
-        warren,
         miltonSpread,
         iporConfiguration,
         miltonDevToolDataProvider,
@@ -278,18 +271,16 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             DerivativesView: lib.derivativesView.address,
         },
     });
-    const WarrenStorage = await ethers.getContractFactory("WarrenStorage");
+
     const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
 
-    const warrenStorage = await WarrenStorage.deploy(
-        data.iporConfiguration.address
-    );
-    await warrenStorage.deployed();
+	const ItfWarren = await ethers.getContractFactory("ItfWarren");
+    const warren = await ItfWarren.deploy(data.iporConfiguration.address);
+    await warren.deployed();
 
-    await warrenStorage.addUpdater(accounts[1].address);
-    await warrenStorage.addUpdater(data.warren.address);
-
-    await data.iporConfiguration.setWarrenStorage(warrenStorage.address);
+    await warren.addUpdater(accounts[1].address);
+    await data.iporConfiguration.setWarren(await warren.address);
+    
 
     const MiltonLPUtilizationStrategyCollateral =
         await ethers.getContractFactory(
@@ -492,7 +483,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
         iporAssetConfigurationUsdt,
         iporAssetConfigurationUsdc,
         iporAssetConfigurationDai,
-        warrenStorage,
+        warren,
         miltonUsdt,
         miltonStorageUsdt,
         josephUsdt,

@@ -6,7 +6,7 @@ import "../interfaces/IWarrenDevToolDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import {Constants} from "../libraries/Constants.sol";
 import {IporMath} from "../libraries/IporMath.sol";
-import "../interfaces/IWarrenStorage.sol";
+import "../interfaces/IWarren.sol";
 
 contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
     IIporConfiguration private immutable _iporConfiguration;
@@ -16,23 +16,24 @@ contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
     }
 
     function getIndexes() external view override returns (IporFront[] memory) {
-        IWarrenStorage warrenStorage = IWarrenStorage(
-            _iporConfiguration.getWarrenStorage()
-        );
-        address[] memory assets = warrenStorage.getAssets();
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
+        address[] memory assets = warren.getAssets();
         IporFront[] memory indexes = new IporFront[](assets.length);
         for (uint256 i = 0; i < assets.length; i++) {
-			address itAsset = assets[i];
-            DataTypes.IPOR memory iporIndex = warrenStorage.getIndex(itAsset);
+            (
+                uint256 value,
+                uint256 ibtPrice,
+                uint256 exponentialMovingAverage,
+                ,
+                uint256 date
+            ) = warren.getIndex(assets[i]);
+
             indexes[i] = IporFront(
-                IERC20Metadata(itAsset).symbol(),
-                iporIndex.indexValue,
-                IporMath.division(
-                    iporIndex.quasiIbtPrice,
-                    Constants.YEAR_IN_SECONDS
-                ),
-                iporIndex.exponentialMovingAverage,
-                iporIndex.blockTimestamp
+                IERC20Metadata(assets[i]).symbol(),
+                value,
+                ibtPrice,
+                exponentialMovingAverage,
+                date
             );
         }
         return indexes;

@@ -228,8 +228,7 @@ describe("Joseph", () => {
         //when
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfRedeem(
-				withdrawAmount, params.openTimestamp);
+            .itfRedeem(withdrawAmount, params.openTimestamp);
 
         // //then
         const actualIpTokenBalanceSender = BigInt(
@@ -447,10 +446,7 @@ describe("Joseph", () => {
 
         await testData.josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                USD_14_000_6DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_6DEC, params.openTimestamp);
 
         //when
         let actualExchangeRate = BigInt(
@@ -539,7 +535,7 @@ describe("Joseph", () => {
 
         let expectedExchangeRate = BigInt("1000747756729810568");
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -598,7 +594,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -662,7 +658,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -686,7 +682,7 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -733,7 +729,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -757,7 +753,7 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -805,7 +801,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -829,7 +825,7 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -877,7 +873,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -905,7 +901,7 @@ describe("Joseph", () => {
             .connect(liquidityProvider)
             .itfRedeem(BigInt("48000000000000000000000"), params.openTimestamp);
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -946,7 +942,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -974,7 +970,7 @@ describe("Joseph", () => {
             .connect(liquidityProvider)
             .itfRedeem(BigInt("48000000000000000000000"), params.openTimestamp);
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1015,7 +1011,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1043,7 +1039,7 @@ describe("Joseph", () => {
             .connect(liquidityProvider)
             .itfRedeem(BigInt("48000000000000000000000"), params.openTimestamp);
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1089,7 +1085,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         //required to have IBT Price higher than 0
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1117,7 +1113,7 @@ describe("Joseph", () => {
             .connect(liquidityProvider)
             .itfRedeem(BigInt("48000000000000000000000"), params.openTimestamp);
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1163,7 +1159,7 @@ describe("Joseph", () => {
 
         let expectedExchangeRate = BigInt("1000747756729810568");
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1223,7 +1219,7 @@ describe("Joseph", () => {
         const amount = BigInt("40000000000000000000");
         const expectedExchangeRate = BigInt("1000000000000000000");
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1292,7 +1288,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         const amount = BigInt("180000000000000000000");
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1389,7 +1385,7 @@ describe("Joseph", () => {
 
         const amount = BigInt("180000000000000000000");
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -1502,7 +1498,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
 
         const amount = BigInt("180000000");
-        await data.warren
+        await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
