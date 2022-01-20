@@ -73,7 +73,10 @@ library DataTypes {
     }
 
 	struct AccruedIpor {
-		
+		uint256 indexValue;        
+        uint256 ibtPrice;        
+        uint256 exponentialMovingAverage;        
+        uint256 exponentialWeightedMovingVariance;		
 	}
     //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum DerivativeDirection {
@@ -92,10 +95,7 @@ library DataTypes {
         uint256 liquidationDepositAmount;
         uint256 decimals;
         uint256 iporPublicationFeeAmount;
-        uint256 accruedIbtPrice;
-        uint256 iporIndexValue;
-        uint256 exponentialMovingAverage;
-        uint256 exponentialWeightedMovingVariance;
+		DataTypes.AccruedIpor accruedIpor;
     }
 
     struct IporDerivativeInterest {

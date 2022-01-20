@@ -90,9 +90,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = BigInt("107709997242251128");
 
@@ -101,9 +104,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -170,9 +171,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -181,9 +185,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -250,9 +252,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -261,9 +266,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -330,9 +333,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = payFixedDerivativesBalance;
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -341,9 +347,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -410,9 +414,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = payFixedDerivativesBalance;
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -421,9 +428,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -491,9 +496,14 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const soap = payFixedDerivativesBalance;
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -502,9 +512,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -572,9 +580,14 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const soap = payFixedDerivativesBalance;
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -583,9 +596,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -653,9 +664,14 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const soap = BigInt("500000000000000000000");
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -664,9 +680,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -734,9 +748,14 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const soap = BigInt("500000000000000000000");
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -745,9 +764,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -814,9 +831,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("100");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -825,9 +845,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -894,9 +912,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("999999999999999999000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -905,9 +926,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -974,9 +993,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("999999999999999899");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("999999999999999899"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -985,9 +1007,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -1054,9 +1074,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("2000000000000000010");
-        const exponentialMovingAverage = BigInt("3000000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("2000000000000000010"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("3000000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -1065,9 +1088,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -1134,9 +1155,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -1145,9 +1169,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,
@@ -1214,18 +1236,19 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         await assertError(
             //when
             data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
+                    accruedIpor,
                     derivativeDeposit,
                     derivativeOpeningFee,
                     liquidityPool,

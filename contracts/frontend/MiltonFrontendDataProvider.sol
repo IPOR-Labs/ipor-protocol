@@ -150,27 +150,17 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             IMiltonStorage miltonStorage = IMiltonStorage(
                 iporAssetConfiguration.getMiltonStorage()
             );
-            uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
-                assets[i],
-                timestamp
+
+            DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(
+                timestamp,
+                assets[i]
             );
-
-            (
-                uint256 iporIndexValue,
-                ,
-                uint256 exponentialMovingAverage,
-                uint256 exponentialWeightedMovingVariance,
-
-            ) = warren.getIndex(assets[i]);
 
             try
                 spreadModel.calculatePartialSpreadPayFixed(
                     miltonStorage,
                     timestamp,
-                    iporIndexValue,
-                    accruedIbtPrice,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
+                    accruedIpor
                 )
             returns (uint256 _spreadPayFixedValue) {
                 spreadPayFixedValue = _spreadPayFixedValue;
@@ -182,10 +172,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 spreadModel.calculatePartialSpreadRecFixed(
                     miltonStorage,
                     timestamp,
-                    iporIndexValue,
-                    accruedIbtPrice,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
+                    accruedIpor
                 )
             returns (uint256 _spreadRecFixedValue) {
                 spreadRecFixedValue = _spreadRecFixedValue;

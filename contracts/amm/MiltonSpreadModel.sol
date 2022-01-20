@@ -33,26 +33,21 @@ contract MiltonSpreadModel is
     function calculatePartialSpreadPayFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        uint256 iporIndexValue,
-        uint256 accruedIbtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
+		DataTypes.AccruedIpor memory accruedIpor
     ) external view override returns (uint256 spreadValue) {
         DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
             .getBalance();
 
         return
             _calculateSpreadPayFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance,
+                accruedIpor,
                 0,
                 0,
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
                 miltonStorage.calculateSoapPayFixed(
-                    accruedIbtPrice,
+                    accruedIpor.ibtPrice,
                     calculateTimestamp
                 )
             );
@@ -61,10 +56,7 @@ contract MiltonSpreadModel is
     function calculateSpreadPayFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        uint256 iporIndexValue,
-        uint256 accruedIbtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
+        DataTypes.AccruedIpor memory accruedIpor,
         uint256 derivativeCollateral,
         uint256 derivativeOpeningFee
     ) external view override returns (uint256 spreadValue) {
@@ -73,16 +65,14 @@ contract MiltonSpreadModel is
 
         return
             _calculateSpreadPayFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance,
+                accruedIpor,
                 derivativeCollateral,
                 derivativeOpeningFee,
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
                 miltonStorage.calculateSoapPayFixed(
-                    accruedIbtPrice,
+                    accruedIpor.ibtPrice,
                     calculateTimestamp
                 )
             );
@@ -91,26 +81,21 @@ contract MiltonSpreadModel is
     function calculatePartialSpreadRecFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        uint256 iporIndexValue,
-        uint256 accruedIbtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
+        DataTypes.AccruedIpor memory accruedIpor
     ) external view override returns (uint256 spreadValue) {
         DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
             .getBalance();
 
         return
             _calculateSpreadRecFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance,
+                accruedIpor,
                 0,
                 0,
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
                 miltonStorage.calculateSoapReceiveFixed(
-                    accruedIbtPrice,
+                    accruedIpor.ibtPrice,
                     calculateTimestamp
                 )
             );
@@ -119,10 +104,7 @@ contract MiltonSpreadModel is
     function calculateSpreadRecFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        uint256 accruedIbtPrice,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
+        DataTypes.AccruedIpor memory accruedIpor,
         uint256 derivativeCollateral,
         uint256 derivativeOpeningFee
     ) external view override returns (uint256 spreadValue) {
@@ -131,25 +113,21 @@ contract MiltonSpreadModel is
 
         return
             _calculateSpreadRecFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance,
+                accruedIpor,
                 derivativeCollateral,
                 derivativeOpeningFee,
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
                 miltonStorage.calculateSoapReceiveFixed(
-                    accruedIbtPrice,
+                    accruedIpor.ibtPrice,
                     calculateTimestamp
                 )
             );
     }
 
     function _calculateSpreadPayFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
+        DataTypes.AccruedIpor memory accruedIpor,
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee,
         uint256 liquidityPool,
@@ -171,18 +149,16 @@ contract MiltonSpreadModel is
             soap
         ) +
             _calculateAtParComponentPayFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
+                accruedIpor.indexValue,
+                accruedIpor.exponentialMovingAverage,
+                accruedIpor.exponentialWeightedMovingVariance
             );
 
         spreadValue = result < _maxValue ? result : _maxValue;
     }
 
     function _calculateSpreadRecFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
+		DataTypes.AccruedIpor memory accruedIpor,        
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee,
         uint256 liquidityPool,
@@ -204,9 +180,9 @@ contract MiltonSpreadModel is
             soap
         ) +
             _calculateAtParComponentRecFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
+                accruedIpor.indexValue,
+                accruedIpor.exponentialMovingAverage,
+                accruedIpor.exponentialWeightedMovingVariance
             );
 
         spreadValue = result < _maxValue ? result : _maxValue;

@@ -173,6 +173,7 @@ contract IporConfiguration is
         }
     }
 
+	//TODO: move asset supported to Warren or remove it forever
     function assetSupported(address asset)
         external
         view

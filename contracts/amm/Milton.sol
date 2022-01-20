@@ -331,28 +331,13 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         );
 
         IWarren warren = IWarren(_iporConfiguration.getWarren());
-
-        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
-            _asset,
-            calculateTimestamp
-        );
-
-        (
-            uint256 iporIndexValue,
-            ,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
-
-        ) = warren.getIndex(_asset);
+		DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(calculateTimestamp, _asset);        
 
         try
             spreadModel.calculatePartialSpreadPayFixed(
                 miltonStorage,
                 calculateTimestamp,
-                iporIndexValue,
-                accruedIbtPrice,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
+                accruedIpor
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -364,10 +349,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             spreadModel.calculatePartialSpreadRecFixed(
                 miltonStorage,
                 calculateTimestamp,
-                iporIndexValue,
-                accruedIbtPrice,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
+                accruedIpor
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;
@@ -464,19 +446,6 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         IWarren warren = IWarren(_iporConfiguration.getWarren());
 
-        uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
-            _asset,
-            openTimestamp
-        );
-
-        (
-            uint256 iporIndexValue,
-            ,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
-
-        ) = warren.getIndex(_asset);
-
         return
             DataTypes.BeforeOpenSwapStruct(
                 wadTotalAmount,
@@ -486,10 +455,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 _iporAssetConfiguration.getLiquidationDepositAmount(),
                 decimals,
                 _iporAssetConfiguration.getIporPublicationFeeAmount(),
-                accruedIbtPrice,
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
+                warren.getAccruedIndex(openTimestamp, _asset)
             );
     }
 
@@ -523,10 +489,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 spreadValue = spreadModel.calculateSpreadPayFixed(
             miltonStorage,
             openTimestamp,
-            bosStruct.iporIndexValue,
-            bosStruct.accruedIbtPrice,
-            bosStruct.exponentialMovingAverage,
-            bosStruct.exponentialWeightedMovingVariance,
+            bosStruct.accruedIpor,
             bosStruct.collateral,
             bosStruct.openingFee
         );
@@ -611,10 +574,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 spreadValue = spreadModel.calculateSpreadRecFixed(
             miltonStorage,
             openTimestamp,
-            bosStruct.iporIndexValue,
-            bosStruct.accruedIbtPrice,
-            bosStruct.exponentialMovingAverage,
-            bosStruct.exponentialWeightedMovingVariance,
+            bosStruct.accruedIpor,
             bosStruct.collateral,
             bosStruct.openingFee
         );

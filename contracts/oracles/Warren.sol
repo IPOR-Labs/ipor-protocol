@@ -24,7 +24,7 @@ contract Warren is Ownable, Pausable, IWarren {
     IIporConfiguration internal _iporConfiguration;
 
     constructor(address initialIporConfiguration) {
-		require(
+        require(
             address(initialIporConfiguration) != address(0),
             IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
         );
@@ -83,7 +83,28 @@ contract Warren is Ownable, Pausable, IWarren {
         );
     }
 
-	function getAccruedIndex(uint256 calculateTimestamp, address asset) 
+    function getAccruedIndex(uint256 calculateTimestamp, address asset)
+        external
+		view
+        override
+        returns (DataTypes.AccruedIpor memory accruedIpor)
+    {
+        DataTypes.IPOR memory ipor = IWarrenStorage(
+            _iporConfiguration.getWarrenStorage()
+        ).getIndex(asset);
+
+        uint256 accruedIbtPrice = _calculateAccruedIbtPrice(
+            calculateTimestamp,
+            asset
+        );
+
+        accruedIpor = DataTypes.AccruedIpor(
+            ipor.indexValue,
+            accruedIbtPrice,
+            ipor.exponentialMovingAverage,
+            ipor.exponentialWeightedMovingVariance
+        );
+    }
 
     //@notice indexValue value with number of decimals like in asset
     function updateIndex(address asset, uint256 indexValue)
@@ -119,6 +140,13 @@ contract Warren is Ownable, Pausable, IWarren {
         override
         returns (uint256)
     {
+        return _calculateAccruedIbtPrice(calculateTimestamp, asset);
+    }
+
+    function _calculateAccruedIbtPrice(
+        uint256 calculateTimestamp,
+        address asset
+    ) internal view returns (uint256) {
         return
             IporMath.division(
                 IWarrenStorage(_iporConfiguration.getWarrenStorage())

@@ -136,6 +136,7 @@ contract WarrenStorage is Ownable, IWarrenStorage {
         // uint256 power = IporMath.division((updateTimestamp-indexes[asset].blockTimestamp)*Constants.D18, iporAssetConfiguration.getDecayFactorValue());
         // uint256 alpha = IporMath.division(Constants.D18, Constants.E_VALUE ** power);
         //TODO: figure out how to calculate alpha???
+		//TODO: move this const to Warren internally - dont use iporassetconfiguration in warren
         uint256 alpha = iporAssetConfiguration.getDecayFactorValue();
 
         if (!assetExists) {

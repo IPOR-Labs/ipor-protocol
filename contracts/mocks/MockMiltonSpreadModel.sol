@@ -9,9 +9,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     {}
 
     function testCalculateSpreadPayFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
+        DataTypes.AccruedIpor memory accruedIpor,
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee,
         uint256 liquidityPool,
@@ -21,9 +19,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     ) public view returns (uint256 spreadValue) {
         return
             _calculateSpreadPayFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance,
+                accruedIpor,
                 derivativeDeposit,
                 derivativeOpeningFee,
                 liquidityPool,
@@ -34,9 +30,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     }
 
     function testCalculateSpreadRecFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
+        DataTypes.AccruedIpor memory accruedIpor,
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee,
         uint256 liquidityPool,
@@ -46,9 +40,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     ) public view returns (uint256 spreadValue) {
         return
             _calculateSpreadRecFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance,
+                accruedIpor,
                 derivativeDeposit,
                 derivativeOpeningFee,
                 liquidityPool,
