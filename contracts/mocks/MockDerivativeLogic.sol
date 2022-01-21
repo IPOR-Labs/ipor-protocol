@@ -2,9 +2,9 @@
 pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
-import "../libraries/DerivativeLogic.sol";
+import "../libraries/IporSwapLogic.sol";
 
-contract MockDerivativeLogic {
+contract MockIporSwapLogic {
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
         uint256 notionalAmount,
@@ -12,7 +12,7 @@ contract MockDerivativeLogic {
         uint256 derivativePeriodInSeconds
     ) public pure returns (uint256) {
         return
-            DerivativeLogic.calculateQuasiInterestFixed(
+            IporSwapLogic.calculateQuasiInterestFixed(
                 notionalAmount,
                 derivativeFixedInterestRate,
                 derivativePeriodInSeconds
@@ -25,19 +25,19 @@ contract MockDerivativeLogic {
         uint256 ibtCurrentPrice
     ) public pure returns (uint256) {
         return
-            DerivativeLogic.calculateQuasiInterestFloating(
+            IporSwapLogic.calculateQuasiInterestFloating(
                 ibtQuantity,
                 ibtCurrentPrice
             );
     }
 
     function calculateInterestForSwapPayFixed(
-        DataTypes.IporDerivativeMemory memory derivative,
+        DataTypes.IporSwapMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (DataTypes.IporDerivativeInterest memory) {
         return
-            DerivativeLogic.calculateInterestForSwapPayFixed(
+            IporSwapLogic.calculateInterestForSwapPayFixed(
                 derivative,
                 closingTimestamp,
                 mdIbtPrice
@@ -45,12 +45,12 @@ contract MockDerivativeLogic {
     }
 
 	function calculateInterestForSwapReceiveFixed(
-        DataTypes.IporDerivativeMemory memory derivative,
+        DataTypes.IporSwapMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (DataTypes.IporDerivativeInterest memory) {
         return
-            DerivativeLogic.calculateInterestForSwapReceiveFixed(
+            IporSwapLogic.calculateInterestForSwapReceiveFixed(
                 derivative,
                 closingTimestamp,
                 mdIbtPrice

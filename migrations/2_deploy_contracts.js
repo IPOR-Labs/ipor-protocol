@@ -4,9 +4,9 @@ const keccak256 = require("keccak256");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 
 const IporLogic = artifacts.require("IporLogic");
-const DerivativeLogic = artifacts.require("DerivativeLogic");
+const IporSwapLogic = artifacts.require("IporSwapLogic");
 const SoapIndicatorLogic = artifacts.require("SoapIndicatorLogic");
-const DerivativesView = artifacts.require("DerivativesView");
+
 const IporMath = artifacts.require("IporMath");
 const IporConfiguration = artifacts.require("IporConfiguration");
 
@@ -15,8 +15,8 @@ const Warren = artifacts.require("Warren");
 const ItfWarren = artifacts.require("ItfWarren");
 const WarrenStorage = artifacts.require("WarrenStorage");
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-const MiltonLPUtilizationStrategyCollateral = artifacts.require(
-    "MiltonLPUtilizationStrategyCollateral"
+const MiltonLiquidityPoolUtilizationModel = artifacts.require(
+    "MiltonLiquidityPoolUtilizationModel"
 );
 
 const MiltonUsdt = artifacts.require("MiltonUsdt");
@@ -62,7 +62,6 @@ const WarrenFrontendDataProvider = artifacts.require(
 const MiltonFrontendDataProvider = artifacts.require(
     "MiltonFrontendDataProvider"
 );
-
 
 async function grandRolesForAssetConfiguration(admin, iporAssetConfiguration) {
     await iporAssetConfiguration.grantRole(
@@ -224,16 +223,16 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.link(IporLogic, Warren);
     await deployer.link(IporLogic, WarrenStorage);
 
-    await deployer.deploy(DerivativeLogic);
+    await deployer.deploy(IporSwapLogic);
 
     await deployer.deploy(SoapIndicatorLogic);
 
-    await deployer.deploy(DerivativesView);
+    
 
     await deployer.link(SoapIndicatorLogic, MiltonStorage);
-    await deployer.link(DerivativeLogic, MiltonStorage);
-    await deployer.link(DerivativesView, MiltonStorage);
-    await deployer.link(DerivativeLogic, Milton);
+    await deployer.link(IporSwapLogic, MiltonStorage);
+    
+    await deployer.link(IporSwapLogic, Milton);
 
     await deployer.deploy(IporConfiguration);
     iporConfiguration = await IporConfiguration.deployed();
@@ -255,13 +254,13 @@ module.exports = async function (deployer, _network, addresses) {
         iporConfiguration.address
     );
 
-    // await deployer.link(IporMath, MiltonLPUtilizationStrategyCollateral);
+    // await deployer.link(IporMath, MiltonLiquidityPoolUtilizationModel);
     await deployer.deploy(
-        MiltonLPUtilizationStrategyCollateral,
+        MiltonLiquidityPoolUtilizationModel,
         iporConfiguration.address
     );
     let miltonLPUtilizationStrategyCollateral =
-        await MiltonLPUtilizationStrategyCollateral.deployed();
+        await MiltonLiquidityPoolUtilizationModel.deployed();
 
     await deployer.deploy(MiltonSpreadModel, iporConfiguration.address);
     let miltonSpreadModel = await MiltonSpreadModel.deployed();
@@ -343,7 +342,7 @@ module.exports = async function (deployer, _network, addresses) {
     //#####################################################################
 
     await iporConfiguration.setMiltonSpreadModel(miltonSpreadModel.address);
-    await iporConfiguration.setMiltonLPUtilizationStrategy(
+    await iporConfiguration.setMiltonLiquidityPoolUtilizationModel(
         miltonLPUtilizationStrategyCollateral.address
     );
 
@@ -633,7 +632,7 @@ module.exports = async function (deployer, _network, addresses) {
 
             //ItfMilton
             // await deployer.link(IporMath, ItfMilton);
-            await deployer.link(DerivativeLogic, ItfMilton);
+            await deployer.link(IporSwapLogic, ItfMilton);
             await deployer.deploy(ItfMilton, iporConfiguration.address);
             itfMilton = await ItfMilton.deployed();
 

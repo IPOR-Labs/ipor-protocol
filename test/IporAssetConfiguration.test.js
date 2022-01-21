@@ -20,7 +20,7 @@ describe("IporAssetConfiguration", () => {
     let ipTokenDai = null;
     let iporAssetConfigurationDAI = null;
     let timelockController = null;
-	const mockAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
+    const mockAddress = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] =
@@ -1185,11 +1185,10 @@ describe("IporAssetConfiguration", () => {
         //when
         await iporAssetConfigurationDAI
             .connect(userOne)
-            .setMaxPositionTotalAmount(max);
+            .setMaxSwapTotalAmount(max);
 
         //then
-        const result =
-            await iporAssetConfigurationDAI.getMaxPositionTotalAmount();
+        const result = await iporAssetConfigurationDAI.getMaxSwapTotalAmount();
         expect(max).to.be.eql(BigInt(result));
     });
 
@@ -1201,7 +1200,7 @@ describe("IporAssetConfiguration", () => {
             //when
             iporAssetConfigurationDAI
                 .connect(userOne)
-                .setMaxPositionTotalAmount(max),
+                .setMaxSwapTotalAmount(max),
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xbd6e7260790b38b2aece87cbeb2f1d97be9c3b1eb157efb80e7b3c341450caf2`

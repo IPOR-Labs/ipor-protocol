@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/Constants.sol";
 import "../libraries/types/DataTypes.sol";
-import "../interfaces/IMiltonLPUtilisationStrategy.sol";
+import "../interfaces/IMiltonLiquidityPoolUtilizationModel.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
@@ -12,7 +12,7 @@ import {IporErrors} from "../IporErrors.sol";
 
 //@notice Milton utilization strategy which - for simplification - is based on Collateral
 //(collateral is a total balance of derivatives in Milton)
-contract MiltonLPUtilizationStrategyCollateral is IMiltonLPUtilizationStrategy {
+contract MiltonLiquidityPoolUtilizationModel is IMiltonLiquidityPoolUtilizationModel {
 
     function calculateTotalUtilizationRate(
 		uint256 liquidityPoolBalance,

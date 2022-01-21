@@ -1,16 +1,16 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 import DerivativeList from "./DerivativeList";
 
-const {ContractData, ContractForm} = newContextComponents;
+const { ContractData, ContractForm } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
             contract="MiltonDevToolDataProvider"
-            method="getMyPositions"
+            method="getMySwaps"
             render={DerivativeList}
         />
     </div>

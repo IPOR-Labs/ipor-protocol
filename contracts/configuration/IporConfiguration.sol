@@ -74,7 +74,7 @@ contract IporConfiguration is
         emit MiltonSpreadModelUpdated(miltonSpreadModel);
     }
 
-    function getMiltonLPUtilizationStrategy()
+    function getMiltonLiquidityPoolUtilizationModel()
         external
         view
         override
@@ -83,13 +83,13 @@ contract IporConfiguration is
         return _addresses[_MILTON_LP_UTILIZATION_STRATEGY];
     }
 
-    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy)
+    function setMiltonLiquidityPoolUtilizationModel(address miltonUtilizationModel)
         external
         override
         onlyRole(_MILTON_LP_UTILIZATION_STRATEGY_ROLE)
     {
-        _addresses[_MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
-        emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
+        _addresses[_MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationModel;
+        emit MiltonUtilizationStrategyUpdated(miltonUtilizationModel);
     }
 
     function getMiltonPublicationFeeTransferer()
@@ -146,7 +146,8 @@ contract IporConfiguration is
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         bool assetExists = false;
 		uint256 i = 0;
-        for (i; i != assets.length; i++) {
+		uint256 assetsLength = assets.length;
+        for (i; i != assetsLength; i++) {
             if (assets[i] == asset) {
                 assetExists = true;
             }
@@ -165,7 +166,8 @@ contract IporConfiguration is
     {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 		uint256 i = 0;
-        for (i; i != assets.length; i++) {
+		uint256 assetsLength = assets.length;
+        for (i; i != assetsLength; i++) {
             if (assets[i] == asset) {
                 delete assets[i];
                 supportedAssets[asset] = 0;

@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 
-interface IMiltonLPUtilizationStrategy {
+interface IMiltonLiquidityPoolUtilizationModel {
     //@notice deposit and openingFee is for this particular derivative
     function calculateTotalUtilizationRate(
         uint256 liquidityPoolBalance,

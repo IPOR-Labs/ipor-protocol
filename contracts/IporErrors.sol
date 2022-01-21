@@ -118,7 +118,7 @@ library IporErrors {
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 
-    //@notice Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
+    //@notice Liquidity Pool Utilisation exceeded, implementation interface IMiltonLiquidityPoolUtilizationModel calculate utilisation, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
     string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED =
         "IPOR_35";
 

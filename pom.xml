@@ -144,7 +144,7 @@
                         <argument>${contracts.sources}/IporErrors.sol</argument>
                         <argument>${contracts.sources}/amm/IMiltonEvents.sol</argument>
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
-                        <argument>${contracts.sources}/amm/MiltonLPUtilizationStrategyCollateral.sol</argument>
+                        <argument>${contracts.sources}/amm/MiltonLiquidityPoolUtilizationModel.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
                         <argument>${contracts.sources}/itf/ItfMilton.sol</argument>
@@ -173,8 +173,7 @@
                         <argument>${contracts.sources}/interfaces/IWarrenStorage.sol</argument>
                         <argument>${contracts.sources}/libraries/IporMath.sol</argument>
                         <argument>${contracts.sources}/libraries/Constants.sol</argument>
-                        <argument>${contracts.sources}/libraries/DerivativeLogic.sol</argument>
-                        <argument>${contracts.sources}/libraries/DerivativesView.sol</argument>
+                        <argument>${contracts.sources}/libraries/IporSwapLogic.sol</argument>                        
                         <argument>${contracts.sources}/libraries/IporLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/SoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>

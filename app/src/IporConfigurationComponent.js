@@ -126,14 +126,14 @@ export default ({ drizzle, drizzleState }) => (
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="IporConfiguration"
-                    method="getMiltonLPUtilizationStrategy"
+                    method="getMiltonLiquidityPoolUtilizationModel"
                 />
             </div>
             <div className="col-md-7">
                 <ContractForm
                     drizzle={drizzle}
                     contract="IporConfiguration"
-                    method="setMiltonLPUtilizationStrategy"
+                    method="setMiltonLiquidityPoolUtilizationModel"
                 />
             </div>
         </div>

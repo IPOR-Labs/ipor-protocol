@@ -14,7 +14,7 @@ interface IMiltonSpreadModel {
     function calculateSpreadPayFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-		DataTypes.AccruedIpor memory accruedIpor,
+        DataTypes.AccruedIpor memory accruedIpor,
         uint256 derivativeDeposit,
         uint256 derivativeOpeningFee
     ) external view returns (uint256 spreadValue);

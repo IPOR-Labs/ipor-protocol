@@ -11,7 +11,7 @@ interface IIporConfiguration {
         address indexed asset,
         address indexed newAddress
     );
-    event ProxyCreated(string id, address indexed newAddress);
+    
     event AssetAddressRemoved(address indexed asset);
     event AssetAddressAdd(address newAddress);    
 
@@ -23,9 +23,9 @@ interface IIporConfiguration {
     function setMiltonPublicationFeeTransferer(address publicationFeeTransferer)
         external;    
 
-    function getMiltonLPUtilizationStrategy() external view returns (address);
+    function getMiltonLiquidityPoolUtilizationModel() external view returns (address);
 
-    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy)
+    function setMiltonLiquidityPoolUtilizationModel(address miltonUtilizationModel)
         external;
 
     function getMiltonSpreadModel() external view returns (address);

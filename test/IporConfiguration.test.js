@@ -142,14 +142,16 @@ describe("IporAssetConfiguration", () => {
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xe8f735d503f091d7e700cae87352987ca83ec17c9b2fb176dc5a5a7ec0390360`
         );
-    });    
+    });
 
     it("should NOT set Milton LP Utilization Strategy when user does not have MILTON_UTILIZATION_STRATEGY role", async () => {
         //given
 
         await assertError(
             //when
-            iporConfiguration.setMiltonLPUtilizationStrategy(mockAddress),
+            iporConfiguration.setMiltonLiquidityPoolUtilizationModel(
+                mockAddress
+            ),
 
             //then
             "account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xef6ebe4a0a1a6329b3e5cd4d5c8731f6077174efd4f525f70490c35144b6ed72"
@@ -168,10 +170,13 @@ describe("IporAssetConfiguration", () => {
         );
 
         //when
-        await iporConfiguration.setMiltonLPUtilizationStrategy(mockAddress);
+        await iporConfiguration.setMiltonLiquidityPoolUtilizationModel(
+            mockAddress
+        );
 
         //then
-        const result = await iporConfiguration.getMiltonLPUtilizationStrategy();
+        const result =
+            await iporConfiguration.getMiltonLiquidityPoolUtilizationModel();
         expect(mockAddress).to.be.eql(result);
     });
 
@@ -182,7 +187,7 @@ describe("IporAssetConfiguration", () => {
             //when
             iporConfiguration
                 .connect(userOne)
-                .setMiltonLPUtilizationStrategy(mockAddress),
+                .setMiltonLiquidityPoolUtilizationModel(mockAddress),
 
             //then
             "account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xef6ebe4a0a1a6329b3e5cd4d5c8731f6077174efd4f525f70490c35144b6ed72"
@@ -305,7 +310,7 @@ describe("IporAssetConfiguration", () => {
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xf2f6e1201d6fbf7ec2033ab2b3ad3dcf0ded3dd534a82806a88281c063f67656`
         );
-    });    
+    });
 
     it("should set Warren Storage", async () => {
         //given

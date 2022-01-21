@@ -67,7 +67,8 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     function removeUpdater(address updater) external override onlyOwner {
         require(updater != address(0), IporErrors.WARREN_WRONG_UPDATER_ADDRESS);
 		uint256 i = 0;
-        for (i; i != _updaters.length; i++) {
+		uint256 updatersLength = _updaters.length;
+        for (i; i != updatersLength; i++) {
             if (_updaters[i] == updater) {
                 _updatersMap[updater] = false;
                 delete _updaters[i];

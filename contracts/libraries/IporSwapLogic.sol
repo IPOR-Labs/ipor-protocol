@@ -6,7 +6,7 @@ import "./IporMath.sol";
 import "./Constants.sol";
 import { IporErrors } from "../IporErrors.sol";
 
-library DerivativeLogic {
+library IporSwapLogic {
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
         uint256 notionalAmount,
@@ -31,7 +31,7 @@ library DerivativeLogic {
     }
 
     function calculateInterestForSwapPayFixed(
-        DataTypes.IporDerivativeMemory memory derivative,
+        DataTypes.IporSwapMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (DataTypes.IporDerivativeInterest memory) {
@@ -79,7 +79,7 @@ library DerivativeLogic {
     }
 
 	function calculateInterestForSwapReceiveFixed(
-        DataTypes.IporDerivativeMemory memory derivative,
+        DataTypes.IporSwapMemory memory derivative,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (DataTypes.IporDerivativeInterest memory) {

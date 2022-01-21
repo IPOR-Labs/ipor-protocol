@@ -201,7 +201,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzle={drizzle}
             drizzleState={drizzleState}
             contract="MiltonFrontendDataProvider"
-            method="getMyPositions"
+            method="getMySwaps"
             render={FrontendPositions}
         />
     </div>

@@ -38,7 +38,7 @@ describe("SoapIndicatorLogic", () => {
         //when
 
         const actualInterestRate =
-            await mockSoapIndicatorLogic.calculateInterestRateWhenOpenPosition(
+            await mockSoapIndicatorLogic.calculateInterestRateWhenOpenSwap(
                 soapIndicator.totalNotional,
                 soapIndicator.averageInterestRate,
                 derivativeNotional,
@@ -62,7 +62,7 @@ describe("SoapIndicatorLogic", () => {
         //when
 
         const actualInterestRate =
-            await mockSoapIndicatorLogic.calculateInterestRateWhenClosePosition(
+            await mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
                 soapIndicator.totalNotional,
                 soapIndicator.averageInterestRate,
                 derivativeNotional,
@@ -86,7 +86,7 @@ describe("SoapIndicatorLogic", () => {
         //when
         await assertError(
             //when
-            mockSoapIndicatorLogic.calculateInterestRateWhenClosePosition(
+            mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
                 soapIndicator.totalNotional,
 				soapIndicator.averageInterestRate,
                 derivativeNotional,
@@ -162,7 +162,7 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const actualSoapIndicator =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestamp,
                 derivativeNotional,
@@ -196,7 +196,7 @@ describe("SoapIndicatorLogic", () => {
         const derivativeIbtQuantity = BigInt("95") * ONE_18DEC;
 
         const actualSoapIndicatorFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestamp,
                 derivativeNotional,
@@ -214,7 +214,7 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const actualSoapIndicatorSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 actualSoapIndicatorFirst,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
@@ -254,7 +254,7 @@ describe("SoapIndicatorLogic", () => {
         const derivativeIbtQuantity = BigInt(95) * ONE_18DEC;
 
         const soapIndicatorAfterOpen =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestampWhenOpen,
                 derivativeNotional,
@@ -268,7 +268,7 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const actualSoapIndicatorAfterClose =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterOpen,
                 closeTimestamp,
                 rebalanceTimestampWhenOpen,
@@ -308,7 +308,7 @@ describe("SoapIndicatorLogic", () => {
         const derivativeIbtQuantityFirst = BigInt("95") * ONE_18DEC;
 
         const soapIndicatorAfterOpenFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestampFirst,
                 derivativeNotionalFirst,
@@ -328,7 +328,7 @@ describe("SoapIndicatorLogic", () => {
         const derivativeIbtQuantitySecond = BigInt("173") * ONE_18DEC;
 
         const soapIndicatorAfterOpenSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicatorAfterOpenFirst,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
@@ -342,7 +342,7 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const actualSoapIndicatorAfterClose =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterOpenSecond,
                 closeTimestamp,
                 rebalanceTimestampSecond,
@@ -383,7 +383,7 @@ describe("SoapIndicatorLogic", () => {
         const derivativeIbtQuantityFirst = BigInt("95") * ONE_18DEC;
 
         const soapIndicatorAfterOpenFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestampFirst,
                 derivativeNotionalFirst,
@@ -399,7 +399,7 @@ describe("SoapIndicatorLogic", () => {
         const derivativeIbtQuantitySecond = BigInt("173") * ONE_18DEC;
 
         const soapIndicatorAfterOpenSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicatorAfterOpenFirst,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
@@ -412,7 +412,7 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         const soapIndicatorAfterCloseSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterOpenSecond,
                 closeTimestampSecondPosition,
                 rebalanceTimestampSecond,
@@ -427,7 +427,7 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const soapIndicatorAfterCloseFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterCloseSecond,
                 closeTimestampFirstPosition,
                 rebalanceTimestampFirst,

@@ -30,13 +30,9 @@ module.exports.assertError = async (promise, error) => {
 };
 
 module.exports.getLibraries = async () => {
-    const DerivativeLogic = await ethers.getContractFactory("DerivativeLogic");
-    const derivativeLogic = await DerivativeLogic.deploy();
-    await derivativeLogic.deployed();
-
-    const DerivativesView = await ethers.getContractFactory("DerivativesView");
-    const derivativesView = await DerivativesView.deploy();
-    await derivativesView.deployed();
+    const IporSwapLogic = await ethers.getContractFactory("IporSwapLogic");
+    const iporSwapLogic = await IporSwapLogic.deploy();
+    await iporSwapLogic.deployed();    
 
     const SoapIndicatorLogic = await ethers.getContractFactory(
         "SoapIndicatorLogic"
@@ -45,8 +41,7 @@ module.exports.getLibraries = async () => {
     await soapIndicatorLogic.deployed();
 
     return {
-        derivativeLogic,
-        derivativesView,
+        iporSwapLogic,
         soapIndicatorLogic,
     };
 };
@@ -214,7 +209,7 @@ module.exports.prepareData = async (libraries, accounts) => {
         iporConfiguration.address
     );
     await miltonDevToolDataProvider.deployed();
-    
+
     let miltonSpread = null;
 
     const MockMiltonSpreadModel = await ethers.getContractFactory(
@@ -266,31 +261,25 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
     const ItfMilton = await ethers.getContractFactory("ItfMilton");
-    const MiltonStorage = await ethers.getContractFactory("MiltonStorage", {
-        libraries: {
-            DerivativesView: lib.derivativesView.address,
-        },
-    });
+    const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
 
     const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
 
-	const ItfWarren = await ethers.getContractFactory("ItfWarren");
+    const ItfWarren = await ethers.getContractFactory("ItfWarren");
     const warren = await ItfWarren.deploy(data.iporConfiguration.address);
     await warren.deployed();
 
     await warren.addUpdater(accounts[1].address);
     await data.iporConfiguration.setWarren(await warren.address);
-    
 
-    const MiltonLPUtilizationStrategyCollateral =
-        await ethers.getContractFactory(
-            "MiltonLPUtilizationStrategyCollateral"
-        );
+    const MiltonLiquidityPoolUtilizationModel = await ethers.getContractFactory(
+        "MiltonLiquidityPoolUtilizationModel"
+    );
     const miltonLPUtilizationStrategyCollateral =
-        await MiltonLPUtilizationStrategyCollateral.deploy();
+        await MiltonLiquidityPoolUtilizationModel.deploy();
     await miltonLPUtilizationStrategyCollateral.deployed();
 
-    await data.iporConfiguration.setMiltonLPUtilizationStrategy(
+    await data.iporConfiguration.setMiltonLiquidityPoolUtilizationModel(
         miltonLPUtilizationStrategyCollateral.address
     );
 

@@ -99,7 +99,7 @@ describe("MiltonSoap", () => {
         );
 
         let openerUserAddress = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_5_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_5_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
@@ -120,7 +120,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams);
@@ -157,7 +157,7 @@ describe("MiltonSoap", () => {
             testData
         );
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
@@ -178,7 +178,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams);
@@ -216,7 +216,7 @@ describe("MiltonSoap", () => {
             testData
         );
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
@@ -237,7 +237,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapReceiveFixed(testData, derivativeParams);
@@ -274,7 +274,7 @@ describe("MiltonSoap", () => {
             testData
         );
         let openerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
@@ -295,7 +295,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapReceiveFixed(testData, derivativeParams);
@@ -334,7 +334,7 @@ describe("MiltonSoap", () => {
         );
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
@@ -355,7 +355,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams);
@@ -402,7 +402,7 @@ describe("MiltonSoap", () => {
         );
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
@@ -423,7 +423,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapReceiveFixed(testData, derivativeParams);
@@ -476,7 +476,7 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const firstDerivativeParams = {
@@ -504,7 +504,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 firstDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
         await openSwapPayFixed(testData, firstDerivativeParams);
@@ -544,7 +544,7 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const firstDerivativeParams = {
@@ -572,7 +572,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 firstDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
         await openSwapPayFixed(testData, firstDerivativeParams);
@@ -623,8 +623,8 @@ describe("MiltonSoap", () => {
 
         let openerUser = userTwo;
 
-        let iporValueBeforOpenPositionDAI = PERCENTAGE_3_18DEC;
-        let iporValueBeforOpenPositionUSDT = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapDAI = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapUSDT = PERCENTAGE_3_18DEC;
 
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -655,14 +655,14 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeDAIParams.asset,
-                iporValueBeforOpenPositionDAI,
+                iporValueBeforOpenSwapDAI,
                 derivativeDAIParams.openTimestamp
             );
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeUSDTParams.asset,
-                iporValueBeforOpenPositionUSDT,
+                iporValueBeforOpenSwapUSDT,
                 derivativeUSDTParams.openTimestamp
             );
 
@@ -716,7 +716,7 @@ describe("MiltonSoap", () => {
 
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeParams = {
@@ -743,7 +743,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 payFixDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
         await openSwapPayFixed(testData, payFixDerivativeParams);
@@ -792,7 +792,7 @@ describe("MiltonSoap", () => {
 
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeParams = {
@@ -819,7 +819,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 payFixDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
         await openSwapPayFixed(testData, payFixDerivativeParams);
@@ -878,8 +878,8 @@ describe("MiltonSoap", () => {
 
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPositionDAI = PERCENTAGE_3_18DEC;
-        let iporValueBeforOpenPositionUSDT = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapDAI = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapUSDT = PERCENTAGE_3_18DEC;
 
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -913,14 +913,14 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 payFixDerivativeDAIParams.asset,
-                iporValueBeforOpenPositionDAI,
+                iporValueBeforOpenSwapDAI,
                 openTimestamp
             );
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
                 recFixDerivativeUSDTParams.asset,
-                iporValueBeforOpenPositionUSDT,
+                iporValueBeforOpenSwapUSDT,
                 openTimestamp
             );
 
@@ -975,8 +975,8 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1001,7 +1001,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
 
@@ -1011,7 +1011,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -1056,8 +1056,8 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1082,7 +1082,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
 
@@ -1092,7 +1092,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -1137,8 +1137,8 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1167,7 +1167,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams);
@@ -1175,7 +1175,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -1229,7 +1229,7 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
@@ -1263,7 +1263,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParamsFirst.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParamsFirst);
@@ -1302,7 +1302,7 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
@@ -1332,7 +1332,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParamsFirst.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParamsFirst);
@@ -1340,7 +1340,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams25days.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams25days);
@@ -1348,7 +1348,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 calculationTimestamp50days
             );
 
@@ -1385,7 +1385,7 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1418,7 +1418,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams);
@@ -1433,7 +1433,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 calculationTimestamp25days
             );
         let soapUpdateIndexAfter25DaysStruct = await calculateSoap(
@@ -1448,7 +1448,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 calculationTimestamp50days
             );
         let soapUpdateIndexAfter50DaysStruct = await calculateSoap(
@@ -1497,8 +1497,8 @@ describe("MiltonSoap", () => {
         );
 
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         let firstUpdateIndexTimestamp = openTimestamp;
@@ -1521,7 +1521,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 firstUpdateIndexTimestamp
             );
         await openSwapPayFixed(testData, derivativeParamsFirst);
@@ -1531,7 +1531,7 @@ describe("MiltonSoap", () => {
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 secondUpdateIndexTimestamp
             );
 

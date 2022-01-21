@@ -71,7 +71,7 @@ library SoapIndicatorLogic {
         
     }
 
-    function rebalanceWhenOpenPosition(
+    function rebalanceWhenOpenSwap(
         DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
@@ -79,7 +79,7 @@ library SoapIndicatorLogic {
         uint256 derivativeIbtQuantity
     ) internal pure returns(DataTypes.SoapIndicatorMemory memory) {
         //TODO: here potential re-entrancy
-        uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
+        uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
             si.totalNotional,
 			si.averageInterestRate,
             derivativeNotional,
@@ -98,7 +98,7 @@ library SoapIndicatorLogic {
 		return si;
     }
 
-    function rebalanceWhenClosePosition(
+    function rebalanceWhenCloseSwap(
         DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
@@ -123,7 +123,7 @@ library SoapIndicatorLogic {
 
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
 
-        uint256 averageInterestRate = calculateInterestRateWhenClosePosition(
+        uint256 averageInterestRate = calculateInterestRateWhenCloseSwap(
 			si.totalNotional,
 			si.averageInterestRate,
             derivativeNotional,
@@ -186,7 +186,7 @@ library SoapIndicatorLogic {
             ((calculateTimestamp - lastRebalanceTimestamp) * Constants.D18);
     }
 
-    function calculateInterestRateWhenOpenPosition(
+    function calculateInterestRateWhenOpenSwap(
 		uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,
@@ -202,7 +202,7 @@ library SoapIndicatorLogic {
             );
     }
 
-    function calculateInterestRateWhenClosePosition(
+    function calculateInterestRateWhenCloseSwap(
 		uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,

@@ -2,16 +2,15 @@
 pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
-import "../libraries/DerivativeLogic.sol";
+import "../libraries/IporSwapLogic.sol";
 import "../libraries/IporMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
-import "../amm/IMiltonEvents.sol";
+import "../interfaces/IMiltonEvents.sol";
 import "../libraries/SoapIndicatorLogic.sol";
-import "../libraries/DerivativesView.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
 import "./AccessControlAssetConfiguration.sol";
@@ -46,7 +45,7 @@ contract IporAssetConfiguration is
 
     //TODO: change to "max collateral position value"
     //@notice max total amount used when opening position
-    uint128 private _maxPositionTotalAmount;
+    uint128 private _maxSwapTotalAmount;
 
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint128 private _wadDecayFactorValue;
@@ -95,7 +94,7 @@ contract IporAssetConfiguration is
             8 * IporMath.division(Constants.D18, 10)
         );
 
-        _maxPositionTotalAmount = uint128(1e5 * Constants.D18);
+        _maxSwapTotalAmount = uint128(1e5 * Constants.D18);
 
         _minCollateralizationFactorValue = uint128(10 * Constants.D18);
         _maxCollateralizationFactorValue = uint128(1000 * Constants.D18);
@@ -267,21 +266,21 @@ contract IporAssetConfiguration is
         );
     }
 
-    function getMaxPositionTotalAmount()
+    function getMaxSwapTotalAmount()
         external
         view
         override
         returns (uint256)
     {
-        return _maxPositionTotalAmount;
+        return _maxSwapTotalAmount;
     }
 
-    function setMaxPositionTotalAmount(uint256 newMaxPositionTotalAmount)
+    function setMaxSwapTotalAmount(uint256 newMaxPositionTotalAmount)
         external
         override
         onlyRole(_MAX_POSITION_TOTAL_AMOUNT_ROLE)
     {
-        _maxPositionTotalAmount = uint128(newMaxPositionTotalAmount);
+        _maxSwapTotalAmount = uint128(newMaxPositionTotalAmount);
         emit MaxPositionTotalAmountSet(newMaxPositionTotalAmount);
     }
 

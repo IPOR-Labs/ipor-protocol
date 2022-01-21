@@ -60,53 +60,49 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         return token.allowance(msg.sender, assetConfiguration.getJoseph());
     }
 
-    function getSwapsPayFixed(address asset)
+    function getSwapsPayFixed(address asset, address user)
         external
         view
         override
-        returns (DataTypes.IporDerivativeMemory[] memory)
+        returns (DataTypes.IporSwapMemory[] memory)
     {
 		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         return
-            IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsPayFixed();
+            IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsPayFixed(user);
     }
 
-	function getSwapsReceiveFixed(address asset)
+	function getSwapsReceiveFixed(address asset, address user)
 	external
 	view
 	override
-	returns (DataTypes.IporDerivativeMemory[] memory)
+	returns (DataTypes.IporSwapMemory[] memory)
 {
 	IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 	return
-		IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsReceiveFixed();
+		IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsReceiveFixed(user);
 }
     function getMySwapsPayFixed(address asset)
         external
         view
         override
-        returns (DataTypes.IporDerivativeMemory[] memory items)
+        returns (DataTypes.IporSwapMemory[] memory items)
     {
 		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getUserSwapsPayFixed(msg.sender);
+                .getSwapsPayFixed(msg.sender);
     }
 
 	function getMySwapsReceiveFixed(address asset)
 	external
 	view
 	override
-	returns (DataTypes.IporDerivativeMemory[] memory items)
+	returns (DataTypes.IporSwapMemory[] memory items)
 {
 	IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 	return
 		IMiltonStorage(assetConfiguration.getMiltonStorage())
-			.getUserSwapsReceiveFixed(msg.sender);
+			.getSwapsReceiveFixed(msg.sender);
 }
 
-    //@notice FOR TEST ONLY
-    //    function getOpenPosition(uint256 derivativeId) external view returns (DataTypes.IporDerivative memory) {
-    //        return milton.getDerivatives().items[derivativeId].item;
-    //    }
 }

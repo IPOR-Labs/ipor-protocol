@@ -48,11 +48,11 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             .getTotalOutstandingNotional();
     }
 
-    function getMyPositions(address asset)
+    function getMySwaps(address asset)
         external
         view
         override
-        returns (IporDerivativeFront[] memory items)
+        returns (IporSwapFront[] memory items)
     {
         IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
             _iporConfiguration.getIporAssetConfiguration(asset)
@@ -61,59 +61,54 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMiltonStorage miltonStorage = IMiltonStorage(
             assetConfiguration.getMiltonStorage()
         );
-        uint256[] memory userSwapPayFixedIds = miltonStorage
+        uint128[] memory userSwapPayFixedIds = miltonStorage
             .getUserSwapPayFixedIds(msg.sender);
-        uint256[] memory userSwapReceiveFixedIds = miltonStorage
+        uint128[] memory userSwapReceiveFixedIds = miltonStorage
             .getUserSwapPayFixedIds(msg.sender);
-        IporDerivativeFront[]
-            memory iporDerivatives = new IporDerivativeFront[](
-                userSwapPayFixedIds.length + userSwapReceiveFixedIds.length
-            );
+        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](
+            userSwapPayFixedIds.length + userSwapReceiveFixedIds.length
+        );
         IMilton milton = IMilton(assetConfiguration.getMilton());
-		uint256 i = 0;
+        uint256 i = 0;
         for (i; i != userSwapPayFixedIds.length; i++) {
-            DataTypes.MiltonDerivativeItemMemory
-                memory derivativeItem = miltonStorage.getSwapPayFixedItem(
-                    userSwapPayFixedIds[i]
-                );
-            iporDerivatives[i] = IporDerivativeFront(
-                derivativeItem.item.id,
+            DataTypes.IporSwapMemory memory iporSwap = miltonStorage
+                .getSwapPayFixedItem(userSwapPayFixedIds[i]);
+            iporDerivatives[i] = IporSwapFront(
+                iporSwap.id,
                 asset,
-                derivativeItem.item.collateral,
-                derivativeItem.item.notionalAmount,
+                iporSwap.collateral,
+                iporSwap.notionalAmount,
                 IporMath.division(
-                    derivativeItem.item.notionalAmount * Constants.D18,
-                    derivativeItem.item.collateral
+                    iporSwap.notionalAmount * Constants.D18,
+                    iporSwap.collateral
                 ),
                 0,
-                derivativeItem.item.fixedInterestRate,
-                milton.calculateSwapPayFixedValue(derivativeItem.item),
-                derivativeItem.item.startingTimestamp,
-                derivativeItem.item.endingTimestamp,
-                derivativeItem.item.liquidationDepositAmount
+                iporSwap.fixedInterestRate,
+                milton.calculateSwapPayFixedValue(iporSwap),
+                iporSwap.startingTimestamp,
+                iporSwap.endingTimestamp,
+                iporSwap.liquidationDepositAmount
             );
         }
-		i = 0;
+        i = 0;
         for (i; i != userSwapReceiveFixedIds.length; i++) {
-            DataTypes.MiltonDerivativeItemMemory
-                memory derivativeItem = miltonStorage.getSwapReceiveFixedItem(
-                    userSwapReceiveFixedIds[i]
-                );
-            iporDerivatives[i] = IporDerivativeFront(
-                derivativeItem.item.id,
+            DataTypes.IporSwapMemory memory iporSwap = miltonStorage
+                .getSwapReceiveFixedItem(userSwapReceiveFixedIds[i]);
+            iporDerivatives[i] = IporSwapFront(
+                iporSwap.id,
                 asset,
-                derivativeItem.item.collateral,
-                derivativeItem.item.notionalAmount,
+                iporSwap.collateral,
+                iporSwap.notionalAmount,
                 IporMath.division(
-                    derivativeItem.item.notionalAmount * Constants.D18,
-                    derivativeItem.item.collateral
+                    iporSwap.notionalAmount * Constants.D18,
+                    iporSwap.collateral
                 ),
                 1,
-                derivativeItem.item.fixedInterestRate,
-                milton.calculateSwapReceiveFixedValue(derivativeItem.item),
-                derivativeItem.item.startingTimestamp,
-                derivativeItem.item.endingTimestamp,
-                derivativeItem.item.liquidationDepositAmount
+                iporSwap.fixedInterestRate,
+                milton.calculateSwapReceiveFixedValue(iporSwap),
+                iporSwap.startingTimestamp,
+                iporSwap.endingTimestamp,
+                iporSwap.liquidationDepositAmount
             );
         }
 
@@ -142,7 +137,7 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
 
         uint256 spreadPayFixedValue;
         uint256 spreadRecFixedValue;
-		uint256 i = 0;
+        uint256 i = 0;
         for (i; i != assets.length; i++) {
             IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
                     _iporConfiguration.getIporAssetConfiguration(assets[i])

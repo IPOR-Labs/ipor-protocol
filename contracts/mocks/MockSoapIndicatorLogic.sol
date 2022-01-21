@@ -38,7 +38,7 @@ contract MockSoapIndicatorLogic {
         return SoapIndicatorLogic.calculateQuasiSoapReceiveFixed(si, calculateTimestamp, ibtPrice);
     }
 
-    function rebalanceWhenOpenPosition(
+    function rebalanceWhenOpenSwap(
         DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
@@ -46,7 +46,7 @@ contract MockSoapIndicatorLogic {
         uint256 derivativeIbtQuantity
     ) public pure returns(DataTypes.SoapIndicatorMemory memory){
         return
-            SoapIndicatorLogic.rebalanceWhenOpenPosition(
+            SoapIndicatorLogic.rebalanceWhenOpenSwap(
                 si,
                 rebalanceTimestamp,
                 derivativeNotional,
@@ -55,7 +55,7 @@ contract MockSoapIndicatorLogic {
             );
     }
 
-    function rebalanceWhenClosePosition(
+    function rebalanceWhenCloseSwap(
         DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
@@ -64,7 +64,7 @@ contract MockSoapIndicatorLogic {
         uint256 derivativeIbtQuantity
     ) external pure returns(DataTypes.SoapIndicatorMemory memory){
         return
-            SoapIndicatorLogic.rebalanceWhenClosePosition(
+            SoapIndicatorLogic.rebalanceWhenCloseSwap(
                 si,
                 rebalanceTimestamp,
                 derivativeOpenTimestamp,
@@ -116,14 +116,14 @@ contract MockSoapIndicatorLogic {
             );
     }
 
-    function calculateInterestRateWhenOpenPosition(
+    function calculateInterestRateWhenOpenSwap(
         uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) public pure returns (uint256) {
         return
-            SoapIndicatorLogic.calculateInterestRateWhenOpenPosition(
+            SoapIndicatorLogic.calculateInterestRateWhenOpenSwap(
 				totalNotional,
 				averageInterestRate,
                 derivativeNotional,
@@ -131,14 +131,14 @@ contract MockSoapIndicatorLogic {
             );
     }
 
-    function calculateInterestRateWhenClosePosition(
+    function calculateInterestRateWhenCloseSwap(
         uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 derivativeFixedInterestRate
     ) public pure returns (uint256) {
         return
-            SoapIndicatorLogic.calculateInterestRateWhenClosePosition(
+            SoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
 				totalNotional,
 				averageInterestRate,
                 derivativeNotional,

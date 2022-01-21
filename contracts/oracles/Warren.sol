@@ -73,18 +73,10 @@ contract Warren is WarrenStorage, IWarren {
         returns (DataTypes.AccruedIpor memory accruedIpor)
     {
         DataTypes.IPOR memory ipor = _indexes[asset];
-        // IWarrenStorage(
-        //     _iporConfiguration.getWarrenStorage()
-        // ).getIndex(asset);
-
-        uint256 accruedIbtPrice = _calculateAccruedIbtPrice(
-            calculateTimestamp,
-            asset
-        );
 
         accruedIpor = DataTypes.AccruedIpor(
             ipor.indexValue,
-            accruedIbtPrice,
+            _calculateAccruedIbtPrice(calculateTimestamp, asset),
             ipor.exponentialMovingAverage,
             ipor.exponentialWeightedMovingVariance
         );
@@ -120,7 +112,7 @@ contract Warren is WarrenStorage, IWarren {
             assets.length == indexValues.length,
             IporErrors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
         );
-		uint256 i = 0;
+        uint256 i = 0;
         for (i; i != assets.length; i++) {
             //TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
             require(
@@ -145,12 +137,6 @@ contract Warren is WarrenStorage, IWarren {
         address asset
     ) internal view returns (uint256) {
         return
-            // IporMath.division(
-            //     IWarrenStorage(_iporConfiguration.getWarrenStorage())
-            //         .getIndex(asset)
-            //         .accrueQuasiIbtPrice(calculateTimestamp),
-            //     Constants.YEAR_IN_SECONDS
-            // );
             IporMath.division(
                 _indexes[asset].accrueQuasiIbtPrice(calculateTimestamp),
                 Constants.YEAR_IN_SECONDS

@@ -10,28 +10,21 @@ interface IMilton {
 
     function unpause() external;
 
-	function openSwapPayFixed(
+    function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
     ) external returns (uint256);
 
-	function openSwapReceiveFixed(
+    function openSwapReceiveFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
     ) external returns (uint256);
 
-    // function openPosition(
-    //     address asset,
-    //     uint256 totalAmount,
-    //     uint256 maximumSlippage,
-    //     uint256 collateralizationFactor,
-    //     uint8 direction
-    // ) external returns (uint256);
+    function closeSwapPayFixed(uint256 swapId) external;
 
-    function closeSwapPayFixed(uint256 derivativeId) external;
-	function closeSwapReceiveFixed(uint256 derivativeId) external;
+    function closeSwapReceiveFixed(uint256 swapId) external;
 
     function calculateSoap()
         external
@@ -47,14 +40,13 @@ interface IMilton {
         view
         returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculateSwapPayFixedValue(DataTypes.IporDerivativeMemory memory derivative)
-        external
-        view
-        returns (int256);
-	function calculateSwapReceiveFixedValue(DataTypes.IporDerivativeMemory memory derivative)
-        external
-        view
-        returns (int256);
+    function calculateSwapPayFixedValue(
+        DataTypes.IporSwapMemory memory swap
+    ) external view returns (int256);
+
+    function calculateSwapReceiveFixedValue(
+        DataTypes.IporSwapMemory memory swap
+    ) external view returns (int256);
 
     function calculateExchangeRate(uint256 calculateTimestamp)
         external

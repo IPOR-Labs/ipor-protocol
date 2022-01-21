@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
-import "../interfaces/IMiltonLPUtilisationStrategy.sol";
+import "../interfaces/IMiltonLiquidityPoolUtilizationModel.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";

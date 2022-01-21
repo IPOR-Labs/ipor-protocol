@@ -93,9 +93,9 @@ interface IIporAssetConfiguration {
         uint256 liquidityPoolMaxUtilizationPercentage
     ) external;
 
-    function getMaxPositionTotalAmount() external view returns (uint256);
+    function getMaxSwapTotalAmount() external view returns (uint256);
 
-    function setMaxPositionTotalAmount(uint256 maxPositionTotalAmount) external;
+    function setMaxSwapTotalAmount(uint256 maxSwapTotalAmount) external;
 
     function getMaxCollateralizationFactorValue()
         external
