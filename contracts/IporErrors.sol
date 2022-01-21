@@ -73,7 +73,7 @@ library IporErrors {
         "IPOR_21";
 
     //@notice Swap id used in input has incorrect value (like 0) or not exists
-    string public constant MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID =
+    string public constant MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID =
         "IPOR_22";
 
     //@notice Swap has incorrect status

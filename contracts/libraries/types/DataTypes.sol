@@ -140,7 +140,7 @@ library DataTypes {
         //@notice unique ID of this swap
         uint256 id;
         //position in MiltonDerivatives.userDerivativeIds array, can be changed when some swap is closed
-        uint256 userIdsIndex;
+        uint256 idsIndex;
         uint256 collateral;
         uint256 liquidationDepositAmount;
         //@notice Notional Principal Amount
@@ -154,7 +154,7 @@ library DataTypes {
         uint32 startingTimestamp;
         //@notice unique ID of this swap
         uint64 id;
-        uint64 userIdsIndex;
+        uint64 idsIndex;
         uint128 collateral;
         uint128 liquidationDepositAmount;
         //@notice Notional Principal Amount
@@ -167,6 +167,6 @@ library DataTypes {
 
     struct IporSwapContainer {
         mapping(uint128 => IporSwap) swaps;
-        mapping(address => uint128[]) userIds;
+        mapping(address => uint128[]) ids;
     }
 }

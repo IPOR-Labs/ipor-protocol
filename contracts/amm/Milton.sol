@@ -758,7 +758,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     {
         require(
             swapId != 0,
-            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID
         );
 
         IMiltonStorage miltonStorage = IMiltonStorage(
@@ -804,7 +804,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     {
         require(
             swapId != 0,
-            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID
         );
 
         IMiltonStorage miltonStorage = IMiltonStorage(

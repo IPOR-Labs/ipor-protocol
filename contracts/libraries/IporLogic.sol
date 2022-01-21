@@ -65,15 +65,15 @@ library IporLogic {
 
 		if (indexValue > exponentialMovingAverage) {
 			result = IporMath.division(
-				alpha *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
+				alpha *(lastExponentialWeightedMovingVariance * Constants.D36
 						+ (Constants.D18 - alpha) * (indexValue - exponentialMovingAverage) * (indexValue - exponentialMovingAverage)),
-					 Constants.D18 * Constants.D18 * Constants.D18 
+						Constants.D54
 				 );
 		} else {
 			result = IporMath.division(
-				alpha *(lastExponentialWeightedMovingVariance * Constants.D18 * Constants.D18
+				alpha *(lastExponentialWeightedMovingVariance * Constants.D36
 						+ (Constants.D18 - alpha) * (exponentialMovingAverage - indexValue) * (exponentialMovingAverage-indexValue)),
-					 Constants.D18 * Constants.D18 * Constants.D18 
+						Constants.D54 
 				 );
 		}
 

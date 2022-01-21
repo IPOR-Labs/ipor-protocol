@@ -29,7 +29,7 @@ const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
         endingTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
         id: BigInt("0"),
         idsIndex: BigInt("0"),
-        userIdsIndex: BigInt("0"),
+        idsIndex: BigInt("0"),
         collateral: BigInt("0"),
         liquidationDepositAmount: BigInt("20") * ONE_18DEC,
         notionalAmount,

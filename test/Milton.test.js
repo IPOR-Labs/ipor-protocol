@@ -5363,8 +5363,8 @@ describe("Milton", () => {
 
         expect(
             BigInt(expectedUserDerivativeIdsIndex),
-            `Incorrect userIdsIndex for swap id ${actualDerivativeItem.id} actual: ${actualDerivativeItem.userIdsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
-        ).to.be.eq(BigInt(actualDerivativeItem.userIdsIndex));
+            `Incorrect idsIndex for swap id ${actualDerivativeItem.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
+        ).to.be.eq(BigInt(actualDerivativeItem.idsIndex));
     };
 
     const testCaseWhenMiltonEarnAndUserLost = async function (

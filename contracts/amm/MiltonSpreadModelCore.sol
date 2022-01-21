@@ -30,11 +30,11 @@ contract MiltonSpreadModelCore {
 
 	function _calculateImbalanceFactorWithLambda(
         uint256 utilizationRateLegWithPosition,
-        uint256 utilizationRateLegWithoutPosition,
+        uint256 utilizationRateLegWithoutSwap,
         uint256 lambda
     ) internal pure returns (uint256) {
         if (
-            utilizationRateLegWithPosition >= utilizationRateLegWithoutPosition
+            utilizationRateLegWithPosition >= utilizationRateLegWithoutSwap
         ) {
             return Constants.D18 - utilizationRateLegWithPosition;
         } else {
@@ -45,7 +45,7 @@ contract MiltonSpreadModelCore {
 					 -
                     IporMath.division(
                         lambda *
-                            (utilizationRateLegWithoutPosition -
+                            (utilizationRateLegWithoutSwap -
                                 utilizationRateLegWithPosition),
                         Constants.D18
                     )
@@ -68,7 +68,7 @@ contract MiltonSpreadModelCore {
     }
 
 	//URleg(0)
-    function _calculateUtilizationRateWithoutPosition(
+    function _calculateUtilizationRateWithoutSwap(
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 swapsBalance

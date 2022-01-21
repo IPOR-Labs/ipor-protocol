@@ -298,7 +298,7 @@ contract MiltonSpreadModel is
         uint256 recFixedDerivativesBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
-        uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutPosition(
+        uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutSwap(
                 swapOpeningFee,
                 liquidityPoolBalance,
                 recFixedDerivativesBalance
@@ -387,7 +387,7 @@ contract MiltonSpreadModel is
             if (historicalDeviation < _maxValue) {
                 return
                     IporMath.division(
-                        _atParComponentKVolValue * Constants.D18,
+                        _atParComponentKVolValue* Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
             } else {
@@ -428,7 +428,7 @@ contract MiltonSpreadModel is
         uint256 recFixedDerivativesBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
-        uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutPosition(
+        uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutSwap(
                 swapOpeningFee,
                 liquidityPoolBalance,
                 payFixedDerivativesBalance

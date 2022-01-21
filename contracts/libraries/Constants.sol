@@ -13,6 +13,8 @@ library Constants {
     uint256 public constant D6 = 1e6;
     uint256 public constant D18 = 1e18;
 	uint256 public constant D16 = 1e16;
+	uint256 public constant D36 = 1e36;
+	uint256 public constant D54 = 1e54;
 
     uint256 public constant YEAR_IN_SECONDS = 365 days;
     uint256 public constant WAD_YEAR_IN_SECONDS = D18 * YEAR_IN_SECONDS;
