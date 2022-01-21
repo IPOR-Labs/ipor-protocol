@@ -14,6 +14,7 @@ contract MiltonSpreadConfiguration is
 	//@notice Spread Max Value
     uint64 internal _maxValue;
 
+	//TODO: consider combine demand component values as one structs
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
     uint64 internal _demandComponentKfValue;
 
