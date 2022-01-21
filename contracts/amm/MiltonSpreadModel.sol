@@ -57,8 +57,8 @@ contract MiltonSpreadModel is
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 derivativeCollateral,
-        uint256 derivativeOpeningFee
+        uint256 swapCollateral,
+        uint256 swapOpeningFee
     ) external view override returns (uint256 spreadValue) {
         DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
             .getBalance();
@@ -66,8 +66,8 @@ contract MiltonSpreadModel is
         return
             _calculateSpreadPayFixed(
                 accruedIpor,
-                derivativeCollateral,
-                derivativeOpeningFee,
+                swapCollateral,
+                swapOpeningFee,
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
@@ -105,8 +105,8 @@ contract MiltonSpreadModel is
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 derivativeCollateral,
-        uint256 derivativeOpeningFee
+        uint256 swapCollateral,
+        uint256 swapOpeningFee
     ) external view override returns (uint256 spreadValue) {
         DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
             .getBalance();
@@ -114,8 +114,8 @@ contract MiltonSpreadModel is
         return
             _calculateSpreadRecFixed(
                 accruedIpor,
-                derivativeCollateral,
-                derivativeOpeningFee,
+                swapCollateral,
+                swapOpeningFee,
                 balance.liquidityPool,
                 balance.payFixedDerivatives,
                 balance.recFixedDerivatives,
@@ -128,22 +128,22 @@ contract MiltonSpreadModel is
 
     function _calculateSpreadPayFixed(
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
     ) internal view returns (uint256 spreadValue) {
         require(
-            liquidityPool + derivativeOpeningFee != 0,
+            liquidityPoolBalance + swapOpeningFee != 0,
             IporErrors
                 .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
-            derivativeDeposit,
-            derivativeOpeningFee,
-            liquidityPool,
+            swapCollateral,
+            swapOpeningFee,
+            liquidityPoolBalance,
             payFixedDerivativesBalance,
             recFixedDerivativesBalance,
             soap
@@ -159,22 +159,22 @@ contract MiltonSpreadModel is
 
     function _calculateSpreadRecFixed(
 		DataTypes.AccruedIpor memory accruedIpor,        
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
     ) internal view returns (uint256 spreadValue) {
         require(
-            liquidityPool + derivativeOpeningFee != 0,
+            liquidityPoolBalance + swapOpeningFee != 0,
             IporErrors
                 .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
-            derivativeDeposit,
-            derivativeOpeningFee,
-            liquidityPool,
+            swapCollateral,
+            swapOpeningFee,
+            liquidityPoolBalance,
             payFixedDerivativesBalance,
             recFixedDerivativesBalance,
             soap
@@ -189,18 +189,18 @@ contract MiltonSpreadModel is
     }
 
     function _calculateDemandComponentPayFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapPayFixed
     ) internal view returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
             _calculateAdjustedUtilizationRatePayFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 _demandComponentLambdaValue
@@ -291,23 +291,23 @@ contract MiltonSpreadModel is
 
     //URlambda_leg(M0)
     function _calculateAdjustedUtilizationRatePayFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutPosition(
-                derivativeOpeningFee,
-                liquidityPool,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 recFixedDerivativesBalance
             );
 
         uint256 utilizationRatePayFixedWithPosition = _calculateUtilizationRateWithPosition(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance
             );
 
@@ -320,18 +320,18 @@ contract MiltonSpreadModel is
     }
 
     function _calculateDemandComponentRecFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapRecFixed
     ) internal view returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
             _calculateAdjustedUtilizationRateRecFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 _demandComponentLambdaValue
@@ -421,23 +421,23 @@ contract MiltonSpreadModel is
     }
 
     function _calculateAdjustedUtilizationRateRecFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutPosition(
-                derivativeOpeningFee,
-                liquidityPool,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance
             );
 
         uint256 utilizationRateRecFixedWithPosition = _calculateUtilizationRateWithPosition(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 recFixedDerivativesBalance
             );
 

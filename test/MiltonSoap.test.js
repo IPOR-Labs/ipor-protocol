@@ -1476,7 +1476,7 @@ describe("MiltonSoap", () => {
         ).to.be.eq(soapUpdateIndexAfter50Days);
     });
 
-    it("should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after derivative opened, soap should be negative right after opened position and updated ibtPrice", async () => {
+    it("should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after swap opened, soap should be negative right after opened position and updated ibtPrice", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],

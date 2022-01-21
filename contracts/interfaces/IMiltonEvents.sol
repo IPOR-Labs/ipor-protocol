@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 
 interface IMiltonEvents {
-    // @notice Open derivative position
+    // @notice Open swap position
     event OpenSwap(
         uint256 indexed swapId,
         address indexed buyer,
@@ -21,7 +21,7 @@ interface IMiltonEvents {
         uint256 spreadValue
     );
 
-    // @notice Close derivative position
+    // @notice Close swap position
     event CloseSwap(
         uint256 indexed swapId,
         address asset,

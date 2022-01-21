@@ -15,8 +15,8 @@ interface IMiltonSpreadModel {
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee
+        uint256 swapCollateral,
+        uint256 swapOpeningFee
     ) external view returns (uint256 spreadValue);
 
     function calculatePartialSpreadRecFixed(
@@ -29,7 +29,7 @@ interface IMiltonSpreadModel {
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee
+        uint256 swapCollateral,
+        uint256 swapOpeningFee
     ) external view returns (uint256 spreadValue);
 }

@@ -141,7 +141,7 @@ export default ({ drizzle, drizzleState }) => (
                 <td>
                     <strong>Milton</strong>
                     <br />
-                    <small>For opening and closing position</small>
+                    <small>For opening and closing swap</small>
                 </td>
                 <td>
                     <ContractData

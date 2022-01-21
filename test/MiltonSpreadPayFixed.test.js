@@ -81,9 +81,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -105,9 +105,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -162,9 +162,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -186,9 +186,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -243,9 +243,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -267,9 +267,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -324,9 +324,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -348,9 +348,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -405,9 +405,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -429,9 +429,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -486,9 +486,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -513,9 +513,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -570,9 +570,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -597,9 +597,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -654,9 +654,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -681,9 +681,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -738,9 +738,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -765,9 +765,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -822,9 +822,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("100000000000000001500");
-        const derivativeDeposit = BigInt("1000");
-        const derivativeOpeningFee = BigInt("0");
+        const liquidityPoolBalance = BigInt("100000000000000001500");
+        const swapCollateral = BigInt("1000");
+        const swapOpeningFee = BigInt("0");
 
         const payFixedDerivativesBalance = BigInt("1000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -846,9 +846,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -903,9 +903,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -927,9 +927,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -984,9 +984,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -1008,9 +1008,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1065,9 +1065,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -1089,9 +1089,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1146,9 +1146,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -1170,9 +1170,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1227,9 +1227,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("0");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("0");
+        const liquidityPoolBalance = BigInt("0");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("0");
 
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
@@ -1249,9 +1249,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPayFixed(
                     accruedIpor,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap

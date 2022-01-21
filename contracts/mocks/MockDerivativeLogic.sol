@@ -32,26 +32,26 @@ contract MockIporSwapLogic {
     }
 
     function calculateInterestForSwapPayFixed(
-        DataTypes.IporSwapMemory memory derivative,
+        DataTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) public pure returns (DataTypes.IporDerivativeInterest memory) {
+    ) public pure returns (DataTypes.IporSwapInterest memory) {
         return
             IporSwapLogic.calculateInterestForSwapPayFixed(
-                derivative,
+                swap,
                 closingTimestamp,
                 mdIbtPrice
             );
     }
 
 	function calculateInterestForSwapReceiveFixed(
-        DataTypes.IporSwapMemory memory derivative,
+        DataTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) public pure returns (DataTypes.IporDerivativeInterest memory) {
+    ) public pure returns (DataTypes.IporSwapInterest memory) {
         return
             IporSwapLogic.calculateInterestForSwapReceiveFixed(
-                derivative,
+                swap,
                 closingTimestamp,
                 mdIbtPrice
             );

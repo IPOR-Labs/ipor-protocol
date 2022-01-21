@@ -48,7 +48,7 @@ interface IMiltonStorage {
         uint256 closingTimestamp
     ) external;
 
-    function getSwapPayFixedItem(uint256 derivativeId)
+    function getSwapPayFixedItem(uint256 swapId)
         external
         view
         returns (DataTypes.IporSwapMemory memory);
@@ -63,7 +63,7 @@ interface IMiltonStorage {
         view
         returns (uint256);
 
-    function getSwapReceiveFixedItem(uint256 derivativeId)
+    function getSwapReceiveFixedItem(uint256 swapId)
         external
         view
         returns (DataTypes.IporSwapMemory memory);

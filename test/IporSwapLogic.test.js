@@ -3,7 +3,7 @@ const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
 const { SwapState } = require("./enums.js");
 
-const DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
+const SWAP_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
 const YEAR_IN_SECONDS = BigInt("31536000");
 const PERIOD_25_DAYS_IN_SECONDS = BigInt(60 * 60 * 24 * 25);
 
@@ -21,15 +21,15 @@ const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
 
     const timeStamp = Math.floor(Date.now() / 1000);
     const notionalAmount = collateral * collateralizationFactor;
-    const derivative = {
+    const swap = {
         state: SwapState.ACTIVE,
         buyer: admin.address,
         asset: daiMockedToken.address,
         startingTimestamp: BigInt(timeStamp),
         endingTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
         id: BigInt("0"),
-		idsIndex: BigInt("0"),
-		userIdsIndex: BigInt("0"),
+        idsIndex: BigInt("0"),
+        userIdsIndex: BigInt("0"),
         collateral: BigInt("0"),
         liquidationDepositAmount: BigInt("20") * ONE_18DEC,
         notionalAmount,
@@ -37,7 +37,7 @@ const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
         fixedInterestRate: fixedInterestRate,
     };
 
-    return derivative;
+    return swap;
 };
 
 describe("IporSwapLogic", () => {
@@ -77,7 +77,7 @@ describe("IporSwapLogic", () => {
         const notionalAmount = BigInt(98703) * ONE_18DEC;
         const derivativeFixedInterestRate = BigInt(4 * 1e16);
         const derivativePeriodInSeconds = BigInt(
-            DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
+            SWAP_DEFAULT_PERIOD_IN_SECONDS
         );
 
         //when
@@ -182,14 +182,11 @@ describe("IporSwapLogic", () => {
     it("Calculate Interest Case 1", async () => {
         //given
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareSwapPayFixedCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         //when
         const derivativeInterest =
             await iporSwapLogic.calculateInterestForSwapPayFixed(
-                derivative,
+                swap,
                 BigInt(Date.now() + 60 * 60 * 24 * 28),
                 ONE_18DEC
             );
@@ -213,17 +210,14 @@ describe("IporSwapLogic", () => {
     it("Calculate Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
         //given
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareSwapPayFixedCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
 
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
         //when
         const derivativeInterest =
             await iporSwapLogic.calculateInterestForSwapPayFixed(
-                derivative,
-                derivative.startingTimestamp,
+                swap,
+                swap.startingTimestamp,
                 ibtPriceSecond
             );
 
@@ -247,18 +241,15 @@ describe("IporSwapLogic", () => {
         //given
 
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareSwapPayFixedCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         const ibtPriceSecond = BigInt(100) * ONE_18DEC;
 
         //when
 
         const derivativeInterest =
             await iporSwapLogic.calculateInterestForSwapPayFixed(
-                derivative,
-                derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
                 ibtPriceSecond
             );
 
@@ -279,18 +270,15 @@ describe("IporSwapLogic", () => {
 
     it("Calculate Interest Case 25 days Later IBT Price Changed Decimals 18", async () => {
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareSwapPayFixedCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
 
         //when
 
         const derivativeInterest =
             await iporSwapLogic.calculateInterestForSwapPayFixed(
-                derivative,
-                derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
                 ibtPriceSecond
             );
 
@@ -314,18 +302,15 @@ describe("IporSwapLogic", () => {
         const spread = BigInt(10000000000000000);
         const fixedInterestRate = iporIndex + spread;
 
-        const derivative = await prepareSwapPayFixedCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
 
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
 
         //when
         const derivativeInterest =
             await iporSwapLogic.calculateInterestForSwapPayFixed(
-                derivative,
-                derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
                 ibtPriceSecond
             );
 
@@ -350,19 +335,15 @@ describe("IporSwapLogic", () => {
         //given
 
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareSwapPayFixedCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         const ibtPriceSecond = BigInt(120) * ONE_18DEC;
 
         //when
 
         const derivativeInterest =
             await iporSwapLogic.calculateInterestForSwapPayFixed(
-                derivative,
-                derivative.startingTimestamp +
-                    PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
                 ibtPriceSecond
             );
 

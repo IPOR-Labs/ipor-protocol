@@ -112,7 +112,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 _swapsPayFixed.swaps[id].buyer,
                 _swapsPayFixed.swaps[id].startingTimestamp,
                 _swapsPayFixed.swaps[id].startingTimestamp +
-                    Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                    Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
                 _swapsPayFixed.swaps[id].id,
                 _swapsPayFixed.swaps[id].userIdsIndex,
                 _swapsPayFixed.swaps[id].collateral,
@@ -154,7 +154,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 _swapsReceiveFixed.swaps[id].buyer,
                 _swapsReceiveFixed.swaps[id].startingTimestamp,
                 _swapsReceiveFixed.swaps[id].startingTimestamp +
-                    Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                    Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
                 _swapsReceiveFixed.swaps[id].id,
                 _swapsReceiveFixed.swaps[id].userIdsIndex,
                 _swapsReceiveFixed.swaps[id].collateral,
@@ -272,7 +272,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
                 swaps[id].buyer,
                 swaps[id].startingTimestamp,
                 swaps[id].startingTimestamp +
-                    Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
+                    Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
                 swaps[id].id,
                 swaps[id].userIdsIndex,
                 swaps[id].collateral,
@@ -541,7 +541,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             uint128(swap.collateral);
         //TODO: remove duplication
         if (abspositionValue < swap.collateral) {
-            //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
+            //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (user != swap.buyer) {
                 require(
                     closingTimestamp >= swap.endingTimestamp,
@@ -551,9 +551,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             }
         }
 
-        uint256 incomeTax = IporMath.calculateIncomeTax(
-            abspositionValue,
-            _iporAssetConfiguration.getIncomeTaxPercentage()
+        uint256 incomeTax = IporMath.division(
+            abspositionValue * _iporAssetConfiguration.getIncomeTaxPercentage(),
+            Constants.D18
         );
 
         _balances.treasury = _balances.treasury + uint128(incomeTax);
@@ -600,7 +600,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         //TODO: remove duplication
 
         if (abspositionValue < swap.collateral) {
-            //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
+            //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (user != swap.buyer) {
                 require(
                     closingTimestamp >= swap.endingTimestamp,
@@ -610,9 +610,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             }
         }
 
-        uint256 incomeTax = IporMath.calculateIncomeTax(
-            abspositionValue,
-            _iporAssetConfiguration.getIncomeTaxPercentage()
+        uint256 incomeTax = IporMath.division(
+            abspositionValue * _iporAssetConfiguration.getIncomeTaxPercentage(),
+            Constants.D18
         );
 
         _balances.treasury = _balances.treasury + uint128(incomeTax);
@@ -749,8 +749,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         require(
             iporSwap.state != uint256(DataTypes.SwapState.INACTIVE),
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
-        );        
-        
+        );
+
         uint64 userIdsIndexToDelete = uint64(iporSwap.userIdsIndex);
         address buyer = iporSwap.buyer;
         uint256 userIdsLength = _swapsReceiveFixed.userIds[buyer].length - 1;

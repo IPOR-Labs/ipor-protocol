@@ -14,18 +14,6 @@ library IporMath {
         z = (x + (y / 2)) / y;
     }
 
-	//@dev x represented as WAD
-	//@return y represented as WAD
-    function sqrt(uint256 xWad) internal pure returns (uint256 y) {
-		uint256 x = xWad * Constants.D18;
-        uint256 z = (x + 1) / 2;
-        y = x;
-        while (z < y) {
-            y = z;
-            z = (x / z + z) / 2;
-        }
-    }
-
     function convertWadToAssetDecimals(uint256 value, uint256 assetDecimals)
         internal
         pure
@@ -54,54 +42,6 @@ library IporMath {
         }
     }
 
-    //TODO: move to separate library
-    function calculateIncomeTax(
-        uint256 derivativeProfit,
-        uint256 incomeTaxPercentage
-    ) internal pure returns (uint256) {
-        return division(derivativeProfit * incomeTaxPercentage, Constants.D18);
-    }
-
-    //TODO: move to separate library
-    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice)
-        internal
-        pure
-        returns (uint256)
-    {
-        return division(notionalAmount * Constants.D18, ibtPrice);
-    }
-
-    //TODO: move to separate library
-    function calculateDerivativeAmount(
-        uint256 totalAmount,
-        uint256 collateralizationFactor,
-        uint256 liquidationDepositAmount,
-        uint256 iporPublicationFeeAmount,
-        uint256 openingFeePercentage
-    ) internal pure returns (
-		uint256 collateral,
-		uint256 notional,
-		uint256 openingFee) {
-
-        collateral = division(
-            (totalAmount -
-                liquidationDepositAmount -
-                iporPublicationFeeAmount) * Constants.D18,
-            Constants.D18 +
-                division(
-                    collateralizationFactor * openingFeePercentage,
-                    Constants.D18
-                )
-        );
-        notional = division(
-            collateralizationFactor * collateral,
-            Constants.D18
-        );
-        openingFee = division(
-            notional * openingFeePercentage,
-            Constants.D18
-        );
-    }
 
     function absoluteValue(int256 value) internal pure returns (uint256) {
         return (uint256)(value < 0 ? -value : value);

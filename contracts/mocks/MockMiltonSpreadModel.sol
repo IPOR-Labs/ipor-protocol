@@ -10,9 +10,9 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
 
     function testCalculateSpreadPayFixed(
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
@@ -20,9 +20,9 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         return
             _calculateSpreadPayFixed(
                 accruedIpor,
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 soap
@@ -31,9 +31,9 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
 
     function testCalculateSpreadRecFixed(
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soap
@@ -41,9 +41,9 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         return
             _calculateSpreadRecFixed(
                 accruedIpor,
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 soap
@@ -51,18 +51,18 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     }
 
     function calculateDemandComponentPayFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapPayFixed
     ) public view returns (uint256) {
         return
             _calculateDemandComponentPayFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 soapPayFixed
@@ -98,18 +98,18 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     }
 
     function calculateAdjustedUtilizationRatePayFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
             _calculateAdjustedUtilizationRatePayFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 lambda
@@ -117,18 +117,18 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     }
 
     function calculateDemandComponentRecFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         int256 soapRecFixed
     ) public view returns (uint256) {
         return
             _calculateDemandComponentRecFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 soapRecFixed
@@ -164,18 +164,18 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
     }
 
     function calculateAdjustedUtilizationRateRecFixed(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
-        uint256 liquidityPool,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        uint256 liquidityPoolBalance,
         uint256 payFixedDerivativesBalance,
         uint256 recFixedDerivativesBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
             _calculateAdjustedUtilizationRateRecFixed(
-                derivativeDeposit,
-                derivativeOpeningFee,
-                liquidityPool,
+                swapCollateral,
+                swapOpeningFee,
+                liquidityPoolBalance,
                 payFixedDerivativesBalance,
                 recFixedDerivativesBalance,
                 lambda

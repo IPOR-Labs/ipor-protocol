@@ -26,41 +26,41 @@ library IporSwapLogic {
         uint256 ibtQuantity,
         uint256 ibtCurrentPrice
     ) internal pure returns (uint256) {
-        //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when derivative is closed)
+        //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when swap is closed)
         return ibtQuantity * ibtCurrentPrice * Constants.YEAR_IN_SECONDS;
     }
 
     function calculateInterestForSwapPayFixed(
-        DataTypes.IporSwapMemory memory derivative,
+        DataTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) internal pure returns (DataTypes.IporDerivativeInterest memory) {
+    ) internal pure returns (DataTypes.IporSwapInterest memory) {
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
-            closingTimestamp >= derivative.startingTimestamp,
+            closingTimestamp >= swap.startingTimestamp,
             IporErrors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP
         );
 
         uint256 calculatedPeriodInSeconds = 0;
 
-        //calculated period cannot be longer than whole derivative period
-        if (closingTimestamp > derivative.endingTimestamp) {
+        //calculated period cannot be longer than whole swap period
+        if (closingTimestamp > swap.endingTimestamp) {
             calculatedPeriodInSeconds =
-                derivative.endingTimestamp -
-                derivative.startingTimestamp;
+			swap.endingTimestamp -
+			swap.startingTimestamp;
         } else {
             calculatedPeriodInSeconds =
                 closingTimestamp -
-                derivative.startingTimestamp;
+                swap.startingTimestamp;
         }
         //TODO: use SafeCast from openzeppelin
         uint256 quasiIFixed = calculateQuasiInterestFixed(
-            derivative.notionalAmount,
-            derivative.fixedInterestRate,
+            swap.notionalAmount,
+            swap.fixedInterestRate,
             calculatedPeriodInSeconds
         );
         uint256 quasiIFloating = calculateQuasiInterestFloating(
-            derivative.ibtQuantity,
+            swap.ibtQuantity,
             mdIbtPrice
         );
 
@@ -71,7 +71,7 @@ library IporSwapLogic {
         );
 
         return
-            DataTypes.IporDerivativeInterest(
+            DataTypes.IporSwapInterest(
                 quasiIFixed,
                 quasiIFloating,
                 positionValue
@@ -79,37 +79,37 @@ library IporSwapLogic {
     }
 
 	function calculateInterestForSwapReceiveFixed(
-        DataTypes.IporSwapMemory memory derivative,
+        DataTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) internal pure returns (DataTypes.IporDerivativeInterest memory) {
+    ) internal pure returns (DataTypes.IporSwapInterest memory) {
 		//TODO: remove duplicates calculateInterestForSwapPayFixed
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
-            closingTimestamp >= derivative.startingTimestamp,
+            closingTimestamp >= swap.startingTimestamp,
             IporErrors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP
         );
 
         uint256 calculatedPeriodInSeconds = 0;
 
-        //calculated period cannot be longer than whole derivative period
-        if (closingTimestamp > derivative.endingTimestamp) {
+        //calculated period cannot be longer than whole swap period
+        if (closingTimestamp > swap.endingTimestamp) {
             calculatedPeriodInSeconds =
-                derivative.endingTimestamp -
-                derivative.startingTimestamp;
+			swap.endingTimestamp -
+			swap.startingTimestamp;
         } else {
             calculatedPeriodInSeconds =
                 closingTimestamp -
-                derivative.startingTimestamp;
+                swap.startingTimestamp;
         }
         //TODO: use SafeCast from openzeppelin
         uint256 quasiIFixed = calculateQuasiInterestFixed(
-            derivative.notionalAmount,
-            derivative.fixedInterestRate,
+            swap.notionalAmount,
+            swap.fixedInterestRate,
             calculatedPeriodInSeconds
         );
         uint256 quasiIFloating = calculateQuasiInterestFloating(
-            derivative.ibtQuantity,
+            swap.ibtQuantity,
             mdIbtPrice
         );
 
@@ -119,7 +119,7 @@ library IporSwapLogic {
         );
 
         return
-            DataTypes.IporDerivativeInterest(
+            DataTypes.IporSwapInterest(
                 quasiIFixed,
                 quasiIFloating,
                 positionValue

@@ -38,17 +38,17 @@ contract ItfMilton is Milton {
             );
     }
 
-    function itfCloseSwapPayFixed(uint256 derivativeId, uint256 closeTimestamp)
+    function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp)
         external
     {
-        _closeSwapPayFixed(derivativeId, closeTimestamp);
+        _closeSwapPayFixed(swapId, closeTimestamp);
     }
 
     function itfCloseSwapReceiveFixed(
-        uint256 derivativeId,
+        uint256 swapId,
         uint256 closeTimestamp
     ) external {
-        _closeSwapReceiveFixed(derivativeId, closeTimestamp);
+        _closeSwapReceiveFixed(swapId, closeTimestamp);
     }
 
     function itfCalculateSoap(uint256 calculateTimestamp)
@@ -75,15 +75,15 @@ contract ItfMilton is Milton {
 
     function itfCalculateSwapPayFixedValue(
         uint256 calculateTimestamp,
-        DataTypes.IporSwapMemory memory derivative
+        DataTypes.IporSwapMemory memory swap
     ) external view returns (int256) {
-        return _calculateSwapPayFixedValue(calculateTimestamp, derivative);
+        return _calculateSwapPayFixedValue(calculateTimestamp, swap);
     }
 
     function itfCalculateSwapReceiveFixedValue(
         uint256 calculateTimestamp,
-        DataTypes.IporSwapMemory memory derivative
+        DataTypes.IporSwapMemory memory swap
     ) external view returns (int256) {
-        return _calculateSwapReceiveFixedValue(calculateTimestamp, derivative);
+        return _calculateSwapReceiveFixedValue(calculateTimestamp, swap);
     }
 }

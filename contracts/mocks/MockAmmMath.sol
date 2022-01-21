@@ -30,42 +30,6 @@ contract MockIporMath {
         return IporMath.convertToWad(value, assetDecimals);
     }
 
-    function calculateIncomeTax(
-        uint256 derivativeProfit,
-        uint256 incomeTaxPercentage
-    ) public pure returns (uint256) {
-        return
-            IporMath.calculateIncomeTax(derivativeProfit, incomeTaxPercentage);
-    }
-
-    function calculateIbtQuantity(uint256 notionalAmount, uint256 ibtPrice)
-        public
-        pure
-        returns (uint256)
-    {
-        return IporMath.calculateIbtQuantity(notionalAmount, ibtPrice);
-    }
-
-    function calculateDerivativeAmount(
-        uint256 totalAmount,
-        uint256 collateralizationFactor,
-        uint256 liquidationDepositAmount,
-        uint256 iporPublicationFeeAmount,
-        uint256 openingFeePercentage
-    ) public pure returns (
-		uint256 collateral,
-		uint256 notional,
-		uint256 openingFee) {
-        (collateral,notional,openingFee) =
-            IporMath.calculateDerivativeAmount(
-                totalAmount,
-                collateralizationFactor,
-                liquidationDepositAmount,
-                iporPublicationFeeAmount,
-                openingFeePercentage
-            );
-    }
-
     function absoluteValue(int256 value) public pure returns (uint256) {
         return IporMath.absoluteValue(value);
     }

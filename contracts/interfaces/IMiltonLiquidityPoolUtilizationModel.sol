@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonLiquidityPoolUtilizationModel {
-    //@notice deposit and openingFee is for this particular derivative
+    //@notice deposit and openingFee is for this particular swap
     function calculateTotalUtilizationRate(
         uint256 liquidityPoolBalance,
 		uint256 swapsPayFixedBalance,

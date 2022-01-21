@@ -7,7 +7,7 @@ library DataTypes {
         ACTIVE
     }
 
-    //@notice Derivative direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
+    //@notice Swap direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum SwapDirection {
         //TODO: use consistent names in enums
         //@notice In long position the trader will pay a fixed rate and receive a floating rate.
@@ -104,7 +104,7 @@ library DataTypes {
         DataTypes.AccruedIpor accruedIpor;
     }
 
-    struct IporDerivativeInterest {
+    struct IporSwapInterest {
         //TODO: reduce to one field the last one;
         uint256 quasiInterestFixed;
         uint256 quasiInterestFloating;
@@ -131,15 +131,15 @@ library DataTypes {
     }
     struct IporSwapMemory {
         uint256 state;
-        //@notice Buyer of this derivative
+        //@notice Buyer of this swap
         address buyer;
-        //@notice Starting time of this Derivative
+        //@notice Starting time of this swap
         uint256 startingTimestamp;
-        //@notice Endind time of this Derivative
+        //@notice Endind time of this swap
         uint256 endingTimestamp;
-        //@notice unique ID of this derivative
+        //@notice unique ID of this swap
         uint256 id;
-        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some derivative is closed
+        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some swap is closed
         uint256 userIdsIndex;
         uint256 collateral;
         uint256 liquidationDepositAmount;
@@ -150,9 +150,9 @@ library DataTypes {
     }
     struct IporSwap {
         SwapState state;
-        //@notice Starting time of this Derivative
+        //@notice Starting time of this swap
         uint32 startingTimestamp;
-        //@notice unique ID of this derivative
+        //@notice unique ID of this swap
         uint64 id;
         uint64 userIdsIndex;
         uint128 collateral;
@@ -161,7 +161,7 @@ library DataTypes {
         uint128 notionalAmount;
         uint128 fixedInterestRate;
         uint128 ibtQuantity;
-        //@notice Buyer of this derivative
+        //@notice Buyer of this swap
         address buyer;
     }
 

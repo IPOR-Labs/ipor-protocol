@@ -82,7 +82,7 @@ describe("Milton", () => {
         await setupDefaultSpreadConstants(data, userOne);
     });
 
-    it("should NOT open position because deposit amount too low", async () => {
+    it("should NOT open position because collateral amount too low", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -230,7 +230,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT open position because deposit amount too high", async () => {
+    it("should NOT open position because collateral amount too high", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2499,7 +2499,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT close position, because incorrect derivative Id", async () => {
+    it("should NOT close position, because incorrect swap Id", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2559,7 +2559,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT close position, because derivative has incorrect status", async () => {
+    it("should NOT close position, because swap has incorrect status", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2632,7 +2632,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT close position, because derivative not exists", async () => {
+    it("should NOT close position, because swap not exists", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2737,7 +2737,7 @@ describe("Milton", () => {
 
         expect(
             expectedDerivativeId,
-            `Incorrect derivative id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
+            `Incorrect swap id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
         ).to.be.eq(BigInt(oneDerivative.id));
     });
 
@@ -2822,7 +2822,7 @@ describe("Milton", () => {
 
         expect(
             expectedDerivativeId,
-            `Incorrect derivative id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
+            `Incorrect swap id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
         ).to.be.eq(BigInt(oneDerivative.id));
     });
 
@@ -3046,7 +3046,7 @@ describe("Milton", () => {
 
         expect(
             expectedUserDerivativeIdsLength,
-            `Incorrect user derivative ids length actual: ${actualUserDerivativeIds.length}, expected: ${expectedUserDerivativeIdsLength}`
+            `Incorrect user swap ids length actual: ${actualUserDerivativeIds.length}, expected: ${expectedUserDerivativeIdsLength}`
         ).to.be.eq(actualUserDerivativeIds.length);
 
         await assertMiltonDerivativeItem(
@@ -3148,11 +3148,11 @@ describe("Milton", () => {
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
-            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
         ).to.be.eq(actualUserDerivativeIdsFirst.length);
         expect(
             expectedUserDerivativeIdsLengthSecond,
-            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
 
         await assertMiltonDerivativeItem(
@@ -3261,11 +3261,11 @@ describe("Milton", () => {
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
-            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
         ).to.be.eq(actualUserDerivativeIdsFirst.length);
         expect(
             expectedUserDerivativeIdsLengthSecond,
-            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
 
         await assertMiltonDerivativeItem(
@@ -3372,11 +3372,11 @@ describe("Milton", () => {
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
-            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
         ).to.be.eq(actualUserDerivativeIdsFirst.length);
         expect(
             expectedUserDerivativeIdsLengthSecond,
-            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
 
         await assertMiltonDerivativeItem(
@@ -3470,11 +3470,11 @@ describe("Milton", () => {
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
-            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
         ).to.be.eq(actualUserDerivativeIdsFirst.length);
         expect(
             expectedUserDerivativeIdsLengthSecond,
-            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
     });
 
@@ -3559,11 +3559,11 @@ describe("Milton", () => {
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
-            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
         ).to.be.eq(actualUserDerivativeIdsFirst.length);
         expect(
             expectedUserDerivativeIdsLengthSecond,
-            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
     });
 
@@ -3651,11 +3651,11 @@ describe("Milton", () => {
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
-            `Incorrect first user derivative ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
         ).to.be.eq(actualUserDerivativeIdsFirst.length);
         expect(
             expectedUserDerivativeIdsLengthSecond,
-            `Incorrect second user derivative ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
     });
 
@@ -5311,7 +5311,7 @@ describe("Milton", () => {
     const assertMiltonDerivativeItem = async (
         testData,
         asset,
-        derivativeId,
+        swapId,
         direction,
         expectedIdsIndex,
         expectedUserDerivativeIdsIndex
@@ -5321,14 +5321,14 @@ describe("Milton", () => {
             if (direction == 0) {
                 actualDerivativeItem =
                     await testData.miltonStorageUsdt.getSwapPayFixedItem(
-                        derivativeId
+                        swapId
                     );
             }
 
             if (direction == 1) {
                 actualDerivativeItem =
                     await testData.miltonStorageUsdt.getSwapReceiveFixedItem(
-                        derivativeId
+                        swapId
                     );
             }
         }
@@ -5336,36 +5336,34 @@ describe("Milton", () => {
             if (direction == 0) {
                 actualDerivativeItem =
                     await testData.miltonStorageUsdc.getSwapPayFixedItem(
-                        derivativeId
+                        swapId
                     );
             }
 
             if (direction == 1) {
                 actualDerivativeItem =
                     await testData.miltonStorageUsdc.getSwapReceiveFixedItem(
-                        derivativeId
+                        swapId
                     );
             }
         }
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             if (direction == 0) {
                 actualDerivativeItem =
-                    await testData.miltonStorageDai.getSwapPayFixedItem(
-                        derivativeId
-                    );
+                    await testData.miltonStorageDai.getSwapPayFixedItem(swapId);
             }
 
             if (direction == 1) {
                 actualDerivativeItem =
                     await testData.miltonStorageDai.getSwapReceiveFixedItem(
-                        derivativeId
+                        swapId
                     );
             }
         }
 
         expect(
             BigInt(expectedUserDerivativeIdsIndex),
-            `Incorrect userIdsIndex for derivative id ${actualDerivativeItem.id} actual: ${actualDerivativeItem.userIdsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
+            `Incorrect userIdsIndex for swap id ${actualDerivativeItem.id} actual: ${actualDerivativeItem.userIdsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
         ).to.be.eq(BigInt(actualDerivativeItem.userIdsIndex));
     };
 
@@ -6089,7 +6087,7 @@ describe("Milton", () => {
 
 //TODO: !!!! add test when before open position liquidity pool is empty and opening fee is zero - then spread cannot be calculated in correct way!!!
 
-//TODO: !!!! add test when closing derivative, Milton lost, Trader earn, but milton don't have enough balance to withdraw during closing position
+//TODO: !!!! add test when closing swap, Milton lost, Trader earn, but milton don't have enough balance to withdraw during closing position
 
 //TODO: check initial IBT
 

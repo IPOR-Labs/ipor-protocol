@@ -12,7 +12,7 @@ import {IporErrors} from "../IporErrors.sol";
 
 contract MiltonSpreadModelCore {
 
-	function _calculateSoapPlus(int256 soap, uint256 derivativesBalance)
+	function _calculateSoapPlus(int256 soap, uint256 swapsBalance)
         internal
         pure
         returns (uint256)
@@ -21,7 +21,7 @@ contract MiltonSpreadModelCore {
             return
                 IporMath.division(
                     uint256(soap) * Constants.D18,
-                    derivativesBalance
+                    swapsBalance
                 );
         } else {
             return 0;
@@ -55,28 +55,28 @@ contract MiltonSpreadModelCore {
 	
 	//@notice Calculates utilization rate including position which is opened
     function _calculateUtilizationRateWithPosition(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 derivativesBalance
+        uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                (derivativesBalance + derivativeDeposit) * Constants.D18,
-                liquidityPoolBalance + derivativeOpeningFee
+                (swapsBalance + swapCollateral) * Constants.D18,
+                liquidityPoolBalance + swapOpeningFee
             );
     }
 
 	//URleg(0)
     function _calculateUtilizationRateWithoutPosition(
-        uint256 derivativeOpeningFee,
+        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 derivativesBalance
+        uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                derivativesBalance * Constants.D18,
-                liquidityPoolBalance + derivativeOpeningFee
+                swapsBalance * Constants.D18,
+                liquidityPoolBalance + swapOpeningFee
             );
     }
 }
