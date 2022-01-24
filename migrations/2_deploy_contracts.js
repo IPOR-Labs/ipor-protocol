@@ -916,6 +916,8 @@ module.exports = async function (deployer, _network, addresses) {
         await itfMiltonUsdc.authorizeJoseph();
         await itfMiltonDai.authorizeJoseph();
 
+		await warren.addUpdater(admin);
+
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Prepare initial IPOR migration...");
             await warren.updateIndexes(
