@@ -141,8 +141,7 @@
                         <argument>${generated.sources.abi}</argument>
                         <argument>@openzeppelin/contracts=${PWD}/node_modules/@openzeppelin/contracts</argument>
                         <!-- INFO: wildcards not working here :( -->
-                        <argument>${contracts.sources}/IporErrors.sol</argument>
-                        <argument>${contracts.sources}/amm/IMiltonEvents.sol</argument>
+                        <argument>${contracts.sources}/IporErrors.sol</argument>                        
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonLiquidityPoolUtilizationModel.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonSpreadModel.sol</argument>
@@ -157,6 +156,7 @@
                         <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenFrontendDataProvider.sol</argument>
+						<argument>${contracts.sources}/interfaces/IMiltonEvents.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporAssetConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIporConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
@@ -164,7 +164,7 @@
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonLPUtilisationStrategy.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonLiquidityPoolUtilizationModel.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
