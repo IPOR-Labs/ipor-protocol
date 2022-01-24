@@ -27,7 +27,7 @@ contract Joseph is Ownable, IJoseph {
 
     IIporConfiguration internal _iporConfiguration;
     IIporAssetConfiguration internal _iporAssetConfiguration;
-
+	
     constructor(address asset, address initialIporConfiguration) {
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(
@@ -40,10 +40,15 @@ contract Joseph is Ownable, IJoseph {
             IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
 
-		_asset = asset;
+		address iporAssetConfigurationAddr = _iporConfiguration.getIporAssetConfiguration(asset);
+
+		require(address(iporAssetConfigurationAddr) != address(0), IporErrors.WRONG_ADDRESS);
+
         _iporAssetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
+            iporAssetConfigurationAddr
         );
+
+		_asset = asset;
 		_decimals = _iporAssetConfiguration.getDecimals();
 		
     }

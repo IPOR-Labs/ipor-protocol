@@ -75,7 +75,7 @@ library SoapIndicatorLogic {
         DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
+        uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
     ) internal pure returns(DataTypes.SoapIndicatorMemory memory) {
         //TODO: here potential re-entrancy
@@ -83,7 +83,7 @@ library SoapIndicatorLogic {
             si.totalNotional,
 			si.averageInterestRate,
             derivativeNotional,
-            derivativeFixedInterestRate
+            swapFixedInterestRate
         );
         uint256 quasiHypotheticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
@@ -103,7 +103,7 @@ library SoapIndicatorLogic {
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
+        uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
     ) internal pure returns(DataTypes.SoapIndicatorMemory memory){
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
@@ -115,7 +115,7 @@ library SoapIndicatorLogic {
             rebalanceTimestamp,
             derivativeOpenTimestamp,
             derivativeNotional,
-            derivativeFixedInterestRate
+            swapFixedInterestRate
         );
 
         uint256 quasiHypotheticalInterestTotal = currentQuasiHypoteticalInterestTotal -
@@ -127,7 +127,7 @@ library SoapIndicatorLogic {
 			si.totalNotional,
 			si.averageInterestRate,
             derivativeNotional,
-            derivativeFixedInterestRate
+            swapFixedInterestRate
         );
         //TODO: here potential re-entrancy
         si.rebalanceTimestamp = uint32(rebalanceTimestamp);
@@ -141,7 +141,7 @@ library SoapIndicatorLogic {
         uint256 calculateTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
@@ -149,7 +149,7 @@ library SoapIndicatorLogic {
         );
         return
             derivativeNotional *
-            derivativeFixedInterestRate *
+            swapFixedInterestRate *
             (calculateTimestamp - derivativeOpenTimestamp) *
             Constants.D18;
     }
@@ -190,14 +190,14 @@ library SoapIndicatorLogic {
 		uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
         return
             IporMath.division(
                 (totalNotional *
                     averageInterestRate +
                     derivativeNotional *
-                    derivativeFixedInterestRate),
+                    swapFixedInterestRate),
                 (totalNotional + derivativeNotional)
             );
     }
@@ -206,7 +206,7 @@ library SoapIndicatorLogic {
 		uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
         require(
             derivativeNotional <= totalNotional,
@@ -220,7 +220,7 @@ library SoapIndicatorLogic {
                     (totalNotional *
                         averageInterestRate -
                         derivativeNotional *
-                        derivativeFixedInterestRate),
+                        swapFixedInterestRate),
                     (totalNotional - derivativeNotional)
                 );
         }

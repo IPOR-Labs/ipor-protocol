@@ -23,9 +23,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        contract="MiltonStorageUsdt"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.payFixedDerivatives /
@@ -40,9 +39,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        contract="MiltonStorageUsdc"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.payFixedDerivatives /
@@ -57,9 +55,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        contract="MiltonStorageDai"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.payFixedDerivatives /
@@ -77,9 +74,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        contract="MiltonStorageUsdt"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.recFixedDerivatives /
@@ -94,9 +90,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        contract="MiltonStorageUsdc"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.recFixedDerivatives /
@@ -111,9 +106,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        contract="MiltonStorageDai"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.recFixedDerivatives /
@@ -131,9 +125,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        contract="MiltonStorageUsdt"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000}
@@ -147,9 +140,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        contract="MiltonStorageUsdc"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000}
@@ -163,9 +155,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        contract="MiltonStorageDai"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
@@ -182,9 +173,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        contract="MiltonStorageUsdt"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.openingFee / 1000000}
@@ -198,9 +188,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        contract="MiltonStorageUsdc"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.openingFee / 1000000}
@@ -214,9 +203,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        contract="MiltonStorageDai"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.openingFee / 1000000000000000000}
@@ -233,9 +221,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        contract="MiltonStorageUsdt"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.liquidationDeposit / 1000000}
@@ -249,9 +236,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        contract="MiltonStorageUsdc"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.liquidationDeposit / 1000000}
@@ -265,9 +251,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        contract="MiltonStorageDai"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.liquidationDeposit / 1000000000000000000}
@@ -284,9 +269,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        contract="MiltonStorageUsdt"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.iporPublicationFee / 1000000}
@@ -300,9 +284,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        contract="MiltonStorageUsdc"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.iporPublicationFee / 1000000}
@@ -316,9 +299,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        contract="MiltonStorageDai"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.iporPublicationFee / 1000000000000000000}
@@ -338,9 +320,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        contract="MiltonStorageUsdt"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.treasury / 1000000}
@@ -354,9 +335,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        contract="MiltonStorageUsdc"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.treasury / 1000000}
@@ -370,9 +350,8 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonStorage"
-                        method="balances"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        contract="MiltonStorageDai"
+                        method="getBalance"
                         render={(value) => (
                             <div>
                                 {value.treasury / 1000000000000000000}

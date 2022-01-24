@@ -51,15 +51,18 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         require(
             _iporConfiguration.assetSupported(asset) == 1,
             IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-        );
+        );        
 
-        _asset = asset;
+		address iporAssetConfigurationAddr = _iporConfiguration.getIporAssetConfiguration(asset);
+
+		require(address(iporAssetConfigurationAddr) != address(0), IporErrors.WRONG_ADDRESS);
 
         _iporAssetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
+            iporAssetConfigurationAddr
         );
 
         _decimals = _iporAssetConfiguration.getDecimals();
+		_asset = asset;
     }
 
     modifier onlyActiveSwapPayFixed(uint256 swapId) {

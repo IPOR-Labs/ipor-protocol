@@ -38,12 +38,16 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             _iporConfiguration.assetSupported(asset) == 1,
             IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
+       
+		address iporAssetConfigurationAddr = _iporConfiguration.getIporAssetConfiguration(asset);
 
-        _asset = asset;
+		require(address(iporAssetConfigurationAddr) != address(0), IporErrors.WRONG_ADDRESS);
 
         _iporAssetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
+			iporAssetConfigurationAddr
+        );		
+
+		_asset = asset;
     }
 
     function getBalance()
@@ -106,20 +110,21 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         returns (DataTypes.IporSwapMemory memory)
     {
         uint64 id = uint64(swapId);
+        DataTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
         return
             DataTypes.IporSwapMemory(
-                uint256(_swapsPayFixed.swaps[id].state),
-                _swapsPayFixed.swaps[id].buyer,
-                _swapsPayFixed.swaps[id].startingTimestamp,
-                _swapsPayFixed.swaps[id].startingTimestamp +
+                uint256(swap.state),
+                swap.buyer,
+                swap.startingTimestamp,
+                swap.startingTimestamp +
                     Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-                _swapsPayFixed.swaps[id].id,
-                _swapsPayFixed.swaps[id].idsIndex,
-                _swapsPayFixed.swaps[id].collateral,
-                _swapsPayFixed.swaps[id].liquidationDepositAmount,
-                _swapsPayFixed.swaps[id].notionalAmount,
-                _swapsPayFixed.swaps[id].fixedInterestRate,
-                _swapsPayFixed.swaps[id].ibtQuantity
+                swap.id,
+                swap.idsIndex,
+                swap.collateral,
+                swap.liquidationDepositAmount,
+                swap.notionalAmount,
+                swap.fixedInterestRate,
+                swap.ibtQuantity
             );
     }
 
@@ -148,20 +153,21 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         returns (DataTypes.IporSwapMemory memory)
     {
         uint64 id = uint64(swapId);
+        DataTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
         return
             DataTypes.IporSwapMemory(
-                uint256(_swapsReceiveFixed.swaps[id].state),
-                _swapsReceiveFixed.swaps[id].buyer,
-                _swapsReceiveFixed.swaps[id].startingTimestamp,
-                _swapsReceiveFixed.swaps[id].startingTimestamp +
+                uint256(swap.state),
+                swap.buyer,
+                swap.startingTimestamp,
+                swap.startingTimestamp +
                     Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-                _swapsReceiveFixed.swaps[id].id,
-                _swapsReceiveFixed.swaps[id].idsIndex,
-                _swapsReceiveFixed.swaps[id].collateral,
-                _swapsReceiveFixed.swaps[id].liquidationDepositAmount,
-                _swapsReceiveFixed.swaps[id].notionalAmount,
-                _swapsReceiveFixed.swaps[id].fixedInterestRate,
-                _swapsReceiveFixed.swaps[id].ibtQuantity
+                swap.id,
+                swap.idsIndex,
+                swap.collateral,
+                swap.liquidationDepositAmount,
+                swap.notionalAmount,
+                swap.fixedInterestRate,
+                swap.ibtQuantity
             );
     }
 
@@ -266,19 +272,20 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         for (i; i != swapsIdsLength; i++) {
             uint128 id = ids[i];
+			DataTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = DataTypes.IporSwapMemory(
                 uint256(swaps[id].state),
-                swaps[id].buyer,
-                swaps[id].startingTimestamp,
-                swaps[id].startingTimestamp +
+                swap.buyer,
+                swap.startingTimestamp,
+                swap.startingTimestamp +
                     Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-                swaps[id].id,
-                swaps[id].idsIndex,
-                swaps[id].collateral,
-                swaps[id].liquidationDepositAmount,
-                swaps[id].notionalAmount,
-                swaps[id].fixedInterestRate,
-                swaps[id].ibtQuantity
+					swap.id,
+					swap.idsIndex,
+					swap.collateral,
+					swap.liquidationDepositAmount,
+					swap.notionalAmount,
+					swap.fixedInterestRate,
+					swap.ibtQuantity
             );
         }
         return derivatives;

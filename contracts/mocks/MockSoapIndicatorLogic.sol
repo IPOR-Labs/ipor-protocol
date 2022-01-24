@@ -42,7 +42,7 @@ contract MockSoapIndicatorLogic {
         DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
+        uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
     ) public pure returns(DataTypes.SoapIndicatorMemory memory){
         return
@@ -50,7 +50,7 @@ contract MockSoapIndicatorLogic {
                 si,
                 rebalanceTimestamp,
                 derivativeNotional,
-                derivativeFixedInterestRate,
+                swapFixedInterestRate,
                 derivativeIbtQuantity
             );
     }
@@ -60,7 +60,7 @@ contract MockSoapIndicatorLogic {
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
+        uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
     ) external pure returns(DataTypes.SoapIndicatorMemory memory){
         return
@@ -69,7 +69,7 @@ contract MockSoapIndicatorLogic {
                 rebalanceTimestamp,
                 derivativeOpenTimestamp,
                 derivativeNotional,
-                derivativeFixedInterestRate,
+                swapFixedInterestRate,
                 derivativeIbtQuantity
             );
     }
@@ -78,14 +78,14 @@ contract MockSoapIndicatorLogic {
         uint256 calculateTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateQuasiInterestPaidOut(
                 calculateTimestamp,
                 derivativeOpenTimestamp,
                 derivativeNotional,
-                derivativeFixedInterestRate
+                swapFixedInterestRate
             );
     }
 
@@ -120,14 +120,14 @@ contract MockSoapIndicatorLogic {
         uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateInterestRateWhenOpenSwap(
 				totalNotional,
 				averageInterestRate,
                 derivativeNotional,
-                derivativeFixedInterestRate
+                swapFixedInterestRate
             );
     }
 
@@ -135,14 +135,14 @@ contract MockSoapIndicatorLogic {
         uint256 totalNotional,
 		uint256 averageInterestRate,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
 				totalNotional,
 				averageInterestRate,
                 derivativeNotional,
-                derivativeFixedInterestRate
+                swapFixedInterestRate
             );
     }
 }

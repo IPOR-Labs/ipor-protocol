@@ -33,7 +33,9 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="UsdtMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.ItfMilton.address]}
+                            methodArgs={[
+                                drizzle.contracts.ItfMiltonUsdt.address,
+                            ]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -48,7 +50,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="UsdtMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.Milton.address]}
+                            methodArgs={[drizzle.contracts.MiltonUsdt.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -67,7 +69,9 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="UsdcMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.ItfMilton.address]}
+                            methodArgs={[
+                                drizzle.contracts.ItfMiltonUsdc.address,
+                            ]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -82,7 +86,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="UsdcMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.Milton.address]}
+                            methodArgs={[drizzle.contracts.MiltonUsdc.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -101,7 +105,9 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DaiMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.ItfMilton.address]}
+                            methodArgs={[
+                                drizzle.contracts.ItfMiltonDai.address,
+                            ]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -116,7 +122,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DaiMockedToken"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.Milton.address]}
+                            methodArgs={[drizzle.contracts.MiltonDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -253,7 +259,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporConfiguration"
+                        contract="IporAssetConfigurationUsdt"
                         method="getMilton"
                         render={(value) => (
                             <div>
@@ -264,7 +270,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporConfiguration"
+                        contract="IporAssetConfigurationUsdt"
                         method="getJoseph"
                         render={(value) => (
                             <div>
@@ -282,7 +288,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporConfiguration"
+                        contract="IporAssetConfigurationUsdc"
                         method="getMilton"
                         render={(value) => (
                             <div>
@@ -293,7 +299,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporConfiguration"
+                        contract="IporAssetConfigurationUsdc"
                         method="getJoseph"
                         render={(value) => (
                             <div>
@@ -311,7 +317,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporConfiguration"
+                        contract="IporAssetConfigurationDai"
                         method="getMilton"
                         render={(value) => (
                             <div>
@@ -322,7 +328,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="IporConfiguration"
+                        contract="IporAssetConfigurationDai"
                         method="getJoseph"
                         render={(value) => (
                             <div>

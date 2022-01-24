@@ -57,14 +57,14 @@ describe("IporSwapLogic", () => {
     it("Calculate Interest Fixed Case 1", async () => {
         //given
         const notionalAmount = BigInt(98703) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4) * BigInt(1e16);
-        const derivativePeriodInSeconds = 0;
+        const swapFixedInterestRate = BigInt(4) * BigInt(1e16);
+        const swapPeriodInSeconds = 0;
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFixed(
             notionalAmount,
-            derivativeFixedInterestRate,
-            derivativePeriodInSeconds
+            swapFixedInterestRate,
+            swapPeriodInSeconds
         );
         //then
         expect(result, "Wrong interest fixed").to.be.equal(
@@ -75,16 +75,14 @@ describe("IporSwapLogic", () => {
     it("Calculate Interest Fixed Case 2", async () => {
         //given
         const notionalAmount = BigInt(98703) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4 * 1e16);
-        const derivativePeriodInSeconds = BigInt(
-            SWAP_DEFAULT_PERIOD_IN_SECONDS
-        );
+        const swapFixedInterestRate = BigInt(4 * 1e16);
+        const swapPeriodInSeconds = BigInt(SWAP_DEFAULT_PERIOD_IN_SECONDS);
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFixed(
             notionalAmount,
-            derivativeFixedInterestRate,
-            derivativePeriodInSeconds
+            swapFixedInterestRate,
+            swapPeriodInSeconds
         );
 
         //then
@@ -96,14 +94,14 @@ describe("IporSwapLogic", () => {
     it("Calculate Interest Fixed Case 3", async () => {
         //given
         const notionalAmount = BigInt(98703) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4 * 1e16);
-        const derivativePeriodInSeconds = YEAR_IN_SECONDS;
+        const swapFixedInterestRate = BigInt(4 * 1e16);
+        const swapPeriodInSeconds = YEAR_IN_SECONDS;
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFixed(
             notionalAmount,
-            derivativeFixedInterestRate,
-            derivativePeriodInSeconds
+            swapFixedInterestRate,
+            swapPeriodInSeconds
         );
 
         //then

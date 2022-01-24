@@ -153,6 +153,8 @@ library DataTypes {
         //@notice Starting time of this swap
         uint32 startingTimestamp;
         //@notice unique ID of this swap
+		//@notice Buyer of this swap
+        address buyer;
         uint64 id;
         uint64 idsIndex;
         uint128 collateral;
@@ -161,8 +163,7 @@ library DataTypes {
         uint128 notionalAmount;
         uint128 fixedInterestRate;
         uint128 ibtQuantity;
-        //@notice Buyer of this swap
-        address buyer;
+        
     }
 
     struct IporSwapContainer {

@@ -2,9 +2,15 @@ import Warren from "./contracts/Warren.json";
 import ItfWarren from "./contracts/ItfWarren.json";
 import WarrenStorage from "./contracts/WarrenStorage.json";
 import WarrenDevToolDataProvider from "./contracts/WarrenDevToolDataProvider.json";
-import Milton from "./contracts/Milton.json";
-import ItfMilton from "./contracts/ItfMilton.json";
-import MiltonStorage from "./contracts/MiltonStorage.json";
+import MiltonUsdt from "./contracts/MiltonUsdt.json";
+import MiltonUsdc from "./contracts/MiltonUsdc.json";
+import MiltonDai from "./contracts/MiltonDai.json";
+import ItfMiltonUsdt from "./contracts/ItfMiltonUsdt.json";
+import ItfMiltonUsdc from "./contracts/ItfMiltonUsdc.json";
+import ItfMiltonDai from "./contracts/ItfMiltonDai.json";
+import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
+import MiltonStorageUsdc from "./contracts/MiltonStorageUsdc.json";
+import MiltonStorageDai from "./contracts/MiltonStorageDai.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
 import IporAssetConfigurationUsdt from "./contracts/IporAssetConfigurationUsdt";
 import IporAssetConfigurationUsdc from "./contracts/IporAssetConfigurationUsdc";
@@ -16,8 +22,12 @@ import MiltonSpreadModel from "./contracts/MiltonSpreadModel";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider";
 import IporConfiguration from "./contracts/IporConfiguration";
-import Joseph from "./contracts/Joseph";
-import ItfJoseph from "./contracts/ItfJoseph";
+import JosephUsdt from "./contracts/JosephUsdt";
+import JosephUsdc from "./contracts/JosephUsdc";
+import JosephDai from "./contracts/JosephDai";
+import ItfJosephUsdt from "./contracts/ItfJosephUsdt";
+import ItfJosephUsdc from "./contracts/ItfJosephUsdc";
+import ItfJosephDai from "./contracts/ItfJosephDai";
 const options = {
     web3: {
         fallback: {
@@ -30,18 +40,28 @@ const options = {
         MiltonDevToolDataProvider,
         MiltonFrontendDataProvider,
         IporConfiguration,
-        Joseph,
-        ItfJoseph,
         Warren,
         ItfWarren,
         WarrenStorage,
         WarrenDevToolDataProvider,
-        Milton,
-        ItfMilton,
-        MiltonStorage,
+        MiltonUsdt,
+        MiltonUsdc,
+        MiltonDai,
+        ItfMiltonUsdt,
+        ItfMiltonUsdc,
+        ItfMiltonDai,
+        MiltonStorageUsdt,
+        MiltonStorageUsdc,
+        MiltonStorageDai,
         DaiMockedToken,
         UsdtMockedToken,
         UsdcMockedToken,
+        JosephUsdt,
+        JosephUsdc,
+        JosephDai,
+        ItfJosephUsdt,
+        ItfJosephUsdc,
+        ItfJosephDai,
         MiltonFaucet,
         IporAssetConfigurationDai,
         IporAssetConfigurationUsdt,

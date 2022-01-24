@@ -1,27 +1,43 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 import IporIndexList from "./IporIndexList";
 
-const {AccountData, ContractData, ContractForm} = newContextComponents;
+const { AccountData, ContractData, ContractForm } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div>
         <div class="section">
             <p>
                 <strong>Add IPOR Index (Warren)</strong>
-                <ContractForm drizzle={drizzle} contract="Warren" method="updateIndex"/>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="Warren"
+                    method="updateIndex"
+                />
             </p>
             <p>
                 <strong>Add IPOR Index (ItfWarren)</strong>
-                <ContractForm drizzle={drizzle} contract="ItfWarren" method="updateIndex"/>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="ItfWarren"
+                    method="updateIndex"
+                />
             </p>
             <p>
                 <strong>Add updater</strong>
-                <ContractForm drizzle={drizzle} contract="WarrenStorage" method="addUpdater"/>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="WarrenStorage"
+                    method="addUpdater"
+                />
             </p>
             <p>
                 <strong>Remove updater</strong>
-                <ContractForm drizzle={drizzle} contract="WarrenStorage" method="removeUpdater"/>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="WarrenStorage"
+                    method="removeUpdater"
+                />
             </p>
             <p>
                 <strong>Updaters</strong>
@@ -34,7 +50,7 @@ export default ({drizzle, drizzleState}) => (
             </p>
         </div>
         <div>
-            <hr/>
+            <hr />
             <p>
                 <ContractData
                     drizzle={drizzle}
@@ -44,7 +60,7 @@ export default ({drizzle, drizzleState}) => (
                     render={IporIndexList}
                 />
             </p>
-            <hr/>
+            <hr />
         </div>
     </div>
 );

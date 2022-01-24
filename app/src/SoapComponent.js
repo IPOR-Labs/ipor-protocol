@@ -20,11 +20,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonUsdt"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapPf / 1000000}
@@ -37,11 +34,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdt"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapPf / 1000000}
@@ -58,11 +52,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonUsdc"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapPf / 1000000}
@@ -75,11 +66,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdc"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapPf / 1000000}
@@ -96,11 +84,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonDai"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapPf / 1000000000000000000}
@@ -113,11 +98,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonDai"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapPf / 1000000000000000000}
@@ -137,11 +119,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonUsdt"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapRf / 1000000}
@@ -154,11 +133,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdt"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapRf / 1000000}
@@ -175,11 +151,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonUsdc"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapRf / 1000000}
@@ -192,11 +165,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdc"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapRf / 1000000}
@@ -213,11 +183,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonDai"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapRf / 1000000000000000000}
@@ -230,11 +197,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonDai"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soapRf / 1000000000000000000}
@@ -254,11 +218,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonUsdt"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soap / 1000000}
@@ -271,11 +232,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdt"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soap / 1000000}
@@ -292,11 +250,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonUsdc"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soap / 1000000}
@@ -309,11 +264,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdc"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soap / 1000000}
@@ -330,11 +282,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMilton"
+                            contract="ItfMiltonDai"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soap / 1000000000000000000}
@@ -347,11 +296,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonDai"
                             method="calculateSoap"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(soap) => (
                                 <div>
                                     {soap.soap / 1000000000000000000}

@@ -10,15 +10,15 @@ library IporSwapLogic {
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
         uint256 notionalAmount,
-        uint256 derivativeFixedInterestRate,
-        uint256 derivativePeriodInSeconds
+        uint256 swapFixedInterestRate,
+        uint256 swapPeriodInSeconds
     ) internal pure returns (uint256) {
         return
             notionalAmount *
             Constants.WAD_YEAR_IN_SECONDS +
             notionalAmount *
-            derivativeFixedInterestRate *
-            derivativePeriodInSeconds;
+            swapFixedInterestRate *
+            swapPeriodInSeconds;
     }
 
     //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS

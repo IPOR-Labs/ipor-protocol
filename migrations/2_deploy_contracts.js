@@ -3,17 +3,11 @@ const keccak256 = require("keccak256");
 
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 
-const IporLogic = artifacts.require("IporLogic");
-const IporSwapLogic = artifacts.require("IporSwapLogic");
-const SoapIndicatorLogic = artifacts.require("SoapIndicatorLogic");
-
-const IporMath = artifacts.require("IporMath");
 const IporConfiguration = artifacts.require("IporConfiguration");
 
 const IpToken = artifacts.require("IpToken");
 const Warren = artifacts.require("Warren");
 const ItfWarren = artifacts.require("ItfWarren");
-const WarrenStorage = artifacts.require("WarrenStorage");
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 const MiltonLiquidityPoolUtilizationModel = artifacts.require(
     "MiltonLiquidityPoolUtilizationModel"
@@ -22,6 +16,7 @@ const MiltonLiquidityPoolUtilizationModel = artifacts.require(
 const MiltonUsdt = artifacts.require("MiltonUsdt");
 const MiltonUsdc = artifacts.require("MiltonUsdc");
 const MiltonDai = artifacts.require("MiltonDai");
+
 const ItfMiltonUsdt = artifacts.require("ItfMiltonUsdt");
 const ItfMiltonUsdc = artifacts.require("ItfMiltonUsdc");
 const ItfMiltonDai = artifacts.require("ItfMiltonDai");
@@ -69,6 +64,27 @@ async function grandRolesForAssetConfiguration(admin, iporAssetConfiguration) {
         admin
     );
     await iporAssetConfiguration.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
+
+    await iporAssetConfiguration.grantRole(
+        keccak256("MILTON_ADMIN_ROLE"),
+        admin
+    );
+    await iporAssetConfiguration.grantRole(keccak256("MILTON_ROLE"), admin);
+
+    await iporAssetConfiguration.grantRole(
+        keccak256("MILTON_STORAGE_ADMIN_ROLE"),
+        admin
+    );
+    await iporAssetConfiguration.grantRole(
+        keccak256("MILTON_STORAGE_ROLE"),
+        admin
+    );
+
+    await iporAssetConfiguration.grantRole(
+        keccak256("JOSEPH_ADMIN_ROLE"),
+        admin
+    );
+    await iporAssetConfiguration.grantRole(keccak256("JOSEPH_ROLE"), admin);
 
     await iporAssetConfiguration.grantRole(
         keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"),
@@ -183,10 +199,10 @@ async function grandRolesForAssetConfiguration(admin, iporAssetConfiguration) {
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
 
-    let isTestEnvironment = 1;
+    let isMainet = false;
 
     if (_network === "mainnet") {
-        isTestEnvironment = 0;
+        isMainet = true;
     }
 
     let faucetSupply6Decimals = "10000000000000000";
@@ -205,40 +221,30 @@ module.exports = async function (deployer, _network, addresses) {
     let mockedUsdt = null;
     let mockedUsdc = null;
     let mockedDai = null;
-    let milton = null;
-    let itfMilton = null;
-    let joseph = null;
-    let itfJoseph = null;
-    let miltonStorage = null;
-    let miltonFaucet = null;
+    let miltonUsdt = null;
+    let miltonUsdc = null;
+    let miltonDai = null;
+    let miltonStorageUsdt = null;
+    let miltonStorageUsdc = null;
+    let miltonStorageDai = null;
+    let itfMiltonUsdt = null;
+    let itfMiltonUsdc = null;
+    let itfMiltonDai = null;
+    let josephUsdt = null;
+    let josephUsdc = null;
+    let josephDai = null;
+    let itfJosephUsdt = null;
+    let itfJosephUsdc = null;
+    let itfJosephDai = null;
     let iporAssetConfigurationUsdt = null;
     let iporAssetConfigurationUsdc = null;
     let iporAssetConfigurationDai = null;
+
+    let miltonFaucet = null;
     let iporConfiguration = null;
-
-    await deployer.deploy(IporMath);
-
-    await deployer.deploy(IporLogic);
-
-    await deployer.link(IporLogic, Warren);
-    await deployer.link(IporLogic, WarrenStorage);
-
-    await deployer.deploy(IporSwapLogic);
-
-    await deployer.deploy(SoapIndicatorLogic);
-
-    
-
-    await deployer.link(SoapIndicatorLogic, MiltonStorage);
-    await deployer.link(IporSwapLogic, MiltonStorage);
-    
-    await deployer.link(IporSwapLogic, Milton);
 
     await deployer.deploy(IporConfiguration);
     iporConfiguration = await IporConfiguration.deployed();
-
-    await deployer.deploy(WarrenStorage, iporConfiguration.address);
-    let warrenStorage = await WarrenStorage.deployed();
 
     await deployer.deploy(Warren, iporConfiguration.address);
     let warren = await Warren.deployed();
@@ -248,13 +254,11 @@ module.exports = async function (deployer, _network, addresses) {
         iporConfiguration.address
     );
 
-    // await deployer.link(IporMath, WarrenFrontendDataProvider);
     await deployer.deploy(
         WarrenFrontendDataProvider,
         iporConfiguration.address
     );
 
-    // await deployer.link(IporMath, MiltonLiquidityPoolUtilizationModel);
     await deployer.deploy(
         MiltonLiquidityPoolUtilizationModel,
         iporConfiguration.address
@@ -299,18 +303,6 @@ module.exports = async function (deployer, _network, addresses) {
     );
     await iporConfiguration.grantRole(keccak256("WARREN_STORAGE_ROLE"), admin);
 
-    await iporConfiguration.grantRole(keccak256("MILTON_ADMIN_ROLE"), admin);
-    await iporConfiguration.grantRole(keccak256("MILTON_ROLE"), admin);
-
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_STORAGE_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(keccak256("MILTON_STORAGE_ROLE"), admin);
-
-    await iporConfiguration.grantRole(keccak256("JOSEPH_ADMIN_ROLE"), admin);
-    await iporConfiguration.grantRole(keccak256("JOSEPH_ROLE"), admin);
-
     await iporConfiguration.grantRole(
         keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
         admin
@@ -354,6 +346,9 @@ module.exports = async function (deployer, _network, addresses) {
         _network === "docker" ||
         _network === "soliditycoverage"
     ) {
+        //#####################################################################
+        // CONFIG USDT - BEGIN
+        //#####################################################################
         await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
         mockedUsdt = await UsdtMockedToken.deployed();
         await iporConfiguration.addAsset(mockedUsdt.address);
@@ -371,6 +366,29 @@ module.exports = async function (deployer, _network, addresses) {
             mockedUsdt.address,
             await iporAssetConfigurationUsdt.address
         );
+        await deployer.deploy(
+            MiltonStorageUsdt,
+            mockedUsdt.address,
+            iporConfiguration.address
+        );
+        miltonStorageUsdt = await MiltonStorageUsdt.deployed();
+
+        await grandRolesForAssetConfiguration(
+            admin,
+            iporAssetConfigurationUsdt
+        );
+
+        await iporAssetConfigurationUsdt.setMiltonStorage(
+            miltonStorageUsdt.address
+        );
+
+        //#####################################################################
+        // CONFIG USDT - END
+        //#####################################################################
+
+        //#####################################################################
+        // CONFIG USDC - BEGIN
+        //#####################################################################
 
         await deployer.deploy(UsdcMockedToken, totalSupply6Decimals, 6);
         mockedUsdc = await UsdcMockedToken.deployed();
@@ -389,6 +407,29 @@ module.exports = async function (deployer, _network, addresses) {
             mockedUsdc.address,
             await iporAssetConfigurationUsdc.address
         );
+        await deployer.deploy(
+            MiltonStorageUsdc,
+            mockedUsdc.address,
+            iporConfiguration.address
+        );
+        miltonStorageUsdc = await MiltonStorageUsdc.deployed();
+
+        await grandRolesForAssetConfiguration(
+            admin,
+            iporAssetConfigurationUsdc
+        );
+
+        await iporAssetConfigurationUsdc.setMiltonStorage(
+            miltonStorageUsdc.address
+        );
+
+        //#####################################################################
+        // CONFIG USDC - END
+        //#####################################################################
+
+        //#####################################################################
+        // CONFIG DAI - BEGIN
+        //#####################################################################
 
         await deployer.deploy(DaiMockedToken, totalSupply18Decimals, 18);
         mockedDai = await DaiMockedToken.deployed();
@@ -406,21 +447,21 @@ module.exports = async function (deployer, _network, addresses) {
             mockedDai.address,
             await iporAssetConfigurationDai.address
         );
+        await deployer.deploy(
+            MiltonStorageDai,
+            mockedDai.address,
+            iporConfiguration.address
+        );
+        miltonStorageDai = await MiltonStorageDai.deployed();
+
+        await grandRolesForAssetConfiguration(admin, iporAssetConfigurationDai);
+
+        await iporAssetConfigurationDai.setMiltonStorage(
+            miltonStorageDai.address
+        );
 
         //#####################################################################
-        //GRANT ROLE IPOR ASSET CONFIGURATION  - BEGIN
-        //#####################################################################
-        await grandRolesForAssetConfiguration(
-            admin,
-            iporAssetConfigurationUsdt
-        );
-        await grandRolesForAssetConfiguration(
-            admin,
-            iporAssetConfigurationUsdc
-        );
-        await grandRolesForAssetConfiguration(admin, iporAssetConfigurationDai);
-        //#####################################################################
-        //GRANT ROLE IPOR ASSET CONFIGURATION - END
+        // CONFIG DAI - END
         //#####################################################################
 
         //#####################################################################
@@ -521,155 +562,255 @@ module.exports = async function (deployer, _network, addresses) {
             iporConfiguration.address
         );
     } else {
-        if (_network !== "test") {
-            //PUBLIC TEST NETWORK AND PRODUCTION
+        //PUBLIC TEST NETWORK AND PRODUCTION
 
-            console.log("NETWORK: " + _network);
+        console.log("NETWORK: " + _network);
 
-            await iporConfiguration.addAsset(
-                process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS
-            );
-            await iporConfiguration.addAsset(
-                process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS
-            );
-            await iporConfiguration.addAsset(
-                process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS
-            );
-            await miltonStorage.addAsset(
-                process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS
-            );
-            await miltonStorage.addAsset(
-                process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS
-            );
-            await miltonStorage.addAsset(
-                process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS
-            );
+        await iporConfiguration.addAsset(
+            process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS
+        );
+        await iporConfiguration.addAsset(
+            process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS
+        );
+        await iporConfiguration.addAsset(
+            process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS
+        );
 
-            await deployer.deploy(
-                IpToken,
-                process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS,
-                "IP USDT",
-                "ipUSDT"
-            );
-            ipUsdtToken = await IpToken.deployed();
+        await deployer.deploy(
+            IpToken,
+            process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS,
+            "IP USDT",
+            "ipUSDT"
+        );
+        ipUsdtToken = await IpToken.deployed();
 
-            await deployer.deploy(
-                IpToken,
-                process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS,
-                "IP USDC",
-                "ipUSDC"
-            );
-            ipUsdcToken = await IpToken.deployed();
+        await deployer.deploy(
+            IpToken,
+            process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS,
+            "IP USDC",
+            "ipUSDC"
+        );
+        ipUsdcToken = await IpToken.deployed();
 
-            await deployer.deploy(
-                IpToken,
-                process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS,
-                "IP DAI",
-                "ipDAI"
-            );
-            ipDaiToken = await IpToken.deployed();
+        await deployer.deploy(
+            IpToken,
+            process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS,
+            "IP DAI",
+            "ipDAI"
+        );
+        ipDaiToken = await IpToken.deployed();
 
-            await deployer.deploy(
-                IporAssetConfiguration,
-                process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS,
-                ipUsdtToken.address
-            );
-            iporAssetConfigurationUsdt =
-                await IporAssetConfiguration.deployed();
+        await deployer.deploy(
+            IporAssetConfiguration,
+            process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS,
+            ipUsdtToken.address
+        );
+        iporAssetConfigurationUsdt = await IporAssetConfiguration.deployed();
 
-            await deployer.deploy(
-                IporAssetConfiguration,
-                process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS,
-                ipUsdcToken.address
-            );
-            iporAssetConfigurationUsdc =
-                await IporAssetConfiguration.deployed();
+        await deployer.deploy(
+            IporAssetConfiguration,
+            process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS,
+            ipUsdcToken.address
+        );
+        iporAssetConfigurationUsdc = await IporAssetConfiguration.deployed();
 
-            await deployer.deploy(
-                IporAssetConfiguration,
-                process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS,
-                ipDaiToken.address
-            );
-            iporAssetConfigurationDai = await IporAssetConfiguration.deployed();
+        await deployer.deploy(
+            IporAssetConfiguration,
+            process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS,
+            ipDaiToken.address
+        );
+        iporAssetConfigurationDai = await IporAssetConfiguration.deployed();
 
-            await iporConfiguration.setIporAssetConfiguration(
-                process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS,
-                await IporAssetConfigurationUsdt.address
-            );
-            await iporConfiguration.setIporAssetConfiguration(
-                process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS,
-                await IporAssetConfigurationUsdc.address
-            );
-            await iporConfiguration.setIporAssetConfiguration(
-                process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS,
-                await IporAssetConfigurationDai.address
-            );
-        }
+        await iporConfiguration.setIporAssetConfiguration(
+            process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS,
+            await iporAssetConfigurationUsdt.address
+        );
+        await deployer.deploy(
+            MiltonStorageUsdt,
+            process.env.PUB_NETWORK_TOKEN_USDT_ADDRESS,
+            iporConfiguration.address
+        );
+        miltonStorageUsdt = await MiltonStorageUsdt.deployed();
+        await iporAssetConfigurationUsdt.setMiltonStorage(
+            miltonStorageUsdt.address
+        );
+
+        await iporConfiguration.setIporAssetConfiguration(
+            process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS,
+            await iporAssetConfigurationUsdc.address
+        );
+        // await deployer.deploy(
+        //     MiltonStorageUsdc,
+        //     process.env.PUB_NETWORK_TOKEN_USDC_ADDRESS,
+        //     iporConfiguration.address
+        // );
+        // miltonStorageUsdc = await MiltonStorageUsdc.deployed();
+        // await iporAssetConfigurationUsdc.setMiltonStorage(
+        //     miltonStorageUsdc.address
+        // );
+
+        await iporConfiguration.setIporAssetConfiguration(
+            process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS,
+            await iporAssetConfigurationDai.address
+        );
+        await deployer.deploy(
+            MiltonStorageDai,
+            process.env.PUB_NETWORK_TOKEN_DAI_ADDRESS,
+            iporConfiguration.address
+        );
+        miltonStorageDai = await MiltonStorageDai.deployed();
+        await iporAssetConfigurationDai.setMiltonStorage(
+            miltonStorageDai.address
+        );
     }
 
-    if (_network !== "test") {
-        await deployer.deploy(Milton, iporConfiguration.address);
-        milton = await Milton.deployed();
+    //initial addresses setup
+    await iporConfiguration.setWarren(warren.address);
+    // await iporConfiguration.setWarrenStorage(warrenStorage.address);
 
-        await deployer.deploy(Joseph, iporConfiguration.address);
-        joseph = await Joseph.deployed();
+    if (isMainet === false) {
+        await deployer.deploy(ItfWarren, iporConfiguration.address);
+        let itfWarren = await ItfWarren.deployed();
+        // await warrenStorage.addUpdater(itfWarren.address);
 
-        await deployer.deploy(MiltonStorage, iporConfiguration.address);
-        miltonStorage = await MiltonStorage.deployed();
+        await deployer.deploy(
+            MiltonUsdt,
+            mockedUsdt.address,
+            iporConfiguration.address
+        );
+        miltonUsdt = await MiltonUsdt.deployed();
 
-        //initial addresses setup
-        await iporConfiguration.setWarren(warren.address);
-        await iporConfiguration.setWarrenStorage(warrenStorage.address);
-        await iporConfiguration.setMiltonStorage(miltonStorage.address);
+        await deployer.deploy(
+            MiltonUsdc,
+            mockedUsdc.address,
+            iporConfiguration.address
+        );
+        miltonUsdc = await MiltonUsdc.deployed();
 
-        if (isTestEnvironment === 1) {
-            //ItfWarren
-            // await deployer.link(IporMath, ItfWarren);
-            await deployer.link(IporLogic, ItfWarren);
-            await deployer.deploy(ItfWarren, iporConfiguration.address);
-            let itfWarren = await ItfWarren.deployed();
-            await warrenStorage.addUpdater(itfWarren.address);
+        await deployer.deploy(
+            MiltonDai,
+            mockedDai.address,
+            iporConfiguration.address
+        );
+        miltonDai = await MiltonDai.deployed();
 
-            //ItfMilton
-            // await deployer.link(IporMath, ItfMilton);
-            await deployer.link(IporSwapLogic, ItfMilton);
-            await deployer.deploy(ItfMilton, iporConfiguration.address);
-            itfMilton = await ItfMilton.deployed();
+        await deployer.deploy(
+            ItfMiltonUsdt,
+            mockedUsdt.address,
+            iporConfiguration.address
+        );
+        itfMiltonUsdt = await ItfMiltonUsdt.deployed();
 
-            //ItfJoseph
-            // await deployer.link(IporMath, ItfJoseph);
-            await deployer.deploy(ItfJoseph, iporConfiguration.address);
-            itfJoseph = await ItfJoseph.deployed();
+        await deployer.deploy(
+            ItfMiltonUsdc,
+            mockedUsdc.address,
+            iporConfiguration.address
+        );
+        itfMiltonUsdc = await ItfMiltonUsdc.deployed();
 
-            if (
-                _network === "develop" ||
-                _network === "develop2" ||
-                _network === "dev" ||
-                _network === "docker" ||
-                _network === "soliditycoverage"
-            ) {
-                if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
-                    //For IPOR Test Framework purposes
-                    await iporConfiguration.setMilton(itfMilton.address);
-                } else {
-                    //Web application, IPOR Dev Tool
-                    await iporConfiguration.setMilton(milton.address);
-                }
+        await deployer.deploy(
+            ItfMiltonDai,
+            mockedDai.address,
+            iporConfiguration.address
+        );
+        itfMiltonDai = await ItfMiltonDai.deployed();
 
-                if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
-                    //For IPOR Test Framework purposes
-                    await iporConfiguration.setJoseph(itfJoseph.address);
-                } else {
-                    //Web application, IPOR Dev Tool
-                    await iporConfiguration.setJoseph(joseph.address);
-                }
+        await deployer.deploy(
+            JosephUsdt,
+            mockedUsdt.address,
+            iporConfiguration.address
+        );
+        josephUsdt = await JosephUsdt.deployed();
+
+        await deployer.deploy(
+            JosephUsdc,
+            mockedUsdc.address,
+            iporConfiguration.address
+        );
+        josephUsdc = await JosephUsdc.deployed();
+
+        await deployer.deploy(
+            JosephDai,
+            mockedDai.address,
+            iporConfiguration.address
+        );
+        josephDai = await JosephDai.deployed();
+
+        await deployer.deploy(
+            ItfJosephUsdt,
+            mockedUsdt.address,
+            iporConfiguration.address
+        );
+        itfJosephUsdt = await ItfJosephUsdt.deployed();
+
+        await deployer.deploy(
+            ItfJosephUsdc,
+            mockedUsdc.address,
+            iporConfiguration.address
+        );
+        itfJosephUsdc = await ItfJosephUsdc.deployed();
+
+        await deployer.deploy(
+            ItfJosephDai,
+            mockedDai.address,
+            iporConfiguration.address
+        );
+        itfJosephDai = await ItfJosephDai.deployed();
+
+        if (
+            _network === "develop" ||
+            _network === "develop2" ||
+            _network === "dev" ||
+            _network === "docker" ||
+            _network === "soliditycoverage"
+        ) {
+            if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
+                //For IPOR Test Framework purposes
+                await iporAssetConfigurationUsdt.setMilton(
+                    itfMiltonUsdt.address
+                );
+                await iporAssetConfigurationUsdc.setMilton(
+                    itfMiltonUsdc.address
+                );
+                await iporAssetConfigurationDai.setMilton(itfMiltonDai.address);
             } else {
-                await iporConfiguration.setMilton(milton.address);
-                await iporConfiguration.setJoseph(joseph.address);
+                //Web application, IPOR Dev Tool
+                await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
+                await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
+                await iporAssetConfigurationDai.setMilton(miltonDai.address);
+            }
+
+            if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
+                //For IPOR Test Framework purposes
+                await iporAssetConfigurationUsdt.setJoseph(
+                    itfJosephUsdt.address
+                );
+                await iporAssetConfigurationUsdc.setJoseph(
+                    itfJosephUsdc.address
+                );
+                await iporAssetConfigurationDai.setJoseph(itfJosephDai.address);
+            } else {
+                //Web application, IPOR Dev Tool
+                await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
+                await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
+                await iporAssetConfigurationDai.setJoseph(josephDai.address);
             }
         } else {
-            await iporConfiguration.setMilton(milton.address);
+            await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
+            await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
+            await iporAssetConfigurationDai.setMilton(miltonDai.address);
+
+            await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
+            await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
+            await iporAssetConfigurationDai.setJoseph(josephDai.address);
         }
+    } else {
+        await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
+        await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
+        await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
+        await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
+        await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
+        await iporAssetConfigurationDai.setJoseph(josephDai.address);
     }
 
     //Prepare tokens for initial accounts...
@@ -697,77 +838,74 @@ module.exports = async function (deployer, _network, addresses) {
             console.log(`Account: ${addresses[i]} - tokens transferred`);
 
             //Milton has rights to spend money on behalf of user
-            mockedUsdt.approve(milton.address, totalSupply6Decimals, {
+            mockedUsdt.approve(miltonUsdt.address, totalSupply6Decimals, {
                 from: addresses[i],
             });
-            mockedUsdc.approve(milton.address, totalSupply6Decimals, {
+            mockedUsdc.approve(miltonUsdc.address, totalSupply6Decimals, {
                 from: addresses[i],
             });
-            mockedDai.approve(milton.address, totalSupply18Decimals, {
-                from: addresses[i],
-            });
-
-            mockedUsdt.approve(joseph.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedUsdc.approve(joseph.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedDai.approve(joseph.address, totalSupply18Decimals, {
+            mockedDai.approve(miltonDai.address, totalSupply18Decimals, {
                 from: addresses[i],
             });
 
-            console.log(
-                `Account: ${addresses[i]} approve spender Milton ${milton.address} to spend tokens on behalf of user.`
-            );
-            console.log(
-                `Account: ${addresses[i]} approve spender Joseph ${joseph.address} to spend tokens on behalf of user.`
-            );
+            mockedUsdt.approve(josephUsdt.address, totalSupply6Decimals, {
+                from: addresses[i],
+            });
+            mockedUsdc.approve(josephUsdc.address, totalSupply6Decimals, {
+                from: addresses[i],
+            });
+            mockedDai.approve(josephDai.address, totalSupply18Decimals, {
+                from: addresses[i],
+            });
 
-            if (isTestEnvironment === 1) {
-                mockedUsdt.approve(itfMilton.address, totalSupply6Decimals, {
-                    from: addresses[i],
-                });
-                mockedUsdc.approve(itfMilton.address, totalSupply6Decimals, {
-                    from: addresses[i],
-                });
-                mockedDai.approve(itfMilton.address, totalSupply18Decimals, {
-                    from: addresses[i],
-                });
-
-                mockedUsdt.approve(itfJoseph.address, totalSupply6Decimals, {
-                    from: addresses[i],
-                });
-                mockedUsdc.approve(itfJoseph.address, totalSupply6Decimals, {
-                    from: addresses[i],
-                });
-                mockedDai.approve(itfJoseph.address, totalSupply18Decimals, {
-                    from: addresses[i],
-                });
-
-                console.log(
-                    `Account: ${addresses[i]} approve spender ItfMilton ${itfMilton.address} to spend tokens on behalf of user.`
+            if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
+                mockedUsdt.approve(
+                    itfMiltonUsdt.address,
+                    totalSupply6Decimals,
+                    {
+                        from: addresses[i],
+                    }
                 );
-                console.log(
-                    `Account: ${addresses[i]} approve spender ItfJoseph ${itfJoseph.address} to spend tokens on behalf of user.`
+                mockedUsdc.approve(
+                    itfMiltonUsdc.address,
+                    totalSupply6Decimals,
+                    {
+                        from: addresses[i],
+                    }
                 );
+                mockedDai.approve(itfMiltonDai.address, totalSupply18Decimals, {
+                    from: addresses[i],
+                });
+            }
+
+            if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
+                mockedUsdt.approve(
+                    itfJosephUsdt.address,
+                    totalSupply6Decimals,
+                    {
+                        from: addresses[i],
+                    }
+                );
+                mockedUsdc.approve(
+                    itfJosephUsdc.address,
+                    totalSupply6Decimals,
+                    {
+                        from: addresses[i],
+                    }
+                );
+                mockedDai.approve(itfJosephDai.address, totalSupply18Decimals, {
+                    from: addresses[i],
+                });
             }
         }
 
-        await milton.authorizeJoseph(mockedUsdt.address);
-        await milton.authorizeJoseph(mockedUsdc.address);
-        await milton.authorizeJoseph(mockedDai.address);
+        await miltonUsdt.authorizeJoseph();
+        await miltonUsdc.authorizeJoseph();
+        await miltonDai.authorizeJoseph();
 
-        await itfMilton.authorizeJoseph(mockedUsdt.address);
-        await itfMilton.authorizeJoseph(mockedUsdc.address);
-        await itfMilton.authorizeJoseph(mockedDai.address);
-
-        await miltonStorage.addAsset(mockedDai.address);
-        await miltonStorage.addAsset(mockedUsdc.address);
-        await miltonStorage.addAsset(mockedUsdt.address);
-
-        await warrenStorage.addUpdater(admin);
-        await warrenStorage.addUpdater(warren.address);
+        await itfMiltonUsdt.authorizeJoseph();
+        await itfMiltonUsdc.authorizeJoseph();
+        await itfMiltonDai.authorizeJoseph();
 
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Prepare initial IPOR migration...");
