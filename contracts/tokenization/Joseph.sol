@@ -53,6 +53,19 @@ contract Joseph is Ownable, IJoseph {
 		
     }
 
+	function decimals() external view returns (uint8) {
+		return _decimals;
+	}
+	function asset() external view returns (address) {
+		return _asset;
+	}
+	function getIporConfiguration() external view returns(address) {
+		return address(_iporConfiguration);
+	}
+	function getIporAssetConfiguration() external view returns(address) {
+		return address(_iporAssetConfiguration);
+	}
+
     function provideLiquidity(uint256 liquidityAmount)
         external
         override

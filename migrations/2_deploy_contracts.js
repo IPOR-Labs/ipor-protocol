@@ -354,7 +354,7 @@ module.exports = async function (deployer, _network, addresses) {
         await iporConfiguration.addAsset(mockedUsdt.address);
         await deployer.deploy(IpToken, mockedUsdt.address, "IP USDT", "ipUSDT");
         ipUsdtToken = await IpToken.deployed();
-        await ipUsdtToken.initialize(iporConfiguration.address);
+
         await deployer.deploy(
             IporAssetConfigurationUsdt,
             mockedUsdt.address,
@@ -362,10 +362,14 @@ module.exports = async function (deployer, _network, addresses) {
         );
         iporAssetConfigurationUsdt =
             await IporAssetConfigurationUsdt.deployed();
+
+        await ipUsdtToken.initialize(iporAssetConfigurationUsdt.address);
+
         await iporConfiguration.setIporAssetConfiguration(
             mockedUsdt.address,
             await iporAssetConfigurationUsdt.address
         );
+
         await deployer.deploy(
             MiltonStorageUsdt,
             mockedUsdt.address,
@@ -395,14 +399,18 @@ module.exports = async function (deployer, _network, addresses) {
         await iporConfiguration.addAsset(mockedUsdc.address);
         await deployer.deploy(IpToken, mockedUsdc.address, "IP USDC", "ipUSDC");
         ipUsdcToken = await IpToken.deployed();
-        await ipUsdcToken.initialize(iporConfiguration.address);
+
         await deployer.deploy(
             IporAssetConfigurationUsdc,
             mockedUsdc.address,
             ipUsdcToken.address
         );
+
         iporAssetConfigurationUsdc =
             await IporAssetConfigurationUsdc.deployed();
+
+        await ipUsdcToken.initialize(iporAssetConfigurationUsdc.address);
+
         await iporConfiguration.setIporAssetConfiguration(
             mockedUsdc.address,
             await iporAssetConfigurationUsdc.address
@@ -436,13 +444,16 @@ module.exports = async function (deployer, _network, addresses) {
         await iporConfiguration.addAsset(mockedDai.address);
         await deployer.deploy(IpToken, mockedDai.address, "IP DAI", "ipDAI");
         ipDaiToken = await IpToken.deployed();
-        await ipDaiToken.initialize(iporConfiguration.address);
+
         await deployer.deploy(
             IporAssetConfigurationDai,
             mockedDai.address,
             ipDaiToken.address
         );
         iporAssetConfigurationDai = await IporAssetConfigurationDai.deployed();
+
+        await ipDaiToken.initialize(iporAssetConfigurationDai.address);
+
         await iporConfiguration.setIporAssetConfiguration(
             mockedDai.address,
             await iporAssetConfigurationDai.address
@@ -666,12 +677,10 @@ module.exports = async function (deployer, _network, addresses) {
 
     //initial addresses setup
     await iporConfiguration.setWarren(warren.address);
-    // await iporConfiguration.setWarrenStorage(warrenStorage.address);
 
     if (isMainet === false) {
         await deployer.deploy(ItfWarren, iporConfiguration.address);
         let itfWarren = await ItfWarren.deployed();
-        // await warrenStorage.addUpdater(itfWarren.address);
 
         await deployer.deploy(
             MiltonUsdt,
@@ -806,8 +815,8 @@ module.exports = async function (deployer, _network, addresses) {
         }
     } else {
         await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
-        await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
-        await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
+        await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
+        await iporAssetConfigurationDai.setMilton(miltonDai.address);
         await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
         await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
         await iporAssetConfigurationDai.setJoseph(josephDai.address);

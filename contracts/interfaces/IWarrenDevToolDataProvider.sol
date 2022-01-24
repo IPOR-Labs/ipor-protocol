@@ -11,6 +11,7 @@ interface IWarrenDevToolDataProvider {
         uint256 ibtPrice;
         //@notice exponential moving average
         uint256 exponentialMovingAverage;
+		uint256 exponentialWeightedMovingVariance;
         //@notice block timestamp
         uint256 blockTimestamp;
     }

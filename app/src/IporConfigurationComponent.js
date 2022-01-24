@@ -101,6 +101,10 @@ export default ({ drizzle, drizzleState }) => (
             </div>
         </div>
         <hr />
+		<div className="row">
+            <div className="col-md-2">IporConfiguration</div>
+            <div className="col-md-10">{drizzle.contracts.IporConfiguration.address}</div>
+        </div>
         <div className="row">
             <div className="col-md-2">Warren</div>
             <div className="col-md-10">{drizzle.contracts.Warren.address}</div>
@@ -112,96 +116,96 @@ export default ({ drizzle, drizzleState }) => (
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDT Milton</div>
+            <div className="col-md-2">MiltonUsdt</div>
             <div className="col-md-10">
                 {drizzle.contracts.MiltonUsdt.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDT ItfMilton</div>
+            <div className="col-md-2">ItfMiltonUsdt</div>
             <div className="col-md-10">
                 {drizzle.contracts.ItfMiltonUsdt.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDT MiltonStorage</div>
+            <div className="col-md-2">MiltonStorageUsdt</div>
             <div className="col-md-10">
                 {drizzle.contracts.MiltonStorageUsdt.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDT Joseph</div>
+            <div className="col-md-2">JosephUsdt</div>
             <div className="col-md-10">
                 {drizzle.contracts.JosephUsdt.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDT ItfJoseph</div>
+            <div className="col-md-2">ItfJosephUsdt</div>
             <div className="col-md-10">
                 {drizzle.contracts.ItfJosephUsdt.address}
             </div>
         </div>
 
         <div className="row">
-            <div className="col-md-2">USDC Milton</div>
+            <div className="col-md-2">MiltonUsdc</div>
             <div className="col-md-10">
                 {drizzle.contracts.MiltonUsdc.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDC ItfMilton </div>
+            <div className="col-md-2">ItfMiltonUsdc</div>
             <div className="col-md-10">
                 {drizzle.contracts.ItfMiltonUsdc.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDC MiltonStorage</div>
+            <div className="col-md-2">MiltonStorageUsdc</div>
             <div className="col-md-10">
                 {drizzle.contracts.MiltonStorageUsdc.address}
             </div>
         </div>
 
         <div className="row">
-            <div className="col-md-2">USDC Joseph</div>
+            <div className="col-md-2">JosephUsdc</div>
             <div className="col-md-10">
                 {drizzle.contracts.JosephUsdc.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">USDC ItfJoseph</div>
+            <div className="col-md-2">ItfJosephUsdc</div>
             <div className="col-md-10">
                 {drizzle.contracts.ItfJosephUsdc.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">DAI Milton</div>
+            <div className="col-md-2">MiltonDai</div>
             <div className="col-md-10">
                 {drizzle.contracts.MiltonDai.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">DAI ItfMilton</div>
+            <div className="col-md-2">ItfMiltonDai</div>
             <div className="col-md-10">
                 {drizzle.contracts.ItfMiltonDai.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">DAI MiltonStorage</div>
+            <div className="col-md-2">MiltonStorageDai</div>
             <div className="col-md-10">
                 {drizzle.contracts.MiltonStorageDai.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">DAI Joseph</div>
+            <div className="col-md-2">JosephDai</div>
             <div className="col-md-10">
                 {drizzle.contracts.JosephDai.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">DAI ItfJoseph </div>
+            <div className="col-md-2">ItfJosephDai</div>
             <div className="col-md-10">
                 {drizzle.contracts.ItfJosephDai.address}
-            </div>
+            </div>	
         </div>
         <hr />
         <div className="row">

@@ -9,6 +9,7 @@ import MyPositions from "./MyPositions";
 import IporAssetConfigurationComponent from "./IporAssetConfigurationComponent";
 import MiltonSpreadConfigurationComponent from "./MiltonSpreadConfigurationComponent";
 import IporConfigurationComponent from "./IporConfigurationComponent";
+import ProtocolOverviewComponent from "./ProtocolOverviewComponent";
 import FaucetComponent from "./FaucetComponent";
 import FrontendComponent from "./FrontendComponent";
 
@@ -43,8 +44,31 @@ export default ({ drizzle, drizzleState }) => {
                     precision={3}
                 />
             </div>
-
+            <div>
+                <table className="table" align="center">
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">USDT</th>
+                        <th scope="col">USDC</th>
+                        <th scope="col">DAI</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>ERC20 Token Address</strong>
+                        </td>
+                        <td>{drizzle.contracts.UsdtMockedToken.address}</td>
+                        <td>{drizzle.contracts.UsdcMockedToken.address}</td>
+                        <td>{drizzle.contracts.DaiMockedToken.address}</td>
+                    </tr>
+                </table>
+            </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
+                <Tab eventKey="protocolOverview" title="Protocol Overview">
+                    <ProtocolOverviewComponent
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
                 <Tab eventKey="iporIndex" title="Warren Oracle">
                     <IporIndexComponent
                         drizzle={drizzle}

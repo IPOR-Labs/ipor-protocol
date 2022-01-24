@@ -42,30 +42,29 @@ export default (derivatives) =>
                                     <small>{derivative.notionalAmount}</small>
                                 </td>
                                 <td>
-                                    {derivative.fee.liquidationDepositAmount /
+                                    {derivative.liquidationDepositAmount /
                                         1000000000000000000}
                                     <br />
                                     <small>
                                         {
-                                            derivative.fee
-                                                .liquidationDepositAmount
+                                            derivative.liquidationDepositAmount
                                         }
                                     </small>
                                 </td>
                                 <td>
-                                    {derivative.indicator.ibtQuantity /
+                                    {derivative.ibtQuantity /
                                         1000000000000000000}
                                     <br />
                                     <small>
-                                        {derivative.indicator.ibtQuantity}
+                                        {derivative.ibtQuantity}
                                     </small>
                                 </td>
                                 <td>
-                                    {derivative.indicator.fixedInterestRate /
+                                    {derivative.fixedInterestRate /
                                         1000000000000000000}
                                     <br />
                                     <small>
-                                        {derivative.indicator.fixedInterestRate}
+                                        {derivative.fixedInterestRate}
                                     </small>
                                 </td>
                                 <td>{toDate(derivative.startingTimestamp)}</td>

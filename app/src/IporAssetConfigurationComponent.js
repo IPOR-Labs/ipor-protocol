@@ -59,6 +59,35 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
+                        <strong>IP Token Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdt"
+                            method="getIpToken"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdc"
+                            method="getIpToken"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationDai"
+                            method="getIpToken"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <strong>Milton</strong>
                     </td>
                     <td>

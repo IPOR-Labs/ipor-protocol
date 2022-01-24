@@ -11,6 +11,7 @@ export default (indexes) =>
                     <th scope="col">IPOR Value</th>
                     <th scope="col">Interest Bearing Token Price</th>
                     <th scope="col">Exponential Moving Average</th>
+					<th scope="col">Exponential Weighted Moving Variance</th>
                     <th scope="col">Block Timestamp</th>
                 </tr>
             </thead>
@@ -34,6 +35,12 @@ export default (indexes) =>
                                 1000000000000000000}
                             <br />
                             <small>{index.exponentialMovingAverage}</small>
+                        </td>
+						<td>
+                            {index.exponentialWeightedMovingVariance /
+                                1000000000000000000}
+                            <br />
+                            <small>{index.exponentialWeightedMovingVariance}</small>
                         </td>
                         <td>{toDate(index.blockTimestamp)}</td>
                     </tr>

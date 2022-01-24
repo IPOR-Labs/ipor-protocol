@@ -25,7 +25,7 @@ contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
                 uint256 value,
                 uint256 ibtPrice,
                 uint256 exponentialMovingAverage,
-                ,
+                uint256 exponentialWeightedMovingVariance,
                 uint256 date
             ) = warren.getIndex(assets[i]);
 
@@ -34,6 +34,7 @@ contract WarrenDevToolDataProvider is IWarrenDevToolDataProvider {
                 value,
                 ibtPrice,
                 exponentialMovingAverage,
+				exponentialWeightedMovingVariance,
                 date
             );
         }
