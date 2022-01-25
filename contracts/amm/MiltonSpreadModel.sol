@@ -20,16 +20,6 @@ contract MiltonSpreadModel is
     MiltonSpreadConfiguration,
     IMiltonSpreadModel
 {
-    IIporConfiguration internal _iporConfiguration;
-
-    constructor(address iporConfiguration) {
-        require(
-            address(iporConfiguration) != address(0),
-            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );
-        _iporConfiguration = IIporConfiguration(iporConfiguration);
-    }
-
     function calculatePartialSpreadPayFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,

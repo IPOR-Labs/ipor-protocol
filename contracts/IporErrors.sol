@@ -168,7 +168,7 @@ library IporErrors {
 	string public constant MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO =
         "IPOR_49";
 
-    //@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
+    //@notice ADMIN_ROLE can be revoked only by different account with ADMIN_ROLE
     string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_50";
 
     //TODO: add test for this code

@@ -5,6 +5,8 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {    
 
+	function getLastSwapId() external view returns (uint256);
+
     function getBalance()
         external
         view
@@ -15,7 +17,7 @@ interface IMiltonStorage {
         view
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
 
-    function getLastSwapId() external view returns (uint256);
+    
 
     function addLiquidity(uint256 liquidityAmount) external;
 
@@ -35,20 +37,20 @@ interface IMiltonStorage {
     ) external returns (uint256);
 
     function updateStorageWhenCloseSwapPayFixed(
-        address user,
+        address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp
     ) external;
 
     function updateStorageWhenCloseSwapReceiveFixed(
-        address user,
+        address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp
     ) external;
 
-    function getSwapPayFixedItem(uint256 swapId)
+    function getSwapPayFixed(uint256 swapId)
         external
         view
         returns (DataTypes.IporSwapMemory memory);
@@ -63,27 +65,27 @@ interface IMiltonStorage {
         view
         returns (uint256);
 
-    function getSwapReceiveFixedItem(uint256 swapId)
+    function getSwapReceiveFixed(uint256 swapId)
         external
         view
         returns (DataTypes.IporSwapMemory memory);
     
-    function getSwapsPayFixed(address user)
+    function getSwapsPayFixed(address account)
         external
         view
         returns (DataTypes.IporSwapMemory[] memory);
 
-    function getSwapsReceiveFixed(address user)
+    function getSwapsReceiveFixed(address account)
         external
         view
         returns (DataTypes.IporSwapMemory[] memory);
 
-    function getUserSwapPayFixedIds(address userAddress)
+    function getSwapPayFixedIds(address account)
         external
         view
         returns (uint128[] memory);
 
-    function getUserSwapReceiveFixedIds(address userAddress)
+    function getSwapReceiveFixedIds(address account)
         external
         view
         returns (uint128[] memory);

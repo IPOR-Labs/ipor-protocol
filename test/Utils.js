@@ -32,7 +32,7 @@ module.exports.assertError = async (promise, error) => {
 module.exports.getLibraries = async () => {
     const IporSwapLogic = await ethers.getContractFactory("IporSwapLogic");
     const iporSwapLogic = await IporSwapLogic.deploy();
-    await iporSwapLogic.deployed();    
+    await iporSwapLogic.deployed();
 
     const SoapIndicatorLogic = await ethers.getContractFactory(
         "SoapIndicatorLogic"
@@ -216,9 +216,7 @@ module.exports.prepareData = async (libraries, accounts) => {
         "MockMiltonSpreadModel"
     );
 
-    miltonSpread = await MockMiltonSpreadModel.deploy(
-        iporConfiguration.address
-    );
+    miltonSpread = await MockMiltonSpreadModel.deploy();
     await miltonSpread.deployed();
 
     await iporConfiguration.setMiltonSpreadModel(miltonSpread.address);

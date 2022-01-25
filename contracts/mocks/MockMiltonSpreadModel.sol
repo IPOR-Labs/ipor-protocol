@@ -4,10 +4,6 @@ pragma solidity 0.8.9;
 import "../amm/MiltonSpreadModel.sol";
 
 contract MockMiltonSpreadModel is MiltonSpreadModel {
-    constructor(address iporConfiguration)
-        MiltonSpreadModel(iporConfiguration)
-    {}
-
     function testCalculateSpreadPayFixed(
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,

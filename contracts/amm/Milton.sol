@@ -770,7 +770,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         //TODO: clarify if needed whole item here??
         DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-            .getSwapPayFixedItem(swapId);
+            .getSwapPayFixed(swapId);
 
         require(
             iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),
@@ -816,7 +816,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         //TODO: clarify it whole item required?
         DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-            .getSwapReceiveFixedItem(swapId);
+            .getSwapReceiveFixed(swapId);
 
         require(
             iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),

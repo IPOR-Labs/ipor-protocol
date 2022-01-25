@@ -19,8 +19,8 @@ contract MockedToken is ERC20 {
         return _customDecimals;
     }
 
-    function setupInitialAmount(address user, uint256 initialAmount) external {
-        _burn(user, balanceOf(user));
-        _mint(user, initialAmount);
+    function setupInitialAmount(address account, uint256 initialAmount) external {
+        _burn(account, balanceOf(account));
+        _mint(account, initialAmount);
     }
 }

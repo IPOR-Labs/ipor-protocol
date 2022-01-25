@@ -10,7 +10,7 @@ abstract contract AccessControlRevoke is AccessControl {
     bytes32 internal constant _ROLES_INFO_ADMIN_ROLE =
         keccak256("ROLES_INFO_ADMIN_ROLE");
     mapping(bytes32 => address[]) private _roleMembers;
-    mapping(address => bytes32[]) private _userRoles;
+    mapping(address => bytes32[]) private _accountRoles;
 
     function revokeRole(bytes32 role, address account)
         public
@@ -39,20 +39,20 @@ abstract contract AccessControlRevoke is AccessControl {
     function _revolkeFromRoleMembers(bytes32 role, address account) private {
         uint8 i = 0;
         address[] memory tempMembers = _roleMembers[role];
-        address[] memory usersWithRole = new address[](tempMembers.length - 1);
+        address[] memory accountsWithRole = new address[](tempMembers.length - 1);
 		uint256 index = 0;
-        for (index; index != usersWithRole.length; index++) {
+        for (index; index != accountsWithRole.length; index++) {
             if (account == tempMembers[index]) {
                 i++;
             }
-            usersWithRole[index] = tempMembers[index + i];
+            accountsWithRole[index] = tempMembers[index + i];
         }
-        _roleMembers[role] = usersWithRole;
+        _roleMembers[role] = accountsWithRole;
     }
 
     function _revolkeFromMemberRoles(bytes32 role, address account) private {
         uint8 i = 0;
-        bytes32[] memory tempRoles = _userRoles[account];
+        bytes32[] memory tempRoles = _accountRoles[account];
         bytes32[] memory rolesWithUser = new bytes32[](tempRoles.length - 1);
 		uint256 index = 0;
         for (index; index != rolesWithUser.length; index++) {
@@ -61,7 +61,7 @@ abstract contract AccessControlRevoke is AccessControl {
             }
             rolesWithUser[index] = tempRoles[index + i];
         }
-        _userRoles[account] = rolesWithUser;
+        _accountRoles[account] = rolesWithUser;
     }
 
     function grantRole(bytes32 role, address account)
@@ -72,7 +72,7 @@ abstract contract AccessControlRevoke is AccessControl {
     {
         if (!hasRole(role, account)) {
             super.grantRole(role, account);
-            _userRoles[account].push(role);
+            _accountRoles[account].push(role);
             _roleMembers[role].push(account);
         }
     }
@@ -84,7 +84,7 @@ abstract contract AccessControlRevoke is AccessControl {
     {
         if (!hasRole(role, account)) {
             super._setupRole(role, account);
-            _userRoles[account].push(role);
+            _accountRoles[account].push(role);
             _roleMembers[role].push(account);
         }
     }
@@ -96,7 +96,7 @@ abstract contract AccessControlRevoke is AccessControl {
         onlyRole(_ROLES_INFO_ROLE)
         returns (bytes32[] memory)
     {
-        return _userRoles[account];
+        return _accountRoles[account];
     }
 
     //TODO: Pete write tests for this

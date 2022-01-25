@@ -47,23 +47,23 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         return _decimals;
     }
 
-    function mint(address user, uint256 amount) external override onlyJoseph {
+    function mint(address account, uint256 amount) external override onlyJoseph {
         require(amount != 0, IporErrors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
-        _mint(user, amount);
-        emit Transfer(address(0), user, amount);
-        emit Mint(user, amount);
+        _mint(account, amount);
+        emit Transfer(address(0), account, amount);
+        emit Mint(account, amount);
     }
 
     function burn(
-        address user,
+        address account,
         address receiverOfUnderlying,
         uint256 amount
     ) external override onlyJoseph {
         require(amount != 0, IporErrors.MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW);
-        _burn(user, amount);
+        _burn(account, amount);
 
-        emit Transfer(user, address(0), amount);
-        emit Burn(user, receiverOfUnderlying, amount);
+        emit Transfer(account, address(0), amount);
+        emit Burn(account, receiverOfUnderlying, amount);
     }
 
     function getUnderlyingAssetAddress()

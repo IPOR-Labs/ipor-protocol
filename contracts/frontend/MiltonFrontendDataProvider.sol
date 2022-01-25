@@ -61,18 +61,18 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         IMiltonStorage miltonStorage = IMiltonStorage(
             assetConfiguration.getMiltonStorage()
         );
-        uint128[] memory userSwapPayFixedIds = miltonStorage
-            .getUserSwapPayFixedIds(msg.sender);
-        uint128[] memory userSwapReceiveFixedIds = miltonStorage
-            .getUserSwapPayFixedIds(msg.sender);
+        uint128[] memory accountSwapPayFixedIds = miltonStorage
+            .getSwapPayFixedIds(msg.sender);
+        uint128[] memory accountSwapReceiveFixedIds = miltonStorage
+            .getSwapPayFixedIds(msg.sender);
         IporSwapFront[] memory iporDerivatives = new IporSwapFront[](
-            userSwapPayFixedIds.length + userSwapReceiveFixedIds.length
+            accountSwapPayFixedIds.length + accountSwapReceiveFixedIds.length
         );
         IMilton milton = IMilton(assetConfiguration.getMilton());
         uint256 i = 0;
-        for (i; i != userSwapPayFixedIds.length; i++) {
+        for (i; i != accountSwapPayFixedIds.length; i++) {
             DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-                .getSwapPayFixedItem(userSwapPayFixedIds[i]);
+                .getSwapPayFixed(accountSwapPayFixedIds[i]);
             iporDerivatives[i] = IporSwapFront(
                 iporSwap.id,
                 asset,
@@ -91,9 +91,9 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
             );
         }
         i = 0;
-        for (i; i != userSwapReceiveFixedIds.length; i++) {
+        for (i; i != accountSwapReceiveFixedIds.length; i++) {
             DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-                .getSwapReceiveFixedItem(userSwapReceiveFixedIds[i]);
+                .getSwapReceiveFixed(accountSwapReceiveFixedIds[i]);
             iporDerivatives[i] = IporSwapFront(
                 iporSwap.id,
                 asset,

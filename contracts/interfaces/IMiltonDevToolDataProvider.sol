@@ -18,12 +18,12 @@ interface IMiltonDevToolDataProvider {
         view
         returns (uint256);
 
-    function getSwapsPayFixed(address, address user)
+    function getSwapsPayFixed(address, address account)
         external
         view
         returns (DataTypes.IporSwapMemory[] memory);
 
-    function getSwapsReceiveFixed(address asset, address user)
+    function getSwapsReceiveFixed(address asset, address account)
         external
         view
         returns (DataTypes.IporSwapMemory[] memory);

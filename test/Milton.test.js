@@ -3040,7 +3040,7 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIds =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getSwapPayFixedIds(
                 openerUser.address
             );
 
@@ -3138,11 +3138,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getSwapPayFixedIds(
                 userThree.address
             );
 
@@ -3251,11 +3249,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getSwapPayFixedIds(
                 userThree.address
             );
 
@@ -3362,11 +3358,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
+            await testData.miltonStorageDai.getSwapPayFixedIds(
                 userThree.address
             );
 
@@ -3460,13 +3454,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -3549,13 +3539,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -3641,13 +3627,9 @@ describe("Milton", () => {
 
         //then
         let actualUserDerivativeIdsFirst =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
         let actualUserDerivativeIdsSecond =
-            await testData.miltonStorageDai.getUserSwapPayFixedIds(
-                userTwo.address
-            );
+            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address);
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -4746,7 +4728,7 @@ describe("Milton", () => {
 
         //then
         let actualDerivativeItem =
-            await testData.miltonStorageDai.getSwapPayFixedItem(1);
+            await testData.miltonStorageDai.getSwapPayFixed(1);
         let actualNotionalAmount = BigInt(actualDerivativeItem.notionalAmount);
         let expectedNotionalAmount = BigInt("150115102721401640058243");
 
@@ -5192,8 +5174,7 @@ describe("Milton", () => {
                 params.openTimestamp
             );
         await openSwapPayFixed(testData, params);
-        let derivativeItem =
-            await testData.miltonStorageDai.getSwapPayFixedItem(1);
+        let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
         let expectedPositionValue = BigInt("-38126715743181445978");
 
         //when
@@ -5320,14 +5301,12 @@ describe("Milton", () => {
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
             if (direction == 0) {
                 actualDerivativeItem =
-                    await testData.miltonStorageUsdt.getSwapPayFixedItem(
-                        swapId
-                    );
+                    await testData.miltonStorageUsdt.getSwapPayFixed(swapId);
             }
 
             if (direction == 1) {
                 actualDerivativeItem =
-                    await testData.miltonStorageUsdt.getSwapReceiveFixedItem(
+                    await testData.miltonStorageUsdt.getSwapReceiveFixed(
                         swapId
                     );
             }
@@ -5335,14 +5314,12 @@ describe("Milton", () => {
         if (testData.tokenUsdc && asset === testData.tokenUsdc.address) {
             if (direction == 0) {
                 actualDerivativeItem =
-                    await testData.miltonStorageUsdc.getSwapPayFixedItem(
-                        swapId
-                    );
+                    await testData.miltonStorageUsdc.getSwapPayFixed(swapId);
             }
 
             if (direction == 1) {
                 actualDerivativeItem =
-                    await testData.miltonStorageUsdc.getSwapReceiveFixedItem(
+                    await testData.miltonStorageUsdc.getSwapReceiveFixed(
                         swapId
                     );
             }
@@ -5350,14 +5327,12 @@ describe("Milton", () => {
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             if (direction == 0) {
                 actualDerivativeItem =
-                    await testData.miltonStorageDai.getSwapPayFixedItem(swapId);
+                    await testData.miltonStorageDai.getSwapPayFixed(swapId);
             }
 
             if (direction == 1) {
                 actualDerivativeItem =
-                    await testData.miltonStorageDai.getSwapReceiveFixedItem(
-                        swapId
-                    );
+                    await testData.miltonStorageDai.getSwapReceiveFixed(swapId);
             }
         }
 

@@ -100,7 +100,7 @@ contract Joseph is Ownable, IJoseph {
             wadLiquidityAmount
         );
 
-        //TODO: user Address from OZ and use call
+        //TODO: account Address from OZ and use call
         //TODO: use call instead transfer if possible!!
 
         //TODO: add from address to black list

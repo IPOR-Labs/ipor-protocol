@@ -104,7 +104,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             uint128(liquidityAmount);
     }
 
-    function getSwapPayFixedItem(uint256 swapId)
+    function getSwapPayFixed(uint256 swapId)
         external
         view
         override
@@ -147,7 +147,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return uint256(_swapsReceiveFixed.swaps[uint64(swapId)].state);
     }
 
-    function getSwapReceiveFixedItem(uint256 swapId)
+    function getSwapReceiveFixed(uint256 swapId)
         external
         view
         override
@@ -206,14 +206,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     function updateStorageWhenCloseSwapPayFixed(
-        address user,
+        address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(
-            user,
+            account,
             iporSwap,
             positionValue,
             closingTimestamp
@@ -222,14 +222,14 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
-        address user,
+        address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(
-            user,
+            account,
             iporSwap,
             positionValue,
             closingTimestamp
@@ -240,16 +240,16 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         );
     }
 
-    function getSwapsPayFixed(address user)
+    function getSwapsPayFixed(address account)
         external
         view
         override
         returns (DataTypes.IporSwapMemory[] memory)
     {
-        return _getPositions(_swapsPayFixed.swaps, _swapsPayFixed.ids[user]);
+        return _getPositions(_swapsPayFixed.swaps, _swapsPayFixed.ids[account]);
     }
 
-    function getSwapsReceiveFixed(address user)
+    function getSwapsReceiveFixed(address account)
         external
         view
         override
@@ -258,7 +258,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return
             _getPositions(
                 _swapsReceiveFixed.swaps,
-                _swapsReceiveFixed.ids[user]
+                _swapsReceiveFixed.ids[account]
             );
     }
 
@@ -292,22 +292,22 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         return derivatives;
     }
 
-    function getUserSwapPayFixedIds(address userAddress)
+    function getSwapPayFixedIds(address account)
         external
         view
         override
         returns (uint128[] memory)
     {
-        return _swapsPayFixed.ids[userAddress];
+        return _swapsPayFixed.ids[account];
     }
 
-    function getUserSwapReceiveFixedIds(address userAddress)
+    function getSwapReceiveFixedIds(address account)
         external
         view
         override
         returns (uint128[] memory)
     {
-        return _swapsReceiveFixed.ids[userAddress];
+        return _swapsReceiveFixed.ids[account];
     }
 
     //TODO: separate soap to MiltonSoapModel smart contract
@@ -526,7 +526,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(
-        address user,
+        address account,
         DataTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp
@@ -549,7 +549,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         //TODO: remove duplication
         if (abspositionValue < swap.collateral) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
-            if (user != swap.buyer) {
+            if (account != swap.buyer) {
                 require(
                     closingTimestamp >= swap.endingTimestamp,
                     IporErrors
@@ -583,7 +583,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
-        address user,
+        address account,
         DataTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp
@@ -608,7 +608,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         if (abspositionValue < swap.collateral) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
-            if (user != swap.buyer) {
+            if (account != swap.buyer) {
                 require(
                     closingTimestamp >= swap.endingTimestamp,
                     IporErrors
@@ -715,17 +715,17 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address buyer = iporSwap.buyer;
         uint256 idsLength = _swapsPayFixed.ids[buyer].length - 1;
         if (idsIndexToDelete < idsLength) {
-            uint128 userDerivativeIdToMove = _swapsPayFixed.ids[buyer][
+            uint128 accountDerivativeIdToMove = _swapsPayFixed.ids[buyer][
                 idsLength
             ];
 
             _swapsPayFixed
-                .swaps[userDerivativeIdToMove]
+                .swaps[accountDerivativeIdToMove]
                 .idsIndex = idsIndexToDelete;
 
             _swapsPayFixed.ids[buyer][
                 idsIndexToDelete
-            ] = userDerivativeIdToMove;
+            ] = accountDerivativeIdToMove;
         }
 
         _swapsPayFixed.swaps[uint64(iporSwap.id)].state = DataTypes
@@ -751,17 +751,17 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 idsLength = _swapsReceiveFixed.ids[buyer].length - 1;
 
         if (idsIndexToDelete < idsLength) {
-            uint128 userDerivativeIdToMove = _swapsReceiveFixed.ids[buyer][
+            uint128 accountDerivativeIdToMove = _swapsReceiveFixed.ids[buyer][
                 idsLength
             ];
 
             _swapsReceiveFixed
-                .swaps[userDerivativeIdToMove]
+                .swaps[accountDerivativeIdToMove]
                 .idsIndex = idsIndexToDelete;
 
             _swapsReceiveFixed.ids[buyer][
                 idsIndexToDelete
-            ] = userDerivativeIdToMove;
+            ] = accountDerivativeIdToMove;
         }
 
         _swapsReceiveFixed.swaps[uint64(iporSwap.id)].state = DataTypes

@@ -138,8 +138,7 @@ library DataTypes {
         //@notice Endind time of this swap
         uint256 endingTimestamp;
         //@notice unique ID of this swap
-        uint256 id;
-        //position in MiltonDerivatives.userDerivativeIds array, can be changed when some swap is closed
+        uint256 id;        
         uint256 idsIndex;
         uint256 collateral;
         uint256 liquidationDepositAmount;

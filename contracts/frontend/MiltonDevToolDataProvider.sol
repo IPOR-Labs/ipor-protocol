@@ -60,7 +60,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         return token.allowance(msg.sender, assetConfiguration.getJoseph());
     }
 
-    function getSwapsPayFixed(address asset, address user)
+    function getSwapsPayFixed(address asset, address account)
         external
         view
         override
@@ -68,10 +68,10 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
     {
 		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         return
-            IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsPayFixed(user);
+            IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsPayFixed(account);
     }
 
-	function getSwapsReceiveFixed(address asset, address user)
+	function getSwapsReceiveFixed(address asset, address account)
 	external
 	view
 	override
@@ -79,7 +79,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
 {
 	IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
 	return
-		IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsReceiveFixed(user);
+		IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsReceiveFixed(account);
 }
     function getMySwapsPayFixed(address asset)
         external
