@@ -24,7 +24,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000}
+                                    {soap.soapPf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapPf}</small>
                                 </div>
@@ -38,7 +38,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000}
+                                    {soap.soapPf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapPf}</small>
                                 </div>
@@ -56,7 +56,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000}
+                                    {soap.soapPf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapPf}</small>
                                 </div>
@@ -70,7 +70,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000}
+                                    {soap.soapPf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapPf}</small>
                                 </div>
@@ -123,7 +123,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000}
+                                    {soap.soapRf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapRf}</small>
                                 </div>
@@ -137,7 +137,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000}
+                                    {soap.soapRf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapRf}</small>
                                 </div>
@@ -155,7 +155,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000}
+                                    {soap.soapRf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapRf}</small>
                                 </div>
@@ -169,7 +169,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000}
+                                    {soap.soapRf / 1000000000000000000}
                                     <br />
                                     <small>{soap.soapRf}</small>
                                 </div>
@@ -222,7 +222,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000}
+                                    {soap.soap / 1000000000000000000}
                                     <br />
                                     <small>{soap.soap}</small>
                                 </div>
@@ -236,7 +236,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000}
+                                    {soap.soap / 1000000000000000000}
                                     <br />
                                     <small>{soap.soap}</small>
                                 </div>
@@ -254,7 +254,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000}
+                                    {soap.soap / 1000000000000000000}
                                     <br />
                                     <small>{soap.soap}</small>
                                 </div>
@@ -268,7 +268,7 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soap / 1000000}
+                                    {soap.soap / 1000000000000000000}
                                     <br />
                                     <small>{soap.soap}</small>
                                 </div>
