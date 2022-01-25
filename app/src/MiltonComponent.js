@@ -26,7 +26,7 @@ export default ({ drizzle, drizzleState }) => (
         </div>
         <hr />
         <div class="row">
-            {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+            {process.env.REACT_APP_ITF_ENABLED ===
             "true" ? (
                 <div className="col-md-12">
                     <strong>Open Swap Pay Fixed USDT (ItfMiltonUsdt)</strong>
@@ -125,7 +125,7 @@ export default ({ drizzle, drizzleState }) => (
         </div>
         <hr />
         <div class="row">
-            {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_JOSEPH ===
+            {process.env.REACT_APP_ITF_ENABLED ===
             "true" ? (
                 <div className="col-md-4">
                     <strong>Provide Liquidity USDT (ItfJosephUsdt)</strong>
@@ -175,7 +175,7 @@ export default ({ drizzle, drizzleState }) => (
                     <br />
                 </div>
             )}
-            {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_JOSEPH ===
+            {process.env.REACT_APP_ITF_ENABLED ===
             "true" ? (
                 <div className="col-md-4">
                     <strong>Redeem USDT (ItfJosephUsdt)</strong>
@@ -225,7 +225,7 @@ export default ({ drizzle, drizzleState }) => (
                     <br />
                 </div>
             )}
-            {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+            {process.env.REACT_APP_ITF_ENABLED ===
             "true" ? (
                 <div className="col-md-4">
                     <strong>Close Pay Fixed Swap - USDT (ItfMiltonUsdt)</strong>

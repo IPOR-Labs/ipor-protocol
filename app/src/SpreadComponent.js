@@ -15,7 +15,7 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SPREAD Pay Fixed</td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
@@ -49,7 +49,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
@@ -83,7 +83,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
@@ -120,7 +120,7 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SPREAD Receive Fixed</td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
@@ -154,7 +154,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
@@ -188,7 +188,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}

@@ -677,7 +677,7 @@ module.exports = async function (deployer, _network, addresses) {
 
     //initial addresses setup
 
-    if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
+    if (process.env.ITF_ENABLED === "true") {
         await iporConfiguration.setWarren(itfWarren.address);
     } else {
         await iporConfiguration.setWarren(warren.address);
@@ -779,7 +779,7 @@ module.exports = async function (deployer, _network, addresses) {
             _network === "docker" ||
             _network === "soliditycoverage"
         ) {
-            if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
+            if (process.env.ITF_ENABLED === "true") {
                 //For IPOR Test Framework purposes
                 await iporAssetConfigurationUsdt.setMilton(
                     itfMiltonUsdt.address
@@ -795,7 +795,7 @@ module.exports = async function (deployer, _network, addresses) {
                 await iporAssetConfigurationDai.setMilton(miltonDai.address);
             }
 
-            if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
+            if (process.env.ITF_ENABLED === "true") {
                 //For IPOR Test Framework purposes
                 await iporAssetConfigurationUsdt.setJoseph(
                     itfJosephUsdt.address
@@ -873,7 +873,7 @@ module.exports = async function (deployer, _network, addresses) {
                 from: addresses[i],
             });
 
-            if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
+            if (process.env.ITF_ENABLED === "true") {
                 mockedUsdt.approve(
                     itfMiltonUsdt.address,
                     totalSupply6Decimals,
@@ -893,7 +893,7 @@ module.exports = async function (deployer, _network, addresses) {
                 });
             }
 
-            if (process.env.PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true") {
+            if (process.env.ITF_ENABLED === "true") {
                 mockedUsdt.approve(
                     itfJosephUsdt.address,
                     totalSupply6Decimals,
