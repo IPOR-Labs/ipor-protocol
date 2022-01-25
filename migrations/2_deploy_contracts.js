@@ -676,11 +676,17 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     //initial addresses setup
-    await iporConfiguration.setWarren(warren.address);
+
+    if (process.env.PRIV_TEST_NETWORK_USE_TEST_MILTON === "true") {
+        await iporConfiguration.setWarren(itfWarren.address);
+    } else {
+        await iporConfiguration.setWarren(warren.address);
+    }
 
     if (isMainet === false) {
         await deployer.deploy(ItfWarren, iporConfiguration.address);
         let itfWarren = await ItfWarren.deployed();
+        await itfWarren.addUpdater(admin);
 
         await deployer.deploy(
             MiltonUsdt,
@@ -916,7 +922,7 @@ module.exports = async function (deployer, _network, addresses) {
         await itfMiltonUsdc.authorizeJoseph();
         await itfMiltonDai.authorizeJoseph();
 
-		await warren.addUpdater(admin);
+        await warren.addUpdater(admin);
 
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Prepare initial IPOR migration...");
