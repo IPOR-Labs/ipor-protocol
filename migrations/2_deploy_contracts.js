@@ -221,6 +221,8 @@ module.exports = async function (deployer, _network, addresses) {
     let mockedUsdt = null;
     let mockedUsdc = null;
     let mockedDai = null;
+    let warren = null;
+    let itfWarren = null;
     let miltonUsdt = null;
     let miltonUsdc = null;
     let miltonDai = null;
@@ -247,7 +249,7 @@ module.exports = async function (deployer, _network, addresses) {
     iporConfiguration = await IporConfiguration.deployed();
 
     await deployer.deploy(Warren, iporConfiguration.address);
-    let warren = await Warren.deployed();
+    warren = await Warren.deployed();
 
     await deployer.deploy(
         MiltonFrontendDataProvider,
@@ -675,18 +677,15 @@ module.exports = async function (deployer, _network, addresses) {
         );
     }
 
-    //initial addresses setup
-
-    if (process.env.ITF_ENABLED === "true") {
-        await iporConfiguration.setWarren(itfWarren.address);
-    } else {
-        await iporConfiguration.setWarren(warren.address);
-    }
-
     if (isMainet === false) {
-        await deployer.deploy(ItfWarren, iporConfiguration.address);
-        let itfWarren = await ItfWarren.deployed();
-        await itfWarren.addUpdater(admin);
+        if (process.env.ITF_ENABLED === "true") {
+            await deployer.deploy(ItfWarren, iporConfiguration.address);
+            itfWarren = await ItfWarren.deployed();
+            await itfWarren.addUpdater(admin);
+            await iporConfiguration.setWarren(itfWarren.address);
+        } else {
+            await iporConfiguration.setWarren(warren.address);
+        }
 
         await deployer.deploy(
             MiltonUsdt,
@@ -826,6 +825,7 @@ module.exports = async function (deployer, _network, addresses) {
         await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
         await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
         await iporAssetConfigurationDai.setJoseph(josephDai.address);
+        await iporConfiguration.setWarren(warren.address);
     }
 
     //Prepare tokens for initial accounts...
