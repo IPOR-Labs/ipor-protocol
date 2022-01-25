@@ -11,10 +11,10 @@ import {IporErrors} from "../IporErrors.sol";
 contract IpToken is Ownable, IIpToken, ERC20 {
     using SafeERC20 for IERC20;
 
-    IIporAssetConfiguration internal _iporAssetConfiguration;
+    address private immutable _underlyingAsset;
+    uint8 private immutable _decimals;
 
-    address private _underlyingAsset;
-    uint8 private _decimals;
+	IIporAssetConfiguration internal _iporAssetConfiguration;
 
     modifier onlyJoseph() {
         require(

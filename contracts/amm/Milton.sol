@@ -38,8 +38,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
     uint8 private immutable _decimals;
     address private immutable _asset;
-    IIporConfiguration internal _iporConfiguration;
-    IIporAssetConfiguration internal _iporAssetConfiguration;
+    IIporConfiguration internal immutable _iporConfiguration;
+    IIporAssetConfiguration internal immutable _iporAssetConfiguration;
 
     constructor(address asset, address initialIporConfiguration) {
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);

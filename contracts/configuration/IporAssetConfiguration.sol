@@ -25,6 +25,10 @@ contract IporAssetConfiguration is
     //TODO: add structure for Milton Config Open Position
     uint64 private immutable _maxSlippagePercentage;
 
+	address private immutable _asset;
+
+    address private immutable _ipToken;
+
     uint64 private _openingFeePercentage;
 
     uint64 private _incomeTaxPercentage;
@@ -48,11 +52,7 @@ contract IporAssetConfiguration is
     uint128 private _maxSwapTotalAmount;
 
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
-    uint128 private _wadDecayFactorValue;
-
-    address private immutable _asset;
-
-    address private immutable _ipToken;
+    uint128 private _wadDecayFactorValue;    
 
     address private _milton;
 

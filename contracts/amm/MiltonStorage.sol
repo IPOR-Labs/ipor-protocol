@@ -16,10 +16,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     using IporSwapLogic for DataTypes.IporSwapMemory;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
-    uint64 private _lastSwapId;
-    address private _asset;
-    IIporConfiguration internal _iporConfiguration;
-    IIporAssetConfiguration internal _iporAssetConfiguration;
+	address private immutable _asset;
+    IIporConfiguration internal immutable _iporConfiguration;
+    IIporAssetConfiguration internal immutable _iporAssetConfiguration;
+	
+    uint64 private _lastSwapId;    
     DataTypes.MiltonTotalBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;

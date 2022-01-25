@@ -35,7 +35,7 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address updater);
 
-    IIporConfiguration private _iporConfiguration;
+    IIporConfiguration internal immutable _iporConfiguration;
 
     /// @notice list of assets used in indexes mapping
     address[] internal _assets;
@@ -49,6 +49,10 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     mapping(address => DataTypes.IPOR) internal _indexes;
 
     constructor(address initialIporConfiguration) {
+		require(
+            address(initialIporConfiguration) != address(0),
+            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
+        );  
         _iporConfiguration = IIporConfiguration(initialIporConfiguration);
     }
 

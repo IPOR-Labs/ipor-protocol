@@ -23,17 +23,9 @@ import "./WarrenStorage.sol";
 contract Warren is WarrenStorage, IWarren {
     using IporLogic for DataTypes.IPOR;
 
-    IIporConfiguration internal _iporConfiguration;
-
     constructor(address initialIporConfiguration)
         WarrenStorage(initialIporConfiguration)
-    {
-        require(
-            address(initialIporConfiguration) != address(0),
-            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );
-        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
-    }
+    {}
 
     function getAssets() external view override returns (address[] memory) {
         return _assets;
