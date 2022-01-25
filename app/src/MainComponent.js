@@ -63,12 +63,12 @@ export default ({ drizzle, drizzleState }) => {
                 </table>
             </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-                <Tab eventKey="protocolOverview" title="Protocol Overview">
+                {/* <Tab eventKey="protocolOverview" title="Protocol Overview">
                     <ProtocolOverviewComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
-                </Tab>
+                </Tab> */}
                 <Tab eventKey="iporIndex" title="Warren Oracle">
                     <IporIndexComponent
                         drizzle={drizzle}
