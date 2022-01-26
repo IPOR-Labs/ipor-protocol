@@ -4,60 +4,26 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 
 const {
-    USER_SUPPLY_6_DECIMALS,
-    USER_SUPPLY_18_DECIMALS,
     COLLATERALIZATION_FACTOR_6DEC,
     COLLATERALIZATION_FACTOR_18DEC,
     PERCENTAGE_3_18DEC,
-    PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_6_6DEC,
     PERCENTAGE_6_18DEC,
-    PERCENTAGE_10_18DEC,
-    PERCENTAGE_50_18DEC,
-    PERCENTAGE_100_18DEC,
     PERCENTAGE_120_18DEC,
-    PERCENTAGE_160_18DEC,
-    PERCENTAGE_365_18DEC,
-    USD_10_6DEC,
-    USD_10_18DEC,
-    USD_20_18DEC,
     USD_10_000_18DEC,
     USD_10_000_6DEC,
-    USD_10_400_18DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
-    USD_9063__63_18DEC,
-    USD_10_000_000_6DEC,
-
-    USD_10_000_000_18DEC,
-    TC_OPENING_FEE_6DEC,
-    TC_OPENING_FEE_18DEC,
-    TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_6DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_18DEC,
     ZERO,
-    SPECIFIC_INTEREST_AMOUNT_CASE_1,
-    SPECIFIC_INCOME_TAX_CASE_1,
     PERIOD_1_DAY_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_50_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
 const {
-    assertError,
     getLibraries,
-    getStandardDerivativeParamsDAI,
-    getStandardDerivativeParamsUSDT,
-    getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
@@ -83,7 +49,7 @@ describe("MiltonSoap", () => {
             userThree,
             liquidityProvider,
         ]);
-		await grantAllSpreadRoles(data, admin, userOne);
+        await grantAllSpreadRoles(data, admin, userOne);
         await setupDefaultSpreadConstants(data, userOne);
     });
     it("should calculate soap, no derivatives, soap equal 0", async () => {
@@ -102,7 +68,7 @@ describe("MiltonSoap", () => {
         const expectedSoap = ZERO;
 
         //when
-        const actualSoapStruct = await calculateSoap(params);
+        const actualSoapStruct = await calculateSoap(testData, params);
         const actualSoap = BigInt(actualSoapStruct.soap);
 
         //then
@@ -119,7 +85,7 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             libraries
-        );        
+        );
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -132,35 +98,32 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUserAddress = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_5_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_5_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         const expectedSoap = ZERO;
 
@@ -171,7 +134,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI, pay fixed, add position, calculate after 25 days", async () => {
@@ -193,35 +156,32 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         const expectedSoap = BigInt("-68083420969966832317");
 
@@ -233,7 +193,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI, rec fixed, add position, calculate now", async () => {
@@ -255,35 +215,32 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 1;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapReceiveFixed(testData, derivativeParams);
 
         const expectedSoap = ZERO;
 
@@ -294,7 +251,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI, rec fixed, add position, calculate after 25 days", async () => {
@@ -316,35 +273,32 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 1;
         let openerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapReceiveFixed(testData, derivativeParams);
 
         const expectedSoap = BigInt("-68083420969966791467");
 
@@ -356,7 +310,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI, pay fixed, add and remove position", async () => {
@@ -378,44 +332,41 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 0;
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
         let endTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+            .itfCloseSwapPayFixed(1, endTimestamp);
 
         const expectedSoap = ZERO;
 
@@ -427,7 +378,7 @@ describe("MiltonSoap", () => {
             from: userTwo,
         };
 
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI, rec fixed, add and remove position", async () => {
@@ -449,54 +400,50 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let direction = 1;
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapReceiveFixed(testData, derivativeParams);
 
         const expectedSoap = ZERO;
         let endTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_10_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+            .itfCloseSwapReceiveFixed(1, endTimestamp);
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -505,7 +452,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI add pay fixed, DAI add rec fixed, 18 decimals", async () => {
@@ -527,11 +474,9 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let firstDerivativeDirection = 0;
-        let secondDerivativeDirection = 1;
 
         let openerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const firstDerivativeParams = {
@@ -539,7 +484,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: firstDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -549,27 +493,22 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: secondDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                firstDerivativeParams.asset,
-                BigInt(2) * USD_14_000_18DEC,
-                openTimestamp
-            );
-        await data.warren
+            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 firstDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
-        await openPositionFunc(firstDerivativeParams);
-        await openPositionFunc(secondDerivativeParams);
+        await openSwapPayFixed(testData, firstDerivativeParams);
+        await openSwapReceiveFixed(testData, secondDerivativeParams);
 
         const expectedSoap = BigInt("-136166841939933623785");
 
@@ -581,7 +520,7 @@ describe("MiltonSoap", () => {
             from: userTwo,
         };
 
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, USDT add pay fixed, USDT add rec fixed, 6 decimals", async () => {
@@ -603,19 +542,16 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        let firstDerivativeDirection = 0;
-        let secondDerivativeDirection = 1;
 
         let openerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const firstDerivativeParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: firstDerivativeDirection,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -624,28 +560,23 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: secondDerivativeDirection,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephUsdt
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                firstDerivativeParams.asset,
-                BigInt(2) * USD_14_000_6DEC,
-                openTimestamp
-            );
-        await data.warren
+            .itfProvideLiquidity(BigInt(2) * USD_14_000_6DEC, openTimestamp);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 firstDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
-        await openPositionFunc(firstDerivativeParams);
-        await openPositionFunc(secondDerivativeParams);
+        await openSwapPayFixed(testData, firstDerivativeParams);
+        await openSwapReceiveFixed(testData, secondDerivativeParams);
 
         const expectedSoap = BigInt("-136166841939933623785");
 
@@ -657,7 +588,7 @@ describe("MiltonSoap", () => {
             from: userTwo,
         };
 
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI add pay fixed, USDT add pay fixed", async () => {
@@ -690,11 +621,10 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
 
-        let iporValueBeforOpenPositionDAI = PERCENTAGE_3_18DEC;
-        let iporValueBeforOpenPositionUSDT = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapDAI = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapUSDT = PERCENTAGE_3_18DEC;
 
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -703,7 +633,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -712,43 +641,34 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: direction,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeDAIParams.asset,
-                USD_14_000_18DEC,
-                openTimestamp
-            );
-        await data.joseph
+            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
+        await testData.josephUsdt
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeUSDTParams.asset,
-                USD_14_000_6DEC,
-                openTimestamp
-            );
-        await data.warren
+            .itfProvideLiquidity(USD_14_000_6DEC, openTimestamp);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeDAIParams.asset,
-                iporValueBeforOpenPositionDAI,
+                iporValueBeforOpenSwapDAI,
                 derivativeDAIParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeUSDTParams.asset,
-                iporValueBeforOpenPositionUSDT,
+                iporValueBeforOpenSwapUSDT,
                 derivativeUSDTParams.openTimestamp
             );
 
         //when
-        await openPositionFunc(derivativeDAIParams);
-        await openPositionFunc(derivativeUSDTParams);
+        await openSwapPayFixed(testData, derivativeDAIParams);
+        await openSwapPayFixed(testData, derivativeUSDTParams);
 
         //then
         let expectedDAISoap = BigInt("-68083420969966832317");
@@ -762,7 +682,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedDAISoap,
             from: userTwo,
         };
-        await assertSoap(soapDAIParams);
+        await assertSoap(testData, soapDAIParams);
 
         const soapUSDTParams = {
             asset: testData.tokenUsdt.address,
@@ -771,7 +691,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedUSDTSoap,
             from: userTwo,
         };
-        await assertSoap(soapUSDTParams);
+        await assertSoap(testData, soapUSDTParams);
     });
 
     it("should calculate soap, DAI add pay fixed, DAI add rec fixed, close rec fixed position", async () => {
@@ -794,12 +714,9 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let payFixDerivativeDirection = 0;
-        let recFixDerivativeDirection = 1;
-
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeParams = {
@@ -807,7 +724,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -817,34 +733,29 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                payFixDerivativeParams.asset,
-                BigInt(2) * USD_14_000_18DEC,
-                openTimestamp
-            );
-        await data.warren
+            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 payFixDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
-        await openPositionFunc(payFixDerivativeParams);
-        await openPositionFunc(recFixDerivativeParams);
+        await openSwapPayFixed(testData, payFixDerivativeParams);
+        await openSwapReceiveFixed(testData, recFixDerivativeParams);
 
         let endTimestamp =
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
-            .test_closePosition(2, endTimestamp);
+            .itfCloseSwapReceiveFixed(2, endTimestamp);
 
         //then
         const expectedSoap = BigInt("-68083420969966832317");
@@ -856,7 +767,7 @@ describe("MiltonSoap", () => {
             from: userTwo,
         };
 
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI add pay fixed, DAI add rec fixed, remove pay fixed position after 25 days", async () => {
@@ -879,12 +790,9 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let payFixDerivativeDirection = 0;
-        let recFixDerivativeDirection = 1;
-
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const payFixDerivativeParams = {
@@ -892,7 +800,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: payFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -902,34 +809,29 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: recFixDerivativeDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                payFixDerivativeParams.asset,
-                BigInt(2) * USD_14_000_18DEC,
-                openTimestamp
-            );
-        await data.warren
+            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 payFixDerivativeParams.asset,
-                iporValueBeforOpenPosition,
+                iporValueBeforOpenSwap,
                 openTimestamp
             );
-        await openPositionFunc(payFixDerivativeParams);
-        await openPositionFunc(recFixDerivativeParams);
+        await openSwapPayFixed(testData, payFixDerivativeParams);
+        await openSwapReceiveFixed(testData, recFixDerivativeParams);
 
         let endTimestamp =
             recFixDerivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
+        await testData.miltonDai
             .connect(closerUser)
-            .test_closePosition(1, endTimestamp);
+            .itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
         const expectedSoap = BigInt("-68083420969966791467");
@@ -941,7 +843,7 @@ describe("MiltonSoap", () => {
             from: userTwo,
         };
 
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI add pay fixed, USDT add rec fixed, remove rec fixed position after 25 days", async () => {
@@ -974,13 +876,10 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let payFixDerivativeDAIDirection = 0;
-        let recFixDerivativeUSDTDirection = 1;
-
         let openerUser = userTwo;
         let closerUser = userTwo;
-        let iporValueBeforOpenPositionDAI = PERCENTAGE_3_18DEC;
-        let iporValueBeforOpenPositionUSDT = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapDAI = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapUSDT = PERCENTAGE_3_18DEC;
 
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -989,7 +888,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: payFixDerivativeDAIDirection,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -998,61 +896,50 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: recFixDerivativeUSDTDirection,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await data.joseph
+
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
+            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
+
+        await testData.josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_14_000_6DEC, openTimestamp);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
                 payFixDerivativeDAIParams.asset,
-                USD_14_000_18DEC,
+                iporValueBeforOpenSwapDAI,
                 openTimestamp
             );
-        await data.joseph
-            .connect(liquidityProvider)
-            .test_provideLiquidity(
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
                 recFixDerivativeUSDTParams.asset,
-                USD_14_000_6DEC,
+                iporValueBeforOpenSwapUSDT,
                 openTimestamp
             );
 
-        await data.warren
-            .connect(userOne)
-            .test_updateIndex(
-                payFixDerivativeDAIParams.asset,
-                iporValueBeforOpenPositionDAI,
-                openTimestamp
-            );
-        await data.warren
-            .connect(userOne)
-            .test_updateIndex(
-                recFixDerivativeUSDTParams.asset,
-                iporValueBeforOpenPositionUSDT,
-                openTimestamp
-            );
-
-        await openPositionFunc(payFixDerivativeDAIParams);
-        await openPositionFunc(recFixDerivativeUSDTParams);
+        await openSwapPayFixed(testData, payFixDerivativeDAIParams);
+        await openSwapReceiveFixed(testData, recFixDerivativeUSDTParams);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
-        await data.joseph
+        await testData.josephUsdt
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                recFixDerivativeUSDTParams.asset,
-                USD_10_000_6DEC,
-                openTimestamp
-            );
+            .itfProvideLiquidity(USD_10_000_6DEC, openTimestamp);
 
         let endTimestamp =
             recFixDerivativeUSDTParams.openTimestamp +
             PERIOD_25_DAYS_IN_SECONDS;
 
         //when
-        await data.milton
+        await testData.miltonUsdt
             .connect(closerUser)
-            .test_closePosition(2, endTimestamp);
+            .itfCloseSwapReceiveFixed(1, endTimestamp);
 
         //then
         const expectedSoapDAI = BigInt("-68083420969966832317");
@@ -1064,7 +951,7 @@ describe("MiltonSoap", () => {
             from: userTwo,
         };
 
-        await assertSoap(soapParamsDAI);
+        await assertSoap(testData, soapParamsDAI);
     });
 
     it("should calculate soap, DAI add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 18 decimals", async () => {
@@ -1087,10 +974,9 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1098,7 +984,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1106,31 +991,32 @@ describe("MiltonSoap", () => {
         let calculationTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
-        await data.warren
+
+        await openSwapPayFixed(testData, derivativeParams);
+
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_6_18DEC,
                 calculationTimestamp
@@ -1146,7 +1032,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, USDT add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 6 decimals", async () => {
@@ -1169,18 +1055,16 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: direction,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1188,33 +1072,32 @@ describe("MiltonSoap", () => {
         let calculationTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph
+        await testData.josephUsdt
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_6DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_6_6DEC,
                 calculationTimestamp
@@ -1230,7 +1113,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI add pay fixed, change ibtPrice, calculate soap after 28 days and after 50 days and compare", async () => {
@@ -1253,10 +1136,9 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_120_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_120_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1264,7 +1146,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1276,31 +1157,30 @@ describe("MiltonSoap", () => {
         let calculationTimestamp50days =
             derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
-        await data.warren
+        await openSwapPayFixed(testData, derivativeParams);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_6_18DEC,
                 calculationTimestamp25days
@@ -1317,7 +1197,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap28Days,
             from: userTwo,
         };
-        await assertSoap(soapParams28days);
+        await assertSoap(testData, soapParams28days);
 
         const soapParams50days = {
             asset: testData.tokenDai.address,
@@ -1325,7 +1205,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap50Days,
             from: userTwo,
         };
-        await assertSoap(soapParams50days);
+        await assertSoap(testData, soapParams50days);
     });
 
     it("should calculate soap, DAI add pay fixed, wait 25 days, DAI add pay fixed, wait 25 days and then calculate soap", async () => {
@@ -1348,9 +1228,8 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
@@ -1358,7 +1237,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1367,31 +1245,29 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
         let calculationTimestamp50days =
             derivativeParams25days.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParamsFirst.asset,
+            .itfProvideLiquidity(
                 BigInt(2) * USD_14_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
 
         //when
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
-        await openPositionFunc(derivativeParams25days);
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+        await openSwapPayFixed(testData, derivativeParams25days);
 
         //then
         const expectedSoap = BigInt("-204669094617849711707");
@@ -1402,7 +1278,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate soap, DAI add pay fixed, wait 25 days, update IPOR and DAI add pay fixed, wait 25 days update IPOR and then calculate soap", async () => {
@@ -1425,9 +1301,8 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
@@ -1435,7 +1310,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1444,42 +1318,37 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
         let calculationTimestamp50days =
             derivativeParams25days.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParamsFirst.asset,
-                BigInt(2) * USD_14_000_18DEC,
-                openTimestamp
-            );
+            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
 
         //when
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParamsFirst.openTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
-        await data.warren
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams25days.openTimestamp
             );
-        await openPositionFunc(derivativeParams25days);
-        await data.warren
+        await openSwapPayFixed(testData, derivativeParams25days);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 calculationTimestamp50days
             );
 
@@ -1492,7 +1361,7 @@ describe("MiltonSoap", () => {
             expectedSoap: expectedSoap,
             from: userTwo,
         };
-        await assertSoap(soapParams);
+        await assertSoap(testData, soapParams);
     });
 
     it("should calculate EXACTLY the same SOAP with and without update IPOR Index with the same indexValue, DAI add pay fixed, 25 and 50 days period", async () => {
@@ -1515,9 +1384,8 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParams = {
@@ -1525,7 +1393,6 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1542,47 +1409,52 @@ describe("MiltonSoap", () => {
             from: userTwo,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
-                USD_14_000_18DEC,
-                openTimestamp
-            );
+            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
 
         //when
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await openPositionFunc(derivativeParams);
+        await openSwapPayFixed(testData, derivativeParams);
 
-        let soapBeforeUpdateIndexStruct = await calculateSoap(soapParams);
+        let soapBeforeUpdateIndexStruct = await calculateSoap(
+            testData,
+            soapParams
+        );
         soapBeforeUpdateIndex = BigInt(soapBeforeUpdateIndexStruct.soap);
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 calculationTimestamp25days
             );
-        let soapUpdateIndexAfter25DaysStruct = await calculateSoap(soapParams);
+        let soapUpdateIndexAfter25DaysStruct = await calculateSoap(
+            testData,
+            soapParams
+        );
         let soapUpdateIndexAfter25Days = BigInt(
             soapUpdateIndexAfter25DaysStruct.soap
         );
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 calculationTimestamp50days
             );
-        let soapUpdateIndexAfter50DaysStruct = await calculateSoap(soapParams);
+        let soapUpdateIndexAfter50DaysStruct = await calculateSoap(
+            testData,
+            soapParams
+        );
         let soapUpdateIndexAfter50Days = BigInt(
             soapUpdateIndexAfter50DaysStruct.soap
         );
@@ -1604,7 +1476,7 @@ describe("MiltonSoap", () => {
         ).to.be.eq(soapUpdateIndexAfter50Days);
     });
 
-    it("should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after derivative opened, soap should be negative right after opened position and updated ibtPrice", async () => {
+    it("should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after swap opened, soap should be negative right after opened position and updated ibtPrice", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1624,10 +1496,9 @@ describe("MiltonSoap", () => {
             testData
         );
 
-        let direction = 0;
         let openerUser = userTwo;
-        let iporValueBeforeOpenPosition = PERCENTAGE_3_18DEC;
-        let iporValueAfterOpenPosition = PERCENTAGE_3_18DEC;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
         let firstUpdateIndexTimestamp = openTimestamp;
@@ -1639,33 +1510,28 @@ describe("MiltonSoap", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: direction,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUser,
         };
 
-        await data.joseph
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParamsFirst.asset,
-                USD_14_000_18DEC,
-                openTimestamp
-            );
-        await data.warren
+            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueBeforeOpenPosition,
+                iporValueBeforeOpenSwap,
                 firstUpdateIndexTimestamp
             );
-        await openPositionFunc(derivativeParamsFirst);
+        await openSwapPayFixed(testData, derivativeParamsFirst);
 
         //when
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParamsFirst.asset,
-                iporValueAfterOpenPosition,
+                iporValueAfterOpenSwap,
                 secondUpdateIndexTimestamp
             );
 
@@ -1678,7 +1544,7 @@ describe("MiltonSoap", () => {
             expectedSoap: 0,
             from: userTwo,
         };
-        const actualSoapStruct = await calculateSoap(soapParams);
+        const actualSoapStruct = await calculateSoap(testData, soapParams);
         const actualSoap = BigInt(actualSoapStruct.soap);
 
         //then
@@ -1688,21 +1554,78 @@ describe("MiltonSoap", () => {
         );
     });
 
-    const openPositionFunc = async (params) => {
-        await data.milton
-            .connect(params.from)
-            .test_openPosition(
-                params.openTimestamp,
-                params.asset,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
-            );
+    const openSwapReceiveFixed = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
     };
 
-    const assertSoap = async (params) => {
-        const actualSoapStruct = await calculateSoap(params);
+    const openSwapPayFixed = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+    };
+
+    const assertSoap = async (testData, params) => {
+        const actualSoapStruct = await calculateSoap(testData, params);
         const actualSoap = BigInt(actualSoapStruct.soap);
 
         //then
@@ -1712,9 +1635,23 @@ describe("MiltonSoap", () => {
         ).to.be.eq(actualSoap);
     };
 
-    const calculateSoap = async (params) => {
-        return await data.milton
-            .connect(params.from)
-            .test_calculateSoap(params.asset, params.calculateTimestamp);
+    const calculateSoap = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            return await testData.miltonUsdt
+                .connect(params.from)
+                .itfCalculateSoap(params.calculateTimestamp);
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            return await testData.miltonUsdc
+                .connect(params.from)
+                .itfCalculateSoap(params.calculateTimestamp);
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            return await testData.miltonDai
+                .connect(params.from)
+                .itfCalculateSoap(params.calculateTimestamp);
+        }
     };
 });

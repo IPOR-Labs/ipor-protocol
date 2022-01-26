@@ -3,54 +3,32 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import { Errors } from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IWarren.sol";
-import { DataTypes } from "../libraries/types/DataTypes.sol";
-import { Constants } from "../libraries/Constants.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
+import {Constants} from "../libraries/Constants.sol";
 import "../libraries/IporLogic.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 import "../interfaces/IWarrenStorage.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
+
+import "./WarrenStorage.sol";
 
 /**
  * @title IPOR Index Oracle Contract
  *
  * @author IPOR Labs
  */
-contract Warren is Ownable, Pausable, IWarren {
-	
+contract Warren is WarrenStorage, IWarren {
     using IporLogic for DataTypes.IPOR;
 
-    IIporConfiguration internal iporConfiguration;
+    constructor(address initialIporConfiguration)
+        WarrenStorage(initialIporConfiguration)
+    {}
 
-    modifier onlyUpdater() {
-        bool allowed = false;
-        address[] memory updaters = IWarrenStorage(
-			//TODO: avoid external call
-            iporConfiguration.getWarrenStorage()
-        ).getUpdaters();
-        for (uint256 i = 0; i < updaters.length; i++) {
-            if (updaters[i] == msg.sender) {
-                allowed = true;
-                break;
-            }
-        }
-        require(allowed, Errors.WARREN_CALLER_NOT_WARREN_UPDATER);
-        _;
-    }
-
-	//TODO: initialization only once,
-    function initialize(IIporConfiguration initialIporConfiguration) external onlyOwner {
-        iporConfiguration = initialIporConfiguration;
-    }
-
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
+    function getAssets() external view override returns (address[] memory) {
+        return _assets;
     }
 
     function getIndex(address asset)
@@ -61,26 +39,42 @@ contract Warren is Ownable, Pausable, IWarren {
             uint256 indexValue,
             uint256 ibtPrice,
             uint256 exponentialMovingAverage,
-			uint256 exponentialWeightedMovingVariance,
+            uint256 exponentialWeightedMovingVariance,
             uint256 blockTimestamp
         )
     {
-        DataTypes.IPOR memory iporIndex = IWarrenStorage(
-            iporConfiguration.getWarrenStorage()
-        ).getIndex(asset);
+        DataTypes.IPOR memory iporIndex = _indexes[asset];
+
         return (
             indexValue = iporIndex.indexValue,
-            ibtPrice = AmmMath.division(
+            ibtPrice = IporMath.division(
                 iporIndex.quasiIbtPrice,
                 Constants.YEAR_IN_SECONDS
             ),
             exponentialMovingAverage = iporIndex.exponentialMovingAverage,
-			exponentialWeightedMovingVariance = iporIndex.exponentialWeightedMovingVariance,
+            exponentialWeightedMovingVariance = iporIndex
+                .exponentialWeightedMovingVariance,
             blockTimestamp = iporIndex.blockTimestamp
         );
     }
-	
-	//@notice indexValue value with number of decimals like in asset
+
+    function getAccruedIndex(uint256 calculateTimestamp, address asset)
+        external
+        view
+        override
+        returns (DataTypes.AccruedIpor memory accruedIpor)
+    {
+        DataTypes.IPOR memory ipor = _indexes[asset];
+
+        accruedIpor = DataTypes.AccruedIpor(
+            ipor.indexValue,
+            _calculateAccruedIbtPrice(calculateTimestamp, asset),
+            ipor.exponentialMovingAverage,
+            ipor.exponentialWeightedMovingVariance
+        );
+    }
+
+    //@notice indexValue value with number of decimals like in asset
     function updateIndex(address asset, uint256 indexValue)
         external
         override
@@ -90,22 +84,35 @@ contract Warren is Ownable, Pausable, IWarren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
-            assets,
-            indexes,
-            block.timestamp
-        );
+
+        _updateIndexes(assets, indexes, block.timestamp);
     }
 
     function updateIndexes(
         address[] memory assets,
         uint256[] memory indexValues
     ) external override onlyUpdater {
-        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
-            assets,
-            indexValues,
-            block.timestamp
+        _updateIndexes(assets, indexValues, block.timestamp);
+    }
+
+    function _updateIndexes(
+        address[] memory assets,
+        uint256[] memory indexValues,
+        uint256 updateTimestamp
+    ) internal {
+        require(
+            assets.length == indexValues.length,
+            IporErrors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
         );
+        uint256 i = 0;
+        for (i; i != assets.length; i++) {
+            //TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
+            require(
+                _iporConfiguration.assetSupported(assets[i]) == 1,
+                IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            );
+            _updateIndex(assets[i], indexValues[i], updateTimestamp);
+        }
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
@@ -114,11 +121,16 @@ contract Warren is Ownable, Pausable, IWarren {
         override
         returns (uint256)
     {
+        return _calculateAccruedIbtPrice(calculateTimestamp, asset);
+    }
+
+    function _calculateAccruedIbtPrice(
+        uint256 calculateTimestamp,
+        address asset
+    ) internal view returns (uint256) {
         return
-            AmmMath.division(
-                IWarrenStorage(iporConfiguration.getWarrenStorage())
-                    .getIndex(asset)
-                    .accrueQuasiIbtPrice(calculateTimestamp),
+            IporMath.division(
+                _indexes[asset].accrueQuasiIbtPrice(calculateTimestamp),
                 Constants.YEAR_IN_SECONDS
             );
     }

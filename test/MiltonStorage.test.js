@@ -5,50 +5,17 @@ const keccak256 = require("keccak256");
 
 const {
     USER_SUPPLY_6_DECIMALS,
-    USER_SUPPLY_18_DECIMALS,
+    USER_SUPPLY_10MLN_18DEC,
     COLLATERALIZATION_FACTOR_6DEC,
     COLLATERALIZATION_FACTOR_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
-    PERCENTAGE_6_6DEC,
-    PERCENTAGE_6_18DEC,
-    PERCENTAGE_10_18DEC,
-    PERCENTAGE_50_18DEC,
-    PERCENTAGE_100_18DEC,
-    PERCENTAGE_120_18DEC,
-    PERCENTAGE_160_18DEC,
-    PERCENTAGE_365_18DEC,
-    USD_10_6DEC,
-    USD_10_18DEC,
-    USD_20_18DEC,
     USD_10_000_18DEC,
     USD_10_000_6DEC,
-    USD_10_400_18DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
-    USD_9063__63_18DEC,
-    USD_10_000_000_6DEC,
-
-    USD_10_000_000_18DEC,
-    TC_OPENING_FEE_6DEC,
-    TC_OPENING_FEE_18DEC,
-    TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
-    TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
-    TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_6DEC,
-    TC_IPOR_PUBLICATION_AMOUNT_18DEC,
-    ZERO,
-    SPECIFIC_INTEREST_AMOUNT_CASE_1,
-    SPECIFIC_INCOME_TAX_CASE_1,
-    PERIOD_1_DAY_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS,
-    PERIOD_28_DAYS_IN_SECONDS,
-    PERIOD_50_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
 const {
@@ -56,13 +23,9 @@ const {
     getLibraries,
     grantAllSpreadRoles,
     setupTokenUsdtInitialValuesForUsers,
-    getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    setupIpTokenDaiInitialValues,
-    setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupDefaultSpreadConstants,
 } = require("./Utils");
@@ -124,13 +87,16 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationDai.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
-        testData.miltonStorage
+        await testData.miltonStorageDai
             .connect(miltonStorageAddress)
-            .updateStorageWhenOpenPosition(
-                await preprareDerivativeStruct18DecSimpleCase1(testData)
+            .updateStorageWhenOpenSwapPayFixed(
+                await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
+                BigInt("1500000000000000000000")
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -151,14 +117,16 @@ describe("MiltonStorage", () => {
             data,
             libraries
         );
-        const derivativeStruct = await preprareDerivativeStruct18DecSimpleCase1(
-            testData
-        );
+        const derivativeStruct =
+            await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
         await assertError(
             //when
-            testData.miltonStorage
+            testData.miltonStorageDai
                 .connect(userThree)
-                .callStatic.updateStorageWhenOpenPosition(derivativeStruct),
+                .updateStorageWhenOpenSwapPayFixed(
+                    derivativeStruct,
+                    BigInt("1500000000000000000000")
+                ),
             //then
             "IPOR_1"
         );
@@ -196,41 +164,41 @@ describe("MiltonStorage", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph
+
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
-        let closePositionTimestamp =
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
+        let closeSwapTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationDai.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
-        testData.miltonStorage
+        testData.miltonStorageDai
             .connect(miltonStorageAddress)
-            .updateStorageWhenClosePosition(
+            .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000000000000000"),
-                closePositionTimestamp
+                closeSwapTimestamp
             );
         //then
         // assert(true); //no exception this line is achieved
@@ -267,42 +235,44 @@ describe("MiltonStorage", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_6DEC,
-            direction: 0,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph
+
+        await testData.josephUsdt
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_6DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
-        let closePositionTimestamp =
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await testData.miltonStorageUsdt.getSwapPayFixed(
+            1
+        );
+        let closeSwapTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationUsdt.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
-        testData.miltonStorage
+        testData.miltonStorageUsdt
             .connect(miltonStorageAddress)
-            .updateStorageWhenClosePosition(
+            .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000"),
-                closePositionTimestamp
+                closeSwapTimestamp
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -339,88 +309,133 @@ describe("MiltonStorage", () => {
             totalAmount: USD_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            direction: 0,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
 
-        await data.warren
+        await testData.warren
             .connect(userOne)
-            .test_updateIndex(
+            .itfUpdateIndex(
                 derivativeParams.asset,
                 PERCENTAGE_5_18DEC,
                 derivativeParams.openTimestamp
             );
-        await data.iporConfiguration.setMilton(data.milton.address);
-        await data.joseph
+
+        await testData.josephDai
             .connect(liquidityProvider)
-            .test_provideLiquidity(
-                derivativeParams.asset,
+            .itfProvideLiquidity(
                 USD_14_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
-        await openPositionFunc(derivativeParams);
-        let derivativeItem = await testData.miltonStorage.getDerivativeItem(1);
-        let closePositionTimestamp =
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
+        let closeSwapTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await data.iporConfiguration.setMilton(miltonStorageAddress.address);
+        await testData.iporAssetConfigurationDai.setMilton(
+            miltonStorageAddress.address
+        );
 
         //when
         await assertError(
-            testData.miltonStorage
+            testData.miltonStorageDai
                 .connect(userThree)
-                .updateStorageWhenClosePosition(
+                .updateStorageWhenCloseSwapPayFixed(
                     userTwo.address,
                     derivativeItem,
                     BigInt("10000000000000000000"),
-                    closePositionTimestamp
+                    closeSwapTimestamp
                 ),
             //then
             "IPOR_1"
         );
     });
 
-    const openPositionFunc = async (params) => {
-        await data.milton
-            .connect(params.from)
-            .test_openPosition(
-                params.openTimestamp,
-                params.asset,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor,
-                params.direction
-            );
+    const openSwapPayFixed = async (testData, params) => {
+        if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
     };
 
-    const preprareDerivativeStruct18DecSimpleCase1 = async (testData) => {
+    const openSwapReceiveFixed = async (testData, params) => {
+        if (params.asset === testData.tokenUsdc.address) {
+            await testData.miltonUsdc
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (params.asset === testData.tokenUsdt.address) {
+            await testData.miltonUsdt
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+
+        if (params.asset === testData.tokenDai.address) {
+            await testData.miltonDai
+                .connect(params.from)
+                .itfOpenSwapReceiveFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                );
+        }
+    };
+
+    const preprareSwapPayFixedStruct18DecSimpleCase1 = async (testData) => {
         let openingTimestamp = Math.floor(Date.now() / 1000);
-        let closePositionTimestamp =
-            openingTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        let closeSwapTimestamp = openingTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
         return {
-            id: 1,
             state: 0,
             buyer: userTwo.address,
-            asset: testData.tokenDai.address,
-            direction: 0,
-            collateral: BigInt("1000000000000000000000"),
-            fee: {
-                liquidationDepositAmount: BigInt("20000000000000000000"),
-                openingAmount: 123,
-                iporPublicationAmount: 123,
-                spreadValue: 123,
-            },
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            notionalAmount: 123,
             startingTimestamp: openingTimestamp,
-            endingTimestamp: closePositionTimestamp,
-            indicator: {
-                iporIndexValue: 123,
-                ibtPrice: 123,
-                ibtQuantity: 123,
-                fixedInterestRate: 234,
-            },
+            endingTimestamp: closeSwapTimestamp,
+            id: 1,
+            collateral: BigInt("1000000000000000000000"),
+            liquidationDepositAmount: BigInt("20000000000000000000"),
+            notionalAmount: BigInt("50000000000000000000000"),
+            ibtQuantity: 123,
+            fixedInterestRate: 234,
         };
     };
 });

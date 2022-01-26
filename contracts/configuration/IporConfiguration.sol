@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
@@ -23,11 +23,6 @@ contract IporConfiguration is
 
     bytes32 private constant _WARREN = keccak256("WARREN");
     bytes32 private constant _WARREN_STORAGE = keccak256("WARREN_STORAGE");
-
-    bytes32 private constant _MILTON = keccak256("MILTON");
-    bytes32 private constant _MILTON_STORAGE = keccak256("MILTON_STORAGE");
-
-    bytes32 private constant _JOSEPH = keccak256("JOSEPH");
 
     //TODO: move to MiltonConfiguration
     bytes32 private constant _MILTON_SPREAD_MODEL =
@@ -64,47 +59,7 @@ contract IporConfiguration is
     {
         _addresses[_WARREN_STORAGE] = warrenStorage;
         emit WarrenStorageAddressUpdated(warrenStorage);
-    }
-
-    function getMilton() external view override returns (address) {
-        return _addresses[_MILTON];
-    }
-
-    function setMilton(address milton)
-        external
-        override
-        onlyRole(_MILTON_ROLE)
-    {
-        //TODO: when Milton address is changing make sure than allowance on Josepth is set to 0 for old milton
-        _addresses[_MILTON] = milton;
-        emit MiltonAddressUpdated(milton);
-    }
-
-    function getMiltonStorage() external view override returns (address) {
-        return _addresses[_MILTON_STORAGE];
-    }
-
-    function setMiltonStorage(address miltonStorage)
-        external
-        override
-        onlyRole(_MILTON_STORAGE_ROLE)
-    {
-        _addresses[_MILTON_STORAGE] = miltonStorage;
-        emit MiltonStorageAddressUpdated(miltonStorage);
-    }
-
-    function getJoseph() external view override returns (address) {
-        return _addresses[_JOSEPH];
-    }
-
-    function setJoseph(address joseph)
-        external
-        override
-        onlyRole(_JOSEPH_ROLE)
-    {
-        _addresses[_JOSEPH] = joseph;
-        emit JosephAddressUpdated(joseph);
-    }
+    }        
 
     function getMiltonSpreadModel() external view override returns (address) {
         return _addresses[_MILTON_SPREAD_MODEL];
@@ -119,7 +74,7 @@ contract IporConfiguration is
         emit MiltonSpreadModelUpdated(miltonSpreadModel);
     }
 
-    function getMiltonLPUtilizationStrategy()
+    function getMiltonLiquidityPoolUtilizationModel()
         external
         view
         override
@@ -128,13 +83,13 @@ contract IporConfiguration is
         return _addresses[_MILTON_LP_UTILIZATION_STRATEGY];
     }
 
-    function setMiltonLPUtilizationStrategy(address miltonUtilizationStrategy)
+    function setMiltonLiquidityPoolUtilizationModel(address miltonUtilizationModel)
         external
         override
         onlyRole(_MILTON_LP_UTILIZATION_STRATEGY_ROLE)
     {
-        _addresses[_MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationStrategy;
-        emit MiltonUtilizationStrategyUpdated(miltonUtilizationStrategy);
+        _addresses[_MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationModel;
+        emit MiltonUtilizationStrategyUpdated(miltonUtilizationModel);
     }
 
     function getMiltonPublicationFeeTransferer()
@@ -173,7 +128,7 @@ contract IporConfiguration is
     {
         require(
             supportedAssets[asset] == 1,
-            Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
         iporAssetConfigurations[asset] = iporConfig;
         emit IporAssetConfigurationAddressUpdated(asset, iporConfig);
@@ -188,9 +143,11 @@ contract IporConfiguration is
         override
         onlyRole(_IPOR_ASSETS_ROLE)
     {
-        require(asset != address(0), Errors.WRONG_ADDRESS);
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
         bool assetExists = false;
-        for (uint256 i = 0; i < assets.length; i++) {
+		uint256 i = 0;
+		uint256 assetsLength = assets.length;
+        for (i; i != assetsLength; i++) {
             if (assets[i] == asset) {
                 assetExists = true;
             }
@@ -207,8 +164,10 @@ contract IporConfiguration is
         override
         onlyRole(_IPOR_ASSETS_ROLE)
     {
-        require(asset != address(0), Errors.WRONG_ADDRESS);
-        for (uint256 i = 0; i < assets.length; i++) {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+		uint256 i = 0;
+		uint256 assetsLength = assets.length;
+        for (i; i != assetsLength; i++) {
             if (assets[i] == asset) {
                 delete assets[i];
                 supportedAssets[asset] = 0;
@@ -218,6 +177,7 @@ contract IporConfiguration is
         }
     }
 
+	//TODO: move asset supported to Warren or remove it forever
     function assetSupported(address asset)
         external
         view

@@ -44,62 +44,6 @@ export default ({ drizzle, drizzleState }) => (
         </div>
 
         <div className="row">
-            <div className="col-md-2">Milton</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getMilton"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setMilton"
-                />
-            </div>
-        </div>
-
-        <div className="row">
-            <div className="col-md-2">Milton Storage</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getMiltonStorage"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setMiltonStorage"
-                />
-            </div>
-        </div>
-
-        <div className="row">
-            <div className="col-md-2">Joseph</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getJoseph"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setJoseph"
-                />
-            </div>
-        </div>
-        <div className="row">
             <div className="col-md-2">Milton Spread Model</div>
             <div className="col-md-3">
                 <ContractData
@@ -126,14 +70,14 @@ export default ({ drizzle, drizzleState }) => (
                     drizzle={drizzle}
                     drizzleState={drizzleState}
                     contract="IporConfiguration"
-                    method="getMiltonLPUtilizationStrategy"
+                    method="getMiltonLiquidityPoolUtilizationModel"
                 />
             </div>
             <div className="col-md-7">
                 <ContractForm
                     drizzle={drizzle}
                     contract="IporConfiguration"
-                    method="setMiltonLPUtilizationStrategy"
+                    method="setMiltonLiquidityPoolUtilizationModel"
                 />
             </div>
         </div>
@@ -157,35 +101,111 @@ export default ({ drizzle, drizzleState }) => (
             </div>
         </div>
         <hr />
+		<div className="row">
+            <div className="col-md-2">IporConfiguration</div>
+            <div className="col-md-10">{drizzle.contracts.IporConfiguration.address}</div>
+        </div>
         <div className="row">
             <div className="col-md-2">Warren</div>
             <div className="col-md-10">{drizzle.contracts.Warren.address}</div>
         </div>
         <div className="row">
-            <div className="col-md-2">Test Warren</div>
+            <div className="col-md-2">ItfWarren</div>
             <div className="col-md-10">
-                {drizzle.contracts.TestWarren.address}
+                {drizzle.contracts.ItfWarren.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">Milton</div>
-            <div className="col-md-10">{drizzle.contracts.Milton.address}</div>
-        </div>
-        <div className="row">
-            <div className="col-md-2">Test Milton</div>
+            <div className="col-md-2">MiltonUsdt</div>
             <div className="col-md-10">
-                {drizzle.contracts.TestMilton.address}
+                {drizzle.contracts.MiltonUsdt.address}
             </div>
         </div>
         <div className="row">
-            <div className="col-md-2">Joseph</div>
-            <div className="col-md-10">{drizzle.contracts.Joseph.address}</div>
+            <div className="col-md-2">ItfMiltonUsdt</div>
+            <div className="col-md-10">
+                {drizzle.contracts.ItfMiltonUsdt.address}
+            </div>
         </div>
         <div className="row">
-            <div className="col-md-2">Test Joseph</div>
+            <div className="col-md-2">MiltonStorageUsdt</div>
             <div className="col-md-10">
-                {drizzle.contracts.TestJoseph.address}
+                {drizzle.contracts.MiltonStorageUsdt.address}
             </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">JosephUsdt</div>
+            <div className="col-md-10">
+                {drizzle.contracts.JosephUsdt.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">ItfJosephUsdt</div>
+            <div className="col-md-10">
+                {drizzle.contracts.ItfJosephUsdt.address}
+            </div>
+        </div>
+
+        <div className="row">
+            <div className="col-md-2">MiltonUsdc</div>
+            <div className="col-md-10">
+                {drizzle.contracts.MiltonUsdc.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">ItfMiltonUsdc</div>
+            <div className="col-md-10">
+                {drizzle.contracts.ItfMiltonUsdc.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">MiltonStorageUsdc</div>
+            <div className="col-md-10">
+                {drizzle.contracts.MiltonStorageUsdc.address}
+            </div>
+        </div>
+
+        <div className="row">
+            <div className="col-md-2">JosephUsdc</div>
+            <div className="col-md-10">
+                {drizzle.contracts.JosephUsdc.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">ItfJosephUsdc</div>
+            <div className="col-md-10">
+                {drizzle.contracts.ItfJosephUsdc.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">MiltonDai</div>
+            <div className="col-md-10">
+                {drizzle.contracts.MiltonDai.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">ItfMiltonDai</div>
+            <div className="col-md-10">
+                {drizzle.contracts.ItfMiltonDai.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">MiltonStorageDai</div>
+            <div className="col-md-10">
+                {drizzle.contracts.MiltonStorageDai.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">JosephDai</div>
+            <div className="col-md-10">
+                {drizzle.contracts.JosephDai.address}
+            </div>
+        </div>
+        <div className="row">
+            <div className="col-md-2">ItfJosephDai</div>
+            <div className="col-md-10">
+                {drizzle.contracts.ItfJosephDai.address}
+            </div>	
         </div>
         <hr />
         <div className="row">
@@ -237,42 +257,6 @@ export default ({ drizzle, drizzleState }) => (
                         <td>WARREN_STORAGE_ROLE</td>
                         <td>
                             0xb527a07823dd490f4af143463d6cd886bd7f2ff7af38e50cce0a4d77dbccc92f
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_ADMIN_ROLE</td>
-                        <td>
-                            0x1b16f266cfe5113986bbdf79323bd64ba74c9e2631c82de1297c13405226a952
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_ROLE</td>
-                        <td>
-                            0x57a20741ae1ee76695a182cdfb995538919da5f1f6a92bca097f37a35c4be803
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_STORAGE_ADMIN_ROLE</td>
-                        <td>
-                            0x61e410eb94acd095b84b0de4a9befc42adb8e88aad1e0c387e8f14c5c05f4cd5
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_STORAGE_ROLE</td>
-                        <td>
-                            0xb8f71ab818f476672f61fd76955446cd0045ed8ddb51f595d9e262b68d1157f6
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>JOSEPH_ADMIN_ROLE</td>
-                        <td>
-                            0x811ff4f923fc903f4390f8acf72873b5d1b288ec77b442fe124d0f95d6a53731
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>JOSEPH_ROLE</td>
-                        <td>
-                            0x2c03e103fc464998235bd7f80967993a1e6052d41cc085d3317ca8e301f51125
                         </td>
                     </tr>
                     <tr>

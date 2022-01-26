@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "./Warren.sol";
+import "../oracles/Warren.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
-//TODO:  move to mock/test/itf folder
-contract TestWarren is Warren {
+contract ItfWarren is Warren {
+    constructor(address initialIporConfiguration)
+        Warren(initialIporConfiguration)
+    {}
 
-	//TODO: change name to updateIndex, align ITF
-	function test_updateIndex(
+    function itfUpdateIndex(
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
@@ -17,20 +18,19 @@ contract TestWarren is Warren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
+        _updateIndexes(
             assets,
             indexes,
             updateTimestamp
         );
     }
 
-	//TODO: change name to updateIndexes, align ITF
-    function test_updateIndexes(
+    function itfUpdateIndexes(
         address[] memory assets,
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) external onlyUpdater {
-        IWarrenStorage(iporConfiguration.getWarrenStorage()).updateIndexes(
+        _updateIndexes(
             assets,
             indexValues,
             updateTimestamp

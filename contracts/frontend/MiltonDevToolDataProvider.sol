@@ -7,11 +7,12 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
+//TODO: consider dev tool per asset
 contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
-    IIporConfiguration public immutable ADDRESSES_MANAGER;
+    IIporConfiguration private immutable _iporConfiguration;
 
     constructor(IIporConfiguration iporConfiguration) {
-        ADDRESSES_MANAGER = iporConfiguration;
+        _iporConfiguration = iporConfiguration;
     }
     function getMyIpTokenBalance(address asset)
         external
@@ -21,7 +22,7 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
     {
         IERC20 token = IERC20(
             IIporAssetConfiguration(
-                ADDRESSES_MANAGER.getIporAssetConfiguration(asset)
+                _iporConfiguration.getIporAssetConfiguration(asset)
             ).getIpToken()
         );
         return token.balanceOf(msg.sender);
@@ -43,8 +44,9 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         override
         returns (uint256)
     {
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         IERC20 token = IERC20(asset);
-        return token.allowance(msg.sender, ADDRESSES_MANAGER.getMilton());
+        return token.allowance(msg.sender, assetConfiguration.getMilton());
     }
 
     function getMyAllowanceInJoseph(address asset)
@@ -54,32 +56,53 @@ contract MiltonDevToolDataProvider is IMiltonDevToolDataProvider {
         returns (uint256)
     {
         IERC20 token = IERC20(asset);
-        return token.allowance(msg.sender, ADDRESSES_MANAGER.getJoseph());
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+        return token.allowance(msg.sender, assetConfiguration.getJoseph());
     }
 
-    function getPositions()
+    function getSwapsPayFixed(address asset, address account)
         external
         view
         override
-        returns (DataTypes.IporDerivative[] memory)
+        returns (DataTypes.IporSwapMemory[] memory)
     {
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         return
-            IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage()).getPositions();
+            IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsPayFixed(account);
     }
 
-    function getMyPositions()
+	function getSwapsReceiveFixed(address asset, address account)
+	external
+	view
+	override
+	returns (DataTypes.IporSwapMemory[] memory)
+{
+	IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+	return
+		IMiltonStorage(assetConfiguration.getMiltonStorage()).getSwapsReceiveFixed(account);
+}
+    function getMySwapsPayFixed(address asset)
         external
         view
         override
-        returns (DataTypes.IporDerivative[] memory items)
+        returns (DataTypes.IporSwapMemory[] memory items)
     {
+		IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
         return
-            IMiltonStorage(ADDRESSES_MANAGER.getMiltonStorage())
-                .getUserPositions(msg.sender);
+            IMiltonStorage(assetConfiguration.getMiltonStorage())
+                .getSwapsPayFixed(msg.sender);
     }
 
-    //@notice FOR TEST ONLY
-    //    function getOpenPosition(uint256 derivativeId) external view returns (DataTypes.IporDerivative memory) {
-    //        return milton.getDerivatives().items[derivativeId].item;
-    //    }
+	function getMySwapsReceiveFixed(address asset)
+	external
+	view
+	override
+	returns (DataTypes.IporSwapMemory[] memory items)
+{
+	IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(_iporConfiguration.getIporAssetConfiguration(asset));
+	return
+		IMiltonStorage(assetConfiguration.getMiltonStorage())
+			.getSwapsReceiveFixed(msg.sender);
+}
+
 }

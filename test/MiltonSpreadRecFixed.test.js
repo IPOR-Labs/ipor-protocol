@@ -81,18 +81,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = BigInt("93497295658845706");
 
@@ -101,12 +104,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -161,18 +162,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -181,12 +185,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -241,19 +243,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
-
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
         const expectedSpreadValue = spreadMaxValue;
 
         //when
@@ -261,12 +265,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -321,18 +323,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = recFixedDerivativesBalance;
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -341,12 +346,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -401,18 +404,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = recFixedDerivativesBalance;
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -421,12 +427,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -481,9 +485,9 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
@@ -491,9 +495,14 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const soap = recFixedDerivativesBalance;
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -502,12 +511,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -562,9 +569,9 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
@@ -572,9 +579,14 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const soap = recFixedDerivativesBalance;
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -583,12 +595,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -643,9 +653,9 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
@@ -653,9 +663,14 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const soap = BigInt("500000000000000000000");
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("1000000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -664,12 +679,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -724,9 +737,9 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
@@ -734,9 +747,14 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const soap = BigInt("500000000000000000000");
 
         const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage =
-            BigInt("1000000000000000000") + iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+
+        const accruedIpor = {
+            indexValue: iporIndexValue,
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage:
+                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -745,12 +763,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -805,18 +821,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("100000000000000001500");
-        const derivativeDeposit = BigInt("10000");
-        const derivativeOpeningFee = BigInt("0");
+        const liquidityPoolBalance = BigInt("100000000000000001500");
+        const swapCollateral = BigInt("10000");
+        const swapOpeningFee = BigInt("0");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000");
 
         const soap = BigInt("100");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -825,12 +844,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -885,18 +902,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("999999999999999999000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -905,12 +925,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -965,19 +983,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-
-        const exponentialWeightedMovingVariance = BigInt("999999999999999899");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("999999999999999899"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -986,12 +1006,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1046,18 +1064,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("3000000000000000000");
-        const exponentialMovingAverage = BigInt("2000000000000000010");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("3000000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("2000000000000000010"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -1066,12 +1087,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1126,18 +1145,21 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("15000000000000000000000");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("20000000000000000000");
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
 
         const expectedSpreadValue = spreadMaxValue;
 
@@ -1146,12 +1168,10 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1206,31 +1226,31 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .connect(userOne)
             .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
-        const liquidityPool = BigInt("0");
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = BigInt("0");
+        const liquidityPoolBalance = BigInt("0");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = BigInt("0");
 
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
-
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: BigInt("1000000000000000000"),
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
         //when
         await assertError(
             //when
             data.miltonSpread
                 .connect(userOne)
                 .testCalculateSpreadRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance,
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    accruedIpor,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap

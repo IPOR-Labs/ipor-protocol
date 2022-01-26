@@ -4,23 +4,29 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
-    function authorizeJoseph(address asset) external;
+    function authorizeJoseph() external;
 
     function pause() external;
 
     function unpause() external;
 
-    function openPosition(
-        address asset,
+    function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint256 collateralizationFactor,
-        uint8 direction
+        uint256 collateralizationFactor
     ) external returns (uint256);
 
-    function closePosition(uint256 derivativeId) external;
+    function openSwapReceiveFixed(
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) external returns (uint256);
 
-    function calculateSoap(address asset)
+    function closeSwapPayFixed(uint256 swapId) external;
+
+    function closeSwapReceiveFixed(uint256 swapId) external;
+
+    function calculateSoap()
         external
         view
         returns (
@@ -29,17 +35,20 @@ interface IMilton {
             int256 soap
         );
 
-    function calculateSpread(address asset)
+    function calculateSpread()
         external
         view
         returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculatePositionValue(DataTypes.IporDerivative memory derivative)
-        external
-        view
-        returns (int256);
+    function calculateSwapPayFixedValue(
+        DataTypes.IporSwapMemory memory swap
+    ) external view returns (int256);
 
-    function calculateExchangeRate(address asset, uint256 calculateTimestamp)
+    function calculateSwapReceiveFixedValue(
+        DataTypes.IporSwapMemory memory swap
+    ) external view returns (int256);
+
+    function calculateExchangeRate(uint256 calculateTimestamp)
         external
         view
         returns (uint256);

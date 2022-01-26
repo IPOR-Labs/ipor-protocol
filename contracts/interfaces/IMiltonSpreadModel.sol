@@ -2,29 +2,34 @@
 pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
+import "../interfaces/IMiltonStorage.sol";
 
 interface IMiltonSpreadModel {
     function calculatePartialSpreadPayFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset
+        DataTypes.AccruedIpor memory accruedIpor
     ) external view returns (uint256 spreadValue);
 
     function calculateSpreadPayFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee
     ) external view returns (uint256 spreadValue);
 
     function calculatePartialSpreadRecFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset
+        DataTypes.AccruedIpor memory accruedIpor
     ) external view returns (uint256 spreadValue);
 
     function calculateSpreadRecFixed(
+        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-        address asset,
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee
     ) external view returns (uint256 spreadValue);
 }

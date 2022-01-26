@@ -22,19 +22,6 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
     bytes32 internal constant _WARREN_STORAGE_ROLE =
         keccak256("WARREN_STORAGE_ROLE");
 
-    bytes32 internal constant _MILTON_ADMIN_ROLE =
-        keccak256("MILTON_ADMIN_ROLE");
-    bytes32 internal constant _MILTON_ROLE = keccak256("MILTON_ROLE");
-
-    bytes32 internal constant _MILTON_STORAGE_ADMIN_ROLE =
-        keccak256("MILTON_STORAGE_ADMIN_ROLE");
-    bytes32 internal constant _MILTON_STORAGE_ROLE =
-        keccak256("MILTON_STORAGE_ROLE");
-
-    bytes32 internal constant _JOSEPH_ADMIN_ROLE =
-        keccak256("JOSEPH_ADMIN_ROLE");
-    bytes32 internal constant _JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
-
     bytes32 internal constant _MILTON_SPREAD_MODEL_ADMIN_ROLE =
         keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE");
     bytes32 internal constant _MILTON_SPREAD_MODEL_ROLE =
@@ -58,13 +45,7 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
         _setRoleAdmin(_ROLES_INFO_ROLE, _ROLES_INFO_ADMIN_ROLE);
 
         _setRoleAdmin(_IPOR_ASSETS_ADMIN_ROLE, _ADMIN_ROLE);
-        _setRoleAdmin(_IPOR_ASSETS_ROLE, _IPOR_ASSETS_ADMIN_ROLE);
-
-        _setRoleAdmin(_MILTON_ADMIN_ROLE, _ADMIN_ROLE);
-        _setRoleAdmin(_MILTON_ROLE, _MILTON_ADMIN_ROLE);
-
-        _setRoleAdmin(_MILTON_STORAGE_ADMIN_ROLE, _ADMIN_ROLE);
-        _setRoleAdmin(_MILTON_STORAGE_ROLE, _MILTON_STORAGE_ADMIN_ROLE);
+        _setRoleAdmin(_IPOR_ASSETS_ROLE, _IPOR_ASSETS_ADMIN_ROLE);        
 
         _setRoleAdmin(_MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE, _ADMIN_ROLE);
         _setRoleAdmin(
@@ -88,10 +69,7 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
         _setRoleAdmin(_WARREN_ROLE, _WARREN_ADMIN_ROLE);
 
         _setRoleAdmin(_WARREN_STORAGE_ADMIN_ROLE, _ADMIN_ROLE);
-        _setRoleAdmin(_WARREN_STORAGE_ROLE, _WARREN_STORAGE_ADMIN_ROLE);
-
-        _setRoleAdmin(_JOSEPH_ADMIN_ROLE, _ADMIN_ROLE);
-        _setRoleAdmin(_JOSEPH_ROLE, _JOSEPH_ADMIN_ROLE);
+        _setRoleAdmin(_WARREN_STORAGE_ROLE, _WARREN_STORAGE_ADMIN_ROLE);        
 
         _setRoleAdmin(
             _MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE,

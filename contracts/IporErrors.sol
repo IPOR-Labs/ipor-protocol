@@ -1,32 +1,32 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-library Errors {
+library IporErrors {
     //@notice The caller must be the Milton smart contract
     string public constant MILTON_CALLER_NOT_MILTON = "IPOR_1";
 
     //@notice The caller must be the Warren updater
     string public constant WARREN_CALLER_NOT_WARREN_UPDATER = "IPOR_2";
 
-    //@notice Deposit Amount when creating derivative position is lower than fee
+    //@notice Total Amount when opening swap is lower than fee
     string public constant MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE = "IPOR_3";
 
-    //@notice Deposit Amount when creating derivative position is too low
+    //@notice Total Amount when opening swap is too low
     string public constant MILTON_TOTAL_AMOUNT_TOO_LOW = "IPOR_4";
 
     //@notice Maximum Slippage is too low
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_5";
 
     //@notice Liquidity Pool for given asset symbol not exists
-    string public constant MILTON_LIQUIDITY_POOL_NOT_EXISTS = "IPOR_7";
+    // string public constant MILTON_LIQUIDITY_POOL_NOT_EXISTS = "IPOR_7";
 
-    //@notice Derivative direction not exists
-    string public constant MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS = "IPOR_8";
+    //@notice Swap direction not exists
+    // string public constant MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS = "IPOR_8";
 
     //@notice Maximum Slippage is too high
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_9";
 
-    //@notice Deposit Amount when creating derivative position is too high
+    //@notice Total Amount is too high
     string public constant MILTON_TOTAL_AMOUNT_TOO_HIGH = "IPOR_10";
 
     //@notice Deposit amount to notional amount collateralization factor is too low
@@ -36,28 +36,28 @@ library Errors {
     string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW
 	 = "IPOR_13";
 	
-    //@notice Derivative cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
+    //@notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
     string
         public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW =
         "IPOR_14";
 
-    //@notcie Derivative cannot be closed because liquidation deposit balance is to low to pay sender for liquidation
+    //@notcie Swap cannot be closed because liquidation deposit balance is to low to pay sender for liquidation
     string
         public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW =
         "IPOR_15";
 
-    //@notice Derivative cannot be closed because sender is not an owner of derivative and derivative maturity not achieved
+    //@notice Swap cannot be closed because sender is not an owner of derivative and derivative maturity not achieved
     string
         public constant MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY =
         "IPOR_16";
 
-    //@notice Derivative should be in ACTIVE state
+    //@notice Swap should be in ACTIVE state
     string public constant MILTON_DERIVATIVE_IS_INACTIVE = "IPOR_17";
 
     //@notice Input arrays which should have the same length - mismatch
     string public constant WARREN_INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
 
-    //@notice Derivative Notional Amount is higher than Total Notional
+    //@notice Swap Notional Amount is higher than Total Notional
     string
         public constant MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL =
         "IPOR_19";
@@ -72,18 +72,18 @@ library Errors {
         public constant MILTON_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP =
         "IPOR_21";
 
-    //@notice Derivative id used in input has incorrect value (like 0) or not exists
-    string public constant MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID =
+    //@notice Swap id used in input has incorrect value (like 0) or not exists
+    string public constant MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID =
         "IPOR_22";
 
-    //@notice Derivative has incorrect status
+    //@notice Swap has incorrect status
     string public constant MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS =
         "IPOR_23";
 
     //@notice General error, max value exceeded
     string public constant MILTON_CONFIG_MAX_VALUE_EXCEEDED = "IPOR_24";
 
-    //@notice Derivative closing timestamp cannot be before derivative starting timestamp
+    //@notice Swap closing timestamp cannot be before derivative starting timestamp
     string
         public constant MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP =
         "IPOR_25";
@@ -112,13 +112,13 @@ library Errors {
     //@notice Incorrect IPOR Configuration address
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = "IPOR_32";
 
-    //@notice Incorrect IPOR Configuration address
-    string public constant MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS =
+    //@notice Incorrect IPOR Configuration address, address to global configuration
+    string public constant INCORRECT_IPOR_CONFIGURATION_ADDRESS =
         "IPOR_33";
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 
-    //@notice Liquidity Pool Utilisation exceeded, implementation interface IMiltonLPUtilizationStrategy calculate utilisation, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
+    //@notice Liquidity Pool Utilisation exceeded, implementation interface IMiltonLiquidityPoolUtilizationModel calculate utilisation, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
     string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED =
         "IPOR_35";
 
@@ -168,7 +168,7 @@ library Errors {
 	string public constant MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO =
         "IPOR_49";
 
-    //@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
+    //@notice ADMIN_ROLE can be revoked only by different account with ADMIN_ROLE
     string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_50";
 
     //TODO: add test for this code

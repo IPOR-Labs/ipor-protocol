@@ -15,16 +15,13 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SPREAD Pay Fixed</td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonUsdt"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadPayFixedValue /
@@ -38,11 +35,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdt"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadPayFixedValue /
@@ -55,16 +49,13 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonUsdc"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadPayFixedValue /
@@ -78,11 +69,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdc"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadPayFixedValue /
@@ -95,16 +83,13 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonDai"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadPayFixedValue /
@@ -118,11 +103,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonDai"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadPayFixedValue /
@@ -138,16 +120,13 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SPREAD Receive Fixed</td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonUsdt"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadRecFixedValue /
@@ -161,11 +140,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdt"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdtMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadRecFixedValue /
@@ -178,16 +154,13 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonUsdc"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadRecFixedValue /
@@ -201,11 +174,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdc"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.UsdcMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadRecFixedValue /
@@ -218,16 +188,13 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_MILTON ===
+                    {process.env.REACT_APP_ITF_ENABLED ===
                     "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonDai"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadRecFixedValue /
@@ -241,11 +208,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonDai"
                             method="calculateSpread"
-                            methodArgs={[
-                                drizzle.contracts.DaiMockedToken.address,
-                            ]}
                             render={(item) => (
                                 <div>
                                     {item.spreadRecFixedValue /

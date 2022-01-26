@@ -12,21 +12,6 @@ contract MockIporLogic {
         return IporLogic.accrueQuasiIbtPrice(ipor, accrueTimestamp);
     }
 
-    // function accrueQuasiIbtPrice(
-    //     uint256 indexValue,
-    //     uint256 quasiIbtPrice,
-    //     uint256 indexTimestamp,
-    //     uint256 accrueTimestamp
-    // ) public pure returns (uint256) {
-    //     return
-    //         IporLogic.accrueQuasiIbtPrice(
-    //             indexValue,
-    //             quasiIbtPrice,
-    //             indexTimestamp,
-    //             accrueTimestamp
-    //         );
-    // }
-
     function calculateExponentialMovingAverage(
         uint256 lastExponentialMovingAverage,
         uint256 indexValue,

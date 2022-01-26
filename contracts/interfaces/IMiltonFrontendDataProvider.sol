@@ -15,7 +15,7 @@ interface IMiltonFrontendDataProvider {
         uint256 spreadRecFixedValue;
     }
 
-    struct IporDerivativeFront {
+    struct IporSwapFront {
         uint256 id;
         address asset;
         uint256 collateral;
@@ -36,10 +36,10 @@ interface IMiltonFrontendDataProvider {
         view
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
 
-    function getMyPositions()
+    function getMySwaps(address asset)
         external
         view
-        returns (IporDerivativeFront[] memory items);
+        returns (IporSwapFront[] memory items);
 
     function getConfiguration()
         external

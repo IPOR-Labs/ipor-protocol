@@ -2,28 +2,26 @@
 pragma solidity 0.8.9;
 
 import "../libraries/Constants.sol";
-import "../libraries/AmmMath.sol";
+import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
-import "../interfaces/IMiltonLPUtilisationStrategy.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
-import {AmmMath} from "../libraries/AmmMath.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 
 contract MiltonSpreadModelCore {
 
-	function _calculateSoapPlus(int256 soap, uint256 derivativesBalance)
+	function _calculateSoapPlus(int256 soap, uint256 swapsBalance)
         internal
         pure
         returns (uint256)
     {
         if (soap > 0) {
             return
-                AmmMath.division(
+                IporMath.division(
                     uint256(soap) * Constants.D18,
-                    derivativesBalance
+                    swapsBalance
                 );
         } else {
             return 0;
@@ -32,11 +30,11 @@ contract MiltonSpreadModelCore {
 
 	function _calculateImbalanceFactorWithLambda(
         uint256 utilizationRateLegWithPosition,
-        uint256 utilizationRateLegWithoutPosition,
+        uint256 utilizationRateLegWithoutSwap,
         uint256 lambda
     ) internal pure returns (uint256) {
         if (
-            utilizationRateLegWithPosition >= utilizationRateLegWithoutPosition
+            utilizationRateLegWithPosition >= utilizationRateLegWithoutSwap
         ) {
             return Constants.D18 - utilizationRateLegWithPosition;
         } else {
@@ -45,9 +43,9 @@ contract MiltonSpreadModelCore {
                  Constants.D18 -
                  (utilizationRateLegWithPosition 
 					 -
-                    AmmMath.division(
+                    IporMath.division(
                         lambda *
-                            (utilizationRateLegWithoutPosition -
+                            (utilizationRateLegWithoutSwap -
                                 utilizationRateLegWithPosition),
                         Constants.D18
                     )
@@ -57,28 +55,28 @@ contract MiltonSpreadModelCore {
 	
 	//@notice Calculates utilization rate including position which is opened
     function _calculateUtilizationRateWithPosition(
-        uint256 derivativeDeposit,
-        uint256 derivativeOpeningFee,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 derivativesBalance
+        uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
-            AmmMath.division(
-                (derivativesBalance + derivativeDeposit) * Constants.D18,
-                liquidityPoolBalance + derivativeOpeningFee
+            IporMath.division(
+                (swapsBalance + swapCollateral) * Constants.D18,
+                liquidityPoolBalance + swapOpeningFee
             );
     }
 
 	//URleg(0)
-    function _calculateUtilizationRateWithoutPosition(
-        uint256 derivativeOpeningFee,
+    function _calculateUtilizationRateWithoutSwap(
+        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 derivativesBalance
+        uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
-            AmmMath.division(
-                derivativesBalance * Constants.D18,
-                liquidityPoolBalance + derivativeOpeningFee
+            IporMath.division(
+                swapsBalance * Constants.D18,
+                liquidityPoolBalance + swapOpeningFee
             );
     }
 }

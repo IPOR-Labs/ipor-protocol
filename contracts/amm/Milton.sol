@@ -2,24 +2,24 @@
 pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
-import "../libraries/AmmMath.sol";
+import "../libraries/IporMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import {Errors} from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../oracles/WarrenStorage.sol";
 import "./MiltonStorage.sol";
-import "./IMiltonEvents.sol";
+import "../interfaces/IMiltonEvents.sol";
 import "../tokenization/IpToken.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
-import "../interfaces/IMiltonLPUtilisationStrategy.sol";
+import "../interfaces/IMiltonLiquidityPoolUtilizationModel.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
 
@@ -32,37 +32,64 @@ import "../interfaces/IJoseph.sol";
 contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     using SafeERC20 for IERC20;
     using SafeCast for uint256;
+    using SafeCast for uint128;
     using SafeCast for int256;
+    using IporSwapLogic for DataTypes.IporSwapMemory;
 
-    using DerivativeLogic for DataTypes.IporDerivative;
+    uint8 private immutable _decimals;
+    address private immutable _asset;
+    IIporConfiguration internal immutable _iporConfiguration;
+    IIporAssetConfiguration internal immutable _iporAssetConfiguration;
 
-    IIporConfiguration internal iporConfiguration;
-
-    modifier onlyActiveDerivative(uint256 derivativeId) {
+    constructor(address asset, address initialIporConfiguration) {
+        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(
-            IMiltonStorage(iporConfiguration.getMiltonStorage())
-                .getDerivativeItem(derivativeId)
-                .item
-                .state == DataTypes.DerivativeState.ACTIVE,
-            Errors.MILTON_DERIVATIVE_IS_INACTIVE
+            address(initialIporConfiguration) != address(0),
+            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
+        );
+        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
+        require(
+            _iporConfiguration.assetSupported(asset) == 1,
+            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+        );        
+
+		address iporAssetConfigurationAddr = _iporConfiguration.getIporAssetConfiguration(asset);
+
+		require(address(iporAssetConfigurationAddr) != address(0), IporErrors.WRONG_ADDRESS);
+
+        _iporAssetConfiguration = IIporAssetConfiguration(
+            iporAssetConfigurationAddr
+        );
+
+        _decimals = _iporAssetConfiguration.getDecimals();
+		_asset = asset;
+    }
+
+    modifier onlyActiveSwapPayFixed(uint256 swapId) {
+        require(
+            IMiltonStorage(_iporAssetConfiguration.getMiltonStorage())
+                .getSwapPayFixedState(swapId) == 1,
+            IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
+        );
+        _;
+    }
+
+    modifier onlyActiveSwapReceiveFixed(uint256 swapId) {
+        require(
+            IMiltonStorage(_iporAssetConfiguration.getMiltonStorage())
+                .getSwapReceiveFixedState(swapId) == 0,
+            IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
         );
         _;
     }
 
     modifier onlyPublicationFeeTransferer() {
         require(
-            msg.sender == iporConfiguration.getMiltonPublicationFeeTransferer(),
-            Errors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
+            msg.sender ==
+                _iporConfiguration.getMiltonPublicationFeeTransferer(),
+            IporErrors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
         );
         _;
-    }
-
-    //TODO: initialization only once
-    function initialize(IIporConfiguration initialIporConfiguration)
-        external
-        onlyOwner
-    {
-        iporConfiguration = initialIporConfiguration;
     }
 
     function pause() external override onlyOwner {
@@ -77,86 +104,100 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
-    function authorizeJoseph(address asset)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        IERC20(asset).safeIncreaseAllowance(
-            iporConfiguration.getJoseph(),
+    function authorizeJoseph() external override onlyOwner whenNotPaused {
+        IERC20(_asset).safeIncreaseAllowance(
+            _iporAssetConfiguration.getJoseph(),
             Constants.MAX_VALUE
         );
     }
 
     //@notice transfer publication fee to configured charlie treasurer address
-    function transferPublicationFee(address asset, uint256 amount)
+    function transferPublicationFee(uint256 amount)
         external
         onlyPublicationFeeTransferer
     {
-        require(amount > 0, Errors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        require(amount != 0, IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+
+        //TODO: consider save this address inside Milton, use MiltonStorage as proxy, and manage this address directly on Milton
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporAssetConfiguration.getMiltonStorage()
         );
         require(
-            amount <= miltonStorage.getBalance(asset).openingFee,
-            Errors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
+            amount <= miltonStorage.getBalance().openingFee,
+            IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
         );
-        address charlieTreasurer = IIporAssetConfiguration(
-            iporConfiguration.getIporAssetConfiguration(asset)
-        ).getCharlieTreasurer();
+        address charlieTreasurer = _iporAssetConfiguration
+            .getCharlieTreasurer();
         require(
             address(0) != charlieTreasurer,
-            Errors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS
+            IporErrors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS
         );
-        miltonStorage.updateStorageWhenTransferPublicationFee(asset, amount);
+        miltonStorage.updateStorageWhenTransferPublicationFee(amount);
         //TODO: user Address from OZ and use call
         //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
-        IERC20(asset).safeTransfer(charlieTreasurer, amount);
+        IERC20(_asset).safeTransfer(charlieTreasurer, amount);
     }
 
     //TODO: !!! consider connect configuration with milton storage,
     //in this way that if there is parameter used only in open and close position then let put it in miltonstorage
-    function openPosition(
-        address asset,
+    function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint256 collateralizationFactor,
-        uint8 direction
+        uint256 collateralizationFactor
     ) external override returns (uint256) {
         return
-            _openPosition(
+            _openSwapPayFixed(
                 block.timestamp,
-                asset,
                 totalAmount,
                 maximumSlippage,
-                collateralizationFactor,
-                direction
+                collateralizationFactor
             );
     }
 
-    function closePosition(uint256 derivativeId)
-        external
-        override
-        onlyActiveDerivative(derivativeId)
-        nonReentrant
-    {
-        _closePosition(derivativeId, block.timestamp);
+    function openSwapReceiveFixed(
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) external override returns (uint256) {
+        return
+            _openSwapReceiveFixed(
+                block.timestamp,
+                totalAmount,
+                maximumSlippage,
+                collateralizationFactor
+            );
     }
 
-    function calculateSpread(address asset)
+    function closeSwapPayFixed(uint256 swapId)
+        external
+        override
+        onlyActiveSwapPayFixed(swapId)
+        nonReentrant
+    {
+        _closeSwapPayFixed(swapId, block.timestamp);
+    }
+
+    function closeSwapReceiveFixed(uint256 swapId)
+        external
+        override
+        onlyActiveSwapReceiveFixed(swapId)
+        nonReentrant
+    {
+        _closeSwapReceiveFixed(swapId, block.timestamp);
+    }
+
+    function calculateSpread()
         external
         view
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(
-            asset,
             block.timestamp
         );
     }
 
-    function calculateSoap(address asset)
+    function calculateSoap()
         external
         view
         override
@@ -167,48 +208,50 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         )
     {
         (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(
-            asset,
             block.timestamp
         );
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function calculatePositionValue(DataTypes.IporDerivative memory derivative)
+    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
         external
         view
         override
         returns (int256)
     {
-        return _calculatePositionValue(block.timestamp, derivative);
+        return _calculateSwapPayFixedValue(block.timestamp, swap);
+    }
+
+    function calculateSwapReceiveFixedValue(
+        DataTypes.IporSwapMemory memory swap
+    ) external view override returns (int256) {
+        return _calculateSwapReceiveFixedValue(block.timestamp, swap);
     }
 
     //TODO: refactor in this way that timestamp is not visible in external milton method
-    function calculateExchangeRate(address asset, uint256 calculateTimestamp)
+    function calculateExchangeRate(uint256 calculateTimestamp)
         external
         view
         override
         returns (uint256)
     {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        IIpToken ipToken = IIpToken(iporAssetConfiguration.getIpToken());
+        IIpToken ipToken = IIpToken(_iporAssetConfiguration.getIpToken());
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporAssetConfiguration.getMiltonStorage()
         );
-        (, , int256 soap) = _calculateSoap(asset, calculateTimestamp);
-        int256 balance = miltonStorage
-            .getBalance(asset)
-            .liquidityPool
-            .toInt256() + soap;
+        (, , int256 soap) = _calculateSoap(calculateTimestamp);
+
+        int256 balance = miltonStorage.getBalance().liquidityPool.toInt256() -
+            soap;
+
         require(
             balance >= 0,
-            Errors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW
+            IporErrors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW
         );
         uint256 ipTokenTotalSupply = ipToken.totalSupply();
-        if (ipTokenTotalSupply > 0) {
+        if (ipTokenTotalSupply != 0) {
             return
-                AmmMath.division(
+                IporMath.division(
                     balance.toUint256() * Constants.D18,
                     ipTokenTotalSupply
                 );
@@ -217,52 +260,93 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         }
     }
 
-    function _calculatePositionValue(
+    function _calculateSwapPayFixedValue(
         uint256 timestamp,
-        DataTypes.IporDerivative memory derivative
+        DataTypes.IporSwapMemory memory swap
     ) internal view returns (int256) {
-        DataTypes.IporDerivativeInterest memory derivativeInterest = derivative
-            .calculateInterest(
+        DataTypes.IporSwapInterest memory derivativeInterest = swap
+            .calculateInterestForSwapPayFixed(
                 timestamp,
-                IWarren(iporConfiguration.getWarren()).calculateAccruedIbtPrice(
-                    derivative.asset,
-                    timestamp
-                )
+                IWarren(_iporConfiguration.getWarren())
+                    .calculateAccruedIbtPrice(_asset, timestamp)
             );
-
+        //TODO: remove dublicates
         if (derivativeInterest.positionValue > 0) {
             if (
-                derivativeInterest.positionValue < int256(derivative.collateral)
+                derivativeInterest.positionValue <
+                int256(uint256(swap.collateral))
             ) {
                 return derivativeInterest.positionValue;
             } else {
-                return int256(derivative.collateral);
+                return int256(uint256(swap.collateral));
             }
         } else {
             if (
                 derivativeInterest.positionValue <
-                -int256(derivative.collateral)
+                -int256(uint256(swap.collateral))
             ) {
-                return -int256(derivative.collateral);
+                return -int256(uint256(swap.collateral));
             } else {
                 return derivativeInterest.positionValue;
             }
         }
     }
 
-    function _calculateSpread(address asset, uint256 calculateTimestamp)
+    function _calculateSwapReceiveFixedValue(
+        uint256 timestamp,
+        DataTypes.IporSwapMemory memory swap
+    ) internal view returns (int256) {
+        DataTypes.IporSwapInterest memory derivativeInterest = swap
+            .calculateInterestForSwapReceiveFixed(
+                timestamp,
+                IWarren(_iporConfiguration.getWarren())
+                    .calculateAccruedIbtPrice(_asset, timestamp)
+            );
+
+        if (derivativeInterest.positionValue > 0) {
+            if (
+                derivativeInterest.positionValue <
+                int256(uint256(swap.collateral))
+            ) {
+                return derivativeInterest.positionValue;
+            } else {
+                return int256(uint256(swap.collateral));
+            }
+        } else {
+            if (
+                derivativeInterest.positionValue <
+                -int256(uint256(swap.collateral))
+            ) {
+                return -int256(uint256(swap.collateral));
+            } else {
+                return derivativeInterest.positionValue;
+            }
+        }
+    }
+
+    function _calculateSpread(uint256 calculateTimestamp)
         internal
         view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-            iporConfiguration.getMiltonSpreadModel()
+            _iporConfiguration.getMiltonSpreadModel()
+        );
+        IMiltonStorage miltonStorage = IMiltonStorage(
+            _iporAssetConfiguration.getMiltonStorage()
+        );
+
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
+        DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(
+            calculateTimestamp,
+            _asset
         );
 
         try
             spreadModel.calculatePartialSpreadPayFixed(
+                miltonStorage,
                 calculateTimestamp,
-                asset
+                accruedIpor
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -272,8 +356,9 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
 
         try
             spreadModel.calculatePartialSpreadRecFixed(
+                miltonStorage,
                 calculateTimestamp,
-                asset
+                accruedIpor
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;
@@ -282,7 +367,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         }
     }
 
-    function _calculateSoap(address asset, uint256 calculateTimestamp)
+    function _calculateSoap(uint256 calculateTimestamp)
         internal
         view
         returns (
@@ -291,254 +376,350 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             int256 soap
         )
     {
-        IWarren warren = IWarren(iporConfiguration.getWarren());
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
-            asset,
+            _asset,
             calculateTimestamp
         );
         (int256 _soapPf, int256 _soapRf, int256 _soap) = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
-        ).calculateSoap(asset, accruedIbtPrice, calculateTimestamp);
+            _iporAssetConfiguration.getMiltonStorage()
+        ).calculateSoap(accruedIbtPrice, calculateTimestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function _openPosition(
+    function _beforeOpenSwap(
         uint256 openTimestamp,
-        address asset,
         uint256 totalAmount,
         uint256 maximumSlippage,
-        uint256 collateralizationFactor,
-        uint8 direction
-    ) internal nonReentrant returns (uint256) {
-        //TODO: consider remove this requirements
+        uint256 collateralizationFactor
+    ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {
+        uint256 decimals = _decimals;
+        IIporAssetConfiguration iac = _iporAssetConfiguration;
         require(
-            address(iporConfiguration) != address(0),
-            Errors.MILTON_INCORRECT_ADRESSES_MANAGER_ADDRESS
+            maximumSlippage != 0,
+            IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW
         );
-        //TODO: consider remove this requirements
-        require(asset != address(0), Errors.MILTON_LIQUIDITY_POOL_NOT_EXISTS);
-        require(maximumSlippage > 0, Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
-        require(totalAmount > 0, Errors.MILTON_TOTAL_AMOUNT_TOO_LOW);
-        require(
-            iporConfiguration.assetSupported(asset) == 1,
-            Errors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-        );
-
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        require(
-            address(iporAssetConfiguration) != address(0),
-            Errors.MILTON_INCORRECT_CONFIGURATION_ADDRESS
-        );
+        require(totalAmount != 0, IporErrors.MILTON_TOTAL_AMOUNT_TOO_LOW);
 
         require(
-            IERC20(asset).balanceOf(msg.sender) >= totalAmount,
-            Errors.MILTON_ASSET_BALANCE_OF_TOO_LOW
+            IERC20(_asset).balanceOf(msg.sender) >= totalAmount,
+            IporErrors.MILTON_ASSET_BALANCE_OF_TOO_LOW
         );
 
-        //TODO: ask front to send always in 18 decimals	for collateralizationFactor and maxumumSlippage, totalAmount leave in decimals specific for asset
-        totalAmount = AmmMath.convertToWad(
-            totalAmount,
-            iporAssetConfiguration.getDecimals()
+        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
+
+        require(
+            collateralizationFactor >= iac.getMinCollateralizationFactorValue(),
+            IporErrors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW
         );
-        collateralizationFactor = AmmMath.convertToWad(
-            collateralizationFactor,
-            iporAssetConfiguration.getDecimals()
-        );
-        maximumSlippage = AmmMath.convertToWad(
-            maximumSlippage,
-            iporAssetConfiguration.getDecimals()
+        require(
+            collateralizationFactor <= iac.getMaxCollateralizationFactorValue(),
+            IporErrors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH
         );
 
         require(
-            collateralizationFactor >=
-                iporAssetConfiguration.getMinCollateralizationFactorValue(),
-            Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW
+            wadTotalAmount >
+                iac.getLiquidationDepositAmount() +
+                    iac.getIporPublicationFeeAmount(),
+            IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
         require(
-            collateralizationFactor <=
-                iporAssetConfiguration.getMaxCollateralizationFactorValue(),
-            Errors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH
+            wadTotalAmount <= iac.getMaxSwapTotalAmount(),
+            IporErrors.MILTON_TOTAL_AMOUNT_TOO_HIGH
         );
 
         require(
-            totalAmount >
-                iporAssetConfiguration.getLiquidationDepositAmount() +
-                    iporAssetConfiguration.getIporPublicationFeeAmount(),
-            Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
-        require(
-            totalAmount <= iporAssetConfiguration.getMaxPositionTotalAmount(),
-            Errors.MILTON_TOTAL_AMOUNT_TOO_HIGH
+            maximumSlippage <= iac.getMaxSlippagePercentage(),
+            IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH
         );
 
-        require(
-            maximumSlippage <=
-                iporAssetConfiguration.getMaxSlippagePercentage(),
-            Errors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH
-        );
-
-        require(
-            direction <=
-                uint8(DataTypes.DerivativeDirection.PayFloatingReceiveFixed),
-            Errors.MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS
-        );
-
-        DataTypes.IporDerivativeAmount memory derivativeAmount = AmmMath
-            .calculateDerivativeAmount(
-                totalAmount,
+        (
+            uint256 collateral,
+            uint256 notional,
+            uint256 openingFee
+        ) = _calculateDerivativeAmount(
+                wadTotalAmount,
                 collateralizationFactor,
-                iporAssetConfiguration.getLiquidationDepositAmount(),
-                iporAssetConfiguration.getIporPublicationFeeAmount(),
-                iporAssetConfiguration.getOpeningFeePercentage()
+                iac.getLiquidationDepositAmount(),
+                iac.getIporPublicationFeeAmount(),
+                iac.getOpeningFeePercentage()
             );
 
         require(
-            totalAmount >
-                iporAssetConfiguration.getLiquidationDepositAmount() +
-                    iporAssetConfiguration.getIporPublicationFeeAmount() +
-                    derivativeAmount.openingFee,
-            Errors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
+            wadTotalAmount >
+                iac.getLiquidationDepositAmount() +
+                    iac.getIporPublicationFeeAmount() +
+                    openingFee,
+            IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
-        require(
-            IMiltonLPUtilizationStrategy(
-                iporConfiguration.getMiltonLPUtilizationStrategy()
-            ).calculateTotalUtilizationRate(
-                    asset,
-                    derivativeAmount.deposit,
-                    derivativeAmount.openingFee
-                ) <=
-                iporAssetConfiguration
-                    .getLiquidityPoolMaxUtilizationPercentage(),
-            Errors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED
-        );
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
 
-        uint256 spreadValue;
-        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-            iporConfiguration.getMiltonSpreadModel()
-        );
-
-        if (direction == 0) {
-            spreadValue = spreadModel.calculateSpreadPayFixed(
-                openTimestamp,
-                asset,
-                derivativeAmount.deposit,
-                derivativeAmount.openingFee
+        return
+            DataTypes.BeforeOpenSwapStruct(
+                wadTotalAmount,
+                collateral,
+                notional,
+                openingFee,
+                iac.getLiquidationDepositAmount(),
+                decimals,
+                iac.getIporPublicationFeeAmount(),
+                warren.getAccruedIndex(openTimestamp, _asset)
             );
-        } else {
-            spreadValue = spreadModel.calculateSpreadRecFixed(
-                openTimestamp,
-                asset,
-                derivativeAmount.deposit,
-                derivativeAmount.openingFee
-            );
-        }
+    }
+
+    function _openSwapPayFixed(
+        uint256 openTimestamp,
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) internal nonReentrant returns (uint256) {
+        DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+            openTimestamp,
+            totalAmount,
+            maximumSlippage,
+            collateralizationFactor
+        );
 
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporAssetConfiguration.getMiltonStorage()
         );
 
-        DataTypes.IporDerivative memory iporDerivative = DataTypes
-            .IporDerivative(
-                miltonStorage.getLastDerivativeId() + 1,
-                DataTypes.DerivativeState.ACTIVE,
-                msg.sender,
-                asset,
-                direction,
-                derivativeAmount.deposit,
-                DataTypes.IporDerivativeFee(
-                    iporAssetConfiguration.getLiquidationDepositAmount(),
-                    derivativeAmount.openingFee,
-                    iporAssetConfiguration.getIporPublicationFeeAmount(),
-                    spreadValue
-                ),
-                collateralizationFactor,
-                derivativeAmount.notional,
+        _validateLiqudityPoolUtylization(
+            miltonStorage,
+            bosStruct.collateral,
+            bosStruct.openingFee
+        );
+
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+            _iporConfiguration.getMiltonSpreadModel()
+        );
+
+        uint256 spreadValue = spreadModel.calculateSpreadPayFixed(
+            miltonStorage,
+            openTimestamp,
+            bosStruct.accruedIpor,
+            bosStruct.collateral,
+            bosStruct.openingFee
+        );
+
+        DataTypes.IporSwapIndicator
+            memory indicator = _calculateDerivativeIndicators(
                 openTimestamp,
-                openTimestamp + Constants.DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS,
-                _calculateDerivativeIndicators(
-                    openTimestamp,
-                    asset,
-                    direction,
-                    derivativeAmount.notional,
-                    spreadValue
-                )
+                0,
+                bosStruct.notional,
+                spreadValue
             );
 
-        miltonStorage.updateStorageWhenOpenPosition(iporDerivative);
+        DataTypes.NewSwap memory newSwap = DataTypes.NewSwap(
+            msg.sender,
+            openTimestamp,
+            bosStruct.collateral,
+            bosStruct.liquidationDepositAmount,
+            bosStruct.notional,
+            indicator.fixedInterestRate,
+            indicator.ibtQuantity
+        );
+
+        uint256 newSwapId = miltonStorage.updateStorageWhenOpenSwapPayFixed(
+            newSwap,
+            bosStruct.openingFee
+        );
 
         //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
         //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
         //TODO: sendValue z Address (use with ReentrancyGuard)
-        IERC20(asset).safeTransferFrom(
+        IERC20(_asset).safeTransferFrom(
             msg.sender,
             address(this),
-            AmmMath.convertWadToAssetDecimals(
-                totalAmount,
-                iporAssetConfiguration.getDecimals()
+            IporMath.convertWadToAssetDecimals(
+                bosStruct.wadTotalAmount,
+                bosStruct.decimals
             )
         );
 
-        _emitOpenPositionEvent(iporDerivative);
+        _emitOpenSwapEvent(
+            newSwapId,
+            newSwap,
+            indicator,
+            0,
+            bosStruct.openingFee,
+            bosStruct.iporPublicationFeeAmount,
+            spreadValue
+        );
 
-        return iporDerivative.id;
+        return newSwapId;
     }
 
-    function _emitOpenPositionEvent(
-        DataTypes.IporDerivative memory iporDerivative
+    function _openSwapReceiveFixed(
+        uint256 openTimestamp,
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) internal nonReentrant returns (uint256) {
+        DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+            openTimestamp,
+            totalAmount,
+            maximumSlippage,
+            collateralizationFactor
+        );
+
+        IMiltonStorage miltonStorage = IMiltonStorage(
+            _iporAssetConfiguration.getMiltonStorage()
+        );
+
+        _validateLiqudityPoolUtylization(
+            miltonStorage,
+            bosStruct.collateral,
+            bosStruct.openingFee
+        );
+
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+            _iporConfiguration.getMiltonSpreadModel()
+        );
+
+        uint256 spreadValue = spreadModel.calculateSpreadRecFixed(
+            miltonStorage,
+            openTimestamp,
+            bosStruct.accruedIpor,
+            bosStruct.collateral,
+            bosStruct.openingFee
+        );
+
+        DataTypes.IporSwapIndicator
+            memory indicator = _calculateDerivativeIndicators(
+                openTimestamp,
+                1,
+                bosStruct.notional,
+                spreadValue
+            );
+
+        DataTypes.NewSwap memory newSwap = DataTypes.NewSwap(
+            msg.sender,
+            openTimestamp,
+            bosStruct.collateral,
+            bosStruct.liquidationDepositAmount,
+            bosStruct.notional,
+            indicator.fixedInterestRate,
+            indicator.ibtQuantity
+        );
+
+        uint256 newSwapId = miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
+            newSwap,
+            bosStruct.openingFee
+        );
+
+        //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
+        //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
+        //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
+        //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
+        //TODO: sendValue z Address (use with ReentrancyGuard)
+        IERC20(_asset).safeTransferFrom(
+            msg.sender,
+            address(this),
+            IporMath.convertWadToAssetDecimals(totalAmount, bosStruct.decimals)
+        );
+
+        _emitOpenSwapEvent(
+            newSwapId,
+            newSwap,
+            indicator,
+            1,
+            bosStruct.openingFee,
+            bosStruct.iporPublicationFeeAmount,
+            spreadValue
+        );
+
+        return newSwapId;
+    }
+
+    function _validateLiqudityPoolUtylization(
+        IMiltonStorage miltonStorage,
+        uint256 collateral,
+        uint256 openingFee
+    ) internal view {
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+            .getBalance();
+
+        require(
+            IMiltonLiquidityPoolUtilizationModel(
+                _iporConfiguration.getMiltonLiquidityPoolUtilizationModel()
+            ).calculateTotalUtilizationRate(
+                    balance.liquidityPool,
+                    balance.payFixedDerivatives,
+                    balance.recFixedDerivatives,
+                    collateral,
+                    openingFee
+                ) <=
+                _iporAssetConfiguration
+                    .getLiquidityPoolMaxUtilizationPercentage(),
+            IporErrors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED
+        );
+    }
+
+    function _emitOpenSwapEvent(
+        uint256 newSwapId,
+        DataTypes.NewSwap memory newSwap,
+        DataTypes.IporSwapIndicator memory indicator,
+        uint256 direction,
+        uint256 openingAmount,
+        uint256 iporPublicationAmount,
+        uint256 spreadValue
     ) internal {
-        emit OpenPosition(
-            iporDerivative.id,
-            iporDerivative.buyer,
-            iporDerivative.asset,
-            DataTypes.DerivativeDirection(iporDerivative.direction),
-            iporDerivative.collateral,
-            iporDerivative.fee,
-            iporDerivative.collateralizationFactor,
-            iporDerivative.notionalAmount,
-            iporDerivative.startingTimestamp,
-            iporDerivative.endingTimestamp,
-            iporDerivative.indicator
+        //TODO: add openingAmount to event and check in tests
+        //TODO: add iporPublicationAmount to event and check in test
+        //TODO: add spreadValue to event and check in test
+        emit OpenSwap(
+            newSwapId,
+            newSwap.buyer,
+            _asset,
+            DataTypes.SwapDirection(direction),
+            newSwap.collateral,
+            newSwap.liquidationDepositAmount,
+            newSwap.notionalAmount,
+            newSwap.startingTimestamp,
+            newSwap.startingTimestamp +
+                Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+            indicator,
+            openingAmount,
+            iporPublicationAmount,
+            spreadValue
         );
     }
 
     function _calculateDerivativeIndicators(
         uint256 calculateTimestamp,
-        address asset,
         uint8 direction,
         uint256 notionalAmount,
         uint256 spreadValue
-    )
-        internal
-        view
-        returns (DataTypes.IporDerivativeIndicator memory indicator)
-    {
-        IWarren warren = IWarren(iporConfiguration.getWarren());
+    ) internal view returns (DataTypes.IporSwapIndicator memory indicator) {
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
         (
             uint256 iporIndexValue,
             ,
             uint256 exponentialMovingAverage,
             ,
 
-        ) = warren.getIndex(asset);
+        ) = warren.getIndex(_asset);
         uint256 accruedIbtPrice = warren.calculateAccruedIbtPrice(
-            asset,
+            _asset,
             calculateTimestamp
         );
-        require(accruedIbtPrice > 0, Errors.MILTON_IBT_PRICE_CANNOT_BE_ZERO);
+        require(
+            accruedIbtPrice != 0,
+            IporErrors.MILTON_IBT_PRICE_CANNOT_BE_ZERO
+        );
         require(
             iporIndexValue >= spreadValue,
-            Errors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
+            IporErrors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
-        indicator = DataTypes.IporDerivativeIndicator(
+        indicator = DataTypes.IporSwapIndicator(
             iporIndexValue,
             accruedIbtPrice,
-            AmmMath.calculateIbtQuantity(notionalAmount, accruedIbtPrice),
+            IporMath.division(notionalAmount * Constants.D18, accruedIbtPrice),
             direction == 0
                 ? (_calculateReferenceLegPayFixed(
                     iporIndexValue,
@@ -575,78 +756,109 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         }
     }
 
-    function _closePosition(uint256 derivativeId, uint256 closeTimestamp)
+    function _closeSwapPayFixed(uint256 swapId, uint256 closeTimestamp)
         internal
     {
         require(
-            derivativeId > 0,
-            Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_ID
+            swapId != 0,
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID
         );
 
         IMiltonStorage miltonStorage = IMiltonStorage(
-            iporConfiguration.getMiltonStorage()
+            _iporAssetConfiguration.getMiltonStorage()
         );
 
-        DataTypes.MiltonDerivativeItem memory derivativeItem = miltonStorage
-            .getDerivativeItem(derivativeId);
+        //TODO: clarify if needed whole item here??
+        DataTypes.IporSwapMemory memory iporSwap = miltonStorage
+            .getSwapPayFixed(swapId);
 
         require(
-            derivativeItem.item.state == DataTypes.DerivativeState.ACTIVE,
-            Errors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
+            iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(
-                    derivativeItem.item.asset
-                )
-            );
-
-        uint256 incomeTaxPercentage = iporAssetConfiguration
+        uint256 incomeTaxPercentage = _iporAssetConfiguration
             .getIncomeTaxPercentage();
 
-        int256 positionValue = _calculatePositionValue(
+        int256 positionValue = _calculateSwapPayFixedValue(
             closeTimestamp,
-            derivativeItem.item
+            iporSwap
         );
 
-        miltonStorage.updateStorageWhenClosePosition(
+        miltonStorage.updateStorageWhenCloseSwapPayFixed(
             msg.sender,
-            derivativeItem,
+            iporSwap,
             positionValue,
             closeTimestamp
         );
 
         _transferTokensBasedOnpositionValue(
-            derivativeItem,
+            iporSwap,
             positionValue,
             closeTimestamp,
-            incomeTaxPercentage,
-            iporAssetConfiguration.getDecimals()
+            incomeTaxPercentage
         );
 
-        emit ClosePosition(
-            derivativeId,
-            derivativeItem.item.asset,
+        emit CloseSwap(swapId, _asset, closeTimestamp);
+    }
+
+    function _closeSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp)
+        internal
+    {
+        require(
+            swapId != 0,
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID
+        );
+
+        IMiltonStorage miltonStorage = IMiltonStorage(
+            _iporAssetConfiguration.getMiltonStorage()
+        );
+
+        //TODO: clarify it whole item required?
+        DataTypes.IporSwapMemory memory iporSwap = miltonStorage
+            .getSwapReceiveFixed(swapId);
+
+        require(
+            iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),
+            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
+        );
+
+        int256 positionValue = _calculateSwapReceiveFixedValue(
+            closeTimestamp,
+            iporSwap
+        );
+
+        miltonStorage.updateStorageWhenCloseSwapReceiveFixed(
+            msg.sender,
+            iporSwap,
+            positionValue,
             closeTimestamp
         );
+
+        _transferTokensBasedOnpositionValue(
+            iporSwap,
+            positionValue,
+            closeTimestamp,
+            _iporAssetConfiguration.getIncomeTaxPercentage()
+        );
+
+        emit CloseSwap(swapId, _asset, closeTimestamp);
     }
 
     function _transferTokensBasedOnpositionValue(
-        DataTypes.MiltonDerivativeItem memory derivativeItem,
+        DataTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 incomeTaxPercentage,
-        uint256 assetDecimals
+        uint256 incomeTaxPercentage
     ) internal {
-        uint256 abspositionValue = AmmMath.absoluteValue(positionValue);
+        uint256 abspositionValue = IporMath.absoluteValue(positionValue);
 
-        if (abspositionValue < derivativeItem.item.collateral) {
-            //verify if sender is an owner of derivative if not then check if maturity - if not then reject, if yes then close even if not an owner
-            if (msg.sender != derivativeItem.item.buyer) {
+        if (abspositionValue < derivativeItem.collateral) {
+            //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
+            if (msg.sender != derivativeItem.buyer) {
                 require(
-                    _calculationTimestamp >=
-                        derivativeItem.item.endingTimestamp,
-                    Errors
+                    _calculationTimestamp >= derivativeItem.endingTimestamp,
+                    IporErrors
                         .MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY
                 );
             }
@@ -655,54 +867,87 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         if (positionValue > 0) {
             //Trader earn, Milton loose
             _transferDerivativeAmount(
-                derivativeItem,
-                derivativeItem.item.collateral +
+                derivativeItem.buyer,
+                derivativeItem.liquidationDepositAmount,
+                derivativeItem.collateral +
                     abspositionValue -
-                    AmmMath.calculateIncomeTax(
-                        abspositionValue,
-                        incomeTaxPercentage
-                    ),
-                assetDecimals
+                    IporMath.division(
+                        abspositionValue * incomeTaxPercentage,
+                        Constants.D18
+                    )
             );
         } else {
             //Milton earn, Trader looseMiltonStorage
             _transferDerivativeAmount(
-                derivativeItem,
-                derivativeItem.item.collateral - abspositionValue,
-                assetDecimals
+                derivativeItem.buyer,
+                derivativeItem.liquidationDepositAmount,
+                derivativeItem.collateral - abspositionValue
             );
         }
     }
 
     //Depends on condition transfer only to sender (when sender == buyer) or to sender and buyer
     function _transferDerivativeAmount(
-        DataTypes.MiltonDerivativeItem memory derivativeItem,
-        uint256 transferAmount,
-        uint256 assetDecimals
+        address buyer,
+        uint256 liquidationDepositAmount,
+        uint256 transferAmount
     ) internal {
-        if (msg.sender == derivativeItem.item.buyer) {
-            transferAmount =
-                transferAmount +
-                derivativeItem.item.fee.liquidationDepositAmount;
+        if (msg.sender == buyer) {
+            transferAmount = transferAmount + liquidationDepositAmount;
         } else {
             //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             //transfer liquidation deposit amount from Milton to Sender
-            IERC20(derivativeItem.item.asset).safeTransfer(
+            IERC20(_asset).safeTransfer(
                 msg.sender,
-                AmmMath.convertWadToAssetDecimals(
-                    derivativeItem.item.fee.liquidationDepositAmount,
-                    assetDecimals
+                IporMath.convertWadToAssetDecimals(
+                    liquidationDepositAmount,
+                    _decimals
                 )
             );
         }
 
-        if (transferAmount > 0) {
+        if (transferAmount != 0) {
             //transfer from Milton to Trader
             //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
-            IERC20(derivativeItem.item.asset).safeTransfer(
-                derivativeItem.item.buyer,
-                AmmMath.convertWadToAssetDecimals(transferAmount, assetDecimals)
+            IERC20(_asset).safeTransfer(
+                buyer,
+                IporMath.convertWadToAssetDecimals(transferAmount, _decimals)
             );
         }
+    }
+
+    function _calculateDerivativeAmount(
+        uint256 totalAmount,
+        uint256 collateralizationFactor,
+        uint256 liquidationDepositAmount,
+        uint256 iporPublicationFeeAmount,
+        uint256 openingFeePercentage
+    )
+        internal
+        pure
+        returns (
+            uint256 collateral,
+            uint256 notional,
+            uint256 openingFee
+        )
+    {
+        collateral = IporMath.division(
+            (totalAmount -
+                liquidationDepositAmount -
+                iporPublicationFeeAmount) * Constants.D18,
+            Constants.D18 +
+                IporMath.division(
+                    collateralizationFactor * openingFeePercentage,
+                    Constants.D18
+                )
+        );
+        notional = IporMath.division(
+            collateralizationFactor * collateral,
+            Constants.D18
+        );
+        openingFee = IporMath.division(
+            notional * openingFeePercentage,
+            Constants.D18
+        );
     }
 }

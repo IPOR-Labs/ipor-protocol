@@ -59,6 +59,169 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
+                        <strong>IP Token Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdt"
+                            method="getIpToken"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdc"
+                            method="getIpToken"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationDai"
+                            method="getIpToken"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Milton</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdt"
+                            method="getMilton"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdt"
+                            method="setMilton"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdc"
+                            method="getMilton"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdc"
+                            method="setMilton"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationDai"
+                            method="getMilton"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationDai"
+                            method="setMilton"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Milton Storage</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdt"
+                            method="getMiltonStorage"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdt"
+                            method="setMiltonStorage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdc"
+                            method="getMiltonStorage"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdc"
+                            method="setMiltonStorage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationDai"
+                            method="getMiltonStorage"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationDai"
+                            method="setMiltonStorage"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Joseph</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdt"
+                            method="getJoseph"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdt"
+                            method="setJoseph"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdc"
+                            method="getJoseph"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdc"
+                            method="setJoseph"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationDai"
+                            method="getJoseph"
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationDai"
+                            method="setJoseph"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
                         <strong>Income Tax Percentage</strong>
                     </td>
                     <td>
@@ -846,6 +1009,42 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
+                        <td>MILTON_ADMIN_ROLE</td>
+                        <td>
+                            0x1b16f266cfe5113986bbdf79323bd64ba74c9e2631c82de1297c13405226a952
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MILTON_ROLE</td>
+                        <td>
+                            0x57a20741ae1ee76695a182cdfb995538919da5f1f6a92bca097f37a35c4be803
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MILTON_STORAGE_ADMIN_ROLE</td>
+                        <td>
+                            0x61e410eb94acd095b84b0de4a9befc42adb8e88aad1e0c387e8f14c5c05f4cd5
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MILTON_STORAGE_ROLE</td>
+                        <td>
+                            0xb8f71ab818f476672f61fd76955446cd0045ed8ddb51f595d9e262b68d1157f6
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JOSEPH_ADMIN_ROLE</td>
+                        <td>
+                            0x811ff4f923fc903f4390f8acf72873b5d1b288ec77b442fe124d0f95d6a53731
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JOSEPH_ROLE</td>
+                        <td>
+                            0x2c03e103fc464998235bd7f80967993a1e6052d41cc085d3317ca8e301f51125
+                        </td>
+                    </tr>
+                    <tr>
                         <td>INCOME_TAX_PERCENTAGE_ADMIN_ROLE</td>
                         <td>
                             0xcaa6983304bafc9d674310f90270b5949e0bb6e51e706428584d7da457ddeccd
@@ -989,7 +1188,7 @@ export default ({ drizzle, drizzleState }) => (
                             0x94c58a89ab11d8b2894ecfbd6cb5c324f772536d0ea878a10cee7effe8ce98d0
                         </td>
                     </tr>
-					<tr>
+                    <tr>
                         <td>ROLES_INFO_ADMIN_ROLE</td>
                         <td>
                             0xfb1902cbac4bf447ada58dff398caab7aa9089eba1be77a2833d9e08dbe8664c
@@ -1001,7 +1200,6 @@ export default ({ drizzle, drizzleState }) => (
                             0xc878cde3567a457053651a2406e31db6dbb9207b6d5eedb081ef807beaaf5444
                         </td>
                     </tr>
-                    
                 </tbody>
             </table>
         </div>

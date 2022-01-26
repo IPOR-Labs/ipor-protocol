@@ -33,15 +33,16 @@ describe("SoapIndicatorLogic", () => {
         //given
         const soapIndicator = await prepareSoapIndicatorPayFixedCaseD18();
         const derivativeNotional = BigInt(10000) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4) * ONE_16DEC;
+        const swapFixedInterestRate = BigInt(4) * ONE_16DEC;
 
         //when
 
         const actualInterestRate =
-            await mockSoapIndicatorLogic.calculateInterestRateWhenOpenPosition(
-                soapIndicator,
+            await mockSoapIndicatorLogic.calculateInterestRateWhenOpenSwap(
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
                 derivativeNotional,
-                derivativeFixedInterestRate
+                swapFixedInterestRate
             );
 
         //then
@@ -56,15 +57,16 @@ describe("SoapIndicatorLogic", () => {
         //given
         const soapIndicator = await prepareSoapIndicatorPayFixedCaseD18();
         const derivativeNotional = BigInt(10000) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4) * ONE_16DEC;
+        const swapFixedInterestRate = BigInt(4) * ONE_16DEC;
 
         //when
 
         const actualInterestRate =
-            await mockSoapIndicatorLogic.calculateInterestRateWhenClosePosition(
-                soapIndicator,
+            await mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
                 derivativeNotional,
-                derivativeFixedInterestRate
+                swapFixedInterestRate
             );
 
         //then
@@ -79,15 +81,16 @@ describe("SoapIndicatorLogic", () => {
         //given
         const soapIndicator = await prepareSoapIndicatorPayFixedCaseD18();
         const derivativeNotional = BigInt(40000) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4) * ONE_16DEC;
+        const swapFixedInterestRate = BigInt(4) * ONE_16DEC;
 
         //when
         await assertError(
             //when
-            mockSoapIndicatorLogic.calculateInterestRateWhenClosePosition(
-                soapIndicator,
+            mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
                 derivativeNotional,
-                derivativeFixedInterestRate
+                swapFixedInterestRate
             ),
             //then
             "IPOR_19"
@@ -105,8 +108,10 @@ describe("SoapIndicatorLogic", () => {
 
         const actualQuasiInterestRate =
             await mockSoapIndicatorLogic.calculateQuasiHypotheticalInterestDelta(
-                soapIndicator,
-                timestamp
+                timestamp,
+                soapIndicator.rebalanceTimestamp,
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate
             );
 
         //then
@@ -152,16 +157,16 @@ describe("SoapIndicatorLogic", () => {
             soapIndicator.rebalanceTimestamp +
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
         const derivativeNotional = BigInt(10000) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(5) * ONE_16DEC;
+        const swapFixedInterestRate = BigInt(5) * ONE_16DEC;
         const derivativeIbtQuantity = BigInt(95) * ONE_18DEC;
 
         //when
         const actualSoapIndicator =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestamp,
                 derivativeNotional,
-                derivativeFixedInterestRate,
+                swapFixedInterestRate,
                 derivativeIbtQuantity
             );
 
@@ -171,7 +176,7 @@ describe("SoapIndicatorLogic", () => {
             rebalanceTimestamp,
             derivativeNotional,
             derivativeIbtQuantity,
-            derivativeFixedInterestRate,
+            swapFixedInterestRate,
             ZERO
         );
     });
@@ -187,15 +192,15 @@ describe("SoapIndicatorLogic", () => {
             soapIndicator.rebalanceTimestamp +
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
         const derivativeNotional = BigInt("10000") * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt("5") * ONE_16DEC;
+        const swapFixedInterestRate = BigInt("5") * ONE_16DEC;
         const derivativeIbtQuantity = BigInt("95") * ONE_18DEC;
 
         const actualSoapIndicatorFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestamp,
                 derivativeNotional,
-                derivativeFixedInterestRate,
+                swapFixedInterestRate,
                 derivativeIbtQuantity
             );
 
@@ -204,16 +209,16 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         const derivativeNotionalSecond = BigInt("20000") * ONE_18DEC;
-        const derivativeFixedInterestRateSecond = BigInt("8") * ONE_16DEC;
+        const swapFixedInterestRateSecond = BigInt("8") * ONE_16DEC;
         const derivativeIbtQuantitySecond = BigInt("173") * ONE_18DEC;
 
         //when
         const actualSoapIndicatorSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 actualSoapIndicatorFirst,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
-                derivativeFixedInterestRateSecond,
+                swapFixedInterestRateSecond,
                 derivativeIbtQuantitySecond
             );
 
@@ -245,15 +250,15 @@ describe("SoapIndicatorLogic", () => {
             soapIndicator.rebalanceTimestamp +
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
         const derivativeNotional = BigInt(10000) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(5) * ONE_16DEC;
+        const swapFixedInterestRate = BigInt(5) * ONE_16DEC;
         const derivativeIbtQuantity = BigInt(95) * ONE_18DEC;
 
         const soapIndicatorAfterOpen =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestampWhenOpen,
                 derivativeNotional,
-                derivativeFixedInterestRate,
+                swapFixedInterestRate,
                 derivativeIbtQuantity
             );
 
@@ -263,12 +268,12 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const actualSoapIndicatorAfterClose =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterOpen,
                 closeTimestamp,
                 rebalanceTimestampWhenOpen,
                 derivativeNotional,
-                derivativeFixedInterestRate,
+                swapFixedInterestRate,
                 derivativeIbtQuantity
             );
 
@@ -299,15 +304,15 @@ describe("SoapIndicatorLogic", () => {
             soapIndicator.rebalanceTimestamp +
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
         const derivativeNotionalFirst = BigInt("10000") * ONE_18DEC;
-        const derivativeFixedInterestRateFirst = BigInt("5") * ONE_16DEC;
+        const swapFixedInterestRateFirst = BigInt("5") * ONE_16DEC;
         const derivativeIbtQuantityFirst = BigInt("95") * ONE_18DEC;
 
         const soapIndicatorAfterOpenFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestampFirst,
                 derivativeNotionalFirst,
-                derivativeFixedInterestRateFirst,
+                swapFixedInterestRateFirst,
                 derivativeIbtQuantityFirst
             );
 
@@ -319,15 +324,15 @@ describe("SoapIndicatorLogic", () => {
             BigInt(soapIndicatorAfterOpenFirst.rebalanceTimestamp) +
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
         const derivativeNotionalSecond = BigInt("20000") * ONE_18DEC;
-        const derivativeFixedInterestRateSecond = BigInt("8") * ONE_16DEC;
+        const swapFixedInterestRateSecond = BigInt("8") * ONE_16DEC;
         const derivativeIbtQuantitySecond = BigInt("173") * ONE_18DEC;
 
         const soapIndicatorAfterOpenSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicatorAfterOpenFirst,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
-                derivativeFixedInterestRateSecond,
+                swapFixedInterestRateSecond,
                 derivativeIbtQuantitySecond
             );
 
@@ -337,12 +342,12 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const actualSoapIndicatorAfterClose =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterOpenSecond,
                 closeTimestamp,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
-                derivativeFixedInterestRateSecond,
+                swapFixedInterestRateSecond,
                 derivativeIbtQuantitySecond
             );
 
@@ -374,15 +379,15 @@ describe("SoapIndicatorLogic", () => {
             soapIndicator.rebalanceTimestamp +
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
         const derivativeNotionalFirst = BigInt("10000") * ONE_18DEC;
-        const derivativeFixedInterestRateFirst = BigInt("5") * ONE_16DEC;
+        const swapFixedInterestRateFirst = BigInt("5") * ONE_16DEC;
         const derivativeIbtQuantityFirst = BigInt("95") * ONE_18DEC;
 
         const soapIndicatorAfterOpenFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicator,
                 rebalanceTimestampFirst,
                 derivativeNotionalFirst,
-                derivativeFixedInterestRateFirst,
+                swapFixedInterestRateFirst,
                 derivativeIbtQuantityFirst
             );
 
@@ -390,15 +395,15 @@ describe("SoapIndicatorLogic", () => {
             BigInt(soapIndicatorAfterOpenFirst.rebalanceTimestamp) +
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
         const derivativeNotionalSecond = BigInt("20000") * ONE_18DEC;
-        const derivativeFixedInterestRateSecond = BigInt("8") * ONE_16DEC;
+        const swapFixedInterestRateSecond = BigInt("8") * ONE_16DEC;
         const derivativeIbtQuantitySecond = BigInt("173") * ONE_18DEC;
 
         const soapIndicatorAfterOpenSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenOpenPosition(
+            await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
                 soapIndicatorAfterOpenFirst,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
-                derivativeFixedInterestRateSecond,
+                swapFixedInterestRateSecond,
                 derivativeIbtQuantitySecond
             );
 
@@ -407,12 +412,12 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         const soapIndicatorAfterCloseSecond =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterOpenSecond,
                 closeTimestampSecondPosition,
                 rebalanceTimestampSecond,
                 derivativeNotionalSecond,
-                derivativeFixedInterestRateSecond,
+                swapFixedInterestRateSecond,
                 derivativeIbtQuantitySecond
             );
 
@@ -422,12 +427,12 @@ describe("SoapIndicatorLogic", () => {
 
         //when
         const soapIndicatorAfterCloseFirst =
-            await mockSoapIndicatorLogic.rebalanceWhenClosePosition(
+            await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
                 soapIndicatorAfterCloseSecond,
                 closeTimestampFirstPosition,
                 rebalanceTimestampFirst,
                 derivativeNotionalFirst,
-                derivativeFixedInterestRateFirst,
+                swapFixedInterestRateFirst,
                 derivativeIbtQuantityFirst
             );
 
@@ -457,10 +462,10 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        const actualSoapPf = await mockSoapIndicatorLogic.calculateSoap(
+        const actualSoapPf = await mockSoapIndicatorLogic.calculateSoapPayFixed(
             soapIndicator,
-            ibtPrice,
-            calculationTimestamp
+            calculationTimestamp,
+            ibtPrice
         );
 
         //then
@@ -480,11 +485,12 @@ describe("SoapIndicatorLogic", () => {
             BigInt(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        const actualSoapRf = await mockSoapIndicatorLogic.calculateSoap(
-            soapIndicator,
-            ibtPrice,
-            calculationTimestamp
-        );
+        const actualSoapRf =
+            await mockSoapIndicatorLogic.calculateSoapReceiveFixed(
+                soapIndicator,
+                calculationTimestamp,
+                ibtPrice
+            );
 
         //then
         const expectedSoapRf = BigInt("6109589041095890410959");
@@ -505,7 +511,8 @@ describe("SoapIndicatorLogic", () => {
         expect(
             expectedRebalanceTimestamp,
             "Incorrect rebalance timestamp"
-        ).to.be.eq(actualSoapIndicator.rebalanceTimestamp);
+        ).to.be.eq(BigInt(actualSoapIndicator.rebalanceTimestamp));
+
         expect(expectedTotalNotional, "Incorrect total notional").to.be.eq(
             actualSoapIndicator.totalNotional
         );

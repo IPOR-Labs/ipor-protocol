@@ -4,6 +4,20 @@ pragma solidity 0.8.9;
 import "./AccessControlRevoke.sol";
 
 abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
+
+	bytes32 internal constant _MILTON_ADMIN_ROLE =
+        keccak256("MILTON_ADMIN_ROLE");
+    bytes32 internal constant _MILTON_ROLE = keccak256("MILTON_ROLE");
+
+    bytes32 internal constant _MILTON_STORAGE_ADMIN_ROLE =
+        keccak256("MILTON_STORAGE_ADMIN_ROLE");
+    bytes32 internal constant _MILTON_STORAGE_ROLE =
+        keccak256("MILTON_STORAGE_ROLE");
+
+	bytes32 internal constant _JOSEPH_ADMIN_ROLE =
+        keccak256("JOSEPH_ADMIN_ROLE");
+    bytes32 internal constant _JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
+		
     bytes32 internal constant _INCOME_TAX_PERCENTAGE_ADMIN_ROLE =
         keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE");
     bytes32 internal constant _INCOME_TAX_PERCENTAGE_ROLE =
@@ -72,6 +86,15 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
 
         _setRoleAdmin(_ROLES_INFO_ADMIN_ROLE, _ADMIN_ROLE);
         _setRoleAdmin(_ROLES_INFO_ROLE, _ROLES_INFO_ADMIN_ROLE);
+
+		_setRoleAdmin(_MILTON_ADMIN_ROLE, _ADMIN_ROLE);
+        _setRoleAdmin(_MILTON_ROLE, _MILTON_ADMIN_ROLE);
+
+        _setRoleAdmin(_MILTON_STORAGE_ADMIN_ROLE, _ADMIN_ROLE);
+        _setRoleAdmin(_MILTON_STORAGE_ROLE, _MILTON_STORAGE_ADMIN_ROLE);
+
+		_setRoleAdmin(_JOSEPH_ADMIN_ROLE, _ADMIN_ROLE);
+        _setRoleAdmin(_JOSEPH_ROLE, _JOSEPH_ADMIN_ROLE);
 
         _setRoleAdmin(_INCOME_TAX_PERCENTAGE_ADMIN_ROLE, _ADMIN_ROLE);
         _setRoleAdmin(

@@ -2,17 +2,15 @@
 pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
-import "../libraries/DerivativeLogic.sol";
-import "../libraries/AmmMath.sol";
+import "../libraries/IporSwapLogic.sol";
+import "../libraries/IporMath.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { Errors } from "../Errors.sol";
-import { DataTypes } from "../libraries/types/DataTypes.sol";
+import {IporErrors} from "../IporErrors.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
-import "../amm/IMiltonEvents.sol";
+import "../interfaces/IMiltonEvents.sol";
 import "../libraries/SoapIndicatorLogic.sol";
-import "../libraries/TotalSoapIndicatorLogic.sol";
-import "../libraries/DerivativesView.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
 import "./AccessControlAssetConfiguration.sol";
@@ -22,40 +20,47 @@ contract IporAssetConfiguration is
     AccessControlAssetConfiguration(msg.sender),
     IIporAssetConfiguration
 {
-    address private immutable _asset;
+    uint8 private immutable _decimals;
+
+    //TODO: add structure for Milton Config Open Position
+    uint64 private immutable _maxSlippagePercentage;
+
+	address private immutable _asset;
 
     address private immutable _ipToken;
 
-    uint8 private immutable _decimals;
+    uint64 private _openingFeePercentage;
 
-    uint256 private immutable _maxSlippagePercentage;
-
-    uint256 private _openingFeePercentage;
-
-	uint256 private _minCollateralizationFactorValue;
-
-    uint256 private _maxCollateralizationFactorValue;
-
-    uint256 private _incomeTaxPercentage;
-
-    uint256 private _liquidationDepositAmount;    
+    uint64 private _incomeTaxPercentage;
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big
     //pie going to Treasury Balance
-    uint256 private _openingFeeForTreasuryPercentage;
+    uint64 private _openingFeeForTreasuryPercentage;
 
-    uint256 private _iporPublicationFeeAmount;
+    uint64 private _liquidityPoolMaxUtilizationPercentage;
 
-    uint256 private _liquidityPoolMaxUtilizationPercentage;
+    uint128 private _minCollateralizationFactorValue;
 
-	//TODO: change to "max collateral position value"
+    uint128 private _maxCollateralizationFactorValue;
+
+    uint128 private _liquidationDepositAmount;
+
+    uint128 private _iporPublicationFeeAmount;
+
+    //TODO: change to "max collateral position value"
     //@notice max total amount used when opening position
-    uint256 private _maxPositionTotalAmount;
+    uint128 private _maxSwapTotalAmount;
 
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
-    uint256 private _wadDecayFactorValue;
-    
-	//TODO: rename DemandComponent to DC, AtParComponent to PC or DemandC, AtParC
+    uint128 private _wadDecayFactorValue;    
+
+    address private _milton;
+
+    address private _miltonStorage;
+
+    address private _joseph;
+
+    //TODO: rename DemandComponent to DC, AtParComponent to PC or DemandC, AtParC
     address private _assetManagementVault;
 
     address private _charlieTreasurer;
@@ -67,39 +72,77 @@ contract IporAssetConfiguration is
         _asset = asset;
         _ipToken = ipToken;
         uint8 decimals = ERC20(asset).decimals();
-        require(decimals > 0, Errors.CONFIG_ASSET_DECIMALS_TOO_LOW);
+        require(decimals != 0, IporErrors.CONFIG_ASSET_DECIMALS_TOO_LOW);
         _decimals = decimals;
 
-        _maxSlippagePercentage = 100 * Constants.D18;
+        _maxSlippagePercentage = uint64(100 * Constants.D18);
 
         //@notice taken after close position from participant who take income (trader or Milton)
-        _incomeTaxPercentage = AmmMath.division(Constants.D18, 10);
+        _incomeTaxPercentage = uint64(IporMath.division(Constants.D18, 10));
 
         //@notice taken after open position from participant who execute opening position,
         //paid after close position to participant who execute closing position
-        _liquidationDepositAmount = 20 * Constants.D18;
+        _liquidationDepositAmount = uint128(20 * Constants.D18);
 
         //@notice
-        _openingFeePercentage = AmmMath.division(
-            3 * Constants.D18,
-            Constants.D4
+        _openingFeePercentage = uint64(
+            IporMath.division(3 * Constants.D18, Constants.D4)
         );
         _openingFeeForTreasuryPercentage = 0;
-        _iporPublicationFeeAmount = 10 * Constants.D18;
-        _liquidityPoolMaxUtilizationPercentage =
-            8 *
-            AmmMath.division(Constants.D18, 10);
+        _iporPublicationFeeAmount = uint128(10 * Constants.D18);
+        _liquidityPoolMaxUtilizationPercentage = uint64(
+            8 * IporMath.division(Constants.D18, 10)
+        );
 
-		_maxPositionTotalAmount = 1e5 * Constants.D18;
+        _maxSwapTotalAmount = uint128(1e5 * Constants.D18);
 
-		_minCollateralizationFactorValue = 10 * Constants.D18;
-		_maxCollateralizationFactorValue = 1000 * Constants.D18;
+        _minCollateralizationFactorValue = uint128(10 * Constants.D18);
+        _maxCollateralizationFactorValue = uint128(1000 * Constants.D18);
 
-		_wadDecayFactorValue = 1e17;        
-
+        _wadDecayFactorValue = 1e17;
     }
 
-	function getOpeningFeePercentage()
+    function getMilton() external view override returns (address) {
+        return _milton;
+    }
+
+    function setMilton(address milton)
+        external
+        override
+        onlyRole(_MILTON_ROLE)
+    {
+        //TODO: when Milton address is changing make sure than allowance on Josepth is set to 0 for old milton
+        _milton = milton;
+        emit MiltonAddressUpdated(milton);
+    }
+
+    function getMiltonStorage() external view override returns (address) {
+        return _miltonStorage;
+    }
+
+    function setMiltonStorage(address miltonStorage)
+        external
+        override
+        onlyRole(_MILTON_STORAGE_ROLE)
+    {
+        _miltonStorage = miltonStorage;
+        emit MiltonStorageAddressUpdated(miltonStorage);
+    }
+
+    function getJoseph() external view override returns (address) {
+        return _joseph;
+    }
+
+    function setJoseph(address joseph)
+        external
+        override
+        onlyRole(_JOSEPH_ROLE)
+    {
+        _joseph = joseph;
+        emit JosephAddressUpdated(joseph);
+    }
+
+    function getOpeningFeePercentage()
         external
         view
         override
@@ -115,11 +158,12 @@ contract IporAssetConfiguration is
     {
         require(
             newOpeningFeePercentage <= Constants.D18,
-            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
+            IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
-        _openingFeePercentage = newOpeningFeePercentage;
+        _openingFeePercentage = uint64(newOpeningFeePercentage);
         emit OpeningFeePercentageSet(newOpeningFeePercentage);
     }
+
     function getIncomeTaxPercentage() external view override returns (uint256) {
         return _incomeTaxPercentage;
     }
@@ -131,9 +175,9 @@ contract IporAssetConfiguration is
     {
         require(
             newIncomeTaxPercentage <= Constants.D18,
-            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
+            IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
-        _incomeTaxPercentage = newIncomeTaxPercentage;
+        _incomeTaxPercentage = uint64(newIncomeTaxPercentage);
         emit IncomeTaxPercentageSet(newIncomeTaxPercentage);
     }
 
@@ -151,9 +195,11 @@ contract IporAssetConfiguration is
     ) external override onlyRole(_OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE) {
         require(
             newOpeningFeeForTreasuryPercentage <= Constants.D18,
-            Errors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
+            IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
-        _openingFeeForTreasuryPercentage = newOpeningFeeForTreasuryPercentage;
+        _openingFeeForTreasuryPercentage = uint64(
+            newOpeningFeeForTreasuryPercentage
+        );
         emit OpeningFeeForTreasuryPercentageSet(
             newOpeningFeeForTreasuryPercentage
         );
@@ -173,11 +219,9 @@ contract IporAssetConfiguration is
         override
         onlyRole(_LIQUIDATION_DEPOSIT_AMOUNT_ROLE)
     {
-        _liquidationDepositAmount = newLiquidationDepositAmount;
+        _liquidationDepositAmount = uint128(newLiquidationDepositAmount);
         emit LiquidationDepositAmountSet(newLiquidationDepositAmount);
     }
-
-    
 
     function getIporPublicationFeeAmount()
         external
@@ -193,7 +237,7 @@ contract IporAssetConfiguration is
         override
         onlyRole(_IPOR_PUBLICATION_FEE_AMOUNT_ROLE)
     {
-        _iporPublicationFeeAmount = newIporPublicationFeeAmount;
+        _iporPublicationFeeAmount = uint128(newIporPublicationFeeAmount);
         emit IporPublicationFeeAmountSet(newIporPublicationFeeAmount);
     }
 
@@ -208,37 +252,35 @@ contract IporAssetConfiguration is
 
     function setLiquidityPoolMaxUtilizationPercentage(
         uint256 newLiquidityPoolMaxUtilizationPercentage
-    )
-        external
-        override
-        onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE)
-    {
+    ) external override onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE) {
         require(
             newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
-            Errors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
+            IporErrors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
-        _liquidityPoolMaxUtilizationPercentage = newLiquidityPoolMaxUtilizationPercentage;
+        _liquidityPoolMaxUtilizationPercentage = uint64(
+            newLiquidityPoolMaxUtilizationPercentage
+        );
         emit LiquidityPoolMaxUtilizationPercentageSet(
             newLiquidityPoolMaxUtilizationPercentage
         );
     }
 
-    function getMaxPositionTotalAmount()
+    function getMaxSwapTotalAmount()
         external
         view
         override
         returns (uint256)
     {
-        return _maxPositionTotalAmount;
+        return _maxSwapTotalAmount;
     }
 
-    function setMaxPositionTotalAmount(uint256 newMaxPositionTotalAmount)
+    function setMaxSwapTotalAmount(uint256 newMaxPositionTotalAmount)
         external
         override
         onlyRole(_MAX_POSITION_TOTAL_AMOUNT_ROLE)
     {
-        _maxPositionTotalAmount = newMaxPositionTotalAmount;
+        _maxSwapTotalAmount = uint128(newMaxPositionTotalAmount);
         emit MaxPositionTotalAmountSet(newMaxPositionTotalAmount);
     }
 
@@ -254,7 +296,9 @@ contract IporAssetConfiguration is
     function setMaxCollateralizationFactorValue(
         uint256 newMaxCollateralizationFactorValue
     ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
-        _maxCollateralizationFactorValue = newMaxCollateralizationFactorValue;
+        _maxCollateralizationFactorValue = uint128(
+            newMaxCollateralizationFactorValue
+        );
         emit MaxCollateralizationFactorValueSet(
             newMaxCollateralizationFactorValue
         );
@@ -272,7 +316,9 @@ contract IporAssetConfiguration is
     function setMinCollateralizationFactorValue(
         uint256 newMinCollateralizationFactorValue
     ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
-        _minCollateralizationFactorValue = newMinCollateralizationFactorValue;
+        _minCollateralizationFactorValue = uint128(
+            newMinCollateralizationFactorValue
+        );
         emit MinCollateralizationFactorValueSet(
             newMinCollateralizationFactorValue
         );
@@ -300,7 +346,7 @@ contract IporAssetConfiguration is
         override
         onlyRole(_CHARLIE_TREASURER_ROLE)
     {
-        require(newCharlieTreasurer != address(0), Errors.WRONG_ADDRESS);
+        require(newCharlieTreasurer != address(0), IporErrors.WRONG_ADDRESS);
         _charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }
@@ -314,7 +360,7 @@ contract IporAssetConfiguration is
         override
         onlyRole(_TREASURE_TREASURER_ROLE)
     {
-        require(newTreasureTreasurer != address(0), Errors.WRONG_ADDRESS);
+        require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
         _treasureTreasurer = newTreasureTreasurer;
         emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
     }
@@ -339,7 +385,7 @@ contract IporAssetConfiguration is
     {
         require(
             newAssetManagementVaultAddress != address(0),
-            Errors.WRONG_ADDRESS
+            IporErrors.WRONG_ADDRESS
         );
         _assetManagementVault = newAssetManagementVaultAddress;
         emit AssetManagementVaultUpdated(
@@ -360,32 +406,9 @@ contract IporAssetConfiguration is
     {
         require(
             newWadDecayFactorValue <= Constants.D18,
-            Errors.CONFIG_DECAY_FACTOR_TOO_HIGH
+            IporErrors.CONFIG_DECAY_FACTOR_TOO_HIGH
         );
-        _wadDecayFactorValue = newWadDecayFactorValue;
+        _wadDecayFactorValue = uint128(newWadDecayFactorValue);
         emit DecayFactorValueUpdated(_asset, newWadDecayFactorValue);
     }
-
-    
-
-	
-}
-
-//TODO: remove drizzle from DevTool and remove this redundant smart contracts below:
-contract IporAssetConfigurationUsdt is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}
-
-contract IporAssetConfigurationUsdc is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}
-
-contract IporAssetConfigurationDai is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
 }

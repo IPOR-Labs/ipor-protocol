@@ -1,12 +1,10 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 
-const {ContractData} = newContextComponents;
+const { ContractData } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div className="section">
-
-
         <table className="table" align="center">
             <tr>
                 <th scope="col">Exchange Rate</th>
@@ -17,97 +15,106 @@ export default ({drizzle, drizzleState}) => (
             <tr>
                 <td></td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true" ?
+                    {process.env.REACT_APP_ITF_ENABLED ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonUsdt"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address, Math.floor(Date.now() / 1000)]}
+                            methodArgs={[Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000000000000000}<br/>
+                                    {value / 1000000000000000000}
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdt"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address, Math.floor(Date.now() / 1000)]}
+                            methodArgs={[Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000000000000000}<br/>
+                                    {value / 1000000000000000000}
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true" ?
+                    {process.env.REACT_APP_ITF_ENABLED ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonUsdc"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address, Math.floor(Date.now() / 1000)]}
+                            methodArgs={[Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000000000000000}<br/>
+                                    {value / 1000000000000000000}
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="Milton"
+                            contract="MiltonUsdc"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address, Math.floor(Date.now() / 1000)]}
+                            methodArgs={[Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000000000000000}<br/>
+                                    {value / 1000000000000000000}
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_PRIV_TEST_NETWORK_USE_TEST_JOSEPH === "true" ?
+                    {process.env.REACT_APP_ITF_ENABLED ===
+                    "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonDai"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address, Math.floor(Date.now() / 1000)]}
+                            methodArgs={[Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000000000000000}<br/>
+                                    {value / 1000000000000000000}
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
-                        :
+                    ) : (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="TestMilton"
+                            contract="ItfMiltonDai"
                             method="calculateExchangeRate"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address, Math.floor(Date.now() / 1000)]}
+                            methodArgs={[Math.floor(Date.now() / 1000)]}
                             render={(value) => (
                                 <div>
-                                    {value / 1000000000000000000}<br/>
+                                    {value / 1000000000000000000}
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
-                    }
+                    )}
                 </td>
             </tr>
         </table>

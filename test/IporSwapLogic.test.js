@@ -1,69 +1,55 @@
 const { expect } = require("chai");
 const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
-const { DerivativeState } = require("./enums.js");
+const { SwapState } = require("./enums.js");
 
-const DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
+const SWAP_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
 const YEAR_IN_SECONDS = BigInt("31536000");
 const PERIOD_25_DAYS_IN_SECONDS = BigInt(60 * 60 * 24 * 25);
 
 const ONE_18DEC = BigInt("1000000000000000000");
 
-const prepareDerivativeCase1 = async (fixedInterestRate, admin) => {
+const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
     const daiMockedToken = await DaiMockedToken.deploy(
         BigInt("1000000000000000000"),
         18
     );
     await daiMockedToken.deployed();
-    const ibtPriceFirst = BigInt("100") * ONE_18DEC;
     const collateral = BigInt("9870300000000000000000");
     const collateralizationFactor = BigInt("10");
 
-    const indicator = {
-        iporIndexValue: BigInt("30000000000000000"), //ipor index value
-        ibtPrice: ibtPriceFirst,
+    const timeStamp = Math.floor(Date.now() / 1000);
+    const notionalAmount = collateral * collateralizationFactor;
+    const swap = {
+        state: SwapState.ACTIVE,
+        buyer: admin.address,
+        asset: daiMockedToken.address,
+        startingTimestamp: BigInt(timeStamp),
+        endingTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
+        id: BigInt("0"),
+        idsIndex: BigInt("0"),
+        idsIndex: BigInt("0"),
+        collateral: BigInt("0"),
+        liquidationDepositAmount: BigInt("20") * ONE_18DEC,
+        notionalAmount,
         ibtQuantity: BigInt("987030000000000000000"), //ibtQuantity
         fixedInterestRate: fixedInterestRate,
     };
 
-    const liquidationDepositAmount = BigInt("20") * ONE_18DEC;
-    const fee = {
-        liquidationDepositAmount, //liquidation deposit amount
-        openingAmount: BigInt("99700000000000000000"), //opening fee amount
-        iporPublicationAmount: BigInt("10"), // * ONE_18DEC, //ipor publication amount        
-        spreadValue: BigInt("10000000000000000"), // spread percentege
-    };
-    const timeStamp = Date.now();
-    const notionalAmount = collateral * collateralizationFactor;
-    const derivative = {
-        id: BigInt("0"),
-        state: DerivativeState.ACTIVE,
-        buyer: admin.address,
-        asset: daiMockedToken.address,
-        direction: BigInt("0"), //Pay Fixed, Receive Floating (long position)
-        collateral: BigInt("0"),
-        fee,
-        collateralizationFactor: BigInt("0"),
-        notionalAmount,
-        startingTimestamp: BigInt(timeStamp),
-        endingTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
-        indicator,
-    };
-
-    return derivative;
+    return swap;
 };
 
-describe("DerivativeLogic", () => {
-    let derivativeLogic;
+describe("IporSwapLogic", () => {
+    let iporSwapLogic;
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        const MockDerivativeLogic = await ethers.getContractFactory(
-            "MockDerivativeLogic"
+        const MockIporSwapLogic = await ethers.getContractFactory(
+            "MockIporSwapLogic"
         );
-        derivativeLogic = await MockDerivativeLogic.deploy();
-        derivativeLogic.deployed();
+        iporSwapLogic = await MockIporSwapLogic.deploy();
+        iporSwapLogic.deployed();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
     });
@@ -71,14 +57,14 @@ describe("DerivativeLogic", () => {
     it("Calculate Interest Fixed Case 1", async () => {
         //given
         const notionalAmount = BigInt(98703) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4) * BigInt(1e16);
-        const derivativePeriodInSeconds = 0;
+        const swapFixedInterestRate = BigInt(4) * BigInt(1e16);
+        const swapPeriodInSeconds = 0;
 
         //when
-        const result = await derivativeLogic.calculateQuasiInterestFixed(
+        const result = await iporSwapLogic.calculateQuasiInterestFixed(
             notionalAmount,
-            derivativeFixedInterestRate,
-            derivativePeriodInSeconds
+            swapFixedInterestRate,
+            swapPeriodInSeconds
         );
         //then
         expect(result, "Wrong interest fixed").to.be.equal(
@@ -89,16 +75,14 @@ describe("DerivativeLogic", () => {
     it("Calculate Interest Fixed Case 2", async () => {
         //given
         const notionalAmount = BigInt(98703) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4 * 1e16);
-        const derivativePeriodInSeconds = BigInt(
-            DERIVATIVE_DEFAULT_PERIOD_IN_SECONDS
-        );
+        const swapFixedInterestRate = BigInt(4 * 1e16);
+        const swapPeriodInSeconds = BigInt(SWAP_DEFAULT_PERIOD_IN_SECONDS);
 
         //when
-        const result = await derivativeLogic.calculateQuasiInterestFixed(
+        const result = await iporSwapLogic.calculateQuasiInterestFixed(
             notionalAmount,
-            derivativeFixedInterestRate,
-            derivativePeriodInSeconds
+            swapFixedInterestRate,
+            swapPeriodInSeconds
         );
 
         //then
@@ -110,14 +94,14 @@ describe("DerivativeLogic", () => {
     it("Calculate Interest Fixed Case 3", async () => {
         //given
         const notionalAmount = BigInt(98703) * ONE_18DEC;
-        const derivativeFixedInterestRate = BigInt(4 * 1e16);
-        const derivativePeriodInSeconds = YEAR_IN_SECONDS;
+        const swapFixedInterestRate = BigInt(4 * 1e16);
+        const swapPeriodInSeconds = YEAR_IN_SECONDS;
 
         //when
-        const result = await derivativeLogic.calculateQuasiInterestFixed(
+        const result = await iporSwapLogic.calculateQuasiInterestFixed(
             notionalAmount,
-            derivativeFixedInterestRate,
-            derivativePeriodInSeconds
+            swapFixedInterestRate,
+            swapPeriodInSeconds
         );
 
         //then
@@ -132,7 +116,7 @@ describe("DerivativeLogic", () => {
         const ibtCurrentPrice = BigInt(100) * ONE_18DEC;
 
         //when
-        const result = await derivativeLogic.calculateQuasiInterestFloating(
+        const result = await iporSwapLogic.calculateQuasiInterestFloating(
             ibtQuantity,
             ibtCurrentPrice
         );
@@ -149,7 +133,7 @@ describe("DerivativeLogic", () => {
         const ibtCurrentPrice = BigInt(150) * ONE_18DEC;
 
         //when
-        const result = await derivativeLogic.calculateQuasiInterestFloating(
+        const result = await iporSwapLogic.calculateQuasiInterestFloating(
             ibtQuantity,
             ibtCurrentPrice
         );
@@ -166,7 +150,7 @@ describe("DerivativeLogic", () => {
         const ibtCurrentPrice = BigInt(100) * ONE_18DEC;
 
         //when
-        const result = await derivativeLogic.calculateQuasiInterestFloating(
+        const result = await iporSwapLogic.calculateQuasiInterestFloating(
             ibtQuantity,
             ibtCurrentPrice
         );
@@ -183,7 +167,7 @@ describe("DerivativeLogic", () => {
         const ibtCurrentPrice = BigInt(150 * 1e6);
 
         //when
-        const result = await derivativeLogic.calculateQuasiInterestFloating(
+        const result = await iporSwapLogic.calculateQuasiInterestFloating(
             ibtQuantity,
             ibtCurrentPrice
         );
@@ -196,16 +180,14 @@ describe("DerivativeLogic", () => {
     it("Calculate Interest Case 1", async () => {
         //given
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareDerivativeCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         //when
-        const derivativeInterest = await derivativeLogic.calculateInterest(
-            derivative,
-            BigInt(Date.now() + 60 * 60 * 24 * 28),
-            ONE_18DEC
-        );
+        const derivativeInterest =
+            await iporSwapLogic.calculateInterestForSwapPayFixed(
+                swap,
+                BigInt(Date.now() + 60 * 60 * 24 * 28),
+                ONE_18DEC
+            );
         //then
         expect(
             derivativeInterest.quasiInterestFixed,
@@ -226,18 +208,16 @@ describe("DerivativeLogic", () => {
     it("Calculate Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
         //given
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareDerivativeCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
 
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
         //when
-        const derivativeInterest = await derivativeLogic.calculateInterest(
-            derivative,
-            derivative.startingTimestamp,
-            ibtPriceSecond
-        );
+        const derivativeInterest =
+            await iporSwapLogic.calculateInterestForSwapPayFixed(
+                swap,
+                swap.startingTimestamp,
+                ibtPriceSecond
+            );
 
         //then
         expect(
@@ -259,19 +239,17 @@ describe("DerivativeLogic", () => {
         //given
 
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareDerivativeCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         const ibtPriceSecond = BigInt(100) * ONE_18DEC;
 
         //when
 
-        const derivativeInterest = await derivativeLogic.calculateInterest(
-            derivative,
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-            ibtPriceSecond
-        );
+        const derivativeInterest =
+            await iporSwapLogic.calculateInterestForSwapPayFixed(
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+                ibtPriceSecond
+            );
 
         //then
         expect(
@@ -290,19 +268,17 @@ describe("DerivativeLogic", () => {
 
     it("Calculate Interest Case 25 days Later IBT Price Changed Decimals 18", async () => {
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareDerivativeCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
 
         //when
 
-        const derivativeInterest = await derivativeLogic.calculateInterest(
-            derivative,
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-            ibtPriceSecond
-        );
+        const derivativeInterest =
+            await iporSwapLogic.calculateInterestForSwapPayFixed(
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+                ibtPriceSecond
+            );
 
         //then
         expect(
@@ -324,19 +300,17 @@ describe("DerivativeLogic", () => {
         const spread = BigInt(10000000000000000);
         const fixedInterestRate = iporIndex + spread;
 
-        const derivative = await prepareDerivativeCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
 
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
 
         //when
-        const derivativeInterest = await derivativeLogic.calculateInterest(
-            derivative,
-            derivative.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-            ibtPriceSecond
-        );
+        const derivativeInterest =
+            await iporSwapLogic.calculateInterestForSwapPayFixed(
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+                ibtPriceSecond
+            );
 
         //then
         expect(
@@ -359,20 +333,17 @@ describe("DerivativeLogic", () => {
         //given
 
         const fixedInterestRate = BigInt("40000000000000000");
-        const derivative = await prepareDerivativeCase1(
-            fixedInterestRate,
-            admin
-        );
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         const ibtPriceSecond = BigInt(120) * ONE_18DEC;
 
         //when
 
-        const derivativeInterest = await derivativeLogic.calculateInterest(
-            derivative,
-            derivative.startingTimestamp +
-                PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
-            ibtPriceSecond
-        );
+        const derivativeInterest =
+            await iporSwapLogic.calculateInterestForSwapPayFixed(
+                swap,
+                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
+                ibtPriceSecond
+            );
 
         //then
         expect(

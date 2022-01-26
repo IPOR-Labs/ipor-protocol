@@ -2,92 +2,110 @@
 pragma solidity 0.8.9;
 
 import { DataTypes } from "../libraries/types/DataTypes.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
-import { Errors } from "../Errors.sol";
+import { IporMath } from "../libraries/IporMath.sol";
+import { IporErrors } from "../IporErrors.sol";
 import { Constants } from "../libraries/Constants.sol";
 
 library SoapIndicatorLogic {
-    function calculateSoap(
-        DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+    function calculateSoapPayFixed(
+        DataTypes.SoapIndicatorMemory memory si,
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) internal pure returns (int256) {
         return
-            AmmMath.divisionInt(
-                calculateQuasiSoap(si, ibtPrice, timestamp),
+            IporMath.divisionInt(
+                calculateQuasiSoapPayFixed(si, calculateTimestamp, ibtPrice),
                 Constants.WAD_P2_YEAR_IN_SECONDS_INT
             );
     }
 
-    //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
-    function calculateQuasiSoap(
-        DataTypes.SoapIndicator memory si,
-        uint256 ibtPrice,
-        uint256 timestamp
+	function calculateSoapReceiveFixed(
+        DataTypes.SoapIndicatorMemory memory si,
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
     ) internal pure returns (int256) {
-        if (
-            si.direction == DataTypes.DerivativeDirection.PayFixedReceiveFloating
-        ) {
-            return
-                int256(
-                    si.totalIbtQuantity *
-                        ibtPrice *
-                        Constants.WAD_YEAR_IN_SECONDS
-                ) -
-                int256(
-                    si.totalNotional *
-                        Constants.WAD_P2_YEAR_IN_SECONDS +
-                        calculateQuasiHyphoteticalInterestTotal(si, timestamp)
-                );
-        } else {
-            return
-                int256(
-                    si.totalNotional *
-                        Constants.WAD_P2_YEAR_IN_SECONDS +
-                        calculateQuasiHyphoteticalInterestTotal(si, timestamp)
-                ) -
-                int256(
-                    si.totalIbtQuantity *
-                        ibtPrice *
-                        Constants.WAD_YEAR_IN_SECONDS
-                );
-        }
+        return
+            IporMath.divisionInt(
+                calculateQuasiSoapReceiveFixed(si, calculateTimestamp, ibtPrice),
+                Constants.WAD_P2_YEAR_IN_SECONDS_INT
+            );
     }
 
-    function rebalanceWhenOpenPosition(
-        DataTypes.SoapIndicator memory si,
+	function calculateQuasiSoapPayFixed(
+        DataTypes.SoapIndicatorMemory memory si,
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
+    ) internal pure returns (int256) {
+
+            return
+                int256(
+                    si.totalIbtQuantity *
+                        ibtPrice *
+                        Constants.WAD_YEAR_IN_SECONDS
+                ) -
+                int256(
+                    si.totalNotional *
+                        Constants.WAD_P2_YEAR_IN_SECONDS +
+                        calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)
+                );
+        
+    }
+    //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
+    function calculateQuasiSoapReceiveFixed(
+        DataTypes.SoapIndicatorMemory memory si,
+        uint256 calculateTimestamp,
+		uint256 ibtPrice        
+    ) internal pure returns (int256) {
+        
+            return
+                int256(
+                    si.totalNotional *
+                        Constants.WAD_P2_YEAR_IN_SECONDS +
+                        calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)
+                ) -
+                int256(
+                    si.totalIbtQuantity *
+                        ibtPrice *
+                        Constants.WAD_YEAR_IN_SECONDS
+                );
+        
+    }
+
+    function rebalanceWhenOpenSwap(
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
+        uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) pure internal returns(DataTypes.SoapIndicator memory) {
+    ) internal pure returns(DataTypes.SoapIndicatorMemory memory) {
         //TODO: here potential re-entrancy
-        uint256 averageInterestRate = calculateInterestRateWhenOpenPosition(
-            si,
+        uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
+            si.totalNotional,
+			si.averageInterestRate,
             derivativeNotional,
-            derivativeFixedInterestRate
+            swapFixedInterestRate
         );
         uint256 quasiHypotheticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
             );
 
-        si.rebalanceTimestamp = rebalanceTimestamp;
-        si.totalNotional = si.totalNotional + derivativeNotional;
+        si.rebalanceTimestamp = uint32(rebalanceTimestamp);
+        si.totalNotional = si.totalNotional + uint128(derivativeNotional);
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
 		return si;
     }
 
-    function rebalanceWhenClosePosition(
-        DataTypes.SoapIndicator memory si,
+    function rebalanceWhenCloseSwap(
+        DataTypes.SoapIndicatorMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate,
+        uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) pure internal returns(DataTypes.SoapIndicator memory){
+    ) internal pure returns(DataTypes.SoapIndicatorMemory memory){
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
@@ -97,7 +115,7 @@ library SoapIndicatorLogic {
             rebalanceTimestamp,
             derivativeOpenTimestamp,
             derivativeNotional,
-            derivativeFixedInterestRate
+            swapFixedInterestRate
         );
 
         uint256 quasiHypotheticalInterestTotal = currentQuasiHypoteticalInterestTotal -
@@ -105,14 +123,15 @@ library SoapIndicatorLogic {
 
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
 
-        uint256 averageInterestRate = calculateInterestRateWhenClosePosition(
-            si,
+        uint256 averageInterestRate = calculateInterestRateWhenCloseSwap(
+			si.totalNotional,
+			si.averageInterestRate,
             derivativeNotional,
-            derivativeFixedInterestRate
+            swapFixedInterestRate
         );
         //TODO: here potential re-entrancy
-        si.rebalanceTimestamp = rebalanceTimestamp;
-        si.totalNotional = si.totalNotional - derivativeNotional;
+        si.rebalanceTimestamp = uint32(rebalanceTimestamp);
+        si.totalNotional = si.totalNotional - uint128(derivativeNotional);
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
 		return si;
@@ -122,78 +141,87 @@ library SoapIndicatorLogic {
         uint256 calculateTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
-            Errors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP
+            IporErrors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP
         );
         return
             derivativeNotional *
-            derivativeFixedInterestRate *
+            swapFixedInterestRate *
             (calculateTimestamp - derivativeOpenTimestamp) *
             Constants.D18;
     }
 
     function calculateQuasiHyphoteticalInterestTotal(
-        DataTypes.SoapIndicator memory si,
-        uint256 timestamp
+        DataTypes.SoapIndicatorMemory memory si,
+        uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return
             si.quasiHypotheticalInterestCumulative +
-            calculateQuasiHypotheticalInterestDelta(si, timestamp);
+            calculateQuasiHypotheticalInterestDelta(
+				calculateTimestamp,
+				si.rebalanceTimestamp, 				
+				si.totalNotional,
+				si.averageInterestRate
+			);
     }
 
     //division by Constants.YEAR_IN_SECONDS * 1e54 postponed at the end of calculation
     function calculateQuasiHypotheticalInterestDelta(
-        DataTypes.SoapIndicator memory si,
-        uint256 timestamp
+		uint256 calculateTimestamp,
+		uint256 lastRebalanceTimestamp,
+		uint256 totalNotional,
+		uint256 averageInterestRate
     ) internal pure returns (uint256) {
         require(
-            timestamp >= si.rebalanceTimestamp,
-            Errors
+            calculateTimestamp >= lastRebalanceTimestamp,
+            IporErrors
                 .MILTON_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP
         );
         return
-            si.totalNotional *
-            si.averageInterestRate *
-            ((timestamp - si.rebalanceTimestamp) * Constants.D18);
+            totalNotional *
+            averageInterestRate *
+            ((calculateTimestamp - lastRebalanceTimestamp) * Constants.D18);
     }
 
-    function calculateInterestRateWhenOpenPosition(
-        DataTypes.SoapIndicator memory si,
+    function calculateInterestRateWhenOpenSwap(
+		uint256 totalNotional,
+		uint256 averageInterestRate,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
         return
-            AmmMath.division(
-                (si.totalNotional *
-                    si.averageInterestRate +
+            IporMath.division(
+                (totalNotional *
+                    averageInterestRate +
                     derivativeNotional *
-                    derivativeFixedInterestRate),
-                (si.totalNotional + derivativeNotional)
+                    swapFixedInterestRate),
+                (totalNotional + derivativeNotional)
             );
     }
 
-    function calculateInterestRateWhenClosePosition(
-        DataTypes.SoapIndicator memory si,
+    function calculateInterestRateWhenCloseSwap(
+		uint256 totalNotional,
+		uint256 averageInterestRate,
         uint256 derivativeNotional,
-        uint256 derivativeFixedInterestRate
+        uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
         require(
-            derivativeNotional <= si.totalNotional,
-            Errors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
+            derivativeNotional <= totalNotional,
+            IporErrors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
         );
-        if (derivativeNotional == si.totalNotional) {
+        if (derivativeNotional == totalNotional) {
             return 0;
         } else {
             return
-                AmmMath.division(
-                    (si.totalNotional *
-                        si.averageInterestRate -
+                IporMath.division(
+                    (totalNotional *
+                        averageInterestRate -
                         derivativeNotional *
-                        derivativeFixedInterestRate),
-                    (si.totalNotional - derivativeNotional)
+                        swapFixedInterestRate),
+                    (totalNotional - derivativeNotional)
                 );
         }
     }

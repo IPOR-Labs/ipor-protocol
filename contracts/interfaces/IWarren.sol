@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import { DataTypes } from "../libraries/types/DataTypes.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
 
-interface IWarren {
-    function pause() external;
-
-    function unpause() external;
-
+interface IWarren {    
+	
+	function getAssets() external view returns (address[] memory);
     function getIndex(address asset)
         external
         view
@@ -18,6 +16,11 @@ interface IWarren {
             uint256 exponentialWeightedMovingVariance,
             uint256 date
         );
+
+    function getAccruedIndex(uint256 calculateTimestamp, address asset)
+        external
+		view
+        returns (DataTypes.AccruedIpor memory accruedIpor);
 
     function updateIndex(address asset, uint256 indexValue) external;
 

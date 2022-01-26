@@ -6,39 +6,33 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
-import { Errors } from "../Errors.sol";
+import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IMiltonStorage.sol";
-import { AmmMath } from "../libraries/AmmMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
-import "./Joseph.sol";
+import "../tokenization/Joseph.sol";
 
-//TODO:  move to mock/test/itf folder
-contract TestJoseph is Joseph {
-	//TODO: change name to provideLiquidity, align ITF 
+contract ItfJoseph is Joseph {
+
+	constructor(address asset, address initialIporConfiguration) Joseph(asset, initialIporConfiguration) {}
+	
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
-    function test_provideLiquidity(
-        address asset,
+    function itfProvideLiquidity(
         uint256 liquidityAmount,
         uint256 timestamp
-    ) external {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                iporConfiguration.getIporAssetConfiguration(asset)
-            );
+    ) external {        
         _provideLiquidity(
-            asset,
             liquidityAmount,
-            iporAssetConfiguration.getDecimals(),
+            _iporAssetConfiguration.getDecimals(),
             timestamp
         );
     }
 
-	//TODO: change name to redeem, align ITF 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
-    function test_redeem(
-        address asset,
+    function itfRedeem(
         uint256 ipTokenVolume,
         uint256 timestamp
     ) external {
-        _redeem(asset, ipTokenVolume, timestamp);
+        _redeem(ipTokenVolume, timestamp);
     }
 }

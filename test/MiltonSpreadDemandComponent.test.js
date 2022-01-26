@@ -4,20 +4,20 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 const { utils } = require("web3");
 
-const {    
+const {
     USD_1_18DEC,
     USD_20_18DEC,
     USD_2_000_18DEC,
-    USD_10_000_18DEC,    
-    USD_14_000_18DEC,    
-    ZERO,    
+    USD_10_000_18DEC,
+    USD_14_000_18DEC,
+    ZERO,
 } = require("./Const.js");
 
 const {
     assertError,
-    getLibraries,    
+    getLibraries,
     prepareData,
-    prepareTestData,    
+    prepareTestData,
     grantAllSpreadRoles,
 } = require("./Utils");
 
@@ -40,7 +40,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         await grantAllSpreadRoles(data, admin, userOne);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, PayFix Balance > RecFix Balance, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, PayFix Balance > RecFix Balance, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -73,9 +73,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("1000000000000000000000000");
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("1000000000000000000000000");
         const payFixedDerivativesBalance = BigInt("2000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -87,9 +87,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -104,7 +104,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, PayFix Balance = RecFix Balance, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, PayFix Balance = RecFix Balance, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -137,9 +137,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("1000000000000000000000000");
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("1000000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -151,9 +151,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -168,7 +168,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, PayFix Balance < RecFix Balance, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, PayFix Balance < RecFix Balance, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -201,9 +201,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("1000000000000000000000000");
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("1000000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("2000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -215,9 +215,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -232,7 +232,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, 100% utilization rate including position, SOAP+=0 ", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, 100% utilization rate including position, SOAP+=0 ", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -261,9 +261,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("1000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("1000000000000000000000");
+        const swapCollateral = BigInt("1000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("1000000000000000000000");
         const payFixedDerivativesBalance = USD_20_18DEC;
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -275,9 +275,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -291,7 +291,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, imbalance factor > 0, opening fee > 0, pay fixed derivative balance > 0, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, imbalance factor > 0, opening fee > 0, pay fixed swap balance > 0, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -324,9 +324,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -338,9 +338,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -354,7 +354,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, imbalance factor > 0, opening fee > 0, pay fixed derivative balance > 0, SOAP+>0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, imbalance factor > 0, opening fee > 0, pay fixed swap balance > 0, SOAP+>0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -387,9 +387,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
         const soap = BigInt("100000000000000000000");
@@ -401,9 +401,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -417,7 +417,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, imbalance factor > 0, opening fee > 0, pay fixed derivative balance > 0, SOAP+=1", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, imbalance factor > 0, opening fee > 0, pay fixed swap balance > 0, SOAP+=1", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -449,9 +449,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             .setDemandComponentMaxLiquidityRedemptionValue(
                 BigInt("1000000000000000000")
             );
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
         const soap = payFixedDerivativesBalance;
@@ -463,9 +463,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -479,7 +479,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, imbalance factor > 0, opening fee > 0, pay fixed derivative balance = 0, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, imbalance factor > 0, opening fee > 0, pay fixed swap balance = 0, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -512,9 +512,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = ZERO;
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -526,9 +526,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -542,7 +542,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, imbalance factor > 0, opening fee = 0, pay fixed derivative balance = 0, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, imbalance factor > 0, opening fee = 0, pay fixed swap balance = 0, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -575,9 +575,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = ZERO;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = ZERO;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = ZERO;
         const recFixedDerivativesBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -589,9 +589,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -605,7 +605,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Pay Fixed Derivative, Adjusted Utilization Rate equal M , Kf denominator = 0, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Pay Fixed Swap, Adjusted Utilization Rate equal M , Kf denominator = 0, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -640,9 +640,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 maxLiquidityRedemptionValue
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = USD_14_000_18DEC;
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = USD_14_000_18DEC;
         const payFixedDerivativesBalance = USD_2_000_18DEC;
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -654,9 +654,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -671,7 +671,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, PayFix Balance > RecFix Balance, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, PayFix Balance > RecFix Balance, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -704,9 +704,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -718,9 +718,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -735,7 +735,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, PayFix Balance = RecFix Balance, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, PayFix Balance = RecFix Balance, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -768,9 +768,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("5000000000000000000000");
         const recFixedDerivativesBalance = BigInt("5000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -782,9 +782,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -799,7 +799,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, PayFix Balance < RecFix Balance, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, PayFix Balance < RecFix Balance, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -832,9 +832,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = BigInt("3000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -846,9 +846,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -863,7 +863,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, 100% utilization rate including position, SOAP+=0 ", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, 100% utilization rate including position, SOAP+=0 ", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -896,9 +896,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("1000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("1000000000000000000000");
+        const swapCollateral = BigInt("1000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("1000000000000000000000");
         const payFixedDerivativesBalance = BigInt("1000000000000000000000");
         const recFixedDerivativesBalance = USD_20_18DEC;
         const soap = BigInt("-1234560000000000000");
@@ -910,9 +910,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -927,7 +927,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, imbalance factor > 0, opening fee > 0, rec fixed derivative balance > 0, SOAP+=0 ", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, imbalance factor > 0, opening fee > 0, rec fixed swap balance > 0, SOAP+=0 ", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -960,9 +960,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -974,9 +974,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -990,7 +990,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, imbalance factor > 0, opening fee > 0, rec fixed derivative balance > 0, SOAP+>0 ", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, imbalance factor > 0, opening fee > 0, rec fixed swap balance > 0, SOAP+>0 ", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1023,9 +1023,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("100000000000000000000");
@@ -1037,9 +1037,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1053,7 +1053,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, imbalance factor > 0, opening fee > 0, rec fixed derivative balance > 0, SOAP+=1 ", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, imbalance factor > 0, opening fee > 0, rec fixed swap balance > 0, SOAP+=1 ", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1086,9 +1086,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = recFixedDerivativesBalance;
@@ -1100,9 +1100,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1116,7 +1116,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, imbalance factor > 0, opening fee > 0, rec fixed derivative balance = 0, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, imbalance factor > 0, opening fee > 0, rec fixed swap balance = 0, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1149,9 +1149,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = ZERO;
         const soap = BigInt("-1234560000000000000");
@@ -1163,9 +1163,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1179,7 +1179,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, imbalance factor > 0, opening fee = 0, rec fixed derivative balance = 0, SOAP+=0", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, imbalance factor > 0, opening fee = 0, rec fixed swap balance = 0, SOAP+=0", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1212,9 +1212,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 BigInt("1000000000000000000")
             );
 
-        const derivativeDeposit = BigInt("10000000000000000000000");
-        const derivativeOpeningFee = ZERO;
-        const liquidityPool = BigInt("15000000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const swapOpeningFee = ZERO;
+        const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedDerivativesBalance = BigInt("13000000000000000000000");
         const recFixedDerivativesBalance = ZERO;
         const soap = BigInt("-1234560000000000000");
@@ -1226,9 +1226,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap
@@ -1242,7 +1242,7 @@ describe("MiltonSpreadModel - Demand Component", () => {
         ).to.be.eq(actualSpreadDemandComponentValue);
     });
 
-    it("should calculate spread - demand component - Rec Fixed Derivative, Adjusted Utilization Rate equal M , Kf denominator = 0, KOmega denominator != 0, SOAP+=0 ", async () => {
+    it("should calculate spread - demand component - Rec Fixed Swap, Adjusted Utilization Rate equal M , Kf denominator = 0, KOmega denominator != 0, SOAP+=0 ", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1277,9 +1277,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
                 maxLiquidityRedemptionValue
             );
 
-        const derivativeDeposit = USD_10_000_18DEC;
-        const derivativeOpeningFee = USD_20_18DEC;
-        const liquidityPool = USD_14_000_18DEC;
+        const swapCollateral = USD_10_000_18DEC;
+        const swapOpeningFee = USD_20_18DEC;
+        const liquidityPoolBalance = USD_14_000_18DEC;
         const payFixedDerivativesBalance = USD_2_000_18DEC;
         const recFixedDerivativesBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
@@ -1291,9 +1291,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
             await data.miltonSpread
                 .connect(userOne)
                 .calculateDemandComponentRecFixed(
-                    derivativeDeposit,
-                    derivativeOpeningFee,
-                    liquidityPool,
+                    swapCollateral,
+                    swapOpeningFee,
+                    liquidityPoolBalance,
                     payFixedDerivativesBalance,
                     recFixedDerivativesBalance,
                     soap

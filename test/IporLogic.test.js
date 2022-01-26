@@ -25,7 +25,7 @@ describe("IporLogic", () => {
 
     it("Should accrue Ibt Price Decimals 18", async () => {
         //given
-        const initialTimestamp = BigInt(Date.now());
+        const initialTimestamp = BigInt(Math.floor(Date.now() / 1000));
         const initialQuasiIbtPrice = ONE_18DEC * YEAR_IN_SECONDS;
 
         const ipor = {
@@ -52,7 +52,7 @@ describe("IporLogic", () => {
 
     it("Should accrue IbtPrice Two Calculations Decimals18", async () => {
         //given
-        const initialTimestamp = BigInt(Date.now());
+        const initialTimestamp = BigInt(Math.floor(Date.now() / 1000));
         const initialQuasiIbtPrice = ONE_18DEC * YEAR_IN_SECONDS;
 
         const ipor = {
