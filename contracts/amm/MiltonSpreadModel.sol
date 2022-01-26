@@ -5,8 +5,6 @@ import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonLiquidityPoolUtilizationModel.sol";
-import "../interfaces/IIporConfiguration.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IWarren.sol";
 import {IporMath} from "../libraries/IporMath.sol";
