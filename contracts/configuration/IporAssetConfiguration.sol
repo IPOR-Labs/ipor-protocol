@@ -22,10 +22,9 @@ contract IporAssetConfiguration is
 {
     uint8 private immutable _decimals;
 
-    //TODO: add structure for Milton Config Open Position
     uint64 private immutable _maxSlippagePercentage;
 
-	address private immutable _asset;
+    address private immutable _asset;
 
     address private immutable _ipToken;
 
@@ -47,12 +46,11 @@ contract IporAssetConfiguration is
 
     uint128 private _iporPublicationFeeAmount;
 
-    //TODO: change to "max collateral position value"
     //@notice max total amount used when opening position
     uint128 private _maxSwapTotalAmount;
 
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
-    uint128 private _wadDecayFactorValue;    
+    uint128 private _wadDecayFactorValue;
 
     address private _milton;
 
@@ -266,12 +264,7 @@ contract IporAssetConfiguration is
         );
     }
 
-    function getMaxSwapTotalAmount()
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getMaxSwapTotalAmount() external view override returns (uint256) {
         return _maxSwapTotalAmount;
     }
 

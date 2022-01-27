@@ -9,12 +9,11 @@ contract MiltonSpreadConfiguration is
     AccessControlMiltonSpreadConfiguration(msg.sender),
     IMiltonSpreadConfiguration
 {
-	//TODO: [gas-opt] decrease size and use struct in Spread Model
+    //TODO: [gas-opt] move to immutable all fields here
 
-	//@notice Spread Max Value
+    //@notice Spread Max Value
     uint64 internal _maxValue;
 
-	//TODO: consider combine demand component values as one structs
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
     uint64 internal _demandComponentKfValue;
 
@@ -31,38 +30,31 @@ contract MiltonSpreadConfiguration is
     uint64 internal _atParComponentKVolValue;
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
-    uint64 internal _atParComponentKHistValue;    
+    uint64 internal _atParComponentKHistValue;
 
     constructor() {
-        _demandComponentKfValue = uint64(IporMath.division(
-            Constants.D18,
-            100
-        ));
-        _demandComponentLambdaValue = uint64(IporMath.division(
-            Constants.D18,
-            100
-        ));
-        _demandComponentKOmegaValue = uint64(IporMath.division(
-            Constants.D18,
-            100
-        ));
+        _demandComponentKfValue = uint64(IporMath.division(Constants.D18, 100));
+        _demandComponentLambdaValue = uint64(
+            IporMath.division(Constants.D18, 100)
+        );
+        _demandComponentKOmegaValue = uint64(
+            IporMath.division(Constants.D18, 100)
+        );
 
         _demandComponentMaxLiquidityRedemptionValue = uint64(Constants.D18);
-        
-        _atParComponentKVolValue = uint64(IporMath.division(
-            Constants.D18,
-            100
-        ));
 
-        _atParComponentKHistValue = uint64(IporMath.division(
-            Constants.D18,
-            100
-        ));
+        _atParComponentKVolValue = uint64(
+            IporMath.division(Constants.D18, 100)
+        );
+
+        _atParComponentKHistValue = uint64(
+            IporMath.division(Constants.D18, 100)
+        );
 
         _maxValue = uint64(IporMath.division(3 * Constants.D16, 10));
     }
 
-	function getSpreadMaxValue() external view override returns (uint256) {
+    function getSpreadMaxValue() external view override returns (uint256) {
         return _maxValue;
     }
 
@@ -84,9 +76,11 @@ contract MiltonSpreadConfiguration is
         return _demandComponentKfValue;
     }
 
-    function setDemandComponentKfValue(
-        uint256 newSpreadDemandComponentKfValue
-    ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE) {
+    function setDemandComponentKfValue(uint256 newSpreadDemandComponentKfValue)
+        external
+        override
+        onlyRole(_SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE)
+    {
         _demandComponentKfValue = uint64(newSpreadDemandComponentKfValue);
         emit SpreadDemandComponentKfValueSet(newSpreadDemandComponentKfValue);
     }
@@ -103,7 +97,9 @@ contract MiltonSpreadConfiguration is
     function setDemandComponentLambdaValue(
         uint256 newSpreadDemandComponentLambdaValue
     ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE) {
-        _demandComponentLambdaValue = uint64(newSpreadDemandComponentLambdaValue);
+        _demandComponentLambdaValue = uint64(
+            newSpreadDemandComponentLambdaValue
+        );
         emit SpreadDemandComponentLambdaValueSet(
             newSpreadDemandComponentLambdaValue
         );
@@ -121,7 +117,9 @@ contract MiltonSpreadConfiguration is
     function setDemandComponentKOmegaValue(
         uint256 newSpreadDemandComponentKOmegaValue
     ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE) {
-        _demandComponentKOmegaValue = uint64(newSpreadDemandComponentKOmegaValue);
+        _demandComponentKOmegaValue = uint64(
+            newSpreadDemandComponentKOmegaValue
+        );
         emit SpreadDemandComponentKOmegaValueSet(
             newSpreadDemandComponentKOmegaValue
         );
@@ -143,7 +141,9 @@ contract MiltonSpreadConfiguration is
         override
         onlyRole(_SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE)
     {
-        _demandComponentMaxLiquidityRedemptionValue = uint64(newSpreadDemandComponentMaxLiquidityRedemptionValue);
+        _demandComponentMaxLiquidityRedemptionValue = uint64(
+            newSpreadDemandComponentMaxLiquidityRedemptionValue
+        );
         emit SpreadDemandComponentMaxLiquidityRedemptionValueSet(
             newSpreadDemandComponentMaxLiquidityRedemptionValue
         );
@@ -181,5 +181,5 @@ contract MiltonSpreadConfiguration is
         emit SpreadAtParComponentKHistValueSet(
             newSpreadAtParComponentKHistValue
         );
-    }    
+    }
 }

@@ -15,7 +15,6 @@ import "../interfaces/IIporConfiguration.sol";
  * @title Ipor Oracle Storage initial version
  * @author IPOR Labs
  */
-//TODO: [gas-opt] use with Warren as inheritance
 contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     using IporLogic for DataTypes.IPOR;
 
@@ -49,10 +48,10 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     mapping(address => DataTypes.IPOR) internal _indexes;
 
     constructor(address initialIporConfiguration) {
-		require(
+        require(
             address(initialIporConfiguration) != address(0),
             IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );  
+        );
         _iporConfiguration = IIporConfiguration(initialIporConfiguration);
     }
 
@@ -70,8 +69,8 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
 
     function removeUpdater(address updater) external override onlyOwner {
         require(updater != address(0), IporErrors.WARREN_WRONG_UPDATER_ADDRESS);
-		uint256 i = 0;
-		uint256 updatersLength = _updaters.length;
+        uint256 i = 0;
+        uint256 updatersLength = _updaters.length;
         for (i; i != updatersLength; i++) {
             if (_updaters[i] == updater) {
                 _updatersMap[updater] = false;
@@ -120,11 +119,9 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
             newExponentialMovingAverage = indexValue;
             newExponentialWeightedMovingVariance = 0;
         } else {
-			DataTypes.IPOR memory ipor = _indexes[asset];
+            DataTypes.IPOR memory ipor = _indexes[asset];
 
-            newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(
-                updateTimestamp
-            );
+            newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
             newExponentialMovingAverage = IporLogic
                 .calculateExponentialMovingAverage(
