@@ -44,10 +44,9 @@ contract ItfMilton is Milton {
         _closeSwapPayFixed(swapId, closeTimestamp);
     }
 
-    function itfCloseSwapReceiveFixed(
-        uint256 swapId,
-        uint256 closeTimestamp
-    ) external {
+    function itfCloseSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp)
+        external
+    {
         _closeSwapReceiveFixed(swapId, closeTimestamp);
     }
 
@@ -75,15 +74,20 @@ contract ItfMilton is Milton {
 
     function itfCalculateSwapPayFixedValue(
         uint256 calculateTimestamp,
-        DataTypes.IporSwapMemory memory swap
+        uint256 swapId
     ) external view returns (int256) {
+        DataTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(
+            swapId
+        );
         return _calculateSwapPayFixedValue(calculateTimestamp, swap);
     }
 
     function itfCalculateSwapReceiveFixedValue(
         uint256 calculateTimestamp,
-        DataTypes.IporSwapMemory memory swap
+        uint256 swapId
     ) external view returns (int256) {
+        DataTypes.IporSwapMemory memory swap = _miltonStorage
+            .getSwapReceiveFixed(swapId);
         return _calculateSwapReceiveFixedValue(calculateTimestamp, swap);
     }
 }

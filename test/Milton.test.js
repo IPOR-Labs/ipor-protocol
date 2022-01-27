@@ -5139,7 +5139,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should calculate Position Value - simple case 1", async () => {
+    it("should calculate Pay Fixed Position Value - simple case 1", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -5175,13 +5175,14 @@ describe("Milton", () => {
             );
         await openSwapPayFixed(testData, params);
         let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
+
         let expectedPositionValue = BigInt("-38126715743181445978");
 
         //when
         let actualPositionValue = BigInt(
             await testData.miltonDai.itfCalculateSwapPayFixedValue(
                 params.openTimestamp + PERIOD_14_DAYS_IN_SECONDS,
-                derivativeItem
+                derivativeItem.id
             )
         );
 
