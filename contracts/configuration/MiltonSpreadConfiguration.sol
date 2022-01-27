@@ -35,29 +35,27 @@ contract MiltonSpreadConfiguration is
 
     constructor() {
         _demandComponentKfValue = uint64(IporMath.division(
-            1 * Constants.D18,
-            1000
+            Constants.D18,
+            100
         ));
         _demandComponentLambdaValue = uint64(IporMath.division(
-            1 * Constants.D18,
-            1000
+            Constants.D18,
+            100
         ));
         _demandComponentKOmegaValue = uint64(IporMath.division(
-            3 * Constants.D18,
-            10
-        ));
-
-        _demandComponentMaxLiquidityRedemptionValue = uint64(Constants.D18);
-
-        //TODO: clarify initial value
-        _atParComponentKVolValue = uint64(IporMath.division(
-            3 * Constants.D18,
+            Constants.D18,
             100
         ));
 
-        //TODO: clarify initial value
+        _demandComponentMaxLiquidityRedemptionValue = uint64(Constants.D18);
+        
+        _atParComponentKVolValue = uint64(IporMath.division(
+            Constants.D18,
+            100
+        ));
+
         _atParComponentKHistValue = uint64(IporMath.division(
-            3 * Constants.D18,
+            Constants.D18,
             100
         ));
 
