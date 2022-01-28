@@ -3,9 +3,8 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 
-interface IMiltonStorage {    
-
-	function getLastSwapId() external view returns (uint256);
+interface IMiltonStorage {
+    function getLastSwapId() external view returns (uint256);
 
     function getBalance()
         external
@@ -16,8 +15,6 @@ interface IMiltonStorage {
         external
         view
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
-
-    
 
     function addLiquidity(uint256 liquidityAmount) external;
 
@@ -69,7 +66,7 @@ interface IMiltonStorage {
         external
         view
         returns (DataTypes.IporSwapMemory memory);
-    
+
     function getSwapsPayFixed(address account)
         external
         view

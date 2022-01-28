@@ -238,8 +238,7 @@ function remove_volume(){
 if [ $IS_BUILD_DOCKER = "YES" ]; then
 
 
-  cd "${DIR}"
-  rm -rf "${ENV_CONTRACTS_DIR}"
+  cd "${DIR}"  
   npm install
   truffle compile
 

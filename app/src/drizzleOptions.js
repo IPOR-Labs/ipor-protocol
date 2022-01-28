@@ -1,6 +1,5 @@
 import Warren from "./contracts/Warren.json";
 import ItfWarren from "./contracts/ItfWarren.json";
-import WarrenStorage from "./contracts/WarrenStorage.json";
 import WarrenDevToolDataProvider from "./contracts/WarrenDevToolDataProvider.json";
 import MiltonUsdt from "./contracts/MiltonUsdt.json";
 import MiltonUsdc from "./contracts/MiltonUsdc.json";
@@ -41,8 +40,7 @@ const options = {
         MiltonFrontendDataProvider,
         IporConfiguration,
         Warren,
-        ItfWarren,
-        WarrenStorage,
+        ItfWarren,        
         WarrenDevToolDataProvider,
         MiltonUsdt,
         MiltonUsdc,
@@ -66,11 +64,10 @@ const options = {
         IporAssetConfigurationDai,
         IporAssetConfigurationUsdt,
         IporAssetConfigurationUsdc,
-        MiltonSpreadModel,
+        MiltonSpreadModel
     ],
-    events: {
-        WarrenStorage: ["IporIndexUpdate"],
-    },
+    // events: {        
+    // },
 };
 
 export default options;

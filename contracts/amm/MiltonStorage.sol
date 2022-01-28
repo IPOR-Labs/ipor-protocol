@@ -16,11 +16,11 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     using IporSwapLogic for DataTypes.IporSwapMemory;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
-	address private immutable _asset;
+    address private immutable _asset;
     IIporConfiguration internal immutable _iporConfiguration;
     IIporAssetConfiguration internal immutable _iporAssetConfiguration;
-	
-    uint64 private _lastSwapId;    
+
+    uint64 private _lastSwapId;
     DataTypes.MiltonTotalBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
@@ -39,16 +39,20 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             _iporConfiguration.assetSupported(asset) == 1,
             IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
-       
-		address iporAssetConfigurationAddr = _iporConfiguration.getIporAssetConfiguration(asset);
 
-		require(address(iporAssetConfigurationAddr) != address(0), IporErrors.WRONG_ADDRESS);
+        address iporAssetConfigurationAddr = _iporConfiguration
+            .getIporAssetConfiguration(asset);
+
+        require(
+            address(iporAssetConfigurationAddr) != address(0),
+            IporErrors.WRONG_ADDRESS
+        );
 
         _iporAssetConfiguration = IIporAssetConfiguration(
-			iporAssetConfigurationAddr
-        );		
+            iporAssetConfigurationAddr
+        );
 
-		_asset = asset;
+        _asset = asset;
     }
 
     function getBalance()
@@ -273,20 +277,20 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         for (i; i != swapsIdsLength; i++) {
             uint128 id = ids[i];
-			DataTypes.IporSwap storage swap = swaps[id];
+            DataTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = DataTypes.IporSwapMemory(
                 uint256(swaps[id].state),
                 swap.buyer,
                 swap.startingTimestamp,
                 swap.startingTimestamp +
                     Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-					swap.id,
-					swap.idsIndex,
-					swap.collateral,
-					swap.liquidationDepositAmount,
-					swap.notionalAmount,
-					swap.fixedInterestRate,
-					swap.ibtQuantity
+                swap.id,
+                swap.idsIndex,
+                swap.collateral,
+                swap.liquidationDepositAmount,
+                swap.notionalAmount,
+                swap.fixedInterestRate,
+                swap.ibtQuantity
             );
         }
         return derivatives;

@@ -164,8 +164,14 @@ library DataTypes {
         
     }
 
-    struct IporSwapContainer {
-        mapping(uint128 => IporSwap) swaps;
+    
+	//@notice All active swaps available in Milton with information which swaps belong to account
+	struct IporSwapContainer {
+
+        //@notice swap details, key in map is a swapId
+		mapping(uint128 => IporSwap) swaps;
+
+		//@notice list of swap ids per account, key is account address, value is a list of swap ids
         mapping(address => uint128[]) ids;
     }
 }

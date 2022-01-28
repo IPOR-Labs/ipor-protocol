@@ -210,6 +210,14 @@ module.exports.prepareData = async (libraries, accounts) => {
     );
     await miltonDevToolDataProvider.deployed();
 
+    const MiltonFrontendDataProvider = await ethers.getContractFactory(
+        "MiltonFrontendDataProvider"
+    );
+    const miltonFrontendDataProvider = await MiltonFrontendDataProvider.deploy(
+        iporConfiguration.address
+    );
+    await miltonFrontendDataProvider.deployed();
+
     let miltonSpread = null;
 
     const MockMiltonSpreadModel = await ethers.getContractFactory(
@@ -225,6 +233,7 @@ module.exports.prepareData = async (libraries, accounts) => {
         miltonSpread,
         iporConfiguration,
         miltonDevToolDataProvider,
+        miltonFrontendDataProvider,
     };
 
     return data;
@@ -607,6 +616,18 @@ module.exports.setupTokenDaiInitialValuesForUsers = async (users, testData) => {
         await testData.tokenDai.setupInitialAmount(
             users[i].address,
             USER_SUPPLY_10MLN_18DEC
+        );
+    }
+};
+
+module.exports.setupTokenUsdcInitialValuesForUsers = async (
+    users,
+    testData
+) => {
+    for (let i = 0; i < users.length; i++) {
+        await testData.tokenUsdc.setupInitialAmount(
+            users[i].address,
+            USER_SUPPLY_6_DECIMALS
         );
     }
 };
