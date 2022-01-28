@@ -98,8 +98,7 @@ library DataTypes {
         uint256 collateral;
         uint256 notional;
         uint256 openingFee;
-        uint256 liquidationDepositAmount;
-        uint256 decimals;
+        uint256 liquidationDepositAmount;        
         uint256 iporPublicationFeeAmount;
         DataTypes.AccruedIpor accruedIpor;
     }
