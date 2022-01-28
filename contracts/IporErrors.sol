@@ -193,4 +193,11 @@ library IporErrors {
 	//@notice During spread calculation - Alpha param which  cannot be higher than 1
 	string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
         "IPOR_55";
+
+	//TODO: add test for it
+	//@notice Max Utilization Rate when Redeem should be higher than Liquidity Pool Max Utilization rate
+	string public constant CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION = "IPOR_56";
+
+	//@notice Redeem Max Utilization Rate is too high
+	string public constant CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH = "IPOR_57"
 }

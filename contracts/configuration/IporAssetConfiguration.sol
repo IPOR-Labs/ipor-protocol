@@ -52,6 +52,8 @@ contract IporAssetConfiguration is
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint128 private _wadDecayFactorValue;
 
+	uint128 private _redeemMaxUtilizationPercentage;
+
     address private _milton;
 
     address private _miltonStorage;
@@ -65,6 +67,8 @@ contract IporAssetConfiguration is
 
     //TODO: fix this name; treasureManager
     address private _treasureTreasurer;
+
+
 
     constructor(address asset, address ipToken) {
         _asset = asset;
@@ -91,6 +95,9 @@ contract IporAssetConfiguration is
         _liquidityPoolMaxUtilizationPercentage = uint64(
             8 * IporMath.division(Constants.D18, 10)
         );
+
+		//@dev Redeem Max Utilization rate cannot be lower than Liquidity Pool Max Utilization rate
+		_redeemMaxUtilizationPercentage = uint128(Constants.D18);
 
         _maxSwapTotalAmount = uint128(1e5 * Constants.D18);
 
@@ -261,6 +268,36 @@ contract IporAssetConfiguration is
         );
         emit LiquidityPoolMaxUtilizationPercentageSet(
             newLiquidityPoolMaxUtilizationPercentage
+        );
+    }
+
+	function getRedeemMaxUtilizationPercentage()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _redeemMaxUtilizationPercentage;
+    }
+
+    function setRedeemMaxUtilizationPercentage(
+        uint256 newRedeemMaxUtilizationPercentage
+    ) external override onlyRole(_REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE) {
+        require(
+            newRedeemMaxUtilizationPercentage >= _liquidityPoolMaxUtilizationPercentage,
+            IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
+        );
+
+		require(
+            newRedeemMaxUtilizationPercentage <= Constants.D18,
+            IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
+        );
+
+        _redeemMaxUtilizationPercentage = uint64(
+            newRedeemMaxUtilizationPercentage
+        );
+        emit RedeemMaxUtilizationPercentageSet(
+            newRedeemMaxUtilizationPercentage
         );
     }
 
