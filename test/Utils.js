@@ -81,7 +81,7 @@ module.exports.grantAllRoleIporAssetConfiguration = async (
     await iporAssetConfiguration.grantRole(
         keccak256("MILTON_ROLE"),
         accounts[0].address
-    );
+    );	
 
     await iporAssetConfiguration.grantRole(
         keccak256("MILTON_STORAGE_ADMIN_ROLE"),
@@ -98,6 +98,15 @@ module.exports.grantAllRoleIporAssetConfiguration = async (
     );
     await iporAssetConfiguration.grantRole(
         keccak256("JOSEPH_ROLE"),
+        accounts[0].address
+    );
+
+	await iporAssetConfiguration.grantRole(
+        keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+        accounts[0].address
+    );
+    await iporAssetConfiguration.grantRole(
+        keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE"),
         accounts[0].address
     );
 };

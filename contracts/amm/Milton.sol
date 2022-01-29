@@ -620,10 +620,9 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         require(
             IMiltonLiquidityPoolUtilizationModel(
                 _iporConfiguration.getMiltonLiquidityPoolUtilizationModel()
-            ).calculateTotalUtilizationRate(
+            ).calculateUtilizationRate(
                     balance.liquidityPool,
-                    balance.payFixedDerivatives,
-                    balance.recFixedDerivatives,
+                    balance.payFixedDerivatives + balance.recFixedDerivatives,                    
                     collateral,
                     openingFee
                 ) <=

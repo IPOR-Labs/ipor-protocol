@@ -20,7 +20,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     IIporConfiguration internal immutable _iporConfiguration;
     IIporAssetConfiguration internal immutable _iporAssetConfiguration;
 	
-    uint64 private _lastSwapId;    
+    uint64 private _lastSwapId;    	
+
     DataTypes.MiltonTotalBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
@@ -852,9 +853,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             swap.ibtQuantity
         );
 
-        _soapIndicatorsPayFixed = DataTypes.SoapIndicatorStorage(
-            uint32(pf.rebalanceTimestamp),
-            uint128(pf.totalNotional),
+        _soapIndicatorsPayFixed = DataTypes.SoapIndicatorStorage(            
+			uint32(pf.rebalanceTimestamp),
+			uint128(pf.totalNotional),
             uint128(pf.averageInterestRate),
             uint128(pf.totalIbtQuantity),
             uint256(pf.quasiHypotheticalInterestCumulative)
@@ -881,9 +882,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             swap.ibtQuantity
         );
 
-        _soapIndicatorsReceiveFixed = DataTypes.SoapIndicatorStorage(
-            uint32(rf.rebalanceTimestamp),
-            uint128(rf.totalNotional),
+        _soapIndicatorsReceiveFixed = DataTypes.SoapIndicatorStorage(  
+			uint32(rf.rebalanceTimestamp),     
+			uint128(rf.totalNotional),     
             uint128(rf.averageInterestRate),
             uint128(rf.totalIbtQuantity),
             uint256(rf.quasiHypotheticalInterestCumulative)

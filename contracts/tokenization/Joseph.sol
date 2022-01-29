@@ -21,12 +21,12 @@ contract Joseph is Ownable, IJoseph {
     using SafeCast for uint256;
     using SafeCast for int256;
 
-	uint8 private immutable _decimals;
-	address internal immutable _asset;
+    uint8 private immutable _decimals;
+    address internal immutable _asset;
 
     IIporConfiguration internal immutable _iporConfiguration;
     IIporAssetConfiguration internal immutable _iporAssetConfiguration;
-	
+
     constructor(address asset, address initialIporConfiguration) {
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(
@@ -39,41 +39,40 @@ contract Joseph is Ownable, IJoseph {
             IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
         );
 
-		address iporAssetConfigurationAddr = _iporConfiguration.getIporAssetConfiguration(asset);
+        address iporAssetConfigurationAddr = _iporConfiguration
+            .getIporAssetConfiguration(asset);
 
-		require(address(iporAssetConfigurationAddr) != address(0), IporErrors.WRONG_ADDRESS);
+        require(
+            address(iporAssetConfigurationAddr) != address(0),
+            IporErrors.WRONG_ADDRESS
+        );
 
         _iporAssetConfiguration = IIporAssetConfiguration(
             iporAssetConfigurationAddr
         );
 
-		_asset = asset;
-		_decimals = _iporAssetConfiguration.getDecimals();
-		
+        _asset = asset;
+        _decimals = _iporAssetConfiguration.getDecimals();
     }
 
-	function decimals() external view returns (uint8) {
-		return _decimals;
-	}
-	function asset() external view returns (address) {
-		return _asset;
-	}
-	function getIporConfiguration() external view returns(address) {
-		return address(_iporConfiguration);
-	}
-	function getIporAssetConfiguration() external view returns(address) {
-		return address(_iporAssetConfiguration);
-	}
+    function decimals() external view returns (uint8) {
+        return _decimals;
+    }
 
-    function provideLiquidity(uint256 liquidityAmount)
-        external
-        override
-    {
-        _provideLiquidity(
-            liquidityAmount,
-            _decimals,
-            block.timestamp
-        );
+    function asset() external view returns (address) {
+        return _asset;
+    }
+
+    function getIporConfiguration() external view returns (address) {
+        return address(_iporConfiguration);
+    }
+
+    function getIporAssetConfiguration() external view returns (address) {
+        return address(_iporAssetConfiguration);
+    }
+
+    function provideLiquidity(uint256 liquidityAmount) external override {
+        _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
     }
 
     function redeem(uint256 ipTokenVolume) external override {
@@ -97,8 +96,8 @@ contract Joseph is Ownable, IJoseph {
         );
 
         IMiltonStorage(_iporAssetConfiguration.getMiltonStorage()).addLiquidity(
-            wadLiquidityAmount
-        );
+                wadLiquidityAmount
+            );
 
         //TODO: account Address from OZ and use call
         //TODO: use call instead transfer if possible!!
@@ -111,25 +110,20 @@ contract Joseph is Ownable, IJoseph {
         );
 
         if (exchangeRate != 0) {
-            IIpToken(
-                _iporAssetConfiguration.getIpToken()
-            ).mint(
-                    msg.sender,
-                    IporMath.division(
-                        wadLiquidityAmount * Constants.D18,
-                        exchangeRate
-                    )
-                );
+            IIpToken(_iporAssetConfiguration.getIpToken()).mint(
+                msg.sender,
+                IporMath.division(
+                    wadLiquidityAmount * Constants.D18,
+                    exchangeRate
+                )
+            );
         }
     }
-
-    function _redeem(
-        uint256 ipTokenVolume,
-        uint256 timestamp
-    ) internal {
-
+	event LogDebug(string name, uint256 value);
+    function _redeem(uint256 ipTokenVolume, uint256 timestamp) internal {
         require(
-            ipTokenVolume <=
+            ipTokenVolume != 0 &&
+                ipTokenVolume <=
                 IIpToken(_iporAssetConfiguration.getIpToken()).balanceOf(
                     msg.sender
                 ),
@@ -141,12 +135,15 @@ contract Joseph is Ownable, IJoseph {
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
+        DataTypes.MiltonTotalBalanceMemory memory balance = IMiltonStorage(
+            _iporAssetConfiguration.getMiltonStorage()
+        ).getBalance();
+
         require(
-            IMiltonStorage(_iporAssetConfiguration.getMiltonStorage())
-                .getBalance()
-                .liquidityPool > ipTokenVolume,
+            balance.liquidityPool > ipTokenVolume,
             IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );
+
         uint256 wadUnderlyingAmount = IporMath.division(
             ipTokenVolume * exchangeRate,
             Constants.D18
@@ -156,20 +153,47 @@ contract Joseph is Ownable, IJoseph {
             _decimals
         );
 
+        uint256 utilizationRate = _calculateRedeemedUtilizationRate(
+            balance.liquidityPool,
+            balance.payFixedDerivatives + balance.recFixedDerivatives,
+            wadUnderlyingAmount
+        );
+		emit LogDebug("exchangeRate", exchangeRate);
+		emit LogDebug("ipTokenVolume",ipTokenVolume);
+		emit LogDebug("wadUnderlyingAmount",wadUnderlyingAmount);
+		emit LogDebug("utilizationRate",utilizationRate);
+		
+        // require(
+        //     utilizationRate <=
+        //         _iporAssetConfiguration.getRedeemMaxUtilizationPercentage(),
+        //     IporErrors.JOSEPH_REDEEM_LP_UTILISATION_EXCEEDED
+        // );
+
         IIpToken(_iporAssetConfiguration.getIpToken()).burn(
             msg.sender,
             msg.sender,
             ipTokenVolume
         );
 
-        IMiltonStorage(_iporAssetConfiguration.getMiltonStorage()).subtractLiquidity(
-                wadUnderlyingAmount
-            );
+        IMiltonStorage(_iporAssetConfiguration.getMiltonStorage())
+            .subtractLiquidity(wadUnderlyingAmount);
 
         IERC20(_asset).safeTransferFrom(
             _iporAssetConfiguration.getMilton(),
             msg.sender,
             underlyingAmount
         );
+    }
+
+    function _calculateRedeemedUtilizationRate(
+        uint256 totalLiquidityPoolBalance,
+        uint256 totalCollateralBalance,
+        uint256 redeemedAmount
+    ) internal pure returns (uint256) {
+        return
+            IporMath.division(
+                totalCollateralBalance * Constants.D18,
+                totalLiquidityPoolBalance - redeemedAmount
+            );
     }
 }

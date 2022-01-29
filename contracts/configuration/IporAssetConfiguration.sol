@@ -95,7 +95,7 @@ contract IporAssetConfiguration is
         _liquidityPoolMaxUtilizationPercentage = uint64(
             8 * IporMath.division(Constants.D18, 10)
         );
-
+		
 		//@dev Redeem Max Utilization rate cannot be lower than Liquidity Pool Max Utilization rate
 		_redeemMaxUtilizationPercentage = uint128(Constants.D18);
 
@@ -260,7 +260,7 @@ contract IporAssetConfiguration is
     ) external override onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE) {
         require(
             newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
-            IporErrors.CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
+            IporErrors.CONFIG_LP_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
         _liquidityPoolMaxUtilizationPercentage = uint64(
@@ -288,10 +288,11 @@ contract IporAssetConfiguration is
             IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
         );
 
-		require(
-            newRedeemMaxUtilizationPercentage <= Constants.D18,
-            IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
-        );
+		//TODO: clarify it
+		// require(
+        //     newRedeemMaxUtilizationPercentage <= Constants.D18,
+        //     IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
+        // );
 
         _redeemMaxUtilizationPercentage = uint64(
             newRedeemMaxUtilizationPercentage

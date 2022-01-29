@@ -126,7 +126,7 @@ contract MiltonSpreadModel is
         require(
             liquidityPoolBalance + swapOpeningFee != 0,
             IporErrors
-                .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+                .MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
             swapCollateral,
@@ -157,7 +157,7 @@ contract MiltonSpreadModel is
         require(
             liquidityPoolBalance + swapOpeningFee != 0,
             IporErrors
-                .MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+                .MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
             swapCollateral,
