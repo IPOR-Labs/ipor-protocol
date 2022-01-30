@@ -288,11 +288,10 @@ contract IporAssetConfiguration is
             IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
         );
 
-		//TODO: clarify it
-		// require(
-        //     newRedeemMaxUtilizationPercentage <= Constants.D18,
-        //     IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
-        // );
+		require(
+            newRedeemMaxUtilizationPercentage <= Constants.D18,
+            IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
+        );
 
         _redeemMaxUtilizationPercentage = uint64(
             newRedeemMaxUtilizationPercentage

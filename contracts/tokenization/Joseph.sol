@@ -163,11 +163,11 @@ contract Joseph is Ownable, IJoseph {
 		emit LogDebug("wadUnderlyingAmount",wadUnderlyingAmount);
 		emit LogDebug("utilizationRate",utilizationRate);
 		
-        // require(
-        //     utilizationRate <=
-        //         _iporAssetConfiguration.getRedeemMaxUtilizationPercentage(),
-        //     IporErrors.JOSEPH_REDEEM_LP_UTILISATION_EXCEEDED
-        // );
+        require(
+            utilizationRate <=
+                _iporAssetConfiguration.getRedeemMaxUtilizationPercentage(),
+            IporErrors.JOSEPH_REDEEM_LP_UTILISATION_EXCEEDED
+        );
 
         IIpToken(_iporAssetConfiguration.getIpToken()).burn(
             msg.sender,

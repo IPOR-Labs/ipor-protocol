@@ -5,6 +5,7 @@ const { ZERO_BYTES32 } = require("@openzeppelin/test-helpers/src/constants");
 const { time } = require("@openzeppelin/test-helpers");
 
 const {
+    PERCENTAGE_100_18DEC,
     TOTAL_SUPPLY_18_DECIMALS,
     TC_MULTIPLICATOR_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
@@ -61,8 +62,6 @@ describe("IporAssetConfiguration", () => {
 
     //TODO: add tests which checks initial values for every param
 
-    //TODO: clarify and add test if needed if RedeemMaxUtilizationPercentage can be higher than 100% (add test for set and if migrated to immutable then add test for constructor)
-
     it("should INIT during DEPLOY correct Liquidity Pool and Redeem Liquidity Pool Utilization Rate", async () => {
         let actualLiquidityPoolMaxUtilizationPercentage =
             await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
@@ -71,6 +70,10 @@ describe("IporAssetConfiguration", () => {
         expect(actualRedeemMaxUtilizationPercentage).to.be.gte(
             actualLiquidityPoolMaxUtilizationPercentage
         );
+        expect(
+            actualRedeemMaxUtilizationPercentage,
+            "Redeem Max Utilization Rate Percentage cannot be higher than 100% "
+        ).to.be.lte(PERCENTAGE_100_18DEC);
     });
 
     it("should set Milton ", async () => {
