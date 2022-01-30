@@ -283,18 +283,18 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         if (derivativeInterest.positionValue > 0) {
             if (
                 derivativeInterest.positionValue <
-                int256(uint256(swap.collateral))
+                swap.collateral.toInt256()
             ) {
                 return derivativeInterest.positionValue;
             } else {
-                return int256(uint256(swap.collateral));
+                return swap.collateral.toInt256();
             }
         } else {
             if (
                 derivativeInterest.positionValue <
-                -int256(uint256(swap.collateral))
+                -swap.collateral.toInt256()
             ) {
-                return -int256(uint256(swap.collateral));
+                return -swap.collateral.toInt256();
             } else {
                 return derivativeInterest.positionValue;
             }
@@ -314,18 +314,18 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         if (derivativeInterest.positionValue > 0) {
             if (
                 derivativeInterest.positionValue <
-                int256(uint256(swap.collateral))
+                swap.collateral.toInt256()
             ) {
                 return derivativeInterest.positionValue;
             } else {
-                return int256(uint256(swap.collateral));
+                return swap.collateral.toInt256();
             }
         } else {
             if (
                 derivativeInterest.positionValue <
-                -int256(uint256(swap.collateral))
+                -swap.collateral.toInt256()
             ) {
-                return -int256(uint256(swap.collateral));
+                return -swap.collateral.toInt256();
             } else {
                 return derivativeInterest.positionValue;
             }

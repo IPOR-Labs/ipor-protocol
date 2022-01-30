@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
@@ -18,6 +19,7 @@ contract MiltonSpreadModel is
     MiltonSpreadConfiguration,
     IMiltonSpreadModel
 {
+	using SafeCast for uint256;
     function calculatePartialSpreadPayFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
@@ -263,7 +265,7 @@ contract MiltonSpreadModel is
             return 0;
         } else {
             uint256 mu = IporMath.absoluteValue(
-                int256(exponentialMovingAverage) - int256(iporIndexValue)
+                exponentialMovingAverage.toInt256()- iporIndexValue.toInt256()
             );
             if (mu == Constants.D18) {
                 return maxSpreadValue;
@@ -394,7 +396,7 @@ contract MiltonSpreadModel is
             return 0;
         } else {
             uint256 mu = IporMath.absoluteValue(
-                int256(exponentialMovingAverage) - int256(iporIndexValue)
+                exponentialMovingAverage.toInt256()- iporIndexValue.toInt256()
             );
             if (mu == Constants.D18) {
                 return maxSpreadValue;

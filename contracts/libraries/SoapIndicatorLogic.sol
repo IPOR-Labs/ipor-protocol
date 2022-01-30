@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
-
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import { DataTypes } from "../libraries/types/DataTypes.sol";
 import { IporMath } from "../libraries/IporMath.sol";
 import { IporErrors } from "../IporErrors.sol";
 import { Constants } from "../libraries/Constants.sol";
 
 library SoapIndicatorLogic {
+	using SafeCast for uint256;
     function calculateSoapPayFixed(
         DataTypes.SoapIndicatorMemory memory si,
         uint256 calculateTimestamp,
@@ -38,16 +39,16 @@ library SoapIndicatorLogic {
     ) internal pure returns (int256) {
 
             return
-                int256(
+                (
                     si.totalIbtQuantity *
                         ibtPrice *
                         Constants.WAD_YEAR_IN_SECONDS
-                ) -
-                int256(
+                ).toInt256() -
+                (
                     si.totalNotional *
                         Constants.WAD_P2_YEAR_IN_SECONDS +
                         calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)
-                );
+                ).toInt256();
         
     }
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
@@ -58,16 +59,16 @@ library SoapIndicatorLogic {
     ) internal pure returns (int256) {
         
             return
-                int256(
+                (
                     si.totalNotional *
                         Constants.WAD_P2_YEAR_IN_SECONDS +
                         calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)
-                ) -
-                int256(
+                ).toInt256() -
+                (
                     si.totalIbtQuantity *
                         ibtPrice *
                         Constants.WAD_YEAR_IN_SECONDS
-                );
+                ).toInt256();
         
     }
 
@@ -90,8 +91,8 @@ library SoapIndicatorLogic {
                 rebalanceTimestamp
             );
 
-        si.rebalanceTimestamp = uint32(rebalanceTimestamp);
-        si.totalNotional = si.totalNotional + uint128(derivativeNotional);
+        si.rebalanceTimestamp = rebalanceTimestamp.toUint32();
+        si.totalNotional = si.totalNotional + derivativeNotional.toUint128();
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
@@ -130,8 +131,8 @@ library SoapIndicatorLogic {
             swapFixedInterestRate
         );
         //TODO: here potential re-entrancy
-        si.rebalanceTimestamp = uint32(rebalanceTimestamp);
-        si.totalNotional = si.totalNotional - uint128(derivativeNotional);
+        si.rebalanceTimestamp = rebalanceTimestamp.toUint32();
+        si.totalNotional = si.totalNotional - derivativeNotional.toUint128();
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
 		return si;
