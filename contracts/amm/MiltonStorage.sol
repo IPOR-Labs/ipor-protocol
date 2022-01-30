@@ -20,8 +20,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     IIporConfiguration internal immutable _iporConfiguration;
     IIporAssetConfiguration internal immutable _iporAssetConfiguration;
 	
-    uint64 private _lastSwapId;    	
-
+    uint64 private _lastSwapId;
     DataTypes.MiltonTotalBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
@@ -274,20 +273,20 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
         for (i; i != swapsIdsLength; i++) {
             uint128 id = ids[i];
-			DataTypes.IporSwap storage swap = swaps[id];
+            DataTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = DataTypes.IporSwapMemory(
                 uint256(swaps[id].state),
                 swap.buyer,
                 swap.startingTimestamp,
                 swap.startingTimestamp +
                     Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-					swap.id,
-					swap.idsIndex,
-					swap.collateral,
-					swap.liquidationDepositAmount,
-					swap.notionalAmount,
-					swap.fixedInterestRate,
-					swap.ibtQuantity
+                swap.id,
+                swap.idsIndex,
+                swap.collateral,
+                swap.liquidationDepositAmount,
+                swap.notionalAmount,
+                swap.fixedInterestRate,
+                swap.ibtQuantity
             );
         }
         return derivatives;
@@ -853,7 +852,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             swap.ibtQuantity
         );
 
-        _soapIndicatorsPayFixed = DataTypes.SoapIndicatorStorage(            
+        _soapIndicatorsPayFixed = DataTypes.SoapIndicatorStorage(
 			uint32(pf.rebalanceTimestamp),
 			uint128(pf.totalNotional),
             uint128(pf.averageInterestRate),
@@ -882,9 +881,9 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             swap.ibtQuantity
         );
 
-        _soapIndicatorsReceiveFixed = DataTypes.SoapIndicatorStorage(  
-			uint32(rf.rebalanceTimestamp),     
-			uint128(rf.totalNotional),     
+        _soapIndicatorsReceiveFixed = DataTypes.SoapIndicatorStorage(
+			uint32(rf.rebalanceTimestamp),
+			uint128(rf.totalNotional),
             uint128(rf.averageInterestRate),
             uint128(rf.totalIbtQuantity),
             uint256(rf.quasiHypotheticalInterestCumulative)

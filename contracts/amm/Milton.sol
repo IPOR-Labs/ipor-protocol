@@ -40,6 +40,10 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     address private immutable _asset;
 	IIpToken private immutable _ipToken;
     IWarren internal immutable _warren;
+
+
+
+
     IMiltonStorage internal immutable _miltonStorage;
     IMiltonSpreadModel internal immutable _miltonSpreadModel;
     IIporConfiguration internal immutable _iporConfiguration;
@@ -386,8 +390,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {
-        uint256 decimals = _decimals;
+    ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {        
         IIporAssetConfiguration iac = _iporAssetConfiguration;
         require(
             maximumSlippage != 0,
@@ -400,7 +403,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             IporErrors.MILTON_ASSET_BALANCE_OF_TOO_LOW
         );
 
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, decimals);
+        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _decimals);
 
         require(
             collateralizationFactor >= iac.getMinCollateralizationFactorValue(),
@@ -453,8 +456,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 collateral,
                 notional,
                 openingFee,
-                iac.getLiquidationDepositAmount(),
-                decimals,
+                iac.getLiquidationDepositAmount(),                
                 iac.getIporPublicationFeeAmount(),
                 _warren.getAccruedIndex(openTimestamp, _asset)
             );
@@ -503,7 +505,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             indicator.fixedInterestRate,
             indicator.ibtQuantity
         );
-
+		//TODO: pass to miltonStorage all required parameters, dont use iporassetconfiguration in milton storage at all
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
             bosStruct.openingFee
@@ -517,10 +519,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         IERC20(_asset).safeTransferFrom(
             msg.sender,
             address(this),
-            IporMath.convertWadToAssetDecimals(
-                bosStruct.wadTotalAmount,
-                bosStruct.decimals
-            )
+            totalAmount
         );
 
         _emitOpenSwapEvent(
@@ -594,7 +593,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         IERC20(_asset).safeTransferFrom(
             msg.sender,
             address(this),
-            IporMath.convertWadToAssetDecimals(totalAmount, bosStruct.decimals)
+            totalAmount
         );
 
         _emitOpenSwapEvent(

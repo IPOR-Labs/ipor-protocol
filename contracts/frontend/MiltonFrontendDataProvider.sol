@@ -63,14 +63,20 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         );
         uint128[] memory accountSwapPayFixedIds = miltonStorage
             .getSwapPayFixedIds(msg.sender);
+
         uint128[] memory accountSwapReceiveFixedIds = miltonStorage
-            .getSwapPayFixedIds(msg.sender);
+            .getSwapReceiveFixedIds(msg.sender);
+
+        uint256 pfSwapsLength = accountSwapPayFixedIds.length;
+
+        uint256 swapsLength = pfSwapsLength + accountSwapReceiveFixedIds.length;
         IporSwapFront[] memory iporDerivatives = new IporSwapFront[](
-            accountSwapPayFixedIds.length + accountSwapReceiveFixedIds.length
+            swapsLength
         );
         IMilton milton = IMilton(assetConfiguration.getMilton());
         uint256 i = 0;
-        for (i; i != accountSwapPayFixedIds.length; i++) {
+
+        for (i; i != pfSwapsLength; i++) {
             DataTypes.IporSwapMemory memory iporSwap = miltonStorage
                 .getSwapPayFixed(accountSwapPayFixedIds[i]);
             iporDerivatives[i] = IporSwapFront(
@@ -90,10 +96,14 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
                 iporSwap.liquidationDepositAmount
             );
         }
-        i = 0;
-        for (i; i != accountSwapReceiveFixedIds.length; i++) {
+
+        i = pfSwapsLength;
+
+        for (i; i != swapsLength; i++) {
             DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-                .getSwapReceiveFixed(accountSwapReceiveFixedIds[i]);
+                .getSwapReceiveFixed(
+                    accountSwapReceiveFixedIds[i - pfSwapsLength]
+                );
             iporDerivatives[i] = IporSwapFront(
                 iporSwap.id,
                 asset,
