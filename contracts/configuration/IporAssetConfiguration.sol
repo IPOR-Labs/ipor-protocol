@@ -38,7 +38,9 @@ contract IporAssetConfiguration is
     //pie going to Treasury Balance
     uint64 private _openingFeeForTreasuryPercentage;
 
-    uint64 private _liquidityPoolMaxUtilizationPercentage;
+    uint64 private _payFixedLpMaxUtilizationPercentage;
+
+	uint64 private _receiveFixedLpMaxUtilizationPercentage;
 
     uint128 private _minCollateralizationFactorValue;
 
@@ -94,9 +96,14 @@ contract IporAssetConfiguration is
         ).toUint64();
         _openingFeeForTreasuryPercentage = 0;
         _iporPublicationFeeAmount = (10 * Constants.D18).toUint128();
-        _liquidityPoolMaxUtilizationPercentage = (
-            8 * IporMath.division(Constants.D18, 10)
+
+        _payFixedLpMaxUtilizationPercentage = (
+            48 * IporMath.division(Constants.D18, 100)
         ).toUint64();
+		_receiveFixedLpMaxUtilizationPercentage = (
+            48 * IporMath.division(Constants.D18, 100)
+        ).toUint64();
+
 		
 		//@dev Redeem Max Utilization rate cannot be lower than Liquidity Pool Max Utilization rate
 		_redeemMaxUtilizationPercentage = Constants.D18.toUint128();
@@ -247,16 +254,16 @@ contract IporAssetConfiguration is
         emit IporPublicationFeeAmountSet(newIporPublicationFeeAmount);
     }
 
-    function getLiquidityPoolMaxUtilizationPercentage()
+    function getPayFixedLpMaxUtilizationPercentage()
         external
         view
         override
         returns (uint256)
     {
-        return _liquidityPoolMaxUtilizationPercentage;
+        return _payFixedLpMaxUtilizationPercentage;
     }
 
-    function setLiquidityPoolMaxUtilizationPercentage(
+    function setPayFixedLpMaxUtilizationPercentage(
         uint256 newLiquidityPoolMaxUtilizationPercentage
     ) external override onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE) {
         require(
@@ -264,9 +271,9 @@ contract IporAssetConfiguration is
             IporErrors.CONFIG_LP_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
-        _liquidityPoolMaxUtilizationPercentage = 
+        _payFixedLpMaxUtilizationPercentage = 
             newLiquidityPoolMaxUtilizationPercentage.toUint64();
-        emit LiquidityPoolMaxUtilizationPercentageSet(
+        emit PayFixedLpMaxUtilizationPercentageSet(
             newLiquidityPoolMaxUtilizationPercentage
         );
     }
