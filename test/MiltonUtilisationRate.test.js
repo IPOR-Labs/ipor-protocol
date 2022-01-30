@@ -82,7 +82,7 @@ describe("Milton", () => {
         await setupDefaultSpreadConstants(data, userOne);
     });
 
-    it("should open pay fixed position - liquidity pool utilisation not exceeded, custom utilisation", async () => {
+    it("should open pay fixed position - liquidity pool utilization not exceeded, custom utilization", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -193,7 +193,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT open pay fixed position - when new position opened then liquidity pool utilisation exceeded, custom utilisation", async () => {
+    it("should NOT open pay fixed position - when new position opened then liquidity pool utilization exceeded, custom utilization", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -274,7 +274,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT open pay fixed position - liquidity pool utilisation already exceeded, custom utilisation", async () => {
+    it("should NOT open pay fixed position - liquidity pool utilization already exceeded, custom utilization", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -357,7 +357,7 @@ describe("Milton", () => {
     });
 
     //TODO: clarify when spread equasion will be clarified
-    // it("should NOT open pay fixed position - liquidity pool utilisation exceeded, liquidity pool and opening fee are ZERO", async () => {
+    // it("should NOT open pay fixed position - liquidity pool utilization exceeded, liquidity pool and opening fee are ZERO", async () => {
     //     //given
     //     let testData = await prepareTestData(
     //         [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -433,8 +433,6 @@ describe("Milton", () => {
     //         oldOpeningFeePercentage
     //     );
     // });
-
-
 
     const calculateSoap = async (testData, params) => {
         if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
@@ -1296,4 +1294,3 @@ describe("Milton", () => {
         }
     };
 });
-

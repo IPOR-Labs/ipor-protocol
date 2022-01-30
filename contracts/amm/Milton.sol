@@ -628,7 +628,7 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
                 ) <=
                 _iporAssetConfiguration
                     .getLiquidityPoolMaxUtilizationPercentage(),
-            IporErrors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED
+            IporErrors.MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED
         );
     }
 

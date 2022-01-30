@@ -115,8 +115,8 @@ library IporErrors {
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 
-    //@notice Liquidity Pool Utilisation exceeded, implementation interface IMiltonLiquidityPoolUtilizationModel calculate utilisation, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
-    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED =
+    //@notice Liquidity Pool Utilization exceeded, implementation interface IMiltonLiquidityPoolUtilizationModel calculate utilization, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilization rate
+    string public constant MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED =
         "IPOR_35";
 
     //@notice Updater address is wrong
@@ -189,8 +189,7 @@ library IporErrors {
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
     string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
         "IPOR_55";
-
-    //TODO: add test for it
+    
     //@notice Max Utilization Rate when Redeem should be higher than Liquidity Pool Max Utilization rate
     string
         public constant CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION =
@@ -200,6 +199,6 @@ library IporErrors {
     string public constant CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
         "IPOR_57";
 
-	string public constant JOSEPH_REDEEM_LP_UTILISATION_EXCEEDED =
+	string public constant JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED =
         "IPOR_58";
 }
