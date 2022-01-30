@@ -119,7 +119,6 @@ contract Joseph is Ownable, IJoseph {
             );
         }
     }
-	event LogDebug(string name, uint256 value);
     function _redeem(uint256 ipTokenVolume, uint256 timestamp) internal {
         require(
             ipTokenVolume != 0 &&
@@ -159,11 +158,7 @@ contract Joseph is Ownable, IJoseph {
             balance.payFixedDerivatives + balance.recFixedDerivatives,
             wadUnderlyingAmount
         );
-		emit LogDebug("exchangeRate", exchangeRate);
-		emit LogDebug("ipTokenVolume",ipTokenVolume);
-		emit LogDebug("wadUnderlyingAmount",wadUnderlyingAmount);
-		emit LogDebug("utilizationRate",utilizationRate);
-		
+				
         require(
             utilizationRate <=
                 _iporAssetConfiguration.getRedeemMaxUtilizationPercentage(),
