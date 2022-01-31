@@ -136,7 +136,7 @@ contract Joseph is Ownable, IJoseph {
 
         DataTypes.MiltonTotalBalanceMemory memory balance = IMiltonStorage(
             _iporAssetConfiguration.getMiltonStorage()
-        ).getBalance();        
+        ).getBalance();
 
         uint256 wadUnderlyingAmount = IporMath.division(
             ipTokenVolume * exchangeRate,
@@ -158,7 +158,7 @@ contract Joseph is Ownable, IJoseph {
             balance.payFixedSwaps + balance.receiveFixedSwaps,
             wadUnderlyingAmount
         );
-				
+
         require(
             utilizationRate <=
                 _iporAssetConfiguration.getRedeemLpMaxUtilizationPercentage(),
