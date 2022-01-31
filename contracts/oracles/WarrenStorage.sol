@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarrenStorage.sol";
 import {Constants} from "../libraries/Constants.sol";
@@ -16,6 +17,7 @@ import "../interfaces/IIporConfiguration.sol";
  * @author IPOR Labs
  */
 contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
+	using SafeCast for uint256;
     using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
@@ -139,11 +141,11 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
                 );
         }
         _indexes[asset] = DataTypes.IPOR(
-            uint32(updateTimestamp),
-            uint128(indexValue),
-            uint128(newQuasiIbtPrice),
-            uint128(newExponentialMovingAverage),
-            uint128(newExponentialWeightedMovingVariance)
+            updateTimestamp.toUint32(),
+            indexValue.toUint128(),
+            newQuasiIbtPrice.toUint128(),
+            newExponentialMovingAverage.toUint128(),
+            newExponentialWeightedMovingVariance.toUint128()
         );
         emit IporIndexUpdate(
             asset,

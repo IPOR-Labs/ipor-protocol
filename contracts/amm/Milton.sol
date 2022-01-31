@@ -283,18 +283,18 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         if (derivativeInterest.positionValue > 0) {
             if (
                 derivativeInterest.positionValue <
-                int256(uint256(swap.collateral))
+                swap.collateral.toInt256()
             ) {
                 return derivativeInterest.positionValue;
             } else {
-                return int256(uint256(swap.collateral));
+                return swap.collateral.toInt256();
             }
         } else {
             if (
                 derivativeInterest.positionValue <
-                -int256(uint256(swap.collateral))
+                -swap.collateral.toInt256()
             ) {
-                return -int256(uint256(swap.collateral));
+                return -swap.collateral.toInt256();
             } else {
                 return derivativeInterest.positionValue;
             }
@@ -314,18 +314,18 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         if (derivativeInterest.positionValue > 0) {
             if (
                 derivativeInterest.positionValue <
-                int256(uint256(swap.collateral))
+                swap.collateral.toInt256()
             ) {
                 return derivativeInterest.positionValue;
             } else {
-                return int256(uint256(swap.collateral));
+                return swap.collateral.toInt256();
             }
         } else {
             if (
                 derivativeInterest.positionValue <
-                -int256(uint256(swap.collateral))
+                -swap.collateral.toInt256()
             ) {
-                return -int256(uint256(swap.collateral));
+                return -swap.collateral.toInt256();
             } else {
                 return derivativeInterest.positionValue;
             }
@@ -619,16 +619,15 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         require(
             IMiltonLiquidityPoolUtilizationModel(
                 _iporConfiguration.getMiltonLiquidityPoolUtilizationModel()
-            ).calculateTotalUtilizationRate(
+            ).calculateUtilizationRate(
                     balance.liquidityPool,
-                    balance.payFixedDerivatives,
-                    balance.recFixedDerivatives,
+                    balance.payFixedDerivatives + balance.recFixedDerivatives,                    
                     collateral,
                     openingFee
                 ) <=
                 _iporAssetConfiguration
                     .getLiquidityPoolMaxUtilizationPercentage(),
-            IporErrors.MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED
+            IporErrors.MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED
         );
     }
 

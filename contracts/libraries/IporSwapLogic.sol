@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "./types/DataTypes.sol";
 import "./IporMath.sol";
 import "./Constants.sol";
 import { IporErrors } from "../IporErrors.sol";
 
 library IporSwapLogic {
+	using SafeCast for uint256;
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
         uint256 notionalAmount,
@@ -53,7 +55,7 @@ library IporSwapLogic {
                 closingTimestamp -
                 swap.startingTimestamp;
         }
-        //TODO: use SafeCast from openzeppelin
+
         uint256 quasiIFixed = calculateQuasiInterestFixed(
             swap.notionalAmount,
             swap.fixedInterestRate,
@@ -65,7 +67,7 @@ library IporSwapLogic {
         );
 
         int256 positionValue = IporMath.divisionInt(
-                 int256(quasiIFloating) - int256(quasiIFixed)
+                 quasiIFloating.toInt256() - quasiIFixed.toInt256()
                 ,
             Constants.WAD_YEAR_IN_SECONDS_INT
         );
@@ -102,7 +104,7 @@ library IporSwapLogic {
                 closingTimestamp -
                 swap.startingTimestamp;
         }
-        //TODO: use SafeCast from openzeppelin
+
         uint256 quasiIFixed = calculateQuasiInterestFixed(
             swap.notionalAmount,
             swap.fixedInterestRate,
@@ -114,7 +116,7 @@ library IporSwapLogic {
         );
 
         int256 positionValue = IporMath.divisionInt(
-            int256(quasiIFixed) - int256(quasiIFloating),
+            quasiIFixed.toInt256() - quasiIFloating.toInt256(),
             Constants.WAD_YEAR_IN_SECONDS_INT
         );
 

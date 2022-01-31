@@ -33,9 +33,8 @@ library IporErrors {
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_LOW = "IPOR_12";
 
     //@notice Trader doesnt have enought tokens to execute transaction
-    string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW
-	 = "IPOR_13";
-	
+    string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW = "IPOR_13";
+
     //@notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
     string
         public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW =
@@ -73,8 +72,7 @@ library IporErrors {
         "IPOR_21";
 
     //@notice Swap id used in input has incorrect value (like 0) or not exists
-    string public constant MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID =
-        "IPOR_22";
+    string public constant MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID = "IPOR_22";
 
     //@notice Swap has incorrect status
     string public constant MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS =
@@ -113,13 +111,12 @@ library IporErrors {
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = "IPOR_32";
 
     //@notice Incorrect IPOR Configuration address, address to global configuration
-    string public constant INCORRECT_IPOR_CONFIGURATION_ADDRESS =
-        "IPOR_33";
+    string public constant INCORRECT_IPOR_CONFIGURATION_ADDRESS = "IPOR_33";
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 
-    //@notice Liquidity Pool Utilisation exceeded, implementation interface IMiltonLiquidityPoolUtilizationModel calculate utilisation, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilisation rate
-    string public constant MILTON_LIQUIDITY_POOL_UTILISATION_EXCEEDED =
+    //@notice Liquidity Pool Utilization exceeded, implementation interface IMiltonLiquidityPoolUtilizationModel calculate utilization, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilization rate
+    string public constant MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED =
         "IPOR_35";
 
     //@notice Updater address is wrong
@@ -164,8 +161,8 @@ library IporErrors {
     //@notice Decay factor cannot be higher than 1 * D18
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
 
-	//@notice Liquiditiy
-	string public constant MILTON_SPREAD_LIQUIDITY_POOL_PLUS_OPENING_FEE_IS_EQUAL_ZERO =
+    //@notice Liquiditiy
+    string public constant MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO =
         "IPOR_49";
 
     //@notice ADMIN_ROLE can be revoked only by different account with ADMIN_ROLE
@@ -173,8 +170,7 @@ library IporErrors {
 
     //TODO: add test for this code
     //@notice Liquidity Pool Max Utilization Percentage cannot be higher than 1 * D18
-    string
-        public constant CONFIG_LIQUIDITY_POOL_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
+    string public constant CONFIG_LP_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
         "IPOR_51";
 
     //TODO: add test for this
@@ -186,11 +182,23 @@ library IporErrors {
     string public constant MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
         "IPOR_53";
 
-	//@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1
-	string public constant MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE =
+    //@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1
+    string public constant MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE =
         "IPOR_54";
 
-	//@notice During spread calculation - Alpha param which  cannot be higher than 1
-	string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
+    //@notice During spread calculation - Alpha param which  cannot be higher than 1
+    string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
         "IPOR_55";
+    
+    //@notice Max Utilization Rate when Redeem should be higher than Liquidity Pool Max Utilization rate
+    string
+        public constant CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION =
+        "IPOR_56";
+
+    //@notice Redeem Max Utilization Rate is too high
+    string public constant CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
+        "IPOR_57";
+
+	string public constant JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED =
+        "IPOR_58";
 }

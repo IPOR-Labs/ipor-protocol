@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
-
 library Constants {
-
+	
 	//@notice Euler number (2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274) using 18 decimals
 	uint256 public constant E_VALUE = 2718281828459045235;
 	

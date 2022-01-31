@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
@@ -11,6 +12,7 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import {IporErrors} from "../IporErrors.sol";
 
 contract MiltonSpreadModelCore {
+	using SafeCast for int256;
 
 	function _calculateSoapPlus(int256 soap, uint256 swapsBalance)
         internal
@@ -20,7 +22,7 @@ contract MiltonSpreadModelCore {
         if (soap > 0) {
             return
                 IporMath.division(
-                    uint256(soap) * Constants.D18,
+                    soap.toUint256() * Constants.D18,
                     swapsBalance
                 );
         } else {

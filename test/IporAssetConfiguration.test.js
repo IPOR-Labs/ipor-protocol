@@ -5,6 +5,7 @@ const { ZERO_BYTES32 } = require("@openzeppelin/test-helpers/src/constants");
 const { time } = require("@openzeppelin/test-helpers");
 
 const {
+    PERCENTAGE_100_18DEC,
     TOTAL_SUPPLY_18_DECIMALS,
     TC_MULTIPLICATOR_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
@@ -60,6 +61,20 @@ describe("IporAssetConfiguration", () => {
     });
 
     //TODO: add tests which checks initial values for every param
+
+    it("should INIT during DEPLOY correct Liquidity Pool and Redeem Liquidity Pool Utilization Rate", async () => {
+        let actualLiquidityPoolMaxUtilizationPercentage =
+            await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
+        let actualRedeemMaxUtilizationPercentage =
+            await iporAssetConfigurationDAI.getRedeemMaxUtilizationPercentage();
+        expect(actualRedeemMaxUtilizationPercentage).to.be.gte(
+            actualLiquidityPoolMaxUtilizationPercentage
+        );
+        expect(
+            actualRedeemMaxUtilizationPercentage,
+            "Redeem Max Utilization Rate Percentage cannot be higher than 100% "
+        ).to.be.lte(PERCENTAGE_100_18DEC);
+    });
 
     it("should set Milton ", async () => {
         //given
@@ -1337,6 +1352,54 @@ describe("IporAssetConfiguration", () => {
                 .setDecayFactorValue(decayFactorValue),
             //then
             "IPOR_48"
+        );
+    });
+
+    it("should set redeemMaxUtilizationPercentage value", async () => {
+        //given
+        const maxUtilizationPercentageValue = BigInt("800000000000000000");
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            admin.address
+        );
+        const role = keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne.address);
+
+        //when
+        await iporAssetConfigurationDAI
+            .connect(userOne)
+            .setRedeemMaxUtilizationPercentage(maxUtilizationPercentageValue);
+
+        //then
+        const actualMaxUtilizationPercentageValue = BigInt(
+            await iporAssetConfigurationDAI.getRedeemMaxUtilizationPercentage()
+        );
+
+        expect(maxUtilizationPercentageValue).to.be.eql(
+            actualMaxUtilizationPercentageValue
+        );
+    });
+
+    it("should NOT set redeemMaxUtilizationPercentage value because lower than liquidityPoolMaxUtilizationPercentage", async () => {
+        //given
+        const maxUtilizationPercentageValue = BigInt("700000000000000000");
+        await iporAssetConfigurationDAI.grantRole(
+            keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
+            admin.address
+        );
+        const role = keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE");
+        await iporAssetConfigurationDAI.grantRole(role, userOne.address);
+
+        //when
+        await assertError(
+            //when
+            iporAssetConfigurationDAI
+                .connect(userOne)
+                .setRedeemMaxUtilizationPercentage(
+                    maxUtilizationPercentageValue
+                ),
+            //then
+            "IPOR_56"
         );
     });
 });

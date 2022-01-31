@@ -2,10 +2,10 @@
 pragma solidity 0.8.9;
 
 interface IIporAssetConfiguration {
-    //TODO: same order in interface and in implementation
-	event MiltonAddressUpdated(address indexed newAddress);
+    //TODO: same order in interface and in implementation or remove if used immutable parameters
+    event MiltonAddressUpdated(address indexed newAddress);
     event MiltonStorageAddressUpdated(address indexed newAddress);
-	event JosephAddressUpdated(address indexed newJosephAddress);
+    event JosephAddressUpdated(address indexed newJosephAddress);
 
     event IncomeTaxPercentageSet(uint256 newIncomeTaxPercentage);
     event LiquidationDepositAmountSet(uint256 newLiquidationDepositAmount);
@@ -19,6 +19,9 @@ interface IIporAssetConfiguration {
 
     event LiquidityPoolMaxUtilizationPercentageSet(
         uint256 newLiquidityPoolMaxUtilizationPercentageSet
+    );
+    event RedeemMaxUtilizationPercentageSet(
+        uint256 newRedeemMaxUtilizationPercentageSet
     );
     event MaxPositionTotalAmountSet(uint256 newMaxPositionTotalAmount);
 
@@ -41,11 +44,11 @@ interface IIporAssetConfiguration {
     event TreasureTreasurerUpdated(
         address asset,
         address indexed newTreasureTreasurer
-    );    
+    );
 
-    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);	
+    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);
 
-	function getMilton() external view returns (address);
+    function getMilton() external view returns (address);
 
     function setMilton(address milton) external;
 
@@ -53,10 +56,10 @@ interface IIporAssetConfiguration {
 
     function setMiltonStorage(address miltonStorage) external;
 
-	function getJoseph() external view returns (address);
+    function getJoseph() external view returns (address);
 
     function setJoseph(address joseph) external;
-	
+
     function getIncomeTaxPercentage() external view returns (uint256);
 
     function setIncomeTaxPercentage(uint256 incomeTaxPercentage) external;
@@ -91,6 +94,15 @@ interface IIporAssetConfiguration {
 
     function setLiquidityPoolMaxUtilizationPercentage(
         uint256 liquidityPoolMaxUtilizationPercentage
+    ) external;
+
+    function getRedeemMaxUtilizationPercentage()
+        external
+        view
+        returns (uint256);
+
+    function setRedeemMaxUtilizationPercentage(
+        uint256 newRedeemMaxUtilizationPercentage
     ) external;
 
     function getMaxSwapTotalAmount() external view returns (uint256);
@@ -136,6 +148,5 @@ interface IIporAssetConfiguration {
 
     function getDecayFactorValue() external view returns (uint256);
 
-    function setDecayFactorValue(uint256 newDecayFactorValue) external;    
-     
+    function setDecayFactorValue(uint256 newDecayFactorValue) external;
 }
