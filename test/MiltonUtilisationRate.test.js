@@ -143,12 +143,12 @@ describe("Milton", () => {
         let expectedLiquidityPoolTotalBalanceWad =
             miltonBalanceBeforePayoutWad + TC_OPENING_FEE_18DEC;
 
-        let oldLiquidityPoolMaxUtilizationPercentage =
-            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
+        let oldLpMaxUtilizationPerLegPercentage =
+            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPerLegPercentage();
 
         let liquidityPoolMaxUtilizationEdge = BigInt("718503678605107622");
 
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
+        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
             liquidityPoolMaxUtilizationEdge
         );
 
@@ -188,8 +188,8 @@ describe("Milton", () => {
             ZERO
         );
 
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-            oldLiquidityPoolMaxUtilizationPercentage
+        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
+            oldLpMaxUtilizationPerLegPercentage
         );
     });
 
@@ -237,7 +237,7 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        let oldLiquidityPoolMaxUtilizationPercentage =
+        let oldLpMaxUtilizationPercentage =
             await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
 
         let liquidityPoolMaxUtilizationEdge = BigInt(608038055741904007);
@@ -270,7 +270,7 @@ describe("Milton", () => {
         );
 
         await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-            oldLiquidityPoolMaxUtilizationPercentage
+            oldLpMaxUtilizationPercentage
         );
     });
 
@@ -302,8 +302,8 @@ describe("Milton", () => {
         );
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
 
-        let oldLiquidityPoolMaxUtilizationPercentage =
-            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
+        let oldLpMaxUtilizationPerLegPercentage =
+            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPerLegPercentage();
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -320,9 +320,9 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        let liquiditiPoolMaxUtilizationEdge = BigInt(758503678605107622);
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-            liquiditiPoolMaxUtilizationEdge
+        let lpMaxUtilizationPerLegEdge = BigInt("758503678605107622");
+        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
+            lpMaxUtilizationPerLegEdge
         );
 
         //First open position not exceeded liquidity utilization
@@ -351,8 +351,8 @@ describe("Milton", () => {
             "IPOR_35"
         );
 
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-            oldLiquidityPoolMaxUtilizationPercentage
+        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
+            oldLpMaxUtilizationPerLegPercentage
         );
     });
 
@@ -395,7 +395,7 @@ describe("Milton", () => {
     //         testData
     //     );
 
-    //     let oldLiquidityPoolMaxUtilizationPercentage =
+    //     let oldLpMaxUtilizationPercentage =
     //         await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
     //     let oldOpeningFeePercentage =
     //         await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
@@ -427,7 +427,7 @@ describe("Milton", () => {
     //     );
 
     //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-    //         oldLiquidityPoolMaxUtilizationPercentage
+    //         oldLpMaxUtilizationPercentage
     //     );
     //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
     //         oldOpeningFeePercentage

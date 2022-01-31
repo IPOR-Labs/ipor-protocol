@@ -14,7 +14,9 @@ const {
     USD_10_000_18DEC,
     USD_10_000_6DEC,
     USD_14_000_18DEC,
+    USD_28_000_18DEC,
     USD_14_000_6DEC,
+    USD_28_000_6DEC,
     PERIOD_25_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
@@ -179,7 +181,7 @@ describe("MiltonStorage", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
@@ -251,7 +253,7 @@ describe("MiltonStorage", () => {
         await testData.josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_6DEC,
+                USD_28_000_6DEC,
                 derivativeParams.openTimestamp
             );
 
@@ -278,7 +280,7 @@ describe("MiltonStorage", () => {
         //assert(true); //no exception this line is achieved
     });
 
-    it("should NOT update Milton Storage when close position, caller dont have rights to update", async () => {
+    it("should NOT update Milton Storage when close position, caller don't have rights to update", async () => {
         // given
         let testData = await prepareTestData(
             [
@@ -324,7 +326,7 @@ describe("MiltonStorage", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
 

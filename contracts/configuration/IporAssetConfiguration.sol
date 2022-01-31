@@ -298,7 +298,7 @@ contract IporAssetConfiguration is
         );
 
 		require(
-            newLpMaxUtilizationPercentage >=
+            newLpMaxUtilizationPercentage <=
                 _liquidityPoolMaxUtilizationPercentage,
             IporErrors
                 .CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG

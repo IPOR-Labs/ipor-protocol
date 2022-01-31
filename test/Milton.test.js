@@ -5717,8 +5717,6 @@ describe("Milton", () => {
 
 //TODO: add test: open long, change index, open short, change index, close long and short and check if soap = 0
 
-//TODO: add simple test where iporassetcopnfiguration or iporconfiguration is changing and milton see this.
-
 //TODO: test when ipor not ready yet
 
 //TODO: create test when ipor index not yet created for specific asset
