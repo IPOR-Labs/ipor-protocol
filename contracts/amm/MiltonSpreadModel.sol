@@ -34,8 +34,8 @@ contract MiltonSpreadModel is
                 0,
                 0,
                 balance.liquidityPool,
-                balance.payFixedDerivatives,
-                balance.recFixedDerivatives,
+                balance.payFixedSwaps,
+                balance.receiveFixedSwaps,
                 miltonStorage.calculateSoapPayFixed(
                     accruedIpor.ibtPrice,
                     calculateTimestamp
@@ -59,8 +59,8 @@ contract MiltonSpreadModel is
                 swapCollateral,
                 swapOpeningFee,
                 balance.liquidityPool,
-                balance.payFixedDerivatives,
-                balance.recFixedDerivatives,
+                balance.payFixedSwaps,
+                balance.receiveFixedSwaps,
                 miltonStorage.calculateSoapPayFixed(
                     accruedIpor.ibtPrice,
                     calculateTimestamp
@@ -82,8 +82,8 @@ contract MiltonSpreadModel is
                 0,
                 0,
                 balance.liquidityPool,
-                balance.payFixedDerivatives,
-                balance.recFixedDerivatives,
+                balance.payFixedSwaps,
+                balance.receiveFixedSwaps,
                 miltonStorage.calculateSoapReceiveFixed(
                     accruedIpor.ibtPrice,
                     calculateTimestamp
@@ -107,8 +107,8 @@ contract MiltonSpreadModel is
                 swapCollateral,
                 swapOpeningFee,
                 balance.liquidityPool,
-                balance.payFixedDerivatives,
-                balance.recFixedDerivatives,
+                balance.payFixedSwaps,
+                balance.receiveFixedSwaps,
                 miltonStorage.calculateSoapReceiveFixed(
                     accruedIpor.ibtPrice,
                     calculateTimestamp
@@ -121,8 +121,8 @@ contract MiltonSpreadModel is
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soap
     ) internal view returns (uint256 spreadValue) {
         require(
@@ -134,8 +134,8 @@ contract MiltonSpreadModel is
             swapCollateral,
             swapOpeningFee,
             liquidityPoolBalance,
-            payFixedDerivativesBalance,
-            recFixedDerivativesBalance,
+            payFixedSwapsBalance,
+            receiveFixedSwapsBalance,
             soap
         ) +
             _calculateAtParComponentPayFixed(
@@ -152,8 +152,8 @@ contract MiltonSpreadModel is
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soap
     ) internal view returns (uint256 spreadValue) {
         require(
@@ -165,8 +165,8 @@ contract MiltonSpreadModel is
             swapCollateral,
             swapOpeningFee,
             liquidityPoolBalance,
-            payFixedDerivativesBalance,
-            recFixedDerivativesBalance,
+            payFixedSwapsBalance,
+            receiveFixedSwapsBalance,
             soap
         ) +
             _calculateAtParComponentRecFixed(
@@ -182,8 +182,8 @@ contract MiltonSpreadModel is
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soapPayFixed
     ) internal view returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
@@ -191,8 +191,8 @@ contract MiltonSpreadModel is
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 _demandComponentLambdaValue
             );
 
@@ -201,7 +201,7 @@ contract MiltonSpreadModel is
                 uint256 kOmegaDenominator = Constants.D18 -
                     _calculateSoapPlus(
                         soapPayFixed,
-                        payFixedDerivativesBalance
+                        payFixedSwapsBalance
                     );
                 if (kOmegaDenominator != 0) {
                     return
@@ -284,21 +284,21 @@ contract MiltonSpreadModel is
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutSwap(
                 swapOpeningFee,
                 liquidityPoolBalance,
-                recFixedDerivativesBalance
+                receiveFixedSwapsBalance
             );
 
         uint256 utilizationRatePayFixedWithPosition = _calculateUtilizationRateWithPosition(
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance
+                payFixedSwapsBalance
             );
 
         uint256 adjustedUtilizationRate = _calculateImbalanceFactorWithLambda(
@@ -313,8 +313,8 @@ contract MiltonSpreadModel is
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soapRecFixed
     ) internal view returns (uint256) {
         uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
@@ -322,8 +322,8 @@ contract MiltonSpreadModel is
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 _demandComponentLambdaValue
             );
         if (kfDenominator != 0) {
@@ -331,7 +331,7 @@ contract MiltonSpreadModel is
                 uint256 kOmegaDenominator = Constants.D18 -
                     _calculateSoapPlus(
                         soapRecFixed,
-                        recFixedDerivativesBalance
+                        receiveFixedSwapsBalance
                     );
                 if (kOmegaDenominator != 0) {
                     return
@@ -414,21 +414,21 @@ contract MiltonSpreadModel is
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutSwap(
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance
+                payFixedSwapsBalance
             );
 
         uint256 utilizationRateRecFixedWithPosition = _calculateUtilizationRateWithPosition(
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                recFixedDerivativesBalance
+                receiveFixedSwapsBalance
             );
 
         uint256 adjustedUtilizationRate = _calculateImbalanceFactorWithLambda(

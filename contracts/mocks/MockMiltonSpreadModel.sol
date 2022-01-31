@@ -9,8 +9,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soap
     ) public view returns (uint256 spreadValue) {
         return
@@ -19,8 +19,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 soap
             );
     }
@@ -30,8 +30,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soap
     ) public view returns (uint256 spreadValue) {
         return
@@ -40,8 +40,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 soap
             );
     }
@@ -50,8 +50,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soapPayFixed
     ) public view returns (uint256) {
         return
@@ -59,8 +59,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 soapPayFixed
             );
     }
@@ -97,8 +97,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
@@ -106,8 +106,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 lambda
             );
     }
@@ -116,8 +116,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         int256 soapRecFixed
     ) public view returns (uint256) {
         return
@@ -125,8 +125,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 soapRecFixed
             );
     }
@@ -163,8 +163,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
-        uint256 payFixedDerivativesBalance,
-        uint256 recFixedDerivativesBalance,
+        uint256 payFixedSwapsBalance,
+        uint256 receiveFixedSwapsBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
@@ -172,8 +172,8 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
-                payFixedDerivativesBalance,
-                recFixedDerivativesBalance,
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
                 lambda
             );
     }

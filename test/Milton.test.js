@@ -344,12 +344,12 @@ describe("Milton", () => {
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonStorageDai.getBalance()
-            ).payFixedDerivatives
+            ).payFixedSwaps
         );
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonStorageDai.getBalance()
-            ).recFixedDerivatives
+            ).receiveFixedSwaps
         );
         const actualDerivativesTotalBalanceWad =
             actualPayFixDerivativesBalanceWad +
@@ -438,13 +438,13 @@ describe("Milton", () => {
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonStorageUsdt.getBalance()
-            ).payFixedDerivatives
+            ).payFixedSwaps
         );
 
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonStorageUsdt.getBalance()
-            ).recFixedDerivatives
+            ).receiveFixedSwaps
         );
 
         const actualDerivativesTotalBalanceWad =
@@ -4739,7 +4739,6 @@ describe("Milton", () => {
         ).to.be.eq(actualNotionalAmount);
     });
 
-
     it("should open pay fixed position - when open timestamp is long time ago", async () => {
         //given
         let testData = await prepareTestData(
@@ -5618,11 +5617,9 @@ describe("Milton", () => {
             );
         }
 
-        const actualPayFixedDerivativesBalance = BigInt(
-            balance.payFixedDerivatives
-        );
+        const actualPayFixedDerivativesBalance = BigInt(balance.payFixedSwaps);
         const actualRecFixedDerivativesBalance = BigInt(
-            balance.recFixedDerivatives
+            balance.receiveFixedSwaps
         );
         const actualDerivativesTotalBalance =
             actualPayFixedDerivativesBalance + actualRecFixedDerivativesBalance;

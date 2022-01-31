@@ -1210,11 +1210,9 @@ describe("Milton", () => {
             );
         }
 
-        const actualPayFixedDerivativesBalance = BigInt(
-            balance.payFixedDerivatives
-        );
+        const actualPayFixedDerivativesBalance = BigInt(balance.payFixedSwaps);
         const actualRecFixedDerivativesBalance = BigInt(
-            balance.recFixedDerivatives
+            balance.receiveFixedSwaps
         );
         const actualDerivativesTotalBalance =
             actualPayFixedDerivativesBalance + actualRecFixedDerivativesBalance;

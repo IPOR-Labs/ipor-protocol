@@ -931,8 +931,7 @@ describe("Joseph - redeem", () => {
 
         const balance = await testData.miltonStorageDai.getBalance();
         const actualCollateral =
-            BigInt(balance.payFixedDerivatives) +
-            BigInt(balance.recFixedDerivatives);
+            BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
         await assertError(
@@ -1008,8 +1007,7 @@ describe("Joseph - redeem", () => {
 
         const balance = await testData.miltonStorageDai.getBalance();
         const actualCollateral =
-            BigInt(balance.payFixedDerivatives) +
-            BigInt(balance.recFixedDerivatives);
+            BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
         await assertError(
@@ -1077,10 +1075,9 @@ describe("Joseph - redeem", () => {
             );
 
         const balance = await testData.miltonStorageDai.getBalance();
-        console.log("balance=", balance);
+
         const actualCollateral =
-            BigInt(balance.payFixedDerivatives) +
-            BigInt(balance.recFixedDerivatives);
+            BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
         await assertError(
@@ -1146,10 +1143,9 @@ describe("Joseph - redeem", () => {
             );
 
         const balance = await testData.miltonStorageDai.getBalance();
-        console.log("balance=", balance);
+
         const actualCollateral =
-            BigInt(balance.payFixedDerivatives) +
-            BigInt(balance.recFixedDerivatives);
+            BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
         await assertError(
@@ -1214,8 +1210,7 @@ describe("Joseph - redeem", () => {
 
         const balance = await testData.miltonStorageDai.getBalance();
         const actualCollateral =
-            BigInt(balance.payFixedDerivatives) +
-            BigInt(balance.recFixedDerivatives);
+            BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
         //when
@@ -1286,8 +1281,7 @@ describe("Joseph - redeem", () => {
 
         const balance = await testData.miltonStorageDai.getBalance();
         const actualCollateral =
-            BigInt(balance.payFixedDerivatives) +
-            BigInt(balance.recFixedDerivatives);
+            BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
         //when

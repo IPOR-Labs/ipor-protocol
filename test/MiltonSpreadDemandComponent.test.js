@@ -76,8 +76,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("2000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = BigInt("2000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("86545000000000000");
@@ -90,8 +90,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -140,8 +140,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = BigInt("1000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("94120909090909091");
@@ -154,8 +154,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -204,8 +204,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("2000000000000000000000");
+        const payFixedSwapsBalance = BigInt("1000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("2000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("94120909090909091");
@@ -218,8 +218,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -264,8 +264,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("1000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000");
-        const payFixedDerivativesBalance = USD_20_18DEC;
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = USD_20_18DEC;
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4210000000000000");
@@ -278,8 +278,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -327,8 +327,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+        const payFixedSwapsBalance = BigInt("1000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4654230769230769");
@@ -341,8 +341,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -390,8 +390,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+        const payFixedSwapsBalance = BigInt("1000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
         const soap = BigInt("100000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("5010897435897436");
@@ -404,8 +404,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -452,9 +452,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const soap = payFixedDerivativesBalance;
+        const payFixedSwapsBalance = BigInt("1000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const soap = payFixedSwapsBalance;
 
         const expectedSpreadDemandComponentValue = spreadMaxValue;
 
@@ -466,8 +466,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -515,8 +515,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = ZERO;
-        const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+        const payFixedSwapsBalance = ZERO;
+        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4860549450549451");
@@ -529,8 +529,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -578,8 +578,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = ZERO;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = ZERO;
-        const recFixedDerivativesBalance = BigInt("13000000000000000000000");
+        const payFixedSwapsBalance = ZERO;
+        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4858351648351648");
@@ -592,8 +592,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -643,8 +643,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = USD_14_000_18DEC;
-        const payFixedDerivativesBalance = USD_2_000_18DEC;
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = USD_2_000_18DEC;
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = spreadMaxValue;
@@ -657,8 +657,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -707,8 +707,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = BigInt("13000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4576251939768483");
@@ -721,8 +721,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -771,8 +771,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("5000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("5000000000000000000000");
+        const payFixedSwapsBalance = BigInt("5000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("5000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4211333333333333");
@@ -785,8 +785,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -835,8 +835,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("3000000000000000000000");
+        const payFixedSwapsBalance = BigInt("1000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("3000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4365384615384615");
@@ -849,8 +849,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -899,8 +899,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("1000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const recFixedDerivativesBalance = USD_20_18DEC;
+        const payFixedSwapsBalance = BigInt("1000000000000000000000");
+        const receiveFixedSwapsBalance = USD_20_18DEC;
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4210000000000000");
@@ -913,8 +913,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -963,8 +963,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = BigInt("13000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4576251939768483");
@@ -977,8 +977,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -1026,8 +1026,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = BigInt("13000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("100000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4932918606435150");
@@ -1040,8 +1040,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -1089,9 +1089,9 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
-        const soap = recFixedDerivativesBalance;
+        const payFixedSwapsBalance = BigInt("13000000000000000000000");
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
+        const soap = receiveFixedSwapsBalance;
 
         const expectedSpreadDemandComponentValue = spreadMaxValue;
 
@@ -1103,8 +1103,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -1152,8 +1152,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const recFixedDerivativesBalance = ZERO;
+        const payFixedSwapsBalance = BigInt("13000000000000000000000");
+        const receiveFixedSwapsBalance = ZERO;
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4713447820250902");
@@ -1166,8 +1166,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -1215,8 +1215,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = ZERO;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedDerivativesBalance = BigInt("13000000000000000000000");
-        const recFixedDerivativesBalance = ZERO;
+        const payFixedSwapsBalance = BigInt("13000000000000000000000");
+        const receiveFixedSwapsBalance = ZERO;
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4711445892394376");
@@ -1229,8 +1229,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );
@@ -1280,8 +1280,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
         const swapCollateral = USD_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = USD_14_000_18DEC;
-        const payFixedDerivativesBalance = USD_2_000_18DEC;
-        const recFixedDerivativesBalance = BigInt("1000000000000000000000");
+        const payFixedSwapsBalance = USD_2_000_18DEC;
+        const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = spreadMaxValue;
@@ -1294,8 +1294,8 @@ describe("MiltonSpreadModel - Demand Component", () => {
                     swapCollateral,
                     swapOpeningFee,
                     liquidityPoolBalance,
-                    payFixedDerivativesBalance,
-                    recFixedDerivativesBalance,
+                    payFixedSwapsBalance,
+                    receiveFixedSwapsBalance,
                     soap
                 )
         );

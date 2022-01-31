@@ -18,10 +18,10 @@ library IporErrors {
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_5";
 
     //@notice Liquidity Pool for given asset symbol not exists
-    // string public constant MILTON_LIQUIDITY_POOL_NOT_EXISTS = "IPOR_7";
+    string public constant CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG = "IPOR_7";
 
     //@notice Swap direction not exists
-    // string public constant MILTON_DERIVATIVE_DIRECTION_NOT_EXISTS = "IPOR_8";
+    string public constant CONFIG_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_TOO_HIGH = "IPOR_8";
 
     //@notice Maximum Slippage is too high
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_9";

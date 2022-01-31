@@ -27,10 +27,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedDerivatives /
-                                    1000000000000000000}
+                                {value.payFixedSwaps / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedDerivatives}</small>
+                                <small>{value.payFixedSwaps}</small>
                             </div>
                         )}
                     />
@@ -43,10 +42,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedDerivatives /
-                                    1000000000000000000}
+                                {value.payFixedSwaps / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedDerivatives}</small>
+                                <small>{value.payFixedSwaps}</small>
                             </div>
                         )}
                     />
@@ -59,10 +57,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedDerivatives /
-                                    1000000000000000000}
+                                {value.payFixedSwaps / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedDerivatives}</small>
+                                <small>{value.payFixedSwaps}</small>
                             </div>
                         )}
                     />
@@ -78,10 +75,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getBalance"
                         render={(value) => (
                             <div>
-                                {value.recFixedDerivatives /
-                                    1000000000000000000}
+                                {value.receiveFixedSwaps / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedDerivatives}</small>
+                                <small>{value.receiveFixedSwaps}</small>
                             </div>
                         )}
                     />
@@ -94,10 +90,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getBalance"
                         render={(value) => (
                             <div>
-                                {value.recFixedDerivatives /
-                                    1000000000000000000}
+                                {value.receiveFixedSwaps / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedDerivatives}</small>
+                                <small>{value.receiveFixedSwaps}</small>
                             </div>
                         )}
                     />
@@ -110,10 +105,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getBalance"
                         render={(value) => (
                             <div>
-                                {value.recFixedDerivatives /
-                                    1000000000000000000}
+                                {value.receiveFixedSwaps / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedDerivatives}</small>
+                                <small>{value.receiveFixedSwaps}</small>
                             </div>
                         )}
                     />

@@ -21,7 +21,7 @@ contract IporAssetConfiguration is
     AccessControlAssetConfiguration(msg.sender),
     IIporAssetConfiguration
 {
-	using SafeCast for uint256;
+    using SafeCast for uint256;
     uint8 private immutable _decimals;
 
     uint64 private immutable _maxSlippagePercentage;
@@ -38,9 +38,9 @@ contract IporAssetConfiguration is
     //pie going to Treasury Balance
     uint64 private _openingFeeForTreasuryPercentage;
 
-    uint64 private _payFixedLpMaxUtilizationPercentage;
+    uint64 private _liquidityPoolMaxUtilizationPercentage;
 
-	uint64 private _receiveFixedLpMaxUtilizationPercentage;
+    uint64 private _liquidityPoolMaxUtilizationPerLegPercentage;
 
     uint128 private _minCollateralizationFactorValue;
 
@@ -56,7 +56,7 @@ contract IporAssetConfiguration is
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint128 private _wadDecayFactorValue;
 
-	uint128 private _redeemMaxUtilizationPercentage;
+    uint128 private _redeemMaxUtilizationPercentage;
 
     address private _milton;
 
@@ -71,8 +71,6 @@ contract IporAssetConfiguration is
 
     //TODO: fix this name; treasureManager
     address private _treasureTreasurer;
-
-
 
     constructor(address asset, address ipToken) {
         _asset = asset;
@@ -97,16 +95,13 @@ contract IporAssetConfiguration is
         _openingFeeForTreasuryPercentage = 0;
         _iporPublicationFeeAmount = (10 * Constants.D18).toUint128();
 
-        _payFixedLpMaxUtilizationPercentage = (
-            48 * IporMath.division(Constants.D18, 100)
-        ).toUint64();
-		_receiveFixedLpMaxUtilizationPercentage = (
-            48 * IporMath.division(Constants.D18, 100)
-        ).toUint64();
+        _liquidityPoolMaxUtilizationPercentage = (8 *
+            IporMath.division(Constants.D18, 10)).toUint64();
+        _liquidityPoolMaxUtilizationPerLegPercentage = (48 *
+            IporMath.division(Constants.D18, 100)).toUint64();
 
-		
-		//@dev Redeem Max Utilization rate cannot be lower than Liquidity Pool Max Utilization rate
-		_redeemMaxUtilizationPercentage = Constants.D18.toUint128();
+        //@dev Redeem Max Utilization rate cannot be lower than Liquidity Pool Max Utilization rate
+        _redeemMaxUtilizationPercentage = Constants.D18.toUint128();
 
         _maxSwapTotalAmount = (1e5 * Constants.D18).toUint128();
 
@@ -211,8 +206,8 @@ contract IporAssetConfiguration is
             newOpeningFeeForTreasuryPercentage <= Constants.D18,
             IporErrors.MILTON_CONFIG_MAX_VALUE_EXCEEDED
         );
-        _openingFeeForTreasuryPercentage = 
-            newOpeningFeeForTreasuryPercentage.toUint64();
+        _openingFeeForTreasuryPercentage = newOpeningFeeForTreasuryPercentage
+            .toUint64();
         emit OpeningFeeForTreasuryPercentageSet(
             newOpeningFeeForTreasuryPercentage
         );
@@ -254,31 +249,69 @@ contract IporAssetConfiguration is
         emit IporPublicationFeeAmountSet(newIporPublicationFeeAmount);
     }
 
-    function getPayFixedLpMaxUtilizationPercentage()
+    function getLiquidityPoolMaxUtilizationPercentage()
         external
         view
         override
         returns (uint256)
     {
-        return _payFixedLpMaxUtilizationPercentage;
+        return _liquidityPoolMaxUtilizationPercentage;
     }
 
-    function setPayFixedLpMaxUtilizationPercentage(
-        uint256 newLiquidityPoolMaxUtilizationPercentage
+    function setLiquidityPoolMaxUtilizationPercentage(
+        uint256 newLpMaxUtilizationPercentage
     ) external override onlyRole(_LP_MAX_UTILIZATION_PERCENTAGE_ROLE) {
         require(
-            newLiquidityPoolMaxUtilizationPercentage <= Constants.D18,
+            newLpMaxUtilizationPercentage <= Constants.D18,
             IporErrors.CONFIG_LP_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
-        _payFixedLpMaxUtilizationPercentage = 
-            newLiquidityPoolMaxUtilizationPercentage.toUint64();
-        emit PayFixedLpMaxUtilizationPercentageSet(
-            newLiquidityPoolMaxUtilizationPercentage
+		require(
+            newLpMaxUtilizationPercentage <=
+                _redeemMaxUtilizationPercentage,
+            IporErrors
+                .CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
+        );
+
+        _liquidityPoolMaxUtilizationPercentage = newLpMaxUtilizationPercentage
+            .toUint64();
+        emit LiquidityPoolMaxUtilizationPercentageSet(
+            newLpMaxUtilizationPercentage
         );
     }
 
-	function getRedeemMaxUtilizationPercentage()
+    function getLiquidityPoolMaxUtilizationPerLegPercentage()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _liquidityPoolMaxUtilizationPerLegPercentage;
+    }
+
+    function setLiquidityPoolMaxUtilizationPerLegPercentage(
+        uint256 newLpMaxUtilizationPercentage
+    ) external override onlyRole(_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE) {
+        require(
+            newLpMaxUtilizationPercentage <= Constants.D18,
+            IporErrors.CONFIG_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_TOO_HIGH
+        );
+
+		require(
+            newLpMaxUtilizationPercentage >=
+                _liquidityPoolMaxUtilizationPercentage,
+            IporErrors
+                .CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG
+        );
+
+        _liquidityPoolMaxUtilizationPerLegPercentage = newLpMaxUtilizationPercentage
+            .toUint64();
+        emit LiquidityPoolMaxUtilizationPerLegPercentageSet(
+            newLpMaxUtilizationPercentage
+        );
+    }
+
+    function getRedeemMaxUtilizationPercentage()
         external
         view
         override
@@ -291,17 +324,19 @@ contract IporAssetConfiguration is
         uint256 newRedeemMaxUtilizationPercentage
     ) external override onlyRole(_REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE) {
         require(
-            newRedeemMaxUtilizationPercentage >= _liquidityPoolMaxUtilizationPercentage,
-            IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
+            newRedeemMaxUtilizationPercentage >=
+                _liquidityPoolMaxUtilizationPercentage,
+            IporErrors
+                .CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
         );
 
-		require(
+        require(
             newRedeemMaxUtilizationPercentage <= Constants.D18,
             IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
-        _redeemMaxUtilizationPercentage = 
-            newRedeemMaxUtilizationPercentage.toUint64();
+        _redeemMaxUtilizationPercentage = newRedeemMaxUtilizationPercentage
+            .toUint64();
         emit RedeemMaxUtilizationPercentageSet(
             newRedeemMaxUtilizationPercentage
         );
@@ -332,8 +367,8 @@ contract IporAssetConfiguration is
     function setMaxCollateralizationFactorValue(
         uint256 newMaxCollateralizationFactorValue
     ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
-        _maxCollateralizationFactorValue = 
-            newMaxCollateralizationFactorValue.toUint128();
+        _maxCollateralizationFactorValue = newMaxCollateralizationFactorValue
+            .toUint128();
         emit MaxCollateralizationFactorValueSet(
             newMaxCollateralizationFactorValue
         );
@@ -351,8 +386,8 @@ contract IporAssetConfiguration is
     function setMinCollateralizationFactorValue(
         uint256 newMinCollateralizationFactorValue
     ) external override onlyRole(_COLLATERALIZATION_FACTOR_VALUE_ROLE) {
-        _minCollateralizationFactorValue = 
-            newMinCollateralizationFactorValue.toUint128();
+        _minCollateralizationFactorValue = newMinCollateralizationFactorValue
+            .toUint128();
         emit MinCollateralizationFactorValueSet(
             newMinCollateralizationFactorValue
         );

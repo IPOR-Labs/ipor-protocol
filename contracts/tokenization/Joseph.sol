@@ -155,7 +155,7 @@ contract Joseph is Ownable, IJoseph {
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
-            balance.payFixedDerivatives + balance.recFixedDerivatives,
+            balance.payFixedSwaps + balance.receiveFixedSwaps,
             wadUnderlyingAmount
         );
 				

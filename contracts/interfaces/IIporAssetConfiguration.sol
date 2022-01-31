@@ -18,8 +18,13 @@ interface IIporAssetConfiguration {
     event IporPublicationFeeAmountSet(uint256 newIporPublicationFeeAmount);
 
     event LiquidityPoolMaxUtilizationPercentageSet(
-        uint256 newLiquidityPoolMaxUtilizationPercentageSet
+        uint256 newLpMaxUtilizationPercentageSet
     );
+
+    event LiquidityPoolMaxUtilizationPerLegPercentageSet(
+        uint256 newLpMaxUtilizationPercentageSet
+    );
+
     event RedeemMaxUtilizationPercentageSet(
         uint256 newRedeemMaxUtilizationPercentageSet
     );
@@ -93,7 +98,16 @@ interface IIporAssetConfiguration {
         returns (uint256);
 
     function setLiquidityPoolMaxUtilizationPercentage(
-        uint256 liquidityPoolMaxUtilizationPercentage
+        uint256 newLpMaxUtilizationPercentage
+    ) external;
+
+    function getLiquidityPoolMaxUtilizationPerLegPercentage()
+        external
+        view
+        returns (uint256);
+
+    function setLiquidityPoolMaxUtilizationPerLegPercentage(
+        uint256 newLpMaxUtilizationPercentage
     ) external;
 
     function getRedeemMaxUtilizationPercentage()
