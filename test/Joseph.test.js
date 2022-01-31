@@ -35,6 +35,7 @@ const {
     setupTokenUsdtInitialValuesForUsers,
     grantAllSpreadRoles,
     setupDefaultSpreadConstants,
+    absValue,
 } = require("./Utils");
 
 describe("Joseph", () => {
@@ -463,15 +464,19 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("26000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
 
         const calculateTimestamp =
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const soap = await testData.miltonDai.itfCalculateSoap(
+            calculateTimestamp
+        );
+        const balance = await testData.miltonStorageDai.getBalance();
 
-        const expectedExchangeRate = BigInt("1006541660406907134");
+        const expectedExchangeRate = BigInt("1004250360789776789");
 
         //when
         let actualExchangeRate = BigInt(
@@ -479,6 +484,9 @@ describe("Joseph", () => {
         );
 
         //then
+        expect(soap.soap).to.be.lte(0);
+        const absSoap = BigInt(-soap.soap);
+        expect(absSoap).to.be.lte(balance.liquidityPool);
         expect(
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
@@ -527,7 +535,7 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -542,7 +550,12 @@ describe("Joseph", () => {
         const calculateTimestamp =
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        const expectedExchangeRate = BigInt("1004267091419804516");
+        const soap = await testData.miltonDai.itfCalculateSoap(
+            calculateTimestamp
+        );
+        const balance = await testData.miltonStorageDai.getBalance();
+
+        const expectedExchangeRate = BigInt("1002879245824171323");
 
         //when
         let actualExchangeRate = BigInt(
@@ -550,6 +563,10 @@ describe("Joseph", () => {
         );
 
         //then
+        expect(soap.soap).to.be.lte(0);
+        const absSoap = BigInt(-soap.soap);
+        expect(absSoap).to.be.lte(balance.liquidityPool);
+
         expect(
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
@@ -598,7 +615,7 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -614,7 +631,12 @@ describe("Joseph", () => {
         const calculateTimestamp =
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        const expectedExchangeRate = BigInt("983795970535880939");
+        const soap = await testData.miltonDai.itfCalculateSoap(
+            calculateTimestamp
+        );
+        const balance = await testData.miltonStorageDai.getBalance();
+
+        const expectedExchangeRate = BigInt("989066232808424041");
 
         //when
         let actualExchangeRate = BigInt(
@@ -622,6 +644,9 @@ describe("Joseph", () => {
         );
 
         //then
+        expect(soap.soap).to.be.gte(0);
+        expect(soap.soap).to.be.lte(balance.liquidityPool);
+
         expect(
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
@@ -670,7 +695,7 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -685,8 +710,12 @@ describe("Joseph", () => {
 
         const calculateTimestamp =
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const soap = await testData.miltonDai.itfCalculateSoap(
+            calculateTimestamp
+        );
+        const balance = await testData.miltonStorageDai.getBalance();
 
-        const expectedExchangeRate = BigInt("983795970535880940");
+        const expectedExchangeRate = BigInt("989066232808424042");
 
         //when
         let actualExchangeRate = BigInt(
@@ -694,6 +723,8 @@ describe("Joseph", () => {
         );
 
         //then
+        expect(soap.soap).to.be.gte(0);
+        expect(soap.soap).to.be.lte(balance.liquidityPool);
         expect(
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
@@ -742,7 +773,7 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -753,7 +784,7 @@ describe("Joseph", () => {
         await testData.iporAssetConfigurationDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("48000000000000000000000")
+            BigInt("55000000000000000000000")
         );
 
         await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
@@ -771,8 +802,8 @@ describe("Joseph", () => {
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         // Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("12555620808806457171080");
-        const expectedLiquidityPoolBalance = BigInt("12119551345962113659023");
+        const expectedSoap = BigInt("8471981316324997495722");
+        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -789,7 +820,8 @@ describe("Joseph", () => {
         );
 
         //then
-
+        expect(soap.soap).to.be.gte(0);
+        expect(actualSoap).to.be.gte(balance.liquidityPool);
         expect(actualSoap).to.be.eql(expectedSoap);
         expect(actualLiquidityPoolBalance).to.be.eql(
             expectedLiquidityPoolBalance
@@ -837,7 +869,7 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -848,7 +880,7 @@ describe("Joseph", () => {
         await testData.iporAssetConfigurationDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("48000000000000000000000")
+            BigInt("55000000000000000000000")
         );
 
         await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
@@ -866,8 +898,8 @@ describe("Joseph", () => {
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("12555620808806457422192");
-        const expectedLiquidityPoolBalance = BigInt("12119551345962113659023");
+        const expectedSoap = BigInt("8471981316324997665162");
+        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -932,7 +964,7 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -943,7 +975,7 @@ describe("Joseph", () => {
         await testData.iporAssetConfigurationDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("48000000000000000000000")
+            BigInt("55000000000000000000000")
         );
 
         await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
@@ -963,10 +995,10 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("420351145194553328");
+        const expectedExchangeRate = BigInt("232016605434837042");
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("-13101517365711086002205");
-        const expectedLiquidityPoolBalance = BigInt("12119551345962113659023");
+        const expectedSoap = BigInt("-8840328330078258430809");
+        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1029,7 +1061,7 @@ describe("Joseph", () => {
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -1040,7 +1072,7 @@ describe("Joseph", () => {
         await testData.iporAssetConfigurationDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("48000000000000000000000")
+            BigInt("55000000000000000000000")
         );
 
         await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
@@ -1060,11 +1092,11 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("420351145194553324");
+        const expectedExchangeRate = BigInt("232016605434837039");
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("-13101517365711085751092");
-        const expectedLiquidityPoolBalance = BigInt("12119551345962113659023");
+        const expectedSoap = BigInt("-8840328330078258261370");
+        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp

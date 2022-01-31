@@ -6,17 +6,9 @@ const { AccountData, ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
     <div>
-        <div align="left">
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Add IPOR Index (Warren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="updateIndex"
-                    />
-                </div>
-                <div class="col-md-6">
+        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+            <div>
+                <div>
                     <strong>Add IPOR Index (ItfWarren)</strong>
                     <ContractForm
                         drizzle={drizzle}
@@ -24,17 +16,7 @@ export default ({ drizzle, drizzleState }) => (
                         method="updateIndex"
                     />
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Add updater (Warren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="addUpdater"
-                    />
-                </div>
-                <div class="col-md-6">
+                <div>
                     <strong>Add updater (ItfWarren)</strong>
                     <ContractForm
                         drizzle={drizzle}
@@ -42,17 +24,7 @@ export default ({ drizzle, drizzleState }) => (
                         method="addUpdater"
                     />
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Remove updater (Warren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="removeUpdater"
-                    />
-                </div>
-                <div class="col-md-6">
+                <div>
                     <strong>Remove updater (ItfWarren)</strong>
                     <ContractForm
                         drizzle={drizzle}
@@ -60,18 +32,7 @@ export default ({ drizzle, drizzleState }) => (
                         method="removeUpdater"
                     />
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Updaters (Warren)</strong>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="Warren"
-                        method="getUpdaters"
-                    />
-                </div>
-                <div class="col-md-6">
+                <div>
                     <strong>Updaters (ItfWarren)</strong>
                     <ContractData
                         drizzle={drizzle}
@@ -81,7 +42,44 @@ export default ({ drizzle, drizzleState }) => (
                     />
                 </div>
             </div>
-        </div>
+        ) : (
+            <div>
+                <div>
+                    <strong>Add IPOR Index (Warren)</strong>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="Warren"
+                        method="updateIndex"
+                    />
+                </div>
+                <div>
+                    <strong>Add updater (Warren)</strong>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="Warren"
+                        method="addUpdater"
+                    />
+                </div>
+                <div>
+                    <strong>Remove updater (Warren)</strong>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="Warren"
+                        method="removeUpdater"
+                    />
+                </div>
+                <div>
+                    <strong>Updaters (Warren)</strong>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="Warren"
+                        method="getUpdaters"
+                    />
+                </div>
+            </div>
+        )}
+
         <div>
             <hr />
             <p>

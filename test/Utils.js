@@ -16,6 +16,13 @@ BigInt.prototype.toJSON = function () {
     return this.toString();
 };
 
+module.exports.absValue = (value) => {
+	if (Math.sign(value) === -1n) {
+		return -value;
+	}
+	return value;
+}
+
 module.exports.assertError = async (promise, error) => {
     try {
         await promise;
@@ -107,6 +114,14 @@ module.exports.grantAllRoleIporAssetConfiguration = async (
     );
     await iporAssetConfiguration.grantRole(
         keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE"),
+        accounts[0].address);
+
+	await iporAssetConfiguration.grantRole(
+        keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE"),
+        accounts[0].address
+    );
+    await iporAssetConfiguration.grantRole(
+        keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE"),
         accounts[0].address
     );
 };

@@ -61,8 +61,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     {
         return
             DataTypes.MiltonTotalBalanceMemory(
-                _balances.payFixedDerivatives,
-                _balances.recFixedDerivatives,
+                _balances.payFixedSwaps,
+                _balances.receiveFixedSwaps,
                 _balances.openingFee,
                 _balances.liquidationDeposit,
                 _balances.iporPublicationFee,
@@ -450,8 +450,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 collateral,
         uint256 openingFeeAmount
     ) internal {
-        _balances.payFixedDerivatives =
-            _balances.payFixedDerivatives +
+        _balances.payFixedSwaps =
+            _balances.payFixedSwaps +
             collateral.toUint128();
 
         _balances.openingFee = _balances.openingFee + openingFeeAmount.toUint128();
@@ -483,8 +483,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         uint256 collateral,
         uint256 openingFeeAmount
     ) internal {
-        _balances.recFixedDerivatives =
-            _balances.recFixedDerivatives +
+        _balances.receiveFixedSwaps =
+            _balances.receiveFixedSwaps +
             collateral.toUint128();
 
         _balances.openingFee = _balances.openingFee + openingFeeAmount.toUint128();
@@ -545,8 +545,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             _balances.liquidationDeposit -
             swap.liquidationDepositAmount.toUint128();
 
-        _balances.payFixedDerivatives =
-            _balances.payFixedDerivatives -
+        _balances.payFixedSwaps =
+            _balances.payFixedSwaps -
             swap.collateral.toUint128();
         //TODO: remove duplication
         if (abspositionValue < swap.collateral) {
@@ -602,8 +602,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             _balances.liquidationDeposit -
             swap.liquidationDepositAmount.toUint128();
 
-        _balances.recFixedDerivatives =
-            _balances.recFixedDerivatives -
+        _balances.receiveFixedSwaps =
+            _balances.receiveFixedSwaps -
             swap.collateral.toUint128();
 
         //TODO: remove duplication

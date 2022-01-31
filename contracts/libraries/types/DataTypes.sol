@@ -18,9 +18,9 @@ library DataTypes {
 
     struct MiltonTotalBalanceMemory {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
-        uint256 payFixedDerivatives;
+        uint256 payFixedSwaps;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
-        uint256 recFixedDerivatives;
+        uint256 receiveFixedSwaps;
         uint256 openingFee;
         uint256 liquidationDeposit;
         uint256 iporPublicationFee;
@@ -33,9 +33,9 @@ library DataTypes {
     }
     struct MiltonTotalBalanceStorage {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
-        uint128 payFixedDerivatives;
+        uint128 payFixedSwaps;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
-        uint128 recFixedDerivatives;
+        uint128 receiveFixedSwaps;
         uint128 openingFee;
         uint128 liquidationDeposit;
         uint128 iporPublicationFee;

@@ -15,6 +15,8 @@ const {
     USD_10_000_6DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
+    USD_28_000_18DEC,
+    USD_28_000_6DEC,
     PERIOD_25_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
@@ -163,15 +165,15 @@ describe("MiltonFrontendDataProvider", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, paramsDai.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, paramsDai.openTimestamp);
 
         await testData.josephUsdc
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_6DEC, paramsUsdc.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_6DEC, paramsUsdc.openTimestamp);
 
         await testData.josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_6DEC, paramsUsdt.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_6DEC, paramsUsdt.openTimestamp);
 
         const expectedSwapsLength = 3;
 

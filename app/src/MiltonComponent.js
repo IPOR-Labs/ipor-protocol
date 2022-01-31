@@ -125,8 +125,7 @@ export default ({ drizzle, drizzleState }) => (
         </div>
         <hr />
         <div class="row">
-            {process.env.REACT_APP_ITF_ENABLED ===
-            "true" ? (
+            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                 <div className="col-md-4">
                     <strong>Provide Liquidity USDT (ItfJosephUsdt)</strong>
                     <ContractForm

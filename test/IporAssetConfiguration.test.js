@@ -5,6 +5,7 @@ const { ZERO_BYTES32 } = require("@openzeppelin/test-helpers/src/constants");
 const { time } = require("@openzeppelin/test-helpers");
 
 const {
+    PERCENTAGE_50_18DEC,
     PERCENTAGE_100_18DEC,
     TOTAL_SUPPLY_18_DECIMALS,
     TC_MULTIPLICATOR_18DEC,
@@ -62,18 +63,40 @@ describe("IporAssetConfiguration", () => {
 
     //TODO: add tests which checks initial values for every param
 
-    it("should INIT during DEPLOY correct Liquidity Pool and Redeem Liquidity Pool Utilization Rate", async () => {
+    it("should INIT during DEPLOY correct Liquidity Pool Utilizations Rate", async () => {
         let actualLiquidityPoolMaxUtilizationPercentage =
             await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPercentage();
+
+        expect(
+            actualLiquidityPoolMaxUtilizationPercentage,
+            "Liquidity Pool Max Utilization Percentage cannot be higher than 100%"
+        ).to.be.lte(PERCENTAGE_100_18DEC);
+
         let actualRedeemMaxUtilizationPercentage =
-            await iporAssetConfigurationDAI.getRedeemMaxUtilizationPercentage();
-        expect(actualRedeemMaxUtilizationPercentage).to.be.gte(
-            actualLiquidityPoolMaxUtilizationPercentage
-        );
+            await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage();
+
         expect(
             actualRedeemMaxUtilizationPercentage,
-            "Redeem Max Utilization Rate Percentage cannot be higher than 100% "
+            "Liquidity Pool Redeem Max Utilization Percentage cannot be higher than 100%"
         ).to.be.lte(PERCENTAGE_100_18DEC);
+
+        let actualMaxUtilizationPerLegPercentage =
+            await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPerLegPercentage();
+
+        expect(
+            actualMaxUtilizationPerLegPercentage,
+            "Liquidity Pool Max Utilization Per Leg Percentage cannot be higher than 100%"
+        ).to.be.lte(PERCENTAGE_100_18DEC);
+
+        expect(
+            actualRedeemMaxUtilizationPercentage,
+            "Redeem Liquidity Pool Max Utilization Rate cannot be lower than Liquidity Pool Max Utilization rate"
+        ).to.be.gte(actualLiquidityPoolMaxUtilizationPercentage);
+
+        expect(
+            actualLiquidityPoolMaxUtilizationPercentage,
+            " Liquidity Pool Max Utilization Rate cannot be lower than Liquidity Pool Max Utilization Per Leg rate"
+        ).to.be.gte(actualMaxUtilizationPerLegPercentage);
     });
 
     it("should set Milton ", async () => {
@@ -1368,11 +1391,11 @@ describe("IporAssetConfiguration", () => {
         //when
         await iporAssetConfigurationDAI
             .connect(userOne)
-            .setRedeemMaxUtilizationPercentage(maxUtilizationPercentageValue);
+            .setRedeemLpMaxUtilizationPercentage(maxUtilizationPercentageValue);
 
         //then
         const actualMaxUtilizationPercentageValue = BigInt(
-            await iporAssetConfigurationDAI.getRedeemMaxUtilizationPercentage()
+            await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage()
         );
 
         expect(maxUtilizationPercentageValue).to.be.eql(
@@ -1395,7 +1418,7 @@ describe("IporAssetConfiguration", () => {
             //when
             iporAssetConfigurationDAI
                 .connect(userOne)
-                .setRedeemMaxUtilizationPercentage(
+                .setRedeemLpMaxUtilizationPercentage(
                     maxUtilizationPercentageValue
                 ),
             //then

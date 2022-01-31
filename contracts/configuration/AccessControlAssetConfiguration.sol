@@ -48,6 +48,13 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
     bytes32 internal constant _LP_MAX_UTILIZATION_PERCENTAGE_ROLE =
         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE");
 
+    bytes32
+        internal constant _LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE =
+        keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE");
+
+    bytes32 internal constant _LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE =
+        keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE");
+
     bytes32 internal constant _REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE =
         keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE");
 
@@ -137,6 +144,15 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(
             _LP_MAX_UTILIZATION_PERCENTAGE_ROLE,
             _LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE
+        );
+
+        _setRoleAdmin(
+            _LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE,
+            _ADMIN_ROLE
+        );
+        _setRoleAdmin(
+            _LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE,
+            _LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE
         );
 
         _setRoleAdmin(

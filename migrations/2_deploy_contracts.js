@@ -729,8 +729,6 @@ module.exports = async function (deployer, _network, addresses) {
         );
         itfMiltonDai = await ItfMiltonDai.deployed();
 
-        
-
         if (
             _network === "develop" ||
             _network === "develop2" ||
@@ -738,6 +736,48 @@ module.exports = async function (deployer, _network, addresses) {
             _network === "docker" ||
             _network === "soliditycoverage"
         ) {
+            await deployer.deploy(
+                JosephUsdt,
+                mockedUsdt.address,
+                iporConfiguration.address
+            );
+            josephUsdt = await JosephUsdt.deployed();
+
+            await deployer.deploy(
+                JosephUsdc,
+                mockedUsdc.address,
+                iporConfiguration.address
+            );
+            josephUsdc = await JosephUsdc.deployed();
+
+            await deployer.deploy(
+                JosephDai,
+                mockedDai.address,
+                iporConfiguration.address
+            );
+            josephDai = await JosephDai.deployed();
+
+            await deployer.deploy(
+                ItfJosephUsdt,
+                mockedUsdt.address,
+                iporConfiguration.address
+            );
+            itfJosephUsdt = await ItfJosephUsdt.deployed();
+
+            await deployer.deploy(
+                ItfJosephUsdc,
+                mockedUsdc.address,
+                iporConfiguration.address
+            );
+            itfJosephUsdc = await ItfJosephUsdc.deployed();
+
+            await deployer.deploy(
+                ItfJosephDai,
+                mockedDai.address,
+                iporConfiguration.address
+            );
+            itfJosephDai = await ItfJosephDai.deployed();
+
             if (process.env.ITF_ENABLED === "true") {
                 //For IPOR Test Framework purposes
                 await iporAssetConfigurationUsdt.setMilton(
@@ -778,48 +818,6 @@ module.exports = async function (deployer, _network, addresses) {
             await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
             await iporAssetConfigurationDai.setJoseph(josephDai.address);
         }
-
-		await deployer.deploy(
-            JosephUsdt,
-            mockedUsdt.address,
-            iporConfiguration.address
-        );
-        josephUsdt = await JosephUsdt.deployed();
-
-        await deployer.deploy(
-            JosephUsdc,
-            mockedUsdc.address,
-            iporConfiguration.address
-        );
-        josephUsdc = await JosephUsdc.deployed();
-
-        await deployer.deploy(
-            JosephDai,
-            mockedDai.address,
-            iporConfiguration.address
-        );
-        josephDai = await JosephDai.deployed();
-
-        await deployer.deploy(
-            ItfJosephUsdt,
-            mockedUsdt.address,
-            iporConfiguration.address
-        );
-        itfJosephUsdt = await ItfJosephUsdt.deployed();
-
-        await deployer.deploy(
-            ItfJosephUsdc,
-            mockedUsdc.address,
-            iporConfiguration.address
-        );
-        itfJosephUsdc = await ItfJosephUsdc.deployed();
-
-        await deployer.deploy(
-            ItfJosephDai,
-            mockedDai.address,
-            iporConfiguration.address
-        );
-        itfJosephDai = await ItfJosephDai.deployed();
     } else {
         await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
         await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
