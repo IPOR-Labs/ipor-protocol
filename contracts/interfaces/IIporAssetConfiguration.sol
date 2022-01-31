@@ -110,12 +110,12 @@ interface IIporAssetConfiguration {
         uint256 newLpMaxUtilizationPercentage
     ) external;
 
-    function getRedeemMaxUtilizationPercentage()
+    function getRedeemLpMaxUtilizationPercentage()
         external
         view
         returns (uint256);
 
-    function setRedeemMaxUtilizationPercentage(
+    function setRedeemLpMaxUtilizationPercentage(
         uint256 newRedeemMaxUtilizationPercentage
     ) external;
 

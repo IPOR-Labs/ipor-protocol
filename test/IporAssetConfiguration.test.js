@@ -73,7 +73,7 @@ describe("IporAssetConfiguration", () => {
         ).to.be.lte(PERCENTAGE_100_18DEC);
 
         let actualRedeemMaxUtilizationPercentage =
-            await iporAssetConfigurationDAI.getRedeemMaxUtilizationPercentage();
+            await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage();
 
         expect(
             actualRedeemMaxUtilizationPercentage,
@@ -1391,11 +1391,11 @@ describe("IporAssetConfiguration", () => {
         //when
         await iporAssetConfigurationDAI
             .connect(userOne)
-            .setRedeemMaxUtilizationPercentage(maxUtilizationPercentageValue);
+            .setRedeemLpMaxUtilizationPercentage(maxUtilizationPercentageValue);
 
         //then
         const actualMaxUtilizationPercentageValue = BigInt(
-            await iporAssetConfigurationDAI.getRedeemMaxUtilizationPercentage()
+            await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage()
         );
 
         expect(maxUtilizationPercentageValue).to.be.eql(
@@ -1418,7 +1418,7 @@ describe("IporAssetConfiguration", () => {
             //when
             iporAssetConfigurationDAI
                 .connect(userOne)
-                .setRedeemMaxUtilizationPercentage(
+                .setRedeemLpMaxUtilizationPercentage(
                     maxUtilizationPercentageValue
                 ),
             //then

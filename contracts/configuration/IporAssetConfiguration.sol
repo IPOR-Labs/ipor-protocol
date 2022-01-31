@@ -56,7 +56,7 @@ contract IporAssetConfiguration is
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint128 private _wadDecayFactorValue;
 
-    uint128 private _redeemMaxUtilizationPercentage;
+    uint128 private _redeemLpMaxUtilizationPercentage;
 
     address private _milton;
 
@@ -101,7 +101,7 @@ contract IporAssetConfiguration is
             IporMath.division(Constants.D18, 100)).toUint64();
 
         //@dev Redeem Max Utilization rate cannot be lower than Liquidity Pool Max Utilization rate
-        _redeemMaxUtilizationPercentage = Constants.D18.toUint128();
+        _redeemLpMaxUtilizationPercentage = Constants.D18.toUint128();
 
         _maxSwapTotalAmount = (1e5 * Constants.D18).toUint128();
 
@@ -268,7 +268,7 @@ contract IporAssetConfiguration is
 
 		require(
             newLpMaxUtilizationPercentage <=
-                _redeemMaxUtilizationPercentage,
+                _redeemLpMaxUtilizationPercentage,
             IporErrors
                 .CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
         );
@@ -311,16 +311,16 @@ contract IporAssetConfiguration is
         );
     }
 
-    function getRedeemMaxUtilizationPercentage()
+    function getRedeemLpMaxUtilizationPercentage()
         external
         view
         override
         returns (uint256)
     {
-        return _redeemMaxUtilizationPercentage;
+        return _redeemLpMaxUtilizationPercentage;
     }
 
-    function setRedeemMaxUtilizationPercentage(
+    function setRedeemLpMaxUtilizationPercentage(
         uint256 newRedeemMaxUtilizationPercentage
     ) external override onlyRole(_REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE) {
         require(
@@ -335,7 +335,7 @@ contract IporAssetConfiguration is
             IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
-        _redeemMaxUtilizationPercentage = newRedeemMaxUtilizationPercentage
+        _redeemLpMaxUtilizationPercentage = newRedeemMaxUtilizationPercentage
             .toUint64();
         emit RedeemMaxUtilizationPercentageSet(
             newRedeemMaxUtilizationPercentage

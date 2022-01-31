@@ -754,6 +754,142 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
+                        <strong>
+                            Redeem Liquidity Pool Max Utilization Percentage
+                        </strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdt"
+                            method="getRedeemLpMaxUtilizationPercentage"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdt"
+                            method="setRedeemLpMaxUtilizationPercentage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdc"
+                            method="getRedeemLpMaxUtilizationPercentage"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdc"
+                            method="setRedeemLpMaxUtilizationPercentage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationDai"
+                            method="getRedeemLpMaxUtilizationPercentage"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationDai"
+                            method="setRedeemLpMaxUtilizationPercentage"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>
+                            Liquidity Pool Max Utilization Per Leg Percentage
+                        </strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdt"
+                            method="getLiquidityPoolMaxUtilizationPerLegPercentage"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdt"
+                            method="setLiquidityPoolMaxUtilizationPerLegPercentage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationUsdc"
+                            method="getLiquidityPoolMaxUtilizationPerLegPercentage"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationUsdc"
+                            method="setLiquidityPoolMaxUtilizationPerLegPercentage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="IporAssetConfigurationDai"
+                            method="getLiquidityPoolMaxUtilizationPerLegPercentage"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IporAssetConfigurationDai"
+                            method="setLiquidityPoolMaxUtilizationPerLegPercentage"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
                         <strong>Charlie Treasuers</strong>
                         <br />
                         <small>Manage IPOR publication fee token balance</small>
@@ -1116,6 +1252,35 @@ export default ({ drizzle, drizzleState }) => (
                             0x1f68aca9d1b8ff5a2094c405f4385604851afa04a50632f403d9ae378700825e
                         </td>
                     </tr>
+
+                    <tr>
+                        <td>
+                            LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE
+                        </td>
+                        <td>
+                            80e9d3cd13b341e2ff646d86b051df3bdc3da949cab32b5ef315fbef82aa6d17
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE</td>
+                        <td>
+                            8ca0936a2a91128b8d7c8d3546c6e7a774ca2867e822791a7cd5bffa5c6d0d4b
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE</td>
+                        <td>
+                            946b28fc3e775932d936a21ebb1c0a64ec4aa4e206cf7323903ca56b0dbd5a9a
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE</td>
+                        <td>
+                            a494d7a1ad4936a67a6d987952c34144e45f452984a66208577238870d43fed4
+                        </td>
+                    </tr>
+
                     <tr>
                         <td>MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE</td>
                         <td>

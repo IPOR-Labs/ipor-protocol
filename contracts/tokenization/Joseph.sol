@@ -161,7 +161,7 @@ contract Joseph is Ownable, IJoseph {
 				
         require(
             utilizationRate <=
-                _iporAssetConfiguration.getRedeemMaxUtilizationPercentage(),
+                _iporAssetConfiguration.getRedeemLpMaxUtilizationPercentage(),
             IporErrors.JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
