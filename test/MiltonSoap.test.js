@@ -14,7 +14,9 @@ const {
     USD_10_000_18DEC,
     USD_10_000_6DEC,
     USD_14_000_18DEC,
+    USD_28_000_18DEC,
     USD_14_000_6DEC,
+    USD_28_000_6DEC,
     ZERO,
     PERIOD_1_DAY_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
@@ -113,7 +115,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -171,7 +173,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -230,7 +232,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -288,7 +290,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -348,7 +350,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -416,7 +418,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -499,7 +501,7 @@ describe("MiltonSoap", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -567,7 +569,7 @@ describe("MiltonSoap", () => {
 
         await testData.josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(BigInt(2) * USD_14_000_6DEC, openTimestamp);
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_6DEC, openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -647,10 +649,10 @@ describe("MiltonSoap", () => {
         };
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, openTimestamp);
         await testData.josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_6DEC, openTimestamp);
+            .itfProvideLiquidity(USD_28_000_6DEC, openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -738,7 +740,7 @@ describe("MiltonSoap", () => {
         };
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -814,7 +816,7 @@ describe("MiltonSoap", () => {
         };
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -903,11 +905,11 @@ describe("MiltonSoap", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, openTimestamp);
 
         await testData.josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_6DEC, openTimestamp);
+            .itfProvideLiquidity(USD_28_000_6DEC, openTimestamp);
 
         await testData.warren
             .connect(userOne)
@@ -994,7 +996,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -1075,7 +1077,7 @@ describe("MiltonSoap", () => {
         await testData.josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_6DEC,
+                USD_28_000_6DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -1160,7 +1162,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -1254,7 +1256,7 @@ describe("MiltonSoap", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(2) * USD_14_000_18DEC,
+                BigInt(2) * USD_28_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
 
@@ -1325,7 +1327,7 @@ describe("MiltonSoap", () => {
             derivativeParams25days.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(BigInt(2) * USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, openTimestamp);
 
         //when
         await testData.warren
@@ -1411,7 +1413,7 @@ describe("MiltonSoap", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, openTimestamp);
 
         //when
         await testData.warren
@@ -1516,7 +1518,8 @@ describe("MiltonSoap", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, openTimestamp);
+
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(

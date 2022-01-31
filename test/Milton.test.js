@@ -23,7 +23,9 @@ const {
     USD_10_000_6DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
+    USD_28_000_18DEC,
     USD_14_000_6DEC,
+    USD_28_000_6DEC,
     USD_9063__63_18DEC,
     USD_10_000_000_6DEC,
 
@@ -298,7 +300,7 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -392,8 +394,8 @@ describe("Milton", () => {
                 params.openTimestamp
             );
 
-        let miltonBalanceBeforePayout = USD_14_000_6DEC;
-        let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
+        let miltonBalanceBeforePayout = USD_28_000_6DEC;
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
 
         await testData.josephUsdt
             .connect(liquidityProvider)
@@ -475,7 +477,7 @@ describe("Milton", () => {
             testData
         );
 
-        let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
         let liquidationDepositAmount = USD_20_18DEC;
 
         let incomeTax = BigInt("0");
@@ -646,7 +648,7 @@ describe("Milton", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
         await testData.warren
             .connect(userOne)
@@ -655,7 +657,9 @@ describe("Milton", () => {
                 BigInt("10000000000000000"),
                 params.openTimestamp
             );
+
         await openSwapPayFixed(testData, params);
+
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -663,6 +667,7 @@ describe("Milton", () => {
                 BigInt("1600000000000000000"),
                 params.openTimestamp
             );
+
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -672,9 +677,11 @@ describe("Milton", () => {
             );
 
         await testData.iporAssetConfigurationDai.setJoseph(userOne.address);
+
         await testData.miltonStorageDai
             .connect(userOne)
-            .subtractLiquidity(params.totalAmount);
+            .subtractLiquidity(BigInt("20000000000000000000000"));
+
         await testData.iporAssetConfigurationDai.setJoseph(
             testData.josephDai.address
         );
@@ -1270,7 +1277,7 @@ describe("Milton", () => {
         };
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -1470,7 +1477,7 @@ describe("Milton", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2130,7 +2137,7 @@ describe("Milton", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2237,7 +2244,7 @@ describe("Milton", () => {
         };
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -2541,7 +2548,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC,
+                USD_28_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParamsFirst);
@@ -2601,7 +2608,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC + USD_14_000_18DEC,
+                USD_28_000_18DEC + USD_28_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParamsFirst);
@@ -2691,7 +2698,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC + USD_14_000_18DEC,
+                USD_28_000_18DEC + USD_28_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
         await testData.warren
@@ -2776,7 +2783,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                USD_14_000_18DEC + USD_14_000_18DEC,
+                USD_28_000_18DEC + USD_28_000_18DEC,
                 derivativeParamsFirst.openTimestamp
             );
         await testData.warren
@@ -3025,7 +3032,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(3) * USD_14_000_18DEC,
+                BigInt(3) * USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
@@ -3119,7 +3126,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(3) * USD_14_000_18DEC,
+                BigInt(3) * USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
@@ -3223,7 +3230,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(3) * USD_14_000_18DEC,
+                BigInt(3) * USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
@@ -3326,7 +3333,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(3) * USD_14_000_18DEC,
+                BigInt(3) * USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
 
@@ -3416,7 +3423,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(2) * USD_14_000_18DEC,
+                BigInt(2) * USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -3501,7 +3508,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(2) * USD_14_000_18DEC,
+                BigInt(2) * USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -3586,7 +3593,7 @@ describe("Milton", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(
-                BigInt(2) * USD_14_000_18DEC,
+                BigInt(2) * USD_28_000_18DEC,
                 derivativeParams.openTimestamp
             );
         await testData.warren
@@ -4209,7 +4216,7 @@ describe("Milton", () => {
         let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalanceWad = BigInt("1491026919242273180");
 
-        let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
         let expectedLiquidityPoolTotalBalanceWad =
             miltonBalanceBeforePayoutWad + BigInt("28329511465603190429");
 
@@ -4302,7 +4309,7 @@ describe("Milton", () => {
         let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalanceWad = BigInt("745513459621136590");
 
-        let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
         let expectedLiquidityPoolTotalBalanceWad =
             miltonBalanceBeforePayoutWad + BigInt("29075024925224327019");
         await testData.josephDai
@@ -4382,7 +4389,7 @@ describe("Milton", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
@@ -4432,7 +4439,7 @@ describe("Milton", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
@@ -4512,7 +4519,7 @@ describe("Milton", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
@@ -4545,7 +4552,7 @@ describe("Milton", () => {
         );
 
         let expectedErc20BalanceMilton =
-            USD_14_000_18DEC + USD_10_000_18DEC - transferedAmount;
+            USD_28_000_18DEC + USD_10_000_18DEC - transferedAmount;
         let actualErc20BalanceMilton = BigInt(
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
@@ -4714,7 +4721,7 @@ describe("Milton", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_14_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
         //when
         await testData.miltonDai
@@ -4814,7 +4821,7 @@ describe("Milton", () => {
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
-        let miltonBalanceBeforePayoutWad = USD_14_000_18DEC;
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(

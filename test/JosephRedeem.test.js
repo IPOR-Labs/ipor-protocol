@@ -913,7 +913,7 @@ describe("Joseph - redeem", () => {
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -924,7 +924,7 @@ describe("Joseph - redeem", () => {
         await testData.iporAssetConfigurationDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("48000000000000000000000")
+            BigInt("55000000000000000000000")
         );
         await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
         //END HACK - substract liquidity without  burn ipToken
@@ -989,7 +989,7 @@ describe("Joseph - redeem", () => {
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -1000,7 +1000,7 @@ describe("Joseph - redeem", () => {
         await testData.iporAssetConfigurationDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("48000000000000000000000")
+            BigInt("55000000000000000000000")
         );
         await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
         //END HACK - substract liquidity without  burn ipToken
@@ -1056,7 +1056,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp
             );
 
-        const ipTokenAmount = BigInt("21000000000000000000000");
+        const ipTokenAmount = BigInt("41000000000000000000000");
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -1069,7 +1069,7 @@ describe("Joseph - redeem", () => {
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -1124,7 +1124,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp
             );
 
-        const ipTokenAmount = BigInt("21000000000000000000000");
+        const ipTokenAmount = BigInt("41000000000000000000000");
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -1137,7 +1137,7 @@ describe("Joseph - redeem", () => {
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -1203,7 +1203,7 @@ describe("Joseph - redeem", () => {
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("40000000000000000000000"),
+                BigInt("27000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -1341,12 +1341,12 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp
             );
 
-        //position which utilizates almost 80% default threshold max utilization for Liquidity Pool
+        //position which utilizates 48% per leg
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
-                BigInt("80000000000000000000000"),
+                BigInt("48000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
@@ -1420,12 +1420,12 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp
             );
 
-        //position which utilizates almost 80% default threshold max utilization for Liquidity Pool
+        //position which utilizates 48% per leg
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
-                BigInt("80000000000000000000000"),
+                BigInt("48000000000000000000000"),
                 params.slippageValue,
                 params.collateralizationFactor
             );
