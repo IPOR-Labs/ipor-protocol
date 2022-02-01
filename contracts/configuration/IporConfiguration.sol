@@ -7,7 +7,7 @@ import {IporErrors} from "../IporErrors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
-    AccessControlConfiguration(msg.sender),
+    AccessControlConfiguration,
     IIporConfiguration
 {
     //@notice list of supported assets in IPOR Protocol example: DAI, USDT, USDC

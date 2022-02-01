@@ -61,6 +61,13 @@ export default ({ drizzle, drizzleState }) => {
                         <td>{drizzle.contracts.DaiMockedToken.address}</td>
                     </tr>
                 </table>
+                <h4>Check issue</h4>
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="Issue"
+                    method="getMyDecimal"
+                />
             </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
                 <Tab eventKey="iporIndex" title="Warren Oracle">

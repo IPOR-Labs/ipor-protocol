@@ -1,13 +1,14 @@
-import { task } from "hardhat/config";
+import "@openzeppelin/hardhat-upgrades";
+import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-web3";
+
+import { task } from "hardhat/config";
 import "hardhat-tracer";
 import "solidity-coverage";
-import "@nomiclabs/hardhat-web3";
+
 import "dotenv";
-// require("@nomiclabs/hardhat-waffle");
-// require("hardhat-tracer");
-// require("solidity-coverage");
-// require("@nomiclabs/hardhat-web3");
+
 require("dotenv").config();
 
 if (process.env.REPORT_GAS === "true") {

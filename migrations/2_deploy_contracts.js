@@ -1,6 +1,8 @@
 require("dotenv").config({ path: "../.env" });
-const keccak256 = require("keccak256");
+const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 
+const keccak256 = require("keccak256");
+const Issue = artifacts.require("Issue");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 
 const IporConfiguration = artifacts.require("IporConfiguration");
@@ -244,6 +246,8 @@ module.exports = async function (deployer, _network, addresses) {
 
     let miltonFaucet = null;
     let iporConfiguration = null;
+
+    await deployProxy(Issue, { deployer });
 
     await deployer.deploy(IporConfiguration);
     iporConfiguration = await IporConfiguration.deployed();
