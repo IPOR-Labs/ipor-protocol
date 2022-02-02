@@ -678,15 +678,15 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     if (isMainet === false) {
+        await deployer.deploy(ItfWarren, iporConfiguration.address);
+        itfWarren = await ItfWarren.deployed();
+        await itfWarren.addUpdater(admin);
+
         if (process.env.ITF_ENABLED === "true") {
             await iporConfiguration.setWarren(itfWarren.address);
         } else {
             await iporConfiguration.setWarren(warren.address);
         }
-
-        await deployer.deploy(ItfWarren, iporConfiguration.address);
-        itfWarren = await ItfWarren.deployed();
-        await itfWarren.addUpdater(admin);
 
         await deployer.deploy(
             MiltonUsdt,
