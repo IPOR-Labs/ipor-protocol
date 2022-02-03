@@ -42,11 +42,7 @@ interface IIporConfiguration {
 
     function getWarren() external view returns (address);
 
-    function setWarren(address warren) external;
-
-    function setWarrenStorage(address warrenStorage) external;
-
-    function getWarrenStorage() external view returns (address);
+    function setWarren(address warren) external;    
 
     function getAssets() external view returns (address[] memory);
 

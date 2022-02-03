@@ -13,26 +13,22 @@ import "../libraries/Constants.sol";
 import "../tokenization/Joseph.sol";
 
 contract ItfJoseph is Joseph {
+    constructor(
+        address asset,
+        address ipToken,
+        address milton,
+        address miltonStorage
+    ) Joseph(asset, ipToken, milton, miltonStorage) {}
 
-	constructor(address asset, address initialIporConfiguration) Joseph(asset, initialIporConfiguration) {}
-	
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
-    function itfProvideLiquidity(
-        uint256 liquidityAmount,
-        uint256 timestamp
-    ) external {        
-        _provideLiquidity(
-            liquidityAmount,
-            _iporAssetConfiguration.getDecimals(),
-            timestamp
-        );
+    function itfProvideLiquidity(uint256 liquidityAmount, uint256 timestamp)
+        external
+    {
+        _provideLiquidity(liquidityAmount, _decimals, timestamp);
     }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
-    function itfRedeem(
-        uint256 ipTokenVolume,
-        uint256 timestamp
-    ) external {
+    function itfRedeem(uint256 ipTokenVolume, uint256 timestamp) external {
         _redeem(ipTokenVolume, timestamp);
     }
 }

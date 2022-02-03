@@ -23,26 +23,6 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </div>
         </div>
-
-        <div className="row">
-            <div className="col-md-2">Warren Storage</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getWarrenStorage"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setWarrenStorage"
-                />
-            </div>
-        </div>
-
         <div className="row">
             <div className="col-md-2">Milton Spread Model</div>
             <div className="col-md-3">

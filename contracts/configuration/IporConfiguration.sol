@@ -3,10 +3,13 @@ pragma solidity 0.8.9;
 
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
+    Initializable,
     AccessControlConfiguration,
     IIporConfiguration
 {
@@ -22,7 +25,6 @@ contract IporConfiguration is
     mapping(bytes32 => address) private _addresses;
 
     bytes32 private constant _WARREN = keccak256("WARREN");
-    bytes32 private constant _WARREN_STORAGE = keccak256("WARREN_STORAGE");
 
     //TODO: move to MiltonConfiguration
     bytes32 private constant _MILTON_SPREAD_MODEL =
@@ -34,8 +36,7 @@ contract IporConfiguration is
 
     bytes32 private constant _MILTON_PUBLICATION_FEE_TRANSFERER =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
-
-    function getWarren() external view override returns (address) {
+	    function getWarren() external view override returns (address) {
         return _addresses[_WARREN];
     }
 
@@ -47,19 +48,6 @@ contract IporConfiguration is
         _addresses[_WARREN] = warren;
         emit WarrenAddressUpdated(warren);
     }
-
-    function getWarrenStorage() external view override returns (address) {
-        return _addresses[_WARREN_STORAGE];
-    }
-
-    function setWarrenStorage(address warrenStorage)
-        external
-        override
-        onlyRole(_WARREN_STORAGE_ROLE)
-    {
-        _addresses[_WARREN_STORAGE] = warrenStorage;
-        emit WarrenStorageAddressUpdated(warrenStorage);
-    }        
 
     function getMiltonSpreadModel() external view override returns (address) {
         return _addresses[_MILTON_SPREAD_MODEL];
@@ -83,11 +71,9 @@ contract IporConfiguration is
         return _addresses[_MILTON_LP_UTILIZATION_STRATEGY];
     }
 
-    function setMiltonLiquidityPoolUtilizationModel(address miltonUtilizationModel)
-        external
-        override
-        onlyRole(_MILTON_LP_UTILIZATION_STRATEGY_ROLE)
-    {
+    function setMiltonLiquidityPoolUtilizationModel(
+        address miltonUtilizationModel
+    ) external override onlyRole(_MILTON_LP_UTILIZATION_STRATEGY_ROLE) {
         _addresses[_MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationModel;
         emit MiltonUtilizationStrategyUpdated(miltonUtilizationModel);
     }
@@ -145,8 +131,8 @@ contract IporConfiguration is
     {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         bool assetExists = false;
-		uint256 i = 0;
-		uint256 assetsLength = assets.length;
+        uint256 i = 0;
+        uint256 assetsLength = assets.length;
         for (i; i != assetsLength; i++) {
             if (assets[i] == asset) {
                 assetExists = true;
@@ -165,8 +151,8 @@ contract IporConfiguration is
         onlyRole(_IPOR_ASSETS_ROLE)
     {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-		uint256 i = 0;
-		uint256 assetsLength = assets.length;
+        uint256 i = 0;
+        uint256 assetsLength = assets.length;
         for (i; i != assetsLength; i++) {
             if (assets[i] == asset) {
                 delete assets[i];
@@ -177,7 +163,7 @@ contract IporConfiguration is
         }
     }
 
-	//TODO: move asset supported to Warren or remove it forever
+    //TODO: move asset supported to Warren or remove it forever
     function assetSupported(address asset)
         external
         view

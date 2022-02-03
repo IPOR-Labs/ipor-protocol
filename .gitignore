@@ -47,3 +47,5 @@ app/.env
 /artifacts/
 /cache/
 
+# OpenZeppelin
+.openzeppelin/unknown-*.json

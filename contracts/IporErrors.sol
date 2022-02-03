@@ -133,7 +133,7 @@ library IporErrors {
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = "IPOR_39";
 
     //@notice Amount which should be minted is too low
-    string public constant MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_40";
+    string public constant IP_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_40";
 
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = "IPOR_41";

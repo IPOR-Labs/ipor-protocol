@@ -312,31 +312,6 @@ describe("IporAssetConfiguration", () => {
         );
     });
 
-    it("should set Warren Storage", async () => {
-        //given
-        const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        const role = keccak256("WARREN_STORAGE_ROLE");
-        await iporConfiguration.grantRole(role, admin.address);
-        //when
-        await iporConfiguration.setWarrenStorage(mockAddress);
-
-        //then
-        const result = await iporConfiguration.getWarrenStorage();
-        expect(mockAddress).to.be.eql(result);
-    });
-
-    it("should NOT set Warren Storage when user does not have JOSEPH_ROLE role", async () => {
-        //given
-        await assertError(
-            //when
-            iporConfiguration.setWarrenStorage(mockAddress),
-
-            //then
-            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xb527a07823dd490f4af143463d6cd886bd7f2ff7af38e50cce0a4d77dbccc92f`
-        );
-    });
-
     it("should revoke WARREN_STORAGE_ROLE role", async () => {
         //given
         const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
