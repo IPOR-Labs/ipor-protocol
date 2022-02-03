@@ -11,22 +11,22 @@ import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
 import MiltonStorageUsdc from "./contracts/MiltonStorageUsdc.json";
 import MiltonStorageDai from "./contracts/MiltonStorageDai.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
-import IporAssetConfigurationUsdt from "./contracts/IporAssetConfigurationUsdt";
-import IporAssetConfigurationUsdc from "./contracts/IporAssetConfigurationUsdc";
-import IporAssetConfigurationDai from "./contracts/IporAssetConfigurationDai";
-import DaiMockedToken from "./contracts/DaiMockedToken";
-import UsdcMockedToken from "./contracts/UsdcMockedToken";
-import UsdtMockedToken from "./contracts/UsdtMockedToken";
-import MiltonSpreadModel from "./contracts/MiltonSpreadModel";
-import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider";
-import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider";
-import IporConfiguration from "./contracts/IporConfiguration";
-import JosephUsdt from "./contracts/JosephUsdt";
-import JosephUsdc from "./contracts/JosephUsdc";
-import JosephDai from "./contracts/JosephDai";
-import ItfJosephUsdt from "./contracts/ItfJosephUsdt";
-import ItfJosephUsdc from "./contracts/ItfJosephUsdc";
-import ItfJosephDai from "./contracts/ItfJosephDai";
+import IporAssetConfigurationUsdt from "./contracts/IporAssetConfigurationUsdt.json";
+import IporAssetConfigurationUsdc from "./contracts/IporAssetConfigurationUsdc.json";
+import IporAssetConfigurationDai from "./contracts/IporAssetConfigurationDai.json";
+import DaiMockedToken from "./contracts/DaiMockedToken.json";
+import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
+import UsdtMockedToken from "./contracts/UsdtMockedToken.json";
+import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
+import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider.json";
+import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider.json";
+import IporConfiguration from "./contracts/IporConfiguration.json";
+import JosephUsdt from "./contracts/JosephUsdt.json";
+import JosephUsdc from "./contracts/JosephUsdc.json";
+import JosephDai from "./contracts/JosephDai.json";
+import ItfJosephUsdt from "./contracts/ItfJosephUsdt.json";
+import ItfJosephUsdc from "./contracts/ItfJosephUsdc.json";
+import ItfJosephDai from "./contracts/ItfJosephDai.json";
 const options = {
     web3: {
         fallback: {
@@ -40,7 +40,7 @@ const options = {
         MiltonFrontendDataProvider,
         IporConfiguration,
         Warren,
-        ItfWarren,        
+        ItfWarren,
         WarrenDevToolDataProvider,
         MiltonUsdt,
         MiltonUsdc,
@@ -64,9 +64,9 @@ const options = {
         IporAssetConfigurationDai,
         IporAssetConfigurationUsdt,
         IporAssetConfigurationUsdc,
-        MiltonSpreadModel
+        MiltonSpreadModel,
     ],
-    // events: {        
+    // events: {
     // },
 };
 
