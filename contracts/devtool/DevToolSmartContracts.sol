@@ -8,77 +8,29 @@ import "../tokenization/Joseph.sol";
 import "../itf/ItfMilton.sol";
 import "../itf/ItfJoseph.sol";
 
-contract IporAssetConfigurationUsdt is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}
+contract IporAssetConfigurationUsdt is IporAssetConfiguration {}
 
-contract IporAssetConfigurationUsdc is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}
+contract IporAssetConfigurationUsdc is IporAssetConfiguration {}
 
-contract IporAssetConfigurationDai is IporAssetConfiguration {
-    constructor(address asset, address ipToken)
-        IporAssetConfiguration(asset, ipToken)
-    {}
-}
+contract IporAssetConfigurationDai is IporAssetConfiguration {}
 
-contract MiltonUsdt is Milton {
-    constructor(address asset, address initialIporConfiguration)
-        Milton(asset, initialIporConfiguration)
-    {}
-}
+contract MiltonUsdt is Milton {}
 
-contract MiltonUsdc is Milton {
-    constructor(address asset, address initialIporConfiguration)
-        Milton(asset, initialIporConfiguration)
-    {}
-}
+contract MiltonUsdc is Milton {}
 
-contract MiltonDai is Milton {
-    constructor(address asset, address initialIporConfiguration)
-        Milton(asset, initialIporConfiguration)
-    {}
-}
+contract MiltonDai is Milton {}
 
-contract ItfMiltonUsdt is ItfMilton {
-    constructor(address asset, address initialIporConfiguration)
-        ItfMilton(asset, initialIporConfiguration)
-    {}
-}
+contract ItfMiltonUsdt is ItfMilton {}
 
-contract ItfMiltonUsdc is ItfMilton {
-    constructor(address asset, address initialIporConfiguration)
-        ItfMilton(asset, initialIporConfiguration)
-    {}
-}
+contract ItfMiltonUsdc is ItfMilton {}
 
-contract ItfMiltonDai is ItfMilton {
-    constructor(address asset, address initialIporConfiguration)
-        ItfMilton(asset, initialIporConfiguration)
-    {}
-}
+contract ItfMiltonDai is ItfMilton {}
 
-contract MiltonStorageUsdt is MiltonStorage {
-    constructor(address asset, address initialIporConfiguration)
-        MiltonStorage(asset, initialIporConfiguration)
-    {}
-}
+contract MiltonStorageUsdt is MiltonStorage {}
 
-contract MiltonStorageUsdc is MiltonStorage {
-    constructor(address asset, address initialIporConfiguration)
-        MiltonStorage(asset, initialIporConfiguration)
-    {}
-}
+contract MiltonStorageUsdc is MiltonStorage {}
 
-contract MiltonStorageDai is MiltonStorage {
-    constructor(address asset, address initialIporConfiguration)
-        MiltonStorage(asset, initialIporConfiguration)
-    {}
-}
+contract MiltonStorageDai is MiltonStorage {}
 
 contract JosephUsdt is Joseph {
     constructor(

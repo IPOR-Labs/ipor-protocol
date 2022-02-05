@@ -91,8 +91,8 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
     bytes32 internal constant _DECAY_FACTOR_VALUE_ROLE =
         keccak256("DECAY_FACTOR_VALUE_ROLE");
 
-    constructor(address root) {
-        _setupRole(_ADMIN_ROLE, root);
+	function _init() internal {
+		_setupRole(_ADMIN_ROLE, msg.sender);
         _setRoleAdmin(_ADMIN_ROLE, _ADMIN_ROLE);
 
         _setRoleAdmin(_ROLES_INFO_ADMIN_ROLE, _ADMIN_ROLE);
@@ -190,5 +190,5 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
 
         _setRoleAdmin(_DECAY_FACTOR_VALUE_ADMIN_ROLE, _ADMIN_ROLE);
         _setRoleAdmin(_DECAY_FACTOR_VALUE_ROLE, _DECAY_FACTOR_VALUE_ADMIN_ROLE);
-    }
+	}
 }

@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.0",
+    "@openzeppelin/contracts-upgradeable": "^4.4.2",
     "hardhat-tracer": "^1.0.0-alpha.6",
     "keccak256": "^1.0.3"
   }

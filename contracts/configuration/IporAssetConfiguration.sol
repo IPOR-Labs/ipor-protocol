@@ -18,17 +18,17 @@ import "./AccessControlAssetConfiguration.sol";
 
 //TODO: combine with MiltonStorage to minimize external calls in modifiers and simplify code
 contract IporAssetConfiguration is
-    AccessControlAssetConfiguration(msg.sender),
+	Initializable, AccessControlAssetConfiguration(),
     IIporAssetConfiguration
 {
     using SafeCast for uint256;
-    uint8 private immutable _decimals;
+    uint8 private  _decimals;
 
-    uint64 private immutable _maxSlippagePercentage;
+    uint64 private  _maxSlippagePercentage;
 
-    address private immutable _asset;
+    address private  _asset;
 
-    address private immutable _ipToken;
+    address private  _ipToken;
 
     uint64 private _openingFeePercentage;
 
@@ -56,8 +56,6 @@ contract IporAssetConfiguration is
     //@notice Decay factor, value between 0..1, indicator used in spread calculation
     uint128 private _wadDecayFactorValue;
 
-    uint128 private _redeemLpMaxUtilizationPercentage;
-
     address private _milton;
 
     address private _miltonStorage;
@@ -72,8 +70,8 @@ contract IporAssetConfiguration is
     //TODO: fix this name; treasureManager
     address private _treasureTreasurer;
 
-    constructor(address asset, address ipToken) {
-        _asset = asset;
+	function initialize(address asset, address ipToken) public initializer {
+		_asset = asset;
         _ipToken = ipToken;
         uint8 decimals = ERC20(asset).decimals();
         require(decimals != 0, IporErrors.CONFIG_ASSET_DECIMALS_TOO_LOW);
@@ -100,16 +98,13 @@ contract IporAssetConfiguration is
         _liquidityPoolMaxUtilizationPerLegPercentage = (48 *
             IporMath.division(Constants.D18, 100)).toUint64();
 
-        //@dev Redeem Max Utilization rate cannot be lower than Liquidity Pool Max Utilization rate
-        _redeemLpMaxUtilizationPercentage = Constants.D18.toUint128();
-
         _maxSwapTotalAmount = (1e5 * Constants.D18).toUint128();
 
         _minCollateralizationFactorValue = (10 * Constants.D18).toUint128();
         _maxCollateralizationFactorValue = (1000 * Constants.D18).toUint128();
 
         _wadDecayFactorValue = 1e17;
-    }
+	}
 
     function getMilton() external view override returns (address) {
         return _milton;
@@ -266,12 +261,12 @@ contract IporAssetConfiguration is
             IporErrors.CONFIG_LP_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
         );
 
-		require(
-            newLpMaxUtilizationPercentage <=
-                _redeemLpMaxUtilizationPercentage,
-            IporErrors
-                .CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
-        );
+		// require(
+        //     newLpMaxUtilizationPercentage <=
+        //         _redeemLpMaxUtilizationPercentage,
+        //     IporErrors
+        //         .CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
+        // );
 
         _liquidityPoolMaxUtilizationPercentage = newLpMaxUtilizationPercentage
             .toUint64();
@@ -308,37 +303,6 @@ contract IporAssetConfiguration is
             .toUint64();
         emit LiquidityPoolMaxUtilizationPerLegPercentageSet(
             newLpMaxUtilizationPercentage
-        );
-    }
-
-    function getRedeemLpMaxUtilizationPercentage()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _redeemLpMaxUtilizationPercentage;
-    }
-
-    function setRedeemLpMaxUtilizationPercentage(
-        uint256 newRedeemMaxUtilizationPercentage
-    ) external override onlyRole(_REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE) {
-        require(
-            newRedeemMaxUtilizationPercentage >=
-                _liquidityPoolMaxUtilizationPercentage,
-            IporErrors
-                .CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION
-        );
-
-        require(
-            newRedeemMaxUtilizationPercentage <= Constants.D18,
-            IporErrors.CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH
-        );
-
-        _redeemLpMaxUtilizationPercentage = newRedeemMaxUtilizationPercentage
-            .toUint64();
-        emit RedeemMaxUtilizationPercentageSet(
-            newRedeemMaxUtilizationPercentage
         );
     }
 

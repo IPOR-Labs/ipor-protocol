@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 import "../libraries/IporMath.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -29,25 +30,25 @@ import "../interfaces/IJoseph.sol";
  * @author IPOR Labs
  */
 //TODO: add pausable modifier for methodds
-contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
+contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
     using SafeERC20 for IERC20;
     using SafeCast for uint256;
     using SafeCast for uint128;
     using SafeCast for int256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
 
-    uint8 private immutable _decimals;
-    address private immutable _asset;
-    IIpToken private immutable _ipToken;
-    IWarren internal immutable _warren;
+    uint8 private _decimals;
+    address private _asset;
+    IIpToken private _ipToken;
+    IWarren internal _warren;
 
-    IMiltonStorage internal immutable _miltonStorage;
-    IMiltonSpreadModel internal immutable _miltonSpreadModel;
-    IIporConfiguration internal immutable _iporConfiguration;
-    IIporAssetConfiguration internal immutable _iporAssetConfiguration;
+    IMiltonStorage internal _miltonStorage;
+    IMiltonSpreadModel internal _miltonSpreadModel;
+    IIporConfiguration internal _iporConfiguration;
+    IIporAssetConfiguration internal _iporAssetConfiguration;
 
-    constructor(address asset, address initialIporConfiguration) {
-        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
+	function initialize(address asset, address initialIporConfiguration) public initializer {
+		require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(
             address(initialIporConfiguration) != address(0),
             IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
@@ -80,7 +81,8 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         _warren = IWarren(_iporConfiguration.getWarren());
         _ipToken = IIpToken(_iporAssetConfiguration.getIpToken());
         _asset = asset;
-    }
+	}
+  
 
     modifier onlyActiveSwapPayFixed(uint256 swapId) {
         require(

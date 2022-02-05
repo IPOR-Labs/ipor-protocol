@@ -37,8 +37,9 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
     bytes32 internal constant _MILTON_PUBLICATION_FEE_TRANSFERER_ROLE =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
 
-    constructor() {
-        _setupRole(_ADMIN_ROLE, msg.sender);
+
+	function _init()  internal {
+		_setupRole(_ADMIN_ROLE, msg.sender);
         _setRoleAdmin(_ADMIN_ROLE, _ADMIN_ROLE);
 
         _setRoleAdmin(_ROLES_INFO_ADMIN_ROLE, _ADMIN_ROLE);
@@ -79,5 +80,5 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
             _MILTON_PUBLICATION_FEE_TRANSFERER_ROLE,
             _MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE
         );
-    }
+	}
 }

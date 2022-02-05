@@ -4,9 +4,6 @@ pragma solidity 0.8.9;
 import "../amm/Milton.sol";
 
 contract ItfMilton is Milton {
-    constructor(address asset, address initialIporConfiguration)
-        Milton(asset, initialIporConfiguration)
-    {}
 
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,

@@ -72,13 +72,14 @@ describe("IporAssetConfiguration", () => {
             "Liquidity Pool Max Utilization Percentage cannot be higher than 100%"
         ).to.be.lte(PERCENTAGE_100_18DEC);
 
-        let actualRedeemMaxUtilizationPercentage =
-            await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage();
+		//TODO: add test for it
+        // let actualRedeemMaxUtilizationPercentage =
+        //     await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage();
 
-        expect(
-            actualRedeemMaxUtilizationPercentage,
-            "Liquidity Pool Redeem Max Utilization Percentage cannot be higher than 100%"
-        ).to.be.lte(PERCENTAGE_100_18DEC);
+        // expect(
+        //     actualRedeemMaxUtilizationPercentage,
+        //     "Liquidity Pool Redeem Max Utilization Percentage cannot be higher than 100%"
+        // ).to.be.lte(PERCENTAGE_100_18DEC);
 
         let actualMaxUtilizationPerLegPercentage =
             await iporAssetConfigurationDAI.getLiquidityPoolMaxUtilizationPerLegPercentage();
@@ -1377,52 +1378,5 @@ describe("IporAssetConfiguration", () => {
             "IPOR_48"
         );
     });
-
-    it("should set redeemMaxUtilizationPercentage value", async () => {
-        //given
-        const maxUtilizationPercentageValue = BigInt("800000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        const role = keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE");
-        await iporAssetConfigurationDAI.grantRole(role, userOne.address);
-
-        //when
-        await iporAssetConfigurationDAI
-            .connect(userOne)
-            .setRedeemLpMaxUtilizationPercentage(maxUtilizationPercentageValue);
-
-        //then
-        const actualMaxUtilizationPercentageValue = BigInt(
-            await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage()
-        );
-
-        expect(maxUtilizationPercentageValue).to.be.eql(
-            actualMaxUtilizationPercentageValue
-        );
-    });
-
-    it("should NOT set redeemMaxUtilizationPercentage value because lower than liquidityPoolMaxUtilizationPercentage", async () => {
-        //given
-        const maxUtilizationPercentageValue = BigInt("700000000000000000");
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        const role = keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE");
-        await iporAssetConfigurationDAI.grantRole(role, userOne.address);
-
-        //when
-        await assertError(
-            //when
-            iporAssetConfigurationDAI
-                .connect(userOne)
-                .setRedeemLpMaxUtilizationPercentage(
-                    maxUtilizationPercentageValue
-                ),
-            //then
-            "IPOR_56"
-        );
-    });
+    
 });

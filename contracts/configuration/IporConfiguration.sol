@@ -40,6 +40,10 @@ contract IporConfiguration is
         return _addresses[_WARREN];
     }
 
+	function initialize() public initializer {
+		_init();
+	}
+
     function setWarren(address warren)
         external
         override

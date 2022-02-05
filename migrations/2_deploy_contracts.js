@@ -63,6 +63,9 @@ const MiltonFrontendDataProvider = artifacts.require(
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
 
+    await deployer.deploy(MiltonFaucet);
+    const miltonFaucet = await MiltonFaucet.deployed();
+
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
@@ -84,17 +87,52 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(IpToken, mockedDai.address, "IP DAI", "ipDAI");
     const ipDaiToken = await IpToken.deployed();
 
+    const iporAssetConfigurationUsdt = await deployProxy(
+        IporAssetConfigurationUsdt,
+        [mockedUsdt.address, ipUsdtToken.address]
+		// ,
+        // {
+        //     initializer: "initialize",
+        // }
+    );
 
-	
-//------------------------
+    // const iporAssetConfigurationUsdc = await deployProxy(
+    //     IporAssetConfigurationUsdc,
+    //     [mockedUsdc.address, ipUsdcToken.address],
+    //     {
+    //         deployer: deployer,
+    //         initializer: "initialize",
+    //     }
+    // );
 
-    await deployProxy(IporConfiguration, {
-        deployer,
-        unsafeAllow: "constructor",
-    });
-    iporConfiguration = await IporConfiguration.deployed();
+    // const iporAssetConfigurationDai = await deployProxy(
+    //     IporAssetConfigurationDai,
+    //     [mockedDai.address, ipDaiToken.address],
+    //     {
+    //         deployer: deployer,
+    //         initializer: "initialize",
+    //     }
+    // );
 
-    
+    // const iporConfiguration = await deployProxy(IporConfiguration, {
+    //     deployer: deployer,
+    //     initializer: "initialize",
+    // });
+
+    // const miltonStorageUsdt = await deployProxy(
+    //     MiltonStorage,
+    //     [mockedUsdt.address, iporConfiguration.address],
+    //     { deployer: deployer, initializer: "initialize" }
+    // );
+
+    //------------------------
+
+    // await deployProxy(IporConfiguration, {
+    //     deployer,
+    //     unsafeAllow: "constructor",
+    // });
+    // iporConfiguration = await IporConfiguration.deployed();
+
     // // let warren = null;
     // // let miltonUsdt = null;
     // // let miltonUsdc = null;
@@ -117,7 +155,6 @@ module.exports = async function (deployer, _network, addresses) {
     // // let iporAssetConfigurationUsdc = null;
     // // let iporAssetConfigurationDai = null;
 
-    // // let miltonFaucet = null;
     // // let iporConfiguration = null;
 
     // // await deployProxy(Issue, { deployer });
@@ -218,9 +255,6 @@ module.exports = async function (deployer, _network, addresses) {
     //     iporConfiguration.address
     // );
     // miltonStorageDai = await MiltonStorageDai.deployed();
-
-    // await deployer.deploy(MiltonFaucet);
-    // miltonFaucet = await MiltonFaucet.deployed();
 
     // await deployer.deploy(WarrenDevToolDataProvider, iporConfiguration.address);
     // await deployer.deploy(MiltonDevToolDataProvider, iporConfiguration.address);

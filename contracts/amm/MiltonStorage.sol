@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
@@ -12,46 +13,35 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../libraries/Constants.sol";
 
-contract MiltonStorage is Ownable, IMiltonStorage {
+contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
 	using SafeCast for uint256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
-	address private immutable _asset;
-    IIporConfiguration internal immutable _iporConfiguration;
-    IIporAssetConfiguration internal immutable _iporAssetConfiguration;
+    IIporAssetConfiguration internal _iporAssetConfiguration;
 	
     uint64 private _lastSwapId;
+	address private _milton;
+	address private _joseph;
     DataTypes.MiltonTotalBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
     DataTypes.IporSwapContainer internal _swapsPayFixed;
     DataTypes.IporSwapContainer internal _swapsReceiveFixed;
 
-    constructor(address asset, address initialIporConfiguration) {
-        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            address(initialIporConfiguration) != address(0),
-            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );
-        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
-
-        require(
-            _iporConfiguration.assetSupported(asset) == 1,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-        );
-       
-		address iporAssetConfigurationAddr = _iporConfiguration.getIporAssetConfiguration(asset);
-
-		require(address(iporAssetConfigurationAddr) != address(0), IporErrors.WRONG_ADDRESS);
-
+	function initialize(address iporAssetConfiguration) public initializer {		
+        require(address(iporAssetConfiguration) != address(0), IporErrors.WRONG_ADDRESS);       
         _iporAssetConfiguration = IIporAssetConfiguration(
-			iporAssetConfigurationAddr
-        );		
-
-		_asset = asset;
+			iporAssetConfiguration
+        );
     }
+	function setMilton(address milton) external override onlyOwner{
+		_milton = milton;
+	}
+	function setJoseph(address joseph) external override onlyOwner{
+		_joseph = joseph;
+	}
 
     function getBalance()
         external
@@ -880,7 +870,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyMilton() {
         require(
-            msg.sender == _iporAssetConfiguration.getMilton(),
+            msg.sender == _milton,
             IporErrors.MILTON_CALLER_NOT_MILTON
         );
         _;
@@ -888,7 +878,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     modifier onlyJoseph() {
         require(
-            msg.sender == _iporAssetConfiguration.getJoseph(),
+            msg.sender == _joseph,
             IporErrors.MILTON_CALLER_NOT_JOSEPH
         );
         _;

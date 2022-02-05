@@ -752,73 +752,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
 
-                <tr>
-                    <td>
-                        <strong>
-                            Redeem Liquidity Pool Max Utilization Percentage
-                        </strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getRedeemLpMaxUtilizationPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setRedeemLpMaxUtilizationPercentage"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getRedeemLpMaxUtilizationPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setRedeemLpMaxUtilizationPercentage"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getRedeemLpMaxUtilizationPercentage"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setRedeemLpMaxUtilizationPercentage"
-                        />
-                    </td>
-                </tr>
+                
 
                 <tr>
                     <td>
