@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "../configuration/IporAssetConfiguration.sol";
+import "../tokenization/IpToken.sol";
 import "../amm/Milton.sol";
 import "../amm/MiltonStorage.sol";
 import "../tokenization/Joseph.sol";
@@ -13,6 +14,30 @@ contract IporAssetConfigurationUsdt is IporAssetConfiguration {}
 contract IporAssetConfigurationUsdc is IporAssetConfiguration {}
 
 contract IporAssetConfigurationDai is IporAssetConfiguration {}
+
+contract IpTokenUsdt is IpToken {
+    constructor(
+        address underlyingAsset,
+        string memory aTokenName,
+        string memory aTokenSymbol
+    ) IpToken(underlyingAsset, aTokenName, aTokenSymbol) {}
+}
+
+contract IpTokenUsdc is IpToken {
+    constructor(
+        address underlyingAsset,
+        string memory aTokenName,
+        string memory aTokenSymbol
+    ) IpToken(underlyingAsset, aTokenName, aTokenSymbol) {}
+}
+
+contract IpTokenDai is IpToken {
+    constructor(
+        address underlyingAsset,
+        string memory aTokenName,
+        string memory aTokenSymbol
+    ) IpToken(underlyingAsset, aTokenName, aTokenSymbol) {}
+}
 
 contract MiltonUsdt is Milton {}
 

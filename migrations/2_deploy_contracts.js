@@ -9,7 +9,9 @@ const MiltonFaucet = artifacts.require("MiltonFaucet");
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
 const DaiMockedToken = artifacts.require("DaiMockedToken");
-const IpToken = artifacts.require("IpToken");
+const IpTokenUsdt = artifacts.require("IpTokenUsdt");
+const IpTokenUsdc = artifacts.require("IpTokenUsdc");
+const IpTokenDai = artifacts.require("IpTokenDai");
 const IporAssetConfigurationUsdt = artifacts.require(
     "IporAssetConfigurationUsdt"
 );
@@ -57,11 +59,11 @@ const MiltonFrontendDataProvider = artifacts.require(
 module.exports = async function (deployer, _network, addresses) {
     const [admin, userOne, userTwo, userThree, _] = addresses;
 
-    await deployer.deploy(MiltonFaucet);
-    const miltonFaucet = await MiltonFaucet.deployed();
-
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
+
+    await deployer.deploy(MiltonFaucet);
+    const miltonFaucet = await MiltonFaucet.deployed();
 
     await deployer.deploy(UsdtMockedToken, stableTotalSupply6Decimals, 6);
     const mockedUsdt = await UsdtMockedToken.deployed();
@@ -72,14 +74,14 @@ module.exports = async function (deployer, _network, addresses) {
     await deployer.deploy(DaiMockedToken, stableTotalSupply18Decimals, 18);
     const mockedDai = await DaiMockedToken.deployed();
 
-    await deployer.deploy(IpToken, mockedUsdt.address, "IP USDT", "ipUSDT");
-    const ipUsdtToken = await IpToken.deployed();
+    await deployer.deploy(IpTokenUsdt, mockedUsdt.address, "IP USDT", "ipUSDT");
+    const ipUsdtToken = await IpTokenUsdt.deployed();
 
-    await deployer.deploy(IpToken, mockedUsdc.address, "IP USDC", "ipUSDC");
-    const ipUsdcToken = await IpToken.deployed();
+    await deployer.deploy(IpTokenUsdc, mockedUsdc.address, "IP USDC", "ipUSDC");
+    const ipUsdcToken = await IpTokenUsdc.deployed();
 
-    await deployer.deploy(IpToken, mockedDai.address, "IP DAI", "ipDAI");
-    const ipDaiToken = await IpToken.deployed();
+    await deployer.deploy(IpTokenDai, mockedDai.address, "IP DAI", "ipDAI");
+    const ipDaiToken = await IpTokenDai.deployed();
 
     const iporAssetConfigurationUsdt = await deployProxy(
         IporAssetConfigurationUsdt,
