@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
@@ -11,12 +13,23 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 
-contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
-    IIporConfiguration internal immutable _iporConfiguration;
+contract MiltonFrontendDataProvider is
+    Initializable,
+    OwnableUpgradeable,
+    UUPSUpgradeable,
+    IMiltonFrontendDataProvider
+{
+    IIporConfiguration internal _iporConfiguration;
 
-    constructor(IIporConfiguration initialIporConfiguration) {
-        _iporConfiguration = initialIporConfiguration;
+    function initialize(IIporConfiguration iporConfiguration)
+        public
+        initializer
+    {
+        __Ownable_init();
+        _iporConfiguration = iporConfiguration;
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function getIpTokenExchangeRate(address asset)
         external

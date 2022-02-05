@@ -5,6 +5,8 @@ import {DataTypes} from "../libraries/types/DataTypes.sol";
 
 interface IWarren {    
 	
+    function addAsset(address asset) external;
+    function removeAsset(address asset) external;	
 	function getAssets() external view returns (address[] memory);
     function getIndex(address asset)
         external

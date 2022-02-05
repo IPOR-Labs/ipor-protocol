@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
-import "../interfaces/IMiltonLiquidityPoolUtilizationModel.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IWarren.sol";
 import {IporMath} from "../libraries/IporMath.sol";
@@ -15,15 +16,45 @@ import "./MiltonSpreadModelCore.sol";
 import "../configuration/MiltonSpreadConfiguration.sol";
 
 contract MiltonSpreadModel is
+    Initializable,
+    UUPSUpgradeable,
     MiltonSpreadModelCore,
     MiltonSpreadConfiguration,
     IMiltonSpreadModel
 {
-	using SafeCast for uint256;
+    using SafeCast for uint256;
+
+    function initialize() public initializer {
+        _init();
+
+        _demandComponentKfValue = (IporMath.division(Constants.D18, 100))
+            .toUint64();
+        _demandComponentLambdaValue = (IporMath.division(Constants.D18, 100))
+            .toUint64();
+        _demandComponentKOmegaValue = (IporMath.division(Constants.D18, 100))
+            .toUint64();
+
+        _demandComponentMaxLiquidityRedemptionValue = Constants.D18.toUint64();
+
+        _atParComponentKVolValue = (IporMath.division(Constants.D18, 100))
+            .toUint64();
+
+        _atParComponentKHistValue = (IporMath.division(Constants.D18, 100))
+            .toUint64();
+
+        _maxValue = (IporMath.division(3 * Constants.D16, 10)).toUint64();
+    }
+
+    function _authorizeUpgrade(address)
+        internal
+        override
+        onlyRole(_ADMIN_ROLE)
+    {}
+
     function calculatePartialSpreadPayFixed(
         IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
-		DataTypes.AccruedIpor memory accruedIpor
+        DataTypes.AccruedIpor memory accruedIpor
     ) external view override returns (uint256 spreadValue) {
         DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
             .getBalance();
@@ -127,8 +158,7 @@ contract MiltonSpreadModel is
     ) internal view returns (uint256 spreadValue) {
         require(
             liquidityPoolBalance + swapOpeningFee != 0,
-            IporErrors
-                .MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
             swapCollateral,
@@ -148,7 +178,7 @@ contract MiltonSpreadModel is
     }
 
     function _calculateSpreadRecFixed(
-		DataTypes.AccruedIpor memory accruedIpor,        
+        DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
         uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
@@ -158,8 +188,7 @@ contract MiltonSpreadModel is
     ) internal view returns (uint256 spreadValue) {
         require(
             liquidityPoolBalance + swapOpeningFee != 0,
-            IporErrors
-                .MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
             swapCollateral,
@@ -199,10 +228,7 @@ contract MiltonSpreadModel is
         if (kfDenominator != 0) {
             if (soapPayFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
-                    _calculateSoapPlus(
-                        soapPayFixed,
-                        payFixedSwapsBalance
-                    );
+                    _calculateSoapPlus(soapPayFixed, payFixedSwapsBalance);
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
@@ -265,7 +291,7 @@ contract MiltonSpreadModel is
             return 0;
         } else {
             uint256 mu = IporMath.absoluteValue(
-                exponentialMovingAverage.toInt256()- iporIndexValue.toInt256()
+                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
             );
             if (mu == Constants.D18) {
                 return maxSpreadValue;
@@ -289,10 +315,10 @@ contract MiltonSpreadModel is
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutSwap(
-                swapOpeningFee,
-                liquidityPoolBalance,
-                receiveFixedSwapsBalance
-            );
+            swapOpeningFee,
+            liquidityPoolBalance,
+            receiveFixedSwapsBalance
+        );
 
         uint256 utilizationRatePayFixedWithPosition = _calculateUtilizationRateWithPosition(
                 swapCollateral,
@@ -329,10 +355,7 @@ contract MiltonSpreadModel is
         if (kfDenominator != 0) {
             if (soapRecFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
-                    _calculateSoapPlus(
-                        soapRecFixed,
-                        receiveFixedSwapsBalance
-                    );
+                    _calculateSoapPlus(soapRecFixed, receiveFixedSwapsBalance);
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
@@ -377,7 +400,7 @@ contract MiltonSpreadModel is
             if (historicalDeviation < _maxValue) {
                 return
                     IporMath.division(
-                        _atParComponentKVolValue* Constants.D18,
+                        _atParComponentKVolValue * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
             } else {
@@ -396,7 +419,7 @@ contract MiltonSpreadModel is
             return 0;
         } else {
             uint256 mu = IporMath.absoluteValue(
-                exponentialMovingAverage.toInt256()- iporIndexValue.toInt256()
+                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
             );
             if (mu == Constants.D18) {
                 return maxSpreadValue;
@@ -419,10 +442,10 @@ contract MiltonSpreadModel is
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutSwap(
-                swapOpeningFee,
-                liquidityPoolBalance,
-                payFixedSwapsBalance
-            );
+            swapOpeningFee,
+            liquidityPoolBalance,
+            payFixedSwapsBalance
+        );
 
         uint256 utilizationRateRecFixedWithPosition = _calculateUtilizationRateWithPosition(
                 swapCollateral,

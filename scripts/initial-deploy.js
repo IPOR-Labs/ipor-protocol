@@ -8,8 +8,9 @@ async function main() {
     //     accounts.map((a) => a.address)
     // );
     console.log("Deploying Issue...");
-	const Issue = await ethers.getContractFactory("Issue");
-    const issue = await upgrades.deployProxy(Issue);
+    const Issue = await ethers.getContractFactory("Issue");
+    const issue = await upgrades.deployProxy(Issue, { kind: "uups" });
+	console.log("Issue address = ", issue);
     //IporConfiguration
 }
 

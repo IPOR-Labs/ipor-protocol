@@ -7,10 +7,10 @@ import "../interfaces/IMiltonSpreadConfiguration.sol";
 import "./AccessControlMiltonSpreadConfiguration.sol";
 
 contract MiltonSpreadConfiguration is
-    AccessControlMiltonSpreadConfiguration(msg.sender),
+    AccessControlMiltonSpreadConfiguration,
     IMiltonSpreadConfiguration
 {
-	using SafeCast for uint256;
+    using SafeCast for uint256;
     //TODO: [gas-opt] move to immutable all fields here
 
     //@notice Spread Max Value
@@ -33,28 +33,6 @@ contract MiltonSpreadConfiguration is
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
     uint64 internal _atParComponentKHistValue;
-
-    constructor() {
-        _demandComponentKfValue = (IporMath.division(Constants.D18, 100)).toUint64();
-        _demandComponentLambdaValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-        _demandComponentKOmegaValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-
-        _demandComponentMaxLiquidityRedemptionValue = Constants.D18.toUint64();
-
-        _atParComponentKVolValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-
-        _atParComponentKHistValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-
-        _maxValue = (IporMath.division(3 * Constants.D16, 10)).toUint64();
-    }
 
     function getSpreadMaxValue() external view override returns (uint256) {
         return _maxValue;
@@ -99,8 +77,8 @@ contract MiltonSpreadConfiguration is
     function setDemandComponentLambdaValue(
         uint256 newSpreadDemandComponentLambdaValue
     ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE) {
-        _demandComponentLambdaValue = 
-            newSpreadDemandComponentLambdaValue.toUint64();
+        _demandComponentLambdaValue = newSpreadDemandComponentLambdaValue
+            .toUint64();
         emit SpreadDemandComponentLambdaValueSet(
             newSpreadDemandComponentLambdaValue
         );
@@ -118,8 +96,8 @@ contract MiltonSpreadConfiguration is
     function setDemandComponentKOmegaValue(
         uint256 newSpreadDemandComponentKOmegaValue
     ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE) {
-        _demandComponentKOmegaValue = 
-            newSpreadDemandComponentKOmegaValue.toUint64();
+        _demandComponentKOmegaValue = newSpreadDemandComponentKOmegaValue
+            .toUint64();
         emit SpreadDemandComponentKOmegaValueSet(
             newSpreadDemandComponentKOmegaValue
         );
@@ -141,8 +119,8 @@ contract MiltonSpreadConfiguration is
         override
         onlyRole(_SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE)
     {
-        _demandComponentMaxLiquidityRedemptionValue = 
-            newSpreadDemandComponentMaxLiquidityRedemptionValue.toUint64();
+        _demandComponentMaxLiquidityRedemptionValue = newSpreadDemandComponentMaxLiquidityRedemptionValue
+            .toUint64();
         emit SpreadDemandComponentMaxLiquidityRedemptionValueSet(
             newSpreadDemandComponentMaxLiquidityRedemptionValue
         );

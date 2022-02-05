@@ -3,13 +3,15 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 import "../libraries/IporMath.sol";
-import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
 import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
@@ -30,8 +32,16 @@ import "../interfaces/IJoseph.sol";
  * @author IPOR Labs
  */
 //TODO: add pausable modifier for methodds
-contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
-    using SafeERC20 for IERC20;
+contract Milton is
+    Initializable,
+    UUPSUpgradeable,
+    OwnableUpgradeable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    IMiltonEvents,
+    IMilton
+{
+    using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for uint128;
     using SafeCast for int256;
@@ -47,42 +57,42 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
     IIporConfiguration internal _iporConfiguration;
     IIporAssetConfiguration internal _iporAssetConfiguration;
 
-	function initialize(address asset, address initialIporConfiguration) public initializer {
-		require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
+    function initialize(
+        address asset,
+        address ipToken,
+        address warren,
+        address miltonStorage,
+        address miltonSpreadModel,
+        address initialIporConfiguration,
+		address iporAssetConfigurationAddr
+    ) public initializer {
+        __Ownable_init();
+        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(ipToken) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(warren) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
+        require(
+            address(miltonSpreadModel) != address(0),
+            IporErrors.WRONG_ADDRESS
+        );
         require(
             address(initialIporConfiguration) != address(0),
             IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
         );
         _iporConfiguration = IIporConfiguration(initialIporConfiguration);
-        require(
-            _iporConfiguration.assetSupported(asset) == 1,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-        );
-
-        address iporAssetConfigurationAddr = _iporConfiguration
-            .getIporAssetConfiguration(asset);
-
-        require(
-            address(iporAssetConfigurationAddr) != address(0),
-            IporErrors.WRONG_ADDRESS
-        );
-
         _iporAssetConfiguration = IIporAssetConfiguration(
             iporAssetConfigurationAddr
         );
 
-        _decimals = _iporAssetConfiguration.getDecimals();
-        _miltonStorage = IMiltonStorage(
-            _iporAssetConfiguration.getMiltonStorage()
-        );
-        _miltonSpreadModel = IMiltonSpreadModel(
-            _iporConfiguration.getMiltonSpreadModel()
-        );
-        _warren = IWarren(_iporConfiguration.getWarren());
-        _ipToken = IIpToken(_iporAssetConfiguration.getIpToken());
+        _decimals = ERC20Upgradeable(asset).decimals();
+        _miltonStorage = IMiltonStorage(miltonStorage);
+        _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
+        _warren = IWarren(warren);
+        _ipToken = IIpToken(ipToken);
         _asset = asset;
-	}
-  
+    }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     modifier onlyActiveSwapPayFixed(uint256 swapId) {
         require(
@@ -122,7 +132,7 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
     //    }
 
     function authorizeJoseph() external override onlyOwner whenNotPaused {
-        IERC20(_asset).safeIncreaseAllowance(
+        IERC20Upgradeable(_asset).safeIncreaseAllowance(
             _iporAssetConfiguration.getJoseph(),
             Constants.MAX_VALUE
         );
@@ -148,7 +158,7 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
         _miltonStorage.updateStorageWhenTransferPublicationFee(amount);
         //TODO: user Address from OZ and use call
         //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
-        IERC20(_asset).safeTransfer(charlieTreasurer, amount);
+        IERC20Upgradeable(_asset).safeTransfer(charlieTreasurer, amount);
     }
 
     //TODO: !!! consider connect configuration with milton storage,
@@ -390,7 +400,7 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
         require(totalAmount != 0, IporErrors.MILTON_TOTAL_AMOUNT_TOO_LOW);
 
         require(
-            IERC20(_asset).balanceOf(msg.sender) >= totalAmount,
+            IERC20Upgradeable(_asset).balanceOf(msg.sender) >= totalAmount,
             IporErrors.MILTON_ASSET_BALANCE_OF_TOO_LOW
         );
 
@@ -512,7 +522,11 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
         //TODO: sendValue z Address (use with ReentrancyGuard)
-        IERC20(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            msg.sender,
+            address(this),
+            totalAmount
+        );
 
         _emitOpenSwapEvent(
             newSwapId,
@@ -587,7 +601,11 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
         //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
         //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
         //TODO: sendValue z Address (use with ReentrancyGuard)
-        IERC20(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            msg.sender,
+            address(this),
+            totalAmount
+        );
 
         _emitOpenSwapEvent(
             newSwapId,
@@ -852,7 +870,7 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
         } else {
             //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             //transfer liquidation deposit amount from Milton to Sender
-            IERC20(_asset).safeTransfer(
+            IERC20Upgradeable(_asset).safeTransfer(
                 msg.sender,
                 IporMath.convertWadToAssetDecimals(
                     liquidationDepositAmount,
@@ -864,7 +882,7 @@ contract Milton is Initializable, Ownable, Pausable, ReentrancyGuard, IMiltonEve
         if (transferAmount != 0) {
             //transfer from Milton to Trader
             //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
-            IERC20(_asset).safeTransfer(
+            IERC20Upgradeable(_asset).safeTransfer(
                 buyer,
                 IporMath.convertWadToAssetDecimals(transferAmount, _decimals)
             );

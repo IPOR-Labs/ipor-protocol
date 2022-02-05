@@ -47,8 +47,8 @@ abstract contract AccessControlMiltonSpreadConfiguration is
     bytes32 internal constant _SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE =
         keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE");
 
-    constructor(address root) {
-        _setupRole(_ADMIN_ROLE, root);
+		function _init()  internal {
+        _setupRole(_ADMIN_ROLE, msg.sender);
         _setRoleAdmin(_ADMIN_ROLE, _ADMIN_ROLE);
 
         _setRoleAdmin(_ROLES_INFO_ADMIN_ROLE, _ADMIN_ROLE);

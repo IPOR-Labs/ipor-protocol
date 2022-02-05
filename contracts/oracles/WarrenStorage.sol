@@ -1,23 +1,27 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarrenStorage.sol";
 import {Constants} from "../libraries/Constants.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "../libraries/IporLogic.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
-import "../interfaces/IIporConfiguration.sol";
 
 /**
  * @title Ipor Oracle Storage initial version
  * @author IPOR Labs
  */
-contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
-	using SafeCast for uint256;
+contract WarrenStorage is
+    UUPSUpgradeable,
+    OwnableUpgradeable,
+    PausableUpgradeable,
+    IWarrenStorage
+{
+    using SafeCast for uint256;
     using IporLogic for DataTypes.IPOR;
 
     /// @notice event emitted when IPOR Index is updated by Updater
@@ -36,11 +40,12 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
     /// @notice event emitted when IPOR Index Updater is removed by Admin
     event IporIndexUpdaterRemove(address updater);
 
-    IIporConfiguration internal immutable _iporConfiguration;
+    uint256 private constant DECAY_FACTOR_VALUE = 1e17;
 
     /// @notice list of assets used in indexes mapping
     address[] internal _assets;
     mapping(address => bool) internal _assetsMap;
+    mapping(address => uint256) internal _supportedAssets;
 
     /// @notice list of addresses which has rights to modify indexes mapping
     address[] internal _updaters;
@@ -48,14 +53,6 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
 
     /// @notice list of IPOR indexes for particular assets
     mapping(address => DataTypes.IPOR) internal _indexes;
-
-    constructor(address initialIporConfiguration) {
-        require(
-            address(initialIporConfiguration) != address(0),
-            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );
-        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
-    }
 
     function pause() external override onlyOwner {
         _pause();
@@ -86,6 +83,8 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
         return _updaters;
     }
 
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
     function _addUpdater(address updater) internal {
         require(updater != address(0), IporErrors.WARREN_WRONG_UPDATER_ADDRESS);
 
@@ -101,18 +100,9 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
         uint256 indexValue,
         uint256 updateTimestamp
     ) internal onlyUpdater {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            );
-
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
         uint256 newExponentialWeightedMovingVariance;
-        // uint256 power = IporMath.division((updateTimestamp-indexes[asset].blockTimestamp)*Constants.D18, iporAssetConfiguration.getDecayFactorValue());
-        // uint256 alpha = IporMath.division(Constants.D18, Constants.E_VALUE ** power);
-        //TODO: figure out how to calculate alpha???
-        //TODO: move this const to Warren internally - dont use iporassetconfiguration in warren
-        uint256 alpha = iporAssetConfiguration.getDecayFactorValue();
 
         if (!_assetsMap[asset]) {
             _assetsMap[asset] = true;
@@ -129,7 +119,7 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
                 .calculateExponentialMovingAverage(
                     ipor.exponentialMovingAverage,
                     indexValue,
-                    alpha
+                    DECAY_FACTOR_VALUE
                 );
 
             newExponentialWeightedMovingVariance = IporLogic
@@ -137,7 +127,7 @@ contract WarrenStorage is Ownable, Pausable, IWarrenStorage {
                     ipor.exponentialWeightedMovingVariance,
                     newExponentialMovingAverage,
                     indexValue,
-                    alpha
+                    DECAY_FACTOR_VALUE
                 );
         }
         _indexes[asset] = DataTypes.IPOR(

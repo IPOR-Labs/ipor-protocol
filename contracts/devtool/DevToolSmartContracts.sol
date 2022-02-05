@@ -32,56 +32,14 @@ contract MiltonStorageUsdc is MiltonStorage {}
 
 contract MiltonStorageDai is MiltonStorage {}
 
-contract JosephUsdt is Joseph {
-    constructor(
-        address asset,
-        address ipToken,
-        address milton,
-        address miltonStorage
-    ) Joseph(asset, ipToken, milton, miltonStorage) {}
-}
+contract JosephUsdt is Joseph {}
 
-contract JosephUsdc is Joseph {
-    constructor(
-        address asset,
-        address ipToken,
-        address milton,
-        address miltonStorage
-    ) Joseph(asset, ipToken, milton, miltonStorage) {}
-}
+contract JosephUsdc is Joseph {}
 
-contract JosephDai is Joseph {
-    constructor(
-        address asset,
-        address ipToken,
-        address milton,
-        address miltonStorage
-    ) Joseph(asset, ipToken, milton, miltonStorage) {}
-}
+contract JosephDai is Joseph {}
 
-contract ItfJosephUsdt is ItfJoseph {
-    constructor(
-        address asset,
-        address ipToken,
-        address milton,
-        address miltonStorage
-    ) ItfJoseph(asset, ipToken, milton, miltonStorage) {}
-}
+contract ItfJosephUsdt is ItfJoseph {}
 
-contract ItfJosephUsdc is ItfJoseph {
-    constructor(
-        address asset,
-        address ipToken,
-        address milton,
-        address miltonStorage
-    ) ItfJoseph(asset, ipToken, milton, miltonStorage) {}
-}
+contract ItfJosephUsdc is ItfJoseph {}
 
-contract ItfJosephDai is ItfJoseph {
-    constructor(
-        address asset,
-        address ipToken,
-        address milton,
-        address miltonStorage
-    ) ItfJoseph(asset, ipToken, milton, miltonStorage) {}
-}
+contract ItfJosephDai is ItfJoseph {}

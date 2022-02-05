@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+
 import "../libraries/types/DataTypes.sol";
 import "../libraries/IporSwapLogic.sol";
 import "../libraries/IporMath.sol";
@@ -18,7 +21,7 @@ import "./AccessControlAssetConfiguration.sol";
 
 //TODO: combine with MiltonStorage to minimize external calls in modifiers and simplify code
 contract IporAssetConfiguration is
-	Initializable, AccessControlAssetConfiguration(),
+	Initializable, UUPSUpgradeable, AccessControlAssetConfiguration,
     IIporAssetConfiguration
 {
     using SafeCast for uint256;
@@ -71,6 +74,7 @@ contract IporAssetConfiguration is
     address private _treasureTreasurer;
 
 	function initialize(address asset, address ipToken) public initializer {
+		_init();
 		_asset = asset;
         _ipToken = ipToken;
         uint8 decimals = ERC20(asset).decimals();
@@ -105,6 +109,8 @@ contract IporAssetConfiguration is
 
         _wadDecayFactorValue = 1e17;
 	}
+
+	function _authorizeUpgrade(address) internal override  onlyRole(_ADMIN_ROLE) {}
 
     function getMilton() external view override returns (address) {
         return _milton;

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../libraries/IporSwapLogic.sol";
@@ -13,35 +14,43 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../libraries/Constants.sol";
 
-contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
+contract MiltonStorage is Initializable, OwnableUpgradeable, UUPSUpgradeable, IMiltonStorage {
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
-	using SafeCast for uint256;
+    using SafeCast for uint256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
     IIporAssetConfiguration internal _iporAssetConfiguration;
-	
+
     uint64 private _lastSwapId;
-	address private _milton;
-	address private _joseph;
+    address private _milton;
+    address private _joseph;
     DataTypes.MiltonTotalBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
     DataTypes.IporSwapContainer internal _swapsPayFixed;
     DataTypes.IporSwapContainer internal _swapsReceiveFixed;
 
-	function initialize(address iporAssetConfiguration) public initializer {		
-        require(address(iporAssetConfiguration) != address(0), IporErrors.WRONG_ADDRESS);       
+    function initialize(address iporAssetConfiguration) public initializer {
+        __Ownable_init();
+        require(
+            address(iporAssetConfiguration) != address(0),
+            IporErrors.WRONG_ADDRESS
+        );
         _iporAssetConfiguration = IIporAssetConfiguration(
-			iporAssetConfiguration
+            iporAssetConfiguration
         );
     }
-	function setMilton(address milton) external override onlyOwner{
-		_milton = milton;
-	}
-	function setJoseph(address joseph) external override onlyOwner{
-		_joseph = joseph;
-	}
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function setMilton(address milton) external override onlyOwner {
+        _milton = milton;
+    }
+
+    function setJoseph(address joseph) external override onlyOwner {
+        _joseph = joseph;
+    }
 
     function getBalance()
         external
@@ -444,7 +453,9 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
             _balances.payFixedSwaps +
             collateral.toUint128();
 
-        _balances.openingFee = _balances.openingFee + openingFeeAmount.toUint128();
+        _balances.openingFee =
+            _balances.openingFee +
+            openingFeeAmount.toUint128();
         _balances.liquidationDeposit =
             _balances.liquidationDeposit +
             _iporAssetConfiguration.getLiquidationDepositAmount().toUint128();
@@ -477,7 +488,9 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
             _balances.receiveFixedSwaps +
             collateral.toUint128();
 
-        _balances.openingFee = _balances.openingFee + openingFeeAmount.toUint128();
+        _balances.openingFee =
+            _balances.openingFee +
+            openingFeeAmount.toUint128();
         _balances.liquidationDeposit =
             _balances.liquidationDeposit +
             _iporAssetConfiguration.getLiquidationDepositAmount().toUint128();
@@ -648,8 +661,9 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
 
         swap.id = id;
         swap.collateral = newSwap.collateral.toUint128();
-        swap.liquidationDepositAmount = 
-            newSwap.liquidationDepositAmount.toUint128();
+        swap.liquidationDepositAmount = newSwap
+            .liquidationDepositAmount
+            .toUint128();
         swap.notionalAmount = newSwap.notionalAmount.toUint128();
         swap.fixedInterestRate = newSwap.fixedInterestRate.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
@@ -676,8 +690,9 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
 
         swap.id = id;
         swap.collateral = newSwap.collateral.toUint128();
-        swap.liquidationDepositAmount = 
-            newSwap.liquidationDepositAmount.toUint128();
+        swap.liquidationDepositAmount = newSwap
+            .liquidationDepositAmount
+            .toUint128();
         swap.notionalAmount = newSwap.notionalAmount.toUint128();
         swap.fixedInterestRate = newSwap.fixedInterestRate.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
@@ -776,12 +791,18 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
         );
-        _soapIndicatorsPayFixed.rebalanceTimestamp = 
-            pf.rebalanceTimestamp.toUint32();
+        _soapIndicatorsPayFixed.rebalanceTimestamp = pf
+            .rebalanceTimestamp
+            .toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
-        _soapIndicatorsPayFixed.averageInterestRate = pf.averageInterestRate.toUint128();
-        _soapIndicatorsPayFixed.totalIbtQuantity = pf.totalIbtQuantity.toUint128();
-        _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative = pf.quasiHypotheticalInterestCumulative;
+        _soapIndicatorsPayFixed.averageInterestRate = pf
+            .averageInterestRate
+            .toUint128();
+        _soapIndicatorsPayFixed.totalIbtQuantity = pf
+            .totalIbtQuantity
+            .toUint128();
+        _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative = pf
+            .quasiHypotheticalInterestCumulative;
     }
 
     function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
@@ -801,13 +822,20 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
             newSwap.ibtQuantity
         );
 
-        _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
-        _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();
-        _soapIndicatorsReceiveFixed.averageInterestRate = rf.averageInterestRate.toUint128();
-        _soapIndicatorsReceiveFixed.totalIbtQuantity = rf.totalIbtQuantity.toUint128();
-        _soapIndicatorsReceiveFixed
-            .quasiHypotheticalInterestCumulative = 
-            rf.quasiHypotheticalInterestCumulative;
+        _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf
+            .rebalanceTimestamp
+            .toUint32();
+        _soapIndicatorsReceiveFixed.totalNotional = rf
+            .totalNotional
+            .toUint128();
+        _soapIndicatorsReceiveFixed.averageInterestRate = rf
+            .averageInterestRate
+            .toUint128();
+        _soapIndicatorsReceiveFixed.totalIbtQuantity = rf
+            .totalIbtQuantity
+            .toUint128();
+        _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative = rf
+            .quasiHypotheticalInterestCumulative;
     }
 
     function _updateSoapIndicatorsWhenCloseSwapPayFixed(
@@ -831,8 +859,8 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
         );
 
         _soapIndicatorsPayFixed = DataTypes.SoapIndicatorStorage(
-			pf.rebalanceTimestamp.toUint32(),
-			pf.totalNotional.toUint128(),
+            pf.rebalanceTimestamp.toUint32(),
+            pf.totalNotional.toUint128(),
             pf.averageInterestRate.toUint128(),
             pf.totalIbtQuantity.toUint128(),
             pf.quasiHypotheticalInterestCumulative
@@ -860,8 +888,8 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
         );
 
         _soapIndicatorsReceiveFixed = DataTypes.SoapIndicatorStorage(
-			rf.rebalanceTimestamp.toUint32(),
-			rf.totalNotional.toUint128(),
+            rf.rebalanceTimestamp.toUint32(),
+            rf.totalNotional.toUint128(),
             rf.averageInterestRate.toUint128(),
             rf.totalIbtQuantity.toUint128(),
             rf.quasiHypotheticalInterestCumulative
@@ -869,18 +897,12 @@ contract MiltonStorage is Initializable, Ownable, IMiltonStorage {
     }
 
     modifier onlyMilton() {
-        require(
-            msg.sender == _milton,
-            IporErrors.MILTON_CALLER_NOT_MILTON
-        );
+        require(msg.sender == _milton, IporErrors.MILTON_CALLER_NOT_MILTON);
         _;
     }
 
     modifier onlyJoseph() {
-        require(
-            msg.sender == _joseph,
-            IporErrors.MILTON_CALLER_NOT_JOSEPH
-        );
+        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }
 }

@@ -1,42 +1,15 @@
-require("dotenv").config({ path: "../.env" });
+// require("dotenv").config({ path: "../.env" });
+
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 
-const keccak256 = require("keccak256");
+// const keccak256 = require("keccak256");
 const Issue = artifacts.require("Issue");
+
 const MiltonFaucet = artifacts.require("MiltonFaucet");
-
-const IporConfiguration = artifacts.require("IporConfiguration");
-
-const IpToken = artifacts.require("IpToken");
-const Warren = artifacts.require("Warren");
-const ItfWarren = artifacts.require("ItfWarren");
-const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-const MiltonLiquidityPoolUtilizationModel = artifacts.require(
-    "MiltonLiquidityPoolUtilizationModel"
-);
-
-const MiltonUsdt = artifacts.require("MiltonUsdt");
-const MiltonUsdc = artifacts.require("MiltonUsdc");
-const MiltonDai = artifacts.require("MiltonDai");
-
-const ItfMiltonUsdt = artifacts.require("ItfMiltonUsdt");
-const ItfMiltonUsdc = artifacts.require("ItfMiltonUsdc");
-const ItfMiltonDai = artifacts.require("ItfMiltonDai");
-const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
-const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
-const MiltonStorageDai = artifacts.require("MiltonStorageDai");
-
-const JosephUsdt = artifacts.require("JosephUsdt");
-const JosephUsdc = artifacts.require("JosephUsdc");
-const JosephDai = artifacts.require("JosephDai");
-const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
-const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
-const ItfJosephDai = artifacts.require("ItfJosephDai");
-
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
 const DaiMockedToken = artifacts.require("DaiMockedToken");
-
+const IpToken = artifacts.require("IpToken");
 const IporAssetConfigurationUsdt = artifacts.require(
     "IporAssetConfigurationUsdt"
 );
@@ -46,15 +19,36 @@ const IporAssetConfigurationUsdc = artifacts.require(
 const IporAssetConfigurationDai = artifacts.require(
     "IporAssetConfigurationDai"
 );
-
-const MiltonDevToolDataProvider = artifacts.require(
-    "MiltonDevToolDataProvider"
+const IporConfiguration = artifacts.require("IporConfiguration");
+const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
+const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
+const MiltonStorageDai = artifacts.require("MiltonStorageDai");
+const Warren = artifacts.require("Warren");
+const ItfWarren = artifacts.require("ItfWarren");
+const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
+const MiltonLiquidityPoolUtilizationModel = artifacts.require(
+    "MiltonLiquidityPoolUtilizationModel"
 );
+const MiltonUsdt = artifacts.require("MiltonUsdt");
+const MiltonUsdc = artifacts.require("MiltonUsdc");
+const MiltonDai = artifacts.require("MiltonDai");
+const ItfMiltonUsdt = artifacts.require("ItfMiltonUsdt");
+const ItfMiltonUsdc = artifacts.require("ItfMiltonUsdc");
+const ItfMiltonDai = artifacts.require("ItfMiltonDai");
+const JosephUsdt = artifacts.require("JosephUsdt");
+const JosephUsdc = artifacts.require("JosephUsdc");
+const JosephDai = artifacts.require("JosephDai");
+const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
+const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
+const ItfJosephDai = artifacts.require("ItfJosephDai");
 const WarrenDevToolDataProvider = artifacts.require(
     "WarrenDevToolDataProvider"
 );
 const WarrenFrontendDataProvider = artifacts.require(
     "WarrenFrontendDataProvider"
+);
+const MiltonDevToolDataProvider = artifacts.require(
+    "MiltonDevToolDataProvider"
 );
 const MiltonFrontendDataProvider = artifacts.require(
     "MiltonFrontendDataProvider"
@@ -89,257 +83,347 @@ module.exports = async function (deployer, _network, addresses) {
 
     const iporAssetConfigurationUsdt = await deployProxy(
         IporAssetConfigurationUsdt,
-        [mockedUsdt.address, ipUsdtToken.address]
-		// ,
-        // {
-        //     initializer: "initialize",
-        // }
+        [mockedUsdt.address, ipUsdtToken.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
     );
 
-    // const iporAssetConfigurationUsdc = await deployProxy(
-    //     IporAssetConfigurationUsdc,
-    //     [mockedUsdc.address, ipUsdcToken.address],
-    //     {
-    //         deployer: deployer,
-    //         initializer: "initialize",
-    //     }
-    // );
+    const iporAssetConfigurationUsdc = await deployProxy(
+        IporAssetConfigurationUsdc,
+        [mockedUsdc.address, ipUsdcToken.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // const iporAssetConfigurationDai = await deployProxy(
-    //     IporAssetConfigurationDai,
-    //     [mockedDai.address, ipDaiToken.address],
-    //     {
-    //         deployer: deployer,
-    //         initializer: "initialize",
-    //     }
-    // );
+    const iporAssetConfigurationDai = await deployProxy(
+        IporAssetConfigurationDai,
+        [mockedDai.address, ipDaiToken.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // const iporConfiguration = await deployProxy(IporConfiguration, {
-    //     deployer: deployer,
-    //     initializer: "initialize",
-    // });
+    const miltonStorageUsdt = await deployProxy(
+        MiltonStorageUsdt,
+        [iporAssetConfigurationUsdt.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // const miltonStorageUsdt = await deployProxy(
-    //     MiltonStorage,
-    //     [mockedUsdt.address, iporConfiguration.address],
-    //     { deployer: deployer, initializer: "initialize" }
-    // );
+    const miltonStorageUsdc = await deployProxy(
+        MiltonStorageUsdc,
+        [iporAssetConfigurationUsdc.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    //------------------------
+    const miltonStorageDai = await deployProxy(
+        MiltonStorageDai,
+        [iporAssetConfigurationDai.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // await deployProxy(IporConfiguration, {
-    //     deployer,
-    //     unsafeAllow: "constructor",
-    // });
-    // iporConfiguration = await IporConfiguration.deployed();
+    const iporConfiguration = await deployProxy(IporConfiguration, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    // // let warren = null;
-    // // let miltonUsdt = null;
-    // // let miltonUsdc = null;
-    // // let miltonDai = null;
-    // // let miltonStorageUsdt = null;
-    // // let miltonStorageUsdc = null;
-    // // let miltonStorageDai = null;
+    const miltonSpreadModel = await deployProxy(MiltonSpreadModel, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    // // let itfWarren = null;
-    // // let itfMiltonUsdt = null;
-    // // let itfMiltonUsdc = null;
-    // // let itfMiltonDai = null;
-    // // let josephUsdt = null;
-    // // let josephUsdc = null;
-    // // let josephDai = null;
-    // // let itfJosephUsdt = null;
-    // // let itfJosephUsdc = null;
-    // // let itfJosephDai = null;
-    // // let iporAssetConfigurationUsdt = null;
-    // // let iporAssetConfigurationUsdc = null;
-    // // let iporAssetConfigurationDai = null;
+    const miltonLiquidityPoolUtilizationModel = await deployProxy(
+        MiltonLiquidityPoolUtilizationModel,
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // // let iporConfiguration = null;
+    const warren = await deployProxy(Warren, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    // // await deployProxy(Issue, { deployer });
+    const itfWarren = await deployProxy(ItfWarren, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    // await deployer.deploy(IporConfiguration);
-    // iporConfiguration = await IporConfiguration.deployed();
+    const miltonUsdt = await deployProxy(
+        MiltonUsdt,
+        [
+            mockedUsdt.address,
+            ipUsdtToken.address,
+            warren.address,
+            miltonStorageUsdt.address,
+            miltonSpreadModel.address,
+            iporConfiguration.address,
+            iporAssetConfigurationUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // await deployer.deploy(Warren, iporConfiguration.address);
-    // warren = await Warren.deployed();
+    const itfMiltonUsdt = await deployProxy(
+        ItfMiltonUsdt,
+        [
+            mockedUsdt.address,
+            ipUsdtToken.address,
+            itfWarren.address,
+            miltonStorageUsdt.address,
+            miltonSpreadModel.address,
+            iporConfiguration.address,
+            iporAssetConfigurationUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // await deployer.deploy(
-    //     MiltonFrontendDataProvider,
-    //     iporConfiguration.address
-    // );
+    const miltonUsdc = await deployProxy(
+        MiltonUsdc,
+        [
+            mockedUsdc.address,
+            ipUsdcToken.address,
+            warren.address,
+            miltonStorageUsdc.address,
+            miltonSpreadModel.address,
+            iporConfiguration.address,
+            iporAssetConfigurationUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // await deployer.deploy(
-    //     WarrenFrontendDataProvider,
-    //     iporConfiguration.address
-    // );
+    const itfMiltonUsdc = await deployProxy(
+        ItfMiltonUsdc,
+        [
+            mockedUsdc.address,
+            ipUsdcToken.address,
+            itfWarren.address,
+            miltonStorageUsdc.address,
+            miltonSpreadModel.address,
+            iporConfiguration.address,
+            iporAssetConfigurationUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // await deployer.deploy(
-    //     MiltonLiquidityPoolUtilizationModel,
-    //     iporConfiguration.address
-    // );
-    // let miltonLPUtilizationStrategyCollateral =
-    //     await MiltonLiquidityPoolUtilizationModel.deployed();
+    const miltonDai = await deployProxy(
+        MiltonDai,
+        [
+            mockedDai.address,
+            ipDaiToken.address,
+            warren.address,
+            miltonStorageDai.address,
+            miltonSpreadModel.address,
+            iporConfiguration.address,
+            iporAssetConfigurationUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // await deployer.deploy(MiltonSpreadModel, iporConfiguration.address);
-    // let miltonSpreadModel = await MiltonSpreadModel.deployed();
+    const itfMiltonDai = await deployProxy(
+        ItfMiltonDai,
+        [
+            mockedDai.address,
+            ipDaiToken.address,
+            itfWarren.address,
+            miltonStorageDai.address,
+            miltonSpreadModel.address,
+            iporConfiguration.address,
+            iporAssetConfigurationUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    // await deployer.deploy(UsdtMockedToken, totalSupply6Decimals, 6);
-    // mockedUsdt = await UsdtMockedToken.deployed();
+    const josephUsdt = await deployProxy(
+        JosephUsdt,
+        [
+            mockedUsdt.address,
+            ipUsdtToken.address,
+            miltonUsdt.address,
+            miltonStorageUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const itfJosephUsdt = await deployProxy(
+        ItfJosephUsdt,
+        [
+            mockedUsdt.address,
+            ipUsdtToken.address,
+            itfMiltonUsdt.address,
+            miltonStorageUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const josephUsdc = await deployProxy(
+        JosephUsdc,
+        [
+            mockedUsdc.address,
+            ipUsdcToken.address,
+            miltonUsdc.address,
+            miltonStorageUsdc.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const itfJosephUsdc = await deployProxy(
+        ItfJosephUsdc,
+        [
+            mockedUsdc.address,
+            ipUsdcToken.address,
+            itfMiltonUsdc.address,
+            miltonStorageUsdc.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const josephDai = await deployProxy(
+        JosephDai,
+        [
+            mockedDai.address,
+            ipDaiToken.address,
+            miltonDai.address,
+            miltonStorageDai.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const itfJosephDai = await deployProxy(
+        ItfJosephDai,
+        [
+            mockedDai.address,
+            ipDaiToken.address,
+            itfMiltonDai.address,
+            miltonStorageDai.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const warrenDevToolDataProvider = await deployProxy(
+        WarrenDevToolDataProvider,
+        [iporConfiguration.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const warrenFrontendDataProvider = await deployProxy(
+        WarrenFrontendDataProvider,
+        [iporConfiguration.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const miltonDevToolDataProvider = await deployProxy(
+        MiltonDevToolDataProvider,
+        [iporConfiguration.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const miltonFrontendDataProvider = await deployProxy(
+        MiltonFrontendDataProvider,
+        [iporConfiguration.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
     // await iporConfiguration.addAsset(mockedUsdt.address);
-    // await deployer.deploy(IpToken, mockedUsdt.address, "IP USDT", "ipUSDT");
-    // ipUsdtToken = await IpToken.deployed();
-
-    // await deployer.deploy(
-    //     IporAssetConfigurationUsdt,
-    //     mockedUsdt.address,
-    //     ipUsdtToken.address
-    // );
-    // iporAssetConfigurationUsdt = await IporAssetConfigurationUsdt.deployed();
-
     // await ipUsdtToken.initialize(iporAssetConfigurationUsdt.address);
-
-    // await deployer.deploy(
-    //     MiltonStorageUsdt,
-    //     mockedUsdt.address,
-    //     iporConfiguration.address
-    // );
-    // miltonStorageUsdt = await MiltonStorageUsdt.deployed();
-
-    // await deployer.deploy(UsdcMockedToken, totalSupply6Decimals, 6);
-    // mockedUsdc = await UsdcMockedToken.deployed();
     // await iporConfiguration.addAsset(mockedUsdc.address);
-    // await deployer.deploy(IpToken, mockedUsdc.address, "IP USDC", "ipUSDC");
-    // ipUsdcToken = await IpToken.deployed();
-
-    // await deployer.deploy(
-    //     IporAssetConfigurationUsdc,
-    //     mockedUsdc.address,
-    //     ipUsdcToken.address
-    // );
-
-    // iporAssetConfigurationUsdc = await IporAssetConfigurationUsdc.deployed();
-
     // await ipUsdcToken.initialize(iporAssetConfigurationUsdc.address);
 
     // await iporConfiguration.setIporAssetConfiguration(
     //     mockedUsdc.address,
     //     await iporAssetConfigurationUsdc.address
     // );
-    // await deployer.deploy(
-    //     MiltonStorageUsdc,
-    //     mockedUsdc.address,
-    //     iporConfiguration.address
-    // );
-    // miltonStorageUsdc = await MiltonStorageUsdc.deployed();
-
-    // await deployer.deploy(DaiMockedToken, totalSupply18Decimals, 18);
-    // mockedDai = await DaiMockedToken.deployed();
-
-    // await deployer.deploy(IpToken, mockedDai.address, "IP DAI", "ipDAI");
-    // ipDaiToken = await IpToken.deployed();
-
-    // await deployer.deploy(
-    //     IporAssetConfigurationDai,
-    //     mockedDai.address,
-    //     ipDaiToken.address
-    // );
-    // iporAssetConfigurationDai = await IporAssetConfigurationDai.deployed();
 
     // await ipDaiToken.initialize(iporAssetConfigurationDai.address);
 
-    // await deployer.deploy(
-    //     MiltonStorageDai,
-    //     mockedDai.address,
-    //     iporConfiguration.address
-    // );
-    // miltonStorageDai = await MiltonStorageDai.deployed();
-
     // await deployer.deploy(WarrenDevToolDataProvider, iporConfiguration.address);
     // await deployer.deploy(MiltonDevToolDataProvider, iporConfiguration.address);
-
-    // await deployer.deploy(
-    //     MiltonUsdt,
-    //     mockedUsdt.address,
-    //     iporConfiguration.address
-    // );
-    // miltonUsdt = await MiltonUsdt.deployed();
-
-    // await deployer.deploy(
-    //     MiltonUsdc,
-    //     mockedUsdc.address,
-    //     iporConfiguration.address
-    // );
-    // miltonUsdc = await MiltonUsdc.deployed();
-
-    // await deployer.deploy(
-    //     MiltonDai,
-    //     mockedDai.address,
-    //     iporConfiguration.address
-    // );
-    // miltonDai = await MiltonDai.deployed();
-
-    // await deployer.deploy(
-    //     ItfMiltonUsdt,
-    //     mockedUsdt.address,
-    //     iporConfiguration.address
-    // );
-    // itfMiltonUsdt = await ItfMiltonUsdt.deployed();
-
-    // await deployer.deploy(
-    //     ItfMiltonUsdc,
-    //     mockedUsdc.address,
-    //     iporConfiguration.address
-    // );
-    // itfMiltonUsdc = await ItfMiltonUsdc.deployed();
-
-    // await deployer.deploy(
-    //     ItfMiltonDai,
-    //     mockedDai.address,
-    //     iporConfiguration.address
-    // );
-    // itfMiltonDai = await ItfMiltonDai.deployed();
-
-    // await deployer.deploy(
-    //     JosephUsdt,
-    //     mockedUsdt.address,
-    //     iporConfiguration.address
-    // );
-    // josephUsdt = await JosephUsdt.deployed();
-
-    // await deployer.deploy(
-    //     JosephUsdc,
-    //     mockedUsdc.address,
-    //     iporConfiguration.address
-    // );
-    // josephUsdc = await JosephUsdc.deployed();
-
-    // await deployer.deploy(
-    //     JosephDai,
-    //     mockedDai.address,
-    //     iporConfiguration.address
-    // );
-    // josephDai = await JosephDai.deployed();
-
-    // await deployer.deploy(
-    //     ItfJosephUsdt,
-    //     mockedUsdt.address,
-    //     iporConfiguration.address
-    // );
-    // itfJosephUsdt = await ItfJosephUsdt.deployed();
-
-    // await deployer.deploy(
-    //     ItfJosephUsdc,
-    //     mockedUsdc.address,
-    //     iporConfiguration.address
-    // );
-    // itfJosephUsdc = await ItfJosephUsdc.deployed();
-
-    // await deployer.deploy(
-    //     ItfJosephDai,
-    //     mockedDai.address,
-    //     iporConfiguration.address
-    // );
-    // itfJosephDai = await ItfJosephDai.deployed();
 };

@@ -48,8 +48,6 @@ interface IIporConfiguration {
 
     function addAsset(address asset) external;
 
-    function assetSupported(address asset) external view returns (uint256);
-
-    function removeAsset(address asset) external;
+	function removeAsset(address asset) external;
 
 }

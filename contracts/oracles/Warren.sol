@@ -1,18 +1,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IWarren.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import {Constants} from "../libraries/Constants.sol";
 import "../libraries/IporLogic.sol";
 import {IporMath} from "../libraries/IporMath.sol";
-import "../interfaces/IWarrenStorage.sol";
-import "../interfaces/IIporConfiguration.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
-
 import "./WarrenStorage.sol";
 
 /**
@@ -20,12 +14,12 @@ import "./WarrenStorage.sol";
  *
  * @author IPOR Labs
  */
-contract Warren is WarrenStorage, IWarren {
+contract Warren is Initializable, WarrenStorage, IWarren {
     using IporLogic for DataTypes.IPOR;
 
-    constructor(address initialIporConfiguration)
-        WarrenStorage(initialIporConfiguration)
-    {}
+    function initialize() public initializer {
+        __Ownable_init();
+    }
 
     function getAssets() external view override returns (address[] memory) {
         return _assets;
@@ -74,6 +68,16 @@ contract Warren is WarrenStorage, IWarren {
         );
     }
 
+    function addAsset(address asset) external override onlyOwner {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        _supportedAssets[asset] = 1;
+    }
+
+    function removeAsset(address asset) external override onlyOwner {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        _supportedAssets[asset] = 0;
+    }
+
     //@notice indexValue value with number of decimals like in asset
     function updateIndex(address asset, uint256 indexValue)
         external
@@ -106,9 +110,8 @@ contract Warren is WarrenStorage, IWarren {
         );
         uint256 i = 0;
         for (i; i != assets.length; i++) {
-            //TODO:[gas-opt] Consider list asset supported as a part WarrenConfiguration - inherinted by WarrenStorage
             require(
-                _iporConfiguration.assetSupported(assets[i]) == 1,
+                _supportedAssets[assets[i]] == 1,
                 IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
             );
             _updateIndex(assets[i], indexValues[i], updateTimestamp);

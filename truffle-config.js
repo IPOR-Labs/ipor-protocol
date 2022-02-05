@@ -14,6 +14,7 @@ module.exports = {
         testnet: {},
         production: {},
     },
+    // contracts_directory: path.join(__dirname, "contracts"),
     contracts_build_directory: path.join(__dirname, "app/src/contracts"),
     networks: {
         dev: {

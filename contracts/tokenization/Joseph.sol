@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
@@ -13,39 +16,40 @@ import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
 
-contract Joseph is Ownable, IJoseph {
-    using SafeERC20 for IERC20;
+contract Joseph is Initializable, OwnableUpgradeable, UUPSUpgradeable, IJoseph {
+    using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
 
     uint256 private constant _REDEEM_LP_MAX_UTYLIZATION_PERCENTAGE = 1e18;
 
-    uint8 internal immutable _decimals;
-	address internal immutable _asset;
-    IIpToken private immutable _ipToken;
-    IMilton private immutable _milton;
-    IMiltonStorage private immutable _miltonStorage;
-    
+    uint8 internal _decimals;
+    address internal _asset;
+    IIpToken private _ipToken;
+    IMilton private _milton;
+    IMiltonStorage private _miltonStorage;
 
-    constructor(
-        address asset,
+    function initialize(
+        address assetAddress,
         address ipToken,
         address milton,
         address miltonStorage
-    ) {
-        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
+    ) public initializer {
+        __Ownable_init();
+        require(address(assetAddress) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
 
-        _asset = asset;
-        _decimals = ERC20(asset).decimals();
+        _asset = assetAddress;
+        _decimals = ERC20Upgradeable(assetAddress).decimals();
         _ipToken = IIpToken(ipToken);
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function decimals() external view returns (uint8) {
         return _decimals;
@@ -84,7 +88,11 @@ contract Joseph is Ownable, IJoseph {
         //TODO: use call instead transfer if possible!!
 
         //TODO: add from address to black list
-        IERC20(_asset).safeTransferFrom(msg.sender, address(_milton), liquidityAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            msg.sender,
+            address(_milton),
+            liquidityAmount
+        );
 
         if (exchangeRate != 0) {
             _ipToken.mint(
@@ -141,7 +149,11 @@ contract Joseph is Ownable, IJoseph {
 
         _miltonStorage.subtractLiquidity(wadUnderlyingAmount);
 
-        IERC20(_asset).safeTransferFrom(address(_milton), msg.sender, underlyingAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            address(_milton),
+            msg.sender,
+            underlyingAmount
+        );
     }
 
     function _calculateRedeemedUtilizationRate(

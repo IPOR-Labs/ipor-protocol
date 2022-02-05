@@ -2,12 +2,8 @@
 pragma solidity 0.8.9;
 
 import "../oracles/Warren.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 
 contract ItfWarren is Warren {
-    constructor(address initialIporConfiguration)
-        Warren(initialIporConfiguration)
-    {}
 
     function itfUpdateIndex(
         address asset,

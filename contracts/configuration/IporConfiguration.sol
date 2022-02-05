@@ -2,14 +2,14 @@
 pragma solidity 0.8.9;
 
 import "../interfaces/IIporConfiguration.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
     Initializable,
+    UUPSUpgradeable,
     AccessControlConfiguration,
     IIporConfiguration
 {
@@ -36,13 +36,20 @@ contract IporConfiguration is
 
     bytes32 private constant _MILTON_PUBLICATION_FEE_TRANSFERER =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
-	    function getWarren() external view override returns (address) {
+
+    function getWarren() external view override returns (address) {
         return _addresses[_WARREN];
     }
 
-	function initialize() public initializer {
-		_init();
-	}
+    function initialize() public initializer {
+        _init();
+    }
+
+    function _authorizeUpgrade(address)
+        internal
+        override
+        onlyRole(_ADMIN_ROLE)
+    {}
 
     function setWarren(address warren)
         external
@@ -167,13 +174,4 @@ contract IporConfiguration is
         }
     }
 
-    //TODO: move asset supported to Warren or remove it forever
-    function assetSupported(address asset)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return supportedAssets[asset];
-    }
 }

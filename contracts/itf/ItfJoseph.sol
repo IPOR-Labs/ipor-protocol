@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
@@ -13,13 +12,7 @@ import "../libraries/Constants.sol";
 import "../tokenization/Joseph.sol";
 
 contract ItfJoseph is Joseph {
-    constructor(
-        address asset,
-        address ipToken,
-        address milton,
-        address miltonStorage
-    ) Joseph(asset, ipToken, milton, miltonStorage) {}
-
+    
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
     function itfProvideLiquidity(uint256 liquidityAmount, uint256 timestamp)
         external
