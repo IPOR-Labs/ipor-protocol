@@ -13,13 +13,10 @@ const {
 
 const { assertError } = require("./Utils");
 
-describe("MiltonSpreadConfiguration", () => {
+describe("MiltonSpreadModelConfiguration", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
-    let tokenDai = null;
-    let ipTokenDai = null;
-    let iporAssetConfigurationDAI = null;
-    let timelockController = null;
+    let miltonSpreadModel = null;
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] =
@@ -27,31 +24,32 @@ describe("MiltonSpreadConfiguration", () => {
     });
 
     beforeEach(async () => {
-        const MiltonSpreadConfiguration = await ethers.getContractFactory(
-            "MiltonSpreadConfiguration"
+        const MiltonSpreadModel = await ethers.getContractFactory(
+            "MiltonSpreadModel"
         );
-        miltonSpreadConfiguration = await MiltonSpreadConfiguration.deploy();
-        miltonSpreadConfiguration.deployed();
+        miltonSpreadModel = await MiltonSpreadModel.deploy();
+        await miltonSpreadModel.deployed();
+        miltonSpreadModel.initialize();
     });
 
     it("should set demandComponentKfValue", async () => {
         //given
         const expectedValue = BigInt("12340000000000000000");
-        await miltonSpreadConfiguration.grantRole(
+        await miltonSpreadModel.grantRole(
             keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
             admin.address
         );
         const role = keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE");
-        await miltonSpreadConfiguration.grantRole(role, userOne.address);
+        await miltonSpreadModel.grantRole(role, userOne.address);
 
         //when
-        await miltonSpreadConfiguration
+        await miltonSpreadModel
             .connect(userOne)
             .setDemandComponentKfValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getDemandComponentKfValue()
+            await miltonSpreadModel.getDemandComponentKfValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -63,7 +61,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         await assertError(
             //when
-            miltonSpreadConfiguration
+            miltonSpreadModel
                 .connect(userOne)
                 .setDemandComponentKfValue(expectedValue),
 
@@ -75,21 +73,21 @@ describe("MiltonSpreadConfiguration", () => {
     it("should set demandComponentLambdaValue", async () => {
         //given
         const expectedValue = BigInt("12000000000000000000");
-        await miltonSpreadConfiguration.grantRole(
+        await miltonSpreadModel.grantRole(
             keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
             admin.address
         );
         const role = keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE");
-        await miltonSpreadConfiguration.grantRole(role, userOne.address);
+        await miltonSpreadModel.grantRole(role, userOne.address);
 
         //when
-        await miltonSpreadConfiguration
+        await miltonSpreadModel
             .connect(userOne)
             .setDemandComponentLambdaValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getDemandComponentLambdaValue()
+            await miltonSpreadModel.getDemandComponentLambdaValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -101,7 +99,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         await assertError(
             //when
-            miltonSpreadConfiguration
+            miltonSpreadModel
                 .connect(userOne)
                 .setDemandComponentLambdaValue(expectedValue),
 
@@ -113,21 +111,21 @@ describe("MiltonSpreadConfiguration", () => {
     it("should set demandComponentKOmegaValue", async () => {
         //given
         const expectedValue = BigInt("120000000000000000");
-        await miltonSpreadConfiguration.grantRole(
+        await miltonSpreadModel.grantRole(
             keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
             admin.address
         );
         const role = keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE");
-        await miltonSpreadConfiguration.grantRole(role, userOne.address);
+        await miltonSpreadModel.grantRole(role, userOne.address);
 
         //when
-        await miltonSpreadConfiguration
+        await miltonSpreadModel
             .connect(userOne)
             .setDemandComponentKOmegaValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getDemandComponentKOmegaValue()
+            await miltonSpreadModel.getDemandComponentKOmegaValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -139,7 +137,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         await assertError(
             //when
-            miltonSpreadConfiguration
+            miltonSpreadModel
                 .connect(userOne)
                 .setDemandComponentKOmegaValue(expectedValue),
 
@@ -151,7 +149,7 @@ describe("MiltonSpreadConfiguration", () => {
     it("should set demandComponentMaxLiquidityRedemptionValue", async () => {
         //given
         const expectedValue = BigInt("12000000000000000000");
-        await miltonSpreadConfiguration.grantRole(
+        await miltonSpreadModel.grantRole(
             keccak256(
                 "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE"
             ),
@@ -160,16 +158,16 @@ describe("MiltonSpreadConfiguration", () => {
         const role = keccak256(
             "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE"
         );
-        await miltonSpreadConfiguration.grantRole(role, userOne.address);
+        await miltonSpreadModel.grantRole(role, userOne.address);
 
         //when
-        await miltonSpreadConfiguration
+        await miltonSpreadModel
             .connect(userOne)
             .setDemandComponentMaxLiquidityRedemptionValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getDemandComponentMaxLiquidityRedemptionValue()
+            await miltonSpreadModel.getDemandComponentMaxLiquidityRedemptionValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -181,7 +179,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         await assertError(
             //when
-            miltonSpreadConfiguration
+            miltonSpreadModel
                 .connect(userOne)
                 .setDemandComponentMaxLiquidityRedemptionValue(expectedValue),
 
@@ -193,21 +191,21 @@ describe("MiltonSpreadConfiguration", () => {
     it("should set atParComponentKVolValue", async () => {
         //given
         const expectedValue = BigInt("12340000000000000000");
-        await miltonSpreadConfiguration.grantRole(
+        await miltonSpreadModel.grantRole(
             keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE"),
             admin.address
         );
         const role = keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE");
-        await miltonSpreadConfiguration.grantRole(role, userOne.address);
+        await miltonSpreadModel.grantRole(role, userOne.address);
 
         //when
-        await miltonSpreadConfiguration
+        await miltonSpreadModel
             .connect(userOne)
             .setAtParComponentKVolValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getAtParComponentKVolValue()
+            await miltonSpreadModel.getAtParComponentKVolValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -219,7 +217,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         await assertError(
             //when
-            miltonSpreadConfiguration
+            miltonSpreadModel
                 .connect(userOne)
                 .setAtParComponentKVolValue(expectedValue),
 
@@ -231,21 +229,21 @@ describe("MiltonSpreadConfiguration", () => {
     it("should set atParComponentKHistValue", async () => {
         //given
         const expectedValue = BigInt("12340000000000000000");
-        await miltonSpreadConfiguration.grantRole(
+        await miltonSpreadModel.grantRole(
             keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE"),
             admin.address
         );
         const role = keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE");
-        await miltonSpreadConfiguration.grantRole(role, userOne.address);
+        await miltonSpreadModel.grantRole(role, userOne.address);
 
         //when
-        await miltonSpreadConfiguration
+        await miltonSpreadModel
             .connect(userOne)
             .setAtParComponentKHistValue(expectedValue);
 
         //then
         const actualValue = BigInt(
-            await miltonSpreadConfiguration.getAtParComponentKHistValue()
+            await miltonSpreadModel.getAtParComponentKHistValue()
         );
 
         expect(expectedValue).to.be.eql(actualValue);
@@ -257,7 +255,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         await assertError(
             //when
-            miltonSpreadConfiguration
+            miltonSpreadModel
                 .connect(userOne)
                 .setAtParComponentKHistValue(expectedValue),
 
@@ -269,22 +267,20 @@ describe("MiltonSpreadConfiguration", () => {
     it("should set spreadMaxValue", async () => {
         //given
         const expectedValue = BigInt("12340000000000000000");
-        await miltonSpreadConfiguration.grantRole(
+        await miltonSpreadModel.grantRole(
             keccak256("SPREAD_MAX_VALUE_ADMIN_ROLE"),
             admin.address
         );
         const role = keccak256("SPREAD_MAX_VALUE_ROLE");
-        await miltonSpreadConfiguration.grantRole(role, userOne.address);
+        await miltonSpreadModel.grantRole(role, userOne.address);
 
         //when
-        await miltonSpreadConfiguration
+        await miltonSpreadModel
             .connect(userOne)
             .setSpreadMaxValue(expectedValue);
 
         //then
-        const actualValue = BigInt(
-            await miltonSpreadConfiguration.getSpreadMaxValue()
-        );
+        const actualValue = BigInt(await miltonSpreadModel.getSpreadMaxValue());
 
         expect(expectedValue).to.be.eql(actualValue);
     });
@@ -295,9 +291,7 @@ describe("MiltonSpreadConfiguration", () => {
 
         await assertError(
             //when
-            miltonSpreadConfiguration
-                .connect(userOne)
-                .setSpreadMaxValue(expectedValue),
+            miltonSpreadModel.connect(userOne).setSpreadMaxValue(expectedValue),
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x243c66f877d2b9250ad8706721efad9f4b3d65a4b61cc21d637d7bfe5d73f574`

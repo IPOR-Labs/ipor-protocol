@@ -11,7 +11,7 @@ const roles = [
         adminRole: keccak256("ROLES_INFO_ADMIN_ROLE"),
         role: keccak256("ROLES_INFO_ROLE"),
     },
-	{
+    {
         name: "MILTON_ROLE",
         adminRole: keccak256("MILTON_ADMIN_ROLE"),
         role: keccak256("MILTON_ROLE"),
@@ -21,7 +21,7 @@ const roles = [
         adminRole: keccak256("MILTON_STORAGE_ADMIN_ROLE"),
         role: keccak256("MILTON_STORAGE_ROLE"),
     },
-	{
+    {
         name: "JOSEPH_ROLE",
         adminRole: keccak256("JOSEPH_ADMIN_ROLE"),
         role: keccak256("JOSEPH_ROLE"),
@@ -94,12 +94,12 @@ const rolesNotGrant = [
         code: "0xfb1902cbac4bf447ada58dff398caab7aa9089eba1be77a2833d9e08dbe8664c",
         role: keccak256("ROLES_INFO_ROLE"),
     },
-	{
+    {
         name: "MILTON_ROLE",
         code: "0x1b16f266cfe5113986bbdf79323bd64ba74c9e2631c82de1297c13405226a952",
         role: keccak256("MILTON_ROLE"),
     },
-	{
+    {
         name: "MILTON_ADMIN_ROLE",
         role: keccak256("MILTON_ADMIN_ROLE"),
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
@@ -108,18 +108,18 @@ const rolesNotGrant = [
         name: "MILTON_STORAGE_ROLE",
         code: "0x61e410eb94acd095b84b0de4a9befc42adb8e88aad1e0c387e8f14c5c05f4cd5",
         role: keccak256("MILTON_STORAGE_ROLE"),
-    },	
+    },
     {
         name: "MILTON_STORAGE_ADMIN_ROLE",
         role: keccak256("MILTON_STORAGE_ADMIN_ROLE"),
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
     },
-	{
+    {
         name: "JOSEPH_ROLE",
         code: "0x811ff4f923fc903f4390f8acf72873b5d1b288ec77b442fe124d0f95d6a53731",
         role: keccak256("JOSEPH_ROLE"),
     },
-	{
+    {
         name: "JOSEPH_ADMIN_ROLE",
         role: keccak256("JOSEPH_ADMIN_ROLE"),
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
@@ -280,11 +280,13 @@ describe("IporAssetConfigurationRoles", () => {
                 "IporAssetConfiguration"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const iporAssetConfiguration = await IporAssetConfiguration.deploy(
+            const iporAssetConfiguration =
+                await IporAssetConfiguration.deploy();
+            await iporAssetConfiguration.deployed();
+            await iporAssetConfiguration.initialize(
                 tokenDai.address,
                 ipTokenDai.address
             );
-            await iporAssetConfiguration.deployed();
 
             let hasAdminRole = await iporAssetConfiguration.hasRole(
                 adminRole,
@@ -362,11 +364,13 @@ describe("IporAssetConfigurationRoles", () => {
                 "IporAssetConfiguration"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const iporAssetConfiguration = await IporAssetConfiguration.deploy(
+            const iporAssetConfiguration =
+                await IporAssetConfiguration.deploy();
+            await iporAssetConfiguration.deployed();
+            await iporAssetConfiguration.initialize(
                 tokenDai.address,
                 ipTokenDai.address
             );
-            await iporAssetConfiguration.deployed();
 
             await expect(
                 iporAssetConfiguration

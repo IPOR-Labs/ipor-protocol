@@ -50,6 +50,8 @@ describe("IporAssetConfiguration", () => {
         );
         iporConfiguration = await IporConfiguration.deploy();
         await iporConfiguration.deployed();
+		await iporConfiguration.initialize();
+
         await iporConfiguration.grantRole(
             keccak256("IPOR_ASSETS_ADMIN_ROLE"),
             admin.address

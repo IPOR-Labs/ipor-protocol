@@ -146,7 +146,7 @@ const rolesNotGrant = [
     },
 ];
 
-describe("MiltonSpreadConfigurationRoles", () => {
+describe("MiltonSpreadModelConfigurationRoles", () => {
     itParam(
         "should grant and revoke ${value.name}",
         roles,
@@ -154,64 +154,52 @@ describe("MiltonSpreadConfigurationRoles", () => {
             //given
             const { adminRole, role } = value;
 
-            const MiltonSpreadConfiguration = await ethers.getContractFactory(
-                "MiltonSpreadConfiguration"
+            const MiltonSpreadModel = await ethers.getContractFactory(
+                "MiltonSpreadModel"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const miltonSpreadConfiguration =
-                await MiltonSpreadConfiguration.deploy();
+            const miltonSpreadModel = await MiltonSpreadModel.deploy();
 
-            await miltonSpreadConfiguration.deployed();
+            await miltonSpreadModel.deployed();
+            await miltonSpreadModel.initialize();
 
-            let hasAdminRole = await miltonSpreadConfiguration.hasRole(
+            let hasAdminRole = await miltonSpreadModel.hasRole(
                 adminRole,
                 userOne.address
             );
             expect(hasAdminRole).to.be.false;
 
-            await miltonSpreadConfiguration.grantRole(
-                adminRole,
-                userOne.address
-            );
+            await miltonSpreadModel.grantRole(adminRole, userOne.address);
 
-            hasAdminRole = await miltonSpreadConfiguration.hasRole(
+            hasAdminRole = await miltonSpreadModel.hasRole(
                 adminRole,
                 userOne.address
             );
             expect(hasAdminRole).to.be.true;
 
-            let hasRole = await miltonSpreadConfiguration.hasRole(
+            let hasRole = await miltonSpreadModel.hasRole(
                 role,
                 userTwo.address
             );
             expect(hasRole).to.be.false;
 
-            await miltonSpreadConfiguration
+            await miltonSpreadModel
                 .connect(userOne)
                 .grantRole(role, userTwo.address);
 
-            hasRole = await miltonSpreadConfiguration.hasRole(
-                role,
-                userTwo.address
-            );
+            hasRole = await miltonSpreadModel.hasRole(role, userTwo.address);
             expect(hasRole).to.be.true;
 
-            await miltonSpreadConfiguration
+            await miltonSpreadModel
                 .connect(userOne)
                 .revokeRole(role, userTwo.address);
 
-            hasRole = await miltonSpreadConfiguration.hasRole(
-                role,
-                userTwo.address
-            );
+            hasRole = await miltonSpreadModel.hasRole(role, userTwo.address);
             expect(hasRole).to.be.false;
 
-            await miltonSpreadConfiguration.revokeRole(
-                adminRole,
-                userOne.address
-            );
+            await miltonSpreadModel.revokeRole(adminRole, userOne.address);
 
-            hasAdminRole = await miltonSpreadConfiguration.hasRole(
+            hasAdminRole = await miltonSpreadModel.hasRole(
                 adminRole,
                 userOne.address
             );
@@ -225,16 +213,16 @@ describe("MiltonSpreadConfigurationRoles", () => {
         async function (value) {
             const { role, code } = value;
 
-            const MiltonSpreadConfiguration = await ethers.getContractFactory(
-                "MiltonSpreadConfiguration"
+            const MiltonSpreadModel = await ethers.getContractFactory(
+                "MiltonSpreadModel"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const miltonSpreadConfiguration =
-                await MiltonSpreadConfiguration.deploy();
-            await miltonSpreadConfiguration.deployed();
+            const miltonSpreadModel = await MiltonSpreadModel.deploy();
+            await miltonSpreadModel.deployed();
+            await miltonSpreadModel.initialize();
 
             await expect(
-                miltonSpreadConfiguration
+                miltonSpreadModel
                     .connect(userOne)
                     .grantRole(role, userTwo.address)
             ).to.be.revertedWith(code);

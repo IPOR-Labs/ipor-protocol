@@ -54,11 +54,12 @@ describe("IporAssetConfiguration", () => {
         const IporAssetConfigurationDai = await ethers.getContractFactory(
             "IporAssetConfigurationDai"
         );
-        iporAssetConfigurationDAI = await IporAssetConfigurationDai.deploy(
+        iporAssetConfigurationDAI = await IporAssetConfigurationDai.deploy();
+        await iporAssetConfigurationDAI.deployed();
+        await iporAssetConfigurationDAI.initialize(
             tokenDai.address,
             ipTokenDai.address
         );
-        iporAssetConfigurationDAI.deployed();
     });
 
     //TODO: add tests which checks initial values for every param
@@ -72,7 +73,7 @@ describe("IporAssetConfiguration", () => {
             "Liquidity Pool Max Utilization Percentage cannot be higher than 100%"
         ).to.be.lte(PERCENTAGE_100_18DEC);
 
-		//TODO: add test for it
+        //TODO: add test for it
         // let actualRedeemMaxUtilizationPercentage =
         //     await iporAssetConfigurationDAI.getRedeemLpMaxUtilizationPercentage();
 
@@ -89,10 +90,10 @@ describe("IporAssetConfiguration", () => {
             "Liquidity Pool Max Utilization Per Leg Percentage cannot be higher than 100%"
         ).to.be.lte(PERCENTAGE_100_18DEC);
 
-        expect(
-            actualRedeemMaxUtilizationPercentage,
-            "Redeem Liquidity Pool Max Utilization Rate cannot be lower than Liquidity Pool Max Utilization rate"
-        ).to.be.gte(actualLiquidityPoolMaxUtilizationPercentage);
+        // expect(
+        //     actualRedeemMaxUtilizationPercentage,
+        //     "Redeem Liquidity Pool Max Utilization Rate cannot be lower than Liquidity Pool Max Utilization rate"
+        // ).to.be.gte(actualLiquidityPoolMaxUtilizationPercentage);
 
         expect(
             actualLiquidityPoolMaxUtilizationPercentage,
@@ -1378,5 +1379,4 @@ describe("IporAssetConfiguration", () => {
             "IPOR_48"
         );
     });
-    
 });

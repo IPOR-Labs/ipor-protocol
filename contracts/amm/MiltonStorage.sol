@@ -14,7 +14,12 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../libraries/Constants.sol";
 
-contract MiltonStorage is Initializable, OwnableUpgradeable, UUPSUpgradeable, IMiltonStorage {
+contract MiltonStorage is
+    Initializable,
+    OwnableUpgradeable,
+    UUPSUpgradeable,
+    IMiltonStorage
+{
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using SafeCast for uint256;
     using IporSwapLogic for DataTypes.IporSwapMemory;

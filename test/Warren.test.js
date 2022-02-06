@@ -48,10 +48,11 @@ describe("Warren", () => {
         const WarrenDevToolDataProvider = await ethers.getContractFactory(
             "WarrenDevToolDataProvider"
         );
-        warrenDevToolDataProvider = await WarrenDevToolDataProvider.deploy(
+        warrenDevToolDataProvider = await WarrenDevToolDataProvider.deploy();
+        await warrenDevToolDataProvider.deployed();
+        await warrenDevToolDataProvider.initialize(
             data.iporConfiguration.address
         );
-        await warrenDevToolDataProvider.deployed();
     });
 
     beforeEach(async () => {

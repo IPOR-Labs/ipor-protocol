@@ -159,6 +159,7 @@ describe("IporConfigurationRoles", () => {
             const [admin, userOne, userTwo] = await ethers.getSigners();
             const iporConfiguration = await IporConfiguration.deploy();
             await iporConfiguration.deployed();
+			await iporConfiguration.initialize();
 
             let hasAdminRole = await iporConfiguration.hasRole(
                 adminRole,
@@ -215,6 +216,7 @@ describe("IporConfigurationRoles", () => {
             const [admin, userOne, userTwo] = await ethers.getSigners();
             const iporConfiguration = await IporConfiguration.deploy();
             await iporConfiguration.deployed();
+			await iporConfiguration.initialize();
 
             await expect(
                 iporConfiguration

@@ -89,9 +89,7 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        await testData.iporAssetConfigurationDai.setMilton(
-            miltonStorageAddress.address
-        );
+        await testData.miltonStorageDai.setMilton(miltonStorageAddress.address);
 
         //when
         await testData.miltonStorageDai
@@ -189,12 +187,11 @@ describe("MiltonStorage", () => {
         let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
         let closeSwapTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.iporAssetConfigurationDai.setMilton(
-            miltonStorageAddress.address
-        );
+
+        await testData.miltonStorageDai.setMilton(miltonStorageAddress.address);
 
         //when
-        testData.miltonStorageDai
+        await testData.miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
@@ -202,6 +199,9 @@ describe("MiltonStorage", () => {
                 BigInt("10000000000000000000"),
                 closeSwapTimestamp
             );
+
+        await testData.miltonStorageDai.setMilton(testData.miltonDai.address);
+
         //then
         // assert(true); //no exception this line is achieved
     });
@@ -263,12 +263,13 @@ describe("MiltonStorage", () => {
         );
         let closeSwapTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.iporAssetConfigurationUsdt.setMilton(
+
+        await testData.miltonStorageUsdt.setMilton(
             miltonStorageAddress.address
         );
 
         //when
-        testData.miltonStorageUsdt
+        await testData.miltonStorageUsdt
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,

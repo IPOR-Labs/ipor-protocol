@@ -413,19 +413,4 @@ module.exports = async function (deployer, _network, addresses) {
             kind: "uups",
         }
     );
-
-    // await iporConfiguration.addAsset(mockedUsdt.address);
-    // await ipUsdtToken.initialize(iporAssetConfigurationUsdt.address);
-    // await iporConfiguration.addAsset(mockedUsdc.address);
-    // await ipUsdcToken.initialize(iporAssetConfigurationUsdc.address);
-
-    // await iporConfiguration.setIporAssetConfiguration(
-    //     mockedUsdc.address,
-    //     await iporAssetConfigurationUsdc.address
-    // );
-
-    // await ipDaiToken.initialize(iporAssetConfigurationDai.address);
-
-    // await deployer.deploy(WarrenDevToolDataProvider, iporConfiguration.address);
-    // await deployer.deploy(MiltonDevToolDataProvider, iporConfiguration.address);
 };

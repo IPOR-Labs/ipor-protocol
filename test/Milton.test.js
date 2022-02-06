@@ -676,15 +676,13 @@ describe("Milton", () => {
                 closeSwapTimestamp
             );
 
-        await testData.iporAssetConfigurationDai.setJoseph(userOne.address);
+        await testData.miltonStorageDai.setJoseph(userOne.address);
 
         await testData.miltonStorageDai
             .connect(userOne)
             .subtractLiquidity(BigInt("20000000000000000000000"));
 
-        await testData.iporAssetConfigurationDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
         await assertError(
