@@ -3,8 +3,6 @@
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 
 // const keccak256 = require("keccak256");
-const Issue = artifacts.require("Issue");
-
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");

@@ -18,7 +18,7 @@ import "../libraries/SoapIndicatorLogic.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "./AccessControlAssetConfiguration.sol";
 
-//TODO: combine with MiltonStorage to minimize external calls in modifiers and simplify code
+//TODO: combine with Milton to minimize external calls in modifiers and simplify code
 contract IporAssetConfiguration is
 	UUPSUpgradeable, AccessControlAssetConfiguration,
     IIporAssetConfiguration
@@ -63,8 +63,7 @@ contract IporAssetConfiguration is
     address private _miltonStorage;
 
     address private _joseph;
-
-    //TODO: rename DemandComponent to DC, AtParComponent to PC or DemandC, AtParC
+    
     address private _assetManagementVault;
 
     address private _charlieTreasurer;
