@@ -64,7 +64,7 @@ contract Milton is
         address miltonStorage,
         address miltonSpreadModel,
         address initialIporConfiguration,
-		address iporAssetConfigurationAddr
+        address iporAssetConfigurationAddr
     ) public initializer {
         __Ownable_init();
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
@@ -131,9 +131,14 @@ contract Milton is
     //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     //    }
 
-    function authorizeJoseph() external override onlyOwner whenNotPaused {
+    function authorizeJoseph(address joseph)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         IERC20Upgradeable(_asset).safeIncreaseAllowance(
-            _iporAssetConfiguration.getJoseph(),
+            joseph,
             Constants.MAX_VALUE
         );
     }

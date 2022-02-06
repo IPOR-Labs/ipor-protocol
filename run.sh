@@ -240,7 +240,7 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
 
   cd "${DIR}"  
   npm install
-  truffle compile
+  truffle compile --all
 
   cd "${DIR}/app"
   echo -e "\n\e[32mBuild Milton Tool docker...\e[0m\n"

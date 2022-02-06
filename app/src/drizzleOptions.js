@@ -1,8 +1,6 @@
 import Warren from "./contracts/Warren.json";
 import ItfWarren from "./contracts/ItfWarren.json";
 import WarrenDevToolDataProvider from "./contracts/WarrenDevToolDataProvider.json";
-import Issue from "./contracts/Issue.json";
-import IssueV2 from "./contracts/IssueV2.json";
 import MiltonUsdt from "./contracts/MiltonUsdt.json";
 import MiltonUsdc from "./contracts/MiltonUsdc.json";
 import MiltonDai from "./contracts/MiltonDai.json";
@@ -38,9 +36,7 @@ const options = {
     },
 
     contracts: [
-		Issue,
-		IssueV2,
-        MiltonDevToolDataProvider,
+		MiltonDevToolDataProvider,
         MiltonFrontendDataProvider,
         IporConfiguration,
         Warren,

@@ -389,7 +389,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             await ipTokenUsdt.setJoseph(josephUsdt.address);
             await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
 
-            await miltonUsdt.authorizeJoseph();
+            await miltonUsdt.authorizeJoseph(josephUsdt.address);
             await warren.addAsset(tokenUsdt.address);
         }
         if (assets[k] === "USDC") {
@@ -461,7 +461,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             await ipTokenUsdc.setJoseph(josephUsdc.address);
             await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
 
-            await miltonUsdc.authorizeJoseph();
+            await miltonUsdc.authorizeJoseph(josephUsdc.address);
             await warren.addAsset(tokenUsdc.address);
         }
         if (assets[k] === "DAI") {
@@ -532,7 +532,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
 
             await ipTokenDai.setJoseph(josephDai.address);
             await iporAssetConfigurationDai.setJoseph(josephDai.address);
-            await miltonDai.authorizeJoseph();
+            await miltonDai.authorizeJoseph(josephDai.address);
             await warren.addAsset(tokenDai.address);
         }
     }

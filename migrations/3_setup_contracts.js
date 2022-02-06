@@ -1,6 +1,6 @@
 require("dotenv").config({ path: "../.env" });
 const keccak256 = require("keccak256");
-const { deployProxy } = require("@openzeppelin/truffle-upgrades");
+const { erc1967, deployProxy } = require("@openzeppelin/truffle-upgrades");
 
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 
@@ -63,78 +63,17 @@ module.exports = async function (deployer, _network, addresses) {
     const totalSupply6Decimals = "1000000000000000000";
     const totalSupply18Decimals = "1000000000000000000000000000000";
 
-    const iporConfiguration = await IporConfiguration.deployed();
+    const iporConfigurationProxy = await IporConfiguration.deployed();
+    await grandRolesForConfiguration(admin, iporConfigurationProxy);
 
-    //#####################################################################
-    //GRANT ROLE IPOR CONFIGURATION  - BEGIN
-    //#####################################################################
-
-    await iporConfiguration.grantRole(
-        keccak256("ROLES_INFO_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
-
-    await iporConfiguration.grantRole(
-        keccak256("IPOR_ASSETS_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(keccak256("IPOR_ASSETS_ROLE"), admin);
-
-    await iporConfiguration.grantRole(
-        keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(
-        keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
-        admin
-    );
-
-    await iporConfiguration.grantRole(keccak256("WARREN_ADMIN_ROLE"), admin);
-    await iporConfiguration.grantRole(keccak256("WARREN_ROLE"), admin);
-
-    await iporConfiguration.grantRole(
-        keccak256("WARREN_STORAGE_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(keccak256("WARREN_STORAGE_ROLE"), admin);
-
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_SPREAD_MODEL_ROLE"),
-        admin
-    );
-
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
-        admin
-    );
-
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE"),
-        admin
-    );
-    //#####################################################################
-    //GRANT ROLE IPOR CONFIGURATION - END
-    //#####################################################################
-
-    const miltonLiquidityPoolUtilizationModel =
+    const miltonLPUtilizationModelProxy =
         await MiltonLiquidityPoolUtilizationModel.deployed();
-    const miltonSpreadModel = await MiltonSpreadModel.deployed();
-    await iporConfiguration.setMiltonSpreadModel(miltonSpreadModel.address);
-    await iporConfiguration.setMiltonLiquidityPoolUtilizationModel(
-        miltonLiquidityPoolUtilizationModel.address
+    const miltonSpreadModelProxy = await MiltonSpreadModel.deployed();
+    await iporConfigurationProxy.setMiltonSpreadModel(
+        miltonSpreadModelProxy.address
+    );
+    await iporConfigurationProxy.setMiltonLiquidityPoolUtilizationModel(
+        miltonLPUtilizationModelProxy.address
     );
 
     //#####################################################################
@@ -145,45 +84,56 @@ module.exports = async function (deployer, _network, addresses) {
     const mockedUsdc = await UsdcMockedToken.deployed();
     const mockedDai = await DaiMockedToken.deployed();
 
-    await iporConfiguration.addAsset(mockedUsdt.address);
-    await iporConfiguration.addAsset(mockedUsdc.address);
-    await iporConfiguration.addAsset(mockedDai.address);
+    await iporConfigurationProxy.addAsset(mockedUsdt.address);
+    await iporConfigurationProxy.addAsset(mockedUsdc.address);
+    await iporConfigurationProxy.addAsset(mockedDai.address);
 
-    const iporAssetConfigurationUsdt =
+    const iporAssetConfigurationUsdtProxy =
         await IporAssetConfigurationUsdt.deployed();
-    const iporAssetConfigurationUsdc =
+    const iporAssetConfigurationUsdcProxy =
         await IporAssetConfigurationUsdc.deployed();
-    const iporAssetConfigurationDai =
+    const iporAssetConfigurationDaiProxy =
         await IporAssetConfigurationDai.deployed();
 
-    await grandRolesForAssetConfiguration(admin, iporAssetConfigurationUsdt);
-    await grandRolesForAssetConfiguration(admin, iporAssetConfigurationUsdc);
-    await grandRolesForAssetConfiguration(admin, iporAssetConfigurationDai);
+    await grandRolesForAssetConfiguration(
+        admin,
+        iporAssetConfigurationUsdtProxy
+    );
+    await grandRolesForAssetConfiguration(
+        admin,
+        iporAssetConfigurationUsdcProxy
+    );
+    await grandRolesForAssetConfiguration(
+        admin,
+        iporAssetConfigurationDaiProxy
+    );
 
-    await iporConfiguration.setIporAssetConfiguration(
+    await iporConfigurationProxy.setIporAssetConfiguration(
         mockedUsdt.address,
-        iporAssetConfigurationUsdt.address
+        iporAssetConfigurationUsdtProxy.address
     );
-    await iporConfiguration.setIporAssetConfiguration(
+    await iporConfigurationProxy.setIporAssetConfiguration(
         mockedUsdc.address,
-        iporAssetConfigurationUsdc.address
+        iporAssetConfigurationUsdcProxy.address
     );
-    await iporConfiguration.setIporAssetConfiguration(
+    await iporConfigurationProxy.setIporAssetConfiguration(
         mockedDai.address,
-        iporAssetConfigurationDai.address
+        iporAssetConfigurationDaiProxy.address
     );
 
-    const miltonStorageUsdt = await MiltonStorageUsdt.deployed();
-    const miltonStorageUsdc = await MiltonStorageUsdc.deployed();
-    const miltonStorageDai = await MiltonStorageDai.deployed();
+    const miltonStorageUsdtProxy = await MiltonStorageUsdt.deployed();
+    const miltonStorageUsdcProxy = await MiltonStorageUsdc.deployed();
+    const miltonStorageDaiProxy = await MiltonStorageDai.deployed();
 
-    await iporAssetConfigurationUsdt.setMiltonStorage(
-        miltonStorageUsdt.address
+    await iporAssetConfigurationUsdtProxy.setMiltonStorage(
+        miltonStorageUsdtProxy.address
     );
-    await iporAssetConfigurationUsdc.setMiltonStorage(
-        miltonStorageUsdc.address
+    await iporAssetConfigurationUsdcProxy.setMiltonStorage(
+        miltonStorageUsdcProxy.address
     );
-    await iporAssetConfigurationDai.setMiltonStorage(miltonStorageDai.address);
+    await iporAssetConfigurationDaiProxy.setMiltonStorage(
+        miltonStorageDaiProxy.address
+    );
 
     //#####################################################################
     // CONFIG STABLE - END
@@ -192,69 +142,69 @@ module.exports = async function (deployer, _network, addresses) {
     //#####################################################################
     //GRANT ROLE MILTON SPREAD CONFIGURATION  - BEGIN
     //#####################################################################
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_MAX_VALUE_ADMIN_ROLE"),
         admin
     );
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_MAX_VALUE_ROLE"),
         admin
     );
 
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
         admin
     );
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE"),
         admin
     );
 
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
         admin
     );
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE"),
         admin
     );
 
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
         admin
     );
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE"),
         admin
     );
 
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256(
             "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE"
         ),
         admin
     );
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256(
             "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE"
         ),
         admin
     );
 
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE"),
         admin
     );
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE"),
         admin
     );
 
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE"),
         admin
     );
-    await miltonSpreadModel.grantRole(
+    await miltonSpreadModelProxy.grantRole(
         keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE"),
         admin
     );
@@ -274,64 +224,149 @@ module.exports = async function (deployer, _network, addresses) {
     const ipUsdcToken = await IpTokenUsdc.deployed();
     const ipDaiToken = await IpTokenDai.deployed();
 
-    const josephUsdt = await JosephUsdt.deployed();
-    const josephUsdc = await JosephUsdc.deployed();
-    const josephDai = await JosephDai.deployed();
+    const josephUsdtProxy = await JosephUsdt.deployed();
+    const josephUsdcProxy = await JosephUsdc.deployed();
+    const josephDaiProxy = await JosephDai.deployed();
 
-    const miltonUsdt = await MiltonUsdt.deployed();
-    const miltonUsdc = await MiltonUsdc.deployed();
-    const miltonDai = await MiltonDai.deployed();
+    const itfJosephUsdtProxy = await ItfJosephUsdt.deployed();
+    const itfJosephUsdcProxy = await ItfJosephUsdc.deployed();
+    const itfJosephDaiProxy = await ItfJosephDai.deployed();
 
-    const itfJosephUsdt = await ItfJosephUsdt.deployed();
-    const itfJosephUsdc = await ItfJosephUsdc.deployed();
-    const itfJosephDai = await ItfJosephDai.deployed();
+    const miltonUsdtProxy = await MiltonUsdt.deployed();
+    const miltonUsdcProxy = await MiltonUsdc.deployed();
+    const miltonDaiProxy = await MiltonDai.deployed();
 
-    const itfMiltonUsdt = await ItfMiltonUsdt.deployed();
-    const itfMiltonUsdc = await ItfMiltonUsdc.deployed();
-    const itfMiltonDai = await ItfMiltonDai.deployed();
+    const itfMiltonUsdtProxy = await ItfMiltonUsdt.deployed();
+    const itfMiltonUsdcProxy = await ItfMiltonUsdc.deployed();
+    const itfMiltonDaiProxy = await ItfMiltonDai.deployed();
+
+    // const josephUsdtImplAddr = await erc1967.getImplementationAddress(
+    //     josephUsdtProxy.address
+    // );
+    // const josephUsdcImplAddr = await erc1967.getImplementationAddress(
+    //     josephUsdcProxy.address
+    // );
+    // const josephDaiImplAddr = await erc1967.getImplementationAddress(
+    //     josephDaiProxy.address
+    // );
+
+    // const itfJosephUsdtImplAddr = await erc1967.getImplementationAddress(
+    //     itfJosephUsdtProxy.address
+    // );
+    // const itfJosephUsdcImplAddr = await erc1967.getImplementationAddress(
+    //     itfJosephUsdcProxy.address
+    // );
+    // const itfJosephDaiImplAddr = await erc1967.getImplementationAddress(
+    //     itfJosephDaiProxy.address
+    // );
+
+    // const miltonUsdtImplAddr = await erc1967.getImplementationAddress(
+    //     miltonUsdtProxy.address
+    // );
+    // const miltonUsdcImplAddr = await erc1967.getImplementationAddress(
+    //     miltonUsdcProxy.address
+    // );
+    // const miltonDaiImplAddr = await erc1967.getImplementationAddress(
+    //     miltonDaiProxy.address
+    // );
+
+    // const itfMiltonUsdtImplAddr = await erc1967.getImplementationAddress(
+    //     itfMiltonUsdtProxy.address
+    // );
+    // const itfMiltonUsdcImplAddr = await erc1967.getImplementationAddress(
+    //     itfMiltonUsdcProxy.address
+    // );
+    // const itfMiltonDaiImplAddr = await erc1967.getImplementationAddress(
+    //     itfMiltonDaiProxy.address
+    // );
 
     if (process.env.ITF_ENABLED === "true") {
         //For IPOR Test Framework purposes
-        await iporAssetConfigurationUsdt.setMilton(itfMiltonUsdt.address);
-        await iporAssetConfigurationUsdc.setMilton(itfMiltonUsdc.address);
-        await iporAssetConfigurationDai.setMilton(itfMiltonDai.address);
+        await iporAssetConfigurationUsdtProxy.setMilton(
+            itfMiltonUsdtProxy.address
+        );
+        await iporAssetConfigurationUsdcProxy.setMilton(
+            itfMiltonUsdcProxy.address
+        );
+        await iporAssetConfigurationDaiProxy.setMilton(
+            itfMiltonDaiProxy.address
+        );
 
-        await iporAssetConfigurationUsdt.setJoseph(itfJosephUsdt.address);
-        await iporAssetConfigurationUsdc.setJoseph(itfJosephUsdc.address);
-        await iporAssetConfigurationDai.setJoseph(itfJosephDai.address);
+        await iporAssetConfigurationUsdtProxy.setJoseph(
+            itfJosephUsdtProxy.address
+        );
+        await iporAssetConfigurationUsdcProxy.setJoseph(
+            itfJosephUsdcProxy.address
+        );
+        await iporAssetConfigurationDaiProxy.setJoseph(
+            itfJosephDaiProxy.address
+        );
 
-        await itfMiltonUsdt.authorizeJoseph();
-        await itfMiltonUsdc.authorizeJoseph();
-        await itfMiltonDai.authorizeJoseph();
+        await itfMiltonUsdtProxy.authorizeJoseph(itfJosephUsdtProxy.address);
+        await itfMiltonUsdcProxy.authorizeJoseph(itfJosephUsdcProxy.address);
+        await itfMiltonDaiProxy.authorizeJoseph(itfJosephDaiProxy.address);
 
-        const itfWarren = await ItfWarren.deployed();
-        await itfWarren.addUpdater(admin);
-        await iporConfiguration.setWarren(itfWarren.address);
+        const itfWarrenProxy = await ItfWarren.deployed();
 
-        await ipUsdtToken.setJoseph(itfJosephUsdt.address);
-        await ipUsdcToken.setJoseph(itfJosephUsdc.address);
-        await ipDaiToken.setJoseph(itfJosephDai.address);
+        await itfWarrenProxy.addUpdater(admin);
+        await itfWarrenProxy.addAsset(mockedUsdt.address);
+        await itfWarrenProxy.addAsset(mockedUsdc.address);
+        await itfWarrenProxy.addAsset(mockedDai.address);
+
+        await iporConfigurationProxy.setWarren(itfWarrenProxy.address);
+
+        await ipUsdtToken.setJoseph(itfJosephUsdtProxy.address);
+        await ipUsdcToken.setJoseph(itfJosephUsdcProxy.address);
+        await ipDaiToken.setJoseph(itfJosephDaiProxy.address);
+
+        await miltonStorageUsdtProxy.setJoseph(itfJosephUsdtProxy.address);
+        await miltonStorageUsdcProxy.setJoseph(itfJosephUsdcProxy.address);
+        await miltonStorageDaiProxy.setJoseph(itfJosephDaiProxy.address);
+
+        await miltonStorageUsdtProxy.setMilton(itfMiltonUsdtProxy.address);
+        await miltonStorageUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
+        await miltonStorageDaiProxy.setMilton(itfMiltonDaiProxy.address);
     } else {
         //Web application, IPOR Dev Tool
-        await iporAssetConfigurationUsdt.setMilton(miltonUsdt.address);
-        await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
-        await iporAssetConfigurationDai.setMilton(miltonDai.address);
+        await iporAssetConfigurationUsdtProxy.setMilton(
+            miltonUsdtProxy.address
+        );
+        await iporAssetConfigurationUsdcProxy.setMilton(
+            miltonUsdcProxy.address
+        );
+        await iporAssetConfigurationDaiProxy.setMilton(miltonDaiProxy.address);
 
-        await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
-        await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
-        await iporAssetConfigurationDai.setJoseph(josephDai.address);
+        await iporAssetConfigurationUsdtProxy.setJoseph(
+            josephUsdtProxy.address
+        );
+        await iporAssetConfigurationUsdcProxy.setJoseph(
+            josephUsdcProxy.address
+        );
+        await iporAssetConfigurationDaiProxy.setJoseph(josephDaiProxy.address);
 
-        await miltonUsdt.authorizeJoseph();
-        await miltonUsdc.authorizeJoseph();
-        await miltonDai.authorizeJoseph();
+        await miltonUsdtProxy.authorizeJoseph(josephUsdtProxy.address);
+        await miltonUsdcProxy.authorizeJoseph(josephUsdcProxy.address);
+        await miltonDaiProxy.authorizeJoseph(josephDaiProxy.address);
 
-        const warren = await Warren.deployed();
-        await warren.addUpdater(admin);
-        await iporConfiguration.setWarren(warren.address);
+        const warrenProxy = await Warren.deployed();
+        await warrenProxy.addUpdater(admin);
+        await warrenProxy.addAsset(mockedUsdt.address);
+        await warrenProxy.addAsset(mockedUsdc.address);
+        await warrenProxy.addAsset(mockedDai.address);
 
-        await ipUsdtToken.setJoseph(josephUsdt.address);
-        await ipUsdcToken.setJoseph(josephUsdc.address);
-        await ipDaiToken.setJoseph(josephDai.address);
+        await iporConfigurationProxy.setWarren(warrenProxy.address);
+
+        await ipUsdtToken.setJoseph(josephUsdtProxy.address);
+        await ipUsdcToken.setJoseph(josephUsdcProxy.address);
+        await ipDaiToken.setJoseph(josephDaiProxy.address);
+
+        await miltonStorageUsdtProxy.setJoseph(josephUsdtProxy.address);
+        await miltonStorageUsdcProxy.setJoseph(josephUsdcProxy.address);
+        await miltonStorageDaiProxy.setJoseph(josephDaiProxy.address);
+
+        await miltonStorageUsdtProxy.setMilton(miltonUsdtProxy.address);
+        await miltonStorageUsdcProxy.setMilton(miltonUsdcProxy.address);
+        await miltonStorageDaiProxy.setMilton(miltonDaiProxy.address);
     }
 
     console.log("Setup Faucet...");
@@ -351,44 +386,68 @@ module.exports = async function (deployer, _network, addresses) {
         console.log(`Account: ${addresses[i]} - tokens transferred`);
 
         if (process.env.ITF_ENABLED === "true") {
-            mockedUsdt.approve(itfMiltonUsdt.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedUsdc.approve(itfMiltonUsdc.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedDai.approve(itfMiltonDai.address, totalSupply18Decimals, {
-                from: addresses[i],
-            });
+            mockedUsdt.approve(
+                itfMiltonUsdtProxy.address,
+                totalSupply6Decimals,
+                {
+                    from: addresses[i],
+                }
+            );
+            mockedUsdc.approve(
+                itfMiltonUsdcProxy.address,
+                totalSupply6Decimals,
+                {
+                    from: addresses[i],
+                }
+            );
+            mockedDai.approve(
+                itfMiltonDaiProxy.address,
+                totalSupply18Decimals,
+                {
+                    from: addresses[i],
+                }
+            );
 
-            mockedUsdt.approve(itfJosephUsdt.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedUsdc.approve(itfJosephUsdc.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedDai.approve(itfJosephDai.address, totalSupply18Decimals, {
-                from: addresses[i],
-            });
+            mockedUsdt.approve(
+                itfJosephUsdtProxy.address,
+                totalSupply6Decimals,
+                {
+                    from: addresses[i],
+                }
+            );
+            mockedUsdc.approve(
+                itfJosephUsdcProxy.address,
+                totalSupply6Decimals,
+                {
+                    from: addresses[i],
+                }
+            );
+            mockedDai.approve(
+                itfJosephDaiProxy.address,
+                totalSupply18Decimals,
+                {
+                    from: addresses[i],
+                }
+            );
         } else {
             //Milton has rights to spend money on behalf of user
-            mockedUsdt.approve(miltonUsdt.address, totalSupply6Decimals, {
+            mockedUsdt.approve(miltonUsdtProxy.address, totalSupply6Decimals, {
                 from: addresses[i],
             });
-            mockedUsdc.approve(miltonUsdc.address, totalSupply6Decimals, {
+            mockedUsdc.approve(miltonUsdcProxy.address, totalSupply6Decimals, {
                 from: addresses[i],
             });
-            mockedDai.approve(miltonDai.address, totalSupply18Decimals, {
+            mockedDai.approve(miltonDaiProxy.address, totalSupply18Decimals, {
                 from: addresses[i],
             });
 
-            mockedUsdt.approve(josephUsdt.address, totalSupply6Decimals, {
+            mockedUsdt.approve(josephUsdtProxy.address, totalSupply6Decimals, {
                 from: addresses[i],
             });
-            mockedUsdc.approve(josephUsdc.address, totalSupply6Decimals, {
+            mockedUsdc.approve(josephUsdcProxy.address, totalSupply6Decimals, {
                 from: addresses[i],
             });
-            mockedDai.approve(josephDai.address, totalSupply18Decimals, {
+            mockedDai.approve(josephDaiProxy.address, totalSupply18Decimals, {
                 from: addresses[i],
             });
         }
@@ -396,7 +455,7 @@ module.exports = async function (deployer, _network, addresses) {
 
     if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
         console.log("Prepare initial IPOR migration...");
-        await warren.updateIndexes(
+        await warrenProxy.updateIndexes(
             [mockedDai.address, mockedUsdt.address, mockedUsdc.address],
             [
                 BigInt("30000000000000000"),
@@ -406,140 +465,218 @@ module.exports = async function (deployer, _network, addresses) {
         );
     }
 };
-
-async function grandRolesForAssetConfiguration(admin, iporAssetConfiguration) {
-    await iporAssetConfiguration.grantRole(
+async function grandRolesForConfiguration(admin, iporConfigurationProxy) {
+    await iporConfigurationProxy.grantRole(
         keccak256("ROLES_INFO_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
+    await iporConfigurationProxy.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
 
-    await iporAssetConfiguration.grantRole(
+    await iporConfigurationProxy.grantRole(
+        keccak256("IPOR_ASSETS_ADMIN_ROLE"),
+        admin
+    );
+    await iporConfigurationProxy.grantRole(
+        keccak256("IPOR_ASSETS_ROLE"),
+        admin
+    );
+
+    await iporConfigurationProxy.grantRole(
+        keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
+        admin
+    );
+    await iporConfigurationProxy.grantRole(
+        keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
+        admin
+    );
+
+    await iporConfigurationProxy.grantRole(
+        keccak256("WARREN_ADMIN_ROLE"),
+        admin
+    );
+    await iporConfigurationProxy.grantRole(keccak256("WARREN_ROLE"), admin);
+
+    await iporConfigurationProxy.grantRole(
+        keccak256("WARREN_STORAGE_ADMIN_ROLE"),
+        admin
+    );
+    await iporConfigurationProxy.grantRole(
+        keccak256("WARREN_STORAGE_ROLE"),
+        admin
+    );
+
+    await iporConfigurationProxy.grantRole(
+        keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
+        admin
+    );
+    await iporConfigurationProxy.grantRole(
+        keccak256("MILTON_SPREAD_MODEL_ROLE"),
+        admin
+    );
+
+    await iporConfigurationProxy.grantRole(
+        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
+        admin
+    );
+    await iporConfigurationProxy.grantRole(
+        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
+        admin
+    );
+
+    await iporConfigurationProxy.grantRole(
+        keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"),
+        admin
+    );
+    await iporConfigurationProxy.grantRole(
+        keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE"),
+        admin
+    );
+}
+async function grandRolesForAssetConfiguration(
+    admin,
+    iporAssetConfigurationProxy
+) {
+    await iporAssetConfigurationProxy.grantRole(
+        keccak256("ROLES_INFO_ADMIN_ROLE"),
+        admin
+    );
+    await iporAssetConfigurationProxy.grantRole(
+        keccak256("ROLES_INFO_ROLE"),
+        admin
+    );
+
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("MILTON_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(keccak256("MILTON_ROLE"), admin);
+    await iporAssetConfigurationProxy.grantRole(
+        keccak256("MILTON_ROLE"),
+        admin
+    );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("MILTON_STORAGE_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("MILTON_STORAGE_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("JOSEPH_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(keccak256("JOSEPH_ROLE"), admin);
+    await iporAssetConfigurationProxy.grantRole(
+        keccak256("JOSEPH_ROLE"),
+        admin
+    );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("DECAY_FACTOR_VALUE_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("CHARLIE_TREASURER_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("CHARLIE_TREASURER_ROLE"),
         admin
     );
 
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("TREASURE_TREASURER_ADMIN_ROLE"),
         admin
     );
-    await iporAssetConfiguration.grantRole(
+    await iporAssetConfigurationProxy.grantRole(
         keccak256("TREASURE_TREASURER_ROLE"),
         admin
     );
