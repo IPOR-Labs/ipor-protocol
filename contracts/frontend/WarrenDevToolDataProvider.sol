@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
@@ -12,7 +11,6 @@ import {IporMath} from "../libraries/IporMath.sol";
 import "../interfaces/IWarren.sol";
 
 contract WarrenDevToolDataProvider is
-    Initializable,
     OwnableUpgradeable,
     UUPSUpgradeable,
     IWarrenDevToolDataProvider

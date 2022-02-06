@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../amm/MiltonSpreadModel.sol";
+import "../../amm/MiltonSpreadModel.sol";
 
-contract MockMiltonSpreadModel is MiltonSpreadModel {
+contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
     function testCalculateSpreadPayFixed(
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
@@ -12,7 +12,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soap
-    ) public view returns (uint256 spreadValue) {
+    ) public pure returns (uint256 spreadValue) {
         return
             _calculateSpreadPayFixed(
                 accruedIpor,
@@ -33,7 +33,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soap
-    ) public view returns (uint256 spreadValue) {
+    ) public pure returns (uint256 spreadValue) {
         return
             _calculateSpreadRecFixed(
                 accruedIpor,
@@ -53,7 +53,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soapPayFixed
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         return
             _calculateDemandComponentPayFixed(
                 swapCollateral,
@@ -69,7 +69,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         return
             _calculateAtParComponentPayFixed(
                 iporIndexValue,
@@ -119,7 +119,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soapRecFixed
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         return
             _calculateDemandComponentRecFixed(
                 swapCollateral,
@@ -135,7 +135,7 @@ contract MockMiltonSpreadModel is MiltonSpreadModel {
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         return
             _calculateAtParComponentRecFixed(
                 iporIndexValue,

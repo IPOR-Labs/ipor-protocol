@@ -14,7 +14,7 @@ import "./WarrenStorage.sol";
  *
  * @author IPOR Labs
  */
-contract Warren is Initializable, WarrenStorage, IWarren {
+contract Warren is WarrenStorage, IWarren {
     using IporLogic for DataTypes.IPOR;
 
     function initialize() public initializer {

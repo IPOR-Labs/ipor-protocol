@@ -57,9 +57,7 @@ const {
     getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
-    prepareTestData,
-    grantAllSpreadRoles,
-    setupDefaultSpreadConstants,
+    prepareTestData,        
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
@@ -79,9 +77,7 @@ describe("Milton", () => {
             userTwo,
             userThree,
             liquidityProvider,
-        ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
+        ]);                
     });
 
     it("should NOT open position because collateral amount too low", async () => {

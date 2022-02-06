@@ -240,46 +240,6 @@ module.exports = async function (deployer, _network, addresses) {
     const itfMiltonUsdcProxy = await ItfMiltonUsdc.deployed();
     const itfMiltonDaiProxy = await ItfMiltonDai.deployed();
 
-    // const josephUsdtImplAddr = await erc1967.getImplementationAddress(
-    //     josephUsdtProxy.address
-    // );
-    // const josephUsdcImplAddr = await erc1967.getImplementationAddress(
-    //     josephUsdcProxy.address
-    // );
-    // const josephDaiImplAddr = await erc1967.getImplementationAddress(
-    //     josephDaiProxy.address
-    // );
-
-    // const itfJosephUsdtImplAddr = await erc1967.getImplementationAddress(
-    //     itfJosephUsdtProxy.address
-    // );
-    // const itfJosephUsdcImplAddr = await erc1967.getImplementationAddress(
-    //     itfJosephUsdcProxy.address
-    // );
-    // const itfJosephDaiImplAddr = await erc1967.getImplementationAddress(
-    //     itfJosephDaiProxy.address
-    // );
-
-    // const miltonUsdtImplAddr = await erc1967.getImplementationAddress(
-    //     miltonUsdtProxy.address
-    // );
-    // const miltonUsdcImplAddr = await erc1967.getImplementationAddress(
-    //     miltonUsdcProxy.address
-    // );
-    // const miltonDaiImplAddr = await erc1967.getImplementationAddress(
-    //     miltonDaiProxy.address
-    // );
-
-    // const itfMiltonUsdtImplAddr = await erc1967.getImplementationAddress(
-    //     itfMiltonUsdtProxy.address
-    // );
-    // const itfMiltonUsdcImplAddr = await erc1967.getImplementationAddress(
-    //     itfMiltonUsdcProxy.address
-    // );
-    // const itfMiltonDaiImplAddr = await erc1967.getImplementationAddress(
-    //     itfMiltonDaiProxy.address
-    // );
-
     if (process.env.ITF_ENABLED === "true") {
         //For IPOR Test Framework purposes
         await iporAssetConfigurationUsdtProxy.setMilton(

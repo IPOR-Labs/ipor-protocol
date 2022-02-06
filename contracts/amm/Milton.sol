@@ -3,7 +3,6 @@ pragma solidity 0.8.9;
 
 import "../libraries/types/DataTypes.sol";
 import "../libraries/IporMath.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -32,8 +31,7 @@ import "../interfaces/IJoseph.sol";
  * @author IPOR Labs
  */
 //TODO: add pausable modifier for methodds
-contract Milton is
-    Initializable,
+contract Milton is    
     UUPSUpgradeable,
     OwnableUpgradeable,
     PausableUpgradeable,

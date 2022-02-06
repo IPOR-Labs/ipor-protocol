@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 import "../libraries/types/DataTypes.sol";
@@ -21,7 +20,7 @@ import "./AccessControlAssetConfiguration.sol";
 
 //TODO: combine with MiltonStorage to minimize external calls in modifiers and simplify code
 contract IporAssetConfiguration is
-	Initializable, UUPSUpgradeable, AccessControlAssetConfiguration,
+	UUPSUpgradeable, AccessControlAssetConfiguration,
     IIporAssetConfiguration
 {
     using SafeCast for uint256;

@@ -244,13 +244,11 @@ module.exports.prepareData = async (libraries, accounts) => {
     await miltonFrontendDataProvider.deployed();
     await miltonFrontendDataProvider.initialize(iporConfiguration.address);
 
-    let miltonSpread = null;
-
-    const MockMiltonSpreadModel = await ethers.getContractFactory(
-        "MockMiltonSpreadModel"
+    const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase1MiltonSpreadModel"
     );
 
-    miltonSpread = await MockMiltonSpreadModel.deploy();
+    const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
     await miltonSpread.deployed();
     await miltonSpread.initialize();
 
@@ -264,6 +262,106 @@ module.exports.prepareData = async (libraries, accounts) => {
     };
 
     return data;
+};
+
+module.exports.prepareMiltonSpreadCase2 = async () => {
+    const MockCase2MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase2MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase2MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase3 = async () => {
+    const MockCase3MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase3MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase3MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase4 = async () => {
+    const MockCase4MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase4MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase4MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase5 = async () => {
+    const MockCase5MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase5MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase5MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase6 = async () => {
+    const MockCase6MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase6MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase6MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase7 = async () => {
+    const MockCase7MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase7MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase7MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase8 = async () => {
+    const MockCase8MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase8MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase8MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase9 = async () => {
+    const MockCase9MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase9MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase9MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase10 = async () => {
+    const MockCase10MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase10MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase10MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+module.exports.prepareMiltonSpreadCase11 = async () => {
+    const MockCase11MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase11MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase11MiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
 };
 
 // TODO implement only for DAI
@@ -560,63 +658,6 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     };
 };
 
-module.exports.grantAllSpreadRoles = async (data, admin, userOne) => {
-    await data.miltonSpread.grantRole(
-        keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ADMIN_ROLE"),
-        admin.address
-    );
-    const roleKf = keccak256("SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE");
-    await data.miltonSpread.grantRole(roleKf, userOne.address);
-
-    await data.miltonSpread.grantRole(
-        keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ADMIN_ROLE"),
-        admin.address
-    );
-
-    const roleLambda = keccak256("SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE");
-    await data.miltonSpread.grantRole(roleLambda, userOne.address);
-
-    await data.miltonSpread.grantRole(
-        keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ADMIN_ROLE"),
-        admin.address
-    );
-
-    const roleKOmega = keccak256("SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE");
-    await data.miltonSpread.grantRole(roleKOmega, userOne.address);
-
-    await data.miltonSpread.grantRole(
-        keccak256(
-            "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ADMIN_ROLE"
-        ),
-        admin.address
-    );
-    const roleM = keccak256(
-        "SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE"
-    );
-    await data.miltonSpread.grantRole(roleM, userOne.address);
-
-    await data.miltonSpread.grantRole(
-        keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ADMIN_ROLE"),
-        admin.address
-    );
-    const roleKvol = keccak256("SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE");
-    await data.miltonSpread.grantRole(roleKvol, userOne.address);
-
-    await data.miltonSpread.grantRole(
-        keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ADMIN_ROLE"),
-        admin.address
-    );
-    const roleKHist = keccak256("SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE");
-    await data.miltonSpread.grantRole(roleKHist, userOne.address);
-
-    await data.miltonSpread.grantRole(
-        keccak256("SPREAD_MAX_VALUE_ADMIN_ROLE"),
-        admin.address
-    );
-    const roleSpreadMax = keccak256("SPREAD_MAX_VALUE_ROLE");
-    await data.miltonSpread.grantRole(roleSpreadMax, userOne.address);
-};
-
 module.exports.setupIpTokenDaiInitialValues = async (
     testData,
     liquidityProvider,
@@ -633,37 +674,6 @@ module.exports.setupIpTokenDaiInitialValues = async (
             testData.josephDai.address
         );
     }
-};
-module.exports.setupDefaultSpreadConstants = async (data, userOne) => {
-    const spreadMaxValue = BigInt("10000000000000000");
-
-    await data.miltonSpread.connect(userOne).setSpreadMaxValue(spreadMaxValue);
-
-    await data.miltonSpread
-        .connect(userOne)
-        .setDemandComponentMaxLiquidityRedemptionValue(
-            BigInt("1000000000000000000")
-        );
-
-    await data.miltonSpread
-        .connect(userOne)
-        .setDemandComponentLambdaValue(BigInt("0"));
-
-    await data.miltonSpread
-        .connect(userOne)
-        .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-    await data.miltonSpread
-        .connect(userOne)
-        .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
-
-    await data.miltonSpread
-        .connect(userOne)
-        .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-    await data.miltonSpread
-        .connect(userOne)
-        .setAtParComponentKHistValue(BigInt("14000000000000000"));
 };
 
 module.exports.setupIpTokenUsdtInitialValues = async (

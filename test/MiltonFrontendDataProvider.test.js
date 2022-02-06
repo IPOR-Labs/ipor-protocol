@@ -22,14 +22,12 @@ const {
 
 const {
     getLibraries,
-    grantAllSpreadRoles,
     setupTokenUsdtInitialValuesForUsers,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdcInitialValuesForUsers,
-    setupDefaultSpreadConstants,
 } = require("./Utils");
 
 describe("MiltonFrontendDataProvider", () => {
@@ -59,8 +57,6 @@ describe("MiltonFrontendDataProvider", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should list correct number DAI, USDC, USDT items", async () => {

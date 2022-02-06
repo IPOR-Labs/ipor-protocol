@@ -33,8 +33,6 @@ const {
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
-    grantAllSpreadRoles,
-    setupDefaultSpreadConstants,
     absValue,
 } = require("./Utils");
 
@@ -54,8 +52,6 @@ describe("Joseph", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {

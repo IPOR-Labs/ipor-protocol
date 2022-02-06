@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
@@ -11,7 +10,6 @@ import "../interfaces/IMiltonDevToolDataProvider.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonDevToolDataProvider is
-    Initializable,
     OwnableUpgradeable,
     UUPSUpgradeable,
     IMiltonDevToolDataProvider

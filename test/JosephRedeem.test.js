@@ -31,8 +31,6 @@ const {
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
-    grantAllSpreadRoles,
-    setupDefaultSpreadConstants,
 } = require("./Utils");
 
 describe("Joseph - redeem", () => {
@@ -51,8 +49,6 @@ describe("Joseph - redeem", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should redeem ipToken - simple case 1 - DAI 18 decimals", async () => {

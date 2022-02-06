@@ -3,12 +3,10 @@ pragma solidity 0.8.9;
 
 import "../interfaces/IIporConfiguration.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "./AccessControlConfiguration.sol";
 
 contract IporConfiguration is
-    Initializable,
     UUPSUpgradeable,
     AccessControlConfiguration,
     IIporConfiguration

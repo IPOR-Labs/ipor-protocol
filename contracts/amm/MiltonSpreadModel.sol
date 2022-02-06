@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
@@ -16,40 +15,17 @@ import "./MiltonSpreadModelCore.sol";
 import "../configuration/MiltonSpreadConfiguration.sol";
 
 contract MiltonSpreadModel is
-    Initializable,
     UUPSUpgradeable,
+    OwnableUpgradeable,
     MiltonSpreadModelCore,
     MiltonSpreadConfiguration,
     IMiltonSpreadModel
 {
-    using SafeCast for uint256;
-
     function initialize() public initializer {
-        _init();
-
-        _demandComponentKfValue = (IporMath.division(Constants.D18, 100))
-            .toUint64();
-        _demandComponentLambdaValue = (IporMath.division(Constants.D18, 100))
-            .toUint64();
-        _demandComponentKOmegaValue = (IporMath.division(Constants.D18, 100))
-            .toUint64();
-
-        _demandComponentMaxLiquidityRedemptionValue = Constants.D18.toUint64();
-
-        _atParComponentKVolValue = (IporMath.division(Constants.D18, 100))
-            .toUint64();
-
-        _atParComponentKHistValue = (IporMath.division(Constants.D18, 100))
-            .toUint64();
-
-        _maxValue = (IporMath.division(3 * Constants.D16, 10)).toUint64();
+        __Ownable_init();
     }
 
-    function _authorizeUpgrade(address)
-        internal
-        override
-        onlyRole(_ADMIN_ROLE)
-    {}
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function calculatePartialSpreadPayFixed(
         IMiltonStorage miltonStorage,
@@ -155,7 +131,7 @@ contract MiltonSpreadModel is
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soap
-    ) internal view returns (uint256 spreadValue) {
+    ) internal pure returns (uint256 spreadValue) {
         require(
             liquidityPoolBalance + swapOpeningFee != 0,
             IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
@@ -173,8 +149,8 @@ contract MiltonSpreadModel is
                 accruedIpor.exponentialMovingAverage,
                 accruedIpor.exponentialWeightedMovingVariance
             );
-
-        spreadValue = result < _maxValue ? result : _maxValue;
+        uint256 maxValue = _getSpreadMaxValue();
+        spreadValue = result < maxValue ? result : maxValue;
     }
 
     function _calculateSpreadRecFixed(
@@ -185,7 +161,7 @@ contract MiltonSpreadModel is
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soap
-    ) internal view returns (uint256 spreadValue) {
+    ) internal pure returns (uint256 spreadValue) {
         require(
             liquidityPoolBalance + swapOpeningFee != 0,
             IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
@@ -204,7 +180,8 @@ contract MiltonSpreadModel is
                 accruedIpor.exponentialWeightedMovingVariance
             );
 
-        spreadValue = result < _maxValue ? result : _maxValue;
+        uint256 maxValue = _getSpreadMaxValue();
+        spreadValue = result < maxValue ? result : maxValue;
     }
 
     function _calculateDemandComponentPayFixed(
@@ -214,15 +191,15 @@ contract MiltonSpreadModel is
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soapPayFixed
-    ) internal view returns (uint256) {
-        uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
+    ) internal pure returns (uint256) {
+        uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
             _calculateAdjustedUtilizationRatePayFixed(
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
-                _demandComponentLambdaValue
+                _getDCLambdaValue()
             );
 
         if (kfDenominator != 0) {
@@ -232,25 +209,25 @@ contract MiltonSpreadModel is
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
-                            _demandComponentKfValue * Constants.D18,
+                            _getDCKfValue() * Constants.D18,
                             kfDenominator
                         ) +
                         IporMath.division(
-                            _demandComponentKOmegaValue * Constants.D18,
+                            _getDCKOmegaValue() * Constants.D18,
                             kOmegaDenominator
                         );
                 } else {
-                    return _maxValue;
+                    return _getSpreadMaxValue();
                 }
             } else {
                 return
                     IporMath.division(
-                        _demandComponentKfValue * Constants.D18,
+                        _getDCKfValue() * Constants.D18,
                         kfDenominator
-                    ) + _demandComponentKOmegaValue;
+                    ) + _getDCKOmegaValue();
             }
         } else {
-            return _maxValue;
+            return _getSpreadMaxValue();
         }
     }
 
@@ -258,49 +235,27 @@ contract MiltonSpreadModel is
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) internal view returns (uint256) {
+    ) internal pure returns (uint256) {
+        uint256 maxValue = _getSpreadMaxValue();
+
         if (exponentialWeightedMovingVariance == Constants.D18) {
-            return _maxValue;
+            return maxValue;
         } else {
             uint256 historicalDeviation = _calculateHistoricalDeviationPayFixed(
-                _atParComponentKHistValue,
+                _getAtParComponentKHistValue(),
                 iporIndexValue,
                 exponentialMovingAverage,
-                _maxValue
+                maxValue
             );
 
-            if (historicalDeviation < _maxValue) {
+            if (historicalDeviation < maxValue) {
                 return
                     IporMath.division(
-                        _atParComponentKVolValue * Constants.D18,
+                        _getAtParComponentKVolValue() * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
             } else {
-                return _maxValue;
-            }
-        }
-    }
-
-    function _calculateHistoricalDeviationPayFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) internal pure returns (uint256) {
-        if (exponentialMovingAverage < iporIndexValue) {
-            return 0;
-        } else {
-            uint256 mu = IporMath.absoluteValue(
-                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
-            );
-            if (mu == Constants.D18) {
-                return maxSpreadValue;
-            } else {
-                return
-                    IporMath.division(
-                        kHist * Constants.D18,
-                        Constants.D18 - mu
-                    );
+                return maxValue;
             }
         }
     }
@@ -342,15 +297,15 @@ contract MiltonSpreadModel is
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         int256 soapRecFixed
-    ) internal view returns (uint256) {
-        uint256 kfDenominator = _demandComponentMaxLiquidityRedemptionValue -
+    ) internal pure returns (uint256) {
+        uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
             _calculateAdjustedUtilizationRateRecFixed(
                 swapCollateral,
                 swapOpeningFee,
                 liquidityPoolBalance,
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
-                _demandComponentLambdaValue
+                _getDCLambdaValue()
             );
         if (kfDenominator != 0) {
             if (soapRecFixed > 0) {
@@ -359,25 +314,25 @@ contract MiltonSpreadModel is
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
-                            _demandComponentKfValue * Constants.D18,
+                            _getDCKfValue() * Constants.D18,
                             kfDenominator
                         ) +
                         IporMath.division(
-                            _demandComponentKOmegaValue * Constants.D18,
+                            _getDCKOmegaValue() * Constants.D18,
                             kOmegaDenominator
                         );
                 } else {
-                    return _maxValue;
+                    return _getSpreadMaxValue();
                 }
             } else {
                 return
                     IporMath.division(
-                        _demandComponentKfValue * Constants.D18,
+                        _getDCKfValue() * Constants.D18,
                         kfDenominator
-                    ) + _demandComponentKOmegaValue;
+                    ) + _getDCKOmegaValue();
             }
         } else {
-            return _maxValue;
+            return _getSpreadMaxValue();
         }
     }
 
@@ -385,50 +340,26 @@ contract MiltonSpreadModel is
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) internal view returns (uint256) {
-        uint256 maxSpreadValue = _maxValue;
+    ) internal pure returns (uint256) {
+        uint256 maxSpreadValue = _getSpreadMaxValue();
 
         if (exponentialWeightedMovingVariance == Constants.D18) {
             return maxSpreadValue;
         } else {
             uint256 historicalDeviation = _calculateHistoricalDeviationRecFixed(
-                _atParComponentKHistValue,
+                _getAtParComponentKHistValue(),
                 iporIndexValue,
                 exponentialMovingAverage,
                 maxSpreadValue
             );
-            if (historicalDeviation < _maxValue) {
+            if (historicalDeviation < maxSpreadValue) {
                 return
                     IporMath.division(
-                        _atParComponentKVolValue * Constants.D18,
+                        _getAtParComponentKVolValue() * Constants.D18,
                         Constants.D18 - exponentialWeightedMovingVariance
                     ) + historicalDeviation;
             } else {
-                return _maxValue;
-            }
-        }
-    }
-
-    function _calculateHistoricalDeviationRecFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) internal pure returns (uint256) {
-        if (exponentialMovingAverage > iporIndexValue) {
-            return 0;
-        } else {
-            uint256 mu = IporMath.absoluteValue(
-                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
-            );
-            if (mu == Constants.D18) {
                 return maxSpreadValue;
-            } else {
-                return
-                    IporMath.division(
-                        kHist * Constants.D18,
-                        Constants.D18 - mu
-                    );
             }
         }
     }

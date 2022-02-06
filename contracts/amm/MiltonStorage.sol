@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
@@ -15,9 +14,8 @@ import "../interfaces/IIporAssetConfiguration.sol";
 import "../libraries/Constants.sol";
 
 contract MiltonStorage is
-    Initializable,
-    OwnableUpgradeable,
-    UUPSUpgradeable,
+	UUPSUpgradeable,
+    OwnableUpgradeable,    
     IMiltonStorage
 {
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract

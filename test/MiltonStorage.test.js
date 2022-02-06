@@ -23,7 +23,6 @@ const {
 const {
     assertError,
     getLibraries,
-    grantAllSpreadRoles,
     setupTokenUsdtInitialValuesForUsers,
     prepareApproveForUsers,
     prepareData,
@@ -59,8 +58,6 @@ describe("MiltonStorage", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {

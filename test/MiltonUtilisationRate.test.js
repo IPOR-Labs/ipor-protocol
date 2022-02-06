@@ -50,17 +50,11 @@ const {
 const {
     assertError,
     getLibraries,
-    getStandardDerivativeParamsDAI,
-    getStandardDerivativeParamsUSDT,
     getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    grantAllSpreadRoles,
-    setupDefaultSpreadConstants,
     setupTokenDaiInitialValuesForUsers,
-    setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
 
 describe("Milton - Utilization Rate", () => {
@@ -79,8 +73,6 @@ describe("Milton - Utilization Rate", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     // it("should open pay fixed position - liquidity pool utilization not exceeded, custom utilization", async () => {
@@ -490,13 +482,13 @@ describe("Milton - Utilization Rate", () => {
         );
     });
 
-	it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, default utilization", async () => {
+    it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, default utilization", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data
-        );        
+        );
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -610,7 +602,7 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data
-        );        
+        );
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
