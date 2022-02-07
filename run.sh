@@ -39,6 +39,7 @@ ETH_BC_URL="http://localhost:9545"
 GET_IP_TOKEN_METHOD_SIGNATURE="0xf64de4ed"
 
 IS_MIGRATE_SC="NO"
+IS_UPGRADE_SC="NO"
 IS_BUILD_DOCKER="NO"
 IS_CLEAN_BC="NO"
 IS_RUN="NO"
@@ -56,6 +57,9 @@ do
     case "$1" in
         migrate|m)
             IS_MIGRATE_SC="YES"
+        ;;
+		upgrade|u)
+            IS_UPGRADE_SC="YES"
         ;;
         build|b)
             IS_BUILD_DOCKER="YES"
@@ -291,6 +295,14 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
   truffle migrate --network docker --reset --compile-none
 fi
 
+if [ $IS_UPGRADE_SC = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mUpgrade Smart Contracts to Ethereum blockchain...\e[0m\n"
+
+  truffle migrate --network docker -f 4
+fi
+
 
 if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
   cd "${DIR}"
@@ -331,6 +343,7 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m         Run / restart IPOR dockers"
     echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m        Stop IPOR dockers"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m     Compile and migrate Smart Contracts to blockchain"
+	echo -e "   \e[36mupgrade\e[0m|\e[36mu\e[0m     Upgrade Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m     Publish build artifacts to S3 bucket"
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m       Clean Ethereum blockchain"
     echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m       Restart nginx Ethereum blockchain container"
