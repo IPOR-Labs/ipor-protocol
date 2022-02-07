@@ -23,6 +23,7 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </div>
         </div>
+
         <div className="row">
             <div className="col-md-2">Milton Spread Model</div>
             <div className="col-md-3">
@@ -81,9 +82,11 @@ export default ({ drizzle, drizzleState }) => (
             </div>
         </div>
         <hr />
-		<div className="row">
+        <div className="row">
             <div className="col-md-2">IporConfiguration</div>
-            <div className="col-md-10">{drizzle.contracts.IporConfiguration.address}</div>
+            <div className="col-md-10">
+                {drizzle.contracts.IporConfiguration.address}
+            </div>
         </div>
         <div className="row">
             <div className="col-md-2">Warren</div>
@@ -185,7 +188,7 @@ export default ({ drizzle, drizzleState }) => (
             <div className="col-md-2">ItfJosephDai</div>
             <div className="col-md-10">
                 {drizzle.contracts.ItfJosephDai.address}
-            </div>	
+            </div>
         </div>
         <hr />
         <div className="row">
