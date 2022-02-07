@@ -291,8 +291,11 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
+
+  rm -rf "${DIR}/app/contracts"
   truffle compile --all
   truffle migrate --network docker --reset --compile-none
+  
 fi
 
 if [ $IS_UPGRADE_SC = "YES" ]; then
