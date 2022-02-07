@@ -90,6 +90,10 @@ contract Milton is
         _asset = asset;
     }
 
+	function getVersion() external view override returns(uint256) {
+		return 4;
+	}
+
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     modifier onlyActiveSwapPayFixed(uint256 swapId) {

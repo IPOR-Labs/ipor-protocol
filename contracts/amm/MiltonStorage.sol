@@ -45,6 +45,10 @@ contract MiltonStorage is
         );
     }
 
+	function getVersion() external view override returns(uint256) {
+		return 4;
+	}
+
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function setMilton(address milton) external override onlyOwner {

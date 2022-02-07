@@ -4,7 +4,10 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
-    function authorizeJoseph(address joseph) external;
+
+	function getVersion() external view returns(uint256);
+    
+	function authorizeJoseph(address joseph) external;
 
     function pause() external;
 
