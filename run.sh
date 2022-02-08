@@ -243,8 +243,7 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
 
 
   cd "${DIR}"  
-  npm install
-  truffle compile --all
+  npm install  
 
   cd "${DIR}/app"
   echo -e "\n\e[32mBuild Milton Tool docker...\e[0m\n"
@@ -293,7 +292,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
   rm -rf app/src/contracts/
   truffle compile --all
-  npx truffle migrate --network docker --reset --compile-none
+  truffle migrate --network docker --reset --compile-none
   
 fi
 
@@ -301,8 +300,8 @@ if [ $IS_UPGRADE_SC = "YES" ]; then
   cd "${DIR}"
 
   echo -e "\n\e[32mUpgrade Smart Contracts to Ethereum blockchain...\e[0m\n"
-
-  npx truffle migrate --network docker -f 4
+  truffle compile --all
+  truffle migrate --network docker -f 4
 fi
 
 

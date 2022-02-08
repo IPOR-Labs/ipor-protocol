@@ -26,7 +26,7 @@
 
         <!-- DIRECTORIES -->
         <generated.sources>src/generated</generated.sources>
-        <contracts.sources>contracts</contracts.sources>
+        <contracts.sources>contracts</contracts.sources>		
 
         <!-- LIBS VERSION -->
         <web3j.version>4.8.7</web3j.version>
