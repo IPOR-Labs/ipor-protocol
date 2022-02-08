@@ -752,8 +752,6 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
 
-                
-
                 <tr>
                     <td>
                         <strong>
@@ -962,73 +960,6 @@ export default ({ drizzle, drizzleState }) => (
                             drizzle={drizzle}
                             contract="IporAssetConfigurationDai"
                             method="setAssetManagementVault"
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Decay Factor Value</strong>
-                        <br />
-                        <small>Indicator used in Spread calculation</small>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getDecayFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setDecayFactorValue"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getDecayFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setDecayFactorValue"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getDecayFactorValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setDecayFactorValue"
                         />
                     </td>
                 </tr>

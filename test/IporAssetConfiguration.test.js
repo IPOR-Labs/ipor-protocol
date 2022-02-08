@@ -1317,33 +1317,7 @@ describe("IporAssetConfiguration", () => {
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xfa417488328f0d166e914b1aa9f0550c0823bf7e3a9e49d553e1ca6d505cc39e`
         );
-    });
-
-    it("should set decay factor value", async () => {
-        //given
-        const decayFactorValue = TC_MULTIPLICATOR_18DEC;
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
-            admin.address
-        );
-        const role = keccak256("DECAY_FACTOR_VALUE_ROLE");
-        await iporAssetConfigurationDAI.grantRole(role, userOne.address);
-
-        //when
-        await iporAssetConfigurationDAI
-            .connect(userOne)
-            .setDecayFactorValue(decayFactorValue);
-
-        //then
-        const actualDecayFactorValue = BigInt(
-            await iporAssetConfigurationDAI.getDecayFactorValue()
-        );
-
-        expect(
-            decayFactorValue,
-            `Incorrect  decay factor value for asset DAI, actual: ${actualDecayFactorValue}, expected: ${decayFactorValue}`
-        ).to.be.eql(actualDecayFactorValue);
-    });
+    });    
 
     it("should NOT set DecayFactorValue when user does not have DECAY_FACTOR_VALUE_ROLE role", async () => {
         //given

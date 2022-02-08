@@ -16,6 +16,7 @@ import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../oracles/WarrenStorage.sol";
 import "./MiltonStorage.sol";
+import "../configuration/MiltonConfiguration.sol";
 import "../interfaces/IMiltonEvents.sol";
 import "../tokenization/IpToken.sol";
 
@@ -31,11 +32,12 @@ import "../interfaces/IJoseph.sol";
  * @author IPOR Labs
  */
 //TODO: add pausable modifier for methodds
-contract Milton is    
+contract Milton is
     UUPSUpgradeable,
     OwnableUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
+    MiltonConfiguration,
     IMiltonEvents,
     IMilton
 {
@@ -48,6 +50,7 @@ contract Milton is
     uint8 private _decimals;
     address private _asset;
     IIpToken private _ipToken;
+
     IWarren internal _warren;
 
     IMiltonStorage internal _miltonStorage;
@@ -90,9 +93,9 @@ contract Milton is
         _asset = asset;
     }
 
-	function getVersion() external view override returns(uint256) {
-		return 1;
-	}
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
@@ -399,7 +402,6 @@ contract Milton is
         uint256 maximumSlippage,
         uint256 collateralizationFactor
     ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {
-        IIporAssetConfiguration iac = _iporAssetConfiguration;
         require(
             maximumSlippage != 0,
             IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW
@@ -414,27 +416,26 @@ contract Milton is
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _decimals);
 
         require(
-            collateralizationFactor >= iac.getMinCollateralizationFactorValue(),
+            collateralizationFactor >= _getMinCollateralizationFactorValue(),
             IporErrors.MILTON_COLLATERALIZATION_FACTOR_TOO_LOW
         );
         require(
-            collateralizationFactor <= iac.getMaxCollateralizationFactorValue(),
+            collateralizationFactor <= _getMaxCollateralizationFactorValue(),
             IporErrors.MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH
         );
 
         require(
             wadTotalAmount >
-                iac.getLiquidationDepositAmount() +
-                    iac.getIporPublicationFeeAmount(),
+                _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
         require(
-            wadTotalAmount <= iac.getMaxSwapTotalAmount(),
+            wadTotalAmount <= _getMaxSwapTotalAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_TOO_HIGH
         );
 
         require(
-            maximumSlippage <= iac.getMaxSlippagePercentage(),
+            maximumSlippage <= _getMaxSlippagePercentage(),
             IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH
         );
 
@@ -445,15 +446,15 @@ contract Milton is
         ) = _calculateDerivativeAmount(
                 wadTotalAmount,
                 collateralizationFactor,
-                iac.getLiquidationDepositAmount(),
-                iac.getIporPublicationFeeAmount(),
-                iac.getOpeningFeePercentage()
+                _getLiquidationDepositAmount(),
+                _getIporPublicationFeeAmount(),
+                _getOpeningFeePercentage()
             );
 
         require(
             wadTotalAmount >
-                iac.getLiquidationDepositAmount() +
-                    iac.getIporPublicationFeeAmount() +
+                _getLiquidationDepositAmount() +
+                    _getIporPublicationFeeAmount() +
                     openingFee,
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
@@ -464,8 +465,8 @@ contract Milton is
                 collateral,
                 notional,
                 openingFee,
-                iac.getLiquidationDepositAmount(),
-                iac.getIporPublicationFeeAmount(),
+                _getLiquidationDepositAmount(),
+                _getIporPublicationFeeAmount(),
                 _warren.getAccruedIndex(openTimestamp, _asset)
             );
     }
@@ -518,10 +519,13 @@ contract Milton is
             indicator.fixedInterestRate,
             indicator.ibtQuantity
         );
-        //TODO: pass to miltonStorage all required parameters, dont use iporassetconfiguration in milton storage at all
+        
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
-            bosStruct.openingFee
+            bosStruct.openingFee,
+            _getLiquidationDepositAmount(),
+            _getIporPublicationFeeAmount(),
+            _getOpeningFeeForTreasuryPercentage()
         );
 
         //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
@@ -600,7 +604,10 @@ contract Milton is
         uint256 newSwapId = _miltonStorage
             .updateStorageWhenOpenSwapReceiveFixed(
                 newSwap,
-                bosStruct.openingFee
+                bosStruct.openingFee,
+                _getLiquidationDepositAmount(),
+                _getIporPublicationFeeAmount(),
+                _getOpeningFeeForTreasuryPercentage()
             );
 
         //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
@@ -641,9 +648,7 @@ contract Milton is
                     totalCollateralPerLegBalance,
                     collateral,
                     openingFee
-                ) <=
-                _iporAssetConfiguration
-                    .getLiquidityPoolMaxUtilizationPerLegPercentage(),
+                ) <= _getMaxLpUtilizationPerLegPercentage(),
             IporErrors.MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED
         );
     }
@@ -761,8 +766,7 @@ contract Milton is
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
         );
 
-        uint256 incomeTaxPercentage = _iporAssetConfiguration
-            .getIncomeTaxPercentage();
+        uint256 incomeTaxPercentage = _getIncomeTaxPercentage();
 
         int256 positionValue = _calculateSwapPayFixedValue(
             closeTimestamp,
@@ -819,7 +823,7 @@ contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-            _iporAssetConfiguration.getIncomeTaxPercentage()
+            _getIncomeTaxPercentage()
         );
 
         emit CloseSwap(swapId, _asset, closeTimestamp);

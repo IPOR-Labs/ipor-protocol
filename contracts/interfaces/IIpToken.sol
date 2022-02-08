@@ -2,7 +2,6 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../libraries/types/DataTypes.sol";
 
 interface IIpToken is IERC20 {
     event Mint(address indexed account, uint256 value);

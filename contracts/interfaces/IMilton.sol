@@ -5,7 +5,7 @@ import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
 
-	function getVersion() external view returns(uint256);
+	function getVersion() external pure returns(uint256);
     
 	function authorizeJoseph(address joseph) external;
 
