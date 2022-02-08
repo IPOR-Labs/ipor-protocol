@@ -9,8 +9,8 @@ http {
     server_tokens                           off;
 
     server {
-        listen                              34555 ssl http2;
-        listen                              [::]:34555 ssl http2;
+        listen                              {{ eth_bc_port }} ssl http2;
+        listen                              [::]:{{ eth_bc_port }} ssl http2;
 
         server_name                         {{ domain }};
 
@@ -217,8 +217,8 @@ http {
     }
 
     server {
-        listen                              34556 ssl http2;
-        listen                              [::]:34556 ssl http2;
+        listen                              {{ eth_bc_ws_port }} ssl http2;
+        listen                              [::]:{{ eth_bc_ws_port }} ssl http2;
 
         server_name                         {{ domain }};
 

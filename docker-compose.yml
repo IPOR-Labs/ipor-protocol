@@ -99,8 +99,8 @@ services:
       - all
     restart: always
     ports:
-      - "34555:34555"
-      - "34556:34556"
+      - "${ETH_BC_HTTP_PORT}:${ETH_BC_HTTP_PORT}"
+      - "${ETH_BC_WS_PORT}:${ETH_BC_WS_PORT}"
     volumes:
       - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./containers/nginx-eth-bc/envs/${ENV_PROFILE}/nginx.api-proxy.conf:/etc/nginx/nginx.api-proxy.conf
