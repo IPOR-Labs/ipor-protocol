@@ -91,7 +91,7 @@ contract Milton is
     }
 
 	function getVersion() external view override returns(uint256) {
-		return 4;
+		return 1;
 	}
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
