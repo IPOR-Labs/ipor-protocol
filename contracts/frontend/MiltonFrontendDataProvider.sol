@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMilton.sol";
@@ -167,6 +168,8 @@ contract MiltonFrontendDataProvider is
                 iporAssetConfiguration.getMiltonStorage()
             );
 
+			IMiltonConfiguration milton = IMiltonConfiguration(iporAssetConfiguration.getMilton());
+
             DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(
                 timestamp,
                 assets[i]
@@ -196,14 +199,16 @@ contract MiltonFrontendDataProvider is
                 spreadRecFixedValue = 0;
             }
 
+
+
             iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
                 assets[i],
-                iporAssetConfiguration.getMinCollateralizationFactorValue(),
-                iporAssetConfiguration.getMaxCollateralizationFactorValue(),
-                iporAssetConfiguration.getOpeningFeePercentage(),
-                iporAssetConfiguration.getIporPublicationFeeAmount(),
-                iporAssetConfiguration.getLiquidationDepositAmount(),
-                iporAssetConfiguration.getIncomeTaxPercentage(),
+				milton.getMinCollateralizationFactorValue(),
+				milton.getMaxCollateralizationFactorValue(),
+                milton.getOpeningFeePercentage(),                
+                milton.getIporPublicationFeeAmount(),
+                milton.getLiquidationDepositAmount(),
+                milton.getIncomeTaxPercentage(),
                 spreadPayFixedValue,
                 spreadRecFixedValue
             );

@@ -49,14 +49,16 @@ interface IMiltonStorage {
         address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+		uint256 cfgIncomeTaxPercentage
     ) external;
 
     function updateStorageWhenCloseSwapReceiveFixed(
         address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+		uint256 cfgIncomeTaxPercentage
     ) external;
 
     function getSwapPayFixed(uint256 swapId)

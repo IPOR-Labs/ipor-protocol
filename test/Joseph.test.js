@@ -53,6 +53,28 @@ describe("Joseph", () => {
             liquidityProvider,
         ]);
     });
+    it("should setup init value for Redeem LP Max Utilization Percentage", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI", "USDT", "USDC"],
+            data,
+            libraries
+        );
+
+        //when
+        let actualValueUsdt =
+            await testData.josephUsdt.getRedeemLpMaxUtilizationPercentage();
+        let actualValueUsdc =
+            await testData.josephUsdc.getRedeemLpMaxUtilizationPercentage();
+        let actualValueDai =
+            await testData.josephDai.getRedeemLpMaxUtilizationPercentage();
+
+        //then
+        expect(actualValueUsdt).to.be.eq(BigInt("1000000000000000000"));
+        expect(actualValueUsdc).to.be.eq(BigInt("1000000000000000000"));
+        expect(actualValueDai).to.be.eq(BigInt("1000000000000000000"));
+    });
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
         //given

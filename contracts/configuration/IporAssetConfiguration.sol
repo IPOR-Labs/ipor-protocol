@@ -68,7 +68,6 @@ contract IporAssetConfiguration is
         override
         onlyRole(_MILTON_ROLE)
     {
-        //TODO: when Milton address is changing make sure than allowance on Josepth is set to 0 for old milton
         _milton = milton;
         emit MiltonAddressUpdated(milton);
     }

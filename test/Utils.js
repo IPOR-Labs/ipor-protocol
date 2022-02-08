@@ -107,24 +107,6 @@ module.exports.grantAllRoleIporAssetConfiguration = async (
         keccak256("JOSEPH_ROLE"),
         accounts[0].address
     );
-
-    await iporAssetConfiguration.grantRole(
-        keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporAssetConfiguration.grantRole(
-        keccak256("REDEEM_MAX_UTILIZATION_PERCENTAGE_ROLE"),
-        accounts[0].address
-    );
-
-    await iporAssetConfiguration.grantRole(
-        keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporAssetConfiguration.grantRole(
-        keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE"),
-        accounts[0].address
-    );
 };
 module.exports.grantAllRoleIporConfiguration = async (
     iporConfiguration,
@@ -452,7 +434,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
 
             miltonStorageUsdt = await MiltonStorage.deploy();
             await miltonStorageUsdt.deployed();
-            miltonStorageUsdt.initialize(iporAssetConfigurationUsdt.address);
+            miltonStorageUsdt.initialize();
 
             await iporAssetConfigurationUsdt.setMiltonStorage(
                 miltonStorageUsdt.address
@@ -460,7 +442,6 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
 
             miltonUsdt = await ItfMilton.deploy();
             await miltonUsdt.deployed();
-
             miltonUsdt.initialize(
                 tokenUsdt.address,
                 ipTokenUsdt.address,
@@ -520,7 +501,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
 
             miltonStorageUsdc = await MiltonStorage.deploy();
             await miltonStorageUsdc.deployed();
-            miltonStorageUsdc.initialize(iporAssetConfigurationUsdc.address);
+            miltonStorageUsdc.initialize();
 
             await this.grantAllRoleIporAssetConfiguration(
                 iporAssetConfigurationUsdc,
@@ -591,7 +572,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
 
             miltonStorageDai = await MiltonStorage.deploy();
             await miltonStorageDai.deployed();
-            miltonStorageDai.initialize(iporAssetConfigurationDai.address);
+            miltonStorageDai.initialize();
 
             await this.grantAllRoleIporAssetConfiguration(
                 iporAssetConfigurationDai,

@@ -22,7 +22,7 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    uint256 private constant _REDEEM_LP_MAX_UTYLIZATION_PERCENTAGE = 1e18;
+    uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
 
     uint8 internal _decimals;
     address internal _asset;
@@ -140,7 +140,7 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
         );
 
         require(
-            utilizationRate <= _REDEEM_LP_MAX_UTYLIZATION_PERCENTAGE,
+            utilizationRate <= _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE,
             IporErrors.JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED
         );
 

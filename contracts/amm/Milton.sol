@@ -777,7 +777,8 @@ contract Milton is
             msg.sender,
             iporSwap,
             positionValue,
-            closeTimestamp
+            closeTimestamp,
+			_getIncomeTaxPercentage()
         );
 
         _transferTokensBasedOnpositionValue(
@@ -816,7 +817,8 @@ contract Milton is
             msg.sender,
             iporSwap,
             positionValue,
-            closeTimestamp
+            closeTimestamp,
+			_getIncomeTaxPercentage()
         );
 
         _transferTokensBasedOnpositionValue(
