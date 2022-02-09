@@ -84,9 +84,9 @@ module.exports = async function (deployer, _network, addresses) {
     await upgradeContract(JosephUsdc);
     await upgradeContract(JosephDai);
 
-    upgradeContract(ItfJosephUsdt);
-    upgradeContract(ItfJosephUsdc);
-    upgradeContract(ItfJosephDai);
+    await upgradeContract(ItfJosephUsdt);
+    await upgradeContract(ItfJosephUsdc);
+    await upgradeContract(ItfJosephDai);
 };
 
 async function upgradeContract(Contract) {
