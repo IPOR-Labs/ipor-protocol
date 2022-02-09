@@ -23,11 +23,6 @@ interface IIporConfiguration {
     function setMiltonPublicationFeeTransferer(address publicationFeeTransferer)
         external;    
 
-    function getMiltonLiquidityPoolUtilizationModel() external view returns (address);
-
-    function setMiltonLiquidityPoolUtilizationModel(address miltonUtilizationModel)
-        external;
-
     function getMiltonSpreadModel() external view returns (address);
 
     function setMiltonSpreadModel(address miltonSpreadModel) external;

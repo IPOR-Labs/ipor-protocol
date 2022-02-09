@@ -148,16 +148,6 @@ module.exports.grantAllRoleIporConfiguration = async (
     );
 
     await iporConfiguration.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
-        accounts[0].address
-    );
-
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
-        accounts[0].address
-    );
-
-    await iporConfiguration.grantRole(
         keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
         accounts[0].address
     );
@@ -351,23 +341,10 @@ module.exports.getMockMiltonCase = async (caseNumber) => {
     if (caseNumber === 0) {
         MockCaseMilton = await ethers.getContractFactory("ItfMilton");
     } else {
-		MockCaseMilton = await ethers.getContractFactory("MockCase"+caseNumber+"Milton");
-	}
-    // if (caseNumber === 1) {
-        
-    // }
-    // if (caseNumber === 2) {
-    //     MockCaseMilton = await ethers.getContractFactory("MockCase2Milton");
-    // }
-    // if (caseNumber === 3) {
-    //     MockCaseMilton = await ethers.getContractFactory("MockCase3Milton");
-    // }
-    // if (caseNumber === 4) {
-    //     MockCaseMilton = await ethers.getContractFactory("MockCase4Milton");
-    // }
-    // if (caseNumber === 5) {
-    //     MockCaseMilton = await ethers.getContractFactory("MockCase5Milton");
-    // }
+        MockCaseMilton = await ethers.getContractFactory(
+            "MockCase" + caseNumber + "Milton"
+        );
+    }
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
 };
@@ -409,22 +386,10 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
     const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
-    const MiltonLiquidityPoolUtilizationModel = await ethers.getContractFactory(
-        "MiltonLiquidityPoolUtilizationModel"
-    );
 
     const warren = await this.prepareWarren(accounts);
     await data.iporConfiguration.setWarren(await warren.address);
-
-    const miltonLPUtilizationStrategyCollateral =
-        await MiltonLiquidityPoolUtilizationModel.deploy();
-    await miltonLPUtilizationStrategyCollateral.deployed();
-    await miltonLPUtilizationStrategyCollateral.initialize();
-
-    await data.iporConfiguration.setMiltonLiquidityPoolUtilizationModel(
-        miltonLPUtilizationStrategyCollateral.address
-    );
-
+    
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
             tokenUsdt = await UsdtMockedToken.deploy(

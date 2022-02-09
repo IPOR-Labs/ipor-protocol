@@ -7,10 +7,6 @@ const MiltonFaucet = artifacts.require("MiltonFaucet");
 const IporConfiguration = artifacts.require("IporConfiguration");
 
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-const MiltonLiquidityPoolUtilizationModel = artifacts.require(
-    "MiltonLiquidityPoolUtilizationModel"
-);
-
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
 const DaiMockedToken = artifacts.require("DaiMockedToken");
@@ -66,14 +62,9 @@ module.exports = async function (deployer, _network, addresses) {
     const iporConfigurationProxy = await IporConfiguration.deployed();
     await grandRolesForConfiguration(admin, iporConfigurationProxy);
 
-    const miltonLPUtilizationModelProxy =
-        await MiltonLiquidityPoolUtilizationModel.deployed();
     const miltonSpreadModelProxy = await MiltonSpreadModel.deployed();
     await iporConfigurationProxy.setMiltonSpreadModel(
         miltonSpreadModelProxy.address
-    );
-    await iporConfigurationProxy.setMiltonLiquidityPoolUtilizationModel(
-        miltonLPUtilizationModelProxy.address
     );
 
     //#####################################################################
@@ -397,15 +388,6 @@ async function grandRolesForConfiguration(admin, iporConfigurationProxy) {
     );
     await iporConfigurationProxy.grantRole(
         keccak256("MILTON_SPREAD_MODEL_ROLE"),
-        admin
-    );
-
-    await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
         admin
     );
 

@@ -22,7 +22,6 @@ import "../tokenization/IpToken.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
-import "../interfaces/IMiltonLiquidityPoolUtilizationModel.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
 
@@ -50,9 +49,7 @@ contract Milton is
     uint8 private _decimals;
     address private _asset;
     IIpToken private _ipToken;
-
     IWarren internal _warren;
-
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
     IIporConfiguration internal _iporConfiguration;
@@ -519,7 +516,7 @@ contract Milton is
             indicator.fixedInterestRate,
             indicator.ibtQuantity
         );
-        
+
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
             bosStruct.openingFee,
@@ -639,16 +636,20 @@ contract Milton is
         uint256 totalCollateralPerLegBalance,
         uint256 collateral,
         uint256 openingFee
-    ) internal view {
+    ) internal pure {
+        uint256 utilizationRate;
+
+        if ((totalLiquidityPoolBalance + openingFee) != 0) {
+            utilizationRate = IporMath.division(
+                (totalCollateralPerLegBalance + collateral) * Constants.D18,
+                totalLiquidityPoolBalance + openingFee
+            );
+        } else {
+            utilizationRate = Constants.MAX_VALUE;
+        }
+
         require(
-            IMiltonLiquidityPoolUtilizationModel(
-                _iporConfiguration.getMiltonLiquidityPoolUtilizationModel()
-            ).calculateUtilizationRate(
-                    totalLiquidityPoolBalance,
-                    totalCollateralPerLegBalance,
-                    collateral,
-                    openingFee
-                ) <= _getMaxLpUtilizationPerLegPercentage(),
+            utilizationRate <= _getMaxLpUtilizationPerLegPercentage(),
             IporErrors.MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED
         );
     }
@@ -778,7 +779,7 @@ contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-			_getIncomeTaxPercentage()
+            _getIncomeTaxPercentage()
         );
 
         _transferTokensBasedOnpositionValue(
@@ -818,7 +819,7 @@ contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-			_getIncomeTaxPercentage()
+            _getIncomeTaxPercentage()
         );
 
         _transferTokensBasedOnpositionValue(
