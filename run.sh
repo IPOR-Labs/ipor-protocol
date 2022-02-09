@@ -284,6 +284,8 @@ if [ $IS_CLEAN_BC = "YES" ]; then
 
   echo -e "Start cleaned containers: ${ETH_BC_CONTAINER}/${ETH_EXP_CONTAINER}/${ETH_EXP_POSTGRES_CONTAINER} with \e[32m${COMPOSE_PROFILE}\e[0m profile..\n"
   docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} up -d
+
+  rm ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
 fi
 
 if [ $IS_MIGRATE_SC = "YES" ]; then
