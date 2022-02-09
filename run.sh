@@ -267,10 +267,8 @@ fi
 
 if [ $IS_MOCK_ASSET = "YES" ]; then
   cd "${DIR}"
-
   echo -e "\n\e[32mStart assetManagment Mock for network name \e[33m${ETH_BC_NETWORK_NAME} \e[32mprofile..\e[0m\n"
   nohup truffle exec scripts/mock-asset-management.js --network ${ETH_BC_NETWORK_NAME} &  
-
 fi
 
 if [ $IS_RUN = "YES" ]; then
@@ -300,7 +298,6 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none
 fi
 
