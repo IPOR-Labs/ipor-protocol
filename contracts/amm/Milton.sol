@@ -31,7 +31,7 @@ import "../interfaces/IJoseph.sol";
  * @author IPOR Labs
  */
 //TODO: add pausable modifier for methodds
-contract Milton is    
+contract Milton is
     UUPSUpgradeable,
     OwnableUpgradeable,
     PausableUpgradeable,
@@ -90,9 +90,9 @@ contract Milton is
         _asset = asset;
     }
 
-	function getVersion() external view override returns(uint256) {
-		return 1;
-	}
+    function getVersion() external view override returns (uint256) {
+        return 2;
+    }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
