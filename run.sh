@@ -46,6 +46,7 @@ IS_STOP="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
+IS_MOCK_ASSET="NO"
 
 if [ $# -eq 0 ]; then
     IS_RUN="YES"
@@ -63,6 +64,9 @@ do
         run|r)
             IS_RUN="YES"
             IS_STOP="YES"
+        ;;
+        mockasset|ma)
+            IS_MOCK_ASSET="YES"
         ;;
         stop|s)
             IS_STOP="YES"
@@ -255,9 +259,18 @@ fi
 
 if [ $IS_STOP = "YES" ]; then
   cd "${DIR}"
-
+  echo -e "\n\e[32mStopping mock asset process\e[0m\n"
+  pkill -f  scripts/mock-asset-management.js 
   echo -e "\n\e[32mStopping ipor protocol containers with \e[33m${COMPOSE_PROFILE} \e[32mprofile..\e[0m\n"
   docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} rm -s -v -f
+fi
+
+if [ $IS_MOCK_ASSET = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mStart assetManagment Mock for network name \e[33m${ETH_BC_NETWORK_NAME} \e[32mprofile..\e[0m\n"
+  nohup truffle exec scripts/mock-asset-management.js --network ${ETH_BC_NETWORK_NAME} &  
+
 fi
 
 if [ $IS_RUN = "YES" ]; then
@@ -288,7 +301,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
 
-  truffle migrate --network docker --reset --compile-none
+  truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none
 fi
 
 
