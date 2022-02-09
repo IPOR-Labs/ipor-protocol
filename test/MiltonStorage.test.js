@@ -73,7 +73,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -93,7 +93,10 @@ describe("MiltonStorage", () => {
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
-                BigInt("1500000000000000000000")
+                BigInt("1500000000000000000000"),
+                await testData.miltonDai.getLiquidationDepositAmount(),
+                await testData.miltonDai.getIporPublicationFeeAmount(),
+                await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -112,7 +115,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
         const derivativeStruct =
             await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
@@ -122,7 +125,10 @@ describe("MiltonStorage", () => {
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
-                    BigInt("1500000000000000000000")
+                    BigInt("1500000000000000000000"),
+                    await testData.miltonDai.getLiquidationDepositAmount(),
+                    await testData.miltonDai.getIporPublicationFeeAmount(),
+                    await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
                 ),
             //then
             "IPOR_1"
@@ -142,7 +148,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
 
         await prepareApproveForUsers(
@@ -194,7 +200,8 @@ describe("MiltonStorage", () => {
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000000000000000"),
-                closeSwapTimestamp
+                closeSwapTimestamp,
+                await testData.miltonDai.getIncomeTaxPercentage()
             );
 
         await testData.miltonStorageDai.setMilton(testData.miltonDai.address);
@@ -216,7 +223,7 @@ describe("MiltonStorage", () => {
             ],
             ["USDT"],
             data,
-            libraries
+            0
         );
 
         await prepareApproveForUsers(
@@ -272,7 +279,8 @@ describe("MiltonStorage", () => {
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000"),
-                closeSwapTimestamp
+                closeSwapTimestamp,
+                await testData.miltonUsdt.getIncomeTaxPercentage()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -291,7 +299,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
 
         await prepareApproveForUsers(
@@ -344,7 +352,8 @@ describe("MiltonStorage", () => {
                     userTwo.address,
                     derivativeItem,
                     BigInt("10000000000000000000"),
-                    closeSwapTimestamp
+                    closeSwapTimestamp,
+                    await testData.miltonDai.getIncomeTaxPercentage()
                 ),
             //then
             "IPOR_1"

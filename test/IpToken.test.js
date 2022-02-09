@@ -35,7 +35,7 @@ describe("IpToken", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
     });
 

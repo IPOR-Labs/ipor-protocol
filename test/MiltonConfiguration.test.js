@@ -105,7 +105,7 @@ describe("MiltonConfiguration", () => {
         let actualValue =
             await miltonConfiguration.getMaxLpUtilizationPerLegPercentage();
         //then
-        expect(actualValue).to.be.eq(BigInt("48000000000000000000"));
+        expect(actualValue).to.be.eq(BigInt("480000000000000000"));
     });
 
     it("should setup init value for Income Tax Percentage", async () => {
@@ -148,7 +148,7 @@ describe("MiltonConfiguration", () => {
         let actualValue =
             await miltonConfiguration.getMaxCollateralizationFactorValue();
         //then
-        expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
+        expect(actualValue).to.be.eq(BigInt("1000000000000000000000"));
     });
 
     it("should setup init value for Min Collateralization Factory Value", async () => {
@@ -156,6 +156,6 @@ describe("MiltonConfiguration", () => {
         let actualValue =
             await miltonConfiguration.getMinCollateralizationFactorValue();
         //then
-        expect(actualValue).to.be.eq(BigInt("1000000000000000000000"));
+        expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
     });
 });

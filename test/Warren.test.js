@@ -60,7 +60,7 @@ describe("Warren", () => {
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
             data,
-            libraries
+            0
         );
     });
 

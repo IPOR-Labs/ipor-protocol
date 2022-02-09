@@ -346,8 +346,41 @@ module.exports.prepareMiltonSpreadCase11 = async () => {
     return miltonSpread;
 };
 
+module.exports.getMockMiltonCase = async (caseNumber) => {
+    let MockCaseMilton = null;
+    if (caseNumber === 0) {
+        MockCaseMilton = await ethers.getContractFactory("ItfMilton");
+    } else {
+		MockCaseMilton = await ethers.getContractFactory("MockCase"+caseNumber+"Milton");
+	}
+    // if (caseNumber === 1) {
+        
+    // }
+    // if (caseNumber === 2) {
+    //     MockCaseMilton = await ethers.getContractFactory("MockCase2Milton");
+    // }
+    // if (caseNumber === 3) {
+    //     MockCaseMilton = await ethers.getContractFactory("MockCase3Milton");
+    // }
+    // if (caseNumber === 4) {
+    //     MockCaseMilton = await ethers.getContractFactory("MockCase4Milton");
+    // }
+    // if (caseNumber === 5) {
+    //     MockCaseMilton = await ethers.getContractFactory("MockCase5Milton");
+    // }
+    const mockCaseMilton = await MockCaseMilton.deploy();
+    return mockCaseMilton;
+};
+module.exports.prepareWarren = async (accounts) => {
+    const ItfWarren = await ethers.getContractFactory("ItfWarren");
+    const warren = await ItfWarren.deploy();
+    await warren.deployed();
+    await warren.initialize();
+    await warren.addUpdater(accounts[1].address);
+    return warren;
+};
 // TODO implement only for DAI
-module.exports.prepareTestData = async (accounts, assets, data, lib) => {
+module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
     let tokenDai = null;
     let tokenUsdt = null;
     let tokenUsdc = null;
@@ -374,21 +407,15 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
     const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
-    const ItfMilton = await ethers.getContractFactory("ItfMilton");
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
     const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
-    const ItfWarren = await ethers.getContractFactory("ItfWarren");
-
-    const warren = await ItfWarren.deploy();
-    await warren.deployed();
-    await warren.initialize();
-
-    await warren.addUpdater(accounts[1].address);
-    await data.iporConfiguration.setWarren(await warren.address);
-
     const MiltonLiquidityPoolUtilizationModel = await ethers.getContractFactory(
         "MiltonLiquidityPoolUtilizationModel"
     );
+
+    const warren = await this.prepareWarren(accounts);
+    await data.iporConfiguration.setWarren(await warren.address);
+
     const miltonLPUtilizationStrategyCollateral =
         await MiltonLiquidityPoolUtilizationModel.deploy();
     await miltonLPUtilizationStrategyCollateral.deployed();
@@ -440,7 +467,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
                 miltonStorageUsdt.address
             );
 
-            miltonUsdt = await ItfMilton.deploy();
+            miltonUsdt = await this.getMockMiltonCase(caseNumber);
             await miltonUsdt.deployed();
             miltonUsdt.initialize(
                 tokenUsdt.address,
@@ -512,7 +539,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
                 miltonStorageUsdc.address
             );
 
-            miltonUsdc = await ItfMilton.deploy();
+            miltonUsdc = await this.getMockMiltonCase(caseNumber);
             await miltonUsdc.deployed();
             miltonUsdc.initialize(
                 tokenUsdc.address,
@@ -582,8 +609,7 @@ module.exports.prepareTestData = async (accounts, assets, data, lib) => {
             await iporAssetConfigurationDai.setMiltonStorage(
                 miltonStorageDai.address
             );
-
-            miltonDai = await ItfMilton.deploy();
+            miltonDai = await this.getMockMiltonCase(caseNumber);
             await miltonDai.deployed();
             miltonDai.initialize(
                 tokenDai.address,
