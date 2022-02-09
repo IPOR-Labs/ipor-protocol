@@ -47,6 +47,7 @@ IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
 IS_MOCK_ASSET="NO"
+IS_MOCK_ASSET_STOP="NO"
 
 if [ $# -eq 0 ]; then
     IS_RUN="YES"
@@ -67,6 +68,9 @@ do
         ;;
         mockasset|ma)
             IS_MOCK_ASSET="YES"
+        ;;
+        mockassetstop|mas)
+            IS_MOCK_ASSET_STOP="YES"
         ;;
         stop|s)
             IS_STOP="YES"
@@ -259,8 +263,6 @@ fi
 
 if [ $IS_STOP = "YES" ]; then
   cd "${DIR}"
-  echo -e "\n\e[32mStopping mock asset process\e[0m\n"
-  pkill -f  scripts/mock-asset-management.js 
   echo -e "\n\e[32mStopping ipor protocol containers with \e[33m${COMPOSE_PROFILE} \e[32mprofile..\e[0m\n"
   docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} rm -s -v -f
 fi
@@ -269,6 +271,12 @@ if [ $IS_MOCK_ASSET = "YES" ]; then
   cd "${DIR}"
   echo -e "\n\e[32mStart assetManagment Mock for network name \e[33m${ETH_BC_NETWORK_NAME} \e[32mprofile..\e[0m\n"
   nohup truffle exec scripts/mock-asset-management.js --network ${ETH_BC_NETWORK_NAME} &  
+fi
+
+if [ $IS_MOCK_ASSET_STOP = "YES" ]; then
+  cd "${DIR}"
+  echo -e "\n\e[32mStopping mock asset process\e[0m\n"
+  pkill -f  scripts/mock-asset-management.js 
 fi
 
 if [ $IS_RUN = "YES" ]; then
