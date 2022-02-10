@@ -51,9 +51,7 @@ const MiltonFrontendDataProvider = artifacts.require(
     "MiltonFrontendDataProvider"
 );
 
-module.exports = async function (deployer, _network, addresses) {
-    const [admin, userOne, userTwo, userThree, _] = addresses;
-
+module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
@@ -108,32 +106,23 @@ module.exports = async function (deployer, _network, addresses) {
         }
     );
 
-    const miltonStorageUsdt = await deployProxy(
-        MiltonStorageUsdt,        
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
+    const miltonStorageUsdt = await deployProxy(MiltonStorageUsdt, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    const miltonStorageUsdc = await deployProxy(
-        MiltonStorageUsdc,        
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
+    const miltonStorageUsdc = await deployProxy(MiltonStorageUsdc, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    const miltonStorageDai = await deployProxy(
-        MiltonStorageDai,        
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
+    const miltonStorageDai = await deployProxy(MiltonStorageDai, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
     const iporConfiguration = await deployProxy(IporConfiguration, {
         deployer: deployer,
@@ -396,4 +385,6 @@ module.exports = async function (deployer, _network, addresses) {
             kind: "uups",
         }
     );
+
+    console.log("Congratulations! DEPLOY Smart Contracts finished!");
 };

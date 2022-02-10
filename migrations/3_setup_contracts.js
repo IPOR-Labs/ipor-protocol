@@ -50,14 +50,11 @@ const IporAssetConfigurationDai = artifacts.require(
 );
 
 module.exports = async function (deployer, _network, addresses) {
+    console.log("Setup Smart contracts...");
     const [admin, userOne, userTwo, userThree, _] = addresses;
 
     const faucetSupply6Decimals = "10000000000000000";
     const faucetSupply18Decimals = "10000000000000000000000000000";
-    const userSupply6Decimals = "1000000000000";
-    const userSupply18Decimals = "1000000000000000000000000";
-    const totalSupply6Decimals = "1000000000000000000";
-    const totalSupply18Decimals = "1000000000000000000000000000000";
 
     const iporConfigurationProxy = await IporConfiguration.deployed();
     await grandRolesForConfiguration(admin, iporConfigurationProxy);
@@ -70,6 +67,7 @@ module.exports = async function (deployer, _network, addresses) {
     //#####################################################################
     // CONFIG STABLE - BEGIN
     //#####################################################################
+    console.log("Setup stable coins....");
 
     const mockedUsdt = await UsdtMockedToken.deployed();
     const mockedUsdc = await UsdcMockedToken.deployed();
@@ -130,13 +128,6 @@ module.exports = async function (deployer, _network, addresses) {
     // CONFIG STABLE - END
     //#####################################################################
 
-    const miltonFaucet = await MiltonFaucet.deployed();
-
-    miltonFaucet.sendTransaction({
-        from: admin,
-        value: "500000000000000000000000",
-    });
-
     const ipUsdtToken = await IpTokenUsdt.deployed();
     const ipUsdcToken = await IpTokenUsdc.deployed();
     const ipDaiToken = await IpTokenDai.deployed();
@@ -158,7 +149,8 @@ module.exports = async function (deployer, _network, addresses) {
     const itfMiltonDaiProxy = await ItfMiltonDai.deployed();
 
     if (process.env.ITF_ENABLED === "true") {
-        //For IPOR Test Framework purposes
+        console.log("Setup contracts for Ipor Test Framework...");
+
         await iporAssetConfigurationUsdtProxy.setMilton(
             itfMiltonUsdtProxy.address
         );
@@ -203,8 +195,22 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonStorageUsdtProxy.setMilton(itfMiltonUsdtProxy.address);
         await miltonStorageUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
         await miltonStorageDaiProxy.setMilton(itfMiltonDaiProxy.address);
+
+        if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
+            console.log("Setup initial IPOR values...");
+            await itfWarrenProxy.updateIndexes(
+                [mockedDai.address, mockedUsdt.address, mockedUsdc.address],
+                [
+                    BigInt("30000000000000000"),
+                    BigInt("30000000000000000"),
+                    BigInt("30000000000000000"),
+                ]
+            );
+            console.log("Setup initial IPOR values finished.");
+        }
     } else {
-        //Web application, IPOR Dev Tool
+        console.log("Setup contracts...");
+
         await iporAssetConfigurationUsdtProxy.setMilton(
             miltonUsdtProxy.address
         );
@@ -244,103 +250,33 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonStorageUsdtProxy.setMilton(miltonUsdtProxy.address);
         await miltonStorageUsdcProxy.setMilton(miltonUsdcProxy.address);
         await miltonStorageDaiProxy.setMilton(miltonDaiProxy.address);
+
+        if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
+            console.log("Setup initial IPOR values...");
+            await warrenProxy.updateIndexes(
+                [mockedDai.address, mockedUsdt.address, mockedUsdc.address],
+                [
+                    BigInt("30000000000000000"),
+                    BigInt("30000000000000000"),
+                    BigInt("30000000000000000"),
+                ]
+            );
+            console.log("Setup initial IPOR values finished.");
+        }
     }
 
     console.log("Setup Faucet...");
+    const miltonFaucet = await MiltonFaucet.deployed();
+    miltonFaucet.sendTransaction({
+        from: admin,
+        value: "500000000000000000000000",
+    });
     await mockedUsdt.transfer(miltonFaucet.address, faucetSupply6Decimals);
     await mockedUsdc.transfer(miltonFaucet.address, faucetSupply6Decimals);
     await mockedDai.transfer(miltonFaucet.address, faucetSupply18Decimals);
     console.log("Setup Faucet finished.");
 
-    console.log("Start transfer TOKENS to test addresses...");
-
-    //first address is an admin, last two addresses will not have tokens and approves
-    for (let i = 0; i < addresses.length - 2; i++) {
-        await mockedUsdt.transfer(addresses[i], userSupply6Decimals);
-        await mockedUsdc.transfer(addresses[i], userSupply6Decimals);
-        await mockedDai.transfer(addresses[i], userSupply18Decimals);
-
-        console.log(`Account: ${addresses[i]} - tokens transferred`);
-
-        if (process.env.ITF_ENABLED === "true") {
-            mockedUsdt.approve(
-                itfMiltonUsdtProxy.address,
-                totalSupply6Decimals,
-                {
-                    from: addresses[i],
-                }
-            );
-            mockedUsdc.approve(
-                itfMiltonUsdcProxy.address,
-                totalSupply6Decimals,
-                {
-                    from: addresses[i],
-                }
-            );
-            mockedDai.approve(
-                itfMiltonDaiProxy.address,
-                totalSupply18Decimals,
-                {
-                    from: addresses[i],
-                }
-            );
-
-            mockedUsdt.approve(
-                itfJosephUsdtProxy.address,
-                totalSupply6Decimals,
-                {
-                    from: addresses[i],
-                }
-            );
-            mockedUsdc.approve(
-                itfJosephUsdcProxy.address,
-                totalSupply6Decimals,
-                {
-                    from: addresses[i],
-                }
-            );
-            mockedDai.approve(
-                itfJosephDaiProxy.address,
-                totalSupply18Decimals,
-                {
-                    from: addresses[i],
-                }
-            );
-        } else {
-            //Milton has rights to spend money on behalf of user
-            mockedUsdt.approve(miltonUsdtProxy.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedUsdc.approve(miltonUsdcProxy.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedDai.approve(miltonDaiProxy.address, totalSupply18Decimals, {
-                from: addresses[i],
-            });
-
-            mockedUsdt.approve(josephUsdtProxy.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedUsdc.approve(josephUsdcProxy.address, totalSupply6Decimals, {
-                from: addresses[i],
-            });
-            mockedDai.approve(josephDaiProxy.address, totalSupply18Decimals, {
-                from: addresses[i],
-            });
-        }
-    }
-
-    if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
-        console.log("Prepare initial IPOR migration...");
-        await warrenProxy.updateIndexes(
-            [mockedDai.address, mockedUsdt.address, mockedUsdc.address],
-            [
-                BigInt("30000000000000000"),
-                BigInt("30000000000000000"),
-                BigInt("30000000000000000"),
-            ]
-        );
-    }
+    console.log("Congratulations! Setup Smart Contracts finished!");
 };
 async function grandRolesForConfiguration(admin, iporConfigurationProxy) {
     await iporConfigurationProxy.grantRole(

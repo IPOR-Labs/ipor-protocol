@@ -53,7 +53,7 @@ const MiltonFrontendDataProvider = artifacts.require(
 );
 
 module.exports = async function (deployer, _network, addresses) {
-    const [admin, userOne, userTwo, userThree, _] = addresses;
+    console.log("Upgrade Smart Contracts...");
 
     await upgradeContract(IporConfiguration);
     await upgradeContract(IporAssetConfigurationUsdt);
@@ -87,6 +87,8 @@ module.exports = async function (deployer, _network, addresses) {
     await upgradeContract(ItfJosephUsdt);
     await upgradeContract(ItfJosephUsdc);
     await upgradeContract(ItfJosephDai);
+
+    console.log("Congratulations! Upgrade Smart Contracts...");
 };
 
 async function upgradeContract(Contract) {
