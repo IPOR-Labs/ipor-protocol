@@ -26,12 +26,7 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
         keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE");
     bytes32 internal constant _MILTON_SPREAD_MODEL_ROLE =
         keccak256("MILTON_SPREAD_MODEL_ROLE");
-
-    bytes32 internal constant _MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE =
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE");
-    bytes32 internal constant _MILTON_LP_UTILIZATION_STRATEGY_ROLE =
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE");
-
+    
     bytes32 internal constant _MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE");
     bytes32 internal constant _MILTON_PUBLICATION_FEE_TRANSFERER_ROLE =
@@ -47,13 +42,7 @@ abstract contract AccessControlConfiguration is AccessControlRevoke {
 
         _setRoleAdmin(_IPOR_ASSETS_ADMIN_ROLE, _ADMIN_ROLE);
         _setRoleAdmin(_IPOR_ASSETS_ROLE, _IPOR_ASSETS_ADMIN_ROLE);        
-
-        _setRoleAdmin(_MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE, _ADMIN_ROLE);
-        _setRoleAdmin(
-            _MILTON_LP_UTILIZATION_STRATEGY_ROLE,
-            _MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE
-        );
-
+        
         _setRoleAdmin(_MILTON_SPREAD_MODEL_ADMIN_ROLE, _ADMIN_ROLE);
         _setRoleAdmin(
             _MILTON_SPREAD_MODEL_ROLE,

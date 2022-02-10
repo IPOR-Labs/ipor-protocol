@@ -53,6 +53,28 @@ describe("Joseph", () => {
             liquidityProvider,
         ]);
     });
+    it("should setup init value for Redeem LP Max Utilization Percentage", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI", "USDT", "USDC"],
+            data,
+            0
+        );
+
+        //when
+        let actualValueUsdt =
+            await testData.josephUsdt.getRedeemLpMaxUtilizationPercentage();
+        let actualValueUsdc =
+            await testData.josephUsdc.getRedeemLpMaxUtilizationPercentage();
+        let actualValueDai =
+            await testData.josephDai.getRedeemLpMaxUtilizationPercentage();
+
+        //then
+        expect(actualValueUsdt).to.be.eq(BigInt("1000000000000000000"));
+        expect(actualValueUsdc).to.be.eq(BigInt("1000000000000000000"));
+        expect(actualValueDai).to.be.eq(BigInt("1000000000000000000"));
+    });
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
         //given
@@ -60,7 +82,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -129,7 +151,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -197,7 +219,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -234,7 +256,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -274,7 +296,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -316,7 +338,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -364,7 +386,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -424,7 +446,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -495,7 +517,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -575,7 +597,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -655,7 +677,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -733,7 +755,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -825,7 +847,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -916,7 +938,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1009,7 +1031,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1103,7 +1125,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1162,7 +1184,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1231,16 +1253,9 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            1
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -1265,11 +1280,6 @@ describe("Joseph", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(amount, params.openTimestamp);
-        const oldOpeningFeePercentage =
-            await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
-            BigInt("600000000000000000")
-        );
 
         //open position to have something in Liquidity Pool
         await testData.miltonDai
@@ -1323,10 +1333,6 @@ describe("Joseph", () => {
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRate}`
         ).to.be.eql(actualExchangeRate);
-
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
-            oldOpeningFeePercentage
-        );
     });
 
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, DAI 18 decimals", async () => {
@@ -1335,7 +1341,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            1
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1362,19 +1368,6 @@ describe("Joseph", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(amount, params.openTimestamp);
-        const oldOpeningFeePercentage =
-            await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
-            BigInt("600000000000000000")
-        );
 
         //open position to have something in Liquidity Pool
         await testData.miltonDai
@@ -1429,10 +1422,6 @@ describe("Joseph", () => {
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRate}`
         ).to.be.eql(actualExchangeRate);
-
-        await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
-            oldOpeningFeePercentage
-        );
     });
 
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, USDT 6 decimals", async () => {
@@ -1441,16 +1430,9 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            1
         );
-        await testData.iporAssetConfigurationUsdt.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationUsdt.grantRole(
-            keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "USDT",
@@ -1475,11 +1457,6 @@ describe("Joseph", () => {
         await testData.josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(amount, params.openTimestamp);
-        const oldOpeningFeePercentage =
-            await testData.iporAssetConfigurationUsdt.getOpeningFeePercentage();
-        await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(
-            BigInt("600000000000000000")
-        );
 
         //open position to have something in Liquidity Pool
         await testData.miltonUsdt
@@ -1535,10 +1512,6 @@ describe("Joseph", () => {
             `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRate}`
         ).to.be.eql(actualExchangeRate);
-
-        await testData.iporAssetConfigurationUsdt.setOpeningFeePercentage(
-            oldOpeningFeePercentage
-        );
     });
 
     it("should NOT provide liquidity because of empty Liquidity Pool", async () => {
@@ -1547,7 +1520,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

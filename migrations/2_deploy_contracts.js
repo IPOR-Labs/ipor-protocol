@@ -26,9 +26,6 @@ const MiltonStorageDai = artifacts.require("MiltonStorageDai");
 const Warren = artifacts.require("Warren");
 const ItfWarren = artifacts.require("ItfWarren");
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-const MiltonLiquidityPoolUtilizationModel = artifacts.require(
-    "MiltonLiquidityPoolUtilizationModel"
-);
 const MiltonUsdt = artifacts.require("MiltonUsdt");
 const MiltonUsdc = artifacts.require("MiltonUsdc");
 const MiltonDai = artifacts.require("MiltonDai");
@@ -152,15 +149,6 @@ module.exports = async function (deployer, _network, addresses) {
         initializer: "initialize",
         kind: "uups",
     });
-
-    const miltonLiquidityPoolUtilizationModel = await deployProxy(
-        MiltonLiquidityPoolUtilizationModel,
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
 
     const warren = await deployProxy(Warren, {
         deployer: deployer,

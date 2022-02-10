@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
-
 interface IWarrenStorage {
+    function pause() external;
 
-	function pause() external;
+    function unpause() external;
 
-    function unpause() external;    
-
-	function addUpdater(address updater) external;
+    function addUpdater(address updater) external;
 
     function removeUpdater(address updater) external;
 

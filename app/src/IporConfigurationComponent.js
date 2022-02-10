@@ -42,26 +42,6 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </div>
         </div>
-        <div className="row">
-            <div className="col-md-2">
-                Milton Liquidity Pool Utilization Strategy
-            </div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getMiltonLiquidityPoolUtilizationModel"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setMiltonLiquidityPoolUtilizationModel"
-                />
-            </div>
-        </div>
 
         <div className="row">
             <div className="col-md-2">Publication Fee Transferer</div>
@@ -253,20 +233,7 @@ export default ({ drizzle, drizzleState }) => (
                         <td>
                             0xc769312598bcfa61b1f22ed091835eefa5a0d9a37ea7646f63bfd88a3dd04878
                         </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE</td>
-                        <td>
-                            0x007166265d5885631bd5886b0a89309e34f70b77bb831ac337b128950760bda7
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>MILTON_LP_UTILIZATION_STRATEGY_ROLE</td>
-                        <td>
-                            0xef6ebe4a0a1a6329b3e5cd4d5c8731f6077174efd4f525f70490c35144b6ed72
-                        </td>
-                    </tr>
+                    </tr>                    
                     <tr>
                         <td>MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE</td>
                         <td>

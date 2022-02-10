@@ -27,11 +27,7 @@ contract IporConfiguration is
     //TODO: move to MiltonConfiguration
     bytes32 private constant _MILTON_SPREAD_MODEL =
         keccak256("MILTON_SPREAD_MODEL");
-
-    //TODO: move to MiltonConfiguration
-    bytes32 private constant _MILTON_LP_UTILIZATION_STRATEGY =
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY");
-
+    
     bytes32 private constant _MILTON_PUBLICATION_FEE_TRANSFERER =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
 
@@ -69,22 +65,6 @@ contract IporConfiguration is
     {
         _addresses[_MILTON_SPREAD_MODEL] = miltonSpreadModel;
         emit MiltonSpreadModelUpdated(miltonSpreadModel);
-    }
-
-    function getMiltonLiquidityPoolUtilizationModel()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _addresses[_MILTON_LP_UTILIZATION_STRATEGY];
-    }
-
-    function setMiltonLiquidityPoolUtilizationModel(
-        address miltonUtilizationModel
-    ) external override onlyRole(_MILTON_LP_UTILIZATION_STRATEGY_ROLE) {
-        _addresses[_MILTON_LP_UTILIZATION_STRATEGY] = miltonUtilizationModel;
-        emit MiltonUtilizationStrategyUpdated(miltonUtilizationModel);
     }
 
     function getMiltonPublicationFeeTransferer()

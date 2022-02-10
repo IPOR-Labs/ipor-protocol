@@ -24,4 +24,8 @@ contract ItfJoseph is Joseph {
     function itfRedeem(uint256 ipTokenVolume, uint256 timestamp) external {
         _redeem(ipTokenVolume, timestamp);
     }
+
+	function getRedeemLpMaxUtilizationPercentage() external pure returns(uint256) {
+		return _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE;
+	}
 }

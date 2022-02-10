@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
-    function getVersion() external view returns (uint256);
+    function getVersion() external pure returns (uint256);
 
     function setMilton(address milton) external;
 
@@ -31,26 +31,34 @@ interface IMiltonStorage {
 
     function updateStorageWhenOpenSwapPayFixed(
         DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
     ) external returns (uint256);
 
     function updateStorageWhenOpenSwapReceiveFixed(
         DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
     ) external returns (uint256);
 
     function updateStorageWhenCloseSwapPayFixed(
         address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+		uint256 cfgIncomeTaxPercentage
     ) external;
 
     function updateStorageWhenCloseSwapReceiveFixed(
         address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+		uint256 cfgIncomeTaxPercentage
     ) external;
 
     function getSwapPayFixed(uint256 swapId)

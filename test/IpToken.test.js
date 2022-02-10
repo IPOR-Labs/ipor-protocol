@@ -35,7 +35,7 @@ describe("IpToken", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
     });
 
@@ -73,9 +73,7 @@ describe("IpToken", () => {
             .to.emit(testData.ipTokenDai, "Mint")
             .withArgs(userOne.address, USD_10_000_18DEC);
 
-        await testData.ipTokenDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.ipTokenDai.setJoseph(testData.josephDai.address);
     });
 
     it("should contain 18 decimals", async () => {
@@ -91,9 +89,7 @@ describe("IpToken", () => {
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
         ).to.be.eql(actualDecimals);
 
-        await testData.ipTokenDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.ipTokenDai.setJoseph(testData.josephDai.address);
     });
 
     it("should contain correct underlying token address", async () => {

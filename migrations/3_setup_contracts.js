@@ -7,10 +7,6 @@ const MiltonFaucet = artifacts.require("MiltonFaucet");
 const IporConfiguration = artifacts.require("IporConfiguration");
 
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-const MiltonLiquidityPoolUtilizationModel = artifacts.require(
-    "MiltonLiquidityPoolUtilizationModel"
-);
-
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
 const DaiMockedToken = artifacts.require("DaiMockedToken");
@@ -66,14 +62,9 @@ module.exports = async function (deployer, _network, addresses) {
     const iporConfigurationProxy = await IporConfiguration.deployed();
     await grandRolesForConfiguration(admin, iporConfigurationProxy);
 
-    const miltonLPUtilizationModelProxy =
-        await MiltonLiquidityPoolUtilizationModel.deployed();
     const miltonSpreadModelProxy = await MiltonSpreadModel.deployed();
     await iporConfigurationProxy.setMiltonSpreadModel(
         miltonSpreadModelProxy.address
-    );
-    await iporConfigurationProxy.setMiltonLiquidityPoolUtilizationModel(
-        miltonLPUtilizationModelProxy.address
     );
 
     //#####################################################################
@@ -401,15 +392,6 @@ async function grandRolesForConfiguration(admin, iporConfigurationProxy) {
     );
 
     await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
-        admin
-    );
-
-    await iporConfigurationProxy.grantRole(
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"),
         admin
     );
@@ -455,88 +437,6 @@ async function grandRolesForAssetConfiguration(
     );
     await iporAssetConfigurationProxy.grantRole(
         keccak256("JOSEPH_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("DECAY_FACTOR_VALUE_ROLE"),
         admin
     );
 

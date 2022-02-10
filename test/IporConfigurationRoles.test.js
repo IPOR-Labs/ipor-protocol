@@ -17,11 +17,6 @@ const roles = [
     },
 
     {
-        name: "MILTON_LP_UTILIZATION_STRATEGY_ROLE",
-        adminRole: keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
-        role: keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
-    },
-    {
         name: "MILTON_SPREAD_MODEL_ROLE",
         adminRole: keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
         role: keccak256("MILTON_SPREAD_MODEL_ROLE"),
@@ -65,12 +60,6 @@ const rolesNotGrant = [
         code: "0xec35db9ce8f02d82695716c134979faf9e051eb97ef9ae15ec0aaafbde76beb5",
         role: keccak256("IPOR_ASSETS_ROLE"),
     },
-
-    {
-        name: "MILTON_LP_UTILIZATION_STRATEGY_ROLE",
-        code: "0x007166265d5885631bd5886b0a89309e34f70b77bb831ac337b128950760bda7",
-        role: keccak256("MILTON_LP_UTILIZATION_STRATEGY_ROLE"),
-    },
     {
         name: "MILTON_SPREAD_MODEL_ROLE",
         code: "0x869c6dda984481cbeefdaab23aeff7b5cae8e04a57bb6bc44608ea47966b45ac",
@@ -105,12 +94,6 @@ const rolesNotGrant = [
     {
         name: "IPOR_ASSETS_ADMIN_ROLE",
         role: keccak256("IPOR_ASSETS_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-
-    {
-        name: "MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE",
-        role: keccak256("MILTON_LP_UTILIZATION_STRATEGY_ADMIN_ROLE"),
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
     },
     {
@@ -159,7 +142,7 @@ describe("IporConfigurationRoles", () => {
             const [admin, userOne, userTwo] = await ethers.getSigners();
             const iporConfiguration = await IporConfiguration.deploy();
             await iporConfiguration.deployed();
-			await iporConfiguration.initialize();
+            await iporConfiguration.initialize();
 
             let hasAdminRole = await iporConfiguration.hasRole(
                 adminRole,
@@ -216,7 +199,7 @@ describe("IporConfigurationRoles", () => {
             const [admin, userOne, userTwo] = await ethers.getSigners();
             const iporConfiguration = await IporConfiguration.deploy();
             await iporConfiguration.deployed();
-			await iporConfiguration.initialize();
+            await iporConfiguration.initialize();
 
             await expect(
                 iporConfiguration
