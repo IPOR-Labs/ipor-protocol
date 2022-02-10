@@ -88,6 +88,17 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
             liquidityAmount.toUint128();
     }
 
+    // TODO: Removed after Internal and Investor tests liquidityAmount in WAND
+    function addLiquidityAssetManagmentMock(uint256 liquidityAmount)
+        public
+        onlyOwner
+    {
+        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
+        _balances.liquidityPool =
+            _balances.liquidityPool +
+            liquidityAmount.toUint128();
+    }
+
     function subtractLiquidity(uint256 liquidityAmount)
         external
         override
@@ -121,24 +132,6 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
                 swap.fixedInterestRate,
                 swap.ibtQuantity
             );
-    }
-
-    function getSwapPayFixedState(uint256 swapId)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return uint256(_swapsPayFixed.swaps[swapId.toUint64()].state);
-    }
-
-    function getSwapReceiveFixedState(uint256 swapId)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return uint256(_swapsReceiveFixed.swaps[swapId.toUint64()].state);
     }
 
     function getSwapReceiveFixed(uint256 swapId)

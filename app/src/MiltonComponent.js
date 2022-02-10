@@ -26,8 +26,7 @@ export default ({ drizzle, drizzleState }) => (
         </div>
         <hr />
         <div class="row">
-            {process.env.REACT_APP_ITF_ENABLED ===
-            "true" ? (
+            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                 <div className="col-md-12">
                     <strong>Open Swap Pay Fixed USDT (ItfMiltonUsdt)</strong>
                     <ContractForm
@@ -174,8 +173,7 @@ export default ({ drizzle, drizzleState }) => (
                     <br />
                 </div>
             )}
-            {process.env.REACT_APP_ITF_ENABLED ===
-            "true" ? (
+            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                 <div className="col-md-4">
                     <strong>Redeem USDT (ItfJosephUsdt)</strong>
                     <ContractForm
@@ -224,8 +222,7 @@ export default ({ drizzle, drizzleState }) => (
                     <br />
                 </div>
             )}
-            {process.env.REACT_APP_ITF_ENABLED ===
-            "true" ? (
+            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                 <div className="col-md-4">
                     <strong>Close Pay Fixed Swap - USDT (ItfMiltonUsdt)</strong>
                     <ContractForm
@@ -277,27 +274,51 @@ export default ({ drizzle, drizzleState }) => (
                 </div>
             ) : (
                 <div className="col-md-4">
-                    <strong>Close Position Form (MiltonUsdt) - USDT</strong>
+                    <strong>Close Pay Fixed Swap - USDT (MiltonUsdt)</strong>
                     <ContractForm
                         drizzle={drizzle}
                         contract="MiltonUsdt"
-                        method="closePosition"
+                        method="closeSwapPayFixed"
                     />
                     <br />
-                    <strong>Close Position Form (MiltonUsdc) - USDC</strong>
+                    <strong>
+                        Close Receive Fixed Swap - USDT (MiltonUsdt)
+                    </strong>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonUsdt"
+                        method="closeSwapReceiveFixed"
+                    />
+                    <br />
+                    <strong>Close Pay Fixed Swap - USDC (MiltonUsdc)</strong>
                     <ContractForm
                         drizzle={drizzle}
                         contract="MiltonUsdc"
-                        method="closePosition"
+                        method="closeSwapPayFixed"
                     />
                     <br />
-                    <strong>Close Position Form (MiltonDai) - DAI</strong>
+                    <strong>
+                        Close Receive Fixed Swap - USDC (MiltonUsdc)
+                    </strong>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonUsdc"
+                        method="closeSwapReceiveFixed"
+                    />
+                    <br />
+                    <strong>Close Pay Fixed Swap - DAI (MiltonDai)</strong>
                     <ContractForm
                         drizzle={drizzle}
                         contract="MiltonDai"
-                        method="closePosition"
+                        method="closeSwapPayFixed"
                     />
                     <br />
+                    <strong>Close Receive Fixed Swap - DAI (MiltonDai)</strong>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonDai"
+                        method="closeSwapReceiveFixed"
+                    />
                 </div>
             )}
         </div>
