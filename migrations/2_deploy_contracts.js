@@ -109,8 +109,7 @@ module.exports = async function (deployer, _network, addresses) {
     );
 
     const miltonStorageUsdt = await deployProxy(
-        MiltonStorageUsdt,
-        [iporAssetConfigurationUsdt.address],
+        MiltonStorageUsdt,        
         {
             deployer: deployer,
             initializer: "initialize",
@@ -119,8 +118,7 @@ module.exports = async function (deployer, _network, addresses) {
     );
 
     const miltonStorageUsdc = await deployProxy(
-        MiltonStorageUsdc,
-        [iporAssetConfigurationUsdc.address],
+        MiltonStorageUsdc,        
         {
             deployer: deployer,
             initializer: "initialize",
@@ -129,8 +127,7 @@ module.exports = async function (deployer, _network, addresses) {
     );
 
     const miltonStorageDai = await deployProxy(
-        MiltonStorageDai,
-        [iporAssetConfigurationDai.address],
+        MiltonStorageDai,        
         {
             deployer: deployer,
             initializer: "initialize",
