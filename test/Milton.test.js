@@ -2568,7 +2568,7 @@ describe("Milton", () => {
 
     it("should NOT close position, because swap has incorrect status - pay fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
@@ -2585,10 +2585,10 @@ describe("Milton", () => {
             testData
         );
 
-        let openerUser = userTwo;
-        let closerUser = userTwo;
-        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-        let openTimestamp = Math.floor(Date.now() / 1000);
+        const openerUser = userTwo;
+        const closerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
@@ -2623,7 +2623,7 @@ describe("Milton", () => {
         };
         await openSwapPayFixed(testData, derivativeParams25days);
 
-        let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+        const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
         await testData.miltonDai
             .connect(closerUser)
@@ -2641,7 +2641,7 @@ describe("Milton", () => {
 
     it("should NOT close position, because swap has incorrect status - receive fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
@@ -2658,10 +2658,10 @@ describe("Milton", () => {
             testData
         );
 
-        let openerUser = userTwo;
-        let closerUser = userTwo;
-        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-        let openTimestamp = Math.floor(Date.now() / 1000);
+        const openerUser = userTwo;
+        const closerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
@@ -2696,7 +2696,7 @@ describe("Milton", () => {
         };
         await openSwapReceiveFixed(testData, derivativeParams25days);
 
-        let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+        const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
         await testData.miltonDai
             .connect(closerUser)
