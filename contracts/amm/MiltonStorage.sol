@@ -146,24 +146,6 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             );
     }
 
-    function getSwapPayFixedState(uint256 swapId)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return uint256(_swapsPayFixed.swaps[swapId.toUint64()].state);
-    }
-
-    function getSwapReceiveFixedState(uint256 swapId)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return uint256(_swapsReceiveFixed.swaps[swapId.toUint64()].state);
-    }
-
     function getSwapReceiveFixed(uint256 swapId)
         external
         view

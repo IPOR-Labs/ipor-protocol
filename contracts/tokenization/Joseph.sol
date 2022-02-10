@@ -119,6 +119,7 @@ contract Joseph is Ownable, IJoseph {
             );
         }
     }
+
     function _redeem(uint256 ipTokenVolume, uint256 timestamp) internal {
         require(
             ipTokenVolume != 0 &&
@@ -143,7 +144,7 @@ contract Joseph is Ownable, IJoseph {
             Constants.D18
         );
 
-		require(
+        require(
             balance.liquidityPool > wadUnderlyingAmount,
             IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );

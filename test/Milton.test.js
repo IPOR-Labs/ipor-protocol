@@ -2566,9 +2566,9 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT close position, because swap has incorrect status", async () => {
+    it("should NOT close position, because swap has incorrect status - pay fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
@@ -2585,10 +2585,10 @@ describe("Milton", () => {
             testData
         );
 
-        let openerUser = userTwo;
-        let closerUser = userTwo;
-        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-        let openTimestamp = Math.floor(Date.now() / 1000);
+        const openerUser = userTwo;
+        const closerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = Math.floor(Date.now() / 1000);
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
@@ -2623,7 +2623,7 @@ describe("Milton", () => {
         };
         await openSwapPayFixed(testData, derivativeParams25days);
 
-        let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+        const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
 
         await testData.miltonDai
             .connect(closerUser)
@@ -2634,6 +2634,79 @@ describe("Milton", () => {
             testData.miltonDai
                 .connect(closerUser)
                 .itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "IPOR_23"
+        );
+    });
+
+    it("should NOT close position, because swap has incorrect status - receive fixed", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            libraries
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const openerUser = userTwo;
+        const closerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParamsFirst = {
+            asset: testData.tokenDai.address,
+            totalAmount: USD_10_000_18DEC,
+            slippageValue: 3,
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                USD_28_000_18DEC + USD_28_000_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapReceiveFixed(testData, derivativeParamsFirst);
+
+        const derivativeParams25days = {
+            asset: testData.tokenDai.address,
+            totalAmount: USD_10_000_18DEC,
+            slippageValue: 3,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            from: openerUser,
+        };
+        await openSwapReceiveFixed(testData, derivativeParams25days);
+
+        const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+
+        await testData.miltonDai
+            .connect(closerUser)
+            .itfCloseSwapReceiveFixed(1, endTimestamp);
+
+        await assertError(
+            //when
+            testData.miltonDai
+                .connect(closerUser)
+                .itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
             "IPOR_23"
         );

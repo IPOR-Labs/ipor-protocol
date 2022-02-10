@@ -52,16 +52,6 @@ interface IMiltonStorage {
         view
         returns (DataTypes.IporSwapMemory memory);
 
-    function getSwapPayFixedState(uint256 swapId)
-        external
-        view
-        returns (uint256);
-
-    function getSwapReceiveFixedState(uint256 swapId)
-        external
-        view
-        returns (uint256);
-
     function getSwapReceiveFixed(uint256 swapId)
         external
         view
