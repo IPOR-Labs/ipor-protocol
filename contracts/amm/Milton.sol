@@ -82,22 +82,6 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
         _asset = asset;
     }
 
-    modifier onlyActiveSwapPayFixed(uint256 swapId) {
-        require(
-            _miltonStorage.getSwapPayFixedState(swapId) == 1,
-            IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
-        );
-        _;
-    }
-
-    modifier onlyActiveSwapReceiveFixed(uint256 swapId) {
-        require(
-            _miltonStorage.getSwapReceiveFixedState(swapId) == 0,
-            IporErrors.MILTON_DERIVATIVE_IS_INACTIVE
-        );
-        _;
-    }
-
     modifier onlyPublicationFeeTransferer() {
         require(
             msg.sender ==
@@ -179,19 +163,13 @@ contract Milton is Ownable, Pausable, ReentrancyGuard, IMiltonEvents, IMilton {
             );
     }
 
-    function closeSwapPayFixed(uint256 swapId)
-        external
-        override
-        onlyActiveSwapPayFixed(swapId)
-        nonReentrant
-    {
+    function closeSwapPayFixed(uint256 swapId) external override nonReentrant {
         _closeSwapPayFixed(swapId, block.timestamp);
     }
 
     function closeSwapReceiveFixed(uint256 swapId)
         external
         override
-        onlyActiveSwapReceiveFixed(swapId)
         nonReentrant
     {
         _closeSwapReceiveFixed(swapId, block.timestamp);

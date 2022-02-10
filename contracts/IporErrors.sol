@@ -51,7 +51,7 @@ library IporErrors {
         "IPOR_16";
 
     //@notice Swap should be in ACTIVE state
-    string public constant MILTON_DERIVATIVE_IS_INACTIVE = "IPOR_17";
+    // string public constant MILTON_DERIVATIVE_IS_INACTIVE = "IPOR_17";
 
     //@notice Input arrays which should have the same length - mismatch
     string public constant WARREN_INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
