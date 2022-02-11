@@ -46,8 +46,8 @@ IS_STOP="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
-IS_MOCK_ASSET="NO"
-IS_MOCK_ASSET_STOP="NO"
+IS_MOCK_ASSET_MANAGEMENT="NO"
+IS_MOCK_ASSET_MANAGEMENT_STOP="NO"
 
 if [ $# -eq 0 ]; then
     IS_RUN="YES"
@@ -66,11 +66,11 @@ do
             IS_RUN="YES"
             IS_STOP="YES"
         ;;
-        mockasset|ma)
-            IS_MOCK_ASSET="YES"
+        mockasset|mam)
+            IS_MOCK_ASSET_MANAGEMENT="YES"
         ;;
-        mockassetstop|mas)
-            IS_MOCK_ASSET_STOP="YES"
+        mockassetstop|mams)
+            IS_MOCK_ASSET_MANAGEMENT_STOP="YES"
         ;;
         stop|s)
             IS_STOP="YES"
@@ -267,13 +267,13 @@ if [ $IS_STOP = "YES" ]; then
   docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} rm -s -v -f
 fi
 
-if [ $IS_MOCK_ASSET = "YES" ]; then
+if [ $IS_MOCK_ASSET_MANAGEMENT = "YES" ]; then
   cd "${DIR}"
   echo -e "\n\e[32mStart assetManagment Mock for network name \e[33m${ETH_BC_NETWORK_NAME} \e[32mprofile..\e[0m\n"
   nohup truffle exec scripts/mock-asset-management.js --network ${ETH_BC_NETWORK_NAME} &  
 fi
 
-if [ $IS_MOCK_ASSET_STOP = "YES" ]; then
+if [ $IS_MOCK_ASSET_MANAGEMENT_STOP = "YES" ]; then
   cd "${DIR}"
   echo -e "\n\e[32mStopping mock asset process\e[0m\n"
   pkill -f  scripts/mock-asset-management.js 
@@ -347,8 +347,8 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
     echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m           Build IPOR dockers"
     echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m             Run / restart IPOR dockers"
-    echo -e "   \e[36mmockasset\e[0m|\e[36mma\e[0m      Start Asset Managment mock"
-    echo -e "   \e[36mmockassetstop\e[0m|\e[36mma\e[0m  Stop Asset Managment mock"
+    echo -e "   \e[36mmockasset\e[0m|\e[36mmam\e[0m      Start Asset Managment mock"
+    echo -e "   \e[36mmockassetstop\e[0m|\e[36mmams\e[0m  Stop Asset Managment mock"
     echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m            Stop IPOR dockers"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m         Compile and migrate Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m         Publish build artifacts to S3 bucket"
