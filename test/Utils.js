@@ -224,8 +224,6 @@ module.exports.prepareData = async (libraries, accounts) => {
     await miltonSpread.deployed();
     await miltonSpread.initialize();
 
-    await iporConfiguration.setMiltonSpreadModel(miltonSpread.address);
-
     let data = {
         miltonSpread,
         iporConfiguration,
@@ -388,7 +386,6 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
     const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
 
     const warren = await this.prepareWarren(accounts);
-    await data.iporConfiguration.setWarren(await warren.address);
     
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -403,9 +400,7 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
                 "IP USDT",
                 "ipUSDT"
             );
-            await ipTokenUsdt.deployed();
-
-            await data.iporConfiguration.addAsset(tokenUsdt.address);
+            await ipTokenUsdt.deployed();            
 
             iporAssetConfigurationUsdt = await IporAssetConfiguration.deploy();
             await iporAssetConfigurationUsdt.deployed();
@@ -468,9 +463,7 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
                 TOTAL_SUPPLY_6_DECIMALS,
                 6
             );
-            await tokenUsdc.deployed();
-
-            await data.iporConfiguration.addAsset(tokenUsdc.address);
+            await tokenUsdc.deployed();            
 
             ipTokenUsdc = await IpToken.deploy(
                 tokenUsdc.address,
@@ -540,8 +533,7 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
                 TOTAL_SUPPLY_18_DECIMALS,
                 18
             );
-            await tokenDai.deployed();
-            await data.iporConfiguration.addAsset(tokenDai.address);
+            await tokenDai.deployed();            
 
             ipTokenDai = await IpToken.deploy(
                 tokenDai.address,

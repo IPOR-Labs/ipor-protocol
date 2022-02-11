@@ -34,6 +34,63 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
+                        <strong>Milton Spread Model Address</strong>
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfMiltonUsdt"
+                                method="getMiltonSpreadModel"
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="MiltonUsdt"
+                                method="getMiltonSpreadModel"
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfMiltonUsdc"
+                                method="getMiltonSpreadModel"
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="MiltonUsdc"
+                                method="getMiltonSpreadModel"
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfMiltonDai"
+                                method="getMiltonSpreadModel"
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="MiltonDai"
+                                method="getMiltonSpreadModel"
+                            />
+                        )}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
                         <strong>Max Swap Total Amount</strong>
                     </td>
                     <td>

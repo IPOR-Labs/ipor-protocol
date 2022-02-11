@@ -25,25 +25,6 @@ export default ({ drizzle, drizzleState }) => (
         </div>
 
         <div className="row">
-            <div className="col-md-2">Milton Spread Model</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getMiltonSpreadModel"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setMiltonSpreadModel"
-                />
-            </div>
-        </div>
-
-        <div className="row">
             <div className="col-md-2">Publication Fee Transferer</div>
             <div className="col-md-3">
                 <ContractData
@@ -221,19 +202,7 @@ export default ({ drizzle, drizzleState }) => (
                         <td>
                             0xb527a07823dd490f4af143463d6cd886bd7f2ff7af38e50cce0a4d77dbccc92f
                         </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_SPREAD_MODEL_ADMIN_ROLE</td>
-                        <td>
-                            0x869c6dda984481cbeefdaab23aeff7b5cae8e04a57bb6bc44608ea47966b45ac
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_SPREAD_MODEL_ROLE</td>
-                        <td>
-                            0xc769312598bcfa61b1f22ed091835eefa5a0d9a37ea7646f63bfd88a3dd04878
-                        </td>
-                    </tr>
+                    </tr>                    
                     <tr>
                         <td>MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE</td>
                         <td>

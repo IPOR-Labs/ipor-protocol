@@ -143,17 +143,14 @@ contract MiltonFrontendDataProvider is
         override
         returns (IporAssetConfigurationFront[] memory)
     {
-        address[] memory assets = _iporConfiguration.getAssets();
+        IWarren warren = IWarren(_iporConfiguration.getWarren());
+        
+		address[] memory assets = warren.getAssets();
+
         IporAssetConfigurationFront[]
             memory iporAssetConfigurationsFront = new IporAssetConfigurationFront[](
                 assets.length
             );
-
-        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-            _iporConfiguration.getMiltonSpreadModel()
-        );
-
-        IWarren warren = IWarren(_iporConfiguration.getWarren());
 
         uint256 timestamp = block.timestamp;
 
@@ -168,7 +165,13 @@ contract MiltonFrontendDataProvider is
                 iporAssetConfiguration.getMiltonStorage()
             );
 
-			IMiltonConfiguration milton = IMiltonConfiguration(iporAssetConfiguration.getMilton());
+            IMiltonConfiguration milton = IMiltonConfiguration(
+                iporAssetConfiguration.getMilton()
+            );
+
+            IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+                milton.getMiltonSpreadModel()
+            );
 
             DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(
                 timestamp,
@@ -199,13 +202,11 @@ contract MiltonFrontendDataProvider is
                 spreadRecFixedValue = 0;
             }
 
-
-
             iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
                 assets[i],
-				milton.getMinCollateralizationFactorValue(),
-				milton.getMaxCollateralizationFactorValue(),
-                milton.getOpeningFeePercentage(),                
+                milton.getMinCollateralizationFactorValue(),
+                milton.getMaxCollateralizationFactorValue(),
+                milton.getOpeningFeePercentage(),
                 milton.getIporPublicationFeeAmount(),
                 milton.getLiquidationDepositAmount(),
                 milton.getIncomeTaxPercentage(),

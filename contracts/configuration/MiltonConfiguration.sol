@@ -2,6 +2,13 @@
 pragma solidity 0.8.9;
 
 import "../interfaces/IMiltonConfiguration.sol";
+import "../interfaces/IIpToken.sol";
+import "../interfaces/IWarren.sol";
+import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/IMiltonSpreadModel.sol";
+import "../interfaces/IIporConfiguration.sol";
+
+import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonConfiguration is IMiltonConfiguration {
     //@notice max total amount used when opening position
@@ -28,6 +35,19 @@ contract MiltonConfiguration is IMiltonConfiguration {
     uint256 internal constant _MAX_COLLATERALIZATION_FACTOR_VALUE = 1000 * 1e18;
 
     uint256 internal constant _MIN_COLLATERALIZATION_FACTOR_VALUE = 10 * 1e18;
+
+	uint8 internal _decimals;
+    address internal _asset;
+    IIpToken internal _ipToken;
+    IWarren internal _warren;
+    IMiltonStorage internal _miltonStorage;
+    IMiltonSpreadModel internal _miltonSpreadModel;
+    IIporConfiguration internal _iporConfiguration;
+    IIporAssetConfiguration internal _iporAssetConfiguration;
+
+	function getMiltonSpreadModel() external view override returns(address) {
+		return address(_miltonSpreadModel);
+	}
 
     function getMaxSwapTotalAmount() external pure override returns (uint256) {
         return _MAX_SWAP_TOTAL_AMOUNT;
@@ -207,3 +227,4 @@ contract MiltonConfiguration is IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 }
+

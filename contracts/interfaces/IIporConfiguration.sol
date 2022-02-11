@@ -2,11 +2,8 @@
 pragma solidity 0.8.9;
 
 interface IIporConfiguration {    
-    event MiltonUtilizationStrategyUpdated(address indexed newAddress);
-    event MiltonSpreadModelUpdated(address indexed newAddress);
-    event MiltonPublicationFeeTransfererUpdated(address indexed newAddress);
-    event WarrenAddressUpdated(address indexed newAddress);
-    event WarrenStorageAddressUpdated(address indexed newAddress);
+    event MiltonUtilizationStrategyUpdated(address indexed newAddress);    
+    event MiltonPublicationFeeTransfererUpdated(address indexed newAddress);        
     event IporAssetConfigurationAddressUpdated(
         address indexed asset,
         address indexed newAddress
@@ -22,11 +19,7 @@ interface IIporConfiguration {
 
     function setMiltonPublicationFeeTransferer(address publicationFeeTransferer)
         external;    
-
-    function getMiltonSpreadModel() external view returns (address);
-
-    function setMiltonSpreadModel(address miltonSpreadModel) external;
-
+    
     function getIporAssetConfiguration(address asset)
         external
         view
@@ -36,13 +29,5 @@ interface IIporConfiguration {
         external;
 
     function getWarren() external view returns (address);
-
-    function setWarren(address warren) external;    
-
-    function getAssets() external view returns (address[] memory);
-
-    function addAsset(address asset) external;
-
-	function removeAsset(address asset) external;
 
 }

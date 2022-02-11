@@ -44,16 +44,7 @@ contract Milton is
     using SafeCast for uint256;
     using SafeCast for uint128;
     using SafeCast for int256;
-    using IporSwapLogic for DataTypes.IporSwapMemory;
-
-    uint8 private _decimals;
-    address private _asset;
-    IIpToken private _ipToken;
-    IWarren internal _warren;
-    IMiltonStorage internal _miltonStorage;
-    IMiltonSpreadModel internal _miltonSpreadModel;
-    IIporConfiguration internal _iporConfiguration;
-    IIporAssetConfiguration internal _iporAssetConfiguration;
+    using IporSwapLogic for DataTypes.IporSwapMemory;    
 
     function initialize(
         address asset,

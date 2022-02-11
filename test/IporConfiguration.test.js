@@ -59,9 +59,7 @@ describe("IporAssetConfiguration", () => {
         await iporConfiguration.grantRole(
             keccak256("IPOR_ASSETS_ROLE"),
             admin.address
-        );
-        await iporConfiguration.addAsset(tokenUsdt.address);
-        await iporConfiguration.addAsset(tokenDai.address);
+        );        
 
         const MockTimelockController = await ethers.getContractFactory(
             "MockTimelockController"

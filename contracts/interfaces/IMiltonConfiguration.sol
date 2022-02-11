@@ -35,4 +35,6 @@ interface IMiltonConfiguration {
         external
         pure
         returns (uint256);
+
+    function getMiltonSpreadModel() external view returns (address);
 }
