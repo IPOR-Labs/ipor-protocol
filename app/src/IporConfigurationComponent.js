@@ -233,7 +233,7 @@ export default ({ drizzle, drizzleState }) => (
                         <td>
                             0xc769312598bcfa61b1f22ed091835eefa5a0d9a37ea7646f63bfd88a3dd04878
                         </td>
-                    </tr>                    
+                    </tr>
                     <tr>
                         <td>MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE</td>
                         <td>
