@@ -393,9 +393,9 @@ describe("Warren", () => {
             `Actual IPOR Index Value is incorrect, actual: ${actualIndexValue}, expected: ${iporIndexThirdValue}`
         ).to.be.eql(iporIndexThirdValue);
     });
-	
-	it("should NOT update IPOR Index - asset not supported", async () => {
-		//given
+
+    it("should NOT update IPOR Index - asset not supported", async () => {
+        //given
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
 
@@ -410,7 +410,7 @@ describe("Warren", () => {
             //then
             "IPOR_39"
         );
-	});
+    });
 
     it("should NOT update IPOR Index - wrong input arrays", async () => {
         //given
