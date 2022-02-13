@@ -149,43 +149,6 @@ describe("Warren", () => {
         );
     });
 
-    it("should retrieve list of IPOR Indexes", async () => {
-        //given
-        const expectedAssetOne = testData.tokenUsdt.address;
-        const expectedAssetSymbolOne = "USDT";
-        const expectedAssetTwo = testData.tokenDai.address;
-        const expectedAssetSymbolTwo = "DAI";
-
-        const expectedIporIndexesSize = 2;
-
-        await testData.warren.addUpdater(userOne.address);
-
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(expectedAssetOne, BigInt(1e8));
-
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(expectedAssetTwo, BigInt(1e20));
-
-        //when
-        const iporIndexes = await warrenDevToolDataProvider.getIndexes();
-
-        //then
-        expect(
-            expectedIporIndexesSize,
-            `Incorrect IPOR indexes size ${iporIndexes.length}, expected ${expectedIporIndexesSize}`
-        ).to.be.eql(iporIndexes.length);
-        expect(
-            expectedAssetSymbolOne,
-            `Incorrect asset on first position in indexes ${iporIndexes[0].asset}, expected ${expectedAssetOne}`
-        ).to.be.eql(iporIndexes[0].asset);
-        expect(
-            expectedAssetSymbolTwo,
-            `Incorrect asset on second position in indexes ${iporIndexes[1].asset}, expected ${expectedAssetTwo}`
-        ).to.be.eql(iporIndexes[1].asset);
-    });
-
     it("should update existing IPOR Index", async () => {
         //given
         const asset = testData.tokenUsdt.address;

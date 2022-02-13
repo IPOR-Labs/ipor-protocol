@@ -12,7 +12,7 @@ const {
 
 const { assertError } = require("./Utils");
 
-describe("IporAssetConfiguration", () => {
+describe("IporConfiguration", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     let tokenDai = null;
@@ -50,7 +50,7 @@ describe("IporAssetConfiguration", () => {
         );
         iporConfiguration = await IporConfiguration.deploy();
         await iporConfiguration.deployed();
-		await iporConfiguration.initialize();
+        await iporConfiguration.initialize();
 
         await iporConfiguration.grantRole(
             keccak256("IPOR_ASSETS_ADMIN_ROLE"),
@@ -59,7 +59,7 @@ describe("IporAssetConfiguration", () => {
         await iporConfiguration.grantRole(
             keccak256("IPOR_ASSETS_ROLE"),
             admin.address
-        );        
+        );
 
         const MockTimelockController = await ethers.getContractFactory(
             "MockTimelockController"
@@ -97,33 +97,6 @@ describe("IporAssetConfiguration", () => {
         ).to.be.eql(actualIporAssetConfigurationAddress);
     });
 
-    it("should NOT set IporAssetConfiguration for NOT supported asset USDC", async () => {
-        //given
-        const iporAssetConfigurationAddress =
-            "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        const asset = tokenUsdc.address;
-
-        await iporConfiguration.grantRole(
-            keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
-            admin.address
-        );
-        await iporConfiguration.grantRole(
-            keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
-            admin.address
-        );
-        //when
-        await assertError(
-            //when
-            iporConfiguration.setIporAssetConfiguration(
-                asset,
-                iporAssetConfigurationAddress
-            ),
-
-            //then
-            "IPOR_39"
-        );
-    });
-
     it("should NOT be able to add new asset when user does not have IPOR_ASSET_CONFIGURATION_ROLE role", async () => {
         //given
         const iporAssetConfigurationAddress =
@@ -141,124 +114,6 @@ describe("IporAssetConfiguration", () => {
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xe8f735d503f091d7e700cae87352987ca83ec17c9b2fb176dc5a5a7ec0390360`
-        );
-    });
-
-   it("should set Milton Spread Strategy", async () => {
-        //given
-        const role = keccak256("MILTON_SPREAD_MODEL_ROLE");
-        const adminRole = keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE");
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        await iporConfiguration.grantRole(role, admin.address);
-
-        //when
-        await iporConfiguration.setMiltonSpreadModel(mockAddress);
-
-        //then
-        const result = await iporConfiguration.getMiltonSpreadModel();
-        expect(mockAddress).to.be.eql(result);
-    });
-
-    it("should NOT set Milton Spread Strategy when user does not have MILTON_SPREAD_MODEL_ROLE role", async () => {
-        //given
-
-        await assertError(
-            //when
-            iporConfiguration.setMiltonSpreadModel(mockAddress),
-
-            //then
-            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xc769312598bcfa61b1f22ed091835eefa5a0d9a37ea7646f63bfd88a3dd04878`
-        );
-    });
-
-    it("should set Warren", async () => {
-        //given
-        const adminRole = keccak256("WARREN_ADMIN_ROLE");
-        const role = keccak256("WARREN_ROLE");
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        await iporConfiguration.grantRole(role, admin.address);
-
-        //when
-        await iporConfiguration.setWarren(mockAddress);
-
-        //then
-        const result = await iporConfiguration.getWarren();
-        expect(mockAddress).to.be.eql(result);
-    });
-
-    it("should NOT set Warren because user does not have WARREN_ROLE role", async () => {
-        //given
-
-        await assertError(
-            //when
-            iporConfiguration.setWarren(mockAddress),
-
-            //then
-            `account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0xe2062703bb72555ff94bfdd96351e7f292b8034f5f9127a25167d8d44f91ae85`
-        );
-    });
-
-    it("should add new asset", async () => {
-        //given
-        const adminRole = keccak256("IPOR_ASSETS_ADMIN_ROLE");
-        const role = keccak256("IPOR_ASSETS_ROLE");
-        await iporConfiguration.grantRole(adminRole, userOne.address);
-        await iporConfiguration.grantRole(role, userOne.address);
-
-        //when
-        await iporConfiguration.addAsset(mockAddress);
-
-        //then
-        const result = await iporConfiguration.getAssets();
-        expect(result.includes(mockAddress)).to.be.true;
-    });
-
-    it("should NOT be able to add new asset when user does not have IPOR_ASSETS_ROLE role", async () => {
-        //given
-
-        await assertError(
-            //when
-            iporConfiguration.connect(userOne).addAsset(mockAddress),
-
-            //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xf2f6e1201d6fbf7ec2033ab2b3ad3dcf0ded3dd534a82806a88281c063f67656`
-        );
-    });
-
-    it("should removed asset", async () => {
-        //given
-        const adminRole = keccak256("IPOR_ASSETS_ADMIN_ROLE");
-        const role = keccak256("IPOR_ASSETS_ROLE");
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        await iporConfiguration.grantRole(role, admin.address);
-        await iporConfiguration.addAsset(mockAddress);
-        const newAsset = Array.from(await iporConfiguration.getAssets());
-        expect(newAsset.includes(mockAddress)).to.be.true;
-
-        //when
-        await iporConfiguration.removeAsset(mockAddress);
-
-        //then
-        const result = Array.from(await iporConfiguration.getAssets());
-        expect(result.includes(mockAddress)).to.be.false;
-    });
-
-    it("should NOT be able to remove asset when user does not have IPOR_ASSETS_ROLE role", async () => {
-        //given
-        const role = keccak256("IPOR_ASSETS_ROLE");
-        const adminRole = keccak256("IPOR_ASSETS_ADMIN_ROLE");
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        await iporConfiguration.grantRole(role, admin.address);
-        await iporConfiguration.addAsset(mockAddress);
-        const newAsset = Array.from(await iporConfiguration.getAssets());
-        expect(newAsset.includes(mockAddress)).to.be.true;
-
-        await assertError(
-            //when
-            iporConfiguration.connect(userOne).removeAsset(mockAddress),
-
-            //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xf2f6e1201d6fbf7ec2033ab2b3ad3dcf0ded3dd534a82806a88281c063f67656`
         );
     });
 

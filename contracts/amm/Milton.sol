@@ -143,9 +143,7 @@ contract Milton is
         IERC20Upgradeable(_asset).safeTransfer(charlieTreasurer, amount);
     }
 
-    //TODO: !!! consider connect configuration with milton storage,
-    //in this way that if there is parameter used only in open and close position then let put it in miltonstorage
-    function openSwapPayFixed(
+	function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
