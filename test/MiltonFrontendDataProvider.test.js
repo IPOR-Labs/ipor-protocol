@@ -173,20 +173,34 @@ describe("MiltonFrontendDataProvider", () => {
 
         const expectedSwapsLength = 3;
 
+        const MiltonFrontendDataProvider = await ethers.getContractFactory(
+            "MiltonFrontendDataProvider"
+        );
+        const miltonFrontendDataProvider =
+            await MiltonFrontendDataProvider.deploy();
+        await miltonFrontendDataProvider.deployed();
+        await miltonFrontendDataProvider.initialize(
+            data.iporConfiguration.address,
+            testData.warren.address,
+            testData.miltonDai.address,
+            testData.miltonUsdt.address,
+            testData.miltonUsdc.address
+        );
+
         //when
         await openSwapPayFixed(testData, paramsDai);
         await openSwapPayFixed(testData, paramsUsdc);
         await openSwapPayFixed(testData, paramsUsdt);
 
-        let itemsDai = await data.miltonFrontendDataProvider
+        let itemsDai = await miltonFrontendDataProvider
             .connect(paramsDai.from)
             .getMySwaps(paramsDai.asset);
 
-        let itemsUsdc = await data.miltonFrontendDataProvider
+        let itemsUsdc = await miltonFrontendDataProvider
             .connect(paramsUsdc.from)
             .getMySwaps(paramsUsdc.asset);
 
-        let itemsUsdt = await data.miltonFrontendDataProvider
+        let itemsUsdt = await miltonFrontendDataProvider
             .connect(paramsUsdt.from)
             .getMySwaps(paramsUsdt.asset);
 

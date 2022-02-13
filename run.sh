@@ -185,7 +185,6 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageUsdc.json" "milton_storage_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageDai.json" "milton_storage_dai_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModel.json" "milton_spread_model_address")
-  RESULT=$(set_smart_contract_address_from_json_file "WarrenStorage.json" "warren_storage_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonFaucet.json" "milton_faucet_address")
   RESULT=$(set_smart_contract_address_from_json_file "IporConfiguration.json" "ipor_configuration_address")
   local IPOR_ASSET_CONFIG_USDC=$(set_smart_contract_address_from_json_file "IporAssetConfigurationUsdc.json" "ipor_asset_configuration_usdc_address")

@@ -15,34 +15,47 @@ contract WarrenFrontendDataProvider is
     UUPSUpgradeable,
     IWarrenFrontendDataProvider
 {
-    IIporConfiguration private _iporConfiguration;
+    address private _warren;
+    address internal _assetDai;
+    address internal _assetUsdc;
+    address internal _assetUsdt;
 
-    function initialize(IIporConfiguration iporConfiguration)
-        public
-        initializer
-    {
+    function initialize(
+        address warren,
+        address assetDai,
+        address assetUsdt,
+        address assetUsdc
+    ) public initializer {
         __Ownable_init();
-        _iporConfiguration = iporConfiguration;
+        _warren = warren;
+        _assetDai = assetDai;
+        _assetUsdc = assetUsdc;
+        _assetUsdt = assetUsdt;
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function getIndexes() external view override returns (IporFront[] memory) {
-        IWarren warren = IWarren(_iporConfiguration.getWarren());
-        address[] memory assets = warren.getAssets();
-        IporFront[] memory indexes = new IporFront[](assets.length);
-        uint256 i = 0;
-        for (i; i != assets.length; i++) {
-            address itAsset = assets[i];
-            (uint256 value, uint256 ibtPrice, , , uint256 date) = warren
-                .getIndex(itAsset);
-            indexes[i] = IporFront(
-                IERC20MetadataUpgradeable(itAsset).symbol(),
-                value,
-                ibtPrice,
-                date
-            );
-        }
+        IporFront[] memory indexes = new IporFront[](3);
+        indexes[0] = _createIporFrond(_assetDai);
+        indexes[1] = _createIporFrond(_assetUsdt);
+        indexes[2] = _createIporFrond(_assetUsdc);
         return indexes;
+    }
+
+    function _createIporFrond(address asset)
+        internal
+        view
+        returns (IporFront memory iporFront)
+    {
+        (uint256 value, uint256 ibtPrice, , , uint256 date) = IWarren(_warren).getIndex(
+            asset
+        );
+        iporFront = IporFront(
+            IERC20MetadataUpgradeable(asset).symbol(),
+            value,
+            ibtPrice,
+            date
+        );
     }
 }

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import { DataTypes } from "../libraries/types/DataTypes.sol";
-import { IporErrors } from "../IporErrors.sol";
-import { Constants } from "../libraries/Constants.sol";
-import { IporMath } from "../libraries/IporMath.sol";
+import {DataTypes} from "../libraries/types/DataTypes.sol";
+import {IporErrors} from "../IporErrors.sol";
+import {Constants} from "../libraries/Constants.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 
 library IporLogic {
     function accrueQuasiIbtPrice(
@@ -59,25 +59,37 @@ library IporLogic {
         uint256 exponentialMovingAverage,
         uint256 indexValue,
         uint256 alpha
-    ) internal pure returns (uint256 result) {		
+    ) internal pure returns (uint256 result) {
+        require(
+            alpha <= Constants.D18,
+            IporErrors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE
+        );
 
-		require(alpha <= Constants.D18, IporErrors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
+        if (indexValue > exponentialMovingAverage) {
+            result = IporMath.division(
+                alpha *
+                    (lastExponentialWeightedMovingVariance *
+                        Constants.D36 +
+                        (Constants.D18 - alpha) *
+                        (indexValue - exponentialMovingAverage) *
+                        (indexValue - exponentialMovingAverage)),
+                Constants.D54
+            );
+        } else {
+            result = IporMath.division(
+                alpha *
+                    (lastExponentialWeightedMovingVariance *
+                        Constants.D36 +
+                        (Constants.D18 - alpha) *
+                        (exponentialMovingAverage - indexValue) *
+                        (exponentialMovingAverage - indexValue)),
+                Constants.D54
+            );
+        }
 
-		if (indexValue > exponentialMovingAverage) {
-			result = IporMath.division(
-				alpha *(lastExponentialWeightedMovingVariance * Constants.D36
-						+ (Constants.D18 - alpha) * (indexValue - exponentialMovingAverage) * (indexValue - exponentialMovingAverage)),
-						Constants.D54
-				 );
-		} else {
-			result = IporMath.division(
-				alpha *(lastExponentialWeightedMovingVariance * Constants.D36
-						+ (Constants.D18 - alpha) * (exponentialMovingAverage - indexValue) * (exponentialMovingAverage-indexValue)),
-						Constants.D54 
-				 );
-		}
-
-		require(result <= Constants.D18, IporErrors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE);
-        
+        require(
+            result <= Constants.D18,
+            IporErrors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE
+        );
     }
 }

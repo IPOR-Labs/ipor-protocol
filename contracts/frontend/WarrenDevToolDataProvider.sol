@@ -15,41 +15,55 @@ contract WarrenDevToolDataProvider is
     UUPSUpgradeable,
     IWarrenDevToolDataProvider
 {
-    IIporConfiguration private _iporConfiguration;
+    address private _warren;
+    address internal _assetDai;
+    address internal _assetUsdc;
+    address internal _assetUsdt;
 
-    function initialize(IIporConfiguration iporConfiguration)
-        public
-        initializer
-    {
+    function initialize(
+        address warren,
+        address assetDai,
+        address assetUsdt,
+        address assetUsdc
+    ) public initializer {
         __Ownable_init();
-        _iporConfiguration = iporConfiguration;
+        _warren = warren;
+        _assetDai = assetDai;
+        _assetUsdc = assetUsdc;
+        _assetUsdt = assetUsdt;
+    }
+
+    function getIndexes() external view override returns (IporFront[] memory) {
+        IporFront[] memory indexes = new IporFront[](3);
+        indexes[0] = _createIporFrond(_assetDai);
+        indexes[1] = _createIporFrond(_assetUsdt);
+        indexes[2] = _createIporFrond(_assetUsdc);
+        return indexes;
+    }
+
+    function _createIporFrond(address asset)
+        internal
+        view
+        returns (IporFront memory iporFront)
+    {
+        (
+            uint256 value,
+            uint256 ibtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance,
+            uint256 date
+        ) = IWarren(_warren).getIndex(asset);
+
+        iporFront = IporFront(
+            IERC20MetadataUpgradeable(asset).symbol(),
+            value,
+            ibtPrice,
+            exponentialMovingAverage,
+            exponentialWeightedMovingVariance,
+            date
+        );
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    function getIndexes() external view override returns (IporFront[] memory) {
-        IWarren warren = IWarren(_iporConfiguration.getWarren());
-        address[] memory assets = warren.getAssets();
-        IporFront[] memory indexes = new IporFront[](assets.length);
-        uint256 i = 0;
-        for (i; i != assets.length; i++) {
-            (
-                uint256 value,
-                uint256 ibtPrice,
-                uint256 exponentialMovingAverage,
-                uint256 exponentialWeightedMovingVariance,
-                uint256 date
-            ) = warren.getIndex(assets[i]);
-
-            indexes[i] = IporFront(
-                IERC20MetadataUpgradeable(assets[i]).symbol(),
-                value,
-                ibtPrice,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance,
-                date
-            );
-        }
-        return indexes;
-    }
 }

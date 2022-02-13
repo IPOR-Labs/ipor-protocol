@@ -168,8 +168,7 @@
                         <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarrenDevToolDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IWarrenFrontendDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IWarrenStorage.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IWarrenFrontendDataProvider.sol</argument>                        
                         <argument>${contracts.sources}/libraries/IporMath.sol</argument>
                         <argument>${contracts.sources}/libraries/Constants.sol</argument>
                         <argument>${contracts.sources}/libraries/IporSwapLogic.sol</argument>                        
@@ -184,8 +183,7 @@
                         <argument>${contracts.sources}/mocks/tokens/UsdcMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/UsdtMockedToken.sol</argument>
                         <argument>${contracts.sources}/itf/ItfWarren.sol</argument>
-                        <argument>${contracts.sources}/oracles/Warren.sol</argument>
-                        <argument>${contracts.sources}/oracles/WarrenStorage.sol</argument>
+                        <argument>${contracts.sources}/oracles/Warren.sol</argument>                        
                         <argument>${contracts.sources}/tokenization/IpToken.sol</argument>
                         <argument>${contracts.sources}/tokenization/Joseph.sol</argument>
                         <argument>${contracts.sources}/itf/ItfJoseph.sol</argument>

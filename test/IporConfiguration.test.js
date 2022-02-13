@@ -52,15 +52,6 @@ describe("IporConfiguration", () => {
         await iporConfiguration.deployed();
         await iporConfiguration.initialize();
 
-        await iporConfiguration.grantRole(
-            keccak256("IPOR_ASSETS_ADMIN_ROLE"),
-            admin.address
-        );
-        await iporConfiguration.grantRole(
-            keccak256("IPOR_ASSETS_ROLE"),
-            admin.address
-        );
-
         const MockTimelockController = await ethers.getContractFactory(
             "MockTimelockController"
         );
@@ -114,52 +105,6 @@ describe("IporConfiguration", () => {
 
             //then
             `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xe8f735d503f091d7e700cae87352987ca83ec17c9b2fb176dc5a5a7ec0390360`
-        );
-    });
-
-    it("should revoke WARREN_STORAGE_ROLE role", async () => {
-        //given
-        const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        const role = keccak256("WARREN_STORAGE_ROLE");
-        await iporConfiguration.grantRole(role, userOne.address);
-        const shouldHasRole = await iporConfiguration.hasRole(
-            role,
-            userOne.address
-        );
-        expect(shouldHasRole).to.be.true;
-
-        //when
-        await iporConfiguration.revokeRole(role, userOne.address);
-
-        //then
-        const shouldNotHasRole = await iporConfiguration.hasRole(
-            role,
-            userOne.address
-        );
-        expect(shouldNotHasRole).to.be.false;
-    });
-
-    it("should NOT revoke WARREN_STORAGE_ROLE role, when user has not WARREN_STORAGE_ADMIN_ROLE", async () => {
-        //given
-        const adminRole = keccak256("WARREN_STORAGE_ADMIN_ROLE");
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        const role = keccak256("WARREN_STORAGE_ROLE");
-        await iporConfiguration.grantRole(role, userOne.address);
-        const shouldHasRole = await iporConfiguration.hasRole(
-            role,
-            userOne.address
-        );
-        expect(shouldHasRole).to.be.true;
-
-        await assertError(
-            //when
-            iporConfiguration
-                .connect(userTwo)
-                .revokeRole(role, userOne.address),
-
-            //then
-            `account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0xb1c511825e3a3673b7b3e9816a90ae950555bc6dbcfe9ddcd93d74ef23df3ed2`
         );
     });
 

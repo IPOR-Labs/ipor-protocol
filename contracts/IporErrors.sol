@@ -127,6 +127,7 @@ library IporErrors {
         "IPOR_38";
 
     //@notice Asset address not supported
+	//@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = "IPOR_39";
 
     //@notice Amount which should be minted is too low

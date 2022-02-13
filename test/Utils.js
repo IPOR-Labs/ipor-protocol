@@ -113,46 +113,11 @@ module.exports.grantAllRoleIporConfiguration = async (
     accounts
 ) => {
     await iporConfiguration.grantRole(
-        keccak256("WARREN_STORAGE_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporConfiguration.grantRole(
-        keccak256("WARREN_STORAGE_ROLE"),
-        accounts[0].address
-    );
-    await iporConfiguration.grantRole(
-        keccak256("IPOR_ASSETS_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporConfiguration.grantRole(
-        keccak256("IPOR_ASSETS_ROLE"),
-        accounts[0].address
-    );
-
-    await iporConfiguration.grantRole(
-        keccak256("WARREN_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporConfiguration.grantRole(
-        keccak256("WARREN_ROLE"),
-        accounts[0].address
-    );
-
-    await iporConfiguration.grantRole(
         keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
         accounts[0].address
     );
     await iporConfiguration.grantRole(
         keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
-        accounts[0].address
-    );
-
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporConfiguration.grantRole(
-        keccak256("MILTON_SPREAD_MODEL_ROLE"),
         accounts[0].address
     );
 };
@@ -201,21 +166,6 @@ module.exports.prepareData = async (libraries, accounts) => {
 
     await this.grantAllRoleIporConfiguration(iporConfiguration, accounts);
 
-    const MiltonDevToolDataProvider = await ethers.getContractFactory(
-        "MiltonDevToolDataProvider"
-    );
-    const miltonDevToolDataProvider = await MiltonDevToolDataProvider.deploy();
-    await miltonDevToolDataProvider.deployed();
-    await miltonDevToolDataProvider.initialize(iporConfiguration.address);
-
-    const MiltonFrontendDataProvider = await ethers.getContractFactory(
-        "MiltonFrontendDataProvider"
-    );
-    const miltonFrontendDataProvider =
-        await MiltonFrontendDataProvider.deploy();
-    await miltonFrontendDataProvider.deployed();
-    await miltonFrontendDataProvider.initialize(iporConfiguration.address);
-
     const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
         "MockCase1MiltonSpreadModel"
     );
@@ -227,8 +177,6 @@ module.exports.prepareData = async (libraries, accounts) => {
     let data = {
         miltonSpread,
         iporConfiguration,
-        miltonDevToolDataProvider,
-        miltonFrontendDataProvider,
     };
 
     return data;
@@ -386,7 +334,7 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
     const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
 
     const warren = await this.prepareWarren(accounts);
-    
+
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
             tokenUsdt = await UsdtMockedToken.deploy(
@@ -400,7 +348,7 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
                 "IP USDT",
                 "ipUSDT"
             );
-            await ipTokenUsdt.deployed();            
+            await ipTokenUsdt.deployed();
 
             iporAssetConfigurationUsdt = await IporAssetConfiguration.deploy();
             await iporAssetConfigurationUsdt.deployed();
@@ -463,7 +411,7 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
                 TOTAL_SUPPLY_6_DECIMALS,
                 6
             );
-            await tokenUsdc.deployed();            
+            await tokenUsdc.deployed();
 
             ipTokenUsdc = await IpToken.deploy(
                 tokenUsdc.address,
@@ -533,7 +481,7 @@ module.exports.prepareTestData = async (accounts, assets, data, caseNumber) => {
                 TOTAL_SUPPLY_18_DECIMALS,
                 18
             );
-            await tokenDai.deployed();            
+            await tokenDai.deployed();
 
             ipTokenDai = await IpToken.deploy(
                 tokenDai.address,

@@ -11,32 +11,10 @@ const roles = [
         role: keccak256("ROLES_INFO_ROLE"),
     },
     {
-        name: "IPOR_ASSETS_ROLE",
-        adminRole: keccak256("IPOR_ASSETS_ADMIN_ROLE"),
-        role: keccak256("IPOR_ASSETS_ROLE"),
-    },
-
-    {
-        name: "MILTON_SPREAD_MODEL_ROLE",
-        adminRole: keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
-        role: keccak256("MILTON_SPREAD_MODEL_ROLE"),
-    },
-    {
         name: "IPOR_ASSET_CONFIGURATION_ROLE",
         adminRole: keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
         role: keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
     },
-    {
-        name: "WARREN_ROLE",
-        adminRole: keccak256("WARREN_ADMIN_ROLE"),
-        role: keccak256("WARREN_ROLE"),
-    },
-    {
-        name: "WARREN_STORAGE_ROLE",
-        adminRole: keccak256("WARREN_STORAGE_ADMIN_ROLE"),
-        role: keccak256("WARREN_STORAGE_ROLE"),
-    },
-
     {
         name: "MILTON_PUBLICATION_FEE_TRANSFERER_ROLE",
         adminRole: keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"),
@@ -56,31 +34,10 @@ const rolesNotGrant = [
         role: keccak256("ROLES_INFO_ROLE"),
     },
     {
-        name: "IPOR_ASSETS_ROLE",
-        code: "0xec35db9ce8f02d82695716c134979faf9e051eb97ef9ae15ec0aaafbde76beb5",
-        role: keccak256("IPOR_ASSETS_ROLE"),
-    },
-    {
-        name: "MILTON_SPREAD_MODEL_ROLE",
-        code: "0x869c6dda984481cbeefdaab23aeff7b5cae8e04a57bb6bc44608ea47966b45ac",
-        role: keccak256("MILTON_SPREAD_MODEL_ROLE"),
-    },
-    {
         name: "IPOR_ASSET_CONFIGURATION_ROLE",
         code: "0xb7659cf0d647b98a28212b8b2a17946479df7bb15e3d9c461c7d32c3536abcaf",
         role: keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
     },
-    {
-        name: "WARREN_ROLE",
-        code: "0x1e04dc043068779cd91c1a75e0583a7db9c855bf85d461752231d1fe5a7f69ca",
-        role: keccak256("WARREN_ROLE"),
-    },
-    {
-        name: "WARREN_STORAGE_ROLE",
-        code: "0xb1c511825e3a3673b7b3e9816a90ae950555bc6dbcfe9ddcd93d74ef23df3ed2",
-        role: keccak256("WARREN_STORAGE_ROLE"),
-    },
-
     {
         name: "MILTON_PUBLICATION_FEE_TRANSFERER_ROLE",
         code: "0x7509198b389a0e4178b0935b3089a6bcebb17099877530792a238050cad1a93a",
@@ -92,31 +49,10 @@ const rolesNotGrant = [
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
     },
     {
-        name: "IPOR_ASSETS_ADMIN_ROLE",
-        role: keccak256("IPOR_ASSETS_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-    {
-        name: "MILTON_SPREAD_MODEL_ADMIN_ROLE",
-        role: keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-    {
         name: "IPOR_ASSET_CONFIGURATION_ADMIN_ROLE",
         role: keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
     },
-    {
-        name: "WARREN_ADMIN_ROLE",
-        role: keccak256("WARREN_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-    {
-        name: "WARREN_STORAGE_ADMIN_ROLE",
-        role: keccak256("WARREN_STORAGE_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-
     {
         name: "MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE",
         role: keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"),

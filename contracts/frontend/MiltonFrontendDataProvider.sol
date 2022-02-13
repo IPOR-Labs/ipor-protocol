@@ -19,13 +19,24 @@ contract MiltonFrontendDataProvider is
     IMiltonFrontendDataProvider
 {
     IIporConfiguration internal _iporConfiguration;
+	address internal _warren;
+    address internal _assetDai;
+    address internal _assetUsdc;
+    address internal _assetUsdt;
 
-    function initialize(IIporConfiguration iporConfiguration)
-        public
-        initializer
-    {
+    function initialize(
+        IIporConfiguration iporConfiguration,
+		address warren,
+        address assetDai,
+        address assetUsdt,
+        address assetUsdc
+    ) public initializer {
         __Ownable_init();
         _iporConfiguration = iporConfiguration;
+		_warren = warren;
+        _assetDai = assetDai;
+        _assetUsdc = assetUsdc;
+        _assetUsdt = assetUsdt;
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
@@ -143,77 +154,87 @@ contract MiltonFrontendDataProvider is
         override
         returns (IporAssetConfigurationFront[] memory)
     {
-        IWarren warren = IWarren(_iporConfiguration.getWarren());
-        
-		address[] memory assets = warren.getAssets();
+        uint256 timestamp = block.timestamp;
 
         IporAssetConfigurationFront[]
             memory iporAssetConfigurationsFront = new IporAssetConfigurationFront[](
-                assets.length
+                3
             );
 
-        uint256 timestamp = block.timestamp;
-
-        uint256 spreadPayFixedValue;
-        uint256 spreadRecFixedValue;
-        uint256 i = 0;
-        for (i; i != assets.length; i++) {
-            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                    _iporConfiguration.getIporAssetConfiguration(assets[i])
-                );
-            IMiltonStorage miltonStorage = IMiltonStorage(
-                iporAssetConfiguration.getMiltonStorage()
-            );
-
-            IMiltonConfiguration milton = IMiltonConfiguration(
-                iporAssetConfiguration.getMilton()
-            );
-
-            IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-                milton.getMiltonSpreadModel()
-            );
-
-            DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(
-                timestamp,
-                assets[i]
-            );
-
-            try
-                spreadModel.calculatePartialSpreadPayFixed(
-                    miltonStorage,
-                    timestamp,
-                    accruedIpor
-                )
-            returns (uint256 _spreadPayFixedValue) {
-                spreadPayFixedValue = _spreadPayFixedValue;
-            } catch {
-                spreadPayFixedValue = 0;
-            }
-
-            try
-                spreadModel.calculatePartialSpreadRecFixed(
-                    miltonStorage,
-                    timestamp,
-                    accruedIpor
-                )
-            returns (uint256 _spreadRecFixedValue) {
-                spreadRecFixedValue = _spreadRecFixedValue;
-            } catch {
-                spreadRecFixedValue = 0;
-            }
-
-            iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
-                assets[i],
-                milton.getMinCollateralizationFactorValue(),
-                milton.getMaxCollateralizationFactorValue(),
-                milton.getOpeningFeePercentage(),
-                milton.getIporPublicationFeeAmount(),
-                milton.getLiquidationDepositAmount(),
-                milton.getIncomeTaxPercentage(),
-                spreadPayFixedValue,
-                spreadRecFixedValue
-            );
-        }
+        iporAssetConfigurationsFront[0] = _createIporAssetConfFront(
+            _assetDai,
+            timestamp
+        );
+        iporAssetConfigurationsFront[1] = _createIporAssetConfFront(
+            _assetUsdt,
+            timestamp
+        );
+        iporAssetConfigurationsFront[2] = _createIporAssetConfFront(
+            _assetUsdc,
+            timestamp
+        );
         return iporAssetConfigurationsFront;
+    }
+
+    function _createIporAssetConfFront(address asset, uint256 timestamp)
+        internal view 
+        returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
+    {
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
+                _iporConfiguration.getIporAssetConfiguration(asset)
+            );
+        IMiltonStorage miltonStorage = IMiltonStorage(
+            iporAssetConfiguration.getMiltonStorage()
+        );
+        IMiltonConfiguration milton = IMiltonConfiguration(
+            iporAssetConfiguration.getMilton()
+        );
+
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+            milton.getMiltonSpreadModel()
+        );
+
+        DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
+            timestamp,
+            asset
+        );
+
+		uint256 spreadPayFixedValue;
+        try
+            spreadModel.calculatePartialSpreadPayFixed(
+                miltonStorage,
+                timestamp,
+                accruedIpor
+            )
+        returns (uint256 _spreadPayFixedValue) {
+            spreadPayFixedValue = _spreadPayFixedValue;
+        } catch {
+            spreadPayFixedValue = 0;
+        }
+
+		uint256 spreadRecFixedValue;
+        try
+            spreadModel.calculatePartialSpreadRecFixed(
+                miltonStorage,
+                timestamp,
+                accruedIpor
+            )
+        returns (uint256 _spreadRecFixedValue) {
+            spreadRecFixedValue = _spreadRecFixedValue;
+        } catch {
+            spreadRecFixedValue = 0;
+        }
+
+        iporAssetConfigurationFront = IporAssetConfigurationFront(
+            asset,
+            milton.getMinCollateralizationFactorValue(),
+            milton.getMaxCollateralizationFactorValue(),
+            milton.getOpeningFeePercentage(),
+            milton.getIporPublicationFeeAmount(),
+            milton.getLiquidationDepositAmount(),
+            milton.getIncomeTaxPercentage(),
+            spreadPayFixedValue,
+            spreadRecFixedValue
+        );
     }
 }

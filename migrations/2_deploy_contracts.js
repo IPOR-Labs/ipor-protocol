@@ -348,7 +348,12 @@ module.exports = async function (deployer, _network) {
 
     const warrenDevToolDataProvider = await deployProxy(
         WarrenDevToolDataProvider,
-        [iporConfiguration.address],
+        [
+            warren.address,
+            mockedDai.address,
+            mockedUsdc.address,
+            mockedUsdt.address,
+        ],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -358,7 +363,12 @@ module.exports = async function (deployer, _network) {
 
     const warrenFrontendDataProvider = await deployProxy(
         WarrenFrontendDataProvider,
-        [iporConfiguration.address],
+        [
+            warren.address,
+            mockedDai.address,
+            mockedUsdt.address,
+            mockedUsdc.address,
+        ],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -378,7 +388,13 @@ module.exports = async function (deployer, _network) {
 
     const miltonFrontendDataProvider = await deployProxy(
         MiltonFrontendDataProvider,
-        [iporConfiguration.address],
+        [
+            iporConfiguration.address,
+            warren.address,
+            mockedDai.address,
+            mockedUsdt.address,
+            mockedUsdc.address,
+        ],
         {
             deployer: deployer,
             initializer: "initialize",
