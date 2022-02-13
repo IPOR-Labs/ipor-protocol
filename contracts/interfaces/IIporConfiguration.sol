@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-interface IIporConfiguration {    
-    event MiltonUtilizationStrategyUpdated(address indexed newAddress);    
+interface IIporConfiguration {        
     event MiltonPublicationFeeTransfererUpdated(address indexed newAddress);        
     event IporAssetConfigurationAddressUpdated(
         address indexed asset,
@@ -26,8 +25,6 @@ interface IIporConfiguration {
         returns (address);
 
     function setIporAssetConfiguration(address asset, address iporConfig)
-        external;
-
-    function getWarren() external view returns (address);
+        external;    
 
 }

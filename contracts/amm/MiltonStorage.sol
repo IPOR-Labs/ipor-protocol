@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../libraries/IporSwapLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
-import "../interfaces/IIporConfiguration.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";

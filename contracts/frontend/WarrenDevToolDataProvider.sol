@@ -65,5 +65,4 @@ contract WarrenDevToolDataProvider is
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
-
 }

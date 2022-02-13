@@ -161,6 +161,10 @@ contract Warren is
         emit IporIndexRemoveUpdater(updater);
     }
 
+	function isUpdater(address updater) external view override returns(uint256) {
+		return _updaters[updater];
+	}
+
     function _updateIndexes(
         address[] memory assets,
         uint256[] memory indexValues,

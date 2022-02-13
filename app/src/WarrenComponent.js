@@ -32,15 +32,6 @@ export default ({ drizzle, drizzleState }) => (
                         method="removeUpdater"
                     />
                 </div>
-                <div>
-                    <strong>Updaters (ItfWarren)</strong>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="ItfWarren"
-                        method="getUpdaters"
-                    />
-                </div>
             </div>
         ) : (
             <div>
@@ -66,15 +57,6 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         contract="Warren"
                         method="removeUpdater"
-                    />
-                </div>
-                <div>
-                    <strong>Updaters (Warren)</strong>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="Warren"
-                        method="getUpdaters"
                     />
                 </div>
             </div>

@@ -21,10 +21,6 @@ contract IporConfiguration is
     bytes32 private constant _MILTON_PUBLICATION_FEE_TRANSFERER =
         keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
 
-    function getWarren() external view override returns (address) {
-        return _warren;
-    }
-
     function initialize() public initializer {
         _init();        
     }

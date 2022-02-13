@@ -49,7 +49,6 @@ library DataTypes {
 
     //soap payfixed and soap recfixed indicators
     struct SoapIndicatorStorage {
-		//TODO: [gas-opt] move outside this struct as a part MiltonStorage fields
         uint32 rebalanceTimestamp;
         //N_0
         uint128 totalNotional;
@@ -62,7 +61,6 @@ library DataTypes {
     }
 
     struct SoapIndicatorMemory {
-		//TODO: [gas-opt] move outside this struct as a part MiltonStorage fields
         uint256 rebalanceTimestamp;
         //N_0
         uint256 totalNotional;

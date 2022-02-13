@@ -58,4 +58,6 @@ interface IWarren {
     function addUpdater(address updater) external;
 
     function removeUpdater(address updater) external;
+
+	function isUpdater(address updater) external view returns(uint256);
 }

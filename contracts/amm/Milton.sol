@@ -43,7 +43,7 @@ contract Milton is
     using SafeCast for uint256;
     using SafeCast for uint128;
     using SafeCast for int256;
-    using IporSwapLogic for DataTypes.IporSwapMemory;    
+    using IporSwapLogic for DataTypes.IporSwapMemory;
 
     function initialize(
         address asset,
@@ -142,7 +142,7 @@ contract Milton is
         IERC20Upgradeable(_asset).safeTransfer(charlieTreasurer, amount);
     }
 
-	function openSwapPayFixed(
+    function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
@@ -724,7 +724,6 @@ contract Milton is
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID
         );
 
-        //TODO: clarify if needed whole item here??
         DataTypes.IporSwapMemory memory iporSwap = _miltonStorage
             .getSwapPayFixed(swapId);
 
@@ -748,7 +747,7 @@ contract Milton is
             _getIncomeTaxPercentage()
         );
 
-        _transferTokensBasedOnpositionValue(
+        _transferTokensBasedOnPositionValue(
             iporSwap,
             positionValue,
             closeTimestamp,
@@ -766,7 +765,6 @@ contract Milton is
             IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID
         );
 
-        //TODO: clarify it whole item required?
         DataTypes.IporSwapMemory memory iporSwap = _miltonStorage
             .getSwapReceiveFixed(swapId);
 
@@ -788,7 +786,7 @@ contract Milton is
             _getIncomeTaxPercentage()
         );
 
-        _transferTokensBasedOnpositionValue(
+        _transferTokensBasedOnPositionValue(
             iporSwap,
             positionValue,
             closeTimestamp,
@@ -798,7 +796,7 @@ contract Milton is
         emit CloseSwap(swapId, _asset, closeTimestamp);
     }
 
-    function _transferTokensBasedOnpositionValue(
+    function _transferTokensBasedOnPositionValue(
         DataTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
