@@ -59,11 +59,6 @@ module.exports = async function (deployer, _network, addresses) {
     const iporConfigurationProxy = await IporConfiguration.deployed();
     await grandRolesForConfiguration(admin, iporConfigurationProxy);
 
-    const miltonSpreadModelProxy = await MiltonSpreadModel.deployed();
-    await iporConfigurationProxy.setMiltonSpreadModel(
-        miltonSpreadModelProxy.address
-    );
-
     //#####################################################################
     // CONFIG STABLE - BEGIN
     //#####################################################################
@@ -72,10 +67,6 @@ module.exports = async function (deployer, _network, addresses) {
     const mockedUsdt = await UsdtMockedToken.deployed();
     const mockedUsdc = await UsdcMockedToken.deployed();
     const mockedDai = await DaiMockedToken.deployed();
-
-    await iporConfigurationProxy.addAsset(mockedUsdt.address);
-    await iporConfigurationProxy.addAsset(mockedUsdc.address);
-    await iporConfigurationProxy.addAsset(mockedDai.address);
 
     const iporAssetConfigurationUsdtProxy =
         await IporAssetConfigurationUsdt.deployed();
@@ -182,8 +173,6 @@ module.exports = async function (deployer, _network, addresses) {
         await itfWarrenProxy.addAsset(mockedUsdc.address);
         await itfWarrenProxy.addAsset(mockedDai.address);
 
-        await iporConfigurationProxy.setWarren(itfWarrenProxy.address);
-
         await ipUsdtToken.setJoseph(itfJosephUsdtProxy.address);
         await ipUsdcToken.setJoseph(itfJosephUsdcProxy.address);
         await ipDaiToken.setJoseph(itfJosephDaiProxy.address);
@@ -237,8 +226,6 @@ module.exports = async function (deployer, _network, addresses) {
         await warrenProxy.addAsset(mockedUsdc.address);
         await warrenProxy.addAsset(mockedDai.address);
 
-        await iporConfigurationProxy.setWarren(warrenProxy.address);
-
         await ipUsdtToken.setJoseph(josephUsdtProxy.address);
         await ipUsdcToken.setJoseph(josephUsdcProxy.address);
         await ipDaiToken.setJoseph(josephDaiProxy.address);
@@ -286,44 +273,11 @@ async function grandRolesForConfiguration(admin, iporConfigurationProxy) {
     await iporConfigurationProxy.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
 
     await iporConfigurationProxy.grantRole(
-        keccak256("IPOR_ASSETS_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(
-        keccak256("IPOR_ASSETS_ROLE"),
-        admin
-    );
-
-    await iporConfigurationProxy.grantRole(
         keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
         admin
     );
     await iporConfigurationProxy.grantRole(
         keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
-        admin
-    );
-
-    await iporConfigurationProxy.grantRole(
-        keccak256("WARREN_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(keccak256("WARREN_ROLE"), admin);
-
-    await iporConfigurationProxy.grantRole(
-        keccak256("WARREN_STORAGE_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(
-        keccak256("WARREN_STORAGE_ROLE"),
-        admin
-    );
-
-    await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_SPREAD_MODEL_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_SPREAD_MODEL_ROLE"),
         admin
     );
 
