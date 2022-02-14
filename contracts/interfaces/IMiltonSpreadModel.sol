@@ -5,31 +5,47 @@ import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 
 interface IMiltonSpreadModel {
-    function calculatePartialSpreadPayFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor
-    ) external view returns (uint256 spreadValue);
-
-    function calculateSpreadPayFixed(
-        IMiltonStorage miltonStorage,
+    function calculateQuotePayFixed(
         uint256 calculateTimestamp,
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
-        uint256 swapOpeningFee
-    ) external view returns (uint256 spreadValue);
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) external view returns (uint256 quoteValue);
 
-    function calculatePartialSpreadRecFixed(
-        IMiltonStorage miltonStorage,
+    function calculateQuoteReceiveFixed(
         uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) external view returns (uint256 quoteValue);
+
+    function calculateSpreadPayFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
     ) external view returns (uint256 spreadValue);
 
     function calculateSpreadRecFixed(
-        IMiltonStorage miltonStorage,
         uint256 calculateTimestamp,
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
-        uint256 swapOpeningFee
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) external view returns (uint256 spreadValue);
+
+    function calculatePartialSpreadPayFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        IMiltonStorage miltonStorage
+    ) external view returns (uint256 spreadValue);
+
+    function calculatePartialSpreadRecFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        IMiltonStorage miltonStorage
     ) external view returns (uint256 spreadValue);
 }

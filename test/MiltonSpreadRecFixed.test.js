@@ -68,7 +68,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -115,7 +115,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -160,7 +160,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -206,7 +206,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -252,7 +252,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -301,7 +301,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -350,7 +350,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -398,7 +398,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -446,7 +446,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -490,7 +490,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -535,7 +535,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -581,7 +581,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -626,7 +626,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -671,7 +671,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -713,7 +713,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             //when
             miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadRecFixed(
+                .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,

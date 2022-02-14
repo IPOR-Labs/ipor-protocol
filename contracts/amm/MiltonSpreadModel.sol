@@ -27,121 +27,210 @@ contract MiltonSpreadModel is
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    function calculatePartialSpreadPayFixed(
-        IMiltonStorage miltonStorage,
+    //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
+    function calculateQuotePayFixed(
         uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor
-    ) external view override returns (uint256 spreadValue) {
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
-            .getBalance();
-
-        return
-            _calculateSpreadPayFixed(
-                accruedIpor,
-                0,
-                0,
-                balance.liquidityPool,
-                balance.payFixedSwaps,
-                balance.receiveFixedSwaps,
-                miltonStorage.calculateSoapPayFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                )
-            );
-    }
-
-    function calculateSpreadPayFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
-    ) external view override returns (uint256 spreadValue) {
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
-            .getBalance();
-
-        return
-            _calculateSpreadPayFixed(
-                accruedIpor,
-                swapCollateral,
-                swapOpeningFee,
-                balance.liquidityPool,
-                balance.payFixedSwaps,
-                balance.receiveFixedSwaps,
-                miltonStorage.calculateSoapPayFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                )
-            );
-    }
-
-    function calculatePartialSpreadRecFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor
-    ) external view override returns (uint256 spreadValue) {
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
-            .getBalance();
-
-        return
-            _calculateSpreadRecFixed(
-                accruedIpor,
-                0,
-                0,
-                balance.liquidityPool,
-                balance.payFixedSwaps,
-                balance.receiveFixedSwaps,
-                miltonStorage.calculateSoapReceiveFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                )
-            );
-    }
-
-    function calculateSpreadRecFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
-    ) external view override returns (uint256 spreadValue) {
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
-            .getBalance();
-
-        return
-            _calculateSpreadRecFixed(
-                accruedIpor,
-                swapCollateral,
-                swapOpeningFee,
-                balance.liquidityPool,
-                balance.payFixedSwaps,
-                balance.receiveFixedSwaps,
-                miltonStorage.calculateSoapReceiveFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                )
-            );
-    }
-
-    function _calculateSpreadPayFixed(
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
         uint256 swapOpeningFee,
-        uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        IMiltonStorage miltonStorage
+    ) external view override returns (uint256 quoteValue) {
+        (
+            uint256 spreadPremiums,
+            uint256 refLeg
+        ) = _calculateQuoteChunksPayFixed(
+                calculateTimestamp,
+                accruedIpor,
+                swapCollateral,
+                swapOpeningFee,
+                miltonStorage
+            );
+        quoteValue = refLeg + spreadPremiums;
+    }
+
+    //@dev Quote = RefLeg - SpreadPremiums, RefLeg = min(IPOR, EMAi), Spread = IPOR - RefLeg + SpreadPremiums
+    function calculateQuoteReceiveFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) external view override returns (uint256 quoteValue) {
+        (
+            uint256 spreadPremiums,
+            uint256 refLeg
+        ) = _calculateQuoteChunksReceiveFixed(
+                calculateTimestamp,
+                accruedIpor,
+                swapCollateral,
+                swapOpeningFee,
+                miltonStorage
+            );
+
+        if (accruedIpor.indexValue > spreadPremiums) {
+            quoteValue = refLeg - spreadPremiums;
+        } else {
+            quoteValue = 0;
+        }
+    }
+
+    //@dev Spread = SpreadPremiums + RefLeg - IPOR
+    function calculateSpreadPayFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) external view override returns (uint256 spreadValue) {
+        (
+            uint256 spreadPremiums,
+            uint256 refLeg
+        ) = _calculateQuoteChunksPayFixed(
+                calculateTimestamp,
+                accruedIpor,
+                swapCollateral,
+                swapOpeningFee,
+                miltonStorage
+            );
+
+        spreadValue = spreadPremiums + refLeg - accruedIpor.indexValue;
+    }
+
+    //@dev Spread = SpreadPremiums + IPOR - RefLeg
+    function calculateSpreadRecFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) external view override returns (uint256 spreadValue) {
+        (
+            uint256 spreadPremiums,
+            uint256 refLeg
+        ) = _calculateQuoteChunksReceiveFixed(
+                calculateTimestamp,
+                accruedIpor,
+                swapCollateral,
+                swapOpeningFee,
+                miltonStorage
+            );
+
+        spreadValue = spreadPremiums + accruedIpor.indexValue - refLeg;
+    }
+
+    function calculatePartialSpreadPayFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        IMiltonStorage miltonStorage
+    ) external view override returns (uint256 spreadValue) {
+        (
+            uint256 spreadPremiums,
+            uint256 refLeg
+        ) = _calculateQuoteChunksPayFixed(
+                calculateTimestamp,
+                accruedIpor,
+                0,
+                0,
+                miltonStorage
+            );
+
+        spreadValue = spreadPremiums + refLeg - accruedIpor.indexValue;
+    }
+
+    function calculatePartialSpreadRecFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        IMiltonStorage miltonStorage
+    ) external view override returns (uint256 spreadValue) {
+        (
+            uint256 spreadPremiums,
+            uint256 refLeg
+        ) = _calculateQuoteChunksReceiveFixed(
+                calculateTimestamp,
+                accruedIpor,
+                0,
+                0,
+                miltonStorage
+            );
+
+        spreadValue = spreadPremiums + accruedIpor.indexValue - refLeg;
+    }
+
+    function _calculateQuoteChunksPayFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) internal view returns (uint256 spreadPremiums, uint256 refLeg) {
+        spreadPremiums = _calculateSpreadPremiumsPayFixed(
+            accruedIpor,
+            swapCollateral,
+            swapOpeningFee,
+            miltonStorage.getBalance(),
+            miltonStorage.calculateSoapPayFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            )
+        );
+
+        require(
+            accruedIpor.indexValue >= spreadPremiums,
+            IporErrors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
+        );
+
+        refLeg = _calculateReferenceLegPayFixed(
+            accruedIpor.indexValue,
+            accruedIpor.exponentialMovingAverage
+        );
+    }
+
+    function _calculateQuoteChunksReceiveFixed(
+        uint256 calculateTimestamp,
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        IMiltonStorage miltonStorage
+    ) internal view returns (uint256 spreadPremiums, uint256 refLeg) {
+        spreadPremiums = _calculateSpreadPremiumsRecFixed(
+            accruedIpor,
+            swapCollateral,
+            swapOpeningFee,
+            miltonStorage.getBalance(),
+            miltonStorage.calculateSoapReceiveFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            )
+        );
+
+        require(
+            accruedIpor.indexValue >= spreadPremiums,
+            IporErrors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
+        );
+
+        refLeg = _calculateReferenceLegRecFixed(
+            accruedIpor.indexValue,
+            accruedIpor.exponentialMovingAverage
+        );
+    }
+
+    function _calculateSpreadPremiumsPayFixed(
+        DataTypes.AccruedIpor memory accruedIpor,
+        uint256 swapCollateral,
+        uint256 swapOpeningFee,
+        DataTypes.MiltonTotalBalanceMemory memory balance,
         int256 soap
     ) internal pure returns (uint256 spreadValue) {
         require(
-            liquidityPoolBalance + swapOpeningFee != 0,
+            balance.liquidityPool + swapOpeningFee != 0,
             IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
             swapCollateral,
             swapOpeningFee,
-            liquidityPoolBalance,
-            payFixedSwapsBalance,
-            receiveFixedSwapsBalance,
+            balance.liquidityPool,
+            balance.payFixedSwaps,
+            balance.receiveFixedSwaps,
             soap
         ) +
             _calculateAtParComponentPayFixed(
@@ -153,25 +242,23 @@ contract MiltonSpreadModel is
         spreadValue = result < maxValue ? result : maxValue;
     }
 
-    function _calculateSpreadRecFixed(
+    function _calculateSpreadPremiumsRecFixed(
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
         uint256 swapOpeningFee,
-        uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        DataTypes.MiltonTotalBalanceMemory memory balance,
         int256 soap
     ) internal pure returns (uint256 spreadValue) {
         require(
-            liquidityPoolBalance + swapOpeningFee != 0,
+            balance.liquidityPool + swapOpeningFee != 0,
             IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
             swapCollateral,
             swapOpeningFee,
-            liquidityPoolBalance,
-            payFixedSwapsBalance,
-            receiveFixedSwapsBalance,
+            balance.liquidityPool,
+            balance.payFixedSwaps,
+            balance.receiveFixedSwaps,
             soap
         ) +
             _calculateAtParComponentRecFixed(
@@ -391,5 +478,27 @@ contract MiltonSpreadModel is
             lambda
         );
         return adjustedUtilizationRate;
+    }
+
+    function _calculateReferenceLegPayFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue > exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
+    }
+
+    function _calculateReferenceLegRecFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue < exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
     }
 }

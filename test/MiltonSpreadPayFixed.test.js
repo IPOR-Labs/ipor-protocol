@@ -4,8 +4,7 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 const { utils } = require("web3");
 
-const {
-} = require("./Const.js");
+const {} = require("./Const.js");
 
 const {
     assertError,
@@ -61,7 +60,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -107,7 +106,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -153,7 +152,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -199,7 +198,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -245,7 +244,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -294,7 +293,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -342,7 +341,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -390,7 +389,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -438,7 +437,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -485,7 +484,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -530,7 +529,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -575,7 +574,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -620,7 +619,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -665,7 +664,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,
@@ -707,7 +706,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             //when
             miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
                     swapCollateral,
                     swapOpeningFee,

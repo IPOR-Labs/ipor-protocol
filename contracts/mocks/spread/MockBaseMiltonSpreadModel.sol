@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../../amm/MiltonSpreadModel.sol";
 
 contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
-    function testCalculateSpreadPayFixed(
+    function testCalculateSpreadPremiumsPayFixed(
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
         uint256 swapOpeningFee,
@@ -13,19 +13,27 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 receiveFixedSwapsBalance,
         int256 soap
     ) public pure returns (uint256 spreadValue) {
+        DataTypes.MiltonTotalBalanceMemory memory balance = DataTypes
+            .MiltonTotalBalanceMemory(
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
+                0,
+                0,
+                0,
+                liquidityPoolBalance,
+                0
+            );
         return
-            _calculateSpreadPayFixed(
+            _calculateSpreadPremiumsPayFixed(
                 accruedIpor,
                 swapCollateral,
                 swapOpeningFee,
-                liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                balance,
                 soap
             );
     }
 
-    function testCalculateSpreadRecFixed(
+    function testCalculateSpreadPremiumsRecFixed(
         DataTypes.AccruedIpor memory accruedIpor,
         uint256 swapCollateral,
         uint256 swapOpeningFee,
@@ -34,14 +42,22 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 receiveFixedSwapsBalance,
         int256 soap
     ) public pure returns (uint256 spreadValue) {
+        DataTypes.MiltonTotalBalanceMemory memory balance = DataTypes
+            .MiltonTotalBalanceMemory(
+                payFixedSwapsBalance,
+                receiveFixedSwapsBalance,
+                0,
+                0,
+                0,
+                liquidityPoolBalance,
+                0
+            );
         return
-            _calculateSpreadRecFixed(
+            _calculateSpreadPremiumsRecFixed(
                 accruedIpor,
                 swapCollateral,
                 swapOpeningFee,
-                liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                balance,
                 soap
             );
     }

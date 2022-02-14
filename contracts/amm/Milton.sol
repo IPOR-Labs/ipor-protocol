@@ -317,10 +317,10 @@ contract Milton is
         );
 
         try
-            _miltonSpreadModel.calculatePartialSpreadPayFixed(
-                _miltonStorage,
+            _miltonSpreadModel.calculatePartialSpreadPayFixed(                
                 calculateTimestamp,
-                accruedIpor
+                accruedIpor,
+				_miltonStorage
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -329,10 +329,10 @@ contract Milton is
         }
 
         try
-            _miltonSpreadModel.calculatePartialSpreadRecFixed(
-                _miltonStorage,
+            _miltonSpreadModel.calculatePartialSpreadRecFixed(                
                 calculateTimestamp,
-                accruedIpor
+                accruedIpor,
+				_miltonStorage
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;
@@ -457,20 +457,19 @@ contract Milton is
             bosStruct.openingFee
         );
 
-        uint256 spreadValue = _miltonSpreadModel.calculateSpreadPayFixed(
-            _miltonStorage,
+        uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(            
             openTimestamp,
             bosStruct.accruedIpor,
             bosStruct.collateral,
-            bosStruct.openingFee
+            bosStruct.openingFee,
+			_miltonStorage
         );
 
         DataTypes.IporSwapIndicator
             memory indicator = _calculateDerivativeIndicators(
                 openTimestamp,
-                0,
                 bosStruct.notional,
-                spreadValue
+                quoteValue
             );
 
         DataTypes.NewSwap memory newSwap = DataTypes.NewSwap(
@@ -509,7 +508,7 @@ contract Milton is
             0,
             bosStruct.openingFee,
             bosStruct.iporPublicationFeeAmount,
-            spreadValue
+            quoteValue
         );
 
         return newSwapId;
@@ -538,20 +537,19 @@ contract Milton is
             bosStruct.openingFee
         );
 
-        uint256 spreadValue = _miltonSpreadModel.calculateSpreadRecFixed(
-            _miltonStorage,
+        uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(            
             openTimestamp,
             bosStruct.accruedIpor,
             bosStruct.collateral,
-            bosStruct.openingFee
+            bosStruct.openingFee,
+			_miltonStorage
         );
 
         DataTypes.IporSwapIndicator
             memory indicator = _calculateDerivativeIndicators(
                 openTimestamp,
-                1,
                 bosStruct.notional,
-                spreadValue
+                quoteValue
             );
 
         DataTypes.NewSwap memory newSwap = DataTypes.NewSwap(
@@ -591,7 +589,7 @@ contract Milton is
             1,
             bosStruct.openingFee,
             bosStruct.iporPublicationFeeAmount,
-            spreadValue
+            quoteValue
         );
 
         return newSwapId;
@@ -627,11 +625,11 @@ contract Milton is
         uint256 direction,
         uint256 openingAmount,
         uint256 iporPublicationAmount,
-        uint256 spreadValue
+        uint256 quoteValue
     ) internal {
         //TODO: add openingAmount to event and check in tests
         //TODO: add iporPublicationAmount to event and check in test
-        //TODO: add spreadValue to event and check in test
+        //TODO: add quoteValue to event and check in test
         emit OpenSwap(
             newSwapId,
             newSwap.buyer,
@@ -646,66 +644,34 @@ contract Milton is
             indicator,
             openingAmount,
             iporPublicationAmount,
-            spreadValue
+            quoteValue
         );
     }
 
     function _calculateDerivativeIndicators(
         uint256 calculateTimestamp,
-        uint8 direction,
         uint256 notionalAmount,
-        uint256 spreadValue
+        uint256 quoteValue
     ) internal view returns (DataTypes.IporSwapIndicator memory indicator) {
+        DataTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(
+            calculateTimestamp,
+            _asset
+        );
 
-        DataTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(calculateTimestamp, _asset);
-        
         require(
             accruedIpor.ibtPrice != 0,
             IporErrors.MILTON_IBT_PRICE_CANNOT_BE_ZERO
-        );
-        require(
-			accruedIpor.indexValue >= spreadValue,
-            IporErrors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
         indicator = DataTypes.IporSwapIndicator(
             accruedIpor.indexValue,
             accruedIpor.ibtPrice,
-            IporMath.division(notionalAmount * Constants.D18, accruedIpor.ibtPrice),
-            direction == 0
-                ? (_calculateReferenceLegPayFixed(
-                    accruedIpor.indexValue,
-                    accruedIpor.exponentialMovingAverage
-                ) + spreadValue)
-                : accruedIpor.indexValue > spreadValue
-                ? (_calculateReferenceLegRecFixed(
-                    accruedIpor.indexValue,
-                    accruedIpor.exponentialMovingAverage
-                ) - spreadValue)
-                : 0
+            IporMath.division(
+                notionalAmount * Constants.D18,
+                accruedIpor.ibtPrice
+            ),
+            quoteValue
         );
-    }
-
-    function _calculateReferenceLegPayFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage
-    ) internal pure returns (uint256) {
-        if (iporIndexValue > exponentialMovingAverage) {
-            return iporIndexValue;
-        } else {
-            return exponentialMovingAverage;
-        }
-    }
-
-    function _calculateReferenceLegRecFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage
-    ) internal pure returns (uint256) {
-        if (iporIndexValue < exponentialMovingAverage) {
-            return iporIndexValue;
-        } else {
-            return exponentialMovingAverage;
-        }
     }
 
     function _closeSwapPayFixed(uint256 swapId, uint256 closeTimestamp)
