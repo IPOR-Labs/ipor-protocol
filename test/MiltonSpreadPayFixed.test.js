@@ -33,25 +33,25 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             liquidityProvider,
         ]);
     });
-	it("should calculate Quote Value Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
-		//given
-		const miltonSpread = await prepareMiltonSpreadCase6();
+    it("should calculate Quote Value Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadCase6();
 
-		const calculateTimestamp = Math.floor(Date.now() / 1000);
+        const calculateTimestamp = Math.floor(Date.now() / 1000);
 
-		const accruedIpor = {
-			indexValue : 1,
-         ibtPrice : 1,
+        const accruedIpor = {
+            indexValue: 1,
+            ibtPrice: 1,
 
-         exponentialMovingAverage : 1,
-         exponentialWeightedMovingVariance:1
-		} 
-		
+            exponentialMovingAverage: 1,
+            exponentialWeightedMovingVariance: 1,
+        };
+
         const swapCollateral = BigInt("23");
-		const swapOpeningFee = BigInt("24");
-        
-		// //when
-		// let actualSpreadValue = BigInt(
+        const swapOpeningFee = BigInt("24");
+
+        // //when
+        // let actualSpreadValue = BigInt(
         //     await miltonSpread
         //         .connect(userOne)
         //         .calculateQuotePayFixed(
@@ -65,8 +65,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //         )
         // );
 
-		//then
-	});
+        //then
+    });
 
     it("should calculate Spread Premiums Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
         //given
@@ -96,12 +96,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -142,12 +141,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -188,12 +186,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -234,12 +231,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -280,12 +276,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -329,12 +324,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -377,12 +371,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -425,12 +418,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -473,12 +465,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -520,12 +511,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -565,12 +555,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -610,12 +599,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -655,12 +643,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -700,12 +687,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 )
         );
 
@@ -742,12 +728,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsPayFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    soap,
+					swapCollateral
                 ),
             //then
             "IPOR_49"

@@ -203,13 +203,14 @@ contract MiltonFrontendDataProvider is
 
         uint256 spreadPayFixedValue;
         try
-            spreadModel.calculatePartialSpreadPayFixed(
+            spreadModel.calculateSpreadPayFixed(
                 miltonStorage.calculateSoapPayFixed(
                     accruedIpor.ibtPrice,
                     timestamp
                 ),
                 accruedIpor,
-                balance
+                balance,
+                0
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -219,13 +220,14 @@ contract MiltonFrontendDataProvider is
 
         uint256 spreadRecFixedValue;
         try
-            spreadModel.calculatePartialSpreadRecFixed(
+            spreadModel.calculateSpreadRecFixed(
                 miltonStorage.calculateSoapReceiveFixed(
                     accruedIpor.ibtPrice,
                     timestamp
                 ),
                 accruedIpor,
-                balance
+                balance,
+                0
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;

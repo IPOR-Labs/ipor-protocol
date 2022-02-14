@@ -6,8 +6,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
-import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IWarren.sol";
 import {IporMath} from "../libraries/IporMath.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import {IporErrors} from "../IporErrors.sol";
@@ -31,9 +29,8 @@ contract MiltonSpreadModel is
     function calculateQuotePayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) external pure override returns (uint256 quoteValue) {
         (
             uint256 spreadPremiums,
@@ -41,9 +38,8 @@ contract MiltonSpreadModel is
         ) = _calculateQuoteChunksPayFixed(
                 soap,
                 accruedIpor,
-                balance,
-                swapCollateral,
-                swapOpeningFee
+                accruedBalance,
+                swapCollateral
             );
         quoteValue = refLeg + spreadPremiums;
     }
@@ -52,9 +48,8 @@ contract MiltonSpreadModel is
     function calculateQuoteReceiveFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) external pure override returns (uint256 quoteValue) {
         (
             uint256 spreadPremiums,
@@ -62,25 +57,19 @@ contract MiltonSpreadModel is
         ) = _calculateQuoteChunksReceiveFixed(
                 soap,
                 accruedIpor,
-                balance,
-                swapCollateral,
-                swapOpeningFee
+                accruedBalance,
+                swapCollateral
             );
 
-        if (accruedIpor.indexValue > spreadPremiums) {
-            quoteValue = refLeg - spreadPremiums;
-        } else {
-            quoteValue = 0;
-        }
+        quoteValue = refLeg - spreadPremiums;
     }
 
     //@dev Spread = SpreadPremiums + RefLeg - IPOR
     function calculateSpreadPayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) external pure override returns (uint256 spreadValue) {
         (
             uint256 spreadPremiums,
@@ -88,9 +77,8 @@ contract MiltonSpreadModel is
         ) = _calculateQuoteChunksPayFixed(
                 soap,
                 accruedIpor,
-                balance,
-                swapCollateral,
-                swapOpeningFee
+                accruedBalance,
+                swapCollateral
             );
 
         spreadValue = spreadPremiums + refLeg - accruedIpor.indexValue;
@@ -100,9 +88,8 @@ contract MiltonSpreadModel is
     function calculateSpreadRecFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) external pure override returns (uint256 spreadValue) {
         (
             uint256 spreadPremiums,
@@ -110,36 +97,9 @@ contract MiltonSpreadModel is
         ) = _calculateQuoteChunksReceiveFixed(
                 soap,
                 accruedIpor,
-                balance,
-                swapCollateral,
-                swapOpeningFee
+                accruedBalance,
+                swapCollateral
             );
-
-        spreadValue = spreadPremiums + accruedIpor.indexValue - refLeg;
-    }
-
-    function calculatePartialSpreadPayFixed(
-        int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance
-    ) external pure override returns (uint256 spreadValue) {
-        (
-            uint256 spreadPremiums,
-            uint256 refLeg
-        ) = _calculateQuoteChunksPayFixed(soap, accruedIpor, balance, 0, 0);
-
-        spreadValue = spreadPremiums + refLeg - accruedIpor.indexValue;
-    }
-
-    function calculatePartialSpreadRecFixed(
-        int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance
-    ) external pure override returns (uint256 spreadValue) {
-        (
-            uint256 spreadPremiums,
-            uint256 refLeg
-        ) = _calculateQuoteChunksReceiveFixed(soap, accruedIpor, balance, 0, 0);
 
         spreadValue = spreadPremiums + accruedIpor.indexValue - refLeg;
     }
@@ -147,16 +107,14 @@ contract MiltonSpreadModel is
     function _calculateQuoteChunksPayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsPayFixed(
             soap,
             accruedIpor,
-            balance,
-            swapCollateral,
-            swapOpeningFee
+            accruedBalance,
+            swapCollateral
         );
 
         require(
@@ -173,16 +131,14 @@ contract MiltonSpreadModel is
     function _calculateQuoteChunksReceiveFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsRecFixed(
             soap,
             accruedIpor,
-            balance,
-            swapCollateral,
-            swapOpeningFee
+            accruedBalance,
+            swapCollateral
         );
 
         require(
@@ -199,20 +155,18 @@ contract MiltonSpreadModel is
     function _calculateSpreadPremiumsPayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) internal pure returns (uint256 spreadValue) {
         require(
-            balance.liquidityPool + swapOpeningFee != 0,
+            accruedBalance.liquidityPool != 0,
             IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
             swapCollateral,
-            swapOpeningFee,
-            balance.liquidityPool,
-            balance.payFixedSwaps,
-            balance.receiveFixedSwaps,
+            accruedBalance.liquidityPool,
+            accruedBalance.payFixedSwaps,
+            accruedBalance.receiveFixedSwaps,
             soap
         ) +
             _calculateAtParComponentPayFixed(
@@ -227,20 +181,18 @@ contract MiltonSpreadModel is
     function _calculateSpreadPremiumsRecFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory balance,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
     ) internal pure returns (uint256 spreadValue) {
         require(
-            balance.liquidityPool + swapOpeningFee != 0,
+            accruedBalance.liquidityPool != 0,
             IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
             swapCollateral,
-            swapOpeningFee,
-            balance.liquidityPool,
-            balance.payFixedSwaps,
-            balance.receiveFixedSwaps,
+            accruedBalance.liquidityPool,
+            accruedBalance.payFixedSwaps,
+            accruedBalance.receiveFixedSwaps,
             soap
         ) +
             _calculateAtParComponentRecFixed(
@@ -255,7 +207,6 @@ contract MiltonSpreadModel is
 
     function _calculateDemandComponentPayFixed(
         uint256 swapCollateral,
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
@@ -263,8 +214,6 @@ contract MiltonSpreadModel is
     ) internal pure returns (uint256) {
         uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
             _calculateAdjustedUtilizationRatePayFixed(
-                swapCollateral,
-                swapOpeningFee,
                 liquidityPoolBalance,
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
@@ -274,7 +223,10 @@ contract MiltonSpreadModel is
         if (kfDenominator != 0) {
             if (soapPayFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
-                    _calculateSoapPlus(soapPayFixed, payFixedSwapsBalance);
+                    _calculateSoapPlus(
+                        soapPayFixed,
+                        payFixedSwapsBalance - swapCollateral
+                    );
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
@@ -331,22 +283,17 @@ contract MiltonSpreadModel is
 
     //URlambda_leg(M0)
     function _calculateAdjustedUtilizationRatePayFixed(
-        uint256 swapCollateral,
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutSwap(
-            swapOpeningFee,
             liquidityPoolBalance,
             receiveFixedSwapsBalance
         );
 
         uint256 utilizationRatePayFixedWithPosition = _calculateUtilizationRateWithPosition(
-                swapCollateral,
-                swapOpeningFee,
                 liquidityPoolBalance,
                 payFixedSwapsBalance
             );
@@ -361,7 +308,6 @@ contract MiltonSpreadModel is
 
     function _calculateDemandComponentRecFixed(
         uint256 swapCollateral,
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
@@ -369,8 +315,6 @@ contract MiltonSpreadModel is
     ) internal pure returns (uint256) {
         uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
             _calculateAdjustedUtilizationRateRecFixed(
-                swapCollateral,
-                swapOpeningFee,
                 liquidityPoolBalance,
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
@@ -379,7 +323,10 @@ contract MiltonSpreadModel is
         if (kfDenominator != 0) {
             if (soapRecFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
-                    _calculateSoapPlus(soapRecFixed, receiveFixedSwapsBalance);
+                    _calculateSoapPlus(
+                        soapRecFixed,
+                        receiveFixedSwapsBalance - swapCollateral
+                    );
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(
@@ -434,22 +381,17 @@ contract MiltonSpreadModel is
     }
 
     function _calculateAdjustedUtilizationRateRecFixed(
-        uint256 swapCollateral,
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutSwap(
-            swapOpeningFee,
             liquidityPoolBalance,
             payFixedSwapsBalance
         );
 
         uint256 utilizationRateRecFixedWithPosition = _calculateUtilizationRateWithPosition(
-                swapCollateral,
-                swapOpeningFee,
                 liquidityPoolBalance,
                 receiveFixedSwapsBalance
             );

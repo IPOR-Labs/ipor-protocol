@@ -70,12 +70,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -117,12 +116,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -162,12 +160,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -208,12 +205,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -254,12 +250,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -303,12 +298,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -352,12 +346,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -400,12 +393,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -448,12 +440,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -492,12 +483,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -537,12 +527,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -583,12 +572,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -628,12 +616,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -673,12 +660,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 )
         );
 
@@ -715,12 +701,11 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .connect(userOne)
                 .testCalculateSpreadPremiumsRecFixed(
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
-                    soap
+                    receiveFixedSwapsBalance + swapCollateral,
+                    soap,
+                    swapCollateral
                 ),
             //then
             "IPOR_49"

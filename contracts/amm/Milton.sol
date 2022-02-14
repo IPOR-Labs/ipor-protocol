@@ -320,13 +320,14 @@ contract Milton is
             .getBalance();
 
         try
-            _miltonSpreadModel.calculatePartialSpreadPayFixed(
+            _miltonSpreadModel.calculateSpreadPayFixed(
                 _miltonStorage.calculateSoapPayFixed(
                     accruedIpor.ibtPrice,
                     calculateTimestamp
                 ),
                 accruedIpor,
-                balance
+                balance,
+                0
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -335,13 +336,14 @@ contract Milton is
         }
 
         try
-            _miltonSpreadModel.calculatePartialSpreadRecFixed(
+            _miltonSpreadModel.calculateSpreadRecFixed(
                 _miltonStorage.calculateSoapReceiveFixed(
                     accruedIpor.ibtPrice,
                     calculateTimestamp
                 ),
                 accruedIpor,
-                balance
+                balance,
+                0
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;
@@ -459,11 +461,12 @@ contract Milton is
         DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
+        balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
+
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.payFixedSwaps,
-            bosStruct.collateral,
-            bosStruct.openingFee
+            balance.payFixedSwaps
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
@@ -473,8 +476,7 @@ contract Milton is
             ),
             bosStruct.accruedIpor,
             balance,
-            bosStruct.collateral,
-            bosStruct.openingFee
+            bosStruct.collateral
         );
 
         DataTypes.IporSwapIndicator
@@ -542,11 +544,14 @@ contract Milton is
         DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
+        balance.receiveFixedSwaps =
+            balance.receiveFixedSwaps +
+            bosStruct.collateral;
+
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.receiveFixedSwaps,
-            bosStruct.collateral,
-            bosStruct.openingFee
+            balance.receiveFixedSwaps
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
@@ -556,8 +561,7 @@ contract Milton is
             ),
             bosStruct.accruedIpor,
             balance,
-            bosStruct.collateral,
-            bosStruct.openingFee
+            bosStruct.collateral
         );
 
         DataTypes.IporSwapIndicator
@@ -612,16 +616,14 @@ contract Milton is
 
     function _validateLiqudityPoolUtylization(
         uint256 totalLiquidityPoolBalance,
-        uint256 totalCollateralPerLegBalance,
-        uint256 collateral,
-        uint256 openingFee
+        uint256 totalCollateralPerLegBalance
     ) internal pure {
         uint256 utilizationRate;
 
-        if ((totalLiquidityPoolBalance + openingFee) != 0) {
+        if (totalLiquidityPoolBalance != 0) {
             utilizationRate = IporMath.division(
-                (totalCollateralPerLegBalance + collateral) * Constants.D18,
-                totalLiquidityPoolBalance + openingFee
+                totalCollateralPerLegBalance * Constants.D18,
+                totalLiquidityPoolBalance
             );
         } else {
             utilizationRate = Constants.MAX_VALUE;

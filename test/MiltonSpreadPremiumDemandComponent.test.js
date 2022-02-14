@@ -58,9 +58,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -93,9 +92,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -128,9 +126,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -163,9 +160,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -197,9 +193,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -231,9 +226,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -266,9 +260,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -300,9 +293,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -334,9 +326,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -369,9 +360,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
                     soap
                 )
@@ -404,10 +394,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -439,10 +428,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -474,10 +462,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -509,10 +496,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -544,10 +530,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -578,10 +563,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -613,10 +597,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -647,10 +630,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -681,10 +663,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );
@@ -717,10 +698,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentRecFixed(
                     swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
+                    liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance,
+                    receiveFixedSwapsBalance + swapCollateral,
                     soap
                 )
         );

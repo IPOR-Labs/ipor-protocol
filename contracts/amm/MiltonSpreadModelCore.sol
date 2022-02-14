@@ -54,28 +54,25 @@ contract MiltonSpreadModelCore {
 
     //@notice Calculates utilization rate including position which is opened
     function _calculateUtilizationRateWithPosition(
-        uint256 swapCollateral,
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                (swapsBalance + swapCollateral) * Constants.D18,
-                liquidityPoolBalance + swapOpeningFee
+                swapsBalance* Constants.D18,
+                liquidityPoolBalance
             );
     }
 
     //URleg(0)
     function _calculateUtilizationRateWithoutSwap(
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
             IporMath.division(
                 swapsBalance * Constants.D18,
-                liquidityPoolBalance + swapOpeningFee
+                liquidityPoolBalance
             );
     }
 
