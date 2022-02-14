@@ -62,26 +62,28 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
         _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
     }
 
-    function redeem(uint256 ipTokenVolume) external override {
-        _redeem(ipTokenVolume, block.timestamp);
+    function redeem(uint256 ipTokenValue) external override {
+        _redeem(ipTokenValue, block.timestamp);
     }
 
     //@param liquidityAmount in decimals like asset
     function _provideLiquidity(
-        uint256 liquidityAmount,
+        uint256 assetValue,
         uint256 assetDecimals,
         uint256 timestamp
     ) internal {
-        uint256 exchangeRate = _milton.calculateExchangeRate(timestamp);
+        IMilton milton = _milton;
+
+        uint256 exchangeRate = milton.calculateExchangeRate(timestamp);
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        uint256 wadLiquidityAmount = IporMath.convertToWad(
-            liquidityAmount,
+        uint256 wadAssetValue = IporMath.convertToWad(
+            assetValue,
             assetDecimals
         );
 
-        _miltonStorage.addLiquidity(wadLiquidityAmount);
+        _miltonStorage.addLiquidity(wadAssetValue);
 
         //TODO: account Address from OZ and use call
         //TODO: use call instead transfer if possible!!
@@ -89,54 +91,58 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
         //TODO: add from address to black list
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
-            address(_milton),
-            liquidityAmount
+            address(milton),
+            assetValue
         );
 
-        if (exchangeRate != 0) {
-            _ipToken.mint(
-                msg.sender,
-                IporMath.division(
-                    wadLiquidityAmount * Constants.D18,
-                    exchangeRate
-                )
-            );
-        }
+        uint256 ipTokenValue = IporMath.division(
+            wadAssetValue * Constants.D18,
+            exchangeRate
+        );
+        _ipToken.mint(msg.sender, ipTokenValue);
+
+        emit ProvideLiquidity(
+            msg.sender,
+            address(milton),
+            exchangeRate,
+            assetValue,
+            ipTokenValue
+        );
     }
 
-    function _redeem(uint256 ipTokenVolume, uint256 timestamp) internal {
+    function _redeem(uint256 ipTokenValue, uint256 timestamp) internal {
         require(
-            ipTokenVolume != 0 &&
-                ipTokenVolume <= _ipToken.balanceOf(msg.sender),
+            ipTokenValue != 0 && ipTokenValue <= _ipToken.balanceOf(msg.sender),
             IporErrors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
+        IMilton milton = _milton;
 
-        uint256 exchangeRate = _milton.calculateExchangeRate(timestamp);
+        uint256 exchangeRate = milton.calculateExchangeRate(timestamp);
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
         DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
-        uint256 wadUnderlyingAmount = IporMath.division(
-            ipTokenVolume * exchangeRate,
+        uint256 wadAssetValue = IporMath.division(
+            ipTokenValue * exchangeRate,
             Constants.D18
         );
 
         require(
-            balance.liquidityPool > wadUnderlyingAmount,
+            balance.liquidityPool > wadAssetValue,
             IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );
 
-        uint256 underlyingAmount = IporMath.convertWadToAssetDecimals(
-            wadUnderlyingAmount,
+        uint256 assetValue = IporMath.convertWadToAssetDecimals(
+            wadAssetValue,
             _decimals
         );
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
             balance.payFixedSwaps + balance.receiveFixedSwaps,
-            wadUnderlyingAmount
+            wadAssetValue
         );
 
         require(
@@ -144,14 +150,22 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
             IporErrors.JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
-        _ipToken.burn(msg.sender, msg.sender, ipTokenVolume);
+        _ipToken.burn(msg.sender, msg.sender, ipTokenValue);
 
-        _miltonStorage.subtractLiquidity(wadUnderlyingAmount);
+        _miltonStorage.subtractLiquidity(wadAssetValue);
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
             msg.sender,
-            underlyingAmount
+            assetValue
+        );
+
+        emit Redeem(
+            address(milton),
+            msg.sender,
+            exchangeRate,
+            assetValue,
+            ipTokenValue
         );
     }
 
