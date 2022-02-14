@@ -656,39 +656,31 @@ contract Milton is
         uint256 notionalAmount,
         uint256 spreadValue
     ) internal view returns (DataTypes.IporSwapIndicator memory indicator) {
-        (
-            uint256 iporIndexValue,
-            ,
-            uint256 exponentialMovingAverage,
-            ,
 
-        ) = _warren.getIndex(_asset);
-        uint256 accruedIbtPrice = _warren.calculateAccruedIbtPrice(
-            _asset,
-            calculateTimestamp
-        );
+        DataTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(calculateTimestamp, _asset);
+        
         require(
-            accruedIbtPrice != 0,
+            accruedIpor.ibtPrice != 0,
             IporErrors.MILTON_IBT_PRICE_CANNOT_BE_ZERO
         );
         require(
-            iporIndexValue >= spreadValue,
+			accruedIpor.indexValue >= spreadValue,
             IporErrors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
         indicator = DataTypes.IporSwapIndicator(
-            iporIndexValue,
-            accruedIbtPrice,
-            IporMath.division(notionalAmount * Constants.D18, accruedIbtPrice),
+            accruedIpor.indexValue,
+            accruedIpor.ibtPrice,
+            IporMath.division(notionalAmount * Constants.D18, accruedIpor.ibtPrice),
             direction == 0
                 ? (_calculateReferenceLegPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage
+                    accruedIpor.indexValue,
+                    accruedIpor.exponentialMovingAverage
                 ) + spreadValue)
-                : iporIndexValue > spreadValue
+                : accruedIpor.indexValue > spreadValue
                 ? (_calculateReferenceLegRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage
+                    accruedIpor.indexValue,
+                    accruedIpor.exponentialMovingAverage
                 ) - spreadValue)
                 : 0
         );
