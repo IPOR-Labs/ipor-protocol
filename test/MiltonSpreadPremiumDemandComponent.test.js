@@ -21,7 +21,7 @@ const {
     prepareMiltonSpreadCase5,
 } = require("./Utils");
 
-describe("MiltonSpreadModel - Demand Component", () => {
+describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
     let libraries;

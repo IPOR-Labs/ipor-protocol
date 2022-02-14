@@ -19,21 +19,21 @@ contract MiltonFrontendDataProvider is
     IMiltonFrontendDataProvider
 {
     IIporConfiguration internal _iporConfiguration;
-	address internal _warren;
+    address internal _warren;
     address internal _assetDai;
     address internal _assetUsdc;
     address internal _assetUsdt;
 
     function initialize(
         IIporConfiguration iporConfiguration,
-		address warren,
+        address warren,
         address assetDai,
         address assetUsdt,
         address assetUsdc
     ) public initializer {
         __Ownable_init();
         _iporConfiguration = iporConfiguration;
-		_warren = warren;
+        _warren = warren;
         _assetDai = assetDai;
         _assetUsdc = assetUsdc;
         _assetUsdt = assetUsdt;
@@ -177,7 +177,8 @@ contract MiltonFrontendDataProvider is
     }
 
     function _createIporAssetConfFront(address asset, uint256 timestamp)
-        internal view 
+        internal
+        view
         returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
@@ -194,17 +195,21 @@ contract MiltonFrontendDataProvider is
             milton.getMiltonSpreadModel()
         );
 
-        DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
-            timestamp,
-            asset
-        );
+        DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren)
+            .getAccruedIndex(timestamp, asset);
 
-		uint256 spreadPayFixedValue;
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+            .getBalance();
+
+        uint256 spreadPayFixedValue;
         try
-            spreadModel.calculatePartialSpreadPayFixed(                
-                timestamp,
+            spreadModel.calculatePartialSpreadPayFixed(
+                miltonStorage.calculateSoapPayFixed(
+                    accruedIpor.ibtPrice,
+                    timestamp
+                ),
                 accruedIpor,
-				miltonStorage
+                balance
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -212,12 +217,15 @@ contract MiltonFrontendDataProvider is
             spreadPayFixedValue = 0;
         }
 
-		uint256 spreadRecFixedValue;
+        uint256 spreadRecFixedValue;
         try
-            spreadModel.calculatePartialSpreadRecFixed(                
-                timestamp,
+            spreadModel.calculatePartialSpreadRecFixed(
+                miltonStorage.calculateSoapReceiveFixed(
+                    accruedIpor.ibtPrice,
+                    timestamp
+                ),
                 accruedIpor,
-				miltonStorage
+                balance
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;

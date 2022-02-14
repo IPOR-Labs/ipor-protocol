@@ -316,11 +316,17 @@ contract Milton is
             _asset
         );
 
+        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
+            .getBalance();
+
         try
-            _miltonSpreadModel.calculatePartialSpreadPayFixed(                
-                calculateTimestamp,
+            _miltonSpreadModel.calculatePartialSpreadPayFixed(
+                _miltonStorage.calculateSoapPayFixed(
+                    accruedIpor.ibtPrice,
+                    calculateTimestamp
+                ),
                 accruedIpor,
-				_miltonStorage
+                balance
             )
         returns (uint256 _spreadPayFixedValue) {
             spreadPayFixedValue = _spreadPayFixedValue;
@@ -329,10 +335,13 @@ contract Milton is
         }
 
         try
-            _miltonSpreadModel.calculatePartialSpreadRecFixed(                
-                calculateTimestamp,
+            _miltonSpreadModel.calculatePartialSpreadRecFixed(
+                _miltonStorage.calculateSoapReceiveFixed(
+                    accruedIpor.ibtPrice,
+                    calculateTimestamp
+                ),
                 accruedIpor,
-				_miltonStorage
+                balance
             )
         returns (uint256 _spreadRecFixedValue) {
             spreadRecFixedValue = _spreadRecFixedValue;
@@ -457,12 +466,15 @@ contract Milton is
             bosStruct.openingFee
         );
 
-        uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(            
-            openTimestamp,
+        uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
+            _miltonStorage.calculateSoapPayFixed(
+                bosStruct.accruedIpor.ibtPrice,
+                openTimestamp
+            ),
             bosStruct.accruedIpor,
+            balance,
             bosStruct.collateral,
-            bosStruct.openingFee,
-			_miltonStorage
+            bosStruct.openingFee
         );
 
         DataTypes.IporSwapIndicator
@@ -537,12 +549,15 @@ contract Milton is
             bosStruct.openingFee
         );
 
-        uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(            
-            openTimestamp,
+        uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
+            _miltonStorage.calculateSoapReceiveFixed(
+                bosStruct.accruedIpor.ibtPrice,
+                openTimestamp
+            ),
             bosStruct.accruedIpor,
+            balance,
             bosStruct.collateral,
-            bosStruct.openingFee,
-			_miltonStorage
+            bosStruct.openingFee
         );
 
         DataTypes.IporSwapIndicator

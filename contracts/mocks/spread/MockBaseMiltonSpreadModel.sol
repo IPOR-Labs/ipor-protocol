@@ -17,19 +17,19 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             .MiltonTotalBalanceMemory(
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
-                0,
-                0,
-                0,
+                0, //redundant for this calculation
+                0, //redundant for this calculation
+                0, //redundant for this calculation
                 liquidityPoolBalance,
-                0
+                0 //redundant for this calculation
             );
         return
             _calculateSpreadPremiumsPayFixed(
-                accruedIpor,
-                swapCollateral,
-                swapOpeningFee,
+                soap,
+				accruedIpor,
                 balance,
-                soap
+				swapCollateral,
+                swapOpeningFee
             );
     }
 
@@ -46,19 +46,19 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             .MiltonTotalBalanceMemory(
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
-                0,
-                0,
-                0,
+                0, //redundant for this calculation
+                0, //redundant for this calculation
+                0, //redundant for this calculation
                 liquidityPoolBalance,
-                0
+                0 //redundant for this calculation
             );
         return
             _calculateSpreadPremiumsRecFixed(
-                accruedIpor,
+                soap,
+				accruedIpor,
+				balance,
                 swapCollateral,
-                swapOpeningFee,
-                balance,
-                soap
+                swapOpeningFee
             );
     }
 
