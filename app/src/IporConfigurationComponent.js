@@ -6,25 +6,6 @@ const { ContractData, ContractForm } = newContextComponents;
 export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
-            <div className="col-md-2">Warren</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getWarren"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setWarren"
-                />
-            </div>
-        </div>
-
-        <div className="row">
             <div className="col-md-2">Publication Fee Transferer</div>
             <div className="col-md-3">
                 <ContractData
@@ -176,31 +157,6 @@ export default ({ drizzle, drizzleState }) => (
                         <td>ADMIN_ROLE</td>
                         <td>
                             0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>WARREN_ADMIN_ROLE</td>
-                        <td>
-                            0x1e04dc043068779cd91c1a75e0583a7db9c855bf85d461752231d1fe5a7f69ca
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>WARREN_ROLE</td>
-                        <td>
-                            0xe2062703bb72555ff94bfdd96351e7f292b8034f5f9127a25167d8d44f91ae85
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>WARREN_STORAGE_ADMIN_ROLE</td>
-                        <td>
-                            0xb1c511825e3a3673b7b3e9816a90ae950555bc6dbcfe9ddcd93d74ef23df3ed2
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>WARREN_STORAGE_ROLE</td>
-                        <td>
-                            0xb527a07823dd490f4af143463d6cd886bd7f2ff7af38e50cce0a4d77dbccc92f
                         </td>
                     </tr>                    
                     <tr>
