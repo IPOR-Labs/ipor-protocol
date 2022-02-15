@@ -25,6 +25,8 @@ ENV ETH_BC_NODE_MODE "archive"
 ENV ETH_BC_NODE_NAME "ipor-eth-network"
 ENV ETH_BC_HTTP_API "eth,net,web3,debug,txpool"
 ENV ETH_BC_WS_API "eth,net,web3,debug,txpool"
+ENV ETH_BC_VERBOSITY "5"
+ENV ETH_BS_VMODULE_VERBOSITY "rpc=5"
 
 ENTRYPOINT ["/geth-entrypoint.sh"]
 CMD ["run-geth"]
