@@ -219,6 +219,7 @@
                             <include>ItfMilton.abi</include>
                             <include>ItfWarren.abi</include>
                             <include>Warren.abi</include>
+                            <include>Joseph.abi</include>
                             <!-- TODO: compile problem with MiltonFrontendDataProvider.abi: Unsupported type encountered: tuple -->
                             <!-- <include>MiltonFrontendDataProvider.abi</include>-->
                         </includes>
