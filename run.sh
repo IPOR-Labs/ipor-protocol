@@ -39,7 +39,7 @@ ETH_BC_URL="http://localhost:9545"
 GET_IP_TOKEN_METHOD_SIGNATURE="0xf64de4ed"
 
 IS_MIGRATE_SC="NO"
-IS_UPGRADE_SC="NO"
+IS_MIGRATE_WITH_CLEAN_SC="NO"
 IS_BUILD_DOCKER="NO"
 IS_CLEAN_BC="NO"
 IS_RUN="NO"
@@ -60,8 +60,8 @@ do
         migrate|m)
             IS_MIGRATE_SC="YES"
         ;;
-		upgrade|u)
-            IS_UPGRADE_SC="YES"
+		migrateclean|mc)
+            IS_MIGRATE_WITH_CLEAN_SC="YES"
         ;;
         build|b)
             IS_BUILD_DOCKER="YES"
@@ -309,19 +309,19 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-  rm -rf app/src/contracts/
+  echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"  
   truffle compile --all
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none
 
 fi
 
-if [ $IS_UPGRADE_SC = "YES" ]; then
+if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mUpgrade Smart Contracts to Ethereum blockchain...\e[0m\n"
+  echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
+  rm -rf app/src/contracts/
   truffle compile --all
-  truffle migrate --network docker -f 4
+  truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none
 fi
 
 
@@ -360,17 +360,17 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
     echo -e ""
     echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
-    echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m           Build IPOR dockers"
-    echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m             Run / restart IPOR dockers"
-    echo -e "   \e[36mmockasset\e[0m|\e[36mmam\e[0m      Start Asset Managment mock"
+    echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m             Build IPOR dockers"
+    echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m               Run / restart IPOR dockers"
+    echo -e "   \e[36mmockasset\e[0m|\e[36mmam\e[0m       Start Asset Managment mock"
     echo -e "   \e[36mmockassetstop\e[0m|\e[36mmams\e[0m  Stop Asset Managment mock"
-    echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m            Stop IPOR dockers"
-    echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m         Compile and migrate Smart Contracts to blockchain"
-	echo -e "   \e[36mupgrade\e[0m|\e[36mu\e[0m     Upgrade Smart Contracts to blockchain"
-    echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m         Publish build artifacts to S3 bucket"
-    echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m           Clean Ethereum blockchain"
-    echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m           Restart nginx Ethereum blockchain container"
-    echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m      Show help"
+    echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"
+    echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m           Compile and migrate Smart Contracts to blockchain"
+	echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
+    echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m           Publish build artifacts to S3 bucket"
+    echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"
+    echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
+    echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
     echo -e "   \e[34mwithout any command\e[0m - the same as Run"
     echo -e ""
     exit 0
