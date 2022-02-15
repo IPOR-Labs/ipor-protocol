@@ -182,6 +182,15 @@ module.exports.prepareData = async (libraries, accounts) => {
     return data;
 };
 
+module.exports.prepareMiltonSpreadBase = async () => {
+    const MockBaseMiltonSpreadModel = await ethers.getContractFactory(
+        "MockBaseMiltonSpreadModel"
+    );
+    const miltonSpread = await MockBaseMiltonSpreadModel.deploy();
+    await miltonSpread.deployed();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
 module.exports.prepareMiltonSpreadCase2 = async () => {
     const MockCase2MiltonSpreadModel = await ethers.getContractFactory(
         "MockCase2MiltonSpreadModel"

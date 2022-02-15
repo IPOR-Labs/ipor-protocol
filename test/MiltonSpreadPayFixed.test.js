@@ -4,13 +4,13 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 const { utils } = require("web3");
 
-const {
-} = require("./Const.js");
+const { ZERO } = require("./Const.js");
 
 const {
     assertError,
     getLibraries,
     prepareData,
+    prepareMiltonSpreadBase,
     prepareMiltonSpreadCase6,
     prepareMiltonSpreadCase7,
     prepareMiltonSpreadCase8,
@@ -34,8 +34,89 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             liquidityProvider,
         ]);
     });
+    it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Ref Leg Case 1", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadBase();
 
-    it("should calculate Spread Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
+        const soap = BigInt("500000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const openingFee = BigInt("20000000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: ZERO,
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
+        const accruedBalance = {
+            payFixedSwaps: BigInt("1000000000000000000000") + swapCollateral,
+            receiveFixedSwaps: BigInt("13000000000000000000000"),
+            openingFee: openingFee,
+            liquidationDeposit: ZERO,
+            iporPublicationFee: ZERO,
+            liquidityPool: BigInt("15000000000000000000000") + openingFee,
+            treasury: ZERO,
+        };
+
+        const expectedQuoteValue = BigInt("45414312152356830");
+
+        //when
+        let actualQuotedValue = BigInt(
+            await miltonSpread
+                .connect(userOne)
+                .calculateQuotePayFixed(
+                    soap,
+                    accruedIpor,
+                    accruedBalance,
+                    swapCollateral
+                )
+        );
+
+        //then
+        expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
+    });
+
+    it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Ref Leg Case 2", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadBase();
+
+        const soap = BigInt("500000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const openingFee = BigInt("20000000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("55000000000000000"),
+            ibtPrice: ZERO,
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
+        const accruedBalance = {
+            payFixedSwaps: BigInt("1000000000000000000000") + swapCollateral,
+            receiveFixedSwaps: BigInt("13000000000000000000000"),
+            openingFee: openingFee,
+            liquidationDeposit: ZERO,
+            iporPublicationFee: ZERO,
+            liquidityPool: BigInt("15000000000000000000000") + openingFee,
+            treasury: ZERO,
+        };
+
+        const expectedQuoteValue = BigInt("59404211142255820");
+
+        //when
+        let actualQuotedValue = BigInt(
+            await miltonSpread
+                .connect(userOne)
+                .calculateQuotePayFixed(
+                    soap,
+                    accruedIpor,
+                    accruedBalance,
+                    swapCollateral
+                )
+        );
+
+        //then
+        expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
+    });
+
+    it("should calculate Spread Premiums Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
 
@@ -61,14 +142,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -79,7 +159,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
 
@@ -107,14 +187,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -125,7 +204,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
 
@@ -153,14 +232,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -171,7 +249,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator != 0, KHist denominator != 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase8();
 
@@ -199,14 +277,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -217,7 +294,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase8();
 
@@ -245,14 +322,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -263,7 +339,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase8();
 
@@ -294,14 +370,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -312,7 +387,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
         const spreadMaxValue = BigInt("300000000000000000");
@@ -342,14 +417,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -360,7 +434,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
         const spreadMaxValue = BigInt("300000000000000000");
@@ -390,14 +464,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -408,7 +481,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
 
@@ -438,14 +511,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -456,7 +528,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part very high, Komega part normal, KVol part normal, KHist part normal", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part very high, Komega part normal, KVol part normal, KHist part normal", async () => {
         //given
 
         const miltonSpread = await prepareMiltonSpreadCase9();
@@ -485,14 +557,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -503,7 +574,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part normal, KOmega part very high, KVol part normal, KHist part normal", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part very high, KVol part normal, KHist part normal", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
 
@@ -530,14 +601,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -548,7 +618,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part very high, KHist part normal", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part very high, KHist part normal", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
         const spreadMaxValue = BigInt("300000000000000000");
@@ -575,14 +645,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -593,7 +662,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part normal, KHist very high", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part normal, KHist very high", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
         const spreadMaxValue = BigInt("300000000000000000");
@@ -620,14 +689,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -638,7 +706,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed Value = Spread Max Value - Kf part + KOmega part + KVol part + KHist > Spread Max Value", async () => {
+    it("should calculate Spread Premiums Pay Fixed Value = Spread Max Value - Kf part + KOmega part + KVol part + KHist > Spread Max Value", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
         const spreadMaxValue = BigInt("300000000000000000");
@@ -665,14 +733,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         let actualSpreadValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -683,7 +750,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should NOT calculate Spread Pay Fixed - Liquidity Pool + Opening Fee = 0", async () => {
+    it("should NOT calculate Spread Premiums Pay Fixed - Liquidity Pool + Opening Fee = 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
 
@@ -707,14 +774,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             //when
             miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 ),
             //then
             "IPOR_49"

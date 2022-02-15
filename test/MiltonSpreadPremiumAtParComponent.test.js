@@ -10,7 +10,7 @@ const {
     prepareMiltonSpreadCase2,
 } = require("./Utils");
 
-describe("MiltonSpreadModel - At Par Component", () => {
+describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
     let libraries;

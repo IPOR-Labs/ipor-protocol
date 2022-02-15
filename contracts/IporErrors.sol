@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+//TODO: organize per smart contract (consider this) use internal, reorder in more intuitive way
 library IporErrors {
     //@notice The caller must be the Milton smart contract
     string public constant MILTON_CALLER_NOT_MILTON = "IPOR_1";
@@ -177,7 +178,7 @@ library IporErrors {
 
     //TODO: try to add test for this
     //@notice Spread value cannot be higher than Ipor Index Value for particular asset
-    string public constant MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
+    string public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
         "IPOR_53";
 
     //@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1

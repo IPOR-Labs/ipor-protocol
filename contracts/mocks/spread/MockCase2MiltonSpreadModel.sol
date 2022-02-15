@@ -5,7 +5,7 @@ import "./MockBaseMiltonSpreadModel.sol";
 
 contract MockCase2MiltonSpreadModel is MockBaseMiltonSpreadModel {
 	
-	function _getSpreadMaxValue()
+	function _getSpreadPremiumsMaxValue()
         internal
         pure
         virtual

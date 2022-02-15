@@ -4,13 +4,14 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
+
     function getVersion() external pure returns (uint256);
+
+	function getLastSwapId() external view returns (uint256);
 
     function setMilton(address milton) external;
 
-    function setJoseph(address joseph) external;
-
-    function getLastSwapId() external view returns (uint256);
+    function setJoseph(address joseph) external;    
 
     function getBalance()
         external

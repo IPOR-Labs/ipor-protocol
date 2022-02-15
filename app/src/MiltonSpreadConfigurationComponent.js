@@ -31,7 +31,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="MiltonSpreadModel"
-                            method="getSpreadMaxValue"
+                            method="getSpreadPremiumsMaxValue"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}

@@ -49,3 +49,4 @@ app/.env
 
 # OpenZeppelin
 .openzeppelin/unknown-*.json
+/coverage.json

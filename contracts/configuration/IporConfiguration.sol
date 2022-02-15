@@ -11,8 +11,6 @@ contract IporConfiguration is
     AccessControlConfiguration,
     IIporConfiguration
 {
-    address internal _warren;
-
     //@notice mapping underlying asset address to ipor configuration address
     mapping(address => address) public iporAssetConfigurations;
 

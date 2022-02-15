@@ -160,31 +160,6 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>WARREN_ADMIN_ROLE</td>
-                        <td>
-                            0x1e04dc043068779cd91c1a75e0583a7db9c855bf85d461752231d1fe5a7f69ca
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>WARREN_ROLE</td>
-                        <td>
-                            0xe2062703bb72555ff94bfdd96351e7f292b8034f5f9127a25167d8d44f91ae85
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>WARREN_STORAGE_ADMIN_ROLE</td>
-                        <td>
-                            0xb1c511825e3a3673b7b3e9816a90ae950555bc6dbcfe9ddcd93d74ef23df3ed2
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>WARREN_STORAGE_ROLE</td>
-                        <td>
-                            0xb527a07823dd490f4af143463d6cd886bd7f2ff7af38e50cce0a4d77dbccc92f
-                        </td>
-                    </tr>
-                    <tr>
                         <td>MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE</td>
                         <td>
                             0x7509198b389a0e4178b0935b3089a6bcebb17099877530792a238050cad1a93a
