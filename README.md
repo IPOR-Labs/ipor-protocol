@@ -1,3 +1,13 @@
+### Pre-run steps
+
+- Install `python3-pip`.
+- Install `solc-select` using pip: `pip3 install solc-select`
+- Install docker and docker-compose
+- Install `node` and `npm`.
+- Install `truffle` : `npm install -g truffle`
+- Check truffle binary execution permission. Run `chmod +x truffle` in binary dir if execution flag is missing.
+- Run `sudo apt-get install build-essential`
+
 ### How to run as developer?
 
 1. Clone `ipor-protocol` repository.

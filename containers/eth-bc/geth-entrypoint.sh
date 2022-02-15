@@ -56,7 +56,9 @@ if [ "${FIRST_ARG}" = "run-geth" ]; then
         --allow-insecure-unlock \
         --dev --dev.period "${ETH_BC_BLOCK_PERIOD}" \
         --networkid "${ETH_BC_NETWORK_ID}" \
-        --identity "${ETH_BC_NODE_NAME}"
+        --identity "${ETH_BC_NODE_NAME}" \
+        --verbosity ${ETH_BC_VERBOSITY} \
+        --vmodule "${ETH_BS_VMODULE_VERBOSITY}"
 else
     echo "NON run geth cmd passed, executing: exec $*"
     exec "$@"
