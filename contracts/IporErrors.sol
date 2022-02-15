@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+//TODO: organize per smart contract (consider this) use internal, reorder in more intuitive way
 library IporErrors {
     //@notice The caller must be the Milton smart contract
     string public constant MILTON_CALLER_NOT_MILTON = "IPOR_1";

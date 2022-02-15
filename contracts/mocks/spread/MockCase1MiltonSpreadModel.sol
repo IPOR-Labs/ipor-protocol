@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 import "./MockBaseMiltonSpreadModel.sol";
 
+//TODO: add set methods and use them in tests, remove many MockCaseX classes
 contract MockCase1MiltonSpreadModel is MockBaseMiltonSpreadModel {
     function _getSpreadPremiumsMaxValue()
         internal
