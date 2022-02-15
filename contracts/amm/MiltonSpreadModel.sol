@@ -119,7 +119,7 @@ contract MiltonSpreadModel is
 
         require(
             accruedIpor.indexValue >= spreadPremiums,
-            IporErrors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
+            IporErrors.MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
         refLeg = _calculateReferenceLegPayFixed(
@@ -143,7 +143,7 @@ contract MiltonSpreadModel is
 
         require(
             accruedIpor.indexValue >= spreadPremiums,
-            IporErrors.MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
+            IporErrors.MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
         refLeg = _calculateReferenceLegRecFixed(
@@ -157,7 +157,7 @@ contract MiltonSpreadModel is
         DataTypes.AccruedIpor memory accruedIpor,
         DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
         uint256 swapCollateral
-    ) internal pure returns (uint256 spreadValue) {
+    ) internal pure returns (uint256 spreadPremiumsValue) {
         require(
             accruedBalance.liquidityPool != 0,
             IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
@@ -174,8 +174,8 @@ contract MiltonSpreadModel is
                 accruedIpor.exponentialMovingAverage,
                 accruedIpor.exponentialWeightedMovingVariance
             );
-        uint256 maxValue = _getSpreadMaxValue();
-        spreadValue = result < maxValue ? result : maxValue;
+        uint256 maxValue = _getSpreadPremiumsMaxValue();
+        spreadPremiumsValue = result < maxValue ? result : maxValue;
     }
 
     function _calculateSpreadPremiumsRecFixed(
@@ -201,7 +201,7 @@ contract MiltonSpreadModel is
                 accruedIpor.exponentialWeightedMovingVariance
             );
 
-        uint256 maxValue = _getSpreadMaxValue();
+        uint256 maxValue = _getSpreadPremiumsMaxValue();
         spreadValue = result < maxValue ? result : maxValue;
     }
 
@@ -238,7 +238,7 @@ contract MiltonSpreadModel is
                             kOmegaDenominator
                         );
                 } else {
-                    return _getSpreadMaxValue();
+                    return _getSpreadPremiumsMaxValue();
                 }
             } else {
                 return
@@ -248,7 +248,7 @@ contract MiltonSpreadModel is
                     ) + _getDCKOmegaValue();
             }
         } else {
-            return _getSpreadMaxValue();
+            return _getSpreadPremiumsMaxValue();
         }
     }
 
@@ -257,7 +257,7 @@ contract MiltonSpreadModel is
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
     ) internal pure returns (uint256) {
-        uint256 maxValue = _getSpreadMaxValue();
+        uint256 maxValue = _getSpreadPremiumsMaxValue();
 
         if (exponentialWeightedMovingVariance == Constants.D18) {
             return maxValue;
@@ -338,7 +338,7 @@ contract MiltonSpreadModel is
                             kOmegaDenominator
                         );
                 } else {
-                    return _getSpreadMaxValue();
+                    return _getSpreadPremiumsMaxValue();
                 }
             } else {
                 return
@@ -348,7 +348,7 @@ contract MiltonSpreadModel is
                     ) + _getDCKOmegaValue();
             }
         } else {
-            return _getSpreadMaxValue();
+            return _getSpreadPremiumsMaxValue();
         }
     }
 
@@ -357,7 +357,7 @@ contract MiltonSpreadModel is
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
     ) internal pure returns (uint256) {
-        uint256 maxSpreadValue = _getSpreadMaxValue();
+        uint256 maxSpreadValue = _getSpreadPremiumsMaxValue();
 
         if (exponentialWeightedMovingVariance == Constants.D18) {
             return maxSpreadValue;

@@ -98,7 +98,7 @@ library DataTypes {
         uint256 collateral;
         uint256 notional;
         uint256 openingFee;
-        uint256 liquidationDepositAmount;        
+        uint256 liquidationDepositAmount;
         uint256 iporPublicationFeeAmount;
         DataTypes.AccruedIpor accruedIpor;
     }
@@ -118,7 +118,7 @@ library DataTypes {
         uint256 ibtQuantity;
         //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
-		//TODO: rename quoteValue
+        //TODO: rename quoteValue
     }
     struct NewSwap {
         address buyer;
@@ -138,7 +138,7 @@ library DataTypes {
         //@notice Endind time of this swap
         uint256 endingTimestamp;
         //@notice unique ID of this swap
-        uint256 id;        
+        uint256 id;
         uint256 idsIndex;
         uint256 collateral;
         uint256 liquidationDepositAmount;
@@ -152,7 +152,7 @@ library DataTypes {
         //@notice Starting time of this swap
         uint32 startingTimestamp;
         //@notice unique ID of this swap
-		//@notice Buyer of this swap
+        //@notice Buyer of this swap
         address buyer;
         uint64 id;
         uint64 idsIndex;
@@ -162,17 +162,13 @@ library DataTypes {
         uint128 notionalAmount;
         uint128 fixedInterestRate;
         uint128 ibtQuantity;
-        
     }
 
-    
-	//@notice All active swaps available in Milton with information which swaps belong to account
-	struct IporSwapContainer {
-
+    //@notice All active swaps available in Milton with information which swaps belong to account
+    struct IporSwapContainer {
         //@notice swap details, key in map is a swapId
-		mapping(uint128 => IporSwap) swaps;
-
-		//@notice list of swap ids per account, key is account address, value is a list of swap ids
+        mapping(uint128 => IporSwap) swaps;
+        //@notice list of swap ids per account, key is account address, value is a list of swap ids
         mapping(address => uint128[]) ids;
     }
 }

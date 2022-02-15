@@ -177,7 +177,7 @@ library IporErrors {
 
     //TODO: try to add test for this
     //@notice Spread value cannot be higher than Ipor Index Value for particular asset
-    string public constant MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
+    string public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
         "IPOR_53";
 
     //@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1

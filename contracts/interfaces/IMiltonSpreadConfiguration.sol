@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 interface IMiltonSpreadConfiguration {
-    function getSpreadMaxValue() external pure returns (uint256);
+    function getSpreadPremiumsMaxValue() external pure returns (uint256);
 
     function getDCKfValue() external pure returns (uint256);
 

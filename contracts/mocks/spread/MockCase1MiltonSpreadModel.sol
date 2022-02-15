@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "./MockBaseMiltonSpreadModel.sol";
 
 contract MockCase1MiltonSpreadModel is MockBaseMiltonSpreadModel {
-    function _getSpreadMaxValue()
+    function _getSpreadPremiumsMaxValue()
         internal
         pure
         virtual
