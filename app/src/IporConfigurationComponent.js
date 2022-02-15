@@ -6,25 +6,6 @@ const { ContractData, ContractForm } = newContextComponents;
 export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
-            <div className="col-md-2">Warren</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getWarren"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setWarren"
-                />
-            </div>
-        </div>
-
-        <div className="row">
             <div className="col-md-2">Publication Fee Transferer</div>
             <div className="col-md-3">
                 <ContractData
@@ -202,7 +183,7 @@ export default ({ drizzle, drizzleState }) => (
                         <td>
                             0xb527a07823dd490f4af143463d6cd886bd7f2ff7af38e50cce0a4d77dbccc92f
                         </td>
-                    </tr>                    
+                    </tr>
                     <tr>
                         <td>MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE</td>
                         <td>
