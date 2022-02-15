@@ -293,7 +293,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
   rm -rf app/src/contracts/
   truffle compile --all
-  truffle migrate --network docker --reset --compile-none
+  truffle migrate --network "${ETH_BC_NETWORK_NAME}" --reset --compile-none
   
 fi
 
@@ -302,7 +302,7 @@ if [ $IS_UPGRADE_SC = "YES" ]; then
 
   echo -e "\n\e[32mUpgrade Smart Contracts to Ethereum blockchain...\e[0m\n"
   truffle compile --all
-  truffle migrate --network docker -f 4
+  truffle migrate --network "${ETH_BC_NETWORK_NAME}" -f 4
 fi
 
 
