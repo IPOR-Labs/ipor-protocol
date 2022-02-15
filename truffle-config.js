@@ -25,7 +25,7 @@ module.exports = {
         docker: {
             provider: () => {
                 return new HDWalletProvider(
-                    process.env.ADMIN_PRIV_KEY,
+                    [process.env.ADMIN_PRIV_KEY, process.env.IPOR_INDEX_ADMIN_PRIV_KEY],
                     process.env.ETH_BC_URL
                 );
             },

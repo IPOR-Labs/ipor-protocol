@@ -60,7 +60,7 @@ do
         migrate|m)
             IS_MIGRATE_SC="YES"
         ;;
-		migrateclean|mc)
+        migrateclean|mc)
             IS_MIGRATE_WITH_CLEAN_SC="YES"
         ;;
         build|b)
