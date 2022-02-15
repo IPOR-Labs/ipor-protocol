@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import {IporErrors} from "../IporErrors.sol";
 
 contract IpToken is Ownable, IIpToken, ERC20 {
@@ -13,15 +12,10 @@ contract IpToken is Ownable, IIpToken, ERC20 {
 
     address private immutable _underlyingAsset;
     uint8 private immutable _decimals;
-
-	IIporAssetConfiguration internal _iporAssetConfiguration;
+    address private _joseph;
 
     modifier onlyJoseph() {
-        require(
-            //TODO: avoid external call
-            msg.sender == _iporAssetConfiguration.getJoseph(),
-            IporErrors.MILTON_CALLER_NOT_JOSEPH
-        );
+        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -33,22 +27,23 @@ contract IpToken is Ownable, IIpToken, ERC20 {
         require(address(0) != underlyingAsset, IporErrors.WRONG_ADDRESS);
         _underlyingAsset = underlyingAsset;
         _decimals = 18;
-    }
-
-    //TODO: initialization only once
-    function initialize(IIporAssetConfiguration iporAssetConfiguration)
-        external
-        onlyOwner
-    {
-        _iporAssetConfiguration = iporAssetConfiguration;
+        _joseph = msg.sender;
     }
 
     function decimals() public view override returns (uint8) {
         return _decimals;
     }
 
-    function mint(address account, uint256 amount) external override onlyJoseph {
-        require(amount != 0, IporErrors.MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW);
+    function setJoseph(address newJoseph) external onlyOwner {
+        _joseph = newJoseph;
+    }
+
+    function mint(address account, uint256 amount)
+        external
+        override
+        onlyJoseph
+    {
+        require(amount != 0, IporErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Transfer(address(0), account, amount);
         emit Mint(account, amount);

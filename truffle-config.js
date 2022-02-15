@@ -8,6 +8,13 @@ module.exports = {
         // "buidler-gas-reporter",
         "solidity-coverage",
     ],
+    environments: {
+        dev: {},
+
+        testnet: {},
+        production: {},
+    },
+    // contracts_directory: path.join(__dirname, "contracts"),
     contracts_build_directory: path.join(__dirname, "app/src/contracts"),
     networks: {
         dev: {

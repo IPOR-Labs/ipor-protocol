@@ -50,17 +50,11 @@ const {
 const {
     assertError,
     getLibraries,
-    getStandardDerivativeParamsDAI,
-    getStandardDerivativeParamsUSDT,
     getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    grantAllSpreadRoles,
-    setupDefaultSpreadConstants,
     setupTokenDaiInitialValuesForUsers,
-    setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
 
 describe("Milton - Utilization Rate", () => {
@@ -79,120 +73,7 @@ describe("Milton - Utilization Rate", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
-
-    // it("should open pay fixed position - liquidity pool utilization not exceeded, custom utilization", async () => {
-    //     //given
-    //     let testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         libraries
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-    //         admin.address
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
-    //         admin.address
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-    //     const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-    //     let closerUserEarned = ZERO;
-    //     let openerUserLost =
-    //         TC_OPENING_FEE_18DEC +
-    //         TC_IPOR_PUBLICATION_AMOUNT_18DEC +
-    //         TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC +
-    //         TC_COLLATERAL_18DEC;
-
-    //     let closerUserLost = openerUserLost;
-    //     let openerUserEarned = closerUserEarned;
-
-    //     let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
-    //         USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
-    //     let expectedCloserUserUnderlyingTokenBalanceAfterClose =
-    //         USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
-
-    //     let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(
-    //             miltonBalanceBeforePayoutWad,
-    //             params.openTimestamp
-    //         );
-
-    //     let expectedMiltonUnderlyingTokenBalance =
-    //         miltonBalanceBeforePayoutWad +
-    //         TC_OPENING_FEE_18DEC +
-    //         TC_IPOR_PUBLICATION_AMOUNT_18DEC +
-    //         TC_COLLATERAL_18DEC +
-    //         TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
-
-    //     let expectedLiquidityPoolTotalBalanceWad =
-    //         miltonBalanceBeforePayoutWad + TC_OPENING_FEE_18DEC;
-
-    //     let oldLpMaxUtilizationPerLegPercentage =
-    //         await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPerLegPercentage();
-
-    //     let liquidityPoolMaxUtilizationEdge = BigInt("718503678605107622");
-
-    //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-    //         liquidityPoolMaxUtilizationEdge
-    //     );
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             params.asset,
-    //             PERCENTAGE_3_18DEC,
-    //             params.openTimestamp
-    //         );
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userTwo)
-    //         .itfOpenSwapPayFixed(
-    //             params.openTimestamp,
-    //             params.totalAmount,
-    //             params.slippageValue,
-    //             params.collateralizationFactor
-    //         );
-
-    //     //then
-    //     await assertExpectedValues(
-    //         testData,
-    //         params.asset,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         miltonBalanceBeforePayoutWad,
-    //         expectedMiltonUnderlyingTokenBalance,
-    //         expectedOpenerUserUnderlyingTokenBalanceAfterClose,
-    //         expectedCloserUserUnderlyingTokenBalanceAfterClose,
-    //         expectedLiquidityPoolTotalBalanceWad,
-    //         1,
-    //         TC_COLLATERAL_18DEC,
-    //         USD_20_18DEC,
-    //         ZERO
-    //     );
-
-    //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-    //         oldLpMaxUtilizationPerLegPercentage
-    //     );
-    // });
 
     //TODO: clarify when spread equasion will be clarified
     // it("should NOT open pay fixed position - liquidity pool utilization exceeded, liquidity pool and opening fee are ZERO", async () => {
@@ -277,7 +158,8 @@ describe("Milton - Utilization Rate", () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
+            data,
+            0
         );
 
         await prepareApproveForUsers(
@@ -320,7 +202,8 @@ describe("Milton - Utilization Rate", () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
+            data,
+            0
         );
 
         await prepareApproveForUsers(
@@ -363,16 +246,8 @@ describe("Milton - Utilization Rate", () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
-        );
-
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE"),
-            admin.address
+            data,
+            6
         );
 
         await prepareApproveForUsers(
@@ -393,13 +268,6 @@ describe("Milton - Utilization Rate", () => {
                 BigInt("100000000000000000000000"),
                 params.openTimestamp
             );
-
-        let oldLpMaxUtilizationPerLegPercentage =
-            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPerLegPercentage();
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            BigInt("300000000000000000")
-        );
 
         await testData.warren
             .connect(userOne)
@@ -418,10 +286,6 @@ describe("Milton - Utilization Rate", () => {
                 params.slippageValue,
                 params.collateralizationFactor
             );
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            oldLpMaxUtilizationPerLegPercentage
-        );
     });
 
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
@@ -429,16 +293,8 @@ describe("Milton - Utilization Rate", () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
-        );
-
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE"),
-            admin.address
+            data,
+            6
         );
 
         await prepareApproveForUsers(
@@ -460,13 +316,6 @@ describe("Milton - Utilization Rate", () => {
                 params.openTimestamp
             );
 
-        let oldLpMaxUtilizationPerLegPercentage =
-            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPerLegPercentage();
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            BigInt("300000000000000000")
-        );
-
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -484,19 +333,16 @@ describe("Milton - Utilization Rate", () => {
                 params.slippageValue,
                 params.collateralizationFactor
             );
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            oldLpMaxUtilizationPerLegPercentage
-        );
     });
 
-	it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, default utilization", async () => {
+    it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, default utilization", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
-        );        
+            data,
+            0
+        );
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -542,16 +388,8 @@ describe("Milton - Utilization Rate", () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
-        );
-
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE"),
-            admin.address
+            data,
+            6
         );
 
         await prepareApproveForUsers(
@@ -569,13 +407,6 @@ describe("Milton - Utilization Rate", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-
-        let oldLpMaxUtilizationPerLegPercentage =
-            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPerLegPercentage();
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            BigInt("300000000000000000")
-        );
 
         await testData.warren
             .connect(userOne)
@@ -597,10 +428,6 @@ describe("Milton - Utilization Rate", () => {
                 ),
             //then
             "IPOR_35"
-        );
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            oldLpMaxUtilizationPerLegPercentage
         );
     });
 
@@ -609,8 +436,9 @@ describe("Milton - Utilization Rate", () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
-        );        
+            data,
+            0
+        );
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -656,16 +484,8 @@ describe("Milton - Utilization Rate", () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
-            data
-        );
-
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_ROLE"),
-            admin.address
+            data,
+            6
         );
 
         await prepareApproveForUsers(
@@ -683,13 +503,6 @@ describe("Milton - Utilization Rate", () => {
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-
-        let oldLpMaxUtilizationPerLegPercentage =
-            await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPerLegPercentage();
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            BigInt("300000000000000000")
-        );
 
         await testData.warren
             .connect(userOne)
@@ -711,10 +524,6 @@ describe("Milton - Utilization Rate", () => {
                 ),
             //then
             "IPOR_35"
-        );
-
-        await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPerLegPercentage(
-            oldLpMaxUtilizationPerLegPercentage
         );
     });
 });

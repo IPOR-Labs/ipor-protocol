@@ -30,7 +30,6 @@ describe("Warren", () => {
     let data = null;
     let testData;
     let libraries;
-    let warrenDevToolDataProvider = null;
 
     before(async () => {
         libraries = await getLibraries();
@@ -44,14 +43,6 @@ describe("Warren", () => {
             userThree,
             liquidityProvider,
         ]);
-
-        const WarrenDevToolDataProvider = await ethers.getContractFactory(
-            "WarrenDevToolDataProvider"
-        );
-        warrenDevToolDataProvider = await WarrenDevToolDataProvider.deploy(
-            data.iporConfiguration.address
-        );
-        await warrenDevToolDataProvider.deployed();
     });
 
     beforeEach(async () => {
@@ -59,7 +50,7 @@ describe("Warren", () => {
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
             data,
-            libraries
+            0
         );
     });
 
@@ -84,7 +75,6 @@ describe("Warren", () => {
             //then
             "IPOR_2"
         );
-        //await testData.warren.addUpdater(testData.warren.address);
     });
 
     it("should update IPOR Index", async () => {
@@ -92,7 +82,6 @@ describe("Warren", () => {
         const asset = testData.tokenDai.address;
         const expectedIndexValue = BigInt(1e20);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
 
         //when
         await testData.warren
@@ -115,13 +104,33 @@ describe("Warren", () => {
     });
 
     it("should add IPOR Index Updater", async () => {
+        //given
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
-        const updaters = await testData.warren.getUpdaters();
-        expect(
-            updaters.includes(userOne.address),
-            `Updater ${userOne.address} should exist in list of updaters in IPOR Oracle, but not exists`
-        ).to.be.true;
+        const updateDate = Math.floor(Date.now() / 1000);
+        const expectedIporIndexValue = BigInt("70000000000000000");
+        const assets = [
+            testData.tokenUsdc.address,
+            testData.tokenDai.address,
+            testData.tokenUsdt.address,
+        ];
+        const indexValues = [
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+        ];
+
+        //when
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndexes(assets, indexValues, updateDate);
+
+        //then
+        const iporIndex = await testData.warren
+            .connect(userOne)
+            .getIndex(testData.tokenDai.address);
+        const actualIndexValue = BigInt(iporIndex.indexValue);
+
+        expect(actualIndexValue).to.be.eql(expectedIporIndexValue);
     });
 
     it("should NOT add IPOR Index Updater", async () => {
@@ -134,11 +143,15 @@ describe("Warren", () => {
     it("should remove IPOR Index Updater", async () => {
         await testData.warren.addUpdater(userOne.address);
         await testData.warren.removeUpdater(userOne.address);
-        const updaters = await testData.warren.getUpdaters();
-        expect(
-            updaters.includes(userOne.address),
-            `Updater ${userOne.address} should not exist in list of updaters in IPOR Oracle, but exists`
-        ).to.be.false;
+
+        await assertError(
+            //when
+            testData.warren
+                .connect(userOne)
+                .updateIndex(testData.tokenUsdt.address, 123),
+            //then
+            "IPOR_2"
+        );
     });
 
     it("should NOT remove IPOR Index Updater", async () => {
@@ -148,50 +161,12 @@ describe("Warren", () => {
         );
     });
 
-    it("should retrieve list of IPOR Indexes", async () => {
-        //given
-        const expectedAssetOne = testData.tokenUsdt.address;
-        const expectedAssetSymbolOne = "USDT";
-        const expectedAssetTwo = testData.tokenDai.address;
-        const expectedAssetSymbolTwo = "DAI";
-
-        const expectedIporIndexesSize = 2;
-
-        await testData.warren.addUpdater(userOne.address);
-
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(expectedAssetOne, BigInt(1e8));
-
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(expectedAssetTwo, BigInt(1e20));
-
-        //when
-        const iporIndexes = await warrenDevToolDataProvider.getIndexes();
-
-        //then
-        expect(
-            expectedIporIndexesSize,
-            `Incorrect IPOR indexes size ${iporIndexes.length}, expected ${expectedIporIndexesSize}`
-        ).to.be.eql(iporIndexes.length);
-        expect(
-            expectedAssetSymbolOne,
-            `Incorrect asset on first position in indexes ${iporIndexes[0].asset}, expected ${expectedAssetOne}`
-        ).to.be.eql(iporIndexes[0].asset);
-        expect(
-            expectedAssetSymbolTwo,
-            `Incorrect asset on second position in indexes ${iporIndexes[1].asset}, expected ${expectedAssetTwo}`
-        ).to.be.eql(iporIndexes[1].asset);
-    });
-
     it("should update existing IPOR Index", async () => {
         //given
         const asset = testData.tokenUsdt.address;
         const expectedIndexValueOne = BigInt("123000000000000000");
         const expectedIndexValueTwo = BigInt("321000000000000000");
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
 
         //when
         await testData.warren
@@ -215,7 +190,6 @@ describe("Warren", () => {
         //given
         const asset = testData.tokenUsdt.address;
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
         const iporIndexValue = BigInt("500000000000000000000");
 
         //when
@@ -242,7 +216,6 @@ describe("Warren", () => {
         //given
         const asset = testData.tokenUsdt.address;
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren
             .connect(userOne)
@@ -277,7 +250,6 @@ describe("Warren", () => {
         const asset = testData.tokenUsdt.address;
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
@@ -312,7 +284,7 @@ describe("Warren", () => {
         const asset = testData.tokenUsdt.address;
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
+
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
@@ -351,7 +323,6 @@ describe("Warren", () => {
         const asset = testData.tokenDai.address;
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
@@ -389,7 +360,6 @@ describe("Warren", () => {
         //given
         const asset = testData.tokenUsdt.address;
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
         let updateDate = Math.floor(Date.now() / 1000);
         await testData.warren
             .connect(userOne)
@@ -424,11 +394,29 @@ describe("Warren", () => {
         ).to.be.eql(iporIndexThirdValue);
     });
 
+    it("should NOT update IPOR Index - asset not supported", async () => {
+        //given
+        const updateDate = Math.floor(Date.now() / 1000);
+        await testData.warren.addUpdater(userOne.address);
+
+        const assets = [userOne.address];
+        const indexValues = [BigInt("50000000000000000")];
+
+        await assertError(
+            //when
+            testData.warren
+                .connect(userOne)
+                .itfUpdateIndexes(assets, indexValues, updateDate),
+            //then
+            "IPOR_39"
+        );
+    });
+
     it("should NOT update IPOR Index - wrong input arrays", async () => {
         //given
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
+
         const assets = [testData.tokenUsdc.address, testData.tokenDai.address];
         const indexValues = [BigInt("50000000000000000")];
 
@@ -446,7 +434,6 @@ describe("Warren", () => {
         //given
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
         const assets = [testData.tokenUsdc.address, testData.tokenDai.address];
         const indexValues = [
             BigInt("50000000000000000"),
@@ -473,9 +460,17 @@ describe("Warren", () => {
         //given
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
-        const assets = [testData.tokenUsdc.address, testData.tokenDai.address];
-        const indexValues = [PERCENTAGE_8_18DEC, PERCENTAGE_7_18DEC];
+
+        const assets = [
+            testData.tokenUsdc.address,
+            testData.tokenDai.address,
+            testData.tokenUsdt.address,
+        ];
+        const indexValues = [
+            PERCENTAGE_8_18DEC,
+            PERCENTAGE_7_18DEC,
+            PERCENTAGE_5_18DEC,
+        ];
 
         //when
         await testData.warren
@@ -497,9 +492,16 @@ describe("Warren", () => {
         //given
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
-        const assets = [testData.tokenDai.address];
-        const indexValues = [PERCENTAGE_7_18DEC];
+        const assets = [
+            testData.tokenDai.address,
+            testData.tokenUsdc.address,
+            testData.tokenUsdt.address,
+        ];
+        const indexValues = [
+            PERCENTAGE_7_18DEC,
+            PERCENTAGE_7_18DEC,
+            PERCENTAGE_7_18DEC,
+        ];
         const expectedExpoMovingAverage = PERCENTAGE_7_18DEC;
         //when
         await testData.warren
@@ -521,10 +523,21 @@ describe("Warren", () => {
         //given
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
-        const assets = [testData.tokenDai.address];
-        const firstIndexValues = [PERCENTAGE_7_18DEC];
-        const secondIndexValues = [PERCENTAGE_50_18DEC];
+        const assets = [
+            testData.tokenDai.address,
+            testData.tokenUsdt.address,
+            testData.tokenUsdc.address,
+        ];
+        const firstIndexValues = [
+            PERCENTAGE_7_18DEC,
+            PERCENTAGE_7_18DEC,
+            PERCENTAGE_7_18DEC,
+        ];
+        const secondIndexValues = [
+            PERCENTAGE_50_18DEC,
+            PERCENTAGE_50_18DEC,
+            PERCENTAGE_50_18DEC,
+        ];
         const expectedExpoMovingAverage = BigInt("113000000000000000");
 
         //when
@@ -550,10 +563,21 @@ describe("Warren", () => {
         //given
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
-        //await testData.warren.addUpdater(testData.warren.address);
-        const assets = [testData.tokenUsdc.address];
-        const firstIndexValues = [PERCENTAGE_7_6DEC];
-        const secondIndexValues = [PERCENTAGE_50_6DEC];
+        const assets = [
+            testData.tokenUsdc.address,
+            testData.tokenDai.address,
+            testData.tokenUsdt.address,
+        ];
+        const firstIndexValues = [
+            PERCENTAGE_7_6DEC,
+            PERCENTAGE_7_6DEC,
+            PERCENTAGE_7_6DEC,
+        ];
+        const secondIndexValues = [
+            PERCENTAGE_50_6DEC,
+            PERCENTAGE_50_6DEC,
+            PERCENTAGE_50_6DEC,
+        ];
         const expectedExpoMovingAverage = BigInt("113000");
 
         //when

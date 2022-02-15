@@ -58,8 +58,6 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    grantAllSpreadRoles,
-    setupDefaultSpreadConstants,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
@@ -80,8 +78,6 @@ describe("Milton", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should NOT open position because collateral amount too low", async () => {
@@ -90,7 +86,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
 
         await prepareApproveForUsers(
@@ -128,7 +124,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -164,7 +160,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -201,7 +197,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -238,7 +234,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -275,7 +271,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -369,7 +365,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -464,7 +460,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -529,7 +525,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -575,7 +571,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -622,7 +618,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -676,15 +672,13 @@ describe("Milton", () => {
                 closeSwapTimestamp
             );
 
-        await testData.iporAssetConfigurationDai.setJoseph(userOne.address);
+        await testData.miltonStorageDai.setJoseph(userOne.address);
 
         await testData.miltonStorageDai
             .connect(userOne)
             .subtractLiquidity(BigInt("20000000000000000000000"));
 
-        await testData.iporAssetConfigurationDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
         await assertError(
@@ -702,7 +696,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -748,7 +742,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -794,7 +788,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -839,7 +833,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -885,7 +879,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -931,7 +925,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -977,7 +971,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1023,7 +1017,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1069,7 +1063,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1115,7 +1109,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1161,7 +1155,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1207,7 +1201,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1254,7 +1248,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1314,7 +1308,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1360,7 +1354,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1406,7 +1400,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1453,7 +1447,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1514,7 +1508,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1560,7 +1554,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1606,7 +1600,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1652,7 +1646,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1698,7 +1692,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1744,7 +1738,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1790,7 +1784,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1836,7 +1830,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1882,7 +1876,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1928,7 +1922,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1974,7 +1968,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2020,7 +2014,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2066,7 +2060,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2113,7 +2107,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2174,7 +2168,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2221,7 +2215,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2281,7 +2275,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2327,7 +2321,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2373,7 +2367,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2419,7 +2413,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2465,7 +2459,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2512,7 +2506,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2572,7 +2566,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2645,7 +2639,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2718,7 +2712,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         let closerUser = userTwo;
         let openTimestamp = Math.floor(Date.now() / 1000);
@@ -2742,7 +2736,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2827,7 +2821,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -2911,7 +2905,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3067,7 +3061,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3161,7 +3155,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3265,7 +3259,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3368,7 +3362,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3470,7 +3464,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3554,7 +3548,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3639,7 +3633,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3726,16 +3720,9 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            2
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -3745,9 +3732,6 @@ describe("Milton", () => {
         await setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
-        );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_5_18DEC
         );
 
         let incomeTax = BigInt("419666206858875426943");
@@ -3776,9 +3760,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should calculate income tax, 5%, Milton loses, user earns, |I| > D", async () => {
@@ -3786,7 +3767,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            2
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -3794,20 +3775,10 @@ describe("Milton", () => {
             data,
             testData
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
-        );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_5_18DEC
         );
 
         let incomeTax = BigInt("497008973080757726820");
@@ -3837,10 +3808,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should calculate income tax, 5%, Milton earns, user loses, |I| < D", async () => {
@@ -3848,16 +3815,9 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            2
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -3867,10 +3827,6 @@ describe("Milton", () => {
         await setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
-        );
-
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_5_18DEC
         );
 
         let incomeTax = BigInt("394883841625807510682");
@@ -3899,10 +3855,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should calculate income tax, 5%, Milton earns, user loses, |I| > D", async () => {
@@ -3910,34 +3862,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-    });
-
-    it("should calculate income tax, 5%, Milton earns, user loses, |I| > D", async () => {
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
+            2
         );
 
         await prepareApproveForUsers(
@@ -3949,10 +3874,6 @@ describe("Milton", () => {
         await setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
-        );
-
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_5_18DEC
         );
 
         let incomeTax = BigInt("497008973080757726820");
@@ -3981,9 +3902,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should calculate income tax, 100%, Milton loses, user earns, |I| < D", async () => {
@@ -3991,15 +3909,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
+            3
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -4010,9 +3920,6 @@ describe("Milton", () => {
         await setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
-        );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_100_18DEC
         );
 
         let incomeTax = BigInt("8393324137177508538862");
@@ -4041,9 +3948,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should calculate income tax, 100%, Milton loses, user earns, |I| > D", async () => {
@@ -4051,16 +3955,9 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            3
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4070,9 +3967,6 @@ describe("Milton", () => {
         await setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
-        );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_100_18DEC
         );
 
         let incomeTax = BigInt("9940179461615154536391");
@@ -4101,9 +3995,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
@@ -4111,16 +4002,9 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            3
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4132,9 +4016,6 @@ describe("Milton", () => {
             testData
         );
 
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_100_18DEC
-        );
         let incomeTax = BigInt("7897676832516150213639");
         let incomeTaxWad = BigInt("7897676832516150213639");
         let interestAmount = BigInt("7897676832516150213639");
@@ -4161,10 +4042,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
@@ -4172,8 +4049,9 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            3
         );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4183,36 +4061,6 @@ describe("Milton", () => {
         await setupTokenDaiInitialValuesForUsers(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
-        );
-    });
-
-    it("should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-            admin.address
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_100_18DEC
         );
 
         let incomeTax = BigInt("9940179461615154536391");
@@ -4241,10 +4089,6 @@ describe("Milton", () => {
             interestAmount,
             interestAmountWad
         );
-
-        await testData.iporAssetConfigurationDai.setIncomeTaxPercentage(
-            PERCENTAGE_10_18DEC
-        );
     });
 
     it("should open pay fixed position, DAI, custom Opening Fee for Treasury 50%", async () => {
@@ -4253,16 +4097,9 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            4
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4282,9 +4119,6 @@ describe("Milton", () => {
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
-        await testData.iporAssetConfigurationDai.setOpeningFeeForTreasuryPercentage(
-            BigInt("50000000000000000")
-        );
 
         let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalanceWad = BigInt("1491026919242273180");
@@ -4334,10 +4168,6 @@ describe("Milton", () => {
             `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
             expected: ${expectedTreasuryTotalBalanceWad}`
         ).to.be.eq(actualTreasuryTotalBalanceWad);
-
-        await testData.iporAssetConfigurationDai.setOpeningFeeForTreasuryPercentage(
-            ZERO
-        );
     });
 
     it("should open pay fixed position, DAI, custom Opening Fee for Treasury 25%", async () => {
@@ -4346,16 +4176,9 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            5
         );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
-            admin.address
-        );
-        await testData.iporAssetConfigurationDai.grantRole(
-            keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
-            admin.address
-        );
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -4375,9 +4198,6 @@ describe("Milton", () => {
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
-        await testData.iporAssetConfigurationDai.setOpeningFeeForTreasuryPercentage(
-            BigInt("25000000000000000")
-        );
 
         let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalanceWad = BigInt("745513459621136590");
@@ -4426,10 +4246,6 @@ describe("Milton", () => {
             `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
             expected: ${expectedTreasuryTotalBalanceWad}`
         ).to.be.eq(actualTreasuryTotalBalanceWad);
-
-        await testData.iporAssetConfigurationDai.setOpeningFeeForTreasuryPercentage(
-            ZERO
-        );
     });
 
     it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
@@ -4438,7 +4254,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -4488,7 +4304,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -4551,7 +4367,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await testData.iporAssetConfigurationDai.grantRole(
             keccak256("CHARLIE_TREASURER_ADMIN_ROLE"),
@@ -4661,7 +4477,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -4712,7 +4528,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -4763,7 +4579,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -4825,7 +4641,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -4873,7 +4689,7 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

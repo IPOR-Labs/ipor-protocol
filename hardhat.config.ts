@@ -1,7 +1,14 @@
-require("@nomiclabs/hardhat-waffle");
-require("hardhat-tracer");
-require("solidity-coverage");
-require("@nomiclabs/hardhat-web3");
+import "@openzeppelin/hardhat-upgrades";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-web3";
+
+import { task } from "hardhat/config";
+import "hardhat-tracer";
+import "solidity-coverage";
+
+import "dotenv";
+
 require("dotenv").config();
 
 if (process.env.REPORT_GAS === "true") {
@@ -24,7 +31,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-module.exports = {
+export default {
     solidity: {
         version: "0.8.9",
         settings: {

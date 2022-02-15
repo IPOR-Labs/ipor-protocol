@@ -36,7 +36,7 @@ const options = {
     },
 
     contracts: [
-        MiltonDevToolDataProvider,
+		MiltonDevToolDataProvider,
         MiltonFrontendDataProvider,
         IporConfiguration,
         Warren,

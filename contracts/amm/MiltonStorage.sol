@@ -1,60 +1,47 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../libraries/IporSwapLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
-import "../interfaces/IIporConfiguration.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import "../libraries/Constants.sol";
 
-contract MiltonStorage is Ownable, IMiltonStorage {
+contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using SafeCast for uint256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
-    address private immutable _asset;
-    IIporConfiguration internal immutable _iporConfiguration;
-    IIporAssetConfiguration internal immutable _iporAssetConfiguration;
-
     uint64 private _lastSwapId;
+    address private _milton;
+    address private _joseph;
     DataTypes.MiltonTotalBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
     DataTypes.IporSwapContainer internal _swapsPayFixed;
     DataTypes.IporSwapContainer internal _swapsReceiveFixed;
 
-    constructor(address asset, address initialIporConfiguration) {
-        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            address(initialIporConfiguration) != address(0),
-            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );
-        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
+    function initialize() public initializer {
+        __Ownable_init();
+    }
 
-        require(
-            _iporConfiguration.assetSupported(asset) == 1,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-        );
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
 
-        address iporAssetConfigurationAddr = _iporConfiguration
-            .getIporAssetConfiguration(asset);
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
-        require(
-            address(iporAssetConfigurationAddr) != address(0),
-            IporErrors.WRONG_ADDRESS
-        );
+    function setMilton(address milton) external override onlyOwner {
+        _milton = milton;
+    }
 
-        _iporAssetConfiguration = IIporAssetConfiguration(
-            iporAssetConfigurationAddr
-        );
-
-        _asset = asset;
+    function setJoseph(address joseph) external override onlyOwner {
+        _joseph = joseph;
     }
 
     function getBalance()
@@ -183,22 +170,37 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function updateStorageWhenOpenSwapPayFixed(
         DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
     ) external override onlyMilton returns (uint256) {
         uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
-        _updateBalancesWhenOpenSwapPayFixed(newSwap.collateral, openingAmount);
+        _updateBalancesWhenOpenSwapPayFixed(
+            newSwap.collateral,
+            openingAmount,
+            cfgLiquidationDepositAmount,
+            cfgIporPublicationFeeAmount,
+            cfgOpeningFeeForTreasuryPercentage
+        );
         _updateSoapIndicatorsWhenOpenSwapPayFixed(newSwap);
         return id;
     }
 
     function updateStorageWhenOpenSwapReceiveFixed(
         DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
     ) external override onlyMilton returns (uint256) {
         uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
-            openingAmount
+            openingAmount,
+            cfgLiquidationDepositAmount,
+            cfgIporPublicationFeeAmount,
+            cfgOpeningFeeForTreasuryPercentage
         );
         _updateSoapIndicatorsWhenOpenSwapReceiveFixed(newSwap);
         return id;
@@ -208,14 +210,16 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+		uint256 cfgIncomeTaxPercentage
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(
             account,
             iporSwap,
             positionValue,
-            closingTimestamp
+            closingTimestamp,
+			cfgIncomeTaxPercentage
         );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
     }
@@ -224,14 +228,16 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address account,
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+		uint256 cfgIncomeTaxPercentage
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(
             account,
             iporSwap,
             positionValue,
-            closingTimestamp
+            closingTimestamp,
+			cfgIncomeTaxPercentage
         );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
             iporSwap,
@@ -445,7 +451,10 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _updateBalancesWhenOpenSwapPayFixed(
         uint256 collateral,
-        uint256 openingFeeAmount
+        uint256 openingFeeAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
     ) internal {
         _balances.payFixedSwaps =
             _balances.payFixedSwaps +
@@ -456,19 +465,17 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             openingFeeAmount.toUint128();
         _balances.liquidationDeposit =
             _balances.liquidationDeposit +
-            _iporAssetConfiguration.getLiquidationDepositAmount().toUint128();
+            cfgLiquidationDepositAmount.toUint128();
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
-            _iporAssetConfiguration.getIporPublicationFeeAmount().toUint128();
+            cfgIporPublicationFeeAmount.toUint128();
 
-        uint256 openingFeeForTreasurePercentage = _iporAssetConfiguration
-            .getOpeningFeeForTreasuryPercentage();
         (
             uint256 openingFeeLPValue,
             uint256 openingFeeTreasuryValue
         ) = _splitOpeningFeeAmount(
                 openingFeeAmount,
-                openingFeeForTreasurePercentage
+                cfgOpeningFeeForTreasuryPercentage
             );
         _balances.liquidityPool =
             _balances.liquidityPool +
@@ -480,7 +487,10 @@ contract MiltonStorage is Ownable, IMiltonStorage {
 
     function _updateBalancesWhenOpenSwapReceiveFixed(
         uint256 collateral,
-        uint256 openingFeeAmount
+        uint256 openingFeeAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
     ) internal {
         _balances.receiveFixedSwaps =
             _balances.receiveFixedSwaps +
@@ -491,19 +501,17 @@ contract MiltonStorage is Ownable, IMiltonStorage {
             openingFeeAmount.toUint128();
         _balances.liquidationDeposit =
             _balances.liquidationDeposit +
-            _iporAssetConfiguration.getLiquidationDepositAmount().toUint128();
+            cfgLiquidationDepositAmount.toUint128();
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
-            _iporAssetConfiguration.getIporPublicationFeeAmount().toUint128();
+            cfgIporPublicationFeeAmount.toUint128();
 
-        uint256 openingFeeForTreasurePercentage = _iporAssetConfiguration
-            .getOpeningFeeForTreasuryPercentage();
         (
             uint256 openingFeeLPValue,
             uint256 openingFeeTreasuryValue
         ) = _splitOpeningFeeAmount(
                 openingFeeAmount,
-                openingFeeForTreasurePercentage
+                cfgOpeningFeeForTreasuryPercentage
             );
         _balances.liquidityPool =
             _balances.liquidityPool +
@@ -532,7 +540,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address account,
         DataTypes.IporSwapMemory memory swap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+        uint256 cfgIncomeTaxPercentage
     ) internal {
         uint256 abspositionValue = IporMath.absoluteValue(positionValue);
 
@@ -562,7 +571,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         }
 
         uint256 incomeTax = IporMath.division(
-            abspositionValue * _iporAssetConfiguration.getIncomeTaxPercentage(),
+            abspositionValue * cfgIncomeTaxPercentage,
             Constants.D18
         );
 
@@ -589,7 +598,8 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         address account,
         DataTypes.IporSwapMemory memory swap,
         int256 positionValue,
-        uint256 closingTimestamp
+        uint256 closingTimestamp,
+        uint256 cfgIncomeTaxPercentage
     ) internal {
         uint256 abspositionValue = IporMath.absoluteValue(positionValue);
 
@@ -621,7 +631,7 @@ contract MiltonStorage is Ownable, IMiltonStorage {
         }
 
         uint256 incomeTax = IporMath.division(
-            abspositionValue * _iporAssetConfiguration.getIncomeTaxPercentage(),
+            abspositionValue * cfgIncomeTaxPercentage,
             Constants.D18
         );
 
@@ -895,18 +905,12 @@ contract MiltonStorage is Ownable, IMiltonStorage {
     }
 
     modifier onlyMilton() {
-        require(
-            msg.sender == _iporAssetConfiguration.getMilton(),
-            IporErrors.MILTON_CALLER_NOT_MILTON
-        );
+        require(msg.sender == _milton, IporErrors.MILTON_CALLER_NOT_MILTON);
         _;
     }
 
     modifier onlyJoseph() {
-        require(
-            msg.sender == _iporAssetConfiguration.getJoseph(),
-            IporErrors.MILTON_CALLER_NOT_JOSEPH
-        );
+        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
         _;
     }
 }

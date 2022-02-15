@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+//TODO: organize per smart contract (consider this) use internal, reorder in more intuitive way
 library IporErrors {
     //@notice The caller must be the Milton smart contract
     string public constant MILTON_CALLER_NOT_MILTON = "IPOR_1";
@@ -112,7 +113,7 @@ library IporErrors {
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 
-    //@notice Liquidity Pool Utilization exceeded, implementation interface IMiltonLiquidityPoolUtilizationModel calculate utilization, IporAssetConfiguration.liquidityPoolMaxUtilizationPercentage define configured max utilization rate
+    //@notice Liquidity Pool Utilization exceeded
     string public constant MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED =
         "IPOR_35";
 
@@ -127,10 +128,11 @@ library IporErrors {
         "IPOR_38";
 
     //@notice Asset address not supported
+	//@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = "IPOR_39";
 
     //@notice Amount which should be minted is too low
-    string public constant MILTON_IPOT_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_40";
+    string public constant IP_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_40";
 
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = "IPOR_41";
@@ -176,7 +178,7 @@ library IporErrors {
 
     //TODO: try to add test for this
     //@notice Spread value cannot be higher than Ipor Index Value for particular asset
-    string public constant MILTON_SPREAD_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
+    string public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
         "IPOR_53";
 
     //@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1

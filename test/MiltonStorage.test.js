@@ -23,7 +23,6 @@ const {
 const {
     assertError,
     getLibraries,
-    grantAllSpreadRoles,
     setupTokenUsdtInitialValuesForUsers,
     prepareApproveForUsers,
     prepareData,
@@ -59,8 +58,6 @@ describe("MiltonStorage", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {
@@ -76,7 +73,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -89,16 +86,17 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        await testData.iporAssetConfigurationDai.setMilton(
-            miltonStorageAddress.address
-        );
+        await testData.miltonStorageDai.setMilton(miltonStorageAddress.address);
 
         //when
         await testData.miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
-                BigInt("1500000000000000000000")
+                BigInt("1500000000000000000000"),
+                await testData.miltonDai.getLiquidationDepositAmount(),
+                await testData.miltonDai.getIporPublicationFeeAmount(),
+                await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -117,7 +115,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
         const derivativeStruct =
             await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
@@ -127,7 +125,10 @@ describe("MiltonStorage", () => {
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
-                    BigInt("1500000000000000000000")
+                    BigInt("1500000000000000000000"),
+                    await testData.miltonDai.getLiquidationDepositAmount(),
+                    await testData.miltonDai.getIporPublicationFeeAmount(),
+                    await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
                 ),
             //then
             "IPOR_1"
@@ -147,7 +148,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
 
         await prepareApproveForUsers(
@@ -189,19 +190,22 @@ describe("MiltonStorage", () => {
         let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
         let closeSwapTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.iporAssetConfigurationDai.setMilton(
-            miltonStorageAddress.address
-        );
+
+        await testData.miltonStorageDai.setMilton(miltonStorageAddress.address);
 
         //when
-        testData.miltonStorageDai
+        await testData.miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000000000000000"),
-                closeSwapTimestamp
+                closeSwapTimestamp,
+                await testData.miltonDai.getIncomeTaxPercentage()
             );
+
+        await testData.miltonStorageDai.setMilton(testData.miltonDai.address);
+
         //then
         // assert(true); //no exception this line is achieved
     });
@@ -219,7 +223,7 @@ describe("MiltonStorage", () => {
             ],
             ["USDT"],
             data,
-            libraries
+            0
         );
 
         await prepareApproveForUsers(
@@ -263,18 +267,20 @@ describe("MiltonStorage", () => {
         );
         let closeSwapTimestamp =
             derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.iporAssetConfigurationUsdt.setMilton(
+
+        await testData.miltonStorageUsdt.setMilton(
             miltonStorageAddress.address
         );
 
         //when
-        testData.miltonStorageUsdt
+        await testData.miltonStorageUsdt
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
                 userTwo.address,
                 derivativeItem,
                 BigInt("10000000"),
-                closeSwapTimestamp
+                closeSwapTimestamp,
+                await testData.miltonUsdt.getIncomeTaxPercentage()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -293,7 +299,7 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            libraries
+            0
         );
 
         await prepareApproveForUsers(
@@ -346,7 +352,8 @@ describe("MiltonStorage", () => {
                     userTwo.address,
                     derivativeItem,
                     BigInt("10000000000000000000"),
-                    closeSwapTimestamp
+                    closeSwapTimestamp,
+                    await testData.miltonDai.getIncomeTaxPercentage()
                 ),
             //then
             "IPOR_1"

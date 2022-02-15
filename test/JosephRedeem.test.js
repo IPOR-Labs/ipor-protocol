@@ -31,8 +31,6 @@ const {
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
-    grantAllSpreadRoles,
-    setupDefaultSpreadConstants,
 } = require("./Utils");
 
 describe("Joseph - redeem", () => {
@@ -51,8 +49,6 @@ describe("Joseph - redeem", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
-        await setupDefaultSpreadConstants(data, userOne);
     });
 
     it("should redeem ipToken - simple case 1 - DAI 18 decimals", async () => {
@@ -61,7 +57,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -137,7 +133,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -213,7 +209,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -233,13 +229,11 @@ describe("Joseph - redeem", () => {
             .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await testData.iporAssetConfigurationDai.setJoseph(userOne.address);
+        await testData.miltonStorageDai.setJoseph(userOne.address);
         await testData.miltonStorageDai
             .connect(userOne)
             .subtractLiquidity(params.totalAmount);
-        await testData.iporAssetConfigurationDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
         await assertError(
@@ -261,7 +255,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -281,13 +275,11 @@ describe("Joseph - redeem", () => {
             .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await testData.iporAssetConfigurationDai.setJoseph(userOne.address);
+        await testData.miltonStorageDai.setJoseph(userOne.address);
         await testData.miltonStorageDai
             .connect(userOne)
             .subtractLiquidity(USD_10_18DEC);
-        await testData.iporAssetConfigurationDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
         await assertError(
@@ -306,7 +298,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -342,7 +334,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -421,7 +413,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -498,7 +490,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -639,7 +631,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -782,7 +774,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -880,7 +872,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -919,14 +911,11 @@ describe("Joseph - redeem", () => {
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
-        let oldJosephAddress =
-            await testData.iporAssetConfigurationDai.getJoseph();
-        await testData.iporAssetConfigurationDai.setJoseph(admin.address);
-
+        await testData.miltonStorageDai.setJoseph(admin.address);
         await testData.miltonStorageDai.subtractLiquidity(
             BigInt("55000000000000000000000")
         );
-        await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
         const balance = await testData.miltonStorageDai.getBalance();
@@ -956,7 +945,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -995,14 +984,12 @@ describe("Joseph - redeem", () => {
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
-        let oldJosephAddress =
-            await testData.iporAssetConfigurationDai.getJoseph();
-        await testData.iporAssetConfigurationDai.setJoseph(admin.address);
+        await testData.miltonStorageDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
             BigInt("55000000000000000000000")
         );
-        await testData.iporAssetConfigurationDai.setJoseph(oldJosephAddress);
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
         const balance = await testData.miltonStorageDai.getBalance();
@@ -1032,7 +1019,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1100,7 +1087,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1168,7 +1155,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1239,7 +1226,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1310,7 +1297,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1389,7 +1376,7 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

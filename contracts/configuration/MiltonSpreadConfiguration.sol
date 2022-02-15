@@ -1,184 +1,113 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../libraries/Constants.sol";
-import "../libraries/IporMath.sol";
+
 import "../interfaces/IMiltonSpreadConfiguration.sol";
-import "./AccessControlMiltonSpreadConfiguration.sol";
 
-contract MiltonSpreadConfiguration is
-    AccessControlMiltonSpreadConfiguration(msg.sender),
-    IMiltonSpreadConfiguration
-{
-	using SafeCast for uint256;
-    //TODO: [gas-opt] move to immutable all fields here
-
+contract MiltonSpreadConfiguration is IMiltonSpreadConfiguration {
     //@notice Spread Max Value
-    uint64 internal _maxValue;
+    uint256 internal constant _SPREAD_PREMIUMS_MAX_VALUE = 3e16;
 
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
-    uint64 internal _demandComponentKfValue;
+    uint256 internal constant _DC_KF_VALUE = 1e15;
 
     //@notice Part of Spread calculation - Demand Component Lambda value - check Whitepaper
-    uint64 internal _demandComponentLambdaValue;
+    uint256 internal constant _DC_LAMBDA_VALUE = 1e16;
 
     //@notice Part of Spread calculation - Demand Component KOmega value - check Whitepaper
-    uint64 internal _demandComponentKOmegaValue;
+    uint256 internal constant _DC_K_OMEGA_VALUE = 1e15;
 
     //@notice Part of Spread calculation - Demand Component Max Liquidity Redemption Value - check Whitepaper
-    uint64 internal _demandComponentMaxLiquidityRedemptionValue;
+    uint256 internal constant _DC_MAX_LIQUIDITY_REDEMPTION_VALUE = 1e18;
 
     //@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
-    uint64 internal _atParComponentKVolValue;
+    uint256 internal constant _AT_PAR_COMPONENT_K_VOL_VALUE = 1e15;
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
-    uint64 internal _atParComponentKHistValue;
+    uint256 internal constant _AT_PAR_COMPONENT_K_HIST_VALUE = 1e15;
 
-    constructor() {
-        _demandComponentKfValue = (IporMath.division(Constants.D18, 100)).toUint64();
-        _demandComponentLambdaValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-        _demandComponentKOmegaValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-
-        _demandComponentMaxLiquidityRedemptionValue = Constants.D18.toUint64();
-
-        _atParComponentKVolValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-
-        _atParComponentKHistValue = (
-            IporMath.division(Constants.D18, 100)
-        ).toUint64();
-
-        _maxValue = (IporMath.division(3 * Constants.D16, 10)).toUint64();
+    function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
+        return _SPREAD_PREMIUMS_MAX_VALUE;
     }
 
-    function getSpreadMaxValue() external view override returns (uint256) {
-        return _maxValue;
+    function getDCKfValue() external pure override returns (uint256) {
+        return _DC_KF_VALUE;
     }
 
-    function setSpreadMaxValue(uint256 newSpreadMaxValue)
+    function getDCLambdaValue() external pure override returns (uint256) {
+        return _DC_LAMBDA_VALUE;
+    }
+
+    function getDCKOmegaValue() external pure override returns (uint256) {
+        return _DC_K_OMEGA_VALUE;
+    }
+
+    function getDCMaxLiquidityRedemptionValue()
         external
-        override
-        onlyRole(_SPREAD_MAX_VALUE_ROLE)
-    {
-        _maxValue = newSpreadMaxValue.toUint64();
-        emit SpreadMaxValueSet(newSpreadMaxValue);
-    }
-
-    function getDemandComponentKfValue()
-        external
-        view
+        pure
         override
         returns (uint256)
     {
-        return _demandComponentKfValue;
-    }
-
-    function setDemandComponentKfValue(uint256 newSpreadDemandComponentKfValue)
-        external
-        override
-        onlyRole(_SPREAD_DEMAND_COMPONENT_KF_VALUE_ROLE)
-    {
-        _demandComponentKfValue = newSpreadDemandComponentKfValue.toUint64();
-        emit SpreadDemandComponentKfValueSet(newSpreadDemandComponentKfValue);
-    }
-
-    function getDemandComponentLambdaValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _demandComponentLambdaValue;
-    }
-
-    function setDemandComponentLambdaValue(
-        uint256 newSpreadDemandComponentLambdaValue
-    ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_LAMBDA_VALUE_ROLE) {
-        _demandComponentLambdaValue = 
-            newSpreadDemandComponentLambdaValue.toUint64();
-        emit SpreadDemandComponentLambdaValueSet(
-            newSpreadDemandComponentLambdaValue
-        );
-    }
-
-    function getDemandComponentKOmegaValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _demandComponentKOmegaValue;
-    }
-
-    function setDemandComponentKOmegaValue(
-        uint256 newSpreadDemandComponentKOmegaValue
-    ) external override onlyRole(_SPREAD_DEMAND_COMPONENT_KOMEGA_VALUE_ROLE) {
-        _demandComponentKOmegaValue = 
-            newSpreadDemandComponentKOmegaValue.toUint64();
-        emit SpreadDemandComponentKOmegaValueSet(
-            newSpreadDemandComponentKOmegaValue
-        );
-    }
-
-    function getDemandComponentMaxLiquidityRedemptionValue()
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _demandComponentMaxLiquidityRedemptionValue;
-    }
-
-    function setDemandComponentMaxLiquidityRedemptionValue(
-        uint256 newSpreadDemandComponentMaxLiquidityRedemptionValue
-    )
-        external
-        override
-        onlyRole(_SPREAD_DEMAND_COMPONENT_MAX_LIQUIDITY_REDEMPTION_VALUE_ROLE)
-    {
-        _demandComponentMaxLiquidityRedemptionValue = 
-            newSpreadDemandComponentMaxLiquidityRedemptionValue.toUint64();
-        emit SpreadDemandComponentMaxLiquidityRedemptionValueSet(
-            newSpreadDemandComponentMaxLiquidityRedemptionValue
-        );
+        return _DC_MAX_LIQUIDITY_REDEMPTION_VALUE;
     }
 
     function getAtParComponentKVolValue()
         external
-        view
+        pure
         override
         returns (uint256)
     {
-        return _atParComponentKVolValue;
-    }
-
-    function setAtParComponentKVolValue(
-        uint256 newSpreadAtParComponentKVolValue
-    ) external override onlyRole(_SPREAD_AT_PAR_COMPONENT_KVOL_VALUE_ROLE) {
-        _atParComponentKVolValue = newSpreadAtParComponentKVolValue.toUint64();
-        emit SpreadAtParComponentKVolValueSet(newSpreadAtParComponentKVolValue);
+        return _AT_PAR_COMPONENT_K_VOL_VALUE;
     }
 
     function getAtParComponentKHistValue()
         external
-        view
+        pure
         override
         returns (uint256)
     {
-        return _atParComponentKHistValue;
+        return _AT_PAR_COMPONENT_K_HIST_VALUE;
     }
 
-    function setAtParComponentKHistValue(
-        uint256 newSpreadAtParComponentKHistValue
-    ) external override onlyRole(_SPREAD_AT_PAR_COMPONENT_KHIST_VALUE_ROLE) {
-        _atParComponentKHistValue = newSpreadAtParComponentKHistValue.toUint64();
-        emit SpreadAtParComponentKHistValueSet(
-            newSpreadAtParComponentKHistValue
-        );
+    function _getSpreadPremiumsMaxValue() internal pure virtual returns (uint256) {
+        return _SPREAD_PREMIUMS_MAX_VALUE;
+    }
+
+    function _getDCKfValue() internal pure virtual returns (uint256) {
+        return _DC_KF_VALUE;
+    }
+
+    function _getDCLambdaValue() internal pure virtual returns (uint256) {
+        return _DC_LAMBDA_VALUE;
+    }
+
+    function _getDCKOmegaValue() internal pure virtual returns (uint256) {
+        return _DC_K_OMEGA_VALUE;
+    }
+
+    function _getDCMaxLiquidityRedemptionValue()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return _DC_MAX_LIQUIDITY_REDEMPTION_VALUE;
+    }
+
+    function _getAtParComponentKVolValue()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return _AT_PAR_COMPONENT_K_VOL_VALUE;
+    }
+
+    function _getAtParComponentKHistValue()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return _AT_PAR_COMPONENT_K_HIST_VALUE;
     }
 }

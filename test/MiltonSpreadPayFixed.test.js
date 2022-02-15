@@ -4,21 +4,17 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 const { utils } = require("web3");
 
-const {
-    USD_1_18DEC,
-    USD_20_18DEC,
-    USD_2_000_18DEC,
-    USD_10_000_18DEC,
-    USD_14_000_18DEC,
-    ZERO,
-} = require("./Const.js");
+const { ZERO } = require("./Const.js");
 
 const {
     assertError,
     getLibraries,
     prepareData,
-    prepareTestData,
-    grantAllSpreadRoles,
+    prepareMiltonSpreadBase,
+    prepareMiltonSpreadCase6,
+    prepareMiltonSpreadCase7,
+    prepareMiltonSpreadCase8,
+    prepareMiltonSpreadCase9,
 } = require("./Utils");
 
 describe("MiltonSpreadModel - Pay Fixed", () => {
@@ -37,49 +33,92 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             userThree,
             liquidityProvider,
         ]);
-        await grantAllSpreadRoles(data, admin, userOne);
     });
-
-    it("should calculate Spread Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
+    it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Ref Leg Case 1", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
+        const miltonSpread = await prepareMiltonSpreadBase();
+
+        const soap = BigInt("500000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const openingFee = BigInt("20000000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("30000000000000000"),
+            ibtPrice: ZERO,
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
+        const accruedBalance = {
+            payFixedSwaps: BigInt("1000000000000000000000") + swapCollateral,
+            receiveFixedSwaps: BigInt("13000000000000000000000"),
+            openingFee: openingFee,
+            liquidationDeposit: ZERO,
+            iporPublicationFee: ZERO,
+            liquidityPool: BigInt("15000000000000000000000") + openingFee,
+            treasury: ZERO,
+        };
+
+        const expectedQuoteValue = BigInt("45414312152356830");
+
+        //when
+        let actualQuotedValue = BigInt(
+            await miltonSpread
+                .connect(userOne)
+                .calculateQuotePayFixed(
+                    soap,
+                    accruedIpor,
+                    accruedBalance,
+                    swapCollateral
+                )
         );
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        //then
+        expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
+    });
 
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
+    it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Ref Leg Case 2", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadBase();
 
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
+        const soap = BigInt("500000000000000000000");
+        const swapCollateral = BigInt("10000000000000000000000");
+        const openingFee = BigInt("20000000000000000000");
+        const accruedIpor = {
+            indexValue: BigInt("55000000000000000"),
+            ibtPrice: ZERO,
+            exponentialMovingAverage: BigInt("40000000000000000"),
+            exponentialWeightedMovingVariance: BigInt("35000000000000000"),
+        };
+        const accruedBalance = {
+            payFixedSwaps: BigInt("1000000000000000000000") + swapCollateral,
+            receiveFixedSwaps: BigInt("13000000000000000000000"),
+            openingFee: openingFee,
+            liquidationDeposit: ZERO,
+            iporPublicationFee: ZERO,
+            liquidityPool: BigInt("15000000000000000000000") + openingFee,
+            treasury: ZERO,
+        };
 
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
+        const expectedQuoteValue = BigInt("59404211142255820");
 
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
+        //when
+        let actualQuotedValue = BigInt(
+            await miltonSpread
+                .connect(userOne)
+                .calculateQuotePayFixed(
+                    soap,
+                    accruedIpor,
+                    accruedBalance,
+                    swapCollateral
+                )
+        );
 
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
+        //then
+        expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
+    });
 
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
+    it("should calculate Spread Premiums Pay Fixed Value - Kf part + KOmega part + KVol part + KHist < Spread Max Value", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadCase6();
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -101,16 +140,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -121,46 +159,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+        const miltonSpread = await prepareMiltonSpreadCase7();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -182,16 +185,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -202,46 +204,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator != 0, KVol denominator != 0, KHist denominator != 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+        const miltonSpread = await prepareMiltonSpreadCase7();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("307589880159786950")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -263,16 +230,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -283,46 +249,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator != 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator != 0, KHist denominator != 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+        const miltonSpread = await prepareMiltonSpreadCase8();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("307589880159786950")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -344,16 +275,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -364,46 +294,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator != 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+        const miltonSpread = await prepareMiltonSpreadCase8();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("307589880159786950")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -425,16 +320,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -445,46 +339,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator = 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+        const miltonSpread = await prepareMiltonSpreadCase8();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("307589880159786950")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -509,16 +368,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -529,46 +387,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-
+        const miltonSpread = await prepareMiltonSpreadCase7();
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -593,16 +415,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -613,46 +434,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-
+        const miltonSpread = await prepareMiltonSpreadCase6();
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -677,16 +462,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -697,47 +481,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator != 0, KHist denominator = 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+        const miltonSpread = await prepareMiltonSpreadCase6();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
-
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
@@ -761,16 +509,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -781,46 +528,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part very high, Komega part normal, KVol part normal, KHist part normal", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part very high, Komega part normal, KVol part normal, KHist part normal", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+
+        const miltonSpread = await prepareMiltonSpreadCase9();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("0"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("100000000000000001500");
         const swapCollateral = BigInt("1000");
@@ -842,16 +555,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -862,47 +574,11 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part normal, KOmega part very high, KVol part normal, KHist part normal", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part very high, KVol part normal, KHist part normal", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
+        const miltonSpread = await prepareMiltonSpreadCase6();
 
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
-
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
@@ -923,16 +599,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -943,46 +618,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part very high, KHist part normal", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part very high, KHist part normal", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-
+        const miltonSpread = await prepareMiltonSpreadCase6();
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -1004,16 +643,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -1024,46 +662,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part normal, KHist very high", async () => {
+    it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part normal, KHist very high", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-
+        const miltonSpread = await prepareMiltonSpreadCase6();
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -1085,16 +687,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -1105,46 +706,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should calculate Spread Pay Fixed Value = Spread Max Value - Kf part + KOmega part + KVol part + KHist > Spread Max Value", async () => {
+    it("should calculate Spread Premiums Pay Fixed Value = Spread Max Value - Kf part + KOmega part + KVol part + KHist > Spread Max Value", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-
+        const miltonSpread = await prepareMiltonSpreadCase7();
         const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("300000009000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -1166,16 +731,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         let actualSpreadValue = BigInt(
-            await data.miltonSpread
+            await miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 )
         );
 
@@ -1186,46 +750,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should NOT calculate Spread Pay Fixed - Liquidity Pool + Opening Fee = 0", async () => {
+    it("should NOT calculate Spread Premiums Pay Fixed - Liquidity Pool + Opening Fee = 0", async () => {
         //given
-        let testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            libraries
-        );
-
-        const spreadMaxValue = BigInt("300000000000000000");
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setSpreadMaxValue(spreadMaxValue);
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentMaxLiquidityRedemptionValue(
-                BigInt("1000000000000000000")
-            );
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentLambdaValue(BigInt("300000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKfValue(BigInt("1000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setDemandComponentKOmegaValue(BigInt("30000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKVolValue(BigInt("31000000000000000"));
-
-        await data.miltonSpread
-            .connect(userOne)
-            .setAtParComponentKHistValue(BigInt("14000000000000000"));
+        const miltonSpread = await prepareMiltonSpreadCase6();
 
         const liquidityPoolBalance = BigInt("0");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -1245,16 +772,15 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         await assertError(
             //when
-            data.miltonSpread
+            miltonSpread
                 .connect(userOne)
-                .testCalculateSpreadPayFixed(
+                .testCalculateSpreadPremiumsPayFixed(
+                    soap,
                     accruedIpor,
-                    swapCollateral,
-                    swapOpeningFee,
-                    liquidityPoolBalance,
-                    payFixedSwapsBalance,
+                    liquidityPoolBalance + swapOpeningFee,
+                    payFixedSwapsBalance + swapCollateral,
                     receiveFixedSwapsBalance,
-                    soap
+                    swapCollateral
                 ),
             //then
             "IPOR_49"

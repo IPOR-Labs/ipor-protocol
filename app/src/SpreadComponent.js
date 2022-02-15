@@ -15,8 +15,7 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SPREAD Pay Fixed</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -49,8 +48,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -83,8 +81,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -120,8 +117,7 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SPREAD Receive Fixed</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -154,8 +150,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -188,8 +183,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}

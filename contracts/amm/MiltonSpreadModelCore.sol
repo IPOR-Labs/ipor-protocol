@@ -12,9 +12,10 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import {IporErrors} from "../IporErrors.sol";
 
 contract MiltonSpreadModelCore {
-	using SafeCast for int256;
+    using SafeCast for int256;
+	using SafeCast for uint256;
 
-	function _calculateSoapPlus(int256 soap, uint256 swapsBalance)
+    function _calculateSoapPlus(int256 soap, uint256 swapsBalance)
         internal
         pure
         returns (uint256)
@@ -30,55 +31,96 @@ contract MiltonSpreadModelCore {
         }
     }
 
-	function _calculateImbalanceFactorWithLambda(
+    function _calculateImbalanceFactorWithLambda(
         uint256 utilizationRateLegWithPosition,
         uint256 utilizationRateLegWithoutSwap,
         uint256 lambda
     ) internal pure returns (uint256) {
-        if (
-            utilizationRateLegWithPosition >= utilizationRateLegWithoutSwap
-        ) {
+        if (utilizationRateLegWithPosition >= utilizationRateLegWithoutSwap) {
             return Constants.D18 - utilizationRateLegWithPosition;
         } else {
-			//TODO: clarify with quants if this value can be higher than 1 if yes then use int256 instead uint256 and prepare test for it
-             return
-                 Constants.D18 -
-                 (utilizationRateLegWithPosition 
-					 -
+            //TODO: clarify with quants if this value can be higher than 1 if yes then use int256 instead uint256 and prepare test for it
+            return
+                Constants.D18 -
+                (utilizationRateLegWithPosition -
                     IporMath.division(
                         lambda *
                             (utilizationRateLegWithoutSwap -
                                 utilizationRateLegWithPosition),
                         Constants.D18
-                    )
-				);
+                    ));
         }
     }
-	
-	//@notice Calculates utilization rate including position which is opened
+
+    //@notice Calculates utilization rate including position which is opened
     function _calculateUtilizationRateWithPosition(
-        uint256 swapCollateral,
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                (swapsBalance + swapCollateral) * Constants.D18,
-                liquidityPoolBalance + swapOpeningFee
+                swapsBalance* Constants.D18,
+                liquidityPoolBalance
             );
     }
 
-	//URleg(0)
+    //URleg(0)
     function _calculateUtilizationRateWithoutSwap(
-        uint256 swapOpeningFee,
         uint256 liquidityPoolBalance,
         uint256 swapsBalance
     ) internal pure returns (uint256) {
         return
             IporMath.division(
                 swapsBalance * Constants.D18,
-                liquidityPoolBalance + swapOpeningFee
+                liquidityPoolBalance
             );
+    }
+
+    function _calculateHistoricalDeviationPayFixed(
+        uint256 kHist,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 maxSpreadValue
+    ) internal pure returns (uint256) {
+        if (exponentialMovingAverage < iporIndexValue) {
+            return 0;
+        } else {
+            uint256 mu = IporMath.absoluteValue(
+                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
+            );
+            if (mu == Constants.D18) {
+                return maxSpreadValue;
+            } else {
+                return
+                    IporMath.division(
+                        kHist * Constants.D18,
+                        Constants.D18 - mu
+                    );
+            }
+        }
+    }
+
+    function _calculateHistoricalDeviationRecFixed(
+        uint256 kHist,
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 maxSpreadValue
+    ) internal pure returns (uint256) {
+        if (exponentialMovingAverage > iporIndexValue) {
+            return 0;
+        } else {
+            uint256 mu = IporMath.absoluteValue(
+                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
+            );
+            if (mu == Constants.D18) {
+                return maxSpreadValue;
+            } else {
+                return
+                    IporMath.division(
+                        kHist * Constants.D18,
+                        Constants.D18 - mu
+                    );
+            }
+        }
     }
 }

@@ -5,31 +5,31 @@ import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 
 interface IMiltonSpreadModel {
-    function calculatePartialSpreadPayFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor
-    ) external view returns (uint256 spreadValue);
+    function calculateQuotePayFixed(
+        int256 soap,
+        DataTypes.AccruedIpor memory accruedIpor,
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
+    ) external pure returns (uint256 quoteValue);
+
+    function calculateQuoteReceiveFixed(
+        int256 soap,
+        DataTypes.AccruedIpor memory accruedIpor,
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
+    ) external pure returns (uint256 quoteValue);
 
     function calculateSpreadPayFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
+        int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
-    ) external view returns (uint256 spreadValue);
-
-    function calculatePartialSpreadRecFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
-        DataTypes.AccruedIpor memory accruedIpor
-    ) external view returns (uint256 spreadValue);
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
+    ) external pure returns (uint256 spreadValue);
 
     function calculateSpreadRecFixed(
-        IMiltonStorage miltonStorage,
-        uint256 calculateTimestamp,
+        int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        uint256 swapCollateral,
-        uint256 swapOpeningFee
-    ) external view returns (uint256 spreadValue);
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
+        uint256 swapCollateral
+    ) external pure returns (uint256 spreadValue);
 }

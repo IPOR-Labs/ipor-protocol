@@ -7,36 +7,6 @@ interface IIporAssetConfiguration {
     event MiltonStorageAddressUpdated(address indexed newAddress);
     event JosephAddressUpdated(address indexed newJosephAddress);
 
-    event IncomeTaxPercentageSet(uint256 newIncomeTaxPercentage);
-    event LiquidationDepositAmountSet(uint256 newLiquidationDepositAmount);
-    event OpeningFeePercentageSet(uint256 newOpeningFeePercentage);
-
-    event OpeningFeeForTreasuryPercentageSet(
-        uint256 newOpeningFeeForTreasuryPercentage
-    );
-
-    event IporPublicationFeeAmountSet(uint256 newIporPublicationFeeAmount);
-
-    event LiquidityPoolMaxUtilizationPercentageSet(
-        uint256 newLpMaxUtilizationPercentageSet
-    );
-
-    event LiquidityPoolMaxUtilizationPerLegPercentageSet(
-        uint256 newLpMaxUtilizationPercentageSet
-    );
-
-    event RedeemMaxUtilizationPercentageSet(
-        uint256 newRedeemMaxUtilizationPercentageSet
-    );
-    event MaxPositionTotalAmountSet(uint256 newMaxPositionTotalAmount);
-
-    event MaxCollateralizationFactorValueSet(
-        uint256 newMaxCollateralizationFactorValue
-    );
-    event MinCollateralizationFactorValueSet(
-        uint256 newMinCollateralizationFactorValue
-    );
-
     event AssetManagementVaultUpdated(
         address indexed asset,
         address indexed newAssetManagementVaultAddress
@@ -51,8 +21,6 @@ interface IIporAssetConfiguration {
         address indexed newTreasureTreasurer
     );
 
-    event DecayFactorValueUpdated(address asset, uint256 newDecayFactorValue);
-
     function getMilton() external view returns (address);
 
     function setMilton(address milton) external;
@@ -65,85 +33,7 @@ interface IIporAssetConfiguration {
 
     function setJoseph(address joseph) external;
 
-    function getIncomeTaxPercentage() external view returns (uint256);
-
-    function setIncomeTaxPercentage(uint256 incomeTaxPercentage) external;
-
-    function getLiquidationDepositAmount() external view returns (uint256);
-
-    function setLiquidationDepositAmount(uint256 liquidationDepositAmount)
-        external;
-
-    function getOpeningFeePercentage() external view returns (uint256);
-
-    function setOpeningFeePercentage(uint256 openingFeePercentage) external;
-
-    function getOpeningFeeForTreasuryPercentage()
-        external
-        view
-        returns (uint256);
-
-    function setOpeningFeeForTreasuryPercentage(
-        uint256 openingFeeForTreasuryPercentage
-    ) external;
-
-    function getIporPublicationFeeAmount() external view returns (uint256);
-
-    function setIporPublicationFeeAmount(uint256 iporPublicationFeeAmount)
-        external;
-
-    function getLiquidityPoolMaxUtilizationPercentage()
-        external
-        view
-        returns (uint256);
-
-    function setLiquidityPoolMaxUtilizationPercentage(
-        uint256 newLpMaxUtilizationPercentage
-    ) external;
-
-    function getLiquidityPoolMaxUtilizationPerLegPercentage()
-        external
-        view
-        returns (uint256);
-
-    function setLiquidityPoolMaxUtilizationPerLegPercentage(
-        uint256 newLpMaxUtilizationPercentage
-    ) external;
-
-    function getRedeemLpMaxUtilizationPercentage()
-        external
-        view
-        returns (uint256);
-
-    function setRedeemLpMaxUtilizationPercentage(
-        uint256 newRedeemMaxUtilizationPercentage
-    ) external;
-
-    function getMaxSwapTotalAmount() external view returns (uint256);
-
-    function setMaxSwapTotalAmount(uint256 maxSwapTotalAmount) external;
-
-    function getMaxCollateralizationFactorValue()
-        external
-        view
-        returns (uint256);
-
-    function setMaxCollateralizationFactorValue(
-        uint256 maxCollateralizationFactorValue
-    ) external;
-
-    function getMinCollateralizationFactorValue()
-        external
-        view
-        returns (uint256);
-
-    function setMinCollateralizationFactorValue(
-        uint256 minCollateralizationFactorValue
-    ) external;
-
     function getDecimals() external view returns (uint8);
-
-    function getMaxSlippagePercentage() external view returns (uint256);
 
     function getIpToken() external view returns (address);
 
@@ -159,8 +49,4 @@ interface IIporAssetConfiguration {
 
     function setAssetManagementVault(address newAssetManagementVaultAddress)
         external;
-
-    function getDecayFactorValue() external view returns (uint256);
-
-    function setDecayFactorValue(uint256 newDecayFactorValue) external;
 }

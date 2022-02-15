@@ -11,61 +11,6 @@ const roles = [
         adminRole: keccak256("ROLES_INFO_ADMIN_ROLE"),
         role: keccak256("ROLES_INFO_ROLE"),
     },
-	{
-        name: "MILTON_ROLE",
-        adminRole: keccak256("MILTON_ADMIN_ROLE"),
-        role: keccak256("MILTON_ROLE"),
-    },
-    {
-        name: "MILTON_STORAGE_ROLE",
-        adminRole: keccak256("MILTON_STORAGE_ADMIN_ROLE"),
-        role: keccak256("MILTON_STORAGE_ROLE"),
-    },
-	{
-        name: "JOSEPH_ROLE",
-        adminRole: keccak256("JOSEPH_ADMIN_ROLE"),
-        role: keccak256("JOSEPH_ROLE"),
-    },
-    {
-        name: "INCOME_TAX_PERCENTAGE_ROLE",
-        adminRole: keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-        role: keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE",
-        adminRole: keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
-        role: keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "LIQUIDATION_DEPOSIT_AMOUNT_ROLE",
-        adminRole: keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE"),
-        role: keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"),
-    },
-    {
-        name: "OPENING_FEE_PERCENTAGE_ROLE",
-        adminRole: keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-        role: keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "IPOR_PUBLICATION_FEE_AMOUNT_ROLE",
-        adminRole: keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE"),
-        role: keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"),
-    },
-    {
-        name: "LP_MAX_UTILIZATION_PERCENTAGE_ROLE",
-        adminRole: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-        role: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "MAX_POSITION_TOTAL_AMOUNT_ROLE",
-        adminRole: keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
-        role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
-    },
-    {
-        name: "COLLATERALIZATION_FACTOR_VALUE_ROLE",
-        adminRole: keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"),
-        role: keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE"),
-    },
     {
         name: "CHARLIE_TREASURER_ROLE",
         adminRole: keccak256("CHARLIE_TREASURER_ADMIN_ROLE"),
@@ -81,11 +26,6 @@ const roles = [
         adminRole: keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"),
         role: keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
     },
-    {
-        name: "DECAY_FACTOR_VALUE_ROLE",
-        adminRole: keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
-        role: keccak256("DECAY_FACTOR_VALUE_ROLE"),
-    },
 ];
 
 const rolesNotGrant = [
@@ -93,77 +33,6 @@ const rolesNotGrant = [
         name: "ROLES_INFO_ROLE",
         code: "0xfb1902cbac4bf447ada58dff398caab7aa9089eba1be77a2833d9e08dbe8664c",
         role: keccak256("ROLES_INFO_ROLE"),
-    },
-	{
-        name: "MILTON_ROLE",
-        code: "0x1b16f266cfe5113986bbdf79323bd64ba74c9e2631c82de1297c13405226a952",
-        role: keccak256("MILTON_ROLE"),
-    },
-	{
-        name: "MILTON_ADMIN_ROLE",
-        role: keccak256("MILTON_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-    {
-        name: "MILTON_STORAGE_ROLE",
-        code: "0x61e410eb94acd095b84b0de4a9befc42adb8e88aad1e0c387e8f14c5c05f4cd5",
-        role: keccak256("MILTON_STORAGE_ROLE"),
-    },	
-    {
-        name: "MILTON_STORAGE_ADMIN_ROLE",
-        role: keccak256("MILTON_STORAGE_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-	{
-        name: "JOSEPH_ROLE",
-        code: "0x811ff4f923fc903f4390f8acf72873b5d1b288ec77b442fe124d0f95d6a53731",
-        role: keccak256("JOSEPH_ROLE"),
-    },
-	{
-        name: "JOSEPH_ADMIN_ROLE",
-        role: keccak256("JOSEPH_ADMIN_ROLE"),
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-    },
-    {
-        name: "INCOME_TAX_PERCENTAGE_ROLE",
-        code: "0xcaa6983304bafc9d674310f90270b5949e0bb6e51e706428584d7da457ddeccd",
-        role: keccak256("INCOME_TAX_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE",
-        code: "0xebe66983650b4d8b57cb18fe7c97cdfe49625e06d8c6e70e646beb3a8ae73dd6",
-        role: keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "LIQUIDATION_DEPOSIT_AMOUNT_ROLE",
-        code: "0xe7cc2a3bd9f3d49de9396c60dc8e9969986ea020b9bf72f8ab3527c64c7cbcf3",
-        role: keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ROLE"),
-    },
-    {
-        name: "OPENING_FEE_PERCENTAGE_ROLE",
-        code: "0x8714c5b454a0d07dd83274b33d478ceb04fb8767fe2079073b335f6e3a9feb14",
-        role: keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "IPOR_PUBLICATION_FEE_AMOUNT_ROLE",
-        code: "0x789f25814c078f5d3a73f07837d3717096a7f31ff58dc1f3971a1aed3a8054d0",
-        role: keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ROLE"),
-    },
-    {
-        name: "LP_MAX_UTILIZATION_PERCENTAGE_ROLE",
-        code: "0xa4c64c3339465ad53a61eda2523e5cb6e0da178b7008bcea975b07e07810b588",
-        role: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
-    },
-    {
-        name: "MAX_POSITION_TOTAL_AMOUNT_ROLE",
-        code: "0x7c8d8e1bbd6d112e40e3f26d08aabeb9e7e37771bd3877eb3850332e23f7c782",
-        role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ROLE"),
-    },
-
-    {
-        name: "COLLATERALIZATION_FACTOR_VALUE_ROLE",
-        code: "0xc73b383cc34ef691c51adf836f82981b87c968081f10ae91077611045805b35e",
-        role: keccak256("COLLATERALIZATION_FACTOR_VALUE_ROLE"),
     },
     {
         name: "CHARLIE_TREASURER_ROLE",
@@ -180,55 +49,11 @@ const rolesNotGrant = [
         code: "0x1d3c5c61c32255cb922b09e735c0e9d76d2aacc424c3f7d9b9b85c478946fa26",
         role: keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
     },
-    {
-        name: "DECAY_FACTOR_VALUE_ROLE",
-        code: "0xed044c57d37423bb4623f9110729ee31cae04cae931fe5ab3b24fc2e474fbb70",
-        role: keccak256("DECAY_FACTOR_VALUE_ROLE"),
-    },
+
     {
         name: "ROLES_INFO_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("ROLES_INFO_ADMIN_ROLE"),
-    },
-    {
-        name: "INCOME_TAX_PERCENTAGE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("INCOME_TAX_PERCENTAGE_ADMIN_ROLE"),
-    },
-    {
-        name: "OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("OPENING_FEE_FOR_TREASURY_PERCENTAGE_ADMIN_ROLE"),
-    },
-    {
-        name: "LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("LIQUIDATION_DEPOSIT_AMOUNT_ADMIN_ROLE"),
-    },
-    {
-        name: "OPENING_FEE_PERCENTAGE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-    },
-    {
-        name: "IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("IPOR_PUBLICATION_FEE_AMOUNT_ADMIN_ROLE"),
-    },
-    {
-        name: "LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-    },
-    {
-        name: "MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("MAX_POSITION_TOTAL_AMOUNT_ADMIN_ROLE"),
-    },
-    {
-        name: "COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("COLLATERALIZATION_FACTOR_VALUE_ADMIN_ROLE"),
     },
     {
         name: "CHARLIE_TREASURER_ADMIN_ROLE",
@@ -244,11 +69,6 @@ const rolesNotGrant = [
         name: "ASSET_MANAGEMENT_VAULT_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"),
-    },
-    {
-        name: "DECAY_FACTOR_VALUE_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("DECAY_FACTOR_VALUE_ADMIN_ROLE"),
     },
 ];
 
@@ -280,11 +100,13 @@ describe("IporAssetConfigurationRoles", () => {
                 "IporAssetConfiguration"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const iporAssetConfiguration = await IporAssetConfiguration.deploy(
+            const iporAssetConfiguration =
+                await IporAssetConfiguration.deploy();
+            await iporAssetConfiguration.deployed();
+            await iporAssetConfiguration.initialize(
                 tokenDai.address,
                 ipTokenDai.address
             );
-            await iporAssetConfiguration.deployed();
 
             let hasAdminRole = await iporAssetConfiguration.hasRole(
                 adminRole,
@@ -362,11 +184,13 @@ describe("IporAssetConfigurationRoles", () => {
                 "IporAssetConfiguration"
             );
             const [admin, userOne, userTwo] = await ethers.getSigners();
-            const iporAssetConfiguration = await IporAssetConfiguration.deploy(
+            const iporAssetConfiguration =
+                await IporAssetConfiguration.deploy();
+            await iporAssetConfiguration.deployed();
+            await iporAssetConfiguration.initialize(
                 tokenDai.address,
                 ipTokenDai.address
             );
-            await iporAssetConfiguration.deployed();
 
             await expect(
                 iporAssetConfiguration

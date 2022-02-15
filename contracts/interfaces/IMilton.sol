@@ -4,7 +4,9 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
-    function authorizeJoseph() external;
+    function getVersion() external pure returns (uint256);
+
+    function authorizeJoseph(address joseph) external;
 
     function pause() external;
 
@@ -40,9 +42,10 @@ interface IMilton {
         view
         returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculateSwapPayFixedValue(
-        DataTypes.IporSwapMemory memory swap
-    ) external view returns (int256);
+    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
+        external
+        view
+        returns (int256);
 
     function calculateSwapReceiveFixedValue(
         DataTypes.IporSwapMemory memory swap

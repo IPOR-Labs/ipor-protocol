@@ -35,7 +35,7 @@ describe("IpToken", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            libraries
+            0
         );
     });
 
@@ -65,7 +65,7 @@ describe("IpToken", () => {
 
     it("should emit event", async () => {
         //given
-        await testData.iporAssetConfigurationDai.setJoseph(admin.address);
+        await testData.ipTokenDai.setJoseph(admin.address);
 
         await expect(
             testData.ipTokenDai.mint(userOne.address, USD_10_000_18DEC)
@@ -73,14 +73,12 @@ describe("IpToken", () => {
             .to.emit(testData.ipTokenDai, "Mint")
             .withArgs(userOne.address, USD_10_000_18DEC);
 
-        await testData.iporAssetConfigurationDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.ipTokenDai.setJoseph(testData.josephDai.address);
     });
 
     it("should contain 18 decimals", async () => {
         //given
-        await testData.iporAssetConfigurationDai.setJoseph(admin.address);
+        await testData.ipTokenDai.setJoseph(admin.address);
         const expectedDecimals = BigInt("18");
         //when
         let actualDecimals = BigInt(await testData.ipTokenDai.decimals());
@@ -91,9 +89,7 @@ describe("IpToken", () => {
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
         ).to.be.eql(actualDecimals);
 
-        await testData.iporAssetConfigurationDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.ipTokenDai.setJoseph(testData.josephDai.address);
     });
 
     it("should contain correct underlying token address", async () => {

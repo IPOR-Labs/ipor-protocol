@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
@@ -13,26 +12,20 @@ import "../libraries/Constants.sol";
 import "../tokenization/Joseph.sol";
 
 contract ItfJoseph is Joseph {
-
-	constructor(address asset, address initialIporConfiguration) Joseph(asset, initialIporConfiguration) {}
-	
+    
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
-    function itfProvideLiquidity(
-        uint256 liquidityAmount,
-        uint256 timestamp
-    ) external {        
-        _provideLiquidity(
-            liquidityAmount,
-            _iporAssetConfiguration.getDecimals(),
-            timestamp
-        );
+    function itfProvideLiquidity(uint256 liquidityAmount, uint256 timestamp)
+        external
+    {
+        _provideLiquidity(liquidityAmount, _decimals, timestamp);
     }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
-    function itfRedeem(
-        uint256 ipTokenVolume,
-        uint256 timestamp
-    ) external {
+    function itfRedeem(uint256 ipTokenVolume, uint256 timestamp) external {
         _redeem(ipTokenVolume, timestamp);
     }
+
+	function getRedeemLpMaxUtilizationPercentage() external pure returns(uint256) {
+		return _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE;
+	}
 }

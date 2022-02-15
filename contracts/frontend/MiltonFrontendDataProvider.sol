@@ -1,22 +1,45 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 
-contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
-    IIporConfiguration internal immutable _iporConfiguration;
+contract MiltonFrontendDataProvider is
+    OwnableUpgradeable,
+    UUPSUpgradeable,
+    IMiltonFrontendDataProvider
+{
+    IIporConfiguration internal _iporConfiguration;
+    address internal _warren;
+    address internal _assetDai;
+    address internal _assetUsdc;
+    address internal _assetUsdt;
 
-    constructor(IIporConfiguration initialIporConfiguration) {
-        _iporConfiguration = initialIporConfiguration;
+    function initialize(
+        IIporConfiguration iporConfiguration,
+        address warren,
+        address assetDai,
+        address assetUsdt,
+        address assetUsdc
+    ) public initializer {
+        __Ownable_init();
+        _iporConfiguration = iporConfiguration;
+        _warren = warren;
+        _assetDai = assetDai;
+        _assetUsdc = assetUsdc;
+        _assetUsdt = assetUsdt;
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function getIpTokenExchangeRate(address asset)
         external
@@ -131,72 +154,97 @@ contract MiltonFrontendDataProvider is IMiltonFrontendDataProvider {
         override
         returns (IporAssetConfigurationFront[] memory)
     {
-        address[] memory assets = _iporConfiguration.getAssets();
-        IporAssetConfigurationFront[]
-            memory iporAssetConfigurationsFront = new IporAssetConfigurationFront[](
-                assets.length
-            );
-
-        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-            _iporConfiguration.getMiltonSpreadModel()
-        );
-
-        IWarren warren = IWarren(_iporConfiguration.getWarren());
-
         uint256 timestamp = block.timestamp;
 
-        uint256 spreadPayFixedValue;
-        uint256 spreadRecFixedValue;
-        uint256 i = 0;
-        for (i; i != assets.length; i++) {
-            IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                    _iporConfiguration.getIporAssetConfiguration(assets[i])
-                );
-            IMiltonStorage miltonStorage = IMiltonStorage(
-                iporAssetConfiguration.getMiltonStorage()
+        IporAssetConfigurationFront[]
+            memory iporAssetConfigurationsFront = new IporAssetConfigurationFront[](
+                3
             );
 
-            DataTypes.AccruedIpor memory accruedIpor = warren.getAccruedIndex(
-                timestamp,
-                assets[i]
-            );
-
-            try
-                spreadModel.calculatePartialSpreadPayFixed(
-                    miltonStorage,
-                    timestamp,
-                    accruedIpor
-                )
-            returns (uint256 _spreadPayFixedValue) {
-                spreadPayFixedValue = _spreadPayFixedValue;
-            } catch {
-                spreadPayFixedValue = 0;
-            }
-
-            try
-                spreadModel.calculatePartialSpreadRecFixed(
-                    miltonStorage,
-                    timestamp,
-                    accruedIpor
-                )
-            returns (uint256 _spreadRecFixedValue) {
-                spreadRecFixedValue = _spreadRecFixedValue;
-            } catch {
-                spreadRecFixedValue = 0;
-            }
-
-            iporAssetConfigurationsFront[i] = IporAssetConfigurationFront(
-                assets[i],
-                iporAssetConfiguration.getMinCollateralizationFactorValue(),
-                iporAssetConfiguration.getMaxCollateralizationFactorValue(),
-                iporAssetConfiguration.getOpeningFeePercentage(),
-                iporAssetConfiguration.getIporPublicationFeeAmount(),
-                iporAssetConfiguration.getLiquidationDepositAmount(),
-                iporAssetConfiguration.getIncomeTaxPercentage(),
-                spreadPayFixedValue,
-                spreadRecFixedValue
-            );
-        }
+        iporAssetConfigurationsFront[0] = _createIporAssetConfFront(
+            _assetDai,
+            timestamp
+        );
+        iporAssetConfigurationsFront[1] = _createIporAssetConfFront(
+            _assetUsdt,
+            timestamp
+        );
+        iporAssetConfigurationsFront[2] = _createIporAssetConfFront(
+            _assetUsdc,
+            timestamp
+        );
         return iporAssetConfigurationsFront;
+    }
+
+    function _createIporAssetConfFront(address asset, uint256 timestamp)
+        internal
+        view
+        returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
+    {
+        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
+                _iporConfiguration.getIporAssetConfiguration(asset)
+            );
+        IMiltonStorage miltonStorage = IMiltonStorage(
+            iporAssetConfiguration.getMiltonStorage()
+        );
+        IMiltonConfiguration milton = IMiltonConfiguration(
+            iporAssetConfiguration.getMilton()
+        );
+
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
+            milton.getMiltonSpreadModel()
+        );
+
+        DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren)
+            .getAccruedIndex(timestamp, asset);
+
+        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+            .getBalance();
+
+        uint256 spreadPayFixedValue;
+        try
+            spreadModel.calculateSpreadPayFixed(
+                miltonStorage.calculateSoapPayFixed(
+                    accruedIpor.ibtPrice,
+                    timestamp
+                ),
+                accruedIpor,
+                balance,
+                0
+            )
+        returns (uint256 _spreadPayFixedValue) {
+            spreadPayFixedValue = _spreadPayFixedValue;
+        } catch {
+            spreadPayFixedValue = 0;
+        }
+
+        uint256 spreadRecFixedValue;
+        try
+            spreadModel.calculateSpreadRecFixed(
+                miltonStorage.calculateSoapReceiveFixed(
+                    accruedIpor.ibtPrice,
+                    timestamp
+                ),
+                accruedIpor,
+                balance,
+                0
+            )
+        returns (uint256 _spreadRecFixedValue) {
+            spreadRecFixedValue = _spreadRecFixedValue;
+        } catch {
+            spreadRecFixedValue = 0;
+        }
+
+        iporAssetConfigurationFront = IporAssetConfigurationFront(
+            asset,
+            milton.getMinCollateralizationFactorValue(),
+            milton.getMaxCollateralizationFactorValue(),
+            milton.getOpeningFeePercentage(),
+            milton.getIporPublicationFeeAmount(),
+            milton.getLiquidationDepositAmount(),
+            milton.getIncomeTaxPercentage(),
+            spreadPayFixedValue,
+            spreadRecFixedValue
+        );
     }
 }
