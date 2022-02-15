@@ -81,7 +81,7 @@ contract Milton is
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 1;
+        return 5;
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
@@ -102,10 +102,6 @@ contract Milton is
     function unpause() external override onlyOwner {
         _unpause();
     }
-
-    //    fallback() external payable  {
-    //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
-    //    }
 
     function authorizeJoseph(address joseph)
         external
