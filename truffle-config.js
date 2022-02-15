@@ -29,13 +29,13 @@ module.exports = {
                     process.env.ETH_BC_URL
                 );
             },
-            network_id: "5777",
+            network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
         },
         docker_debug: {
             host: "127.0.0.1",
             port: 9545,
-            network_id: "5777",
+            network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
         },
         develop: {
@@ -47,7 +47,7 @@ module.exports = {
         develop2: {
             host: "127.0.0.1",
             port: 7545,
-            network_id: "5777",
+            network_id: process.env.ETH_BC_NETWORK_ID,
         },
         kovan: {
             networkCheckTimeout: 10000,
