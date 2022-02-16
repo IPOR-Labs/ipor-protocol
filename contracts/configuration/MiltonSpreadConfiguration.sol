@@ -5,7 +5,7 @@ import "../interfaces/IMiltonSpreadConfiguration.sol";
 
 contract MiltonSpreadConfiguration is IMiltonSpreadConfiguration {
     //@notice Spread Max Value
-    uint256 internal constant _SPREAD_PREMIUMS_MAX_VALUE = 3e16;
+    uint256 internal constant _SPREAD_PREMIUMS_MAX_VALUE = 3e15;
 
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
     uint256 internal constant _DC_KF_VALUE = 1e15;

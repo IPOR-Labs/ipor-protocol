@@ -401,7 +401,7 @@ describe("Joseph", () => {
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000747756729810568");
+        let expectedExchangeRate = BigInt("1000074775672981057");
 
         await testData.warren
             .connect(userOne)
@@ -493,7 +493,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonStorageDai.getBalance();
 
-        const expectedExchangeRate = BigInt("1004250360789776789");
+        const expectedExchangeRate = BigInt("1003085206253385962");
 
         //when
         let actualExchangeRate = BigInt(
@@ -572,7 +572,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonStorageDai.getBalance();
 
-        const expectedExchangeRate = BigInt("1002879245824171323");
+        const expectedExchangeRate = BigInt("1001669225883991862");
 
         //when
         let actualExchangeRate = BigInt(
@@ -653,7 +653,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonStorageDai.getBalance();
 
-        const expectedExchangeRate = BigInt("989066232808424041");
+        const expectedExchangeRate = BigInt("987856212868244579");
 
         //when
         let actualExchangeRate = BigInt(
@@ -732,7 +732,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonStorageDai.getBalance();
 
-        const expectedExchangeRate = BigInt("989066232808424042");
+        const expectedExchangeRate = BigInt("987856212868244580");
 
         //when
         let actualExchangeRate = BigInt(
@@ -816,7 +816,7 @@ describe("Joseph", () => {
 
         // Notice! |SOAP| > Liquidity Pool Balance
         const expectedSoap = BigInt("8471981316324997495722");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedLiquidityPoolBalance = BigInt("5008066799601196410768");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -908,7 +908,7 @@ describe("Joseph", () => {
 
         //Notice! |SOAP| > Liquidity Pool Balance
         const expectedSoap = BigInt("8471981316324997665162");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedLiquidityPoolBalance = BigInt("5008066799601196410768");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1000,10 +1000,10 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("232016605434837042");
+        const expectedExchangeRate = BigInt("230806585494657581");
         //Notice! |SOAP| > Liquidity Pool Balance
         const expectedSoap = BigInt("-8840328330078258430809");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedLiquidityPoolBalance = BigInt("5008066799601196410768");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1093,11 +1093,11 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("232016605434837039");
+        const expectedExchangeRate = BigInt("230806585494657578");
 
         //Notice! |SOAP| > Liquidity Pool Balance
         const expectedSoap = BigInt("-8840328330078258261370");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedLiquidityPoolBalance = BigInt("5008066799601196410768");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1140,7 +1140,7 @@ describe("Joseph", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000747756729810568");
+        let expectedExchangeRate = BigInt("1000074775672981057");
 
         await testData.warren
             .connect(userOne)
@@ -1292,12 +1292,12 @@ describe("Joseph", () => {
             );
 
         //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1071428571428571429");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
         const expectedIpTokenBalanceForUserThree = BigInt(
-            "874999999999999999854"
+            "1399999999999999999440"
         );
 
         // //when
@@ -1380,11 +1380,11 @@ describe("Joseph", () => {
             );
 
         //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1071428571428571429");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
-        const expectedIpTokenBalanceForUserThree = BigInt("0");
+        const expectedIpTokenBalanceForUserThree = BigInt("524999999999999999586");
 
         //when
         await testData.josephDai
@@ -1469,13 +1469,13 @@ describe("Joseph", () => {
             );
 
         //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1071428571428571429");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonUsdt.calculateExchangeRate(
                 params.openTimestamp
             )
         );
-        const expectedIpTokenBalanceForUserThree = BigInt("0");
+        const expectedIpTokenBalanceForUserThree = BigInt("524999999999999999586");
 
         //when
         await testData.josephUsdt

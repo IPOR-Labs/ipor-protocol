@@ -535,7 +535,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
         );
         liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
-
+	event LogDebug(string name, int256 value);
     function _updateBalancesWhenCloseSwapPayFixed(
         address account,
         DataTypes.IporSwapMemory memory swap,
@@ -543,7 +543,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
         uint256 closingTimestamp,
         uint256 cfgIncomeTaxPercentage
     ) internal {
-        uint256 abspositionValue = IporMath.absoluteValue(positionValue);
+        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
 
         //decrease from balances the liquidation deposit
         require(
@@ -559,7 +559,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
             _balances.payFixedSwaps -
             swap.collateral.toUint128();
         //TODO: remove duplication
-        if (abspositionValue < swap.collateral) {
+        if (absPositionValue < swap.collateral) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (account != swap.buyer) {
                 require(
@@ -569,28 +569,30 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
                 );
             }
         }
-
+		
         uint256 incomeTax = IporMath.division(
-            abspositionValue * cfgIncomeTaxPercentage,
+            absPositionValue * cfgIncomeTaxPercentage,
             Constants.D18
         );
+		emit LogDebug("incomeTax", int256(incomeTax));
+		emit LogDebug("positionValue", positionValue);
 
         _balances.treasury = _balances.treasury + incomeTax.toUint128();
 
         if (positionValue > 0) {
             require(
-                _balances.liquidityPool >= abspositionValue,
+                _balances.liquidityPool >= absPositionValue,
                 IporErrors
                     .MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW
             );
 
             _balances.liquidityPool =
                 _balances.liquidityPool -
-                abspositionValue.toUint128();
+                absPositionValue.toUint128();
         } else {
             _balances.liquidityPool =
                 _balances.liquidityPool +
-                (abspositionValue - incomeTax).toUint128();
+                (absPositionValue - incomeTax).toUint128();
         }
     }
 
@@ -601,7 +603,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
         uint256 closingTimestamp,
         uint256 cfgIncomeTaxPercentage
     ) internal {
-        uint256 abspositionValue = IporMath.absoluteValue(positionValue);
+        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
 
         //decrease from balances the liquidation deposit
         require(
@@ -619,7 +621,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
 
         //TODO: remove duplication
 
-        if (abspositionValue < swap.collateral) {
+        if (absPositionValue < swap.collateral) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (account != swap.buyer) {
                 require(
@@ -629,28 +631,30 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
                 );
             }
         }
-
+		
         uint256 incomeTax = IporMath.division(
-            abspositionValue * cfgIncomeTaxPercentage,
+            absPositionValue * cfgIncomeTaxPercentage,
             Constants.D18
         );
+		emit LogDebug("incomeTax", int256(incomeTax));
+		emit LogDebug("positionValue", positionValue);
 
         _balances.treasury = _balances.treasury + incomeTax.toUint128();
 
         if (positionValue > 0) {
             require(
-                _balances.liquidityPool >= abspositionValue,
+                _balances.liquidityPool >= absPositionValue,
                 IporErrors
                     .MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW
             );
 
             _balances.liquidityPool =
                 _balances.liquidityPool -
-                abspositionValue.toUint128();
+                absPositionValue.toUint128();
         } else {
             _balances.liquidityPool =
                 _balances.liquidityPool +
-                (abspositionValue - incomeTax).toUint128();
+                (absPositionValue - incomeTax).toUint128();
         }
     }
 

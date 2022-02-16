@@ -913,7 +913,7 @@ describe("Joseph - redeem", () => {
         //BEGIN HACK - substract liquidity without  burn ipToken
         await testData.miltonStorageDai.setJoseph(admin.address);
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("55000000000000000000000")
+            BigInt("45000000000000000000000")
         );
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
@@ -987,7 +987,7 @@ describe("Joseph - redeem", () => {
         await testData.miltonStorageDai.setJoseph(admin.address);
 
         await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("55000000000000000000000")
+            BigInt("45000000000000000000000")
         );
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken

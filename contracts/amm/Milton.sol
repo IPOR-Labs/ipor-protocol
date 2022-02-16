@@ -302,6 +302,13 @@ contract Milton is
         }
     }
 
+	function _calculateIncomeTaxValue(int256 positionValue) internal pure returns(uint256) {		
+		return IporMath.division(
+            IporMath.absoluteValue(positionValue) * _getIncomeTaxPercentage(),
+            Constants.D18
+        );
+	}
+
     function _calculateSpread(uint256 calculateTimestamp)
         internal
         view
@@ -773,9 +780,9 @@ contract Milton is
         uint256 _calculationTimestamp,
         uint256 incomeTaxPercentage
     ) internal {
-        uint256 abspositionValue = IporMath.absoluteValue(positionValue);
+        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
 
-        if (abspositionValue < derivativeItem.collateral) {
+        if (absPositionValue < derivativeItem.collateral) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (msg.sender != derivativeItem.buyer) {
                 require(
@@ -792,9 +799,9 @@ contract Milton is
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral +
-                    abspositionValue -
+                    absPositionValue -
                     IporMath.division(
-                        abspositionValue * incomeTaxPercentage,
+                        absPositionValue * incomeTaxPercentage,
                         Constants.D18
                     )
             );
@@ -803,7 +810,7 @@ contract Milton is
             _transferDerivativeAmount(
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
-                derivativeItem.collateral - abspositionValue
+                derivativeItem.collateral - absPositionValue
             );
         }
     }
@@ -857,18 +864,14 @@ contract Milton is
             (totalAmount -
                 liquidationDepositAmount -
                 iporPublicationFeeAmount) * Constants.D18,
-            Constants.D18 +
-                IporMath.division(
-                    collateralizationFactor * openingFeePercentage,
-                    Constants.D18
-                )
+            Constants.D18 + openingFeePercentage                
         );
         notional = IporMath.division(
             collateralizationFactor * collateral,
             Constants.D18
         );
         openingFee = IporMath.division(
-            notional * openingFeePercentage,
+            collateral * openingFeePercentage,
             Constants.D18
         );
     }

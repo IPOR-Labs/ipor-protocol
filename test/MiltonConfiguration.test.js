@@ -119,7 +119,7 @@ describe("MiltonConfiguration", () => {
         //when
         let actualValue = await miltonConfiguration.getOpeningFeePercentage();
         //then
-        expect(actualValue).to.be.eq(BigInt("300000000000000"));
+        expect(actualValue).to.be.eq(BigInt("10000000000000000"));
     });
     it("should setup init value for Opening Fee Treasury Percentage", async () => {
         //when

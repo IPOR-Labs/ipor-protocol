@@ -292,14 +292,9 @@ module.exports.prepareMiltonSpreadCase11 = async () => {
 };
 
 module.exports.getMockMiltonCase = async (caseNumber) => {
-    let MockCaseMilton = null;
-    if (caseNumber === 0) {
-        MockCaseMilton = await ethers.getContractFactory("ItfMilton");
-    } else {
-        MockCaseMilton = await ethers.getContractFactory(
-            "MockCase" + caseNumber + "Milton"
-        );
-    }
+    let MockCaseMilton = await ethers.getContractFactory(
+        "MockCase" + caseNumber + "Milton"
+    );
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
 };
