@@ -61,23 +61,21 @@ module.exports = async (done) => {
     const zeroNight = BigNumber.from("900000000000000000"); // 0.9*10^18
     const timeDeltaPerYear = BigNumber.from("9512937595129"); // 5min ->  (5/(60*24*365))10^18
 
-    while (true) {
-        for (let i = 0; i < data.length; i++) {
-            const result = await calculate(
-                data[i].milton,
-                data[i].asset,
-                warren,
-                zeroNight,
-                timeDeltaPerYear
-            );
-            console.log("Result to save: ", result.toString());
-            await data[i].milton.addLiquidityAssetManagmentMock(result);
-            // used to add initial value of liquidyty
-            // await data[i].milton.addLiquidityAssetManagmentMock(
-            //     BigNumber.from("5000000000000000000")
-            // );
-        }
-        await delay(1000 * 60 * 5); //1s * 60 * 5 = 5minutes
+    for (let i = 0; i < data.length; i++) {
+        const result = await calculate(
+            data[i].milton,
+            data[i].asset,
+            warren,
+            zeroNight,
+            timeDeltaPerYear
+        );
+        console.log("Result to save: ", result.toString());
+        await data[i].milton.addLiquidityAssetManagmentMock(result);
+        // used to add initial value of liquidyty
+        // await data[i].milton.addLiquidityAssetManagmentMock(
+        // BigNumber.from("5000000000000000000")
+        // );
     }
+
     done();
 };
