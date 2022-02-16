@@ -34,6 +34,8 @@ if [ "${FIRST_ARG}" = "run-geth" ]; then
     assert_required_variable "${ETH_BC_NODE_NAME}" "ETH_BC_NODE_NAME"
     assert_required_variable "${ETH_BC_HTTP_API}" "ETH_BC_HTTP_API"
     assert_required_variable "${ETH_BC_WS_API}" "ETH_BC_WS_API"
+    assert_required_variable "${ETH_BC_VERBOSITY}" "ETH_BC_VERBOSITY"
+    assert_required_variable "${ETH_BS_VMODULE_VERBOSITY}" "ETH_BS_VMODULE_VERBOSITY"
 
     if [ ! -d "${ETH_BC_DATA_WORK_DIR}" ]; then
         echo "Initialize geth configuration..."
@@ -57,7 +59,7 @@ if [ "${FIRST_ARG}" = "run-geth" ]; then
         --dev --dev.period "${ETH_BC_BLOCK_PERIOD}" \
         --networkid "${ETH_BC_NETWORK_ID}" \
         --identity "${ETH_BC_NODE_NAME}" \
-        --verbosity ${ETH_BC_VERBOSITY} \
+        --verbosity "${ETH_BC_VERBOSITY}" \
         --vmodule "${ETH_BS_VMODULE_VERBOSITY}"
 else
     echo "NON run geth cmd passed, executing: exec $*"

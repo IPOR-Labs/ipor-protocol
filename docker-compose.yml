@@ -64,6 +64,8 @@ services:
       - ETH_BC_NODE_NAME=${ETH_BC_NODE_NAME}
       - ETH_BC_HTTP_API=${ETH_BC_HTTP_API}
       - ETH_BC_WS_API=${ETH_BC_WS_API}
+      - ETH_BC_VERBOSITY=${ETH_BC_VERBOSITY}
+      - ETH_BS_VMODULE_VERBOSITY=${ETH_BS_VMODULE_VERBOSITY}
 
 ############################################ SSL ############################################
 
