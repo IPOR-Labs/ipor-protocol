@@ -47,6 +47,7 @@ IS_STOP="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
+IS_SETUP_CRONE="NO"
 IS_MOCK_ASSET_MANAGEMENT="NO"
 
 
@@ -72,6 +73,9 @@ do
         ;;
         mockasset|mam)
             IS_MOCK_ASSET_MANAGEMENT="YES"
+        ;;
+        setupmamcron|mamcron)
+            IS_SETUP_CRONE="YES"
         ;;
         stop|s)
             IS_STOP="YES"
@@ -266,17 +270,23 @@ if [ $IS_STOP = "YES" ]; then
   docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} rm -s -v -f
 fi
 
-if [ $IS_MOCK_ASSET_MANAGEMENT = "YES" ]; then
+if [ $IS_SETUP_CRONE = "YES" ]; then
   echo -e "\n\e[32mStarting cron for mock asset managment\e[0m\n"
   cd "${DIR}"
   chmod +x cron.sh
   crontab -l > cron_bkp
   echo "SHELL=$SHELL" >> cron_bkp
   echo "PATH=$PATH" >> cron_bkp
-  echo "*/5 * * * * ${DIR}/cron.sh >> ${DIR}/logs.cron " >> cron_bkp
+  echo "*/5 * * * * ${DIR}/run.sh mam >> ${DIR}/logs.cron " >> cron_bkp
   crontab cron_bkp
   rm cron_bkp
   echo -e "\n\e[32mCron Started\e[0m\n"
+fi
+
+
+if [ $IS_MOCK_ASSET_MANAGEMENT = "YES" ]; then
+  cd "${DIR}"
+truffle exec scripts/mock-asset-management.js --network docker
 fi
 
 if [ $IS_RUN = "YES" ]; then
@@ -361,9 +371,10 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m             Build IPOR dockers"
     echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m               Run / restart IPOR dockers"
     echo -e "   \e[36mmockasset\e[0m|\e[36mmam\e[0m       Start Asset Managment mock"
+    echo -e "   \e[36mmamcron\e[0m|\e[36mmam\e[0m         Setup asser Managmant cron"
     echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m           Compile and migrate Smart Contracts to blockchain"
-	echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
+	  echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m           Publish build artifacts to S3 bucket"
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"
     echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
