@@ -163,7 +163,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -181,7 +181,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -208,7 +208,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -226,7 +226,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -253,7 +253,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase8();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -271,7 +271,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -298,7 +298,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase8();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -316,7 +316,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -343,7 +343,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase8();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -364,7 +364,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -390,7 +390,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator = 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -411,7 +411,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -437,7 +437,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf denominator != 0, Komega denominator != 0, KVol denominator = 0, KHist denominator = 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -458,7 +458,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -485,7 +485,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
@@ -505,7 +505,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -533,7 +533,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const miltonSpread = await prepareMiltonSpreadCase9();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("100000000000000001500");
         const swapCollateral = BigInt("1000");
@@ -551,7 +551,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -578,7 +578,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
 
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
@@ -595,7 +595,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -621,7 +621,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part very high, KHist part normal", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -639,7 +639,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("999999999999999899"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -665,7 +665,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it("should calculate Spread Premiums Pay Fixed = Spread Max Value - Kf part normal, KOmega part normal, KVol part normal, KHist very high", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase6();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -683,7 +683,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -709,7 +709,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it("should calculate Spread Premiums Pay Fixed Value = Spread Max Value - Kf part + KOmega part + KVol part + KHist > Spread Max Value", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase7();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const swapCollateral = BigInt("10000000000000000000000");
@@ -727,7 +727,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = spreadMaxValue;
+        const expectedSpreadValue = spreadPremiumsMaxValue;
 
         //when
         let actualSpreadValue = BigInt(
@@ -784,6 +784,30 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 ),
             //then
             "IPOR_49"
+        );
+    });
+
+    it("should calculate Spread Receive Fixed - simple case 1 - initial state", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        const calculateTimestamp = Math.floor(Date.now() / 1000);
+        const expectedSpreadPayFixed = BigInt("0");
+
+        //when
+        let actualSpreadValue = await testData.miltonDai
+            .connect(userOne)
+            .itfCalculateSpread(calculateTimestamp);
+
+        console.log(actualSpreadValue);
+
+        //then
+        expect(BigInt(await actualSpreadValue.spreadPayFixedValue)).to.be.eq(
+            expectedSpreadPayFixed
         );
     });
 });

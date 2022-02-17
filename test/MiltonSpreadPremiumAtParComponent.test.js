@@ -177,7 +177,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const iporIndexValue = BigInt("60000000000000000");
         const exponentialMovingAverage = BigInt("40000000000000000");
@@ -194,7 +194,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
         expect(
@@ -234,7 +234,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const iporIndexValue = BigInt("60000000000000000");
         const exponentialMovingAverage = iporIndexValue;
@@ -251,7 +251,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
         expect(
@@ -291,7 +291,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const iporIndexValue = BigInt("1050000000000000000");
         const exponentialMovingAverage = BigInt("50000000000000000");
@@ -308,7 +308,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
         expect(
@@ -320,7 +320,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator != 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const iporIndexValue = BigInt("60000000000000000");
         const exponentialMovingAverage = BigInt("40000000000000000");
@@ -337,7 +337,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
         expect(
@@ -349,7 +349,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
         const iporIndexValue = BigInt("1050000000000000000");
         const exponentialMovingAverage = BigInt("50000000000000000");
         const exponentialWeightedMovingVariance = USD_1_18DEC;
@@ -365,7 +365,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
         expect(
@@ -405,7 +405,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
         const iporIndexValue = BigInt("33000000000000000");
         const exponentialMovingAverage = BigInt("40000000000000000");
         const exponentialWeightedMovingVariance = USD_1_18DEC;
@@ -421,7 +421,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
         expect(
@@ -461,7 +461,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const iporIndexValue = BigInt("33000000000000000");
         const exponentialMovingAverage = iporIndexValue;
@@ -478,7 +478,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = spreadMaxValue;
+        const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
         expect(
