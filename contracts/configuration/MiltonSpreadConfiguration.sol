@@ -8,7 +8,7 @@ contract MiltonSpreadConfiguration is IMiltonSpreadConfiguration {
     uint256 internal constant _SPREAD_PREMIUMS_MAX_VALUE = 3e15;
 
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper
-    uint256 internal constant _DC_KF_VALUE = 1e14;
+    uint256 internal constant _DC_KF_VALUE = 1e13;
 
     //@notice Part of Spread calculation - Demand Component Lambda value - check Whitepaper
     uint256 internal constant _DC_LAMBDA_VALUE = 1e16;
