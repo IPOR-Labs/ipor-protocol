@@ -180,7 +180,6 @@ contract Milton is
 
     function calculateSpread()
         external
-        view
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
@@ -304,7 +303,6 @@ contract Milton is
 
     function _calculateSpread(uint256 calculateTimestamp)
         internal
-        view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         DataTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(
@@ -315,37 +313,24 @@ contract Milton is
         DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
-        try
-            _miltonSpreadModel.calculateSpreadPayFixed(
-                _miltonStorage.calculateSoapPayFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadPayFixedValue) {
-            spreadPayFixedValue = _spreadPayFixedValue;
-        } catch {
-            spreadPayFixedValue = 0;
-        }
-
-        try
-            _miltonSpreadModel.calculateSpreadRecFixed(
-                _miltonStorage.calculateSoapReceiveFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadRecFixedValue) {
-            spreadRecFixedValue = _spreadRecFixedValue;
-        } catch {
-            spreadRecFixedValue = 0;
-        }
+        spreadPayFixedValue = _miltonSpreadModel.calculateSpreadPayFixed(
+            _miltonStorage.calculateSoapPayFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            ),
+            accruedIpor,
+            balance,
+            0
+        );
+        spreadRecFixedValue = _miltonSpreadModel.calculateSpreadRecFixed(
+            _miltonStorage.calculateSoapReceiveFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            ),
+            accruedIpor,
+            balance,
+            0
+        );
     }
 
     function _calculateSoap(uint256 calculateTimestamp)

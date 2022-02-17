@@ -31,5 +31,5 @@ interface IMiltonSpreadModel {
         DataTypes.AccruedIpor memory accruedIpor,
         DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
         uint256 swapCollateral
-    ) external pure returns (uint256 spreadValue);
+    ) external returns (uint256 spreadValue);
 }

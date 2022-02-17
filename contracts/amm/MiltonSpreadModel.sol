@@ -84,13 +84,15 @@ contract MiltonSpreadModel is
         spreadValue = spreadPremiums + refLeg - accruedIpor.indexValue;
     }
 
+    event LogDebug(string name, uint256 value);
+
     //@dev Spread = SpreadPremiums + IPOR - RefLeg
     function calculateSpreadRecFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
         DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
         uint256 swapCollateral
-    ) external pure override returns (uint256 spreadValue) {
+    ) external override returns (uint256 spreadValue) {
         (
             uint256 spreadPremiums,
             uint256 refLeg
@@ -100,6 +102,10 @@ contract MiltonSpreadModel is
                 accruedBalance,
                 swapCollateral
             );
+        emit LogDebug("spreadPremiums", spreadPremiums);
+        emit LogDebug("accruedIpor.indexValue", accruedIpor.indexValue);
+        emit LogDebug("refLeg", refLeg);
+        emit LogDebug("maxValue", _getSpreadPremiumsMaxValue());
 
         spreadValue = spreadPremiums + accruedIpor.indexValue - refLeg;
     }
@@ -115,11 +121,6 @@ contract MiltonSpreadModel is
             accruedIpor,
             accruedBalance,
             swapCollateral
-        );
-
-        require(
-            accruedIpor.indexValue >= spreadPremiums,
-            IporErrors.MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
         );
 
         refLeg = _calculateReferenceLegPayFixed(
@@ -141,10 +142,10 @@ contract MiltonSpreadModel is
             swapCollateral
         );
 
-        require(
-            accruedIpor.indexValue >= spreadPremiums,
-            IporErrors.MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
-        );
+        // require(
+        //     accruedIpor.indexValue >= spreadPremiums,
+        //     IporErrors.MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
+        // );
 
         refLeg = _calculateReferenceLegRecFixed(
             accruedIpor.indexValue,

@@ -39,7 +39,7 @@ interface IMilton {
 
     function calculateSpread()
         external
-        view
+        
         returns (uint256 spreadPf, uint256 spreadRf);
 
     function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)

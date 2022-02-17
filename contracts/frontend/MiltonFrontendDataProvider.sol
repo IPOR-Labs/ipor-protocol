@@ -150,7 +150,6 @@ contract MiltonFrontendDataProvider is
 
     function getConfiguration()
         external
-        view
         override
         returns (IporAssetConfigurationFront[] memory)
     {
@@ -178,7 +177,6 @@ contract MiltonFrontendDataProvider is
 
     function _createIporAssetConfFront(address asset, uint256 timestamp)
         internal
-        view
         returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
@@ -202,56 +200,24 @@ contract MiltonFrontendDataProvider is
             .getBalance();
 
         uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
-			miltonStorage.calculateSoapPayFixed(
-				accruedIpor.ibtPrice,
-				timestamp
-			),
-			accruedIpor,
-			balance,
-			0
-		);
-
-        // try
-        //     spreadModel.calculateSpreadPayFixed(
-        //         miltonStorage.calculateSoapPayFixed(
-        //             accruedIpor.ibtPrice,
-        //             timestamp
-        //         ),
-        //         accruedIpor,
-        //         balance,
-        //         0
-        //     )
-        // returns (uint256 _spreadPayFixedValue) {
-        //     spreadPayFixedValue = _spreadPayFixedValue;
-        // } catch {
-        //     spreadPayFixedValue = 0;
-        // }
+            miltonStorage.calculateSoapPayFixed(
+                accruedIpor.ibtPrice,
+                timestamp
+            ),
+            accruedIpor,
+            balance,
+            0
+        );
 
         uint256 spreadRecFixedValue = spreadModel.calculateSpreadRecFixed(
-			miltonStorage.calculateSoapReceiveFixed(
-				accruedIpor.ibtPrice,
-				timestamp
-			),
-			accruedIpor,
-			balance,
-			0
-		);
-
-        // try
-        //     spreadModel.calculateSpreadRecFixed(
-        //         miltonStorage.calculateSoapReceiveFixed(
-        //             accruedIpor.ibtPrice,
-        //             timestamp
-        //         ),
-        //         accruedIpor,
-        //         balance,
-        //         0
-        //     )
-        // returns (uint256 _spreadRecFixedValue) {
-        //     spreadRecFixedValue = _spreadRecFixedValue;
-        // } catch {
-        //     spreadRecFixedValue = 0;
-        // }
+            miltonStorage.calculateSoapReceiveFixed(
+                accruedIpor.ibtPrice,
+                timestamp
+            ),
+            accruedIpor,
+            balance,
+            0
+        );
 
         iporAssetConfigurationFront = IporAssetConfigurationFront(
             asset,

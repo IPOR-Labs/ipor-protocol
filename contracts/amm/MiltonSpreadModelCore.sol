@@ -32,21 +32,22 @@ contract MiltonSpreadModelCore {
     }
 
     function _calculateImbalanceFactorWithLambda(
-        uint256 utilizationRateLegWithPosition,
+        uint256 utilizationRateLegWithSwap,
         uint256 utilizationRateLegWithoutSwap,
         uint256 lambda
     ) internal pure returns (uint256) {
-        if (utilizationRateLegWithPosition >= utilizationRateLegWithoutSwap) {
-            return Constants.D18 - utilizationRateLegWithPosition;
+        if (utilizationRateLegWithSwap >= utilizationRateLegWithoutSwap) {
+			//TODO: FIX IT! URLegLambda dont have "1-" now
+            return Constants.D18 - utilizationRateLegWithSwap;
         } else {
-            //TODO: clarify with quants if this value can be higher than 1 if yes then use int256 instead uint256 and prepare test for it
+			//TODO: FIX IT! URLegLambda dont have "1-" now            
             return
                 Constants.D18 -
-                (utilizationRateLegWithPosition -
+                (utilizationRateLegWithSwap -
                     IporMath.division(
                         lambda *
                             (utilizationRateLegWithoutSwap -
-                                utilizationRateLegWithPosition),
+                                utilizationRateLegWithSwap),
                         Constants.D18
                     ));
         }
