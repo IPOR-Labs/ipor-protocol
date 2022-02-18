@@ -29,7 +29,7 @@ contract MiltonSpreadModelCore {
         } else {
             return 0;
         }
-    }
+    }	
 
     function _calculateAdjustedUtilizationRate(
         uint256 utilizationRateLegWithSwap,

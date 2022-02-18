@@ -179,7 +179,7 @@ contract Milton is
     }
 
     function calculateSpread()
-        external
+        external view
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
@@ -302,7 +302,7 @@ contract Milton is
     }
 
     function _calculateSpread(uint256 calculateTimestamp)
-        internal
+        internal view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         DataTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(
@@ -319,8 +319,7 @@ contract Milton is
                 calculateTimestamp
             ),
             accruedIpor,
-            balance,
-            0
+            balance
         );
         spreadRecFixedValue = _miltonSpreadModel.calculateSpreadRecFixed(
             _miltonStorage.calculateSoapReceiveFixed(
@@ -328,8 +327,7 @@ contract Milton is
                 calculateTimestamp
             ),
             accruedIpor,
-            balance,
-            0
+            balance
         );
     }
 
@@ -456,8 +454,7 @@ contract Milton is
                 openTimestamp
             ),
             bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral
+            balance
         );
 
         DataTypes.IporSwapIndicator
@@ -541,8 +538,7 @@ contract Milton is
                 openTimestamp
             ),
             bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral
+            balance
         );
 
         DataTypes.IporSwapIndicator

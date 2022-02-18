@@ -88,8 +88,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 .callStatic.calculateQuoteReceiveFixed(
                     soap,
                     accruedIpor,
-                    accruedBalance,
-                    swapCollateral
+                    accruedBalance
                 )
         );
 
@@ -121,19 +120,13 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             treasury: ZERO,
         };
 
-        // BigInt("150000000000000000") - BigInt("75559995895962654")
-        const expectedQuoteValue = BigInt("74440004104037346");
+        const expectedQuoteValue = BigInt("79240004104037346");
 
         //when
         let actualQuotedValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .calculateQuoteReceiveFixed(
-                    soap,
-                    accruedIpor,
-                    accruedBalance,
-                    swapCollateral
-                )
+                .calculateQuoteReceiveFixed(soap, accruedIpor, accruedBalance)
         );
 
         //then
@@ -160,7 +153,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = BigInt("95805724880625826");
+        const expectedSpreadValue = BigInt("67234296309197255");
 
         //when
         let actualSpreadValue = BigInt(
@@ -171,8 +164,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -228,8 +220,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -276,8 +267,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -321,8 +311,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -369,8 +358,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -417,8 +405,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -464,8 +451,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -511,8 +497,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -554,8 +539,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -572,7 +556,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
 
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = USD_100_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -598,8 +582,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -643,8 +626,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -687,8 +669,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -731,8 +712,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 )
         );
 
@@ -772,8 +752,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance,
-                    receiveFixedSwapsBalance + swapCollateral,
-                    swapCollateral
+                    receiveFixedSwapsBalance + swapCollateral
                 ),
             //then
             "IPOR_49"
@@ -807,8 +786,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         //when
         let actualSpreadValue = await testData.miltonDai
             .connect(userOne)
-			.callStatic
-            .itfCalculateSpread(calculateTimestamp);
+            .callStatic.itfCalculateSpread(calculateTimestamp);
 
         //then
         expect(BigInt(await actualSpreadValue.spreadRecFixedValue)).to.be.eq(

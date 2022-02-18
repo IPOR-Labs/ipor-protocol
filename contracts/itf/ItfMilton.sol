@@ -4,7 +4,6 @@ pragma solidity 0.8.9;
 import "../amm/Milton.sol";
 
 contract ItfMilton is Milton {
-
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -61,7 +60,7 @@ contract ItfMilton is Milton {
 
     function itfCalculateSpread(uint256 calculateTimestamp)
         external
-        
+        view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(

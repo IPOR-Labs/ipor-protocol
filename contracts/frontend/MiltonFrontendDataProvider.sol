@@ -150,6 +150,7 @@ contract MiltonFrontendDataProvider is
 
     function getConfiguration()
         external
+        view
         override
         returns (IporAssetConfigurationFront[] memory)
     {
@@ -177,6 +178,7 @@ contract MiltonFrontendDataProvider is
 
     function _createIporAssetConfFront(address asset, uint256 timestamp)
         internal
+        view
         returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
     {
         IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
@@ -205,8 +207,7 @@ contract MiltonFrontendDataProvider is
                 timestamp
             ),
             accruedIpor,
-            balance,
-            0
+            balance
         );
 
         uint256 spreadRecFixedValue = spreadModel.calculateSpreadRecFixed(
@@ -215,8 +216,7 @@ contract MiltonFrontendDataProvider is
                 timestamp
             ),
             accruedIpor,
-            balance,
-            0
+            balance
         );
 
         iporAssetConfigurationFront = IporAssetConfigurationFront(

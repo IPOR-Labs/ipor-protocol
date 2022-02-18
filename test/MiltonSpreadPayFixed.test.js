@@ -7,6 +7,7 @@ const { utils } = require("web3");
 const {
     USD_1_18DEC,
     USD_20_18DEC,
+    USD_100_18DEC,
     USD_2_000_18DEC,
     PERCENTAGE_3_18DEC,
     USD_10_000_18DEC,
@@ -72,18 +73,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigInt("149947139022039967");
+        const expectedQuoteValue = BigInt("121375710450611396");
 
         //when
         let actualQuotedValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .calculateQuotePayFixed(
-                    soap,
-                    accruedIpor,
-                    accruedBalance,
-                    swapCollateral
-                )
+                .calculateQuotePayFixed(soap, accruedIpor, accruedBalance)
         );
 
         //then
@@ -113,18 +109,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigInt("150805724880625826");
+        const expectedQuoteValue = BigInt("122234296309197255");
 
         //when
         let actualQuotedValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .calculateQuotePayFixed(
-                    soap,
-                    accruedIpor,
-                    accruedBalance,
-                    swapCollateral
-                )
+                .calculateQuotePayFixed(soap, accruedIpor, accruedBalance)
         );
 
         //then
@@ -151,7 +142,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
-        const expectedSpreadValue = BigInt("109947139022039967");
+        const expectedSpreadValue = BigInt("81375710450611396");
 
         //when
         let actualSpreadValue = BigInt(
@@ -162,8 +153,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -207,8 +197,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -252,8 +241,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -297,8 +285,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -342,8 +329,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -390,8 +376,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -437,8 +422,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -484,8 +468,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -531,8 +514,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -577,8 +559,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -595,13 +576,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const swapCollateral = BigInt("10000000000000000000000");
+        const swapCollateral = USD_100_18DEC;
         const swapOpeningFee = BigInt("20000000000000000000");
 
         const payFixedSwapsBalance = BigInt("1000000000000000000000");
         const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
 
-        const soap = BigInt("999999999999999999000");
+        const soap = BigInt("999999999999999990000");
 
         const accruedIpor = {
             indexValue: BigInt("30000000000000000"),
@@ -621,8 +602,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -665,8 +645,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -709,8 +688,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -753,8 +731,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 )
         );
 
@@ -794,8 +771,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
                     payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance,
-                    swapCollateral
+                    receiveFixedSwapsBalance
                 ),
             //then
             "IPOR_49"
