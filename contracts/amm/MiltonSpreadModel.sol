@@ -60,8 +60,10 @@ contract MiltonSpreadModel is
                 accruedBalance,
                 swapCollateral
             );
-
-        quoteValue = refLeg - spreadPremiums;
+			
+        if (refLeg > spreadPremiums) {
+            quoteValue = refLeg - spreadPremiums;
+        } 		
     }
 
     //@dev Spread = SpreadPremiums + RefLeg - IPOR
@@ -141,11 +143,6 @@ contract MiltonSpreadModel is
             accruedBalance,
             swapCollateral
         );
-
-        // require(
-        //     accruedIpor.indexValue >= spreadPremiums,
-        //     IporErrors.MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX
-        // );
 
         refLeg = _calculateReferenceLegRecFixed(
             accruedIpor.indexValue,
@@ -299,7 +296,7 @@ contract MiltonSpreadModel is
                 payFixedSwapsBalance
             );
 
-        uint256 adjustedUtilizationRate = _calculateImbalanceFactorWithLambda(
+        uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
             utilizationRatePayFixedWithPosition,
             utilizationRateRecFixed,
             lambda
@@ -397,7 +394,7 @@ contract MiltonSpreadModel is
                 receiveFixedSwapsBalance
             );
 
-        uint256 adjustedUtilizationRate = _calculateImbalanceFactorWithLambda(
+        uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
             utilizationRateRecFixedWithPosition,
             utilizationRatePayFixed,
             lambda

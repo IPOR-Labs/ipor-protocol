@@ -13,7 +13,7 @@ import {IporErrors} from "../IporErrors.sol";
 
 contract MiltonSpreadModelCore {
     using SafeCast for int256;
-	using SafeCast for uint256;
+    using SafeCast for uint256;
 
     function _calculateSoapPlus(int256 soap, uint256 swapsBalance)
         internal
@@ -31,25 +31,27 @@ contract MiltonSpreadModelCore {
         }
     }
 
-    function _calculateImbalanceFactorWithLambda(
+    function _calculateAdjustedUtilizationRate(
         uint256 utilizationRateLegWithSwap,
         uint256 utilizationRateLegWithoutSwap,
         uint256 lambda
     ) internal pure returns (uint256) {
         if (utilizationRateLegWithSwap >= utilizationRateLegWithoutSwap) {
-			//TODO: FIX IT! URLegLambda dont have "1-" now
-            return Constants.D18 - utilizationRateLegWithSwap;
+            return utilizationRateLegWithSwap;
         } else {
-			//TODO: FIX IT! URLegLambda dont have "1-" now            
-            return
-                Constants.D18 -
-                (utilizationRateLegWithSwap -
-                    IporMath.division(
-                        lambda *
-                            (utilizationRateLegWithoutSwap -
-                                utilizationRateLegWithSwap),
-                        Constants.D18
-                    ));
+			
+            uint256 imbalanceFactor = IporMath.division(
+                lambda *
+                    (utilizationRateLegWithoutSwap -
+                        utilizationRateLegWithSwap),
+                Constants.D18
+            );
+
+            if (imbalanceFactor > utilizationRateLegWithSwap) {
+                return 0;
+            } else {
+                return utilizationRateLegWithSwap - imbalanceFactor;
+            }
         }
     }
 
@@ -60,7 +62,7 @@ contract MiltonSpreadModelCore {
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                swapsBalance* Constants.D18,
+                swapsBalance * Constants.D18,
                 liquidityPoolBalance
             );
     }

@@ -46,7 +46,7 @@ contract MockCase5MiltonSpreadModel is MockBaseMiltonSpreadModel {
         override
         returns (uint256)
     {
-        return 215406562054208274;
+        return 784593437945791726;
     }
 
     function _getAtParComponentKVolValue()

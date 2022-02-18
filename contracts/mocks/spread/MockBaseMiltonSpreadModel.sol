@@ -58,6 +58,19 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
+    function testCalculateAdjustedUtilizationRate(
+        uint256 utilizationRateLegWithSwap,
+        uint256 utilizationRateLegWithoutSwap,
+        uint256 lambda
+    ) public pure returns (uint256) {
+        return
+            _calculateAdjustedUtilizationRate(
+                utilizationRateLegWithSwap,
+                utilizationRateLegWithoutSwap,
+                lambda
+            );
+    }
+
     function calculateDemandComponentPayFixed(
         uint256 swapCollateral,
         uint256 liquidityPoolBalance,
