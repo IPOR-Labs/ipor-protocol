@@ -17,6 +17,7 @@ const {
     USD_100_18DEC,
     USD_500_18DEC,
     ZERO,
+    USD_10_000_000_18DEC,
 } = require("./Const.js");
 
 const {
@@ -526,12 +527,12 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase9();
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
-        const liquidityPoolBalance = BigInt("100000000000000001500");
-        const swapCollateral = BigInt("10000");
+        const liquidityPoolBalance = BigInt("100000000000000000000");
+        const swapCollateral = BigInt("1000000000000000");
         const swapOpeningFee = BigInt("0");
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
-        const receiveFixedSwapsBalance = BigInt("1000");
+        const receiveFixedSwapsBalance = BigInt("99990000000000000000");
 
         const soap = BigInt("100");
 
@@ -779,7 +780,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         );
     });
 
-    it("should calculate Spread Receive Fixed - simple case 1 - initial state", async () => {
+    it("should calculate Spread Receive Fixed - simple case 1 - initial state with Liquidity Pool", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -788,11 +789,25 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             0
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
-        const expectedSpreadReceiveFixed = BigInt("0");
+        const expectedSpreadReceiveFixed = BigInt("3000000000000000");
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await prepareApproveForUsers(
+            [liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+
+        await setupTokenDaiInitialValuesForUsers([liquidityProvider], testData);
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_10_000_000_18DEC, timestamp);
 
         //when
         let actualSpreadValue = await testData.miltonDai
             .connect(userOne)
+			.callStatic
             .itfCalculateSpread(calculateTimestamp);
 
         //then
