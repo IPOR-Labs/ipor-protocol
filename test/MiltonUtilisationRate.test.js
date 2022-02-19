@@ -31,7 +31,7 @@ const {
     USD_10_000_000_18DEC,
     TC_OPENING_FEE_6DEC,
     TC_OPENING_FEE_18DEC,
-    TC_COLLATERAL_6DEC,    
+    TC_COLLATERAL_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
@@ -80,22 +80,6 @@ describe("Milton - Utilization Rate", () => {
     //         ["DAI"],
     //         data
     //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-    //         admin.address
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-    //         admin.address
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-    //         admin.address
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
-    //         admin.address
-    //     );
     //     await prepareApproveForUsers(
     //         [userOne, userTwo, userThree, liquidityProvider],
     //         "DAI",
@@ -110,11 +94,6 @@ describe("Milton - Utilization Rate", () => {
     //         userTwo,
     //         testData
     //     );
-
-    //     let oldLpMaxUtilizationPercentage =
-    //         await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
-    //     let oldOpeningFeePercentage =
-    //         await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
 
     //     await testData.warren.connect(userOne).itfUpdateIndex(
     //         params.asset,
@@ -140,13 +119,6 @@ describe("Milton - Utilization Rate", () => {
     //         ),
     //         //then
     //         "IPOR_35"
-    //     );
-
-    //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-    //         oldLpMaxUtilizationPercentage
-    //     );
-    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
-    //         oldOpeningFeePercentage
     //     );
     // });
 
