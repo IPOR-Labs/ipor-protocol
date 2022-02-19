@@ -211,7 +211,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(
@@ -219,7 +219,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
             iporSwap,
             positionValue,
             closingTimestamp,
-			cfgIncomeTaxPercentage
+            cfgIncomeTaxPercentage
         );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
     }
@@ -229,7 +229,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(
@@ -237,7 +237,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
             iporSwap,
             positionValue,
             closingTimestamp,
-			cfgIncomeTaxPercentage
+            cfgIncomeTaxPercentage
         );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
             iporSwap,
@@ -535,7 +535,7 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
         );
         liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
-	event LogDebug(string name, int256 value);
+
     function _updateBalancesWhenCloseSwapPayFixed(
         address account,
         DataTypes.IporSwapMemory memory swap,
@@ -569,13 +569,11 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
                 );
             }
         }
-		
+
         uint256 incomeTax = IporMath.division(
             absPositionValue * cfgIncomeTaxPercentage,
             Constants.D18
         );
-		emit LogDebug("incomeTax", int256(incomeTax));
-		emit LogDebug("positionValue", positionValue);
 
         _balances.treasury = _balances.treasury + incomeTax.toUint128();
 
@@ -631,13 +629,11 @@ contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
                 );
             }
         }
-		
+
         uint256 incomeTax = IporMath.division(
             absPositionValue * cfgIncomeTaxPercentage,
             Constants.D18
         );
-		emit LogDebug("incomeTax", int256(incomeTax));
-		emit LogDebug("positionValue", positionValue);
 
         _balances.treasury = _balances.treasury + incomeTax.toUint128();
 
