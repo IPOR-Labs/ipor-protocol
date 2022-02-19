@@ -8,28 +8,24 @@ interface IMiltonSpreadModel {
     function calculateQuotePayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
-        uint256 swapCollateral
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
     ) external pure returns (uint256 quoteValue);
 
     function calculateQuoteReceiveFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
-        uint256 swapCollateral
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
     ) external pure returns (uint256 quoteValue);
 
     function calculateSpreadPayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
-        uint256 swapCollateral
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
     ) external pure returns (uint256 spreadValue);
 
     function calculateSpreadRecFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance,
-        uint256 swapCollateral
+        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
     ) external pure returns (uint256 spreadValue);
 }

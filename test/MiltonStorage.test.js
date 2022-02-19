@@ -51,13 +51,11 @@ describe("MiltonStorage", () => {
             liquidityProvider,
             miltonStorageAddress,
         ] = await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            libraries,
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {

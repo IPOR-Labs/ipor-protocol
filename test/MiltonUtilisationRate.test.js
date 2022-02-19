@@ -31,8 +31,7 @@ const {
     USD_10_000_000_18DEC,
     TC_OPENING_FEE_6DEC,
     TC_OPENING_FEE_18DEC,
-    TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
+    TC_COLLATERAL_6DEC,    
     TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
@@ -66,13 +65,11 @@ describe("Milton - Utilization Rate", () => {
         libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            libraries,
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
 
     //TODO: clarify when spread equasion will be clarified

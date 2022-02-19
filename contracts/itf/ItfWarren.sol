@@ -5,6 +5,10 @@ import "../oracles/Warren.sol";
 
 contract ItfWarren is Warren {
 
+	function testGetDecayFactorValue() external pure returns(uint256) {
+		return _DECAY_FACTOR_VALUE;
+	}
+
     function itfUpdateIndex(
         address asset,
         uint256 indexValue,
@@ -32,4 +36,5 @@ contract ItfWarren is Warren {
             updateTimestamp
         );
     }
+	
 }

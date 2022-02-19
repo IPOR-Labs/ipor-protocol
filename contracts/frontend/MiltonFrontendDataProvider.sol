@@ -201,39 +201,23 @@ contract MiltonFrontendDataProvider is
         DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
             .getBalance();
 
-        uint256 spreadPayFixedValue;
-        try
-            spreadModel.calculateSpreadPayFixed(
-                miltonStorage.calculateSoapPayFixed(
-                    accruedIpor.ibtPrice,
-                    timestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadPayFixedValue) {
-            spreadPayFixedValue = _spreadPayFixedValue;
-        } catch {
-            spreadPayFixedValue = 0;
-        }
+        uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
+            miltonStorage.calculateSoapPayFixed(
+                accruedIpor.ibtPrice,
+                timestamp
+            ),
+            accruedIpor,
+            balance
+        );
 
-        uint256 spreadRecFixedValue;
-        try
-            spreadModel.calculateSpreadRecFixed(
-                miltonStorage.calculateSoapReceiveFixed(
-                    accruedIpor.ibtPrice,
-                    timestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadRecFixedValue) {
-            spreadRecFixedValue = _spreadRecFixedValue;
-        } catch {
-            spreadRecFixedValue = 0;
-        }
+        uint256 spreadRecFixedValue = spreadModel.calculateSpreadRecFixed(
+            miltonStorage.calculateSoapReceiveFixed(
+                accruedIpor.ibtPrice,
+                timestamp
+            ),
+            accruedIpor,
+            balance
+        );
 
         iporAssetConfigurationFront = IporAssetConfigurationFront(
             asset,

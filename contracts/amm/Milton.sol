@@ -220,7 +220,6 @@ contract Milton is
         return _calculateSwapReceiveFixedValue(block.timestamp, swap);
     }
 
-    //TODO: refactor in this way that timestamp is not visible in external milton method
     function calculateExchangeRate(uint256 calculateTimestamp)
         external
         view
@@ -302,12 +301,18 @@ contract Milton is
         }
     }
 
-	function _calculateIncomeTaxValue(int256 positionValue) internal pure returns(uint256) {		
-		return IporMath.division(
-            IporMath.absoluteValue(positionValue) * _getIncomeTaxPercentage(),
-            Constants.D18
-        );
-	}
+    function _calculateIncomeTaxValue(int256 positionValue)
+        internal
+        pure
+        returns (uint256)
+    {
+        return
+            IporMath.division(
+                IporMath.absoluteValue(positionValue) *
+                    _getIncomeTaxPercentage(),
+                Constants.D18
+            );
+    }
 
     function _calculateSpread(uint256 calculateTimestamp)
         internal
@@ -322,37 +327,22 @@ contract Milton is
         DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
-        try
-            _miltonSpreadModel.calculateSpreadPayFixed(
-                _miltonStorage.calculateSoapPayFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadPayFixedValue) {
-            spreadPayFixedValue = _spreadPayFixedValue;
-        } catch {
-            spreadPayFixedValue = 0;
-        }
-
-        try
-            _miltonSpreadModel.calculateSpreadRecFixed(
-                _miltonStorage.calculateSoapReceiveFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadRecFixedValue) {
-            spreadRecFixedValue = _spreadRecFixedValue;
-        } catch {
-            spreadRecFixedValue = 0;
-        }
+        spreadPayFixedValue = _miltonSpreadModel.calculateSpreadPayFixed(
+            _miltonStorage.calculateSoapPayFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            ),
+            accruedIpor,
+            balance
+        );
+        spreadRecFixedValue = _miltonSpreadModel.calculateSpreadRecFixed(
+            _miltonStorage.calculateSoapReceiveFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            ),
+            accruedIpor,
+            balance
+        );
     }
 
     function _calculateSoap(uint256 calculateTimestamp)
@@ -478,8 +468,7 @@ contract Milton is
                 openTimestamp
             ),
             bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral
+            balance
         );
 
         DataTypes.IporSwapIndicator
@@ -563,8 +552,7 @@ contract Milton is
                 openTimestamp
             ),
             bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral
+            balance
         );
 
         DataTypes.IporSwapIndicator
@@ -864,7 +852,7 @@ contract Milton is
             (totalAmount -
                 liquidationDepositAmount -
                 iporPublicationFeeAmount) * Constants.D18,
-            Constants.D18 + openingFeePercentage                
+            Constants.D18 + openingFeePercentage
         );
         notional = IporMath.division(
             collateralizationFactor * collateral,

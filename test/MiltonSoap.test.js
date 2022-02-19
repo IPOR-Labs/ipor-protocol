@@ -42,13 +42,11 @@ describe("MiltonSoap", () => {
         libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            libraries,
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
     it("should calculate soap, no derivatives, soap equal 0", async () => {
         //given
@@ -181,7 +179,7 @@ describe("MiltonSoap", () => {
             );
         await openSwapPayFixed(testData, derivativeParams);
 
-        const expectedSoap = BigInt("-68083420969966832317");
+        const expectedSoap = BigInt("-68267191075554066594");
 
         //when
         const soapParams = {
@@ -298,7 +296,7 @@ describe("MiltonSoap", () => {
             );
         await openSwapReceiveFixed(testData, derivativeParams);
 
-        const expectedSoap = BigInt("-68083420969966791467");
+        const expectedSoap = BigInt("-68267191075554025634");
 
         //when
         const soapParams = {
@@ -508,7 +506,7 @@ describe("MiltonSoap", () => {
         await openSwapPayFixed(testData, firstDerivativeParams);
         await openSwapReceiveFixed(testData, secondDerivativeParams);
 
-        const expectedSoap = BigInt("-136166841939933623785");
+        const expectedSoap = BigInt("-136534382151108092229");
 
         //when
         const soapParams = {
@@ -576,7 +574,7 @@ describe("MiltonSoap", () => {
         await openSwapPayFixed(testData, firstDerivativeParams);
         await openSwapReceiveFixed(testData, secondDerivativeParams);
 
-        const expectedSoap = BigInt("-136166841939933623785");
+        const expectedSoap = BigInt("-136534382151108092229");
 
         //when
         const soapParams = {
@@ -669,9 +667,9 @@ describe("MiltonSoap", () => {
         await openSwapPayFixed(testData, derivativeUSDTParams);
 
         //then
-        let expectedDAISoap = BigInt("-68083420969966832317");
+        let expectedDAISoap = BigInt("-68267191075554066594");
 
-        let expectedUSDTSoap = BigInt("-68083420969966832317");
+        let expectedUSDTSoap = BigInt("-68267191075554066594");
 
         const soapDAIParams = {
             asset: testData.tokenDai.address,
@@ -756,7 +754,7 @@ describe("MiltonSoap", () => {
             .itfCloseSwapReceiveFixed(2, endTimestamp);
 
         //then
-        const expectedSoap = BigInt("-68083420969966832317");
+        const expectedSoap = BigInt("-68267191075554066594");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -832,7 +830,7 @@ describe("MiltonSoap", () => {
             .itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
-        const expectedSoap = BigInt("-68083420969966791467");
+        const expectedSoap = BigInt("-68267191075554025634");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -940,7 +938,7 @@ describe("MiltonSoap", () => {
             .itfCloseSwapReceiveFixed(1, endTimestamp);
 
         //then
-        const expectedSoapDAI = BigInt("-68083420969966832317");
+        const expectedSoapDAI = BigInt("-68267191075554066594");
 
         const soapParamsDAI = {
             asset: testData.tokenDai.address,
@@ -1020,7 +1018,7 @@ describe("MiltonSoap", () => {
                 calculationTimestamp
             );
 
-        const expectedSoap = BigInt("7897676832516150157812");
+        const expectedSoap = BigInt("7918994164764269327487");
 
         //when
         //then
@@ -1101,7 +1099,7 @@ describe("MiltonSoap", () => {
                 calculationTimestamp
             );
 
-        const expectedSoap = BigInt("7897676832516150157812");
+        const expectedSoap = BigInt("7918994164764269327487");
 
         //when
         //then
@@ -1184,8 +1182,8 @@ describe("MiltonSoap", () => {
                 calculationTimestamp25days
             );
 
-        const expectedSoap28Days = BigInt("7914016853548942207644");
-        const expectedSoap50Days = BigInt("8033843674456083840150");
+        const expectedSoap28Days = BigInt("7935378290622402313573");
+        const expectedSoap50Days = BigInt("8055528546915377478426");
 
         //when
         //then
@@ -1268,7 +1266,7 @@ describe("MiltonSoap", () => {
         await openSwapPayFixed(testData, derivativeParams25days);
 
         //then
-        const expectedSoap = BigInt("-204669094617849711707");
+        const expectedSoap = BigInt("-205221535441070939561");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -1351,7 +1349,7 @@ describe("MiltonSoap", () => {
             );
 
         //then
-        const expectedSoap = BigInt("-204669094617849711707");
+        const expectedSoap = BigInt("-205221535441070939561");
 
         const soapParams = {
             asset: testData.tokenDai.address,
@@ -1458,7 +1456,7 @@ describe("MiltonSoap", () => {
         );
 
         //then
-        const expectedSoap = BigInt("-136166841939933664635");
+        const expectedSoap = BigInt("-136534382151108133189");
 
         expect(
             expectedSoap,

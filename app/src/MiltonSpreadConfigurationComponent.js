@@ -24,7 +24,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>Spread Max Value</strong>
+                        <strong>Spread Premiums Max Value</strong>
                     </td>
                     <td>
                         <ContractData

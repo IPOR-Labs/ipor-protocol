@@ -34,7 +34,7 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <br />
-                        <strong>Ipor Configuration Address</strong>
+                        <strong>Ipor Asset Configuration Address</strong>
                         <br />
                         <br />
                     </td>

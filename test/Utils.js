@@ -156,7 +156,7 @@ module.exports.prepareApproveForUsers = async (
     }
 };
 
-module.exports.prepareData = async (libraries, accounts) => {
+module.exports.prepareData = async (libraries, accounts, spreadCaseNumber) => {
     const IporConfiguration = await ethers.getContractFactory(
         "IporConfiguration"
     );
@@ -166,9 +166,17 @@ module.exports.prepareData = async (libraries, accounts) => {
 
     await this.grantAllRoleIporConfiguration(iporConfiguration, accounts);
 
-    const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase1MiltonSpreadModel"
-    );
+    let MockCase1MiltonSpreadModel = null;
+
+    if (spreadCaseNumber == 0) {
+        MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockBaseMiltonSpreadModel"
+        );
+    } else {
+        MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockCase" + spreadCaseNumber + "MiltonSpreadModel"
+        );
+    }
 
     const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
     await miltonSpread.deployed();

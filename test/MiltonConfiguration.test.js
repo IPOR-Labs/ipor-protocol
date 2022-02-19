@@ -32,8 +32,7 @@ const {
     USD_10_000_000_18DEC,
     TC_OPENING_FEE_6DEC,
     TC_OPENING_FEE_18DEC,
-    TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
+    TC_COLLATERAL_6DEC,    
     TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
@@ -157,5 +156,20 @@ describe("MiltonConfiguration", () => {
             await miltonConfiguration.getMinCollateralizationFactorValue();
         //then
         expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
+    });
+
+    it("should init value for Opening Fee Treasury Percentage lower than 100%", async () => {
+        //when
+        let actualValue =
+            await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        //then
+        expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
+    });
+
+    it("should init value for Income Tax Percentage lower than 100%", async () => {
+        //when
+        let actualValue = await miltonConfiguration.getIncomeTaxPercentage();
+        //then
+        expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
     });
 });
