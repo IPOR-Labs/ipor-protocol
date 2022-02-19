@@ -14,8 +14,6 @@ export default (configurations) =>
                         <th scope="col">IPOR Publication Fee Amount</th>
                         <th scope="col">Liquidation Deposit Amount</th>
                         <th scope="col">Income Tax Percentage</th>
-                        <th scope="col">Spread Pay Fixed Value</th>
-                        <th scope="col">Spread Receive Fixed Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,35 +58,19 @@ export default (configurations) =>
                                     </small>
                                 </td>
                                 <td>
-                                    {configuration.liquidationDepositAmount/
-                                            1000000000000000000}
+                                    {configuration.liquidationDepositAmount /
+                                        1000000000000000000}
                                     <br />
                                     <small>
                                         {configuration.liquidationDepositAmount}
                                     </small>
                                 </td>
                                 <td>
-                                    {configuration.incomeTaxPercentage/
-                                            1000000000000000000}
+                                    {configuration.incomeTaxPercentage /
+                                        1000000000000000000}
                                     <br />
                                     <small>
                                         {configuration.incomeTaxPercentage}
-                                    </small>
-                                </td>
-                                <td>
-                                    {configuration.spreadPayFixedValue/
-                                            1000000000000000000}
-                                    <br />
-                                    <small>
-                                        {configuration.spreadPayFixedValue}
-                                    </small>
-                                </td>
-                                <td>
-                                    {configuration.spreadRecFixedValue/
-                                            1000000000000000000}
-                                    <br />
-                                    <small>
-                                        {configuration.spreadRecFixedValue}
                                     </small>
                                 </td>
                             </tr>

@@ -20,6 +20,7 @@ const {
     PERCENTAGE_50_18DEC,
     PERCENTAGE_50_6DEC,
     PERCENTAGE_7_6DEC,
+    PERCENTAGE_100_18DEC,
 } = require("./Const.js");
 
 const YEAR_IN_SECONDS = 31536000;
@@ -49,6 +50,14 @@ describe("Warren", () => {
             ["USDC", "USDT", "DAI"],
             data,
             0
+        );
+    });
+
+    it("should Decay Factor be lower than 100%", async () => {
+        const decayFactorValue =
+            await testData.warren.testGetDecayFactorValue();
+        expect(parseInt(decayFactorValue)).to.be.lte(
+            parseInt(PERCENTAGE_100_18DEC)
         );
     });
 

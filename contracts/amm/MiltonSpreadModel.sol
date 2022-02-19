@@ -223,7 +223,7 @@ contract MiltonSpreadModel is
     ) internal pure returns (uint256) {
         uint256 maxValue = _getSpreadPremiumsMaxValue();
 
-        if (exponentialWeightedMovingVariance == Constants.D18) {
+        if (exponentialWeightedMovingVariance >= Constants.D18) {
             return maxValue;
         } else {
             uint256 historicalDeviation = _calculateHistoricalDeviationPayFixed(

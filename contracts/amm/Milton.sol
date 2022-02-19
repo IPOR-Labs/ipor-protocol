@@ -179,7 +179,8 @@ contract Milton is
     }
 
     function calculateSpread()
-        external view
+        external
+        view
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
@@ -302,7 +303,8 @@ contract Milton is
     }
 
     function _calculateSpread(uint256 calculateTimestamp)
-        internal view
+        internal
+        view
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
         DataTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(

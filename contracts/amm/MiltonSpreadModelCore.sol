@@ -115,7 +115,7 @@ contract MiltonSpreadModelCore {
             uint256 mu = IporMath.absoluteValue(
                 exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
             );
-            if (mu == Constants.D18) {
+            if (mu >= Constants.D18) {
                 return maxSpreadValue;
             } else {
                 return
