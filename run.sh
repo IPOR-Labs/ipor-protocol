@@ -271,13 +271,12 @@ if [ $IS_STOP = "YES" ]; then
 fi
 
 if [ $IS_SETUP_CRONE = "YES" ]; then
-  echo -e "\n\e[32mStarting cron for mock asset managment\e[0m\n"
+  echo -e "\n\e[32mStarting cron for mock asset management\e[0m\n"
   cd "${DIR}"
-  chmod +x cron.sh
   crontab -l > cron_bkp
   echo "SHELL=$SHELL" >> cron_bkp
   echo "PATH=$PATH" >> cron_bkp
-  echo "*/5 * * * * ${DIR}/run.sh mam >> ${DIR}/logs.cron " >> cron_bkp
+  echo "*/5 * * * * ${DIR}/run.sh mam >> ${DIR}/logs/asset-management-cron.log" >> cron_bkp
   crontab cron_bkp
   rm cron_bkp
   echo -e "\n\e[32mCron Started\e[0m\n"
