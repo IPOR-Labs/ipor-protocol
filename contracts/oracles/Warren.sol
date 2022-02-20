@@ -28,10 +28,10 @@ contract Warren is
     using SafeCast for uint256;
     using IporLogic for DataTypes.IPOR;
 
-    uint256 private constant _DECAY_FACTOR_VALUE = 1e17;
+    uint256 private constant _DECAY_FACTOR_VALUE = 5e17;
 
     mapping(address => uint256) internal _updaters;
-	
+
     mapping(address => DataTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {

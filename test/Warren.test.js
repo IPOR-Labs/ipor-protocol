@@ -538,7 +538,7 @@ describe("Warren", () => {
             PERCENTAGE_50_18DEC,
             PERCENTAGE_50_18DEC,
         ];
-        const expectedExpoMovingAverage = BigInt("113000000000000000");
+        const expectedExpoMovingAverage = BigInt("285000000000000000");
 
         //when
         await testData.warren
@@ -578,7 +578,7 @@ describe("Warren", () => {
             PERCENTAGE_50_6DEC,
             PERCENTAGE_50_6DEC,
         ];
-        const expectedExpoMovingAverage = BigInt("113000");
+        const expectedExpoMovingAverage = BigInt("285000");
 
         //when
         await testData.warren

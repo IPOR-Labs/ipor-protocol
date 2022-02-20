@@ -57,7 +57,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigInt("45414312152356830");
+        const expectedQuoteValue = BigInt("40215997939129682");
 
         //when
         let actualQuotedValue = BigInt(
@@ -98,7 +98,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigInt("59404211142255820");
+        const expectedQuoteValue = BigInt("55165492888624631");
 
         //when
         let actualQuotedValue = BigInt(

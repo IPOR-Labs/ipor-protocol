@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -e -o pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -60,7 +60,7 @@ do
         migrate|m)
             IS_MIGRATE_SC="YES"
         ;;
-		migrateclean|mc)
+        migrateclean|mc)
             IS_MIGRATE_WITH_CLEAN_SC="YES"
         ;;
         build|b)
@@ -309,7 +309,7 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
 
-  echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"  
+  echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
   truffle compile --all
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none
 
@@ -320,6 +320,7 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
 
   echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
   rm -rf app/src/contracts/
+  rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
   truffle compile --all
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none
 fi

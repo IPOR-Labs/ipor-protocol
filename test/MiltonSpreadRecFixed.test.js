@@ -66,7 +66,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigInt("26608345954563572");
+        const expectedQuoteValue = BigInt("29876632682343563");
 
         //when
         let actualQuotedValue = BigInt(
@@ -107,7 +107,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigInt("35593117528167633");
+        const expectedQuoteValue = BigInt("39825871261023766");
 
         //when
         let actualQuotedValue = BigInt(
