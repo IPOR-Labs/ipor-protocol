@@ -48,6 +48,10 @@ app/.env
 /artifacts/
 /cache/
 
-# OpenZeppelin
+### OpenZeppelin ###
 .openzeppelin/unknown-*.json
 /coverage.json
+
+
+### Asset Management Cron ###
+/cron_bkp
