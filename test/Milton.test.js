@@ -3441,7 +3441,6 @@ describe("Milton", () => {
         );
     });
 
-    //TODO: debug case where SoapIndicatorStorage.quasiHypotheticalInterestCumulative is changed to uint128
     it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1", async () => {
         //given
         let testData = await prepareTestData(

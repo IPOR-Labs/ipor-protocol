@@ -118,7 +118,6 @@ library DataTypes {
         uint256 ibtQuantity;
         //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
-        //TODO: rename quoteValue
     }
     struct NewSwap {
         address buyer;

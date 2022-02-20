@@ -12,9 +12,8 @@ import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
 
 contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
-    //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
-    using SafeCast for uint256;
-    using IporSwapLogic for DataTypes.IporSwapMemory;
+    
+    using SafeCast for uint256;    
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
     uint64 private _lastSwapId;
