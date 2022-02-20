@@ -286,7 +286,7 @@ fi
 
 if [ $IS_MOCK_ASSET_MANAGEMENT = "YES" ]; then
   cd "${DIR}"
-truffle exec scripts/mock-asset-management.js --network docker
+  truffle exec scripts/mock-asset-management.js --network docker
 fi
 
 if [ $IS_RUN = "YES" ]; then
