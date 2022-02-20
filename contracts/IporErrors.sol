@@ -18,6 +18,9 @@ library IporErrors {
     //@notice Maximum Slippage is too low
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_5";
 
+	//@notice msg.sender is not an appointed owner, so cannot confirm his appointment to be an owner of a specific smart contract
+	string public constant SENDER_NOT_APPOINTED_OWNER = "IPOR_6";
+
     //@notice Liquidity Pool for given asset symbol not exists
     string public constant CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG = "IPOR_7";
 

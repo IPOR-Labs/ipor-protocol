@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
-import "../libraries/IporMath.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-
+import "../libraries/types/DataTypes.sol";
+import "../libraries/IporMath.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
@@ -32,7 +31,7 @@ import "../interfaces/IJoseph.sol";
 //TODO: add pausable modifier for methodds
 contract Milton is
     UUPSUpgradeable,
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     MiltonConfiguration,

@@ -53,6 +53,155 @@ describe("Joseph", () => {
             liquidityProvider,
         ]);
     });
+    it("should transfer ownership - simple case 1", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.josephDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //then
+        const actualNewOwner = await testData.josephDai
+            .connect(userOne)
+            .owner();
+        expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
+    });
+
+    it("should NOT transfer ownership - sender not current owner", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await assertError(
+            testData.josephDai
+                .connect(userThree)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await assertError(
+            testData.josephDai.connect(userThree).confirmTransferOwnership(),
+            //then
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.josephDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        await assertError(
+            testData.josephDai
+                .connect(expectedNewOwner)
+                .confirmTransferOwnership(),
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT transfer ownership - sender already lost ownership", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        const expectedNewOwner = userTwo;
+
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.josephDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //when
+        await assertError(
+            testData.josephDai
+                .connect(admin)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should have rights to transfer ownership - sender still have rights", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        const expectedNewOwner = userTwo;
+
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //then
+        const actualNewOwner = await testData.josephDai
+            .connect(userOne)
+            .owner();
+        expect(admin.address).to.be.eql(actualNewOwner);
+    });
+
     it("should setup init value for Redeem LP Max Utilization Percentage", async () => {
         //given
         let testData = await prepareTestData(
