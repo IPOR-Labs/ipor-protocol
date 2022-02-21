@@ -27,6 +27,7 @@ ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/contracts.zip"
 ETH_BC_CONTAINER="ipor-protocol-eth-bc"
 ETH_EXP_CONTAINER="ipor-protocol-eth-explorer"
 ETH_EXP_POSTGRES_CONTAINER="ipor-protocol-eth-exp-postgres"
+DEV_TOOL_CONTAINER="ipor-protocol-milton-tool"
 
 ETH_BC_DATA_VOLUME="ipor-protocol-eth-bc-data"
 ETH_EXP_DATA_VOLUME="ipor-protocol-eth-exp-postgres-data"
@@ -49,6 +50,8 @@ IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
 IS_MOCK_ASSET_MANAGEMENT="NO"
 IS_MOCK_ASSET_MANAGEMENT_STOP="NO"
+IS_UPDATE_DEV_TOOL="NO"
+
 
 if [ $# -eq 0 ]; then
     IS_RUN="YES"
@@ -87,6 +90,9 @@ do
         ;;
         nginx|n)
             IS_NGINX_ETH_BC_RESTART="YES"
+        ;;
+        update-dev-tool|udt)
+            IS_UPDATE_DEV_TOOL="YES"
         ;;
         help|h|?)
             IS_HELP="YES"
@@ -356,6 +362,18 @@ if [ $IS_NGINX_ETH_BC_RESTART = "YES" ]; then
 fi
 
 
+if [ $IS_UPDATE_DEV_TOOL = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mUpdate dev-tool..\e[0m\n"
+
+  remove_container "${DEV_TOOL_CONTAINER}"
+
+  echo -e "Start cleaned container: ${DEV_TOOL_CONTAINER} with \e[33m${COMPOSE_PROFILE}\e[0m profile..\n"
+  docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} up -d
+fi
+
+
 
 if [ $IS_HELP = "YES" ]; then
     echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
@@ -367,10 +385,11 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "   \e[36mmockassetstop\e[0m|\e[36mmams\e[0m  Stop Asset Managment mock"
     echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m           Compile and migrate Smart Contracts to blockchain"
-	echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
+    echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m           Publish build artifacts to S3 bucket"
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"
     echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
+    echo -e "   \e[36mupdate-dev-tool\e[0m|\e[36mudt\e[0m Update dev-tool container"
     echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
     echo -e "   \e[34mwithout any command\e[0m - the same as Run"
     echo -e ""
