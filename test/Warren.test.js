@@ -53,6 +53,271 @@ describe("Warren", () => {
         );
     });
 
+    it("should pause Smart Contract, sender is an admin", async () => {
+        //when
+        await testData.warren.addUpdater(userOne.address);
+        await testData.warren.connect(admin).pause();
+
+        //then
+        await assertError(
+            testData.warren
+                .connect(userOne)
+                .updateIndex(testData.tokenUsdt.address, 123),
+            "Pausable: paused"
+        );
+    });
+
+    it("should pause Smart Contract specific methods", async () => {
+        //given
+        const assets = [
+            testData.tokenUsdc.address,
+            testData.tokenDai.address,
+            testData.tokenUsdt.address,
+        ];
+        const indexValues = [
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+        ];
+
+        await testData.warren.addUpdater(userOne.address);
+        await testData.warren.connect(admin).pause();
+
+        //when
+        await assertError(
+            testData.warren
+                .connect(userOne)
+                .updateIndex(testData.tokenUsdt.address, 123),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.warren.connect(userOne).updateIndexes(assets, indexValues),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.warren.connect(admin).addAsset(userThree.address),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.warren.connect(admin).removeAsset(userThree.address),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.warren.connect(admin).addUpdater(userThree.address),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.warren.connect(admin).removeUpdater(userThree.address),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT pause Smart Contract specific methods when paused", async () => {
+        //given
+        const assets = [
+            testData.tokenUsdc.address,
+            testData.tokenDai.address,
+            testData.tokenUsdt.address,
+        ];
+        const indexValues = [
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+        ];
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await testData.warren.addUpdater(userOne.address);
+        await testData.warren.connect(admin).pause();
+
+        //when
+        await testData.warren
+            .connect(userOne)
+            .getIndex(testData.tokenUsdt.address);
+
+        await testData.warren
+            .connect(userOne)
+            .getAccruedIndex(timestamp, testData.tokenUsdt.address);
+
+        await testData.warren
+            .connect(userOne)
+            .calculateAccruedIbtPrice(testData.tokenUsdt.address, timestamp);
+
+        await testData.warren.connect(userOne).isUpdater(userOne.address);
+    });
+
+    it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
+        //when
+        await assertError(
+            testData.warren.connect(userThree).pause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should unpause Smart Contract, sender is an admin", async () => {
+        //given
+
+        const assets = [
+            testData.tokenUsdc.address,
+            testData.tokenDai.address,
+            testData.tokenUsdt.address,
+        ];
+        const indexValues = [
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+            BigInt("70000000000000000"),
+        ];
+        const expectedIporIndexValue = BigInt("70000000000000000");
+
+        await testData.warren.addUpdater(userOne.address);
+        await testData.warren.connect(admin).pause();
+
+        await assertError(
+            testData.warren.connect(userOne).updateIndexes(assets, indexValues),
+            "Pausable: paused"
+        );
+
+        //when
+        await testData.warren.connect(admin).unpause();
+        await testData.warren
+            .connect(userOne)
+            .updateIndexes(assets, indexValues);
+
+        //then
+        const iporIndex = await testData.warren
+            .connect(userOne)
+            .getIndex(testData.tokenDai.address);
+        const actualIndexValue = BigInt(iporIndex.indexValue);
+
+        expect(actualIndexValue).to.be.eql(expectedIporIndexValue);
+    });
+
+    it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
+        //given
+        await testData.warren.connect(admin).pause();
+
+        //when
+        await assertError(
+            testData.warren.connect(userThree).unpause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should transfer ownership - simple case 1", async () => {
+        //given
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.warren
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.warren
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //then
+        const actualNewOwner = await testData.warren.connect(userOne).owner();
+        expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
+    });
+
+    it("should NOT transfer ownership - sender not current owner", async () => {
+        //given
+        const expectedNewOwner = userTwo;
+
+        //when
+        await assertError(
+            testData.warren
+                .connect(userThree)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
+        //given
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.warren
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await assertError(
+            testData.warren.connect(userThree).confirmTransferOwnership(),
+            //then
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
+        //given
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.warren
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.warren
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        await assertError(
+            testData.warren
+                .connect(expectedNewOwner)
+                .confirmTransferOwnership(),
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT transfer ownership - sender already lost ownership", async () => {
+        //given
+        const expectedNewOwner = userTwo;
+
+        await testData.warren
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.warren
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //when
+        await assertError(
+            testData.warren
+                .connect(admin)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should have rights to transfer ownership - sender still have rights", async () => {
+        //given
+        const expectedNewOwner = userTwo;
+
+        await testData.warren
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //when
+        await testData.warren
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //then
+        const actualNewOwner = await testData.warren.connect(userOne).owner();
+        expect(admin.address).to.be.eql(actualNewOwner);
+    });
+
     it("should Decay Factor be lower than 100%", async () => {
         const decayFactorValue =
             await testData.warren.testGetDecayFactorValue();
@@ -545,7 +810,7 @@ describe("Warren", () => {
             PERCENTAGE_50_18DEC,
             PERCENTAGE_50_18DEC,
         ];
-        const expectedExpoMovingAverage = BigInt("113000000000000000");
+        const expectedExpoMovingAverage = BigInt("285000000000000000");
 
         //when
         await testData.warren
@@ -585,7 +850,7 @@ describe("Warren", () => {
             PERCENTAGE_50_6DEC,
             PERCENTAGE_50_6DEC,
         ];
-        const expectedExpoMovingAverage = BigInt("113000");
+        const expectedExpoMovingAverage = BigInt("285000");
 
         //when
         await testData.warren
@@ -605,7 +870,4 @@ describe("Warren", () => {
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
         ).to.be.eql(expectedExpoMovingAverage);
     });
-
-    //TODO: add test when transfer ownership and Warren still works properly
-    //TODO: add tests for pausable methods
 });

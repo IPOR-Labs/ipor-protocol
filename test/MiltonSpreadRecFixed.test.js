@@ -80,6 +80,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         };
 
         const expectedQuoteValue = BigInt("0");
+        // const expectedQuoteValue = BigInt("29876632682343563");
 
         //when
         let actualQuotedValue = BigInt(
@@ -768,7 +769,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             0
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
-        const expectedSpreadReceiveFixed = BigInt("1100000000000000");
+        const expectedSpreadReceiveFixed = BigInt("160000000000000");
         const timestamp = Math.floor(Date.now() / 1000);
 
         await prepareApproveForUsers(

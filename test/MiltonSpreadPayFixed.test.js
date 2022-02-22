@@ -50,6 +50,146 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             0
         );
     });
+
+    it("should transfer ownership - simple case 1", async () => {
+        //given
+        const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockCase1MiltonSpreadModel"
+        );
+        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
+        await miltonSpread.deployed();
+        await miltonSpread.initialize();
+
+        const expectedNewOwner = userTwo;
+
+        //when
+        await miltonSpread
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
+
+        //then
+        const actualNewOwner = await miltonSpread.connect(userOne).owner();
+        expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
+    });
+
+    it("should NOT transfer ownership - sender not current owner", async () => {
+        //given
+        const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockCase1MiltonSpreadModel"
+        );
+        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
+        await miltonSpread.deployed();
+        await miltonSpread.initialize();
+        const expectedNewOwner = userTwo;
+
+        //when
+        await assertError(
+            miltonSpread
+                .connect(userThree)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
+        //given
+        const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockCase1MiltonSpreadModel"
+        );
+        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
+        await miltonSpread.deployed();
+        await miltonSpread.initialize();
+        const expectedNewOwner = userTwo;
+
+        //when
+        await miltonSpread
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await assertError(
+            miltonSpread.connect(userThree).confirmTransferOwnership(),
+            //then
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
+        //given
+        const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockCase1MiltonSpreadModel"
+        );
+        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
+        await miltonSpread.deployed();
+        await miltonSpread.initialize();
+        const expectedNewOwner = userTwo;
+
+        //when
+        await miltonSpread
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
+
+        await assertError(
+            miltonSpread.connect(expectedNewOwner).confirmTransferOwnership(),
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT transfer ownership - sender already lost ownership", async () => {
+        //given
+        const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockCase1MiltonSpreadModel"
+        );
+        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
+        await miltonSpread.deployed();
+        await miltonSpread.initialize();
+        const expectedNewOwner = userTwo;
+
+        await miltonSpread
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
+
+        //when
+        await assertError(
+            miltonSpread
+                .connect(admin)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should have rights to transfer ownership - sender still have rights", async () => {
+        //given
+        const MockCase1MiltonSpreadModel = await ethers.getContractFactory(
+            "MockCase1MiltonSpreadModel"
+        );
+        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
+        await miltonSpread.deployed();
+        await miltonSpread.initialize();
+
+        const expectedNewOwner = userTwo;
+
+        await miltonSpread
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //when
+        await miltonSpread
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //then
+        const actualNewOwner = await miltonSpread.connect(userOne).owner();
+        expect(admin.address).to.be.eql(actualNewOwner);
+    });
+
     it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Ref Leg Case 1", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase10();
@@ -787,7 +927,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             0
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
-        const expectedSpreadPayFixed = BigInt("1100000000000000");
+        const expectedSpreadPayFixed = BigInt("160000000000000");
         const timestamp = Math.floor(Date.now() / 1000);
 
         await prepareApproveForUsers(

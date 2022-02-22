@@ -42,6 +42,7 @@
 slither-report.json
 app/.env
 .vscode/settings.json
+/logs/
 
 ### hardhat ###
 /artifacts/
