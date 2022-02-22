@@ -20,10 +20,10 @@ contract MiltonSpreadConfiguration is IMiltonSpreadConfiguration {
     uint256 internal constant _DC_MAX_LIQUIDITY_REDEMPTION_VALUE = 1e18;
 
     //@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
-    uint256 internal constant _AT_PAR_COMPONENT_K_VOL_VALUE = 5e13;
+    uint256 internal constant _AT_PAR_COMPONENT_K_VOL_VALUE = 0;
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
-    uint256 internal constant _AT_PAR_COMPONENT_K_HIST_VALUE = 5e13;
+    uint256 internal constant _AT_PAR_COMPONENT_K_HIST_VALUE = 3e14;
 
     function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
         return _SPREAD_PREMIUMS_MAX_VALUE;

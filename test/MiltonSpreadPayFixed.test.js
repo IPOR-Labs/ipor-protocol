@@ -927,7 +927,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             0
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
-        const expectedSpreadPayFixed = BigInt("160000000000000");
+        const expectedSpreadPayFixed = BigInt("360000000000000");
         const timestamp = Math.floor(Date.now() / 1000);
 
         await prepareApproveForUsers(
