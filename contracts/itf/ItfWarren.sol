@@ -5,7 +5,7 @@ import "../oracles/Warren.sol";
 
 contract ItfWarren is Warren {
 
-	function testGetDecayFactorValue() external pure returns(uint256) {
+	function itfGetDecayFactorValue() external pure returns(uint256) {
 		return _DECAY_FACTOR_VALUE;
 	}
 

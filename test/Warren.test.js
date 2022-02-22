@@ -320,7 +320,7 @@ describe("Warren", () => {
 
     it("should Decay Factor be lower than 100%", async () => {
         const decayFactorValue =
-            await testData.warren.testGetDecayFactorValue();
+            await testData.warren.itfGetDecayFactorValue();
         expect(parseInt(decayFactorValue)).to.be.lte(
             parseInt(PERCENTAGE_100_18DEC)
         );
