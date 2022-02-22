@@ -102,6 +102,7 @@ contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
         _ipToken.mint(msg.sender, ipTokenValue);
 
         emit ProvideLiquidity(
+            timestamp,
             msg.sender,
             address(milton),
             exchangeRate,
@@ -161,6 +162,7 @@ contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
         );
 
         emit Redeem(
+            timestamp,
             address(milton),
             msg.sender,
             exchangeRate,
