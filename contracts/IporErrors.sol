@@ -34,8 +34,8 @@ library IporErrors {
     //@notice Maximum Slippage is too high
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_9";
 
-    //@notice Total Amount is too high
-    string public constant MILTON_TOTAL_AMOUNT_TOO_HIGH = "IPOR_10";
+    //@notice Amount of collateral used to open swap exceeds limit
+    string public constant MILTON_COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_10";
 
     //@notice Deposit amount to notional amount collateralization factor is too low
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_LOW = "IPOR_12";

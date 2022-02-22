@@ -382,11 +382,7 @@ contract Milton is
             wadTotalAmount >
                 _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
-        require(
-            wadTotalAmount <= _getMaxSwapTotalAmount(),
-            IporErrors.MILTON_TOTAL_AMOUNT_TOO_HIGH
-        );
+        );        
 
         require(
             maximumSlippage <= _getMaxSlippagePercentage(),
@@ -404,6 +400,11 @@ contract Milton is
                 _getIporPublicationFeeAmount(),
                 _getOpeningFeePercentage()
             );
+
+		require(
+			collateral <= _getMaxSwapCollateralAmount(),
+			IporErrors.MILTON_COLLATERAL_AMOUNT_TOO_HIGH
+		);
 
         require(
             wadTotalAmount >

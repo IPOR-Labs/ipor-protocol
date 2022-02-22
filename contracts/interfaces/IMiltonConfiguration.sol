@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 interface IMiltonConfiguration {
-    function getMaxSwapTotalAmount() external pure returns (uint256);
+    function getMaxSwapCollateralAmount() external pure returns (uint256);
 
     function getMaxSlippagePercentage() external pure returns (uint256);
 
