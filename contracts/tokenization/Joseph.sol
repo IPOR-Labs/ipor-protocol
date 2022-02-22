@@ -2,12 +2,12 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
@@ -17,7 +17,7 @@ import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/IMilton.sol";
 
-contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
+contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;

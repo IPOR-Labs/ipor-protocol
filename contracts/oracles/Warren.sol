@@ -2,11 +2,10 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-
+import "../security/IporOwnableUpgradeable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IWarren.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
@@ -21,7 +20,7 @@ import {IporMath} from "../libraries/IporMath.sol";
  */
 contract Warren is
     UUPSUpgradeable,
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     PausableUpgradeable,
     IWarren
 {
