@@ -158,4 +158,19 @@ describe("MiltonConfiguration", () => {
         //then
         expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
     });
+
+    it("should init value for Opening Fee Treasury Percentage lower than 100%", async () => {
+        //when
+        let actualValue =
+            await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        //then
+        expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
+    });
+
+    it("should init value for Income Tax Percentage lower than 100%", async () => {
+        //when
+        let actualValue = await miltonConfiguration.getIncomeTaxPercentage();
+        //then
+        expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
+    });
 });

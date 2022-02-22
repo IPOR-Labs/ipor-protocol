@@ -9,7 +9,7 @@ import MyPositions from "./MyPositions";
 import IporAssetConfigurationComponent from "./IporAssetConfigurationComponent";
 import MiltonConfigurationComponent from "./MiltonConfigurationComponent";
 import MiltonSpreadConfigurationComponent from "./MiltonSpreadConfigurationComponent";
-import IporConfigurationComponent from "./IporConfigurationComponent";
+import GlobalConfigurationComponent from "./GlobalConfigurationComponent";
 import FaucetComponent from "./FaucetComponent";
 import FrontendComponent from "./FrontendComponent";
 
@@ -76,7 +76,7 @@ export default ({ drizzle, drizzleState }) => {
                     />
                 </Tab>				
                 <Tab eventKey="globalConfig" title="Global Configuration">
-                    <IporConfigurationComponent
+                    <GlobalConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />

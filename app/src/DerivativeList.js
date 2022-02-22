@@ -9,8 +9,6 @@ export default (derivatives) =>
                 <tr>
                     <th scope="col">id</th>
                     <th scope="col">Buyer</th>
-                    <th scope="col">Asset</th>
-                    <th scope="col">Direction</th>
                     <th scope="col">Collateral</th>
                     <th scope="col">Notional</th>
                     <th scope="col">Fee Liquidation Deposit Amount</th>
@@ -27,8 +25,6 @@ export default (derivatives) =>
                             <tr key={derivative.id}>
                                 <td>{derivative.id}</td>
                                 <td>{derivative.buyer}</td>
-                                <td>{derivative.asset}</td>
-                                <td>{derivative.direction}</td>
                                 <td>
                                     {derivative.collateral /
                                         1000000000000000000}
@@ -46,18 +42,14 @@ export default (derivatives) =>
                                         1000000000000000000}
                                     <br />
                                     <small>
-                                        {
-                                            derivative.liquidationDepositAmount
-                                        }
+                                        {derivative.liquidationDepositAmount}
                                     </small>
                                 </td>
                                 <td>
                                     {derivative.ibtQuantity /
                                         1000000000000000000}
                                     <br />
-                                    <small>
-                                        {derivative.ibtQuantity}
-                                    </small>
+                                    <small>{derivative.ibtQuantity}</small>
                                 </td>
                                 <td>
                                     {derivative.fixedInterestRate /

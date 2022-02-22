@@ -13,7 +13,7 @@ import {IporErrors} from "../IporErrors.sol";
 
 contract MiltonSpreadModelCore {
     using SafeCast for int256;
-	using SafeCast for uint256;
+    using SafeCast for uint256;
 
     function _calculateSoapPlus(int256 soap, uint256 swapsBalance)
         internal
@@ -29,26 +29,29 @@ contract MiltonSpreadModelCore {
         } else {
             return 0;
         }
-    }
+    }	
 
-    function _calculateImbalanceFactorWithLambda(
-        uint256 utilizationRateLegWithPosition,
+    function _calculateAdjustedUtilizationRate(
+        uint256 utilizationRateLegWithSwap,
         uint256 utilizationRateLegWithoutSwap,
         uint256 lambda
     ) internal pure returns (uint256) {
-        if (utilizationRateLegWithPosition >= utilizationRateLegWithoutSwap) {
-            return Constants.D18 - utilizationRateLegWithPosition;
+        if (utilizationRateLegWithSwap >= utilizationRateLegWithoutSwap) {
+            return utilizationRateLegWithSwap;
         } else {
-            //TODO: clarify with quants if this value can be higher than 1 if yes then use int256 instead uint256 and prepare test for it
-            return
-                Constants.D18 -
-                (utilizationRateLegWithPosition -
-                    IporMath.division(
-                        lambda *
-                            (utilizationRateLegWithoutSwap -
-                                utilizationRateLegWithPosition),
-                        Constants.D18
-                    ));
+			
+            uint256 imbalanceFactor = IporMath.division(
+                lambda *
+                    (utilizationRateLegWithoutSwap -
+                        utilizationRateLegWithSwap),
+                Constants.D18
+            );
+
+            if (imbalanceFactor > utilizationRateLegWithSwap) {
+                return 0;
+            } else {
+                return utilizationRateLegWithSwap - imbalanceFactor;
+            }
         }
     }
 
@@ -59,7 +62,7 @@ contract MiltonSpreadModelCore {
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                swapsBalance* Constants.D18,
+                swapsBalance * Constants.D18,
                 liquidityPoolBalance
             );
     }
@@ -112,7 +115,7 @@ contract MiltonSpreadModelCore {
             uint256 mu = IporMath.absoluteValue(
                 exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
             );
-            if (mu == Constants.D18) {
+            if (mu >= Constants.D18) {
                 return maxSpreadValue;
             } else {
                 return

@@ -42,6 +42,6 @@ interface IMiltonFrontendDataProvider {
 
     function getConfiguration()
         external
-        view
+        
         returns (IporAssetConfigurationFront[] memory);
 }

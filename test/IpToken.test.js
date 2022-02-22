@@ -27,7 +27,7 @@ describe("IpToken", () => {
             userTwo,
             userThree,
             liquidityProvider,
-        ]);
+        ], 1);
     });
 
     beforeEach(async () => {

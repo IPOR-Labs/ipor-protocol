@@ -20,6 +20,7 @@ const {
     PERCENTAGE_50_18DEC,
     PERCENTAGE_50_6DEC,
     PERCENTAGE_7_6DEC,
+    PERCENTAGE_100_18DEC,
 } = require("./Const.js");
 
 const YEAR_IN_SECONDS = 31536000;
@@ -36,13 +37,11 @@ describe("Warren", () => {
 
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            libraries,
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
 
     beforeEach(async () => {
@@ -317,6 +316,14 @@ describe("Warren", () => {
         //then
         const actualNewOwner = await testData.warren.connect(userOne).owner();
         expect(admin.address).to.be.eql(actualNewOwner);
+    });
+
+    it("should Decay Factor be lower than 100%", async () => {
+        const decayFactorValue =
+            await testData.warren.testGetDecayFactorValue();
+        expect(parseInt(decayFactorValue)).to.be.lte(
+            parseInt(PERCENTAGE_100_18DEC)
+        );
     });
 
     it("should NOT update IPOR Index, because sender is not an updater", async () => {

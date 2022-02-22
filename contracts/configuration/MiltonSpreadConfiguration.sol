@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../interfaces/IMiltonSpreadConfiguration.sol";
 
 contract MiltonSpreadConfiguration is IMiltonSpreadConfiguration {
-    //@notice Spread Max Value
+    //@notice Spread Premiums Max Value
     uint256 internal constant _SPREAD_PREMIUMS_MAX_VALUE = 3e15;
 
     //@notice Part of Spread calculation - Demand Component Kf value - check Whitepaper

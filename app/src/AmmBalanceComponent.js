@@ -6,7 +6,7 @@ import SoapComponent from "./SoapComponent";
 const { ContractData } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
-    <div className="section">
+    <div >
         <SpreadComponent drizzle={drizzle} drizzleState={drizzleState} />
         <SoapComponent drizzle={drizzle} drizzleState={drizzleState} />
 
