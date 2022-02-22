@@ -45,6 +45,14 @@ contract Warren is
         __Ownable_init();
     }
 
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
     function getIndex(address asset)
         external
         view
@@ -108,6 +116,7 @@ contract Warren is
         external
         override
         onlyUpdater
+        whenNotPaused
     {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = indexValue;
@@ -120,11 +129,11 @@ contract Warren is
     function updateIndexes(
         address[] memory assets,
         uint256[] memory indexValues
-    ) external override onlyUpdater {
+    ) external override onlyUpdater whenNotPaused {
         _updateIndexes(assets, indexValues, block.timestamp);
     }
 
-    function addAsset(address asset) external override onlyOwner {
+    function addAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
@@ -140,7 +149,12 @@ contract Warren is
         emit IporIndexAddAsset(asset);
     }
 
-    function removeAsset(address asset) external override onlyOwner {
+    function removeAsset(address asset)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
@@ -150,19 +164,34 @@ contract Warren is
         emit IporIndexRemoveAsset(asset);
     }
 
-    function addUpdater(address updater) external override onlyOwner {
+    function addUpdater(address updater)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _updaters[updater] = 1;
         emit IporIndexAddUpdater(updater);
     }
 
-    function removeUpdater(address updater) external override onlyOwner {
+    function removeUpdater(address updater)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _updaters[updater] = 0;
         emit IporIndexRemoveUpdater(updater);
     }
 
-	function isUpdater(address updater) external view override returns(uint256) {
-		return _updaters[updater];
-	}
+    function isUpdater(address updater)
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _updaters[updater];
+    }
 
     function _updateIndexes(
         address[] memory assets,
