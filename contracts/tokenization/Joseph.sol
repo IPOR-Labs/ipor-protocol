@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -17,7 +18,12 @@ import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/IMilton.sol";
 
-contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
+contract Joseph is
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    PausableUpgradeable,
+    IJoseph
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -48,7 +54,13 @@ contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
         _miltonStorage = IMiltonStorage(miltonStorage);
     }
 
-    function _authorizeUpgrade(address) internal override onlyOwner {}
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
     function decimals() external view returns (uint8) {
         return _decimals;
@@ -58,11 +70,15 @@ contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
         return _asset;
     }
 
-    function provideLiquidity(uint256 liquidityAmount) external override {
+    function provideLiquidity(uint256 liquidityAmount)
+        external
+        override
+        whenNotPaused
+    {
         _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
     }
 
-    function redeem(uint256 ipTokenValue) external override {
+    function redeem(uint256 ipTokenValue) external override whenNotPaused {
         _redeem(ipTokenValue, block.timestamp);
     }
 
@@ -85,10 +101,6 @@ contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
 
         _miltonStorage.addLiquidity(wadAssetValue);
 
-        //TODO: account Address from OZ and use call
-        //TODO: use call instead transfer if possible!!
-
-        //TODO: add from address to black list
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(milton),
@@ -182,4 +194,6 @@ contract Joseph is UUPSUpgradeable, IporOwnableUpgradeable, IJoseph {
                 totalLiquidityPoolBalance - redeemedAmount
             );
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }
