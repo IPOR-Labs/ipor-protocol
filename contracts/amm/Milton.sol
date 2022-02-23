@@ -23,6 +23,8 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
@@ -382,7 +384,7 @@ contract Milton is
             wadTotalAmount >
                 _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
-        );        
+        );
 
         require(
             maximumSlippage <= _getMaxSlippagePercentage(),
@@ -401,10 +403,10 @@ contract Milton is
                 _getOpeningFeePercentage()
             );
 
-		require(
-			collateral <= _getMaxSwapCollateralAmount(),
-			IporErrors.MILTON_COLLATERAL_AMOUNT_TOO_HIGH
-		);
+        require(
+            collateral <= _getMaxSwapCollateralAmount(),
+            IporErrors.MILTON_COLLATERAL_AMOUNT_TOO_HIGH
+        );
 
         require(
             wadTotalAmount >
