@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
@@ -14,7 +14,7 @@ import "../configuration/MiltonSpreadConfiguration.sol";
 
 contract MiltonSpreadModel is
     UUPSUpgradeable,
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     MiltonSpreadModelCore,
     MiltonSpreadConfiguration,
     IMiltonSpreadModel

@@ -103,7 +103,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfMiltonDai"
+                            contract="MiltonDai"
                             method="calculateExchangeRate"
                             methodArgs={[Math.floor(Date.now() / 1000)]}
                             render={(value) => (

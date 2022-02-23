@@ -99,7 +99,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -113,7 +113,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -130,7 +130,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -144,7 +144,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -161,7 +161,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -175,7 +175,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

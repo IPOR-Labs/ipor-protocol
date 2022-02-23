@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
@@ -14,7 +14,7 @@ import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 
 contract MiltonFrontendDataProvider is
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     UUPSUpgradeable,
     IMiltonFrontendDataProvider
 {

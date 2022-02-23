@@ -5,7 +5,7 @@ import "../../itf/ItfMilton.sol";
 
 contract MockCase5Milton is ItfMilton {
 
-	function _getMaxSwapTotalAmount() internal virtual override pure returns (uint256) {
+	function _getMaxSwapCollateralAmount() internal virtual override pure returns (uint256) {
 			return 1e23;
 	}
 

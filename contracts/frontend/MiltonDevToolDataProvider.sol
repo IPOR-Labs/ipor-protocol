@@ -2,8 +2,8 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonStorage.sol";
@@ -11,7 +11,7 @@ import "../interfaces/IMiltonDevToolDataProvider.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonDevToolDataProvider is
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     UUPSUpgradeable,
     IMiltonDevToolDataProvider
 {

@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
-import "../libraries/IporMath.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-
+import "../libraries/types/DataTypes.sol";
+import "../libraries/IporMath.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
@@ -24,6 +23,8 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
  *
@@ -32,7 +33,7 @@ import "../interfaces/IJoseph.sol";
 //TODO: add pausable modifier for methodds
 contract Milton is
     UUPSUpgradeable,
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     MiltonConfiguration,
@@ -396,10 +397,6 @@ contract Milton is
                 _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
-        require(
-            wadTotalAmount <= _getMaxSwapTotalAmount(),
-            IporErrors.MILTON_TOTAL_AMOUNT_TOO_HIGH
-        );
 
         require(
             maximumSlippage <= _getMaxSlippagePercentage(),
@@ -417,6 +414,11 @@ contract Milton is
                 _getIporPublicationFeeAmount(),
                 _getOpeningFeePercentage()
             );
+
+        require(
+            collateral <= _getMaxSwapCollateralAmount(),
+            IporErrors.MILTON_COLLATERAL_AMOUNT_TOO_HIGH
+        );
 
         require(
             wadTotalAmount >

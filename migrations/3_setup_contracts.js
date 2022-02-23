@@ -51,7 +51,10 @@ const IporAssetConfigurationDai = artifacts.require(
 
 module.exports = async function (deployer, _network, addresses) {
     console.log("Setup Smart contracts...");
-    const [admin, userOne, userTwo, userThree, _] = addresses;
+    const [admin, iporIndexAdmin, userTwo, userThree, _] = addresses;
+
+    console.log("admin wallet: ", admin);
+    console.log("iporIndexAdmin wallet: ", iporIndexAdmin);
 
     const faucetSupply6Decimals = "10000000000000000";
     const faucetSupply18Decimals = "10000000000000000000000000000";
@@ -169,6 +172,7 @@ module.exports = async function (deployer, _network, addresses) {
         const itfWarrenProxy = await ItfWarren.deployed();
 
         await itfWarrenProxy.addUpdater(admin);
+        await itfWarrenProxy.addUpdater(iporIndexAdmin);
         await itfWarrenProxy.addAsset(mockedUsdt.address);
         await itfWarrenProxy.addAsset(mockedUsdc.address);
         await itfWarrenProxy.addAsset(mockedDai.address);
@@ -222,6 +226,7 @@ module.exports = async function (deployer, _network, addresses) {
 
         const warrenProxy = await Warren.deployed();
         await warrenProxy.addUpdater(admin);
+        await warrenProxy.addUpdater(iporIndexAdmin);
         await warrenProxy.addAsset(mockedUsdt.address);
         await warrenProxy.addAsset(mockedUsdc.address);
         await warrenProxy.addAsset(mockedDai.address);

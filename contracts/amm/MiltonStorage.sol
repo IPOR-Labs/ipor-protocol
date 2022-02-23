@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../libraries/IporSwapLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
@@ -11,9 +11,9 @@ import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
 
-contract MiltonStorage is UUPSUpgradeable, OwnableUpgradeable, IMiltonStorage {
-    
-    using SafeCast for uint256;    
+contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
+
+    using SafeCast for uint256;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
     uint64 private _lastSwapId;

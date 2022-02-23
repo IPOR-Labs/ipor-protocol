@@ -18,17 +18,24 @@ library IporErrors {
     //@notice Maximum Slippage is too low
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_5";
 
+    //@notice msg.sender is not an appointed owner, so cannot confirm his appointment to be an owner of a specific smart contract
+    string public constant SENDER_NOT_APPOINTED_OWNER = "IPOR_6";
+
     //@notice Liquidity Pool for given asset symbol not exists
-    string public constant CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG = "IPOR_7";
+    string
+        public constant CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG =
+        "IPOR_7";
 
     //@notice Swap direction not exists
-    string public constant CONFIG_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_TOO_HIGH = "IPOR_8";
+    string
+        public constant CONFIG_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_TOO_HIGH =
+        "IPOR_8";
 
     //@notice Maximum Slippage is too high
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_9";
 
-    //@notice Total Amount is too high
-    string public constant MILTON_TOTAL_AMOUNT_TOO_HIGH = "IPOR_10";
+    //@notice Amount of collateral used to open swap exceeds limit
+    string public constant MILTON_COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_10";
 
     //@notice Deposit amount to notional amount collateralization factor is too low
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_LOW = "IPOR_12";
@@ -128,7 +135,7 @@ library IporErrors {
         "IPOR_38";
 
     //@notice Asset address not supported
-	//@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS
+    //@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = "IPOR_39";
 
     //@notice Amount which should be minted is too low
@@ -178,7 +185,8 @@ library IporErrors {
 
     //TODO: try to add test for this
     //@notice Spread value cannot be higher than Ipor Index Value for particular asset
-    string public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
+    string
+        public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
         "IPOR_53";
 
     //@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1
@@ -188,7 +196,7 @@ library IporErrors {
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
     string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
         "IPOR_55";
-    
+
     //@notice Max Utilization Rate when Redeem should be higher than Liquidity Pool Max Utilization rate
     string
         public constant CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION =
@@ -198,6 +206,5 @@ library IporErrors {
     string public constant CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
         "IPOR_57";
 
-	string public constant JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED =
-        "IPOR_58";
+    string public constant JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED = "IPOR_58";
 }
