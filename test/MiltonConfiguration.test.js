@@ -80,7 +80,8 @@ describe("MiltonConfiguration", () => {
 
     it("should setup init value for Max Swap Total Amount", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMaxSwapTotalAmount();
+        let actualValue =
+            await miltonConfiguration.getMaxSwapCollateralAmount();
         //then
         expect(actualValue).to.be.eq(BigInt("100000000000000000000000"));
     });

@@ -12,7 +12,7 @@ import "../interfaces/IIporAssetConfiguration.sol";
 
 contract MiltonConfiguration is IMiltonConfiguration {
     //@notice max total amount used when opening position
-    uint256 internal constant _MAX_SWAP_TOTAL_AMOUNT = 1e23;
+    uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
     uint256 internal constant _MAX_SLIPPAGE_PERCENTAGE = 1e18;
 
@@ -49,8 +49,8 @@ contract MiltonConfiguration is IMiltonConfiguration {
 		return address(_miltonSpreadModel);
 	}
 
-    function getMaxSwapTotalAmount() external pure override returns (uint256) {
-        return _MAX_SWAP_TOTAL_AMOUNT;
+    function getMaxSwapCollateralAmount() external pure override returns (uint256) {
+        return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
     function getMaxSlippagePercentage()
@@ -138,8 +138,8 @@ contract MiltonConfiguration is IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 
-    function _getMaxSwapTotalAmount() internal pure virtual returns (uint256) {
-        return _MAX_SWAP_TOTAL_AMOUNT;
+    function _getMaxSwapCollateralAmount() internal pure virtual returns (uint256) {
+        return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
     function _getMaxSlippagePercentage()

@@ -227,7 +227,7 @@ describe("Milton", () => {
         expect(admin.address).to.be.eql(actualNewOwner);
     });
 
-    it("should NOT open position because collateral amount too low", async () => {
+    it("should NOT open position because totalAmount amount too low", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -248,7 +248,7 @@ describe("Milton", () => {
             testData
         );
 
-        const collateral = 0;
+        const totalAmount = 0;
         const slippageValue = 3;
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
@@ -256,7 +256,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                collateral,
+                totalAmount,
                 slippageValue,
                 collateralizationFactor
             ),
@@ -284,7 +284,7 @@ describe("Milton", () => {
             testData
         );
 
-        const collateral = BigInt("30000000000000000001");
+        const totalAmount = BigInt("30000000000000000001");
         const slippageValue = 0;
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
@@ -292,7 +292,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                collateral,
+                totalAmount,
                 slippageValue,
                 collateralizationFactor
             ),
@@ -320,7 +320,7 @@ describe("Milton", () => {
             testData
         );
 
-        const collateral = BigInt("30000000000000000001");
+        const totalAmount = BigInt("30000000000000000001");
         const slippageValue = BigInt("100000000000000000001");
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
@@ -329,7 +329,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                collateral,
+                totalAmount,
                 slippageValue,
                 collateralizationFactor
             ),
@@ -357,7 +357,7 @@ describe("Milton", () => {
             testData
         );
 
-        const collateral = BigInt("30000001");
+        const totalAmount = BigInt("30000001");
         const slippageValue = BigInt("100000000000000000001");
         const collateralizationFactor = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
@@ -366,7 +366,7 @@ describe("Milton", () => {
             //when
             testData.miltonUsdt.itfOpenSwapPayFixed(
                 timestamp,
-                collateral,
+                totalAmount,
                 slippageValue,
                 collateralizationFactor
             ),
@@ -375,7 +375,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT open position because collateral amount too high", async () => {
+    it("should NOT open position because totalAmount amount too high", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -394,7 +394,7 @@ describe("Milton", () => {
             testData
         );
 
-        const collateral = BigInt("1000000000000000000000001");
+        const totalAmount = BigInt("1000000000000000000000001");
         const slippageValue = 3;
         const collateralizationFactor = BigInt(10000000000000000000);
         const timestamp = Math.floor(Date.now() / 1000);
@@ -403,7 +403,44 @@ describe("Milton", () => {
             //when
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
-                collateral,
+                totalAmount,
+                slippageValue,
+                collateralizationFactor
+            ),
+            //then
+            "IPOR_10"
+        );
+    });
+
+    it("should NOT open position because totalAmount amount too high - case 2", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const totalAmount = BigInt("100688870576704582165765");
+        const slippageValue = 3;
+        const collateralizationFactor = BigInt(10000000000000000000);
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await assertError(
+            //when
+            testData.miltonDai.itfOpenSwapPayFixed(
+                timestamp,
+                totalAmount,
                 slippageValue,
                 collateralizationFactor
             ),
@@ -838,7 +875,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, DAI 18 decimals", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -884,7 +921,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should close position, USDT, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, USDT 6 decimals", async () => {
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
