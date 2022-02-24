@@ -10,7 +10,8 @@ import "../interfaces/IIporConfiguration.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
 
-contract MiltonConfiguration is IMiltonConfiguration {
+contract MiltonConfiguration is IMiltonConfiguration {	
+
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 

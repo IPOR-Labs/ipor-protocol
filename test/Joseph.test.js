@@ -51,6 +51,138 @@ describe("Joseph", () => {
             1
         );
     });
+
+    it("should pause Smart Contract, sender is an admin", async () => {
+        //when
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        await testData.josephDai.connect(admin).pause();
+
+        //then
+        await assertError(
+            testData.josephDai.connect(userOne).provideLiquidity(123),
+            "Pausable: paused"
+        );
+    });
+
+    it("should pause Smart Contract specific methods", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        await testData.josephDai.connect(admin).pause();
+
+        //when
+        await assertError(
+            testData.josephDai.connect(userOne).provideLiquidity(123),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.josephDai.connect(userOne).redeem(123),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT pause Smart Contract specific methods when paused", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        await testData.josephDai.connect(admin).pause();
+
+        //when
+        await testData.josephDai.connect(userOne).decimals();
+        await testData.josephDai.connect(userOne).asset();
+    });
+
+    it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+
+        //when
+        await assertError(
+            testData.josephDai.connect(userThree).pause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should unpause Smart Contract, sender is an admin", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testData.josephDai.connect(admin).pause();
+
+        await assertError(
+            testData.josephDai.connect(userOne).provideLiquidity(123),
+            "Pausable: paused"
+        );
+
+        const expectedIpTokenBalance = BigInt("123");
+
+        //when
+        await testData.josephDai.connect(admin).unpause();
+        await testData.josephDai.connect(userOne).provideLiquidity(123);
+
+        //then
+        const actualIpTokenBalance = BigInt(
+            await testData.ipTokenDai.balanceOf(userOne.address)
+        );
+        expect(actualIpTokenBalance, "Incorrect IpToken balance.").to.be.eql(
+            expectedIpTokenBalance
+        );
+    });
+
+    it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0
+        );
+
+        await testData.josephDai.connect(admin).pause();
+
+        //when
+        await assertError(
+            testData.josephDai.connect(userThree).unpause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
     it("should transfer ownership - simple case 1", async () => {
         //given
         let testData = await prepareTestData(
