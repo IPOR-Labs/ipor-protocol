@@ -120,6 +120,7 @@ contract Milton is
     function transferPublicationFee(uint256 amount)
         external
         onlyPublicationFeeTransferer
+        nonReentrant
     {
         require(amount != 0, IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
@@ -134,8 +135,7 @@ contract Milton is
             IporErrors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS
         );
         _miltonStorage.updateStorageWhenTransferPublicationFee(amount);
-        //TODO: user Address from OZ and use call
-        //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
+
         IERC20Upgradeable(_asset).safeTransfer(charlieTreasurer, amount);
     }
 
@@ -143,7 +143,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) external override returns (uint256) {
+    ) external override nonReentrant returns (uint256) {
         return
             _openSwapPayFixed(
                 block.timestamp,
@@ -157,7 +157,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) external override returns (uint256) {
+    ) external override nonReentrant returns (uint256) {
         return
             _openSwapReceiveFixed(
                 block.timestamp,
@@ -433,7 +433,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) internal nonReentrant returns (uint256) {
+    ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
@@ -486,11 +486,6 @@ contract Milton is
             _getOpeningFeeForTreasuryPercentage()
         );
 
-        //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
-        //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
-        //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
-        //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        //TODO: sendValue z Address (use with ReentrancyGuard)
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
@@ -515,7 +510,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) internal nonReentrant returns (uint256) {
+    ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
@@ -571,11 +566,6 @@ contract Milton is
                 _getOpeningFeeForTreasuryPercentage()
             );
 
-        //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
-        //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
-        //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
-        //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        //TODO: sendValue z Address (use with ReentrancyGuard)
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
@@ -802,7 +792,6 @@ contract Milton is
         if (msg.sender == buyer) {
             transferAmount = transferAmount + liquidationDepositAmount;
         } else {
-            //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             //transfer liquidation deposit amount from Milton to Sender
             IERC20Upgradeable(_asset).safeTransfer(
                 msg.sender,
@@ -815,7 +804,6 @@ contract Milton is
 
         if (transferAmount != 0) {
             //transfer from Milton to Trader
-            //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             IERC20Upgradeable(_asset).safeTransfer(
                 buyer,
                 IporMath.convertWadToAssetDecimals(transferAmount, _decimals)
