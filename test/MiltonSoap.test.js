@@ -25,7 +25,6 @@ const {
 } = require("./Const.js");
 
 const {
-    getLibraries,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
@@ -36,14 +35,11 @@ const {
 describe("MiltonSoap", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );
@@ -54,7 +50,8 @@ describe("MiltonSoap", () => {
             [admin, userTwo],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
         const params = {
             asset: testData.tokenDai.address,
@@ -80,7 +77,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -139,7 +137,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -198,7 +197,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -256,7 +256,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -315,7 +316,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -383,7 +385,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -457,7 +460,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -525,7 +529,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -593,7 +598,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -696,7 +702,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -772,7 +779,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -848,7 +856,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -956,7 +965,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -1037,7 +1047,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -1118,7 +1129,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -1210,7 +1222,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -1283,7 +1296,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -1366,7 +1380,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -1478,7 +1493,8 @@ describe("MiltonSoap", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(

@@ -29,7 +29,7 @@ contract MiltonSpreadModel is
     function calculateQuotePayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) external override pure returns (uint256 quoteValue) {
         (
             uint256 spreadPremiums,
@@ -42,7 +42,7 @@ contract MiltonSpreadModel is
     function calculateQuoteReceiveFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) external override pure returns (uint256 quoteValue) {
         (
             uint256 spreadPremiums,
@@ -62,7 +62,7 @@ contract MiltonSpreadModel is
     function calculateSpreadPayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) external pure override returns (uint256 spreadValue) {
         (
             uint256 spreadPremiums,
@@ -76,7 +76,7 @@ contract MiltonSpreadModel is
     function calculateSpreadRecFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) external pure override returns (uint256 spreadValue) {
         (
             uint256 spreadPremiums,
@@ -93,7 +93,7 @@ contract MiltonSpreadModel is
     function _calculateQuoteChunksPayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsPayFixed(
             soap,
@@ -110,7 +110,7 @@ contract MiltonSpreadModel is
     function _calculateQuoteChunksReceiveFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsRecFixed(
             soap,
@@ -127,7 +127,7 @@ contract MiltonSpreadModel is
     function _calculateSpreadPremiumsPayFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) internal pure returns (uint256 spreadPremiumsValue) {
         require(
             accruedBalance.liquidityPool != 0,
@@ -151,7 +151,7 @@ contract MiltonSpreadModel is
     function _calculateSpreadPremiumsRecFixed(
         int256 soap,
         DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonTotalBalanceMemory memory accruedBalance
+        DataTypes.MiltonBalanceMemory memory accruedBalance
     ) internal pure returns (uint256 spreadValue) {
         require(
             accruedBalance.liquidityPool != 0,

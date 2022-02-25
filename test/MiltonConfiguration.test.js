@@ -50,7 +50,6 @@ const {
 
 const {
     assertError,
-    getLibraries,
     getStandardDerivativeParamsDAI,
     getStandardDerivativeParamsUSDT,
     getPayFixedDerivativeParamsDAICase1,
@@ -68,7 +67,6 @@ describe("MiltonConfiguration", () => {
     let miltonConfiguration = null;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         const MiltonConfiguration = await ethers.getContractFactory(

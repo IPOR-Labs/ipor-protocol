@@ -22,7 +22,6 @@ const {
 
 const {
     assertError,
-    getLibraries,
     prepareData,
     prepareTestData,
     prepareMiltonSpreadBase,
@@ -42,14 +41,11 @@ const {
 describe("MiltonSpreadModel - Rec Fixed", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             0
         );
@@ -766,7 +762,8 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
         const expectedSpreadReceiveFixed = BigInt("360000000000000");
@@ -801,7 +798,8 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            0
+            0,
+            1
         );
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);

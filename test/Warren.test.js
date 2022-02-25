@@ -5,7 +5,6 @@ const {
     assertError,
     prepareData,
     prepareTestData,
-    getLibraries,
 } = require("./Utils");
 
 const {
@@ -30,15 +29,11 @@ describe("Warren", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
     let data = null;
     let testData;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
-
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );
@@ -49,7 +44,8 @@ describe("Warren", () => {
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
             data,
-            0
+            0,
+            1
         );
     });
 
@@ -319,8 +315,7 @@ describe("Warren", () => {
     });
 
     it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue =
-            await testData.warren.itfGetDecayFactorValue();
+        const decayFactorValue = await testData.warren.itfGetDecayFactorValue();
         expect(parseInt(decayFactorValue)).to.be.lte(
             parseInt(PERCENTAGE_100_18DEC)
         );

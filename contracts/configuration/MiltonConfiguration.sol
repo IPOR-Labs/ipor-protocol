@@ -7,6 +7,7 @@ import "../interfaces/IWarren.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporVault.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
 
@@ -45,6 +46,7 @@ contract MiltonConfiguration is IMiltonConfiguration {
     IMiltonSpreadModel internal _miltonSpreadModel;
     IIporConfiguration internal _iporConfiguration;
     IIporAssetConfiguration internal _iporAssetConfiguration;
+	IIporVault internal _iporVault;
 
 	function getMiltonSpreadModel() external view override returns(address) {
 		return address(_miltonSpreadModel);

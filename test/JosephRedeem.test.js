@@ -21,12 +21,12 @@ const {
 
 const {
     assertError,
-    getLibraries,
     getStandardDerivativeParamsDAI,
     getStandardDerivativeParamsUSDT,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
+    prepareTestDataDaiCase1,
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
@@ -36,14 +36,11 @@ const {
 describe("Joseph - redeem", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );
@@ -51,11 +48,9 @@ describe("Joseph - redeem", () => {
 
     it("should redeem ipToken - simple case 1 - DAI 18 decimals", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -97,7 +92,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonStorageDai.getExtendedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -131,7 +126,8 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            0
+            0,
+            1
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -173,7 +169,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getBalance()
+                await testData.miltonStorageUsdt.getExtendedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -203,11 +199,9 @@ describe("Joseph - redeem", () => {
 
     it("should NOT redeem ipTokens because of empty Liquidity Pool", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -249,11 +243,9 @@ describe("Joseph - redeem", () => {
 
     it("should NOT redeem ipTokens because redeem value higher than Liquidity Pool Balance", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -292,11 +284,9 @@ describe("Joseph - redeem", () => {
 
     it("should NOT redeem ipTokens because after redeem Liquidity Pool will be empty", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -328,11 +318,9 @@ describe("Joseph - redeem", () => {
 
     it("should redeem ipTokens because NO validation for cool off period", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -377,7 +365,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonStorageDai.getExtendedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -407,11 +395,9 @@ describe("Joseph - redeem", () => {
 
     it("should redeem ipTokens, two times provided liquidity", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -454,7 +440,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonStorageDai.getExtendedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -488,7 +474,8 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
             data,
-            0
+            0,
+            1
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -559,7 +546,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolDAIBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonStorageDai.getExtendedBalance()
             ).liquidityPool
         );
         const actualDAIBalanceSender = BigInt(
@@ -595,7 +582,7 @@ describe("Joseph - redeem", () => {
 
         const actualLiquidityPoolUSDTBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getBalance()
+                await testData.miltonStorageUsdt.getExtendedBalance()
             ).liquidityPool
         );
         const actualUSDTBalanceSender = BigInt(
@@ -629,7 +616,8 @@ describe("Joseph - redeem", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
             data,
-            0
+            0,
+            1
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -702,7 +690,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolDAIBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonStorageDai.getExtendedBalance()
             ).liquidityPool
         );
         const actualDAIBalanceSender = BigInt(
@@ -738,7 +726,7 @@ describe("Joseph - redeem", () => {
 
         const actualLiquidityPoolUSDTBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getBalance()
+                await testData.miltonStorageUsdt.getExtendedBalance()
             ).liquidityPool
         );
         const actualUSDTBalanceSender = BigInt(
@@ -768,11 +756,9 @@ describe("Joseph - redeem", () => {
 
     it("should redeem - Liquidity Provider can transfer tokens to other user, user can redeem tokens", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -818,7 +804,7 @@ describe("Joseph - redeem", () => {
         );
         const actualDAIBalanceMiltonLiquidityPool = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonStorageDai.getExtendedBalance()
             ).liquidityPool
         );
 
@@ -866,11 +852,9 @@ describe("Joseph - redeem", () => {
 
     it("should NOT redeem - Redeem Liquidity Pool Utilization already exceeded, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -916,7 +900,7 @@ describe("Joseph - redeem", () => {
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonStorageDai.getExtendedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -939,11 +923,9 @@ describe("Joseph - redeem", () => {
 
     it("should NOT redeem - Redeem Liquidity Pool Utilization already exceeded, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -990,7 +972,7 @@ describe("Joseph - redeem", () => {
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonStorageDai.getExtendedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -1013,11 +995,9 @@ describe("Joseph - redeem", () => {
 
     it("should NOT redeem - Redeem Liquidity Pool Utilization exceeded, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1059,7 +1039,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonStorageDai.getExtendedBalance();
 
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
@@ -1081,11 +1061,9 @@ describe("Joseph - redeem", () => {
 
     it("should NOT redeem - Redeem Liquidity Pool Utilization exceeded, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1127,7 +1105,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonStorageDai.getExtendedBalance();
 
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
@@ -1149,11 +1127,9 @@ describe("Joseph - redeem", () => {
 
     it("should redeem - Liquidity Pool Utilization not exceedeed, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1193,7 +1169,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonStorageDai.getExtendedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -1220,11 +1196,9 @@ describe("Joseph - redeem", () => {
 
     it("should redeem - Liquidity Pool Utilization not exceedeed, Redeem Liquidity Pool Utilization not exceeded, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1264,7 +1238,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonStorageDai.getExtendedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -1291,11 +1265,9 @@ describe("Joseph - redeem", () => {
 
     it("should redeem - Liquidity Pool Utilization exceedeed, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1370,11 +1342,9 @@ describe("Joseph - redeem", () => {
     });
     it("should redeem - Liquidity Pool Utilization exceedeed, Redeem Liquidity Pool Utilization not exceeded, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

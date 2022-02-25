@@ -17,7 +17,7 @@ import "./MiltonStorage.sol";
 import "../configuration/MiltonConfiguration.sol";
 import "../interfaces/IMiltonEvents.sol";
 import "../tokenization/IpToken.sol";
-
+import "../interfaces/IIporVault.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
@@ -46,6 +46,15 @@ contract Milton is
     using SafeCast for int256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
 
+    modifier onlyPublicationFeeTransferer() {
+        require(
+            msg.sender ==
+                _iporConfiguration.getMiltonPublicationFeeTransferer(),
+            IporErrors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
+        );
+        _;
+    }
+
     function initialize(
         address asset,
         address ipToken,
@@ -53,7 +62,8 @@ contract Milton is
         address miltonStorage,
         address miltonSpreadModel,
         address initialIporConfiguration,
-        address iporAssetConfigurationAddr
+        address iporAssetConfigurationAddr,
+        address iporVault
     ) public initializer {
         __Ownable_init();
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
@@ -79,21 +89,30 @@ contract Milton is
         _warren = IWarren(warren);
         _ipToken = IIpToken(ipToken);
         _asset = asset;
+        _iporVault = IIporVault(iporVault);
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 5;
+        return 1;
     }
 
-    function _authorizeUpgrade(address) internal override onlyOwner {}
+    function depositToVault(uint256 assetValue)
+        external
+        nonReentrant
+        returns (uint256 currentBalance, uint256 currentInterest)
+    {
+        (currentBalance, currentInterest) = _iporVault.deposit(assetValue);
+        _miltonStorage.incrementLiquidityPoolBalance(currentInterest);
+    }
 
-    modifier onlyPublicationFeeTransferer() {
-        require(
-            msg.sender ==
-                _iporConfiguration.getMiltonPublicationFeeTransferer(),
-            IporErrors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
+    function withdrawFromVault(uint256 ivTokenValue)
+        external
+        nonReentrant
+        returns (uint256 withdrawAssetValue, uint256 currentInterest)
+    {
+        (withdrawAssetValue, currentInterest) = _iporVault.withdraw(
+            ivTokenValue
         );
-        _;
     }
 
     function pause() external override onlyOwner {
@@ -122,18 +141,13 @@ contract Milton is
         onlyPublicationFeeTransferer
         nonReentrant
     {
-        require(amount != 0, IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
-
-        require(
-            amount <= _miltonStorage.getBalance().openingFee,
-            IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
-        );
         address charlieTreasurer = _iporAssetConfiguration
             .getCharlieTreasurer();
         require(
             address(0) != charlieTreasurer,
             IporErrors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS
         );
+
         _miltonStorage.updateStorageWhenTransferPublicationFee(amount);
 
         IERC20Upgradeable(_asset).safeTransfer(charlieTreasurer, amount);
@@ -249,6 +263,16 @@ contract Milton is
         }
     }
 
+    function getAccruedBalance()
+        external
+        view
+        override
+        returns (DataTypes.MiltonBalanceMemory memory)
+    {
+        //TODO: fix using vault;
+        return _miltonStorage.getBalance();
+    }
+
     function _calculateSwapPayFixedValue(
         uint256 timestamp,
         DataTypes.IporSwapMemory memory swap
@@ -313,7 +337,7 @@ contract Milton is
             _asset
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
+        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
         spreadPayFixedValue = _miltonSpreadModel.calculateSpreadPayFixed(
@@ -441,7 +465,7 @@ contract Milton is
             collateralizationFactor
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
+        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
@@ -518,7 +542,7 @@ contract Milton is
             collateralizationFactor
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
+        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
@@ -845,4 +869,6 @@ contract Milton is
             Constants.D18
         );
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

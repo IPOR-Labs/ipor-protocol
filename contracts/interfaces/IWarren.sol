@@ -23,6 +23,8 @@ interface IWarren {
 
     event IporIndexRemoveAsset(address newAsset);
 
+	function getVersion() external pure returns (uint256);
+
     function getIndex(address asset)
         external
         view

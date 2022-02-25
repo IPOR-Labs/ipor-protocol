@@ -198,7 +198,7 @@ contract MiltonFrontendDataProvider is
         DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren)
             .getAccruedIndex(timestamp, asset);
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
+        DataTypes.MiltonBalanceMemory memory balance = miltonStorage
             .getBalance();
 
         uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(

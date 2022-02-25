@@ -12,6 +12,14 @@ interface IMilton {
 
     function unpause() external;
 
+    function depositToVault(uint256 assetValue)
+        external
+        returns (uint256 currentBalance, uint256 currentInterest);
+
+    function withdrawFromVault(uint256 ivTokenValue)
+        external
+        returns (uint256 withdrawAssetValue, uint256 currentInterest);
+
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
@@ -39,7 +47,7 @@ interface IMilton {
 
     function calculateSpread()
         external
-		view
+        view
         returns (uint256 spreadPf, uint256 spreadRf);
 
     function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
@@ -55,4 +63,9 @@ interface IMilton {
         external
         view
         returns (uint256);
+
+    function getAccruedBalance()
+        external
+        view
+        returns (DataTypes.MiltonBalanceMemory memory);
 }

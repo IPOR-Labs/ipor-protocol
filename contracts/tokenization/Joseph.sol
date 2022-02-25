@@ -11,12 +11,14 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporVault.sol";
 import "../interfaces/IJoseph.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IMiltonStorage.sol";
 import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/IMilton.sol";
+import "hardhat/console.sol";
 
 contract Joseph is
     UUPSUpgradeable,
@@ -29,29 +31,40 @@ contract Joseph is
     using SafeCast for int256;
 
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
+    uint256 internal constant _IDEAL_MILTON_VAULT_REBALANCE_RATIO = 85e15;
 
     uint8 internal _decimals;
     address internal _asset;
     IIpToken private _ipToken;
     IMilton private _milton;
     IMiltonStorage private _miltonStorage;
+    IIporVault private _iporVault;
+
+    // uint256 private _vaultDeposit;
 
     function initialize(
         address assetAddress,
         address ipToken,
         address milton,
-        address miltonStorage
+        address miltonStorage,
+        address iporVault
     ) public initializer {
         __Ownable_init();
         require(address(assetAddress) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(iporVault) != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = assetAddress;
         _decimals = ERC20Upgradeable(assetAddress).decimals();
         _ipToken = IIpToken(ipToken);
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
+        _iporVault = IIporVault(iporVault);
+    }
+
+    function getVersion() external pure returns (uint256) {
+        return 1;
     }
 
     function pause() external onlyOwner {
@@ -60,6 +73,55 @@ contract Joseph is
 
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
+    function checkVaultReservesRatio() external override returns (uint256) {
+        return _checkVaultReservesRatio();
+    }
+
+    function rebalance() external override {
+        uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(
+            address(_milton)
+        );
+        uint256 iporVaultBalance = _iporVault.totalBalance(address(_milton));
+        uint256 ratio = IporMath.division(
+            miltonBalance * Constants.D18,
+            miltonBalance + iporVaultBalance
+        );
+
+        console.log("miltonBalance=", miltonBalance);
+        console.log("iporVaultBalance=", iporVaultBalance);
+        console.log("ratio=", ratio);
+
+        if (ratio > _IDEAL_MILTON_VAULT_REBALANCE_RATIO) {
+            uint256 assetValue = miltonBalance -
+                IporMath.division(
+                    _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
+                        (miltonBalance + iporVaultBalance),
+                    Constants.D18
+                );
+            // _vaultDeposit = _vaultDeposit + assetValue;
+            // _iporVault.deposit(assetValue);
+
+			_milton.depositToVault(assetValue);
+
+        } else {
+            uint256 withdrawAmount = IporMath.division(
+                _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
+                    (miltonBalance + iporVaultBalance),
+                Constants.D18
+            ) - miltonBalance;
+            uint256 withdrawIvTokenAmount = 0;
+        }
+    }
+
+    function depositToVault(uint256 assetAmount) external override {
+        _iporVault.deposit(assetAmount);
+    }
+
+    function withdrawFromVault(uint256 ivTokenAmount) external override {
+        _iporVault.withdraw(ivTokenAmount);
     }
 
     function decimals() external view returns (uint8) {
@@ -80,6 +142,18 @@ contract Joseph is
 
     function redeem(uint256 ipTokenValue) external override whenNotPaused {
         _redeem(ipTokenValue, block.timestamp);
+    }
+
+    function _checkVaultReservesRatio() internal returns (uint256) {
+        uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(
+            address(_milton)
+        );
+        uint256 iporVaultBalance = _iporVault.totalBalance(address(_milton));
+        return
+            IporMath.division(
+                miltonBalance * _decimals,
+                miltonBalance + iporVaultBalance
+            );
     }
 
     //@param liquidityAmount in decimals like asset
@@ -134,7 +208,7 @@ contract Joseph is
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
+        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
             .getBalance();
 
         uint256 wadAssetValue = IporMath.division(

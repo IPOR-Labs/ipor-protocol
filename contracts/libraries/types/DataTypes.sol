@@ -16,32 +16,42 @@ library DataTypes {
         PayFloatingReceiveFixed
     }
 
-    struct MiltonTotalBalanceMemory {
+	struct MiltonExtendedBalanceMemory {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint256 payFixedSwaps;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
-        uint256 receiveFixedSwaps;
-        uint256 openingFee;
-        uint256 liquidationDeposit;
-        uint256 iporPublicationFee;
+        uint256 receiveFixedSwaps;        
         //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
-        uint256 liquidityPool;
-        //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
+        uint256 liquidityPool;        
+		uint256 openingFee;
+        uint256 liquidationDeposit;
+        uint256 iporPublicationFee;
+		//@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 treasury;
     }
-    struct MiltonTotalBalanceStorage {
+
+    struct MiltonBalanceMemory {
+        //@notice derivatives balance for Pay Fixed & Receive Floating leg
+        uint256 payFixedSwaps;
+        //@notice derivatives balance for Pay Floating & Receive Fixed leg
+        uint256 receiveFixedSwaps;        
+        //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
+        //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
+        uint256 liquidityPool;
+    }
+    struct MiltonBalanceStorage {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint128 payFixedSwaps;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
         uint128 receiveFixedSwaps;
-        uint128 openingFee;
-        uint128 liquidationDeposit;
-        uint128 iporPublicationFee;
-        //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
+		//@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 liquidityPool;
+        uint128 openingFee;
+        uint128 liquidationDeposit;
+        uint128 iporPublicationFee;        
         //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 treasury;

@@ -11,7 +11,11 @@ import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
 
-contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
+contract MiltonStorage is
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IMiltonStorage
+{
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using SafeCast for uint256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
@@ -20,7 +24,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     uint64 private _lastSwapId;
     address private _milton;
     address private _joseph;
-    DataTypes.MiltonTotalBalanceStorage internal _balances;
+    DataTypes.MiltonBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
     DataTypes.IporSwapContainer internal _swapsPayFixed;
@@ -48,16 +52,30 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         external
         view
         override
-        returns (DataTypes.MiltonTotalBalanceMemory memory)
+        returns (DataTypes.MiltonBalanceMemory memory)
     {
         return
-            DataTypes.MiltonTotalBalanceMemory(
+            DataTypes.MiltonBalanceMemory(
                 _balances.payFixedSwaps,
                 _balances.receiveFixedSwaps,
-                _balances.openingFee,
-                _balances.liquidationDeposit,
-                _balances.iporPublicationFee,
+                _balances.liquidityPool
+            );
+    }
+
+	function getExtendedBalance()
+        external
+        view
+        override
+        returns (DataTypes.MiltonExtendedBalanceMemory memory)
+    {
+        return
+            DataTypes.MiltonExtendedBalanceMemory(
+                _balances.payFixedSwaps,
+                _balances.receiveFixedSwaps,
                 _balances.liquidityPool,
+				_balances.openingFee,
+                _balances.liquidationDeposit,
+                _balances.iporPublicationFee,                
                 _balances.treasury
             );
     }
@@ -163,6 +181,16 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         override
         onlyMilton
     {
+        require(
+            transferedAmount != 0,
+            IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER
+        );
+
+        require(
+            transferedAmount <= _balances.openingFee,
+            IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
+        );
+
         _balances.iporPublicationFee =
             _balances.iporPublicationFee -
             transferedAmount.toUint128();
@@ -211,7 +239,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(
@@ -219,7 +247,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             iporSwap,
             positionValue,
             closingTimestamp,
-			cfgIncomeTaxPercentage
+            cfgIncomeTaxPercentage
         );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
     }
@@ -229,7 +257,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(
@@ -237,12 +265,22 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             iporSwap,
             positionValue,
             closingTimestamp,
-			cfgIncomeTaxPercentage
+            cfgIncomeTaxPercentage
         );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
             iporSwap,
             closingTimestamp
         );
+    }
+
+    function incrementLiquidityPoolBalance(uint256 deltaValue)
+        external
+        override
+        onlyMilton
+    {
+        uint256 liquidityPoolBalance = _balances.liquidityPool;
+        liquidityPoolBalance = liquidityPoolBalance + deltaValue;
+        _balances.liquidityPool = liquidityPoolBalance.toUint128();
     }
 
     function getSwapsPayFixed(address account)

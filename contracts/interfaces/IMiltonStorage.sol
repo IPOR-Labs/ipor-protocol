@@ -4,19 +4,23 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
-
     function getVersion() external pure returns (uint256);
 
-	function getLastSwapId() external view returns (uint256);
+    function getLastSwapId() external view returns (uint256);
 
     function setMilton(address milton) external;
 
-    function setJoseph(address joseph) external;    
+    function setJoseph(address joseph) external;
 
     function getBalance()
         external
         view
-        returns (DataTypes.MiltonTotalBalanceMemory memory);
+        returns (DataTypes.MiltonBalanceMemory memory);
+
+    function getExtendedBalance()
+        external
+        view
+        returns (DataTypes.MiltonExtendedBalanceMemory memory);
 
     function getTotalOutstandingNotional()
         external
@@ -51,7 +55,7 @@ interface IMiltonStorage {
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
     ) external;
 
     function updateStorageWhenCloseSwapReceiveFixed(
@@ -59,8 +63,10 @@ interface IMiltonStorage {
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
     ) external;
+
+    function incrementLiquidityPoolBalance(uint256 deltaValue) external;
 
     function getSwapPayFixed(uint256 swapId)
         external
