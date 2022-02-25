@@ -120,6 +120,7 @@ module.exports.prepareApproveForUsers = async (
                 .connect(users[i])
                 .approve(testData.miltonUsdt.address, TOTAL_SUPPLY_6_DECIMALS);
         }
+
         if (asset === "USDC") {
             await testData.tokenUsdc
                 .connect(users[i])
@@ -128,6 +129,7 @@ module.exports.prepareApproveForUsers = async (
                 .connect(users[i])
                 .approve(testData.miltonUsdc.address, TOTAL_SUPPLY_6_DECIMALS);
         }
+
         if (asset === "DAI") {
             await testData.tokenDai
                 .connect(users[i])
@@ -435,6 +437,8 @@ module.exports.prepareTestData = async (
             await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
 
             await miltonUsdt.authorizeJoseph(josephUsdt.address);
+			await miltonUsdt.authorizeJoseph(iporVaultUsdt.address);
+            // await iporVaultUsdt.authorizeMilton(miltonUsdt.address);
             await warren.addAsset(tokenUsdt.address);
         }
         if (assets[k] === "USDC") {
@@ -512,6 +516,8 @@ module.exports.prepareTestData = async (
             await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
 
             await miltonUsdc.authorizeJoseph(josephUsdc.address);
+			await miltonUsdc.authorizeJoseph(iporVaultUsdc.address);
+            // await iporVaultUsdc.authorizeMilton(miltonUsdc.address);
             await warren.addAsset(tokenUsdc.address);
         }
         if (assets[k] === "DAI") {
@@ -588,7 +594,11 @@ module.exports.prepareTestData = async (
             await ipTokenDai.setJoseph(josephDai.address);
             await iporAssetConfigurationDai.setJoseph(josephDai.address);
             await miltonDai.authorizeJoseph(josephDai.address);
-            await warren.addAsset(tokenDai.address);
+			await miltonDai.authorizeJoseph(iporVaultDai.address);
+
+            // await iporVaultDai.authorizeMilton(miltonDai.address);
+            
+			await warren.addAsset(tokenDai.address);
         }
     }
 

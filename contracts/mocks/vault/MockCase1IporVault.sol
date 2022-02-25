@@ -7,10 +7,11 @@ import "../../interfaces/IIporVault.sol";
 import "../../libraries/IporMath.sol";
 
 contract MockCase1IporVault is IIporVault {
+	
     using SafeERC20 for IERC20;
     IERC20 private _asset;
 
-    mapping(address => uint256) internal balance;
+    mapping(address => uint256) internal _balance;
 
     uint256 private constant _FIXED_INTEREST = 2e16;
     uint256 private constant _FIXED_IV_TOKEN_PRICE = 1e18;
@@ -20,7 +21,7 @@ contract MockCase1IporVault is IIporVault {
     }
 
     function totalBalance(address who) external view override returns (uint256) {
-        return balance[who];
+        return _balance[who];
     }
 
     function deposit(uint256 assetValue)
@@ -29,8 +30,8 @@ contract MockCase1IporVault is IIporVault {
         returns (uint256 currentBalance, uint256 currentInterest)
     {
         //@dev assume that every deposit returns some fixed interest
-        balance[msg.sender] = balance[msg.sender] + _FIXED_INTEREST + assetValue;
-        currentBalance = balance[msg.sender];
+        _balance[msg.sender] = _balance[msg.sender] + _FIXED_INTEREST + assetValue;
+        currentBalance = _balance[msg.sender];
         currentInterest = _FIXED_INTEREST;
 
         _asset.safeTransferFrom(msg.sender, address(this), assetValue);
@@ -46,8 +47,8 @@ contract MockCase1IporVault is IIporVault {
             ivTokenValue * _FIXED_IV_TOKEN_PRICE,
             Constants.D18
         );
-        balance[msg.sender] =
-            balance[msg.sender] +
+        _balance[msg.sender] =
+            _balance[msg.sender] +
             _FIXED_INTEREST -
             withdrawAssetValue;
 
@@ -59,5 +60,15 @@ contract MockCase1IporVault is IIporVault {
     function currentInterest(address who) external override returns (uint256) {
         //@dev for test purposes always the same fixed interest for any msg.sender
         return _FIXED_INTEREST;
+    }
+
+	function authorizeMilton(address milton)
+        external
+        override
+    {
+        IERC20(_asset).safeIncreaseAllowance(
+            milton,
+            Constants.MAX_VALUE
+        );
     }
 }

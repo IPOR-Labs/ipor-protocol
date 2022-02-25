@@ -104,8 +104,7 @@ contract Joseph is
             // _vaultDeposit = _vaultDeposit + assetValue;
             // _iporVault.deposit(assetValue);
 
-			_milton.depositToVault(assetValue);
-
+            _milton.depositToVault(assetValue);
         } else {
             uint256 withdrawAmount = IporMath.division(
                 _IDEAL_MILTON_VAULT_REBALANCE_RATIO *

@@ -56,7 +56,6 @@ describe("AssetManagementIntegration", () => {
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
-		
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -68,7 +67,7 @@ describe("AssetManagementIntegration", () => {
                 PERCENTAGE_3_18DEC,
                 params.openTimestamp
             );
-			
+
         await testData.miltonDai
             .connect(params.from)
             .itfOpenSwapPayFixed(
@@ -77,10 +76,11 @@ describe("AssetManagementIntegration", () => {
                 params.slippageValue,
                 params.collateralizationFactor
             );
-		
-		const expectedMiltonStableBalance = BigInt("38000000000000000000000");
+
+        const expectedMiltonStableBalance = BigInt("38000000000000000000000");
+
         //when
-        await testData.josephDai.rebalance();
+        await testData.josephDai.connect(userOne).rebalance();
 
         //then
         //1. sprawdz tokeny na miltonie
