@@ -1,3 +1,21 @@
+# ipor-protocol
+
+Shared java library used in IPOR oracle related services.
+
+## Job statuses
+
+Smart contracts continuous integration last status:
+
+* [![CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/main.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/main.yml)
+
+Java continuous integration last status:
+
+* [![Java CD](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-cd.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-cd.yml)
+
+Java continuous deployment last status:
+
+* [![Java CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-ci.yml)
+
 ### How to run as developer?
 
 1. Clone `ipor-protocol` repository.
