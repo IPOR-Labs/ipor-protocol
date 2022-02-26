@@ -6,7 +6,7 @@ IPOR smart contracts
 
 Smart contracts continuous integration last status:
 
-* [![CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/main.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/main.yml)
+* [![Smart Contracts CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/smart-contracts-ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/smart-contracts-ci.yml)
 
 Java continuous integration last status:
 
