@@ -12,13 +12,9 @@ interface IMilton {
 
     function unpause() external;
 
-    function depositToVault(uint256 assetValue)
-        external
-        returns (uint256 currentInterest);
+    function depositToVault(uint256 assetValue) external;
 
-    function withdrawFromVault(uint256 ivTokenValue)
-        external
-        returns (uint256 withdrawAssetValue, uint256 currentInterest);
+    function withdrawFromVault(uint256 assetValue) external;
 
     function openSwapPayFixed(
         uint256 totalAmount,

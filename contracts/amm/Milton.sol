@@ -96,23 +96,14 @@ contract Milton is
         return 1;
     }
 
-    function depositToVault(uint256 assetValue)
-        external
-        nonReentrant
-        returns (uint256 currentInterest)
-    {        
-        currentInterest = _iporVault.deposit(assetValue);
-        _miltonStorage.incrementLiquidityPoolBalance(currentInterest);        
+    function depositToVault(uint256 assetValue) external nonReentrant {
+        uint256 interest = _iporVault.deposit(assetValue);
+        _miltonStorage.incrementLiquidityPoolBalance(interest);
     }
 
-    function withdrawFromVault(uint256 ivTokenValue)
-        external
-        nonReentrant
-        returns (uint256 withdrawAssetValue, uint256 currentInterest)
-    {
-        (withdrawAssetValue, currentInterest) = _iporVault.withdraw(
-            ivTokenValue
-        );
+    function withdrawFromVault(uint256 assetValue) external nonReentrant {
+        uint256 interest = _iporVault.withdraw(assetValue);
+        _miltonStorage.incrementLiquidityPoolBalance(interest);
     }
 
     function pause() external override onlyOwner {

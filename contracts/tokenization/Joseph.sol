@@ -40,8 +40,6 @@ contract Joseph is
     IMiltonStorage private _miltonStorage;
     IIporVault private _iporVault;
 
-    // uint256 private _vaultDeposit;
-
     function initialize(
         address assetAddress,
         address ipToken,
@@ -100,20 +98,21 @@ contract Joseph is
                     _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
                         (miltonBalance + iporVaultBalance),
                     Constants.D18
-                );
-            // _vaultDeposit = _vaultDeposit + assetValue;
-            // _iporVault.deposit(assetValue);
+                );            
 			console.log("assetValue=", assetValue);
             _milton.depositToVault(assetValue);
         } else {
 
-            uint256 withdrawAmount = IporMath.division(
+            uint256 assetValue = IporMath.division(
                 _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
                     (miltonBalance + iporVaultBalance),
                 Constants.D18
             ) - miltonBalance;
-            uint256 withdrawIvTokenAmount = 0;
-			console.log("withdrawAmount=", withdrawAmount);
+
+			// (uint256 withdrawnAssetValue, uint256 currentInterest) = 
+			_milton.withdrawFromVault(assetValue);
+            
+			console.log("assetValue=", assetValue);
         }
     }
 
