@@ -57,6 +57,9 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
+      - name: Set up node_modules
+        run: npm install
+
       - name: Build
         run: mvn clean package -B -ntp -s '${{ github.workspace }}/settings.xml' -Dmaven.test.skip=true --update-snapshots
 
