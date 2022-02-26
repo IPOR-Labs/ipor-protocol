@@ -6,7 +6,7 @@ import "../libraries/types/DataTypes.sol";
 interface IMilton {
     function getVersion() external pure returns (uint256);
 
-    function authorizeJoseph(address joseph) external;
+    function setupMaxAllowance(address spender) external;
 
     function pause() external;
 
@@ -14,7 +14,7 @@ interface IMilton {
 
     function depositToVault(uint256 assetValue)
         external
-        returns (uint256 currentBalance, uint256 currentInterest);
+        returns (uint256 currentInterest);
 
     function withdrawFromVault(uint256 ivTokenValue)
         external

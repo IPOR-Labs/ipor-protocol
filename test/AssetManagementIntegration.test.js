@@ -55,11 +55,13 @@ describe("AssetManagementIntegration", () => {
             testData
         );
 
+
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(
@@ -77,15 +79,53 @@ describe("AssetManagementIntegration", () => {
                 params.collateralizationFactor
             );
 
-        const expectedMiltonStableBalance = BigInt("38000000000000000000000");
+        const expectedMiltonStableBalance = BigInt("3230000000000000000000");
+        //collateral + opening fee + ipor vault interest
+        const expectedMiltonLiquidityPoolBalance = BigInt(
+            "28032820538384845463609"			 
+        );
+        const expectedMiltonAccruedLiquidityPoolBalance =
+            expectedMiltonLiquidityPoolBalance + BigInt("3000000000000000000");
+        const expectedIporVaultStableBalance = BigInt(
+            "34770000000000000000000"
+        );
 
         //when
         await testData.josephDai.connect(userOne).rebalance();
 
         //then
-        //1. sprawdz tokeny na miltonie
-        //2. sprawdz LP balance na miltonie
-        //3. odczytaj runtime LPBalance
+        const actualMiltonStableBalance = await testData.tokenDai.balanceOf(
+            testData.miltonDai.address
+        );
+        const actualIporVaultStableBalance = await testData.tokenDai.balanceOf(
+            testData.iporVaultDai.address
+        );
+
+        const actualMiltonBalance =
+            await testData.miltonStorageDai.getBalance();
+
+        const actualMiltonAccruedBalance =
+            await testData.miltonDai.getAccruedBalance();
+
+        expect(
+            expectedMiltonStableBalance,
+            `Incorrect Milton stables balance`
+        ).to.be.eq(actualMiltonStableBalance);
+
+        expect(
+            expectedIporVaultStableBalance,
+            `Incorrect Ipor Vault stables balance`
+        ).to.be.eq(actualIporVaultStableBalance);
+
+        expect(
+            expectedMiltonLiquidityPoolBalance,
+            `Incorrect Milton Liquidity Pool Balance`
+        ).to.be.eq(actualMiltonBalance.liquidityPool);
+
+        expect(
+            expectedMiltonAccruedLiquidityPoolBalance,
+            `Incorrect Milton Accrued Liquidity Pool Balance`
+        ).to.be.eq(actualMiltonAccruedBalance.liquidityPool);
     });
     it("should rebalance - AM Vault ration < Optimal - withdraw from Vault full amount", async () => {});
     it("should rebalance - AM Vault ration < Optimal - withdraw from Vault part amount", async () => {});

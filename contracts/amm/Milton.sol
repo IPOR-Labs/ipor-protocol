@@ -99,10 +99,10 @@ contract Milton is
     function depositToVault(uint256 assetValue)
         external
         nonReentrant
-        returns (uint256 currentBalance, uint256 currentInterest)
-    {
-        (currentBalance, currentInterest) = _iporVault.deposit(assetValue);
-        _miltonStorage.incrementLiquidityPoolBalance(currentInterest);
+        returns (uint256 currentInterest)
+    {        
+        currentInterest = _iporVault.deposit(assetValue);
+        _miltonStorage.incrementLiquidityPoolBalance(currentInterest);        
     }
 
     function withdrawFromVault(uint256 ivTokenValue)
@@ -123,14 +123,14 @@ contract Milton is
         _unpause();
     }
 
-    function authorizeJoseph(address joseph)
+    function setupMaxAllowance(address spender)
         external
         override
         onlyOwner
         whenNotPaused
     {
         IERC20Upgradeable(_asset).safeIncreaseAllowance(
-            joseph,
+            spender,
             Constants.MAX_VALUE
         );
     }
@@ -244,8 +244,7 @@ contract Milton is
     {
         (, , int256 soap) = _calculateSoap(calculateTimestamp);
 
-        int256 balance = _miltonStorage.getBalance().liquidityPool.toInt256() -
-            soap;
+        int256 balance = _getAccruedBalance().liquidityPool.toInt256() - soap;
 
         require(
             balance >= 0,
@@ -269,8 +268,20 @@ contract Milton is
         override
         returns (DataTypes.MiltonBalanceMemory memory)
     {
-        //TODO: fix using vault;
-        return _miltonStorage.getBalance();
+        return _getAccruedBalance();
+    }
+
+    function _getAccruedBalance()
+        internal
+        view
+        returns (DataTypes.MiltonBalanceMemory memory)
+    {
+        DataTypes.MiltonBalanceMemory memory accruedBalance = _miltonStorage
+            .getBalance();
+        accruedBalance.liquidityPool =
+            accruedBalance.liquidityPool +
+            _iporVault.getCurrentInterest();
+        return accruedBalance;
     }
 
     function _calculateSwapPayFixedValue(
@@ -337,8 +348,7 @@ contract Milton is
             _asset
         );
 
-        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = _getAccruedBalance();
 
         spreadPayFixedValue = _miltonSpreadModel.calculateSpreadPayFixed(
             _miltonStorage.calculateSoapPayFixed(
@@ -465,9 +475,7 @@ contract Milton is
             collateralizationFactor
         );
 
-        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
-            .getBalance();
-
+        DataTypes.MiltonBalanceMemory memory balance = _getAccruedBalance();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
         balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
 
@@ -542,8 +550,7 @@ contract Milton is
             collateralizationFactor
         );
 
-        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = _getAccruedBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
         balance.receiveFixedSwaps =

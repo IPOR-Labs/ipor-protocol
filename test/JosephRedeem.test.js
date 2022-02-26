@@ -92,7 +92,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -127,7 +127,7 @@ describe("Joseph - redeem", () => {
             ["USDT"],
             data,
             0,
-            1
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -169,7 +169,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getExtendedBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -365,7 +365,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -440,7 +440,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -475,7 +475,7 @@ describe("Joseph - redeem", () => {
             ["DAI", "USDT"],
             data,
             0,
-            1
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -546,7 +546,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolDAIBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualDAIBalanceSender = BigInt(
@@ -582,7 +582,7 @@ describe("Joseph - redeem", () => {
 
         const actualLiquidityPoolUSDTBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getExtendedBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).liquidityPool
         );
         const actualUSDTBalanceSender = BigInt(
@@ -617,7 +617,7 @@ describe("Joseph - redeem", () => {
             ["DAI", "USDT"],
             data,
             0,
-            1
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -690,7 +690,7 @@ describe("Joseph - redeem", () => {
         );
         const actualLiquidityPoolDAIBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualDAIBalanceSender = BigInt(
@@ -726,7 +726,7 @@ describe("Joseph - redeem", () => {
 
         const actualLiquidityPoolUSDTBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getExtendedBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).liquidityPool
         );
         const actualUSDTBalanceSender = BigInt(
@@ -804,7 +804,7 @@ describe("Joseph - redeem", () => {
         );
         const actualDAIBalanceMiltonLiquidityPool = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
 
@@ -900,7 +900,7 @@ describe("Joseph - redeem", () => {
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -972,7 +972,7 @@ describe("Joseph - redeem", () => {
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -1039,7 +1039,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
@@ -1105,7 +1105,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
@@ -1169,7 +1169,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -1238,7 +1238,7 @@ describe("Joseph - redeem", () => {
                 params.collateralizationFactor
             );
 
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualCollateral =
             BigInt(balance.payFixedSwaps) + BigInt(balance.receiveFixedSwaps);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);

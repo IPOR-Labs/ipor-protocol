@@ -292,7 +292,9 @@ module.exports.getMockIporVaultCase = async (
     MockCaseIporVault = await ethers.getContractFactory(
         "MockCase" + iporVaultCaseNumber + "IporVault"
     );
-    const mockCaseIporVault = await MockCaseIporVault.deploy(assetAddress);
+    const mockCaseIporVault = await MockCaseIporVault.deploy(
+        assetAddress
+    );
     return mockCaseIporVault;
 };
 module.exports.getMockMiltonCase = async (miltonCaseNumber) => {
@@ -317,7 +319,10 @@ module.exports.prepareWarren = async (accounts) => {
 };
 
 module.exports.prepareTestDataDaiCase1 = async (accounts, data) => {
-    return await this.prepareTestData(accounts, ["DAI"], data, 0, 1);
+    return await this.prepareTestData(accounts, ["DAI"], data, 0, 0);
+};
+module.exports.prepareTestDataUsdtCase1 = async (accounts, data) => {
+    return await this.prepareTestData(accounts, ["USDT"], data, 0, 0);
 };
 
 module.exports.prepareTestData = async (
@@ -436,8 +441,8 @@ module.exports.prepareTestData = async (
             await ipTokenUsdt.setJoseph(josephUsdt.address);
             await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
 
-            await miltonUsdt.authorizeJoseph(josephUsdt.address);
-			await miltonUsdt.authorizeJoseph(iporVaultUsdt.address);
+            await miltonUsdt.setupMaxAllowance(josephUsdt.address);
+            await miltonUsdt.setupMaxAllowance(iporVaultUsdt.address);
             // await iporVaultUsdt.authorizeMilton(miltonUsdt.address);
             await warren.addAsset(tokenUsdt.address);
         }
@@ -515,8 +520,8 @@ module.exports.prepareTestData = async (
             await ipTokenUsdc.setJoseph(josephUsdc.address);
             await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
 
-            await miltonUsdc.authorizeJoseph(josephUsdc.address);
-			await miltonUsdc.authorizeJoseph(iporVaultUsdc.address);
+            await miltonUsdc.setupMaxAllowance(josephUsdc.address);
+            await miltonUsdc.setupMaxAllowance(iporVaultUsdc.address);
             // await iporVaultUsdc.authorizeMilton(miltonUsdc.address);
             await warren.addAsset(tokenUsdc.address);
         }
@@ -593,12 +598,12 @@ module.exports.prepareTestData = async (
 
             await ipTokenDai.setJoseph(josephDai.address);
             await iporAssetConfigurationDai.setJoseph(josephDai.address);
-            await miltonDai.authorizeJoseph(josephDai.address);
-			await miltonDai.authorizeJoseph(iporVaultDai.address);
+            await miltonDai.setupMaxAllowance(josephDai.address);
+            await miltonDai.setupMaxAllowance(iporVaultDai.address);
 
             // await iporVaultDai.authorizeMilton(miltonDai.address);
-            
-			await warren.addAsset(tokenDai.address);
+
+            await warren.addAsset(tokenDai.address);
         }
     }
 

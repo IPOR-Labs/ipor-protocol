@@ -76,7 +76,7 @@ contract Joseph is
     }
 
     //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
-    function checkVaultReservesRatio() external override returns (uint256) {
+    function checkVaultReservesRatio() external view override returns (uint256) {
         return _checkVaultReservesRatio();
     }
 
@@ -84,7 +84,7 @@ contract Joseph is
         uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(
             address(_milton)
         );
-        uint256 iporVaultBalance = _iporVault.totalBalance(address(_milton));
+        uint256 iporVaultBalance = _iporVault.totalBalance();
         uint256 ratio = IporMath.division(
             miltonBalance * Constants.D18,
             miltonBalance + iporVaultBalance
@@ -103,15 +103,17 @@ contract Joseph is
                 );
             // _vaultDeposit = _vaultDeposit + assetValue;
             // _iporVault.deposit(assetValue);
-
+			console.log("assetValue=", assetValue);
             _milton.depositToVault(assetValue);
         } else {
+
             uint256 withdrawAmount = IporMath.division(
                 _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
                     (miltonBalance + iporVaultBalance),
                 Constants.D18
             ) - miltonBalance;
             uint256 withdrawIvTokenAmount = 0;
+			console.log("withdrawAmount=", withdrawAmount);
         }
     }
 
@@ -143,11 +145,11 @@ contract Joseph is
         _redeem(ipTokenValue, block.timestamp);
     }
 
-    function _checkVaultReservesRatio() internal returns (uint256) {
+    function _checkVaultReservesRatio() internal view returns (uint256) {
         uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(
             address(_milton)
         );
-        uint256 iporVaultBalance = _iporVault.totalBalance(address(_milton));
+        uint256 iporVaultBalance = _iporVault.totalBalance();
         return
             IporMath.division(
                 miltonBalance * _decimals,
@@ -207,8 +209,8 @@ contract Joseph is
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        DataTypes.MiltonBalanceMemory memory balance = _miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = _milton
+            .getAccruedBalance();
 
         uint256 wadAssetValue = IporMath.division(
             ipTokenValue * exchangeRate,

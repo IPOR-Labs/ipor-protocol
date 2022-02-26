@@ -187,9 +187,8 @@ contract MiltonFrontendDataProvider is
         IMiltonStorage miltonStorage = IMiltonStorage(
             iporAssetConfiguration.getMiltonStorage()
         );
-        IMiltonConfiguration milton = IMiltonConfiguration(
-            iporAssetConfiguration.getMilton()
-        );
+        address miltonAddr = iporAssetConfiguration.getMilton();
+        IMiltonConfiguration milton = IMiltonConfiguration(miltonAddr);
 
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
             milton.getMiltonSpreadModel()
@@ -198,8 +197,8 @@ contract MiltonFrontendDataProvider is
         DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren)
             .getAccruedIndex(timestamp, asset);
 
-        DataTypes.MiltonBalanceMemory memory balance = miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = IMilton(miltonAddr)
+            .getAccruedBalance();
 
         uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
             miltonStorage.calculateSoapPayFixed(

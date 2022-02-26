@@ -28,6 +28,7 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
+    prepareTestDataUsdtCase1,
     prepareTestDataDaiCase1,
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
@@ -377,7 +378,7 @@ describe("Joseph", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -407,12 +408,9 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - USDT 6 decimals", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataUsdtCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
-            data,
-            0,
-            1
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -446,7 +444,7 @@ describe("Joseph", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getExtendedBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -554,7 +552,7 @@ describe("Joseph", () => {
             ["USDT"],
             data,
             0,
-            1
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -743,7 +741,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("1004250360789776789");
 
@@ -820,7 +818,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("1002879245824171323");
 
@@ -899,7 +897,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("989066232808424041");
 
@@ -976,7 +974,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("989066232808424042");
 
@@ -1065,7 +1063,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1155,7 +1153,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1248,7 +1246,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1340,7 +1338,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getExtendedBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1364,7 +1362,7 @@ describe("Joseph", () => {
             ["USDT"],
             data,
             0,
-            1
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1459,7 +1457,7 @@ describe("Joseph", () => {
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - provide liquidity without mint ipToken
 
-        let balance = await testData.miltonStorageDai.getExtendedBalance();
+        let balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedIpTokenDaiBalance = ZERO;
 
@@ -1491,7 +1489,7 @@ describe("Joseph", () => {
             ["DAI"],
             data,
             1,
-            1
+            0
         );
 
         await prepareApproveForUsers(
@@ -1580,7 +1578,7 @@ describe("Joseph", () => {
             ["DAI"],
             data,
             1,
-            1
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1670,7 +1668,7 @@ describe("Joseph", () => {
             ["USDT"],
             data,
             1,
-            1
+            0
         );
 
         await prepareApproveForUsers(

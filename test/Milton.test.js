@@ -499,12 +499,12 @@ describe("Milton", () => {
 
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).payFixedSwaps
         );
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorageDai.getExtendedBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).receiveFixedSwaps
         );
         const actualDerivativesTotalBalanceWad =
@@ -594,13 +594,13 @@ describe("Milton", () => {
         );
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorageUsdt.getExtendedBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).payFixedSwaps
         );
 
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
-                await testData.miltonStorageUsdt.getExtendedBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).receiveFixedSwaps
         );
 
