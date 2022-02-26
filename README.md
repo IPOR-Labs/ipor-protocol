@@ -1,6 +1,6 @@
 # ipor-protocol
 
-Shared java library used in IPOR oracle related services.
+IPOR smart contracts
 
 ## Job statuses
 
@@ -15,6 +15,8 @@ Java continuous integration last status:
 Java continuous deployment last status:
 
 * [![Java CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-ci.yml)
+
+## Usage
 
 ### How to run as developer?
 
