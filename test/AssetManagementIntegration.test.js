@@ -84,10 +84,9 @@ describe("AssetManagementIntegration", () => {
         const expectedMiltonStableBalance = BigInt("3230000000000000000000");
         //collateral + opening fee + ipor vault interest
         const expectedMiltonLiquidityPoolBalance = BigInt(
-            "28032820538384845463609"
+            "28029820538384845463609"
         );
-        const expectedMiltonAccruedLiquidityPoolBalance =
-            expectedMiltonLiquidityPoolBalance + BigInt("3000000000000000000");
+
         const expectedIporVaultStableBalance = BigInt(
             "34773000000000000000000"
         );
@@ -100,7 +99,9 @@ describe("AssetManagementIntegration", () => {
             testData.miltonDai.address
         );
         const actualIporVaultStableBalance =
-            await testData.iporVaultDai.totalBalance();
+            await testData.iporVaultDai.totalBalance(
+                testData.miltonDai.address
+            );
 
         const actualMiltonBalance =
             await testData.miltonStorageDai.getBalance();
@@ -123,8 +124,9 @@ describe("AssetManagementIntegration", () => {
             `Incorrect Milton Liquidity Pool Balance`
         ).to.be.eq(actualMiltonBalance.liquidityPool);
 
+        //Notice! In this specific case IporVault mock returns totalBalance without any interest so balance = accrued balance
         expect(
-            expectedMiltonAccruedLiquidityPoolBalance,
+            expectedMiltonLiquidityPoolBalance,
             `Incorrect Milton Accrued Liquidity Pool Balance`
         ).to.be.eq(actualMiltonAccruedBalance.liquidityPool);
     });
@@ -160,17 +162,17 @@ describe("AssetManagementIntegration", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_1_000_18DEC, params.openTimestamp);
 
+        //Force deposit to simulate that IporVault earn money for Milton (ERC20 tokens transfered from liquidityPorvider address)
         await testData.iporVaultDai
             .connect(liquidityProvider)
-            .deposit(USD_19_997_18DEC);
+            .testDeposit(testData.miltonDai.address, USD_20_000_18DEC);
 
         const expectedMiltonStableBalance = BigInt("1785000000000000000000");
 
         const expectedMiltonLiquidityPoolBalance = BigInt(
-            "1003000000000000000000"
+            "1000000000000000000000"
         );
-        const expectedMiltonAccruedLiquidityPoolBalance =
-            expectedMiltonLiquidityPoolBalance + BigInt("3000000000000000000");
+
         const expectedIporVaultStableBalance = BigInt(
             "19218000000000000000000"
         );
@@ -183,7 +185,9 @@ describe("AssetManagementIntegration", () => {
             testData.miltonDai.address
         );
         const actualIporVaultStableBalance =
-            await testData.iporVaultDai.totalBalance();
+            await testData.iporVaultDai.totalBalance(
+                testData.miltonDai.address
+            );
 
         const actualMiltonBalance =
             await testData.miltonStorageDai.getBalance();
@@ -206,8 +210,9 @@ describe("AssetManagementIntegration", () => {
             `Incorrect Milton Liquidity Pool Balance`
         ).to.be.eq(actualMiltonBalance.liquidityPool);
 
+        //Notice! In this specific case IporVault mock returns totalBalance without any interest so balance = accrued balance
         expect(
-            expectedMiltonAccruedLiquidityPoolBalance,
+            expectedMiltonLiquidityPoolBalance,
             `Incorrect Milton Accrued Liquidity Pool Balance`
         ).to.be.eq(actualMiltonAccruedBalance.liquidityPool);
     });

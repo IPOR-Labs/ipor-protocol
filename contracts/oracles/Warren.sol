@@ -45,9 +45,9 @@ contract Warren is
         __Ownable_init();
     }
 
-	function getVersion() external pure returns (uint256) {
-		return 1;
-	}
+    function getVersion() external pure returns (uint256) {
+        return 1;
+    }
 
     function pause() external onlyOwner {
         _pause();

@@ -292,9 +292,7 @@ module.exports.getMockIporVaultCase = async (
     MockCaseIporVault = await ethers.getContractFactory(
         "MockCase" + iporVaultCaseNumber + "IporVault"
     );
-    const mockCaseIporVault = await MockCaseIporVault.deploy(
-        assetAddress
-    );
+    const mockCaseIporVault = await MockCaseIporVault.deploy(assetAddress);
     return mockCaseIporVault;
 };
 module.exports.getMockMiltonCase = async (miltonCaseNumber) => {
@@ -316,6 +314,20 @@ module.exports.prepareWarren = async (accounts) => {
     await warren.initialize();
     await warren.addUpdater(accounts[1].address);
     return warren;
+};
+
+module.exports.prepareComplexTestDataDaiCase00 = async (accounts, data) => {
+    const testData = await this.prepareTestDataDaiCase1(accounts, data);
+    await this.prepareApproveForUsers(accounts, "DAI", data, testData);
+    await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+module.exports.prepareComplexTestDataDaiCase01 = async (accounts, data) => {
+    const testData = await this.prepareTestData(accounts, ["DAI"], data, 0, 1);
+    await this.prepareApproveForUsers(accounts, "DAI", data, testData);
+    await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
 };
 
 module.exports.prepareTestDataDaiCase1 = async (accounts, data) => {

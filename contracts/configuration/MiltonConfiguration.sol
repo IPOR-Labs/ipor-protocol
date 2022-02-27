@@ -11,8 +11,7 @@ import "../interfaces/IIporVault.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";
 
-contract MiltonConfiguration is IMiltonConfiguration {	
-
+contract MiltonConfiguration is IMiltonConfiguration {
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
@@ -38,7 +37,7 @@ contract MiltonConfiguration is IMiltonConfiguration {
 
     uint256 internal constant _MIN_COLLATERALIZATION_FACTOR_VALUE = 10 * 1e18;
 
-	uint8 internal _decimals;
+    uint8 internal _decimals;
     address internal _asset;
     IIpToken internal _ipToken;
     IWarren internal _warren;
@@ -46,13 +45,18 @@ contract MiltonConfiguration is IMiltonConfiguration {
     IMiltonSpreadModel internal _miltonSpreadModel;
     IIporConfiguration internal _iporConfiguration;
     IIporAssetConfiguration internal _iporAssetConfiguration;
-	IIporVault internal _iporVault;
+    IIporVault internal _iporVault;
 
-	function getMiltonSpreadModel() external view override returns(address) {
-		return address(_miltonSpreadModel);
-	}
+    function getMiltonSpreadModel() external view override returns (address) {
+        return address(_miltonSpreadModel);
+    }
 
-    function getMaxSwapCollateralAmount() external pure override returns (uint256) {
+    function getMaxSwapCollateralAmount()
+        external
+        pure
+        override
+        returns (uint256)
+    {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
@@ -141,7 +145,12 @@ contract MiltonConfiguration is IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 
-    function _getMaxSwapCollateralAmount() internal pure virtual returns (uint256) {
+    function _getMaxSwapCollateralAmount()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
@@ -230,4 +239,3 @@ contract MiltonConfiguration is IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 }
-

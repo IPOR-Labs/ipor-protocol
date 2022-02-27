@@ -10,6 +10,7 @@ import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
+import "hardhat/console.sol";
 
 contract MiltonStorage is
     UUPSUpgradeable,
@@ -58,11 +59,12 @@ contract MiltonStorage is
             DataTypes.MiltonBalanceMemory(
                 _balances.payFixedSwaps,
                 _balances.receiveFixedSwaps,
-                _balances.liquidityPool
+                _balances.liquidityPool,
+                _balances.vault
             );
     }
 
-	function getExtendedBalance()
+    function getExtendedBalance()
         external
         view
         override
@@ -73,9 +75,9 @@ contract MiltonStorage is
                 _balances.payFixedSwaps,
                 _balances.receiveFixedSwaps,
                 _balances.liquidityPool,
-				_balances.openingFee,
+                _balances.openingFee,
                 _balances.liquidationDeposit,
-                _balances.iporPublicationFee,                
+                _balances.iporPublicationFee,
                 _balances.treasury
             );
     }
@@ -273,13 +275,21 @@ contract MiltonStorage is
         );
     }
 
-    function incrementLiquidityPoolBalance(uint256 deltaValue)
+    function updateStorageWhenRebalance(uint256 vaultBalance)
         external
         override
         onlyMilton
     {
-        uint256 liquidityPoolBalance = _balances.liquidityPool;
-        liquidityPoolBalance = liquidityPoolBalance + deltaValue;
+        uint256 actualVaultBalance = _balances.vault;
+        require(
+            actualVaultBalance <= vaultBalance,
+            IporErrors.IPOR_VAULT_BALANCE_TOO_LOW
+        );
+        uint256 interest = actualVaultBalance != 0
+            ? (vaultBalance - actualVaultBalance)
+            : 0;
+        _balances.vault = vaultBalance.toUint128();
+        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
     }
 

@@ -97,13 +97,13 @@ contract Milton is
     }
 
     function depositToVault(uint256 assetValue) external nonReentrant {
-        uint256 interest = _iporVault.deposit(assetValue);
-        _miltonStorage.incrementLiquidityPoolBalance(interest);
+        uint256 balance = _iporVault.deposit(assetValue);
+        _miltonStorage.updateStorageWhenRebalance(balance);
     }
 
     function withdrawFromVault(uint256 assetValue) external nonReentrant {
-        uint256 interest = _iporVault.withdraw(assetValue);
-        _miltonStorage.incrementLiquidityPoolBalance(interest);
+        uint256 balance = _iporVault.withdraw(assetValue);
+        _miltonStorage.updateStorageWhenRebalance(balance);
     }
 
     function pause() external override onlyOwner {
@@ -269,9 +269,11 @@ contract Milton is
     {
         DataTypes.MiltonBalanceMemory memory accruedBalance = _miltonStorage
             .getBalance();
+        uint256 actualVaultBalance = _iporVault.totalBalance(address(this));
         accruedBalance.liquidityPool =
             accruedBalance.liquidityPool +
-            _iporVault.getCurrentInterest();
+            (actualVaultBalance - accruedBalance.vault);
+        accruedBalance.vault = actualVaultBalance;
         return accruedBalance;
     }
 

@@ -58,6 +58,7 @@ const {
     prepareData,
     prepareTestData,
     prepareTestDataDaiCase1,
+    prepareComplexTestDataDaiCase00,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
@@ -214,21 +215,9 @@ describe("Milton", () => {
 
     it("should NOT open position because totalAmount amount too low", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const totalAmount = 0;
@@ -250,19 +239,9 @@ describe("Milton", () => {
 
     it("should NOT open position because slippage too low", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const totalAmount = BigInt("30000000000000000001");
@@ -284,19 +263,9 @@ describe("Milton", () => {
 
     it("should NOT open position because slippage too high - 18 decimals", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const totalAmount = BigInt("30000000000000000001");
@@ -357,19 +326,9 @@ describe("Milton", () => {
 
     it("should NOT open position because totalAmount amount too high", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const totalAmount = BigInt("1000000000000000000000001");
@@ -392,19 +351,9 @@ describe("Milton", () => {
 
     it("should NOT open position because totalAmount amount too high - case 2", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const totalAmount = BigInt("100688870576704582165765");
@@ -427,20 +376,11 @@ describe("Milton", () => {
 
     it("should open pay fixed position - simple case DAI - 18 decimals", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
 
         let collateralWad = USD_9063__63_18DEC;
@@ -615,19 +555,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
@@ -678,19 +608,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("6808342096996681189");
@@ -770,19 +690,9 @@ describe("Milton", () => {
 
     it("should NOT open position because Liquidity Pool balance is to low", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -846,19 +756,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -937,19 +837,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("789767683251615021364");
@@ -1028,19 +918,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("854583100015023419750");
@@ -1072,19 +952,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1163,19 +1033,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("776150999057621653403");
@@ -1254,19 +1114,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1298,19 +1148,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = SPECIFIC_INCOME_TAX_CASE_1;
@@ -1343,19 +1183,9 @@ describe("Milton", () => {
 
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, before maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1388,19 +1218,9 @@ describe("Milton", () => {
 
     it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -1446,19 +1266,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1490,19 +1300,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("635082150807850422837");
@@ -1534,19 +1334,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1579,19 +1369,9 @@ describe("Milton", () => {
 
     it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, before maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -1638,19 +1418,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("854583100015023419750");
@@ -1682,19 +1452,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1726,19 +1486,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price not changed, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("6808342096996679147");
@@ -1770,19 +1520,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price changed 25%, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("6808342096996681189");
@@ -1814,19 +1554,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1858,19 +1588,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, User earned < Deposit, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("279142025976863929170");
@@ -1902,19 +1622,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -1946,19 +1656,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("789767683251615015781");
@@ -1990,19 +1690,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -2034,19 +1724,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("839332413717750853886");
@@ -2078,19 +1758,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -2122,19 +1792,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("650332837105122988701");
@@ -2166,19 +1826,9 @@ describe("Milton", () => {
     });
 
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -2211,19 +1861,9 @@ describe("Milton", () => {
 
     it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -2271,19 +1911,9 @@ describe("Milton", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -2316,19 +1946,9 @@ describe("Milton", () => {
 
     it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -2375,19 +1995,9 @@ describe("Milton", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -2420,19 +2030,9 @@ describe("Milton", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("839332413717750853886");
@@ -2465,19 +2065,9 @@ describe("Milton", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -2510,19 +2100,9 @@ describe("Milton", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("650332837105122988701");
@@ -2555,19 +2135,9 @@ describe("Milton", () => {
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("994017946161515453639");
@@ -2600,19 +2170,9 @@ describe("Milton", () => {
 
     it("should NOT close position, because incorrect swap Id", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let openerUser = userTwo;
@@ -2658,19 +2218,9 @@ describe("Milton", () => {
 
     it("should NOT close position, because swap has incorrect status - pay fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const openerUser = userTwo;
@@ -2729,19 +2279,9 @@ describe("Milton", () => {
 
     it("should NOT close position, because swap has incorrect status - receive fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const openerUser = userTwo;
@@ -2822,19 +2362,9 @@ describe("Milton", () => {
 
     it("should close only one position - close first position", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let openerUser = userTwo;
@@ -2905,19 +2435,9 @@ describe("Milton", () => {
 
     it("should close only one position - close last position", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let openerUser = userTwo;
@@ -2988,19 +2508,9 @@ describe("Milton", () => {
 
     it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity, IPOR index calculated before close", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let incomeTax = BigInt("635082150807850422837");
@@ -3142,19 +2652,9 @@ describe("Milton", () => {
 
     it("should open many positions and arrays with ids have correct state, one user", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let openerUser = userTwo;
@@ -3234,19 +2734,9 @@ describe("Milton", () => {
 
     it("should open many positions and arrays with ids have correct state, two users", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
@@ -3336,19 +2826,9 @@ describe("Milton", () => {
 
     it("should open many positions and close one position and arrays with ids have correct state, two users", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
@@ -3437,19 +2917,9 @@ describe("Milton", () => {
 
     it("should open many positions and close two positions and arrays with ids have correct state, two users", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
@@ -3537,20 +3007,11 @@ describe("Milton", () => {
     //TODO: debug case where SoapIndicatorStorage.quasiHypotheticalInterestCumulative is changed to uint128
     it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
         let openTimestamp = Math.floor(Date.now() / 1000);
 
@@ -3619,19 +3080,9 @@ describe("Milton", () => {
 
     it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1 with minus 3", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
@@ -3702,19 +3153,9 @@ describe("Milton", () => {
 
     it("should open two positions and close one position - Arithmetic overflow - last byte difference - case 1", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
@@ -4331,20 +3772,11 @@ describe("Milton", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
 
         await testData.warren
@@ -4379,20 +3811,11 @@ describe("Milton", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - Charlie Treasury address incorrect", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
 
         await testData.warren
@@ -4440,7 +3863,7 @@ describe("Milton", () => {
 
     it("should transfer Publication Fee to Charlie Treasury - simple case 1", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -4461,16 +3884,6 @@ describe("Milton", () => {
             admin.address
         );
 
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
 
         await testData.warren
@@ -4548,19 +3961,9 @@ describe("Milton", () => {
 
     it("should NOT open pay fixed position, DAI, collateralization factor too low", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -4597,19 +4000,9 @@ describe("Milton", () => {
 
     it("should NOT open pay fixed position, DAI, collateralization factor too high", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -4646,19 +4039,9 @@ describe("Milton", () => {
 
     it("should open pay fixed position, DAI, custom collateralization factor - simple case 1", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = {
@@ -4706,19 +4089,9 @@ describe("Milton", () => {
 
     it("should open pay fixed position - when open timestamp is long time ago", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
@@ -4752,19 +4125,9 @@ describe("Milton", () => {
 
     it("should calculate Pay Fixed Position Value - simple case 1", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
 

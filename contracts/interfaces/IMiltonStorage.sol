@@ -66,7 +66,7 @@ interface IMiltonStorage {
         uint256 cfgIncomeTaxPercentage
     ) external;
 
-    function incrementLiquidityPoolBalance(uint256 deltaValue) external;
+    function updateStorageWhenRebalance(uint256 vaultBalance) external;
 
     function getSwapPayFixed(uint256 swapId)
         external

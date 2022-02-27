@@ -74,45 +74,44 @@ contract Joseph is
     }
 
     //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
-    function checkVaultReservesRatio() external view override returns (uint256) {
+    function checkVaultReservesRatio()
+        external
+        view
+        override
+        returns (uint256)
+    {
         return _checkVaultReservesRatio();
     }
 
     function rebalance() external override {
-        uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(
-            address(_milton)
-        );
-        uint256 iporVaultBalance = _iporVault.totalBalance();
-        uint256 ratio = IporMath.division(
-            miltonBalance * Constants.D18,
-            miltonBalance + iporVaultBalance
+        address miltonAddr = address(_milton);
+        uint256 miltonAssetBalance = IERC20Upgradeable(_asset).balanceOf(
+            miltonAddr
         );
 
-        console.log("miltonBalance=", miltonBalance);
-        console.log("iporVaultBalance=", iporVaultBalance);
-        console.log("ratio=", ratio);
+        uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
+
+        uint256 ratio = IporMath.division(
+            miltonAssetBalance * Constants.D18,
+            miltonAssetBalance + iporVaultAssetBalance
+        );
 
         if (ratio > _IDEAL_MILTON_VAULT_REBALANCE_RATIO) {
-            uint256 assetValue = miltonBalance -
+            uint256 assetValue = miltonAssetBalance -
                 IporMath.division(
                     _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
-                        (miltonBalance + iporVaultBalance),
+                        (miltonAssetBalance + iporVaultAssetBalance),
                     Constants.D18
-                );            
-			console.log("assetValue=", assetValue);
+                );
             _milton.depositToVault(assetValue);
         } else {
-
             uint256 assetValue = IporMath.division(
                 _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
-                    (miltonBalance + iporVaultBalance),
+                    (miltonAssetBalance + iporVaultAssetBalance),
                 Constants.D18
-            ) - miltonBalance;
+            ) - miltonAssetBalance;
 
-			// (uint256 withdrawnAssetValue, uint256 currentInterest) = 
-			_milton.withdrawFromVault(assetValue);
-            
-			console.log("assetValue=", assetValue);
+            _milton.withdrawFromVault(assetValue);
         }
     }
 
@@ -145,14 +144,13 @@ contract Joseph is
     }
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
-        uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(
-            address(_milton)
-        );
-        uint256 iporVaultBalance = _iporVault.totalBalance();
+        address miltonAddr = address(_milton);
+        uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(miltonAddr);
+        uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
         return
             IporMath.division(
                 miltonBalance * _decimals,
-                miltonBalance + iporVaultBalance
+                miltonBalance + iporVaultAssetBalance
             );
     }
 
