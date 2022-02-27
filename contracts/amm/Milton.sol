@@ -98,12 +98,17 @@ contract Milton is
 
     function depositToVault(uint256 assetValue) external nonReentrant {
         uint256 balance = _iporVault.deposit(assetValue);
-        _miltonStorage.updateStorageWhenRebalance(balance);
+        _miltonStorage.updateStorageWhenDepositToVault(assetValue, balance);
     }
 
     function withdrawFromVault(uint256 assetValue) external nonReentrant {
-        uint256 balance = _iporVault.withdraw(assetValue);
-        _miltonStorage.updateStorageWhenRebalance(balance);
+        (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
+            assetValue
+        );
+        _miltonStorage.updateStorageWhenWithdrawFromVault(
+            withdrawnValue,
+            vaultBalance
+        );
     }
 
     function pause() external override onlyOwner {

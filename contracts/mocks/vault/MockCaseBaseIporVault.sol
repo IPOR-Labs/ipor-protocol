@@ -46,11 +46,7 @@ contract MockCaseBaseIporVault is IIporVault {
         override
         returns (uint256 balance)
     {
-        //@dev assume that every deposit returns some fixed interest, which is interest from last rebalance
-        //Notice! asset balance ERC20 for IporVault should be increased with interest, but for simplicity is not increased!
-        uint256 interest = _getCurrentInterest();
-
-        balance = _balance[msg.sender] + interest + assetValue;
+        balance = _balance[msg.sender] + assetValue;
 
         _balance[msg.sender] = balance;
 
@@ -60,22 +56,27 @@ contract MockCaseBaseIporVault is IIporVault {
     function withdraw(uint256 assetValue)
         external
         override
-        returns (uint256 balance)
+        returns (uint256 withdrawnValue, uint256 balance)
     {
-        //@dev assume that every withdraw returns some fixed interest, which is interest from last rebalance
-        //Notice! asset balance ERC20 for IporVault should be increased with interest, but for simplicity is not increased!
-        uint256 interest = _getCurrentInterest();
+        uint256 finalAssetValue = IporMath.division(
+            assetValue * _withdrawPercentage(),
+            Constants.D18
+        );
 
-        balance = _balance[msg.sender] + interest - assetValue;
+        balance = _balance[msg.sender] - finalAssetValue;
+        withdrawnValue = finalAssetValue;
 
         _balance[msg.sender] = balance;
 
-        //@dev assume that IPOR Vault will withdraw 100% assetValue
-        _asset.safeTransfer(msg.sender, assetValue);
+        _asset.safeTransfer(msg.sender, finalAssetValue);
     }
 
     function _getCurrentInterest() internal pure virtual returns (uint256) {
         //@dev for test purposes always the same fixed interest for any msg.sender
         return 0;
+    }
+
+    function _withdrawPercentage() internal pure virtual returns (uint256) {
+        return 1e18;
     }
 }

@@ -7,7 +7,9 @@ interface IIporVault {
 
     function deposit(uint256 assetValue) external returns (uint256 balance);
 
-    function withdraw(uint256 assetValue) external returns (uint256 balance);
+    function withdraw(uint256 assetValue)
+        external
+        returns (uint256 withdrawnValue, uint256 balance);
 }
 
 // interface IIporVault {

@@ -275,18 +275,28 @@ contract MiltonStorage is
         );
     }
 
-    function updateStorageWhenRebalance(uint256 vaultBalance)
-        external
-        override
-        onlyMilton
-    {
+    function updateStorageWhenWithdrawFromVault(
+        uint256 withdrawnValue,
+        uint256 vaultBalance
+    ) external override onlyMilton {
+        uint256 actualVaultBalance = _balances.vault;
+        uint256 interest = vaultBalance + withdrawnValue - actualVaultBalance;
+        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
+        _balances.liquidityPool = liquidityPoolBalance.toUint128();
+        _balances.vault = vaultBalance.toUint128();
+    }
+
+    function updateStorageWhenDepositToVault(
+        uint256 depositValue,
+        uint256 vaultBalance
+    ) external override onlyMilton {
         uint256 actualVaultBalance = _balances.vault;
         require(
-            actualVaultBalance <= vaultBalance,
+            actualVaultBalance <= (vaultBalance - depositValue),
             IporErrors.IPOR_VAULT_BALANCE_TOO_LOW
         );
         uint256 interest = actualVaultBalance != 0
-            ? (vaultBalance - actualVaultBalance)
+            ? (vaultBalance - actualVaultBalance - depositValue)
             : 0;
         _balances.vault = vaultBalance.toUint128();
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
