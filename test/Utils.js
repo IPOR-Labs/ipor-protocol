@@ -453,6 +453,7 @@ module.exports.prepareTestData = async (
             await ipTokenUsdt.setJoseph(josephUsdt.address);
             await iporAssetConfigurationUsdt.setJoseph(josephUsdt.address);
 
+            await miltonUsdt.setJoseph(josephUsdt.address);
             await miltonUsdt.setupMaxAllowance(josephUsdt.address);
             await miltonUsdt.setupMaxAllowance(iporVaultUsdt.address);
             // await iporVaultUsdt.authorizeMilton(miltonUsdt.address);
@@ -532,6 +533,7 @@ module.exports.prepareTestData = async (
             await ipTokenUsdc.setJoseph(josephUsdc.address);
             await iporAssetConfigurationUsdc.setJoseph(josephUsdc.address);
 
+            await miltonUsdc.setJoseph(josephUsdc.address);
             await miltonUsdc.setupMaxAllowance(josephUsdc.address);
             await miltonUsdc.setupMaxAllowance(iporVaultUsdc.address);
             // await iporVaultUsdc.authorizeMilton(miltonUsdc.address);
@@ -610,6 +612,8 @@ module.exports.prepareTestData = async (
 
             await ipTokenDai.setJoseph(josephDai.address);
             await iporAssetConfigurationDai.setJoseph(josephDai.address);
+
+            await miltonDai.setJoseph(josephDai.address);
             await miltonDai.setupMaxAllowance(josephDai.address);
             await miltonDai.setupMaxAllowance(iporVaultDai.address);
 

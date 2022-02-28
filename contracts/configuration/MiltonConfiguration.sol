@@ -41,6 +41,7 @@ contract MiltonConfiguration is IMiltonConfiguration {
     address internal _asset;
     IIpToken internal _ipToken;
     IWarren internal _warren;
+    address internal _joseph;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
     IIporConfiguration internal _iporConfiguration;

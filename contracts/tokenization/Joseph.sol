@@ -115,12 +115,12 @@ contract Joseph is
         }
     }
 
-    function depositToVault(uint256 assetAmount) external override {
-        _iporVault.deposit(assetAmount);
+    function depositToVault(uint256 assetValue) external override onlyOwner {
+        _milton.depositToVault(assetValue);
     }
 
-    function withdrawFromVault(uint256 ivTokenAmount) external override {
-        _iporVault.withdraw(ivTokenAmount);
+    function withdrawFromVault(uint256 assetValue) external override onlyOwner {
+        _milton.withdrawFromVault(assetValue);
     }
 
     function decimals() external view returns (uint8) {

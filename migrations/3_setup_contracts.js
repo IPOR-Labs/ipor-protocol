@@ -164,6 +164,9 @@ module.exports = async function (deployer, _network, addresses) {
         await iporAssetConfigurationDaiProxy.setJoseph(
             itfJosephDaiProxy.address
         );
+        await itfMiltonUsdtProxy.setJoseph(itfJosephUsdtProxy.address);
+        await itfMiltonUsdcProxy.setJoseph(itfJosephUsdcProxy.address);
+        await itfMiltonDaiProxy.setJoseph(itfJosephDaiProxy.address);
 
         await itfMiltonUsdtProxy.setupMaxAllowance(itfJosephUsdtProxy.address);
         await itfMiltonUsdcProxy.setupMaxAllowance(itfJosephUsdcProxy.address);
@@ -219,6 +222,10 @@ module.exports = async function (deployer, _network, addresses) {
             josephUsdcProxy.address
         );
         await iporAssetConfigurationDaiProxy.setJoseph(josephDaiProxy.address);
+
+        await miltonUsdtProxy.setJoseph(josephUsdtProxy.address);
+        await miltonUsdcProxy.setJoseph(josephUsdcProxy.address);
+        await miltonDaiProxy.setJoseph(josephDaiProxy.address);
 
         await miltonUsdtProxy.setupMaxAllowance(josephUsdtProxy.address);
         await miltonUsdcProxy.setupMaxAllowance(josephUsdcProxy.address);

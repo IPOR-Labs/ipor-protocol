@@ -55,6 +55,11 @@ contract Milton is
         _;
     }
 
+    modifier onlyJoseph() {
+        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
+        _;
+    }
+
     function initialize(
         address asset,
         address ipToken,
@@ -96,12 +101,25 @@ contract Milton is
         return 1;
     }
 
-    function depositToVault(uint256 assetValue) external nonReentrant {
+    function setJoseph(address joseph) external override onlyOwner {
+        _joseph = joseph;
+        //TODO: add event
+    }
+
+    function depositToVault(uint256 assetValue)
+        external
+        nonReentrant
+        onlyJoseph
+    {
         uint256 balance = _iporVault.deposit(assetValue);
         _miltonStorage.updateStorageWhenDepositToVault(assetValue, balance);
     }
 
-    function withdrawFromVault(uint256 assetValue) external nonReentrant {
+    function withdrawFromVault(uint256 assetValue)
+        external
+        nonReentrant
+        onlyJoseph
+    {
         (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
             assetValue
         );
@@ -132,6 +150,7 @@ contract Milton is
     }
 
     //@notice transfer publication fee to configured charlie treasurer address
+    //TODO: move to Joseph
     function transferPublicationFee(uint256 amount)
         external
         onlyPublicationFeeTransferer

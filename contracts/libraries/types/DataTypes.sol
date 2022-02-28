@@ -24,6 +24,8 @@ library DataTypes {
         //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 liquidityPool;
+        //@notice Actual Balance on IporVault site in Asset Management
+        uint128 vault;
         uint256 openingFee;
         uint256 liquidationDeposit;
         uint256 iporPublicationFee;
@@ -40,7 +42,7 @@ library DataTypes {
         //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 liquidityPool;
-		uint256 vault;
+        uint256 vault;
     }
     struct MiltonBalanceStorage {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
@@ -50,7 +52,7 @@ library DataTypes {
         //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 liquidityPool;
-        //@notic Actual Balance on IporVault site in Asset Management
+        //@notice Actual Balance on IporVault site in Asset Management
         uint128 vault;
         uint128 openingFee;
         uint128 liquidationDeposit;

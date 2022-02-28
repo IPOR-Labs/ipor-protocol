@@ -31,6 +31,16 @@ contract MiltonStorage is
     DataTypes.IporSwapContainer internal _swapsPayFixed;
     DataTypes.IporSwapContainer internal _swapsReceiveFixed;
 
+    modifier onlyMilton() {
+        require(msg.sender == _milton, IporErrors.MILTON_CALLER_NOT_MILTON);
+        _;
+    }
+
+    modifier onlyJoseph() {
+        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
+        _;
+    }
+
     function initialize() public initializer {
         __Ownable_init();
     }
@@ -75,6 +85,7 @@ contract MiltonStorage is
                 _balances.payFixedSwaps,
                 _balances.receiveFixedSwaps,
                 _balances.liquidityPool,
+                _balances.vault,
                 _balances.openingFee,
                 _balances.liquidationDeposit,
                 _balances.iporPublicationFee,
@@ -279,8 +290,8 @@ contract MiltonStorage is
         uint256 withdrawnValue,
         uint256 vaultBalance
     ) external override onlyMilton {
-        uint256 actualVaultBalance = _balances.vault;
-        uint256 interest = vaultBalance + withdrawnValue - actualVaultBalance;
+        uint256 currentVaultBalance = _balances.vault;
+        uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
@@ -290,13 +301,13 @@ contract MiltonStorage is
         uint256 depositValue,
         uint256 vaultBalance
     ) external override onlyMilton {
-        uint256 actualVaultBalance = _balances.vault;
+        uint256 currentVaultBalance = _balances.vault;
         require(
-            actualVaultBalance <= (vaultBalance - depositValue),
+            currentVaultBalance <= (vaultBalance - depositValue),
             IporErrors.IPOR_VAULT_BALANCE_TOO_LOW
         );
-        uint256 interest = actualVaultBalance != 0
-            ? (vaultBalance - actualVaultBalance - depositValue)
+        uint256 interest = currentVaultBalance != 0
+            ? (vaultBalance - currentVaultBalance - depositValue)
             : 0;
         _balances.vault = vaultBalance.toUint128();
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
@@ -960,15 +971,5 @@ contract MiltonStorage is
             rf.totalIbtQuantity.toUint128(),
             rf.quasiHypotheticalInterestCumulative
         );
-    }
-
-    modifier onlyMilton() {
-        require(msg.sender == _milton, IporErrors.MILTON_CALLER_NOT_MILTON);
-        _;
-    }
-
-    modifier onlyJoseph() {
-        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
-        _;
     }
 }
