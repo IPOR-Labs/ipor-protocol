@@ -23,12 +23,13 @@ const {
 
 const {
     assertError,
-    getLibraries,
     getStandardDerivativeParamsDAI,
     getStandardDerivativeParamsUSDT,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
+    prepareTestDataUsdtCase1,
+    prepareTestDataDaiCase1,
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
@@ -39,14 +40,11 @@ const {
 describe("Joseph", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );
@@ -58,7 +56,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            1,
+            1
         );
         await testData.josephDai.connect(admin).pause();
 
@@ -75,7 +74,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            1,
+            1
         );
         await testData.josephDai.connect(admin).pause();
 
@@ -97,7 +97,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            1,
+            1
         );
         await testData.josephDai.connect(admin).pause();
 
@@ -108,11 +109,9 @@ describe("Joseph", () => {
 
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
 
         //when
@@ -125,11 +124,9 @@ describe("Joseph", () => {
 
     it("should unpause Smart Contract, sender is an admin", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -166,11 +163,9 @@ describe("Joseph", () => {
 
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
 
         await testData.josephDai.connect(admin).pause();
@@ -185,11 +180,9 @@ describe("Joseph", () => {
 
     it("should transfer ownership - simple case 1", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -211,11 +204,9 @@ describe("Joseph", () => {
 
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -231,11 +222,9 @@ describe("Joseph", () => {
 
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -253,11 +242,9 @@ describe("Joseph", () => {
 
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -280,11 +267,9 @@ describe("Joseph", () => {
 
     it("should NOT transfer ownership - sender already lost ownership", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -308,11 +293,9 @@ describe("Joseph", () => {
 
     it("should have rights to transfer ownership - sender still have rights", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -338,7 +321,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT", "USDC"],
             data,
-            0
+            0,
+            1
         );
 
         //when
@@ -357,11 +341,9 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -396,7 +378,7 @@ describe("Joseph", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -426,11 +408,9 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - USDT 6 decimals", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataUsdtCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -464,7 +444,7 @@ describe("Joseph", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -494,11 +474,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance and ipToken Total Supply is zero", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -531,11 +509,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, DAI 18 decimals", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -575,6 +551,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
+            0,
             0
         );
         await prepareApproveForUsers(
@@ -613,11 +590,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is zero and ipToken Total Supply is NOT zero", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -661,11 +636,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -721,11 +694,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -770,7 +741,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("1004250360789776789");
 
@@ -792,11 +763,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -849,7 +818,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("1002879245824171323");
 
@@ -872,11 +841,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -930,7 +897,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("989066232808424041");
 
@@ -952,11 +919,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1009,7 +974,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("989066232808424042");
 
@@ -1030,11 +995,9 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1100,7 +1063,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1122,11 +1085,9 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1192,7 +1153,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1213,11 +1174,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1287,7 +1246,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1306,11 +1265,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1381,7 +1338,7 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1404,6 +1361,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
+            0,
             0
         );
         await prepareApproveForUsers(
@@ -1459,11 +1417,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1501,7 +1457,7 @@ describe("Joseph", () => {
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - provide liquidity without mint ipToken
 
-        let balance = await testData.miltonStorageDai.getBalance();
+        let balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedIpTokenDaiBalance = ZERO;
 
@@ -1532,7 +1488,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1620,7 +1577,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            1
+            1,
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1709,7 +1667,8 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1795,11 +1754,9 @@ describe("Joseph", () => {
 
     it("should NOT provide liquidity because of empty Liquidity Pool", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

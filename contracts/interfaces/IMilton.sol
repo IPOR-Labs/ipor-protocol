@@ -6,11 +6,17 @@ import "../libraries/types/DataTypes.sol";
 interface IMilton {
     function getVersion() external pure returns (uint256);
 
-    function authorizeJoseph(address joseph) external;
+    function setJoseph(address joseph) external;
+
+    function setupMaxAllowance(address spender) external;
 
     function pause() external;
 
     function unpause() external;
+
+    function depositToVault(uint256 assetValue) external;
+
+    function withdrawFromVault(uint256 assetValue) external;
 
     function openSwapPayFixed(
         uint256 totalAmount,
@@ -39,7 +45,7 @@ interface IMilton {
 
     function calculateSpread()
         external
-		view
+        view
         returns (uint256 spreadPf, uint256 spreadRf);
 
     function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
@@ -55,4 +61,9 @@ interface IMilton {
         external
         view
         returns (uint256);
+
+    function getAccruedBalance()
+        external
+        view
+        returns (DataTypes.MiltonBalanceMemory memory);
 }

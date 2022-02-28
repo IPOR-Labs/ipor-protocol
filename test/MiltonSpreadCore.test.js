@@ -13,7 +13,6 @@ const {
 } = require("./Const.js");
 
 const {
-    getLibraries,
     prepareData,
     prepareMiltonSpreadBase,
     prepareMiltonSpreadCase2,
@@ -25,20 +24,16 @@ const {
 describe("MiltonSpreadModel - Core", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );
     });
-	it("should init config with ", async () => {
-	});
+    it("should init config with ", async () => {});
     it("should calculate Adjusted Utilization Rate - simple case 1", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadBase();

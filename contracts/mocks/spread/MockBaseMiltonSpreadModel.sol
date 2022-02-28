@@ -11,15 +11,12 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance
     ) public pure returns (uint256 spreadValue) {
-        DataTypes.MiltonTotalBalanceMemory memory balance = DataTypes
-            .MiltonTotalBalanceMemory(
+        DataTypes.MiltonBalanceMemory memory balance = DataTypes
+            .MiltonBalanceMemory(
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
-                0, //redundant for this calculation
-                0, //redundant for this calculation
-                0, //redundant for this calculation
                 liquidityPoolBalance,
-                0 //redundant for this calculation
+                0
             );
         return _calculateSpreadPremiumsPayFixed(soap, accruedIpor, balance);
     }
@@ -31,15 +28,12 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance
     ) public pure returns (uint256 spreadValue) {
-        DataTypes.MiltonTotalBalanceMemory memory balance = DataTypes
-            .MiltonTotalBalanceMemory(
+        DataTypes.MiltonBalanceMemory memory balance = DataTypes
+            .MiltonBalanceMemory(
                 payFixedSwapsBalance,
                 receiveFixedSwapsBalance,
-                0, //redundant for this calculation
-                0, //redundant for this calculation
-                0, //redundant for this calculation
                 liquidityPoolBalance,
-                0 //redundant for this calculation
+                0
             );
         return _calculateSpreadPremiumsRecFixed(soap, accruedIpor, balance);
     }

@@ -164,10 +164,13 @@ module.exports = async function (deployer, _network, addresses) {
         await iporAssetConfigurationDaiProxy.setJoseph(
             itfJosephDaiProxy.address
         );
+        await itfMiltonUsdtProxy.setJoseph(itfJosephUsdtProxy.address);
+        await itfMiltonUsdcProxy.setJoseph(itfJosephUsdcProxy.address);
+        await itfMiltonDaiProxy.setJoseph(itfJosephDaiProxy.address);
 
-        await itfMiltonUsdtProxy.authorizeJoseph(itfJosephUsdtProxy.address);
-        await itfMiltonUsdcProxy.authorizeJoseph(itfJosephUsdcProxy.address);
-        await itfMiltonDaiProxy.authorizeJoseph(itfJosephDaiProxy.address);
+        await itfMiltonUsdtProxy.setupMaxAllowance(itfJosephUsdtProxy.address);
+        await itfMiltonUsdcProxy.setupMaxAllowance(itfJosephUsdcProxy.address);
+        await itfMiltonDaiProxy.setupMaxAllowance(itfJosephDaiProxy.address);
 
         const itfWarrenProxy = await ItfWarren.deployed();
 
@@ -220,9 +223,13 @@ module.exports = async function (deployer, _network, addresses) {
         );
         await iporAssetConfigurationDaiProxy.setJoseph(josephDaiProxy.address);
 
-        await miltonUsdtProxy.authorizeJoseph(josephUsdtProxy.address);
-        await miltonUsdcProxy.authorizeJoseph(josephUsdcProxy.address);
-        await miltonDaiProxy.authorizeJoseph(josephDaiProxy.address);
+        await miltonUsdtProxy.setJoseph(josephUsdtProxy.address);
+        await miltonUsdcProxy.setJoseph(josephUsdcProxy.address);
+        await miltonDaiProxy.setJoseph(josephDaiProxy.address);
+
+        await miltonUsdtProxy.setupMaxAllowance(josephUsdtProxy.address);
+        await miltonUsdcProxy.setupMaxAllowance(josephUsdcProxy.address);
+        await miltonDaiProxy.setupMaxAllowance(josephDaiProxy.address);
 
         const warrenProxy = await Warren.deployed();
         await warrenProxy.addUpdater(admin);

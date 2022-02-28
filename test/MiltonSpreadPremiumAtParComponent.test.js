@@ -5,7 +5,6 @@ const keccak256 = require("keccak256");
 const { USD_1_18DEC } = require("./Const.js");
 
 const {
-    getLibraries,
     prepareData,
     prepareMiltonSpreadCase2,
 } = require("./Utils");
@@ -13,14 +12,11 @@ const {
 describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );

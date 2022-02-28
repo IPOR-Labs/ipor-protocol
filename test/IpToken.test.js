@@ -5,7 +5,7 @@ const {
     assertError,
     prepareData,
     prepareTestData,
-    getLibraries,
+    prepareTestDataDaiCase1,
 } = require("./Utils");
 
 const { USD_10_000_18DEC } = require("./Const.js");
@@ -14,20 +14,14 @@ describe("IpToken", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
     let data = null;
     let testData;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
-
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ], 1);
+        data = await prepareData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
 
     beforeEach(async () => {
@@ -35,17 +29,16 @@ describe("IpToken", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
     });
 
     it("should transfer ownership - simple case 1", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -67,11 +60,9 @@ describe("IpToken", () => {
 
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -87,11 +78,9 @@ describe("IpToken", () => {
 
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -109,11 +98,9 @@ describe("IpToken", () => {
 
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         const expectedNewOwner = userTwo;
 
@@ -140,7 +127,8 @@ describe("IpToken", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            1,
+            1
         );
         const expectedNewOwner = userTwo;
 
@@ -168,7 +156,8 @@ describe("IpToken", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            1,
+            1
         );
         const expectedNewOwner = userTwo;
 

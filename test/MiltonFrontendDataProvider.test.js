@@ -21,7 +21,6 @@ const {
 } = require("./Const.js");
 
 const {
-    getLibraries,
     setupTokenUsdtInitialValuesForUsers,
     prepareApproveForUsers,
     prepareData,
@@ -38,10 +37,8 @@ describe("MiltonFrontendDataProvider", () => {
         userThree,
         liquidityProvider,
         miltonStorageAddress;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [
             admin,
             userOne,
@@ -51,7 +48,6 @@ describe("MiltonFrontendDataProvider", () => {
             miltonStorageAddress,
         ] = await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );
@@ -70,7 +66,8 @@ describe("MiltonFrontendDataProvider", () => {
             ],
             ["DAI", "USDC", "USDT"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
