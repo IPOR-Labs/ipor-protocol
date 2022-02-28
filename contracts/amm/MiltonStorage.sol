@@ -191,7 +191,7 @@ contract MiltonStorage is
     function updateStorageWhenTransferPublicationFee(uint256 transferedAmount)
         external
         override
-        onlyMilton
+        onlyJoseph
     {
         require(
             transferedAmount != 0,

@@ -46,15 +46,6 @@ contract Milton is
     using SafeCast for int256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
 
-    modifier onlyPublicationFeeTransferer() {
-        require(
-            msg.sender ==
-                _iporConfiguration.getMiltonPublicationFeeTransferer(),
-            IporErrors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
-        );
-        _;
-    }
-
     modifier onlyJoseph() {
         require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
         _;
@@ -101,6 +92,14 @@ contract Milton is
         return 1;
     }
 
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
+
     function setJoseph(address joseph) external override onlyOwner {
         _joseph = joseph;
         //TODO: add event
@@ -129,14 +128,6 @@ contract Milton is
         );
     }
 
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
     function setupMaxAllowance(address spender)
         external
         override
@@ -147,25 +138,6 @@ contract Milton is
             spender,
             Constants.MAX_VALUE
         );
-    }
-
-    //@notice transfer publication fee to configured charlie treasurer address
-    //TODO: move to Joseph
-    function transferPublicationFee(uint256 amount)
-        external
-        onlyPublicationFeeTransferer
-        nonReentrant
-    {
-        address charlieTreasurer = _iporAssetConfiguration
-            .getCharlieTreasurer();
-        require(
-            address(0) != charlieTreasurer,
-            IporErrors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS
-        );
-
-        _miltonStorage.updateStorageWhenTransferPublicationFee(amount);
-
-        IERC20Upgradeable(_asset).safeTransfer(charlieTreasurer, amount);
     }
 
     function openSwapPayFixed(
@@ -879,7 +851,7 @@ contract Milton is
         uint256 openingFeePercentage
     )
         internal
-        view
+        pure
         returns (
             uint256 collateral,
             uint256 notional,
@@ -899,7 +871,7 @@ contract Milton is
         openingFee = IporMath.division(
             collateral * openingFeePercentage,
             Constants.D18
-        );        
+        );
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}

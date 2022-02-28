@@ -3,42 +3,40 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "../interfaces/IIpToken.sol";
+import "../configuration/JosephConfiguration.sol";
 import "../interfaces/IIporConfiguration.sol";
-import "../interfaces/IIporVault.sol";
 import "../interfaces/IJoseph.sol";
 import {IporErrors} from "../IporErrors.sol";
-import "../interfaces/IMiltonStorage.sol";
 import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
-import "../interfaces/IMilton.sol";
 import "hardhat/console.sol";
 
 contract Joseph is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    JosephConfiguration,
     IJoseph
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
-    uint256 internal constant _IDEAL_MILTON_VAULT_REBALANCE_RATIO = 85e15;
-
-    uint8 internal _decimals;
-    address internal _asset;
-    IIpToken private _ipToken;
-    IMilton private _milton;
-    IMiltonStorage private _miltonStorage;
-    IIporVault private _iporVault;
+    modifier onlyPublicationFeeTransferer() {
+        require(
+            msg.sender == _publicationFeeTransferer,
+            IporErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
+        );
+        _;
+    }
 
     function initialize(
         address assetAddress,
@@ -61,26 +59,52 @@ contract Joseph is
         _iporVault = IIporVault(iporVault);
     }
 
-    function getVersion() external pure returns (uint256) {
+    function getVersion() external pure override returns (uint256) {
         return 1;
     }
 
-    function pause() external onlyOwner {
+    function pause() external override onlyOwner {
         _pause();
     }
 
-    function unpause() external onlyOwner {
+    function unpause() external override onlyOwner {
         _unpause();
     }
 
-    //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
-    function checkVaultReservesRatio()
+    function setCharlieTreasurer(address newCharlieTreasurer)
         external
-        view
         override
-        returns (uint256)
+        onlyOwner
     {
-        return _checkVaultReservesRatio();
+        require(
+            newCharlieTreasurer != address(0),
+            IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS
+        );
+        _charlieTreasurer = newCharlieTreasurer;
+        emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
+    }    
+
+	function setTreasureTreasurer(address newTreasureTreasurer)
+        external
+        override
+        onlyOwner
+    {
+        require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
+        _treasureTreasurer = newTreasureTreasurer;
+        emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
+    }
+
+	function setPublicationFeeTransferer(address publicationFeeTransferer)
+        external
+        override
+        onlyOwner
+    {
+        require(
+            address(0) != publicationFeeTransferer,
+            IporErrors.WRONG_ADDRESS
+        );
+        _publicationFeeTransferer = publicationFeeTransferer;
+        emit PublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
 
     function rebalance() external override {
@@ -123,14 +147,6 @@ contract Joseph is
         _milton.withdrawFromVault(assetValue);
     }
 
-    function decimals() external view returns (uint8) {
-        return _decimals;
-    }
-
-    function asset() external view returns (address) {
-        return _asset;
-    }
-
     function provideLiquidity(uint256 liquidityAmount)
         external
         override
@@ -141,6 +157,37 @@ contract Joseph is
 
     function redeem(uint256 ipTokenValue) external override whenNotPaused {
         _redeem(ipTokenValue, block.timestamp);
+    }
+
+    //@notice transfer publication fee to configured charlie treasurer address
+    function transferPublicationFee(uint256 amount)
+        external
+        override
+        onlyPublicationFeeTransferer
+        nonReentrant
+    {
+        require(
+            address(0) != _charlieTreasurer,
+            IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS
+        );
+
+        _miltonStorage.updateStorageWhenTransferPublicationFee(amount);
+
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            address(_milton),
+            _charlieTreasurer,
+            amount
+        );
+    }
+
+    //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
+    function checkVaultReservesRatio()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _checkVaultReservesRatio();
     }
 
     function _checkVaultReservesRatio() internal view returns (uint256) {

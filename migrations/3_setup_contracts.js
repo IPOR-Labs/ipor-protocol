@@ -292,15 +292,6 @@ async function grandRolesForConfiguration(admin, iporConfigurationProxy) {
         keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
         admin
     );
-
-    await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(
-        keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE"),
-        admin
-    );
 }
 async function grandRolesForAssetConfiguration(
     admin,
@@ -348,24 +339,6 @@ async function grandRolesForAssetConfiguration(
     );
     await iporAssetConfigurationProxy.grantRole(
         keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("CHARLIE_TREASURER_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("CHARLIE_TREASURER_ROLE"),
-        admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("TREASURE_TREASURER_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("TREASURE_TREASURER_ROLE"),
         admin
     );
 }

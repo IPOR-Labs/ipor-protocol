@@ -363,31 +363,7 @@ export default ({ drizzle, drizzleState }) => (
                         <td>
                             0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
                         </td>
-                    </tr>
-                    <tr>
-                        <td>CHARLIE_TREASURER_ADMIN_ROLE</td>
-                        <td>
-                            0x0a8c46bed2194419383260fcc83e7085079a16a3dce173fb3d66eb1f81c71f6e
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>CHARLIE_TREASURER_ROLE</td>
-                        <td>
-                            0x21b203ce7b3398e0ad35c938bc2c62a805ef17dc57de85e9d29052eac6d9d6f7
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>TREASURE_TREASURER_ADMIN_ROLE</td>
-                        <td>
-                            0x1ba824e22ad2e0dc1d7a152742f3b5890d88c5a849ed8e57f4c9d84203d3ea9c
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>TREASURE_TREASURER_ROLE</td>
-                        <td>
-                            0x9cdee4e06275597b667c73a5eb52ed89fe6acbbd36bd9fa38146b1316abfbbc4
-                        </td>
-                    </tr>
+                    </tr>                    
                     <tr>
                         <td>ASSET_MANAGEMENT_VAULT_ADMIN_ROLE</td>
                         <td>

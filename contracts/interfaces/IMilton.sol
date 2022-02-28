@@ -6,13 +6,13 @@ import "../libraries/types/DataTypes.sol";
 interface IMilton {
     function getVersion() external pure returns (uint256);
 
-    function setJoseph(address joseph) external;
-
-    function setupMaxAllowance(address spender) external;
-
     function pause() external;
 
     function unpause() external;
+
+    function setJoseph(address joseph) external;
+
+    function setupMaxAllowance(address spender) external;
 
     function depositToVault(uint256 assetValue) external;
 

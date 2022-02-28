@@ -102,15 +102,13 @@ library IporErrors {
     string public constant MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE = "IPOR_28";
 
     //@notice Charlie Treasurer address is incorrect
-    string public constant MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS =
-        "IPOR_29";
+    string public constant INCORRECT_CHARLIE_TREASURER_ADDRESS = "IPOR_29";
 
     //@notice Amount is too low to transfer
     string public constant MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER = "IPOR_30";
 
     //@notice Sender is not a publication fee transferer, not match address defined in IporConfiguration in key MILTON_PUBLICATION_FEE_TRANSFERER
-    string public constant MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER =
-        "IPOR_31";
+    string public constant CALLER_NOT_PUBLICATION_FEE_TRANSFERER = "IPOR_31";
 
     //@notice Incorrect IPOR Configuration address
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = "IPOR_32";
@@ -208,6 +206,6 @@ library IporErrors {
 
     string public constant JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED = "IPOR_58";
 
-	//@notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
-	string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
+    //@notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
+    string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
 }

@@ -15,7 +15,9 @@ const {
     USD_10_18DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
+    USD_28_000_18DEC,
     USD_14_000_6DEC,
+    USER_SUPPLY_10MLN_18DEC,
     ZERO,
 
     PERIOD_25_DAYS_IN_SECONDS,
@@ -28,6 +30,8 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
+    prepareComplexTestDataDaiCase00,
+    getPayFixedDerivativeParamsDAICase1,
     prepareTestDataUsdtCase1,
     prepareTestDataDaiCase1,
     setupIpTokenDaiInitialValues,
@@ -124,19 +128,9 @@ describe("Joseph", () => {
 
     it("should unpause Smart Contract, sender is an admin", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         await testData.josephDai.connect(admin).pause();
@@ -341,20 +335,11 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
         const liquidityAmount = USD_14_000_18DEC;
@@ -474,20 +459,11 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance and ipToken Total Supply is zero", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
 
         const expectedExchangeRate = BigInt("1000000000000000000");
@@ -509,20 +485,11 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, DAI 18 decimals", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
@@ -590,20 +557,11 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is zero and ipToken Total Supply is NOT zero", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
@@ -639,19 +597,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -697,19 +645,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -766,19 +704,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -844,19 +772,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -922,19 +840,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -998,19 +906,9 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1088,19 +986,9 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1177,19 +1065,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1268,19 +1146,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1420,19 +1288,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
         );
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1795,5 +1653,130 @@ describe("Joseph", () => {
             //then
             "IPOR_45"
         );
+    });
+
+    it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase00(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        //when
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(userThree)
+                .transferPublicationFee(BigInt("100")),
+            //then
+            "IPOR_31"
+        );
+    });
+
+    it("should NOT transfer Publication Fee to Charlie Treasury - Charlie Treasury address incorrect", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase00(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        await testData.josephDai
+            .connect(admin)
+            .setPublicationFeeTransferer(userThree.address);
+
+        //when
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(userThree)
+                .transferPublicationFee(BigInt("100")),
+            //then
+            "IPOR_29"
+        );
+    });
+
+    it("should transfer Publication Fee to Charlie Treasury - simple case 1", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase00(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        await testData.josephDai
+            .connect(admin)
+            .setPublicationFeeTransferer(userThree.address);
+
+        await testData.josephDai
+            .connect(admin)
+            .setCharlieTreasurer(userOne.address);
+
+        const transferedAmount = BigInt("100");
+
+        //when
+        await testData.josephDai
+            .connect(userThree)
+            .transferPublicationFee(transferedAmount);
+
+        //then
+        let balance = await testData.miltonStorageDai.getExtendedBalance();
+
+        let expectedErc20BalanceCharlieTreasurer =
+            USER_SUPPLY_10MLN_18DEC + transferedAmount;
+        let actualErc20BalanceCharlieTreasurer = BigInt(
+            await testData.tokenDai.balanceOf(userOne.address)
+        );
+
+        let expectedErc20BalanceMilton =
+            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedAmount;
+        let actualErc20BalanceMilton = BigInt(
+            await testData.tokenDai.balanceOf(testData.miltonDai.address)
+        );
+
+        let expectedPublicationFeeBalanceMilton =
+            USD_10_18DEC - transferedAmount;
+        const actualPublicationFeeBalanceMilton = BigInt(
+            balance.iporPublicationFee
+        );
+
+        expect(
+            expectedErc20BalanceCharlieTreasurer,
+            `Incorrect ERC20 Charlie Treasurer balance for ${params.asset}, actual:  ${actualErc20BalanceCharlieTreasurer},
+                expected: ${expectedErc20BalanceCharlieTreasurer}`
+        ).to.be.eq(actualErc20BalanceCharlieTreasurer);
+
+        expect(
+            expectedErc20BalanceMilton,
+            `Incorrect ERC20 Milton balance for ${params.asset}, actual:  ${actualErc20BalanceMilton},
+                expected: ${expectedErc20BalanceMilton}`
+        ).to.be.eq(actualErc20BalanceMilton);
+
+        expect(
+            expectedPublicationFeeBalanceMilton,
+            `Incorrect Milton balance for ${params.asset}, actual:  ${actualPublicationFeeBalanceMilton},
+                expected: ${expectedPublicationFeeBalanceMilton}`
+        ).to.be.eq(actualPublicationFeeBalanceMilton);
     });
 });

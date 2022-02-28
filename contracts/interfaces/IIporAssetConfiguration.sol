@@ -12,15 +12,6 @@ interface IIporAssetConfiguration {
         address indexed newAssetManagementVaultAddress
     );
 
-    event CharlieTreasurerUpdated(
-        address asset,
-        address indexed newCharlieTreasurer
-    );
-    event TreasureTreasurerUpdated(
-        address asset,
-        address indexed newTreasureTreasurer
-    );
-
     function getMilton() external view returns (address);
 
     function setMilton(address milton) external;
@@ -35,15 +26,7 @@ interface IIporAssetConfiguration {
 
     function getDecimals() external view returns (uint8);
 
-    function getIpToken() external view returns (address);
-
-    function getCharlieTreasurer() external view returns (address);
-
-    function setCharlieTreasurer(address charlieTreasurer) external;
-
-    function getTreasureTreasurer() external view returns (address);
-
-    function setTreasureTreasurer(address treasureTreasurer) external;
+    function getIpToken() external view returns (address);    
 
     function getAssetManagementVault() external view returns (address);
 

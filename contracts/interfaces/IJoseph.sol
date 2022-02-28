@@ -19,9 +19,32 @@ interface IJoseph {
         uint256 ipTokenValue
     );
 
+    event CharlieTreasurerUpdated(
+        address indexed asset,
+        address indexed newCharlieTreasurer
+    );
+
+    event PublicationFeeTransfererUpdated(
+        address indexed newPublicationFeeTransferer
+    );
+
+    event TreasureTreasurerUpdated(
+        address indexed asset,
+        address indexed newTreasureTreasurer
+    );
+
     function getVersion() external pure returns (uint256);
 
-    function checkVaultReservesRatio() external returns (uint256);
+    function pause() external;
+
+    function unpause() external;
+
+    function setCharlieTreasurer(address newCharlieTreasurer) external;
+
+    function setTreasureTreasurer(address newTreasureTreasurer) external;
+
+    function setPublicationFeeTransferer(address newPublicationFeeTransferer)
+        external;
 
     function rebalance() external;
 
@@ -29,11 +52,11 @@ interface IJoseph {
 
     function withdrawFromVault(uint256 assetValue) external;
 
-    function decimals() external view returns (uint8);
-
-    function asset() external view returns (address);
-
     function provideLiquidity(uint256 liquidityAmount) external;
 
     function redeem(uint256 ipTokenVolume) external;
+
+    function transferPublicationFee(uint256 amount) external;
+
+    function checkVaultReservesRatio() external returns (uint256);
 }

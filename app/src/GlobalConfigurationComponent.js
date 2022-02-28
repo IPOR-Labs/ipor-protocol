@@ -123,18 +123,6 @@ export default ({ drizzle, drizzleState }) => (
                         </td>
                     </tr>
                     <tr>
-                        <td>MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE</td>
-                        <td>
-                            0x7509198b389a0e4178b0935b3089a6bcebb17099877530792a238050cad1a93a
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>MILTON_PUBLICATION_FEE_TRANSFERER_ROLE</td>
-                        <td>
-                            0xcaf9c92ac95381198cb99b15cf6677f38c77ba44a82d424368980282298f9dc9
-                        </td>
-                    </tr>
-                    <tr>
                         <td>IPOR_ASSET_CONFIGURATION_ROLE</td>
                         <td>
                             0xe8f735d503f091d7e700cae87352987ca83ec17c9b2fb176dc5a5a7ec0390360
