@@ -8,7 +8,7 @@ const {
     prepareTestDataDaiCase1,
 } = require("./Utils");
 
-const { USD_10_000_18DEC } = require("./Const.js");
+const { TC_TOTAL_AMOUNT_10_000_18DEC } = require("./Const.js");
 
 describe("IpToken", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
@@ -183,7 +183,7 @@ describe("IpToken", () => {
             //when
             testData.ipTokenDai
                 .connect(userTwo)
-                .mint(userOne.address, USD_10_000_18DEC),
+                .mint(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
             "IPOR_46"
         );
@@ -195,7 +195,11 @@ describe("IpToken", () => {
             //when
             testData.ipTokenDai
                 .connect(userTwo)
-                .burn(userOne.address, userTwo.address, USD_10_000_18DEC),
+                .burn(
+                    userOne.address,
+                    userTwo.address,
+                    TC_TOTAL_AMOUNT_10_000_18DEC
+                ),
             //then
             "IPOR_46"
         );
@@ -206,10 +210,13 @@ describe("IpToken", () => {
         await testData.ipTokenDai.setJoseph(admin.address);
 
         await expect(
-            testData.ipTokenDai.mint(userOne.address, USD_10_000_18DEC)
+            testData.ipTokenDai.mint(
+                userOne.address,
+                TC_TOTAL_AMOUNT_10_000_18DEC
+            )
         )
             .to.emit(testData.ipTokenDai, "Mint")
-            .withArgs(userOne.address, USD_10_000_18DEC);
+            .withArgs(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC);
 
         await testData.ipTokenDai.setJoseph(testData.josephDai.address);
     });

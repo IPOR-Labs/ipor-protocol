@@ -9,7 +9,7 @@ const {
     USD_20_18DEC,
     USD_2_000_18DEC,
     PERCENTAGE_3_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_13_000_18DEC,
     USD_14_000_18DEC,
     USD_15_000_18DEC,
@@ -57,7 +57,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
 
         const soap = BigInt("500000000000000000000");
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const openingFee = USD_20_18DEC;
         const accruedIpor = {
             indexValue: BigInt("30000000000000000"),
@@ -98,7 +98,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const miltonSpread = await prepareMiltonSpreadCase10();
 
         const soap = USD_500_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const openingFee = USD_20_18DEC;
         const accruedIpor = {
             indexValue: BigInt("150000000000000000"),
@@ -136,7 +136,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const miltonSpread = await prepareMiltonSpreadCase10();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -180,7 +180,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -239,7 +239,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -283,7 +283,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -327,7 +327,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -374,7 +374,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -420,7 +420,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -466,7 +466,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -598,7 +598,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -641,7 +641,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
 
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -684,7 +684,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
         const liquidityPoolBalance = USD_15_000_18DEC;
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
 
         const payFixedSwapsBalance = USD_13_000_18DEC;
@@ -726,7 +726,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const miltonSpread = await prepareMiltonSpreadCase6();
 
         const liquidityPoolBalance = BigInt("0");
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = BigInt("0");
 
         const payFixedSwapsBalance = USD_13_000_18DEC;

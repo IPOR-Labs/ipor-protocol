@@ -8,7 +8,7 @@ const {
     USD_20_18DEC,
     USD_1_000_18DEC,
     USD_2_000_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_14_000_18DEC,
     ZERO,
 } = require("./Const.js");
@@ -39,7 +39,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const miltonSpread = await prepareMiltonSpreadCase2();
 
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const payFixedSwapsBalance = BigInt("2000000000000000000000");
         const receiveFixedSwapsBalance = BigInt("1000000000000000000000");
@@ -71,7 +71,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
         const payFixedSwapsBalance = BigInt("1000000000000000000000");
@@ -104,7 +104,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
         const payFixedSwapsBalance = BigInt("1000000000000000000000");
@@ -331,7 +331,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const miltonSpread = await prepareMiltonSpreadCase3();
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = USD_14_000_18DEC;
         const payFixedSwapsBalance = USD_2_000_18DEC;
@@ -378,7 +378,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase4();
 
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedSwapsBalance = BigInt("13000000000000000000000");
@@ -411,7 +411,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedSwapsBalance = BigInt("5000000000000000000000");
@@ -444,7 +444,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
         const payFixedSwapsBalance = BigInt("1000000000000000000000");
@@ -673,7 +673,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const miltonSpread = await prepareMiltonSpreadCase5();
         const spreadPremiumsMaxValue = BigInt("300000000000000000");
 
-        const swapCollateral = USD_10_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = USD_14_000_18DEC;
         const payFixedSwapsBalance = USD_2_000_18DEC;

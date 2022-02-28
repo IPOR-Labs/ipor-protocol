@@ -11,7 +11,7 @@ const {
     PERCENTAGE_6_6DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_120_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_14_000_18DEC,
     USD_28_000_18DEC,
@@ -97,7 +97,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: Math.floor(Date.now() / 1000),
@@ -156,7 +156,7 @@ describe("MiltonSoap", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -216,7 +216,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: Math.floor(Date.now() / 1000),
@@ -275,7 +275,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: Math.floor(Date.now() / 1000),
@@ -336,7 +336,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: Math.floor(Date.now() / 1000),
@@ -405,7 +405,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: Math.floor(Date.now() / 1000),
@@ -435,7 +435,7 @@ describe("MiltonSoap", () => {
     //     await testData.josephDai
     //         .connect(liquidityProvider)
     //         .itfProvideLiquidity(
-    //             USD_10_000_18DEC,
+    //             TC_TOTAL_AMOUNT_10_000_18DEC,
     //             derivativeParams.openTimestamp
     //         );
 
@@ -481,7 +481,7 @@ describe("MiltonSoap", () => {
 
     //     const firstDerivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -490,7 +490,7 @@ describe("MiltonSoap", () => {
 
     //     const secondDerivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -632,7 +632,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeDAIParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -724,7 +724,7 @@ describe("MiltonSoap", () => {
 
     //     const payFixDerivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -733,7 +733,7 @@ describe("MiltonSoap", () => {
 
     //     const recFixDerivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -801,7 +801,7 @@ describe("MiltonSoap", () => {
 
     //     const payFixDerivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -810,7 +810,7 @@ describe("MiltonSoap", () => {
 
     //     const recFixDerivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -890,7 +890,7 @@ describe("MiltonSoap", () => {
 
     //     const payFixDerivativeDAIParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -987,7 +987,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -1151,7 +1151,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -1243,7 +1243,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParamsFirst = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -1251,7 +1251,7 @@ describe("MiltonSoap", () => {
     //     };
     //     const derivativeParams25days = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
@@ -1317,7 +1317,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParamsFirst = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -1325,7 +1325,7 @@ describe("MiltonSoap", () => {
     //     };
     //     const derivativeParams25days = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
@@ -1401,7 +1401,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParams = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: openTimestamp,
@@ -1519,7 +1519,7 @@ describe("MiltonSoap", () => {
 
     //     const derivativeParamsFirst = {
     //         asset: testData.tokenDai.address,
-    //         totalAmount: USD_10_000_18DEC,
+    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
     //         slippageValue: 3,
     //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
     //         openTimestamp: secondUpdateIndexTimestamp,

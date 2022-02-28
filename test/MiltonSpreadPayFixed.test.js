@@ -10,7 +10,7 @@ const {
     USD_100_18DEC,
     USD_2_000_18DEC,
     PERCENTAGE_3_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_14_000_18DEC,
     USD_28_000_18DEC,
     ZERO,
@@ -1054,7 +1054,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            0,0
+            0,
+            0
         );
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);

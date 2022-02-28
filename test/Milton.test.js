@@ -16,7 +16,7 @@ const {
     PERCENTAGE_365_18DEC,
     USD_10_18DEC,
     USD_20_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_28_000_18DEC,
     USD_28_000_6DEC,
@@ -560,7 +560,7 @@ describe("Milton", () => {
         let expectedIncomeTaxValue = BigInt("0");
         let expectedIncomeTaxValueWad = BigInt("0");
 
-        let totalAmount = USD_10_000_18DEC;
+        let totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
         let collateral = TC_COLLATERAL_18DEC;
         let openingFee = TC_OPENING_FEE_18DEC;
 
@@ -1210,7 +1210,7 @@ describe("Milton", () => {
 
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -1360,7 +1360,7 @@ describe("Milton", () => {
 
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -1842,7 +1842,7 @@ describe("Milton", () => {
 
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -1926,7 +1926,7 @@ describe("Milton", () => {
 
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -2152,7 +2152,7 @@ describe("Milton", () => {
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2200,7 +2200,7 @@ describe("Milton", () => {
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2223,7 +2223,7 @@ describe("Milton", () => {
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
@@ -2261,7 +2261,7 @@ describe("Milton", () => {
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2284,7 +2284,7 @@ describe("Milton", () => {
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
@@ -2344,7 +2344,7 @@ describe("Milton", () => {
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2367,7 +2367,7 @@ describe("Milton", () => {
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
@@ -2417,7 +2417,7 @@ describe("Milton", () => {
 
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2440,7 +2440,7 @@ describe("Milton", () => {
 
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
@@ -2545,7 +2545,7 @@ describe("Milton", () => {
         }
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: collateralizationFactor,
             openTimestamp: localOpenTimestamp,
@@ -2649,7 +2649,7 @@ describe("Milton", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2730,7 +2730,7 @@ describe("Milton", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2822,7 +2822,7 @@ describe("Milton", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -2913,7 +2913,7 @@ describe("Milton", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -3002,7 +3002,7 @@ describe("Milton", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -3075,7 +3075,7 @@ describe("Milton", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -3148,7 +3148,7 @@ describe("Milton", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: USD_10_18DEC,
             openTimestamp: openTimestamp,
@@ -3912,7 +3912,7 @@ describe("Milton", () => {
         );
 
         let expectedErc20BalanceMilton =
-            USD_28_000_18DEC + USD_10_000_18DEC - transferedAmount;
+            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedAmount;
         let actualErc20BalanceMilton = BigInt(
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
@@ -3951,7 +3951,7 @@ describe("Milton", () => {
 
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt(500),
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -3990,7 +3990,7 @@ describe("Milton", () => {
 
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt("1000000000000000000001"),
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -4029,7 +4029,7 @@ describe("Milton", () => {
 
         const params = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: BigInt("15125000000000000000"),
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -4587,7 +4587,7 @@ describe("Milton", () => {
         let totalAmount = null;
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
-            totalAmount = USD_10_000_18DEC;
+            totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
         }
 
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {

@@ -879,7 +879,7 @@ contract Milton is
         uint256 openingFeePercentage
     )
         internal
-        pure
+        view
         returns (
             uint256 collateral,
             uint256 notional,
@@ -899,7 +899,7 @@ contract Milton is
         openingFee = IporMath.division(
             collateral * openingFeePercentage,
             Constants.D18
-        );
+        );        
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}

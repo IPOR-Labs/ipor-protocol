@@ -297,13 +297,9 @@ module.exports.getMockIporVaultCase = async (
 };
 module.exports.getMockMiltonCase = async (miltonCaseNumber) => {
     let MockCaseMilton = null;
-    if (miltonCaseNumber === 0) {
-        MockCaseMilton = await ethers.getContractFactory("ItfMilton");
-    } else {
-        MockCaseMilton = await ethers.getContractFactory(
-            "MockCase" + miltonCaseNumber + "Milton"
-        );
-    }
+    MockCaseMilton = await ethers.getContractFactory(
+        "MockCase" + miltonCaseNumber + "Milton"
+    );
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
 };

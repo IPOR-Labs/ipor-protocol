@@ -11,7 +11,7 @@ const {
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_14_000_18DEC,
     USD_28_000_18DEC,
@@ -318,7 +318,7 @@ describe("MiltonStorage", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -470,7 +470,7 @@ describe("MiltonStorage", () => {
         );
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),

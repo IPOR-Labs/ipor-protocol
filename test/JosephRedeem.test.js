@@ -9,7 +9,7 @@ const {
     PERCENTAGE_3_18DEC,
     PERCENTAGE_8_18DEC,
     PERCENTAGE_50_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_18DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
@@ -65,7 +65,7 @@ describe("Joseph - redeem", () => {
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
         const liquidityAmount = USD_14_000_18DEC;
-        const withdrawAmount = USD_10_000_18DEC;
+        const withdrawAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
         const expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         const expectedStableBalanceMilton = BigInt("4000000000000000000000");
         const expectedLiquidityProviderStableBalance = BigInt(
@@ -142,7 +142,7 @@ describe("Joseph - redeem", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
         const liquidityAmount = USD_14_000_6DEC;
-        const withdrawIpTokenAmount = USD_10_000_18DEC;
+        const withdrawIpTokenAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
         const expectedIpTokenBalanceSender = BigInt("4000000000000000000000");
         const expectedStableBalanceMilton = BigInt("4000000000");
         const expectedLiquidityProviderStableBalance = BigInt("9996000000000");
@@ -335,7 +335,7 @@ describe("Joseph - redeem", () => {
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
 
         const liquidityAmount = USD_14_000_18DEC;
-        const withdrawAmount = USD_10_000_18DEC;
+        const withdrawAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -413,10 +413,10 @@ describe("Joseph - redeem", () => {
         const timestamp = Math.floor(Date.now() / 1000);
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_10_000_18DEC, timestamp);
+            .itfProvideLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC, timestamp);
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_10_000_18DEC, timestamp);
+            .itfProvideLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC, timestamp);
 
         //when
         await testData.josephDai
@@ -501,10 +501,10 @@ describe("Joseph - redeem", () => {
         await setupIpTokenUsdtInitialValues(testData, liquidityProvider, ZERO);
 
         const liquidityAmountDAI = USD_14_000_18DEC;
-        const withdrawAmountDAI = USD_10_000_18DEC;
+        const withdrawAmountDAI = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const liquidityAmountUSDT = USD_14_000_6DEC;
-        const withdrawIpTokenAmountUSDT = USD_10_000_18DEC;
+        const withdrawIpTokenAmountUSDT = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const expectedipDAIBalanceSender = BigInt("4000000000000000000000");
         const expectedDAIBalanceMilton = BigInt("4000000000000000000000");
@@ -643,9 +643,9 @@ describe("Joseph - redeem", () => {
         await setupIpTokenUsdtInitialValues(testData, liquidityProvider, ZERO);
 
         const liquidityAmountDAI = USD_14_000_18DEC;
-        const withdrawAmountDAI = USD_10_000_18DEC;
+        const withdrawAmountDAI = TC_TOTAL_AMOUNT_10_000_18DEC;
         const liquidityAmountUSDT = USD_14_000_6DEC;
-        const withdrawIpTokenAmountUSDT = USD_10_000_18DEC;
+        const withdrawIpTokenAmountUSDT = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const expectedipDAIBalanceSender = BigInt("4000000000000000000000");
         const expectedDAIBalanceMilton = BigInt("4000000000000000000000");
@@ -778,11 +778,11 @@ describe("Joseph - redeem", () => {
 
         await testData.ipTokenDai
             .connect(liquidityProvider)
-            .transfer(userThree.address, USD_10_000_18DEC);
+            .transfer(userThree.address, TC_TOTAL_AMOUNT_10_000_18DEC);
 
         await testData.josephDai
             .connect(userThree)
-            .itfRedeem(USD_10_000_18DEC, timestamp);
+            .itfRedeem(TC_TOTAL_AMOUNT_10_000_18DEC, timestamp);
 
         const expectedDAIBalanceMilton = BigInt("400000000000000000000");
         const expectedDAIBalanceMiltonLiquidityPool = expectedDAIBalanceMilton;

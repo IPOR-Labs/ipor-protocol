@@ -11,7 +11,7 @@ const {
     PERCENTAGE_50_18DEC,
     PERCENTAGE_160_18DEC,
     PERCENTAGE_365_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_18DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
@@ -611,14 +611,17 @@ describe("Joseph", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_10_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(
+                TC_TOTAL_AMOUNT_10_000_18DEC,
+                params.openTimestamp
+            );
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
 
         await testData.miltonStorageDai.setJoseph(userOne.address);
         await testData.miltonStorageDai
             .connect(userOne)
-            .subtractLiquidity(USD_10_000_18DEC);
+            .subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
