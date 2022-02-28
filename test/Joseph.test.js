@@ -11,7 +11,7 @@ const {
     PERCENTAGE_50_18DEC,
     PERCENTAGE_160_18DEC,
     PERCENTAGE_365_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_18DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
@@ -611,14 +611,17 @@ describe("Joseph", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_10_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(
+                TC_TOTAL_AMOUNT_10_000_18DEC,
+                params.openTimestamp
+            );
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
 
         await testData.miltonStorageDai.setJoseph(userOne.address);
         await testData.miltonStorageDai
             .connect(userOne)
-            .subtractLiquidity(USD_10_000_18DEC);
+            .subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
@@ -653,7 +656,7 @@ describe("Joseph", () => {
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000747756729810568");
+        let expectedExchangeRate = BigInt("1000074977506747976");
 
         await testData.warren
             .connect(userOne)
@@ -743,7 +746,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("1004250360789776789");
+        const expectedExchangeRate = BigInt("1003093533812002519");
 
         //when
         let actualExchangeRate = BigInt(
@@ -820,7 +823,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("1002879245824171323");
+        const expectedExchangeRate = BigInt("1001673731442211174");
 
         //when
         let actualExchangeRate = BigInt(
@@ -899,7 +902,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("989066232808424041");
+        const expectedExchangeRate = BigInt("987823434476506361");
 
         //when
         let actualExchangeRate = BigInt(
@@ -976,7 +979,7 @@ describe("Joseph", () => {
         );
         const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("989066232808424042");
+        const expectedExchangeRate = BigInt("987823434476506362");
 
         //when
         let actualExchangeRate = BigInt(
@@ -1057,8 +1060,8 @@ describe("Joseph", () => {
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         // Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("8471981316324997495722");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("8494848805632282803369");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1147,8 +1150,8 @@ describe("Joseph", () => {
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("8471981316324997665162");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("8494848805632282973266");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1238,10 +1241,10 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("232016605434837042");
+        const expectedExchangeRate = BigInt("231204643857984158");
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("-8840328330078258430809");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("-8864190058051077882737");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1329,11 +1332,11 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("232016605434837039");
+        const expectedExchangeRate = BigInt("231204643857984155");
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("-8840328330078258261370");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("-8864190058051077712840");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
@@ -1377,7 +1380,7 @@ describe("Joseph", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000747756729810568");
+        let expectedExchangeRate = BigInt("1000074977506747976");
 
         await testData.warren
             .connect(userOne)
@@ -1482,7 +1485,7 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
     });
 
-    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity, initial Exchange Rate equal to 1.5", async () => {
+    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity, DAI 18 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1527,16 +1530,15 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
         const expectedIpTokenBalanceForUserThree = BigInt(
-            "874999999999999999854"
+            "1142857142857142857143"
         );
 
-        // //when
+        //when
         await testData.josephDai
             .connect(userThree)
             .itfProvideLiquidity(
@@ -1571,7 +1573,7 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
     });
 
-    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, DAI 18 decimals", async () => {
+    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, DAI 18 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1616,12 +1618,13 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
-        const expectedIpTokenBalanceForUserThree = BigInt("0");
+        const expectedIpTokenBalanceForUserThree = BigInt(
+            "267857142857142857289"
+        );
 
         //when
         await testData.josephDai
@@ -1661,7 +1664,7 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
     });
 
-    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, USDT 6 decimals", async () => {
+    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1706,14 +1709,15 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonUsdt.calculateExchangeRate(
                 params.openTimestamp
             )
         );
-        const expectedIpTokenBalanceForUserThree = BigInt("0");
+        const expectedIpTokenBalanceForUserThree = BigInt(
+            "267857142857142857289"
+        );
 
         //when
         await testData.josephUsdt

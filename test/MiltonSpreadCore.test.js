@@ -7,7 +7,7 @@ const { utils } = require("web3");
 const {
     USD_20_18DEC,
     USD_2_000_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_14_000_18DEC,
     ZERO,
 } = require("./Const.js");

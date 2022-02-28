@@ -10,7 +10,7 @@ const {
     USD_100_18DEC,
     USD_2_000_18DEC,
     PERCENTAGE_3_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_14_000_18DEC,
     USD_28_000_18DEC,
     ZERO,
@@ -960,6 +960,102 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             data,
             0,
             1
+        );
+
+        const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        let balanceLiquidityPool = BigInt("10000000000");
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testData.josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(balanceLiquidityPool, params.openTimestamp);
+
+        await testData.miltonUsdt
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                BigInt("1000000000"),
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        const calculateTimestamp = Math.floor(Date.now() / 1000);
+        const expectedSpreadReceiveFixed = BigInt("0");
+
+        //when
+        let actualSpreadValue = await testData.miltonUsdt
+            .connect(userOne)
+            .callStatic.itfCalculateSpread(params.openTimestamp + 1);
+
+        //then
+        expect(parseInt(await actualSpreadValue.spreadPayFixedValue)).to.be.gt(
+            0
+        );
+    });
+
+    it("should calculate Spread Pay Fixed - initial state with Liquidity Pool", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0,
+            0
+        );
+        const calculateTimestamp = Math.floor(Date.now() / 1000);
+        const expectedSpreadPayFixed = BigInt("360000000000000");
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await prepareApproveForUsers(
+            [liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+
+        await setupTokenDaiInitialValuesForUsers([liquidityProvider], testData);
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_10_000_000_18DEC, timestamp);
+
+        //when
+        let actualSpreadValue = await testData.miltonDai
+            .connect(userOne)
+            .callStatic.itfCalculateSpread(calculateTimestamp);
+
+        //then
+        expect(BigInt(await actualSpreadValue.spreadPayFixedValue)).to.be.eq(
+            expectedSpreadPayFixed
+        );
+    });
+
+    it("should calculate Spread Pay Fixed - spread premiums higher than IPOR Index", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            data,
+            0,
+            0
         );
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);

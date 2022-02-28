@@ -49,6 +49,14 @@ describe("Warren", () => {
         );
     });
 
+    it("should Decay Factor be lower than 100%", async () => {
+        const decayFactorValue =
+            await testData.warren.itfGetDecayFactorValue();
+        expect(parseInt(decayFactorValue)).to.be.lte(
+            parseInt(PERCENTAGE_100_18DEC)
+        );
+    });
+
     it("should pause Smart Contract, sender is an admin", async () => {
         //when
         await testData.warren.addUpdater(userOne.address);

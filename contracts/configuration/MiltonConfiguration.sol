@@ -24,7 +24,7 @@ contract MiltonConfiguration is IMiltonConfiguration {
 
     uint256 internal constant _INCOME_TAX_PERCENTAGE = 1e17;
 
-    uint256 internal constant _OPENING_FEE_PERCENTAGE = 3e14;
+    uint256 internal constant _OPENING_FEE_PERCENTAGE = 1e16;
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big pie going to Treasury Balance
     uint256 internal constant _OPENING_FEE_FOR_TREASURY_PERCENTAGE = 0;
