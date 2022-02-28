@@ -56,7 +56,8 @@ interface IJoseph {
 
     function redeem(uint256 ipTokenVolume) external;
 
-    function transferPublicationFee(uint256 amount) external;
+    //@notice Transfers asset value from Miltons's Ipor Publication Fee Balance to Charlie Treaserer account
+    function transferPublicationFee(uint256 assetValue) external;
 
     function checkVaultReservesRatio() external returns (uint256);
 }

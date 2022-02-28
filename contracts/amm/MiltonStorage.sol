@@ -199,8 +199,8 @@ contract MiltonStorage is
         );
 
         require(
-            transferedAmount <= _balances.openingFee,
-            IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
+            transferedAmount <= _balances.iporPublicationFee,
+            IporErrors.NOT_ENOUGH_IPOR_PUBLICATION_FEE_BALANCE
         );
 
         _balances.iporPublicationFee =

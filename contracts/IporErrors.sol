@@ -99,7 +99,7 @@ library IporErrors {
         "IPOR_27";
 
     //@notice Opening Fee Balance is too low
-    string public constant MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE = "IPOR_28";
+    string public constant NOT_ENOUGH_IPOR_PUBLICATION_FEE_BALANCE = "IPOR_28";
 
     //@notice Charlie Treasurer address is incorrect
     string public constant INCORRECT_CHARLIE_TREASURER_ADDRESS = "IPOR_29";
