@@ -1,0 +1,71 @@
+name: Smart Contracts CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches:
+      - '**'
+
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+
+      - name: Slack Status
+        id: slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
+        with:
+          channel: github-ci
+          status: STARTING
+          color: warning
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install
+        run: npm install
+
+      - name: Test
+        run: npm run test
+
+      - name: Slack Status Success
+        if: success()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
+        with:
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: github-ci
+          status: SUCCESS
+          color: good
+
+      - name: Slack Status Fail
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
+        with:
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: github-ci
+          status: FAILED
+          color: danger
+
+      - name: Slack Alarm
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
+        with:
+          channel: alarms-github
+          status: FAILED
+          color: danger

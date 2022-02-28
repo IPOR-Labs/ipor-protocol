@@ -48,7 +48,6 @@ const {
 
 const {
     assertError,
-    getLibraries,
     getPayFixedDerivativeParamsDAICase1,
     prepareApproveForUsers,
     prepareData,
@@ -59,14 +58,11 @@ const {
 describe("Milton - Utilization Rate", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         data = await prepareData(
-            libraries,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             1
         );
@@ -128,7 +124,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -172,7 +169,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -216,7 +214,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(
@@ -263,7 +262,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(
@@ -310,7 +310,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -358,7 +359,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(
@@ -406,7 +408,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -454,7 +457,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(

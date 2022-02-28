@@ -207,4 +207,7 @@ library IporErrors {
         "IPOR_57";
 
     string public constant JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED = "IPOR_58";
+
+	//@notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
+	string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
 }

@@ -1,6 +1,7 @@
 // require("dotenv").config({ path: "../.env" });
 
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
+// const { artifacts } = require("hardhat");
 
 // const keccak256 = require("keccak256");
 const MiltonFaucet = artifacts.require("MiltonFaucet");
@@ -51,6 +52,8 @@ const MiltonFrontendDataProvider = artifacts.require(
     "MiltonFrontendDataProvider"
 );
 
+const MockCaseBaseIporVault = artifacts.require("MockCaseBaseIporVault");
+
 module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
@@ -72,6 +75,15 @@ module.exports = async function (deployer, _network) {
 
     await deployer.deploy(IpTokenUsdc, mockedUsdc.address, "IP USDC", "ipUSDC");
     const ipUsdcToken = await IpTokenUsdc.deployed();
+
+    await deployer.deploy(MockCaseBaseIporVault, mockedUsdt.address);
+    const iporVaultUsdt = await MockCaseBaseIporVault.deployed();
+
+    await deployer.deploy(MockCaseBaseIporVault, mockedUsdc.address);
+    const iporVaultUsdc = await MockCaseBaseIporVault.deployed();
+
+    await deployer.deploy(MockCaseBaseIporVault, mockedDai.address);
+    const iporVaultDai = await MockCaseBaseIporVault.deployed();
 
     await deployer.deploy(IpTokenDai, mockedDai.address, "IP DAI", "ipDAI");
     const ipDaiToken = await IpTokenDai.deployed();
@@ -158,6 +170,7 @@ module.exports = async function (deployer, _network) {
             miltonSpreadModel.address,
             iporConfiguration.address,
             iporAssetConfigurationUsdt.address,
+            iporVaultUsdt.address,
         ],
         {
             deployer: deployer,
@@ -176,6 +189,7 @@ module.exports = async function (deployer, _network) {
             miltonSpreadModel.address,
             iporConfiguration.address,
             iporAssetConfigurationUsdt.address,
+            iporVaultUsdt.address,
         ],
         {
             deployer: deployer,
@@ -194,6 +208,7 @@ module.exports = async function (deployer, _network) {
             miltonSpreadModel.address,
             iporConfiguration.address,
             iporAssetConfigurationUsdt.address,
+            iporVaultUsdc.address,
         ],
         {
             deployer: deployer,
@@ -212,6 +227,7 @@ module.exports = async function (deployer, _network) {
             miltonSpreadModel.address,
             iporConfiguration.address,
             iporAssetConfigurationUsdt.address,
+            iporVaultUsdc.address,
         ],
         {
             deployer: deployer,
@@ -230,6 +246,7 @@ module.exports = async function (deployer, _network) {
             miltonSpreadModel.address,
             iporConfiguration.address,
             iporAssetConfigurationUsdt.address,
+            iporVaultDai.address,
         ],
         {
             deployer: deployer,
@@ -248,6 +265,7 @@ module.exports = async function (deployer, _network) {
             miltonSpreadModel.address,
             iporConfiguration.address,
             iporAssetConfigurationUsdt.address,
+            iporVaultDai.address,
         ],
         {
             deployer: deployer,
@@ -263,6 +281,7 @@ module.exports = async function (deployer, _network) {
             ipUsdtToken.address,
             miltonUsdt.address,
             miltonStorageUsdt.address,
+            iporVaultUsdt.address,
         ],
         {
             deployer: deployer,
@@ -278,6 +297,7 @@ module.exports = async function (deployer, _network) {
             ipUsdtToken.address,
             itfMiltonUsdt.address,
             miltonStorageUsdt.address,
+            iporVaultUsdt.address,
         ],
         {
             deployer: deployer,
@@ -293,6 +313,7 @@ module.exports = async function (deployer, _network) {
             ipUsdcToken.address,
             miltonUsdc.address,
             miltonStorageUsdc.address,
+            iporVaultUsdc.address,
         ],
         {
             deployer: deployer,
@@ -308,6 +329,7 @@ module.exports = async function (deployer, _network) {
             ipUsdcToken.address,
             itfMiltonUsdc.address,
             miltonStorageUsdc.address,
+            iporVaultUsdc.address,
         ],
         {
             deployer: deployer,
@@ -323,6 +345,7 @@ module.exports = async function (deployer, _network) {
             ipDaiToken.address,
             miltonDai.address,
             miltonStorageDai.address,
+            iporVaultDai.address,
         ],
         {
             deployer: deployer,
@@ -338,6 +361,7 @@ module.exports = async function (deployer, _network) {
             ipDaiToken.address,
             itfMiltonDai.address,
             miltonStorageDai.address,
+            iporVaultDai.address,
         ],
         {
             deployer: deployer,

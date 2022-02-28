@@ -19,6 +19,16 @@ interface IJoseph {
         uint256 ipTokenValue
     );
 
+    function getVersion() external pure returns (uint256);
+
+    function checkVaultReservesRatio() external returns (uint256);
+
+    function rebalance() external;
+
+    function depositToVault(uint256 assetValue) external;
+
+    function withdrawFromVault(uint256 assetValue) external;
+
     function decimals() external view returns (uint8);
 
     function asset() external view returns (address);

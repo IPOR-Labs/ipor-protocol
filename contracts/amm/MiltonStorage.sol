@@ -10,20 +10,35 @@ import "../libraries/SoapIndicatorLogic.sol";
 import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
+import "hardhat/console.sol";
 
-contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
-
+contract MiltonStorage is
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IMiltonStorage
+{
+    //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using SafeCast for uint256;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
     uint64 private _lastSwapId;
     address private _milton;
     address private _joseph;
-    DataTypes.MiltonTotalBalanceStorage internal _balances;
+    DataTypes.MiltonBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
     DataTypes.IporSwapContainer internal _swapsPayFixed;
     DataTypes.IporSwapContainer internal _swapsReceiveFixed;
+
+    modifier onlyMilton() {
+        require(msg.sender == _milton, IporErrors.MILTON_CALLER_NOT_MILTON);
+        _;
+    }
+
+    modifier onlyJoseph() {
+        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
+        _;
+    }
 
     function initialize() public initializer {
         __Ownable_init();
@@ -47,16 +62,32 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         external
         view
         override
-        returns (DataTypes.MiltonTotalBalanceMemory memory)
+        returns (DataTypes.MiltonBalanceMemory memory)
     {
         return
-            DataTypes.MiltonTotalBalanceMemory(
+            DataTypes.MiltonBalanceMemory(
                 _balances.payFixedSwaps,
                 _balances.receiveFixedSwaps,
+                _balances.liquidityPool,
+                _balances.vault
+            );
+    }
+
+    function getExtendedBalance()
+        external
+        view
+        override
+        returns (DataTypes.MiltonExtendedBalanceMemory memory)
+    {
+        return
+            DataTypes.MiltonExtendedBalanceMemory(
+                _balances.payFixedSwaps,
+                _balances.receiveFixedSwaps,
+                _balances.liquidityPool,
+                _balances.vault,
                 _balances.openingFee,
                 _balances.liquidationDeposit,
                 _balances.iporPublicationFee,
-                _balances.liquidityPool,
                 _balances.treasury
             );
     }
@@ -162,6 +193,16 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         override
         onlyMilton
     {
+        require(
+            transferedAmount != 0,
+            IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER
+        );
+
+        require(
+            transferedAmount <= _balances.openingFee,
+            IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
+        );
+
         _balances.iporPublicationFee =
             _balances.iporPublicationFee -
             transferedAmount.toUint128();
@@ -242,6 +283,34 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             iporSwap,
             closingTimestamp
         );
+    }
+
+    function updateStorageWhenWithdrawFromVault(
+        uint256 withdrawnValue,
+        uint256 vaultBalance
+    ) external override onlyMilton {
+        uint256 currentVaultBalance = _balances.vault;
+        uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
+        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
+        _balances.liquidityPool = liquidityPoolBalance.toUint128();
+        _balances.vault = vaultBalance.toUint128();
+    }
+
+    function updateStorageWhenDepositToVault(
+        uint256 depositValue,
+        uint256 vaultBalance
+    ) external override onlyMilton {
+        uint256 currentVaultBalance = _balances.vault;
+        require(
+            currentVaultBalance <= (vaultBalance - depositValue),
+            IporErrors.IPOR_VAULT_BALANCE_TOO_LOW
+        );
+        uint256 interest = currentVaultBalance != 0
+            ? (vaultBalance - currentVaultBalance - depositValue)
+            : 0;
+        _balances.vault = vaultBalance.toUint128();
+        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
+        _balances.liquidityPool = liquidityPoolBalance.toUint128();
     }
 
     function getSwapsPayFixed(address account)
@@ -901,15 +970,5 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             rf.totalIbtQuantity.toUint128(),
             rf.quasiHypotheticalInterestCumulative
         );
-    }
-
-    modifier onlyMilton() {
-        require(msg.sender == _milton, IporErrors.MILTON_CALLER_NOT_MILTON);
-        _;
-    }
-
-    modifier onlyJoseph() {
-        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
-        _;
     }
 }

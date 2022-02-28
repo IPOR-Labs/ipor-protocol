@@ -11,6 +11,8 @@ import "dotenv";
 
 require("dotenv").config();
 
+require('hardhat-contract-sizer');
+
 if (process.env.REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
 }
