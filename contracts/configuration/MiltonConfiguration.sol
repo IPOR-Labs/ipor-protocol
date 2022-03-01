@@ -143,10 +143,16 @@ contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 
-	function getJoseph() external override view returns(address){
-		return _joseph;
-	}
-    function setJoseph(address joseph) external override onlyOwner {
+    function getJoseph() external view override returns (address) {
+        return _joseph;
+    }
+
+    function setJoseph(address joseph)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _joseph = joseph;
         emit JosephUpdated(joseph);
     }

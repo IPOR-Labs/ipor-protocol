@@ -2,7 +2,6 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -19,8 +18,7 @@ import "../libraries/Constants.sol";
 import "hardhat/console.sol";
 
 contract Joseph is
-    UUPSUpgradeable,
-    PausableUpgradeable,
+    UUPSUpgradeable,    
     ReentrancyGuardUpgradeable,
     JosephConfiguration,
     IJoseph
@@ -78,7 +76,7 @@ contract Joseph is
         _unpause();
     }
 
-    function rebalance() external override {
+    function rebalance() external override whenNotPaused {
         address miltonAddr = address(_milton);
         uint256 miltonAssetBalance = IERC20Upgradeable(_asset).balanceOf(
             miltonAddr
@@ -110,11 +108,21 @@ contract Joseph is
         }
     }
 
-    function depositToVault(uint256 assetValue) external override onlyOwner {
+    function depositToVault(uint256 assetValue)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _milton.depositToVault(assetValue);
     }
 
-    function withdrawFromVault(uint256 assetValue) external override onlyOwner {
+    function withdrawFromVault(uint256 assetValue)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _milton.withdrawFromVault(assetValue);
     }
 
@@ -133,8 +141,9 @@ contract Joseph is
     function transferTreasury(uint256 assetValue)
         external
         override
-        onlyTreasureTransferer
         nonReentrant
+        whenNotPaused
+        onlyTreasureTransferer
     {
         require(
             address(0) != _treasureTreasurer,
@@ -153,8 +162,9 @@ contract Joseph is
     function transferPublicationFee(uint256 assetValue)
         external
         override
-        onlyPublicationFeeTransferer
         nonReentrant
+        whenNotPaused
+        onlyPublicationFeeTransferer
     {
         require(
             address(0) != _charlieTreasurer,

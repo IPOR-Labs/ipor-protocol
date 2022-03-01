@@ -70,143 +70,6 @@ describe("Milton", () => {
         );
     });
 
-    it("should transfer ownership - simple case 1", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase1(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        const expectedNewOwner = userTwo;
-
-        //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
-
-        await testData.miltonDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
-
-        //then
-        const actualNewOwner = await testData.miltonDai
-            .connect(userOne)
-            .owner();
-        expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
-    });
-
-    it("should NOT transfer ownership - sender not current owner", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase1(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        const expectedNewOwner = userTwo;
-
-        //when
-        await assertError(
-            testData.miltonDai
-                .connect(userThree)
-                .transferOwnership(expectedNewOwner.address),
-            //then
-            "Ownable: caller is not the owner"
-        );
-    });
-
-    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase1(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        const expectedNewOwner = userTwo;
-
-        //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
-
-        await assertError(
-            testData.miltonDai.connect(userThree).confirmTransferOwnership(),
-            //then
-            "IPOR_6"
-        );
-    });
-
-    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase1(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        const expectedNewOwner = userTwo;
-
-        //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
-
-        await testData.miltonDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
-
-        await assertError(
-            testData.miltonDai
-                .connect(expectedNewOwner)
-                .confirmTransferOwnership(),
-            "IPOR_6"
-        );
-    });
-
-    it("should NOT transfer ownership - sender already lost ownership", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase1(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        const expectedNewOwner = userTwo;
-
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
-
-        await testData.miltonDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
-
-        //when
-        await assertError(
-            testData.miltonDai
-                .connect(admin)
-                .transferOwnership(expectedNewOwner.address),
-            //then
-            "Ownable: caller is not the owner"
-        );
-    });
-
-    it("should have rights to transfer ownership - sender still have rights", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase1(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        const expectedNewOwner = userTwo;
-
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
-
-        //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
-
-        //then
-        const actualNewOwner = await testData.miltonDai
-            .connect(userOne)
-            .owner();
-        expect(admin.address).to.be.eql(actualNewOwner);
-    });
-
     it("should NOT open position because totalAmount amount too low", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase00(
@@ -3751,7 +3614,7 @@ describe("Milton", () => {
             `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
             expected: ${expectedTreasuryTotalBalanceWad}`
         ).to.be.eq(actualTreasuryTotalBalanceWad);
-    });    
+    });
 
     it("should NOT open pay fixed position, DAI, collateralization factor too low", async () => {
         //given
@@ -4892,8 +4755,6 @@ describe("Milton", () => {
 
 //TODO: check initial IBT
 
-//TODO: test when transfer ownership and Milton still works properly
-
 //TODO: add test: open long, change index, open short, change index, close long and short and check if soap = 0
 
 //TODO: test when ipor not ready yet
@@ -4903,7 +4764,8 @@ describe("Milton", () => {
 //TODO: add test where total amount higher than openingfeeamount
 
 //TODO: add test which checks emited events!!!
-//TODO: add test when warren address will change and check if milton see this
+
 //TODO: add test when user try to send eth on milton
-//TODO: add test where milton storage is changing - how balance behave
+
 //TODO: add tests for pausable methods
+//TODO: !!! test when close position, trader earn more than Milton hase in ERC20 tokens

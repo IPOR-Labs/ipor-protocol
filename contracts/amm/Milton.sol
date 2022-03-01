@@ -87,29 +87,6 @@ contract Milton is
         _unpause();
     }
 
-    function depositToVault(uint256 assetValue)
-        external
-        nonReentrant
-        onlyJoseph
-    {
-        uint256 balance = _iporVault.deposit(assetValue);
-        _miltonStorage.updateStorageWhenDepositToVault(assetValue, balance);
-    }
-
-    function withdrawFromVault(uint256 assetValue)
-        external
-        nonReentrant
-        onlyJoseph
-    {
-        (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
-            assetValue
-        );
-        _miltonStorage.updateStorageWhenWithdrawFromVault(
-            withdrawnValue,
-            vaultBalance
-        );
-    }
-
     function setupMaxAllowance(address spender)
         external
         override
@@ -122,11 +99,36 @@ contract Milton is
         );
     }
 
+    function depositToVault(uint256 assetValue)
+        external
+        onlyJoseph
+        nonReentrant
+        whenNotPaused
+    {
+        uint256 balance = _iporVault.deposit(assetValue);
+        _miltonStorage.updateStorageWhenDepositToVault(assetValue, balance);
+    }
+
+    function withdrawFromVault(uint256 assetValue)
+        external
+        onlyJoseph
+        nonReentrant
+        whenNotPaused
+    {
+        (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
+            assetValue
+        );
+        _miltonStorage.updateStorageWhenWithdrawFromVault(
+            withdrawnValue,
+            vaultBalance
+        );
+    }
+
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) external override nonReentrant returns (uint256) {
+    ) external override nonReentrant whenNotPaused returns (uint256) {
         return
             _openSwapPayFixed(
                 block.timestamp,
@@ -140,7 +142,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) external override nonReentrant returns (uint256) {
+    ) external override nonReentrant whenNotPaused returns (uint256) {
         return
             _openSwapReceiveFixed(
                 block.timestamp,
@@ -150,7 +152,12 @@ contract Milton is
             );
     }
 
-    function closeSwapPayFixed(uint256 swapId) external override nonReentrant {
+    function closeSwapPayFixed(uint256 swapId)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+    {
         _closeSwapPayFixed(swapId, block.timestamp);
     }
 
@@ -158,6 +165,7 @@ contract Milton is
         external
         override
         nonReentrant
+        whenNotPaused
     {
         _closeSwapReceiveFixed(swapId, block.timestamp);
     }
