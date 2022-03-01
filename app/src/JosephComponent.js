@@ -88,6 +88,107 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <strong>Provide Liquidity</strong>
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="ItfJosephUsdt"
+                                method="provideLiquidity"
+                            />
+                        ) : (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="JosephUsdt"
+                                method="provideLiquidity"
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="ItfJosephUsdc"
+                                method="provideLiquidity"
+                            />
+                        ) : (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="JosephUsdc"
+                                method="provideLiquidity"
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="ItfJosephDai"
+                                method="provideLiquidity"
+                            />
+                        ) : (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="JosephDai"
+                                method="provideLiquidity"
+                            />
+                        )}
+                    </td>
+                </tr>
+
+				<tr>
+                    <td>
+                        <strong>Redeem</strong>
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="ItfJosephUsdt"
+                                method="redeem"
+                            />
+                        ) : (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="JosephUsdt"
+                                method="redeem"
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="ItfJosephUsdc"
+                                method="redeem"
+                            />
+                        ) : (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="JosephUsdc"
+                                method="redeem"
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="ItfJosephDai"
+                                method="redeem"
+                            />
+                        ) : (
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="JosephDai"
+                                method="redeem"
+                            />
+                        )}
+                    </td>
+                </tr>
 
                 <tr>
                     <td>
@@ -398,6 +499,132 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     contract="JosephDai"
                                     method="transferPublicationFee"
+                                />
+                            </div>
+                        )}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pause</strong>
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfJosephUsdt"
+                                    method="pause"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="JosephUsdt"
+                                    method="pause"
+                                />
+                            </div>
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfJosephUsdc"
+                                    method="pause"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="JosephUsdc"
+                                    method="pause"
+                                />
+                            </div>
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfJosephDai"
+                                    method="pause"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="JosephDai"
+                                    method="pause"
+                                />
+                            </div>
+                        )}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Unpause</strong>
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfJosephUsdt"
+                                    method="unpause"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="JosephUsdt"
+                                    method="unpause"
+                                />
+                            </div>
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfJosephUsdc"
+                                    method="unpause"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="JosephUsdc"
+                                    method="unpause"
+                                />
+                            </div>
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfJosephDai"
+                                    method="unpause"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="JosephDai"
+                                    method="unpause"
                                 />
                             </div>
                         )}

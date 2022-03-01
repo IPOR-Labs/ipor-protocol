@@ -331,14 +331,5 @@ async function grandRolesForAssetConfiguration(
     await iporAssetConfigurationProxy.grantRole(
         keccak256("JOSEPH_ROLE"),
         admin
-    );
-
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
-        admin
-    );
+   );
 }

@@ -17,7 +17,6 @@ import "../configuration/MiltonConfiguration.sol";
 import "../interfaces/IMiltonEvents.sol";
 import "../tokenization/IpToken.sol";
 import "../interfaces/IIporVault.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
@@ -31,7 +30,7 @@ import "hardhat/console.sol";
  */
 //TODO: add pausable modifier for methodds
 contract Milton is
-    UUPSUpgradeable,    
+    UUPSUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     MiltonConfiguration,
@@ -55,8 +54,6 @@ contract Milton is
         address warren,
         address miltonStorage,
         address miltonSpreadModel,
-        address initialIporConfiguration,
-        address iporAssetConfigurationAddr,
         address iporVault
     ) public initializer {
         __Ownable_init();
@@ -67,14 +64,6 @@ contract Milton is
         require(
             address(miltonSpreadModel) != address(0),
             IporErrors.WRONG_ADDRESS
-        );
-        require(
-            address(initialIporConfiguration) != address(0),
-            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );
-        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
-        _iporAssetConfiguration = IIporAssetConfiguration(
-            iporAssetConfigurationAddr
         );
 
         _decimals = ERC20Upgradeable(asset).decimals();
@@ -96,7 +85,7 @@ contract Milton is
 
     function unpause() external override onlyOwner {
         _unpause();
-    }    
+    }
 
     function depositToVault(uint256 assetValue)
         external

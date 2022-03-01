@@ -6,9 +6,7 @@ import "../interfaces/IIpToken.sol";
 import "../interfaces/IWarren.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporVault.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
@@ -43,8 +41,6 @@ contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
     IWarren internal _warren;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
-    IIporConfiguration internal _iporConfiguration;
-    IIporAssetConfiguration internal _iporAssetConfiguration;
     IIporVault internal _iporVault;
 
     address internal _joseph;

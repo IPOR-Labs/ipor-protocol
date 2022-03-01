@@ -26,10 +26,5 @@ interface IIporAssetConfiguration {
 
     function getDecimals() external view returns (uint8);
 
-    function getIpToken() external view returns (address);    
-
-    function getAssetManagementVault() external view returns (address);
-
-    function setAssetManagementVault(address newAssetManagementVaultAddress)
-        external;
+    function getIpToken() external view returns (address);
 }

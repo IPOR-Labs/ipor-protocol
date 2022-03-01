@@ -576,46 +576,4 @@ describe("IporAssetConfiguration", () => {
         );
         expect(hasRoleAdmin).to.be.true;
     });
-
-    it("should set asset management vault", async () => {
-        //given
-        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-        const asset = tokenDai.address;
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"),
-            admin.address
-        );
-        await iporAssetConfigurationDAI.grantRole(
-            keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
-            userOne.address
-        );
-
-        //when
-        await iporAssetConfigurationDAI
-            .connect(userOne)
-            .setAssetManagementVault(address);
-
-        //then
-        const actualAddress =
-            await iporAssetConfigurationDAI.getAssetManagementVault();
-
-        expect(
-            address,
-            `Incorrect  Asset Management Vault address for asset ${asset}, actual: ${actualAddress}, expected: ${address}`
-        ).to.be.eql(actualAddress);
-    });
-
-    it("should NOT set AssetManagementVault when user does not have ASSET_MANAGEMENT_VAULT_ROLE role", async () => {
-        //given
-        const address = "0x17A6E00cc10CC183a79c109E4A0aef9Cf59c8984";
-
-        await assertError(
-            //when
-            iporAssetConfigurationDAI
-                .connect(userOne)
-                .setAssetManagementVault(address),
-            //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x2a7b2b7d358f8b11f783d1505af660b492b725a034776176adc7c268915d5bd8`
-        );
-    });
 });

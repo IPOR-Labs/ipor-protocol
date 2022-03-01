@@ -17,11 +17,6 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         keccak256("JOSEPH_ADMIN_ROLE");
     bytes32 internal constant _JOSEPH_ROLE = keccak256("JOSEPH_ROLE");
 
-    bytes32 internal constant _ASSET_MANAGEMENT_VAULT_ADMIN_ROLE =
-        keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE");
-    bytes32 internal constant _ASSET_MANAGEMENT_VAULT_ROLE =
-        keccak256("ASSET_MANAGEMENT_VAULT_ROLE");
-
     function _init() internal {
         _setupRole(_ADMIN_ROLE, msg.sender);
         _setRoleAdmin(_ADMIN_ROLE, _ADMIN_ROLE);
@@ -38,10 +33,5 @@ abstract contract AccessControlAssetConfiguration is AccessControlRevoke {
         _setRoleAdmin(_JOSEPH_ADMIN_ROLE, _ADMIN_ROLE);
         _setRoleAdmin(_JOSEPH_ROLE, _JOSEPH_ADMIN_ROLE);
 
-        _setRoleAdmin(_ASSET_MANAGEMENT_VAULT_ADMIN_ROLE, _ADMIN_ROLE);
-        _setRoleAdmin(
-            _ASSET_MANAGEMENT_VAULT_ROLE,
-            _ASSET_MANAGEMENT_VAULT_ADMIN_ROLE
-        );
     }
 }

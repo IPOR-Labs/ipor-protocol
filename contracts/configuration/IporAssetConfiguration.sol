@@ -101,28 +101,4 @@ contract IporAssetConfiguration is
         return _ipToken;
     }
 
-    function getAssetManagementVault()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _assetManagementVault;
-    }
-
-    function setAssetManagementVault(address newAssetManagementVaultAddress)
-        external
-        override
-        onlyRole(_ASSET_MANAGEMENT_VAULT_ROLE)
-    {
-        require(
-            newAssetManagementVaultAddress != address(0),
-            IporErrors.WRONG_ADDRESS
-        );
-        _assetManagementVault = newAssetManagementVaultAddress;
-        emit AssetManagementVaultUpdated(
-            _asset,
-            newAssetManagementVaultAddress
-        );
-    }
 }

@@ -434,9 +434,7 @@ module.exports.prepareTestData = async (
                 ipTokenUsdt.address,
                 warren.address,
                 miltonStorageUsdt.address,
-                data.miltonSpread.address,
-                data.iporConfiguration.address,
-                iporAssetConfigurationUsdt.address,
+                data.miltonSpread.address,                
                 iporVaultUsdt.address
             );
 
@@ -515,8 +513,6 @@ module.exports.prepareTestData = async (
                 warren.address,
                 miltonStorageUsdc.address,
                 data.miltonSpread.address,
-                data.iporConfiguration.address,
-                iporAssetConfigurationUsdc.address,
                 iporVaultUsdc.address
             );
             await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
@@ -594,8 +590,6 @@ module.exports.prepareTestData = async (
                 warren.address,
                 miltonStorageDai.address,
                 data.miltonSpread.address,
-                data.iporConfiguration.address,
-                iporAssetConfigurationDai.address,
                 iporVaultDai.address
             );
 

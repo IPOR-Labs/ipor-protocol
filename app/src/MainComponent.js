@@ -5,6 +5,7 @@ import { Container, Navbar, Tabs } from "react-bootstrap";
 import { Tab } from "bootstrap";
 import WarrenComponent from "./WarrenComponent";
 import MiltonComponent from "./MiltonComponent";
+import JosephComponent from "./JosephComponent";
 import MyPositions from "./MyPositions";
 import IporAssetConfigurationComponent from "./IporAssetConfigurationComponent";
 import JosephConfigurationComponent from "./JosephConfigurationComponent";
@@ -76,32 +77,38 @@ export default ({ drizzle, drizzleState }) => {
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="globalConfig" title="Global Configuration">
+                <Tab eventKey="joseph" title="Joseph">
+                    <JosephComponent
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
+                <Tab eventKey="globalConfig" title="Global Config">
                     <GlobalConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="josephConfig" title="Joseph Configuration">
+                <Tab eventKey="josephConfig" title="Joseph Config">
                     <JosephConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="miltonConfig" title="Milton Configuration">
+                <Tab eventKey="miltonConfig" title="Milton Config">
                     <MiltonConfigurationComponent
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
+                <Tab eventKey="spreadConfig" title="Spread Config">
+                    <MiltonSpreadConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
                 </Tab>
                 <Tab eventKey="assetConfig" title="Asset Configuration">
                     <IporAssetConfigurationComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
-                </Tab>
-                <Tab eventKey="spreadConfig" title="Spread Configuration">
-                    <MiltonSpreadConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
