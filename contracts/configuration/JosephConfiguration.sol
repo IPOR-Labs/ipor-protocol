@@ -93,7 +93,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
 
     function getRedeemLpMaxUtilizationPercentage()
         external
-        view
+        pure
         override
         returns (uint256)
     {
@@ -102,7 +102,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
 
     function getMiltonStanleyBalancePercentage()
         external
-        view
+        pure
         override
         returns (uint256)
     {
@@ -119,7 +119,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
 
     function _getRedeemLpMaxUtilizationPercentage()
         internal
-        view
+        pure
         virtual
         returns (uint256)
     {
@@ -128,7 +128,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
 
     function _getMiltonStanleyBalancePercentage()
         internal
-        view
+        pure
         virtual
         returns (uint256)
     {

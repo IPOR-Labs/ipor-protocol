@@ -40,5 +40,7 @@ interface IMiltonConfiguration {
 
     function getMiltonSpreadModel() external view returns (address);
 
+    function getJoseph() external view returns (address);
+
     function setJoseph(address joseph) external;
 }

@@ -37,12 +37,12 @@ interface IJosephConfiguration {
 
     function getRedeemLpMaxUtilizationPercentage()
         external
-        view
+        pure
         returns (uint256);
 
     function getMiltonStanleyBalancePercentage()
         external
-        view
+        pure
         returns (uint256);
 
     function decimals() external view returns (uint8);

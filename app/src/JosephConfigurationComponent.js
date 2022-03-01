@@ -40,95 +40,95 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="ItfJosephUsdt"
-                                    method="getRedeemLpMaxUtilizationPercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="ItfJosephUsdt"
-                                    method="setRedeemLpMaxUtilizationPercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfJosephUsdt"
+                                method="getRedeemLpMaxUtilizationPercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         ) : (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="JosephUsdt"
-                                    method="getRedeemLpMaxUtilizationPercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="JosephUsdt"
-                                    method="setRedeemLpMaxUtilizationPercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="JosephUsdt"
+                                method="getRedeemLpMaxUtilizationPercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         )}
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="ItfJosephUsdc"
-                                    method="getRedeemLpMaxUtilizationPercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="ItfJosephUsdc"
-                                    method="setRedeemLpMaxUtilizationPercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfJosephUsdc"
+                                method="getRedeemLpMaxUtilizationPercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         ) : (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="JosephUsdc"
-                                    method="getRedeemLpMaxUtilizationPercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="JosephUsdc"
-                                    method="setRedeemLpMaxUtilizationPercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="JosephUsdc"
+                                method="getRedeemLpMaxUtilizationPercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         )}
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="ItfJosephDai"
-                                    method="getRedeemLpMaxUtilizationPercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="ItfJosephDai"
-                                    method="setRedeemLpMaxUtilizationPercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfJosephDai"
+                                method="getRedeemLpMaxUtilizationPercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         ) : (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="JosephDai"
-                                    method="getRedeemLpMaxUtilizationPercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="JosephDai"
-                                    method="setRedeemLpMaxUtilizationPercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="JosephDai"
+                                method="getRedeemLpMaxUtilizationPercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         )}
                     </td>
                 </tr>
@@ -139,95 +139,95 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="ItfJosephUsdt"
-                                    method="getMiltonStanleyBalancePercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="ItfJosephUsdt"
-                                    method="setMiltonStanleyBalancePercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfJosephUsdt"
+                                method="getMiltonStanleyBalancePercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         ) : (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="JosephUsdt"
-                                    method="getMiltonStanleyBalancePercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="JosephUsdt"
-                                    method="setMiltonStanleyBalancePercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="JosephUsdt"
+                                method="getMiltonStanleyBalancePercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         )}
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="ItfJosephUsdc"
-                                    method="getMiltonStanleyBalancePercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="ItfJosephUsdc"
-                                    method="setMiltonStanleyBalancePercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfJosephUsdc"
+                                method="getMiltonStanleyBalancePercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         ) : (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="JosephUsdc"
-                                    method="getMiltonStanleyBalancePercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="JosephUsdc"
-                                    method="setMiltonStanleyBalancePercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="JosephUsdc"
+                                method="getMiltonStanleyBalancePercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         )}
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="ItfJosephDai"
-                                    method="getMiltonStanleyBalancePercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="ItfJosephDai"
-                                    method="setMiltonStanleyBalancePercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfJosephDai"
+                                method="getMiltonStanleyBalancePercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         ) : (
-                            <div>
-                                <ContractData
-                                    drizzle={drizzle}
-                                    drizzleState={drizzleState}
-                                    contract="JosephDai"
-                                    method="getMiltonStanleyBalancePercentage"
-                                />
-                                <ContractForm
-                                    drizzle={drizzle}
-                                    contract="JosephDai"
-                                    method="setMiltonStanleyBalancePercentage"
-                                />
-                            </div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="JosephDai"
+                                method="getMiltonStanleyBalancePercentage"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
                         )}
                     </td>
                 </tr>
@@ -235,6 +235,7 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Charlie Treasurer</strong>
+						<small></small>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (

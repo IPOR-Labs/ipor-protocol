@@ -3,10 +3,11 @@ import { newContextComponents } from "@drizzle/react-components";
 import logo from "./logo.png";
 import { Container, Navbar, Tabs } from "react-bootstrap";
 import { Tab } from "bootstrap";
-import IporIndexComponent from "./WarrenComponent";
+import WarrenComponent from "./WarrenComponent";
 import MiltonComponent from "./MiltonComponent";
 import MyPositions from "./MyPositions";
 import IporAssetConfigurationComponent from "./IporAssetConfigurationComponent";
+import JosephConfigurationComponent from "./JosephConfigurationComponent";
 import MiltonConfigurationComponent from "./MiltonConfigurationComponent";
 import MiltonSpreadConfigurationComponent from "./MiltonSpreadConfigurationComponent";
 import GlobalConfigurationComponent from "./GlobalConfigurationComponent";
@@ -63,31 +64,31 @@ export default ({ drizzle, drizzleState }) => {
                 </table>
             </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-                <Tab eventKey="iporIndex" title="Warren Oracle">
-                    <IporIndexComponent
+                <Tab eventKey="iporIndex" title="Warren">
+                    <WarrenComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="miltonOverview" title="Milton Overview">
+                <Tab eventKey="miltonOverview" title="Milton">
                     <MiltonComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
-                </Tab>				
+                </Tab>
                 <Tab eventKey="globalConfig" title="Global Configuration">
                     <GlobalConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
                 </Tab>
-				<Tab eventKey="josephConfig" title="Joseph Configuration">
+                <Tab eventKey="josephConfig" title="Joseph Configuration">
                     <JosephConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
                 </Tab>
-				<Tab eventKey="miltonConfig" title="Milton Configuration">
+                <Tab eventKey="miltonConfig" title="Milton Configuration">
                     <MiltonConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
