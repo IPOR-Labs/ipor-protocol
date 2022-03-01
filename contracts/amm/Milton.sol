@@ -9,7 +9,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/types/DataTypes.sol";
 import "../libraries/IporMath.sol";
-import "../security/IporOwnableUpgradeable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
@@ -32,8 +31,7 @@ import "hardhat/console.sol";
  */
 //TODO: add pausable modifier for methodds
 contract Milton is
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
+    UUPSUpgradeable,    
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     MiltonConfiguration,
@@ -98,12 +96,7 @@ contract Milton is
 
     function unpause() external override onlyOwner {
         _unpause();
-    }
-
-    function setJoseph(address joseph) external override onlyOwner {
-        _joseph = joseph;
-        //TODO: add event
-    }
+    }    
 
     function depositToVault(uint256 assetValue)
         external

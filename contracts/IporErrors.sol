@@ -37,6 +37,8 @@ library IporErrors {
     //@notice Amount of collateral used to open swap exceeds limit
     string public constant MILTON_COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_10";
 
+    string public constant CALLER_NOT_TREASURE_TRANSFERER = "IPOR_11";
+
     //@notice Deposit amount to notional amount collateralization factor is too low
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_LOW = "IPOR_12";
 
@@ -99,13 +101,13 @@ library IporErrors {
         "IPOR_27";
 
     //@notice Opening Fee Balance is too low
-    string public constant NOT_ENOUGH_IPOR_PUBLICATION_FEE_BALANCE = "IPOR_28";
+    string public constant IPOR_PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_28";
 
     //@notice Charlie Treasurer address is incorrect
     string public constant INCORRECT_CHARLIE_TREASURER_ADDRESS = "IPOR_29";
 
     //@notice Amount is too low to transfer
-    string public constant MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER = "IPOR_30";
+    string public constant NOT_ENOUGH_AMOUNT_TO_TRANSFER = "IPOR_30";
 
     //@notice Sender is not a publication fee transferer, not match address defined in IporConfiguration in key MILTON_PUBLICATION_FEE_TRANSFERER
     string public constant CALLER_NOT_PUBLICATION_FEE_TRANSFERER = "IPOR_31";
@@ -136,8 +138,8 @@ library IporErrors {
     //@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS
     string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = "IPOR_39";
 
-    //@notice Amount which should be minted is too low
-    string public constant IP_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_40";
+    //@notice IP Token Value which should be minted is too low
+    string public constant IP_TOKEN_MINT_VALUE_TOO_LOW = "IPOR_40";
 
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = "IPOR_41";
@@ -150,7 +152,7 @@ library IporErrors {
         "IPOR_43";
 
     //@notice Amount which should be burned is too low
-    string public constant MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_44";
+    string public constant IP_TOKEN_BURN_VALUE_TOO_LOW = "IPOR_44";
 
     //@notice Liquidity Pool balance is equal 0
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = "IPOR_45";
@@ -173,9 +175,8 @@ library IporErrors {
     string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_50";
 
     //TODO: add test for this code
-    //@notice Liquidity Pool Max Utilization Percentage cannot be higher than 1 * D18
-    string public constant CONFIG_LP_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
-        "IPOR_51";
+    //@notice Incorrect Treasure Treasurer Address
+    string public constant INCORRECT_TREASURE_TREASURER_ADDRESS = "IPOR_51";
 
     //TODO: add test for this
     //@notice Asset has too low decimals
@@ -208,4 +209,6 @@ library IporErrors {
 
     //@notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
+
+    string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_60";
 }

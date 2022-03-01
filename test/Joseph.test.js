@@ -1733,30 +1733,30 @@ describe("Joseph", () => {
             .connect(admin)
             .setCharlieTreasurer(userOne.address);
 
-        const transferedAmount = BigInt("100");
+        const transferedValue = BigInt("100");
 
         //when
         await testData.josephDai
             .connect(userThree)
-            .transferPublicationFee(transferedAmount);
+            .transferPublicationFee(transferedValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
         let expectedErc20BalanceCharlieTreasurer =
-            USER_SUPPLY_10MLN_18DEC + transferedAmount;
+            USER_SUPPLY_10MLN_18DEC + transferedValue;
         let actualErc20BalanceCharlieTreasurer = BigInt(
             await testData.tokenDai.balanceOf(userOne.address)
         );
 
         let expectedErc20BalanceMilton =
-            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedAmount;
+            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedValue;
         let actualErc20BalanceMilton = BigInt(
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
 
         let expectedPublicationFeeBalanceMilton =
-            USD_10_18DEC - transferedAmount;
+            USD_10_18DEC - transferedValue;
         const actualPublicationFeeBalanceMilton = BigInt(
             balance.iporPublicationFee
         );

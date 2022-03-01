@@ -224,7 +224,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Treasure Manager</strong>
+                        <strong>Treasury Manager</strong>
                         <br />
                         <small>Manage opening fee balance</small>
                     </td>

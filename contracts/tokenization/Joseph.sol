@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../security/IporOwnableUpgradeable.sol";
+
 import "../configuration/JosephConfiguration.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
@@ -20,7 +20,6 @@ import "hardhat/console.sol";
 
 contract Joseph is
     UUPSUpgradeable,
-    IporOwnableUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     JosephConfiguration,
@@ -34,6 +33,14 @@ contract Joseph is
         require(
             msg.sender == _publicationFeeTransferer,
             IporErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
+        );
+        _;
+    }
+
+    modifier onlyTreasureTransferer() {
+        require(
+            msg.sender == _treasureTransferer,
+            IporErrors.CALLER_NOT_TREASURE_TRANSFERER
         );
         _;
     }
@@ -69,42 +76,6 @@ contract Joseph is
 
     function unpause() external override onlyOwner {
         _unpause();
-    }
-
-    function setCharlieTreasurer(address newCharlieTreasurer)
-        external
-        override
-        onlyOwner
-    {
-        require(
-            newCharlieTreasurer != address(0),
-            IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS
-        );
-        _charlieTreasurer = newCharlieTreasurer;
-        emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
-    }    
-
-	function setTreasureTreasurer(address newTreasureTreasurer)
-        external
-        override
-        onlyOwner
-    {
-        require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
-        _treasureTreasurer = newTreasureTreasurer;
-        emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
-    }
-
-	function setPublicationFeeTransferer(address publicationFeeTransferer)
-        external
-        override
-        onlyOwner
-    {
-        require(
-            address(0) != publicationFeeTransferer,
-            IporErrors.WRONG_ADDRESS
-        );
-        _publicationFeeTransferer = publicationFeeTransferer;
-        emit PublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
 
     function rebalance() external override {
@@ -159,8 +130,27 @@ contract Joseph is
         _redeem(ipTokenValue, block.timestamp);
     }
 
-    //@notice transfer publication fee to configured charlie treasurer address
-    function transferPublicationFee(uint256 amount)
+    function transferTreasury(uint256 assetValue)
+        external
+        override
+        onlyTreasureTransferer
+        nonReentrant
+    {
+        require(
+            address(0) != _treasureTreasurer,
+            IporErrors.INCORRECT_TREASURE_TREASURER_ADDRESS
+        );
+
+        _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
+
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            address(_milton),
+            _treasureTreasurer,
+            assetValue
+        );
+    }
+
+    function transferPublicationFee(uint256 assetValue)
         external
         override
         onlyPublicationFeeTransferer
@@ -171,12 +161,12 @@ contract Joseph is
             IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS
         );
 
-        _miltonStorage.updateStorageWhenTransferPublicationFee(amount);
+        _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
             _charlieTreasurer,
-            amount
+            assetValue
         );
     }
 

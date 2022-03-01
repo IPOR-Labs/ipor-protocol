@@ -8,9 +8,7 @@ interface IMilton {
 
     function pause() external;
 
-    function unpause() external;
-
-    function setJoseph(address joseph) external;
+    function unpause() external;    
 
     function setupMaxAllowance(address spender) external;
 
