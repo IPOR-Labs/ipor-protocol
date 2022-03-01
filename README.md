@@ -4,14 +4,8 @@ IPOR smart contracts
 
 ## Job statuses
 
-### Smart contracts:
-
-* [![Smart Contracts CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/smart-contracts-ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/smart-contracts-ci.yml)
-
-### Java:
-
-* [![Java CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-ci.yml)
-* [![Java CD](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-cd.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/java-cd.yml)
+* [![CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml)
+* [![CD](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml)
 
 ## Usage
 

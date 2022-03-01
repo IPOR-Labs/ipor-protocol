@@ -1,24 +1,20 @@
-name: Java CD
+name: CI
 
 on:
-  push:
+  pull_request:
     branches:
-      - main
+      - '**'
 
 env:
   SOLC_VERSION: 0.8.9
+  SLACK_ID_FILE: slack-id.txt
 
 jobs:
 
-  build-and-publish:
+  notify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-
-      - name: Slack Status
+      - name: Slack status start
         id: slack
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -28,17 +24,52 @@ jobs:
           status: STARTING
           color: warning
 
+      - name: Save slack message id
+        shell: bash
+        run: echo ${{ steps.slack.outputs.message_id }} > ${{ env.SLACK_ID_FILE }}
+
+      - name: Upload slack message id
+        uses: actions/upload-artifact@v2
+        with:
+          name: slack-id
+          path: ${{ env.SLACK_ID_FILE }}
+
+
+  build-smart-contracts:
+    needs: notify
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Solidity Compiler
+      - name: Install
+        run: npm install
+
+      - name: Hardhat compile
+        run: npx hardhat compile
+
+      - name: Tests
+        run: npm run test
+
+
+  build-java:
+    needs: notify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up solidity compiler
         run: |
           python -m pip install --upgrade --no-cache-dir solc-select
           solc-select install $SOLC_VERSION
           solc-select use $SOLC_VERSION
         shell: bash
 
-      - name: Set up Java
+      - name: Set up java
         uses: actions/setup-java@v2
         with:
           java-version: 11
@@ -46,12 +77,12 @@ jobs:
           server-id: github
           settings-path: ${{ github.workspace }}
 
-      - name: Set up Maven
+      - name: Set up maven
         uses: stCarolas/setup-maven@v4.2
         with:
           maven-version: 3.8.4
 
-      - name: Cache Maven Repository
+      - name: Cache maven repository
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
@@ -63,13 +94,27 @@ jobs:
       - name: Build
         run: mvn clean package -B -ntp -s '${{ github.workspace }}/settings.xml' -Dmaven.test.skip=true --update-snapshots
 
-      - name: Test
+      - name: Tests
         run: mvn test -B -ntp -s '${{ github.workspace }}/settings.xml'
 
-      - name: Publish
-        run: mvn deploy -B -ntp -s '${{ github.workspace }}/settings.xml' -Dmaven.test.skip=true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  report:
+    needs:
+      - build-smart-contracts
+      - build-java
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Download slack message id
+        uses: actions/download-artifact@v2
+        with:
+          name: slack-id
+
+      - name: Read slack message id
+        id: slack-id
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ${{ env.SLACK_ID_FILE }}
 
       - name: Slack Status Success
         if: success()
@@ -77,7 +122,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
         with:
-          message_id: ${{ steps.slack.outputs.message_id }}
+          message_id: ${{ steps.slack-id.outputs.content }}
           channel: github-ci
           status: SUCCESS
           color: good
@@ -88,7 +133,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
         with:
-          message_id: ${{ steps.slack.outputs.message_id }}
+          message_id: ${{ steps.slack-id.outputs.content }}
           channel: github-ci
           status: FAILED
           color: danger
