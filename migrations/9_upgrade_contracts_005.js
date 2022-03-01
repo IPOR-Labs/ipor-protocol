@@ -27,6 +27,10 @@ const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
 
+const MiltonFrontendDataProvider = artifacts.require(
+    "MiltonFrontendDataProvider"
+);
+
 module.exports = async function (deployer, _network, addresses) {
     console.log("Upgrade Smart Contracts...");
 
