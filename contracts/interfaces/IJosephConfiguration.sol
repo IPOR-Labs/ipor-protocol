@@ -18,14 +18,32 @@ interface IJosephConfiguration {
         address indexed newTreasureTreasurer
     );
 
+    function getCharlieTreasurer() external view returns (address);
+
     function setCharlieTreasurer(address newCharlieTreasurer) external;
 
+    function getTreasureTreasurer() external view returns (address);
+
     function setTreasureTreasurer(address newTreasureTreasurer) external;
+
+    function getPublicationFeeTransferer() external view returns (address);
 
     function setPublicationFeeTransferer(address newPublicationFeeTransferer)
         external;
 
+    function getTreasureTransferer() external view returns (address);
+
     function setTreasureTransferer(address treasureTransferer) external;
+
+    function getRedeemLpMaxUtilizationPercentage()
+        external
+        view
+        returns (uint256);
+
+    function getMiltonStanleyBalancePercentage()
+        external
+        view
+        returns (uint256);
 
     function decimals() external view returns (uint8);
 

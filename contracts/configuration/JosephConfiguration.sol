@@ -10,7 +10,7 @@ import "../security/IporOwnableUpgradeable.sol";
 
 contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
-    uint256 internal constant _IDEAL_MILTON_VAULT_REBALANCE_RATIO = 85e15;
+    uint256 internal constant _MILTON_STANLEY_BALANCE_PERCENTAGE = 85e15;
 
     uint8 internal _decimals;
     address internal _asset;
@@ -23,6 +23,10 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
     address internal _treasureTreasurer;
     address internal _publicationFeeTransferer;
     address internal _treasureTransferer;
+
+    function getCharlieTreasurer() external view override returns (address) {
+        return _charlieTreasurer;
+    }
 
     function setCharlieTreasurer(address newCharlieTreasurer)
         external
@@ -37,6 +41,10 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }
 
+    function getTreasureTreasurer() external view override returns (address) {
+        return _treasureTreasurer;
+    }
+
     function setTreasureTreasurer(address newTreasureTreasurer)
         external
         override
@@ -45,6 +53,15 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
         _treasureTreasurer = newTreasureTreasurer;
         emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
+    }
+
+    function getPublicationFeeTransferer()
+        external
+        view
+        override
+        returns (address)
+    {
+        return _publicationFeeTransferer;
     }
 
     function setPublicationFeeTransferer(address publicationFeeTransferer)
@@ -60,6 +77,10 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         emit PublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
 
+    function getTreasureTransferer() external view override returns (address) {
+        return _treasureTransferer;
+    }
+
     function setTreasureTransferer(address treasureTransferer)
         external
         override
@@ -70,11 +91,47 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         emit TreasureTransfererUpdated(treasureTransferer);
     }
 
+    function getRedeemLpMaxUtilizationPercentage()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _getRedeemLpMaxUtilizationPercentage();
+    }
+
+    function getMiltonStanleyBalancePercentage()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _getMiltonStanleyBalancePercentage();
+    }
+
     function decimals() external view override returns (uint8) {
         return _decimals;
     }
 
     function asset() external view override returns (address) {
         return _asset;
+    }
+
+    function _getRedeemLpMaxUtilizationPercentage()
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
+        return _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE;
+    }
+
+    function _getMiltonStanleyBalancePercentage()
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
+        return _MILTON_STANLEY_BALANCE_PERCENTAGE;
     }
 }

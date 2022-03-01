@@ -91,17 +91,17 @@ contract Joseph is
             miltonAssetBalance + iporVaultAssetBalance
         );
 
-        if (ratio > _IDEAL_MILTON_VAULT_REBALANCE_RATIO) {
+        if (ratio > _MILTON_STANLEY_BALANCE_PERCENTAGE) {
             uint256 assetValue = miltonAssetBalance -
                 IporMath.division(
-                    _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
+                    _MILTON_STANLEY_BALANCE_PERCENTAGE *
                         (miltonAssetBalance + iporVaultAssetBalance),
                     Constants.D18
                 );
             _milton.depositToVault(assetValue);
         } else {
             uint256 assetValue = IporMath.division(
-                _IDEAL_MILTON_VAULT_REBALANCE_RATIO *
+                _MILTON_STANLEY_BALANCE_PERCENTAGE *
                     (miltonAssetBalance + iporVaultAssetBalance),
                 Constants.D18
             ) - miltonAssetBalance;

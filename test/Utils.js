@@ -312,6 +312,14 @@ module.exports.prepareWarren = async (accounts) => {
     return warren;
 };
 
+module.exports.prepareComplexTestDataDaiCase40 = async (accounts, data) => {
+    const testData = await this.prepareTestData(accounts, ["DAI"], data, 4, 0);
+    await this.prepareApproveForUsers(accounts, "DAI", data, testData);
+    await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+
 module.exports.prepareComplexTestDataDaiCase00 = async (accounts, data) => {
     const testData = await this.prepareTestDataDaiCase1(accounts, data);
     await this.prepareApproveForUsers(accounts, "DAI", data, testData);

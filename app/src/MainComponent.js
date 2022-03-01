@@ -81,6 +81,12 @@ export default ({ drizzle, drizzleState }) => {
                         drizzleState={drizzleState}
                     />
                 </Tab>
+				<Tab eventKey="josephConfig" title="Joseph Configuration">
+                    <JosephConfigurationComponent
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
 				<Tab eventKey="miltonConfig" title="Milton Configuration">
                     <MiltonConfigurationComponent
                         drizzle={drizzle}

@@ -5,25 +5,6 @@ const { ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
     <div>
-        <div className="row">
-            <div className="col-md-2">Publication Fee Transferer</div>
-            <div className="col-md-3">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="IporConfiguration"
-                    method="getMiltonPublicationFeeTransferer"
-                />
-            </div>
-            <div className="col-md-7">
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporConfiguration"
-                    method="setMiltonPublicationFeeTransferer"
-                />
-            </div>
-        </div>
-        <hr />
         <table className="table" align="center">
             <tr>
                 <td>

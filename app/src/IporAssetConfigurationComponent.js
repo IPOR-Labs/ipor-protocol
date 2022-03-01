@@ -177,100 +177,6 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Charlie Treasuers</strong>
-                        <br />
-                        <small>Manage IPOR publication fee token balance</small>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getCharlieTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setCharlieTreasurer"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getCharlieTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setCharlieTreasurer"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getCharlieTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setCharlieTreasurer"
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Treasury Manager</strong>
-                        <br />
-                        <small>Manage opening fee balance</small>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdt"
-                            method="getTreasureTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdt"
-                            method="setTreasureTreasurer"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationUsdc"
-                            method="getTreasureTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationUsdc"
-                            method="setTreasureTreasurer"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporAssetConfigurationDai"
-                            method="getTreasureTreasurer"
-                        />
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporAssetConfigurationDai"
-                            method="setTreasureTreasurer"
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
                         <strong>Asset Management Vault</strong>
                         <br />
                         <small>
@@ -363,7 +269,7 @@ export default ({ drizzle, drizzleState }) => (
                         <td>
                             0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
                         </td>
-                    </tr>                    
+                    </tr>
                     <tr>
                         <td>ASSET_MANAGEMENT_VAULT_ADMIN_ROLE</td>
                         <td>

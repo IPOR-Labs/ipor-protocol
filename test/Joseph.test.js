@@ -4,22 +4,14 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 
 const {
-    PERCENTAGE_2_18DEC,
     PERCENTAGE_2_5_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_8_18DEC,
     PERCENTAGE_50_18DEC,
-    PERCENTAGE_160_18DEC,
-    PERCENTAGE_365_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
-    USD_10_18DEC,
-    USD_10_400_18DEC,
     USD_14_000_18DEC,
-    USD_28_000_18DEC,
     USD_14_000_6DEC,
-    USER_SUPPLY_10MLN_18DEC,
     ZERO,
-
     PERIOD_25_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
@@ -31,14 +23,12 @@ const {
     prepareData,
     prepareTestData,
     prepareComplexTestDataDaiCase00,
-    getPayFixedDerivativeParamsDAICase1,
     prepareTestDataUsdtCase1,
     prepareTestDataDaiCase1,
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
-    absValue,
 } = require("./Utils");
 
 describe("Joseph", () => {
@@ -1653,130 +1643,5 @@ describe("Joseph", () => {
             //then
             "IPOR_45"
         );
-    });
-
-    it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase00(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        //when
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(userThree)
-                .transferPublicationFee(BigInt("100")),
-            //then
-            "IPOR_31"
-        );
-    });
-
-    it("should NOT transfer Publication Fee to Charlie Treasury - Charlie Treasury address incorrect", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase00(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        await testData.josephDai
-            .connect(admin)
-            .setPublicationFeeTransferer(userThree.address);
-
-        //when
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(userThree)
-                .transferPublicationFee(BigInt("100")),
-            //then
-            "IPOR_29"
-        );
-    });
-
-    it("should transfer Publication Fee to Charlie Treasury - simple case 1", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase00(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor
-            );
-
-        await testData.josephDai
-            .connect(admin)
-            .setPublicationFeeTransferer(userThree.address);
-
-        await testData.josephDai
-            .connect(admin)
-            .setCharlieTreasurer(userOne.address);
-
-        const transferedValue = BigInt("100");
-
-        //when
-        await testData.josephDai
-            .connect(userThree)
-            .transferPublicationFee(transferedValue);
-
-        //then
-        let balance = await testData.miltonStorageDai.getExtendedBalance();
-
-        let expectedErc20BalanceCharlieTreasurer =
-            USER_SUPPLY_10MLN_18DEC + transferedValue;
-        let actualErc20BalanceCharlieTreasurer = BigInt(
-            await testData.tokenDai.balanceOf(userOne.address)
-        );
-
-        let expectedErc20BalanceMilton =
-            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedValue;
-        let actualErc20BalanceMilton = BigInt(
-            await testData.tokenDai.balanceOf(testData.miltonDai.address)
-        );
-
-        let expectedPublicationFeeBalanceMilton =
-            USD_10_18DEC - transferedValue;
-        const actualPublicationFeeBalanceMilton = BigInt(
-            balance.iporPublicationFee
-        );
-
-        expect(
-            expectedErc20BalanceCharlieTreasurer,
-            `Incorrect ERC20 Charlie Treasurer balance for ${params.asset}, actual:  ${actualErc20BalanceCharlieTreasurer},
-                expected: ${expectedErc20BalanceCharlieTreasurer}`
-        ).to.be.eq(actualErc20BalanceCharlieTreasurer);
-
-        expect(
-            expectedErc20BalanceMilton,
-            `Incorrect ERC20 Milton balance for ${params.asset}, actual:  ${actualErc20BalanceMilton},
-                expected: ${expectedErc20BalanceMilton}`
-        ).to.be.eq(actualErc20BalanceMilton);
-
-        expect(
-            expectedPublicationFeeBalanceMilton,
-            `Incorrect Milton balance for ${params.asset}, actual:  ${actualPublicationFeeBalanceMilton},
-                expected: ${expectedPublicationFeeBalanceMilton}`
-        ).to.be.eq(actualPublicationFeeBalanceMilton);
     });
 });
