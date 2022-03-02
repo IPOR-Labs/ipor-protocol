@@ -90,16 +90,13 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         IStrategy strategy = getMaxApyStrategy();
 
         IIvToken token = IIvToken(_ivToken);
-        uint256 _totalAsset = totalStrategiesBalance();
-        uint256 _tokenAmount = token.totalSupply();
-        uint256 _exchangeRate = _calculateExchangeRate(
-            _totalAsset,
-            _tokenAmount
-        );
+        uint256 totalAsset = totalStrategiesBalance();
+        uint256 tokenAmount = token.totalSupply();
+        uint256 exchangeRate = _calculateExchangeRate(totalAsset, tokenAmount);
         _deposit(strategy, _amount);
         emit Deposit(address(strategy), _amount);
 
-        token.mint(msg.sender, AmMath.division(_amount * 1e18, _exchangeRate));
+        token.mint(msg.sender, AmMath.division(_amount * 1e18, exchangeRate));
     }
 
     function setCompoundStrategy(address strategy)

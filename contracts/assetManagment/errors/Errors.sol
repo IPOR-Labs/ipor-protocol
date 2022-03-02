@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+// TODO: move to IP-Errors
 library Errors {
     //@notice ADMIN_ROLE can be revoked only by different user with ADMIN_ROLE
     string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED =
