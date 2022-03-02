@@ -6,12 +6,10 @@ import "../interfaces/IIpToken.sol";
 import "../interfaces/IWarren.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IIporVault.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
-import "../interfaces/IIporAssetConfiguration.sol";
-
-contract MiltonConfiguration is IMiltonConfiguration {
+contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
@@ -41,12 +39,11 @@ contract MiltonConfiguration is IMiltonConfiguration {
     address internal _asset;
     IIpToken internal _ipToken;
     IWarren internal _warren;
-    address internal _joseph;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
-    IIporConfiguration internal _iporConfiguration;
-    IIporAssetConfiguration internal _iporAssetConfiguration;
     IIporVault internal _iporVault;
+
+    address internal _joseph;
 
     function getMiltonSpreadModel() external view override returns (address) {
         return address(_miltonSpreadModel);
@@ -144,6 +141,14 @@ contract MiltonConfiguration is IMiltonConfiguration {
         returns (uint256)
     {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
+    }
+
+	function getJoseph() external override view returns(address){
+		return _joseph;
+	}
+    function setJoseph(address joseph) external override onlyOwner {
+        _joseph = joseph;
+        emit JosephUpdated(joseph);
     }
 
     function _getMaxSwapCollateralAmount()

@@ -167,9 +167,7 @@ module.exports = async function (deployer, _network) {
             ipUsdtToken.address,
             warren.address,
             miltonStorageUsdt.address,
-            miltonSpreadModel.address,
-            iporConfiguration.address,
-            iporAssetConfigurationUsdt.address,
+            miltonSpreadModel.address,            
             iporVaultUsdt.address,
         ],
         {
@@ -187,8 +185,6 @@ module.exports = async function (deployer, _network) {
             itfWarren.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
-            iporConfiguration.address,
-            iporAssetConfigurationUsdt.address,
             iporVaultUsdt.address,
         ],
         {
@@ -206,8 +202,6 @@ module.exports = async function (deployer, _network) {
             warren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
-            iporConfiguration.address,
-            iporAssetConfigurationUsdt.address,
             iporVaultUsdc.address,
         ],
         {
@@ -225,8 +219,6 @@ module.exports = async function (deployer, _network) {
             itfWarren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
-            iporConfiguration.address,
-            iporAssetConfigurationUsdt.address,
             iporVaultUsdc.address,
         ],
         {
@@ -244,8 +236,6 @@ module.exports = async function (deployer, _network) {
             warren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
-            iporConfiguration.address,
-            iporAssetConfigurationUsdt.address,
             iporVaultDai.address,
         ],
         {
@@ -263,8 +253,6 @@ module.exports = async function (deployer, _network) {
             itfWarren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
-            iporConfiguration.address,
-            iporAssetConfigurationUsdt.address,
             iporVaultDai.address,
         ],
         {

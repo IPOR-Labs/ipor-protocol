@@ -143,41 +143,7 @@ describe("IporConfiguration", () => {
         expect(shouldNotHasRole).to.be.false;
     });
 
-    it("should set Milton Publication Fee Transferer", async () => {
-        //given
-        const adminRole = keccak256(
-            "MILTON_PUBLICATION_FEE_TRANSFERER_ADMIN_ROLE"
-        );
-        await iporConfiguration.grantRole(adminRole, admin.address);
-        const role = keccak256("MILTON_PUBLICATION_FEE_TRANSFERER_ROLE");
-        await iporConfiguration.grantRole(role, userOne.address);
-
-        //when
-        await iporConfiguration
-            .connect(userOne)
-            .setMiltonPublicationFeeTransferer(mockAddress);
-
-        //then
-        const result =
-            await iporConfiguration.getMiltonPublicationFeeTransferer();
-        expect(mockAddress).to.be.eql(result);
-    });
-
-    it("should NOT set Milton Publication Fee Transferer when user does not have MILTON_PUBLICATION_FEE_TRANSFERER_ROLE role", async () => {
-        //given
-
-        await assertError(
-            //when
-            iporConfiguration
-                .connect(userOne)
-                .setMiltonPublicationFeeTransferer(mockAddress),
-
-            //then
-            `account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0xcaf9c92ac95381198cb99b15cf6677f38c77ba44a82d424368980282298f9dc9`
-        );
-    });
-
-    // TODO Add test with Timelock grant and revolk ADMIN_ROLE
+    //TODO: Add test with Timelock grant and revolk ADMIN_ROLE
 
     it("admin should have ADMIN_ROLE when check all roles", async () => {
         //given

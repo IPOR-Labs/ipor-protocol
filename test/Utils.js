@@ -312,6 +312,14 @@ module.exports.prepareWarren = async (accounts) => {
     return warren;
 };
 
+module.exports.prepareComplexTestDataDaiCase40 = async (accounts, data) => {
+    const testData = await this.prepareTestData(accounts, ["DAI"], data, 4, 0);
+    await this.prepareApproveForUsers(accounts, "DAI", data, testData);
+    await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+
 module.exports.prepareComplexTestDataDaiCase00 = async (accounts, data) => {
     const testData = await this.prepareTestDataDaiCase1(accounts, data);
     await this.prepareApproveForUsers(accounts, "DAI", data, testData);
@@ -426,9 +434,7 @@ module.exports.prepareTestData = async (
                 ipTokenUsdt.address,
                 warren.address,
                 miltonStorageUsdt.address,
-                data.miltonSpread.address,
-                data.iporConfiguration.address,
-                iporAssetConfigurationUsdt.address,
+                data.miltonSpread.address,                
                 iporVaultUsdt.address
             );
 
@@ -507,8 +513,6 @@ module.exports.prepareTestData = async (
                 warren.address,
                 miltonStorageUsdc.address,
                 data.miltonSpread.address,
-                data.iporConfiguration.address,
-                iporAssetConfigurationUsdc.address,
                 iporVaultUsdc.address
             );
             await iporAssetConfigurationUsdc.setMilton(miltonUsdc.address);
@@ -586,8 +590,6 @@ module.exports.prepareTestData = async (
                 warren.address,
                 miltonStorageDai.address,
                 data.miltonSpread.address,
-                data.iporConfiguration.address,
-                iporAssetConfigurationDai.address,
                 iporVaultDai.address
             );
 

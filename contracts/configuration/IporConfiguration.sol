@@ -16,11 +16,8 @@ contract IporConfiguration is
 
     mapping(bytes32 => address) private _addresses;
 
-    bytes32 private constant _MILTON_PUBLICATION_FEE_TRANSFERER =
-        keccak256("MILTON_PUBLICATION_FEE_TRANSFERER");
-
     function initialize() public initializer {
-        _init();        
+        _init();
     }
 
     function _authorizeUpgrade(address)
@@ -28,26 +25,6 @@ contract IporConfiguration is
         override
         onlyRole(_ADMIN_ROLE)
     {}
-
-    function getMiltonPublicationFeeTransferer()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _addresses[_MILTON_PUBLICATION_FEE_TRANSFERER];
-    }
-
-    function setMiltonPublicationFeeTransferer(address publicationFeeTransferer)
-        external
-        override
-        onlyRole(_MILTON_PUBLICATION_FEE_TRANSFERER_ROLE)
-    {
-        _addresses[
-            _MILTON_PUBLICATION_FEE_TRANSFERER
-        ] = publicationFeeTransferer;
-        emit MiltonPublicationFeeTransfererUpdated(publicationFeeTransferer);
-    }
 
     function getIporAssetConfiguration(address asset)
         external

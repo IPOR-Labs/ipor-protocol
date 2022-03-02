@@ -188,24 +188,42 @@ contract MiltonStorage is
             );
     }
 
-    function updateStorageWhenTransferPublicationFee(uint256 transferedAmount)
+    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
         external
         override
-        onlyMilton
+        onlyJoseph
     {
-        require(
-            transferedAmount != 0,
-            IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER
-        );
+        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+
+        uint256 balance = _balances.iporPublicationFee;
 
         require(
-            transferedAmount <= _balances.openingFee,
-            IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
+            transferedValue <= balance,
+            IporErrors.IPOR_PUBLICATION_FEE_BALANCE_TOO_LOW
         );
 
-        _balances.iporPublicationFee =
-            _balances.iporPublicationFee -
-            transferedAmount.toUint128();
+        balance = balance - transferedValue;
+
+        _balances.iporPublicationFee = balance.toUint128();
+    }
+
+    function updateStorageWhenTransferTreasure(uint256 transferedValue)
+        external
+        override
+        onlyJoseph
+    {
+        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+
+        uint256 balance = _balances.treasury;
+
+        require(
+            transferedValue <= balance,
+            IporErrors.TREASURE_BALANCE_TOO_LOW
+        );
+
+        balance = balance - transferedValue;
+
+        _balances.treasury = balance.toUint128();
     }
 
     function updateStorageWhenOpenSwapPayFixed(

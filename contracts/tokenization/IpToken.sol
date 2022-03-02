@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../security/IporOwnable.sol";
@@ -39,27 +38,23 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         _joseph = newJoseph;
     }
 
-    function mint(address account, uint256 amount)
-        external
-        override
-        onlyJoseph
-    {
-        require(amount != 0, IporErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
-        _mint(account, amount);
-        emit Transfer(address(0), account, amount);
-        emit Mint(account, amount);
+    function mint(address account, uint256 value) external override onlyJoseph {
+        require(value != 0, IporErrors.IP_TOKEN_MINT_VALUE_TOO_LOW);
+        _mint(account, value);
+        emit Transfer(address(0), account, value);
+        emit Mint(account, value);
     }
 
     function burn(
         address account,
         address receiverOfUnderlying,
-        uint256 amount
+        uint256 value
     ) external override onlyJoseph {
-        require(amount != 0, IporErrors.MILTON_IPOT_TOKEN_BURN_AMOUNT_TOO_LOW);
-        _burn(account, amount);
+        require(value != 0, IporErrors.IP_TOKEN_BURN_VALUE_TOO_LOW);
+        _burn(account, value);
 
-        emit Transfer(account, address(0), amount);
-        emit Burn(account, receiverOfUnderlying, amount);
+        emit Transfer(account, address(0), value);
+        emit Burn(account, receiverOfUnderlying, value);
     }
 
     function getUnderlyingAssetAddress()

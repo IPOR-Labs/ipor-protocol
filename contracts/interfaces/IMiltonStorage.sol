@@ -31,7 +31,10 @@ interface IMiltonStorage {
 
     function subtractLiquidity(uint256 liquidityAmount) external;
 
-    function updateStorageWhenTransferPublicationFee(uint256 transferedAmount)
+    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
+        external;
+
+    function updateStorageWhenTransferTreasure(uint256 transferedValue)
         external;
 
     function updateStorageWhenOpenSwapPayFixed(

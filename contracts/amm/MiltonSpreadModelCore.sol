@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/IporMath.sol";
 import "../libraries/types/DataTypes.sol";
-import "../interfaces/IIporConfiguration.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import {IporErrors} from "../IporErrors.sol";
