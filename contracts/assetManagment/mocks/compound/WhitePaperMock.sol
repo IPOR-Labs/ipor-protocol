@@ -1,25 +1,15 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 import "../../interfaces/compound/WhitePaperInterestRateModel.sol";
 
 contract WhitePaperMock is WhitePaperInterestRateModel {
     uint256 private _borrowRate;
     uint256 private _supplyRate;
-    uint256 public override baseRate;
-    uint256 public override multiplier;
-    uint256 public override blocksPerYear;
+    uint256 public blocksPerYear;
 
     constructor() {
-        baseRate = 50000000000000000;
-        multiplier = 120000000000000000;
         blocksPerYear = 2102400;
     }
-
-    function getBorrowRate(
-        uint256 cash,
-        uint256 borrows,
-        uint256 _reserves
-    ) external view override returns (uint256, uint256) {}
 
     function setSupplyRate(uint256 rate) external {
         _supplyRate = rate;
@@ -33,6 +23,4 @@ contract WhitePaperMock is WhitePaperInterestRateModel {
     ) external view override returns (uint256) {
         return _supplyRate;
     }
-
-    function dsrPerBlock() external view override returns (uint256) {}
 }

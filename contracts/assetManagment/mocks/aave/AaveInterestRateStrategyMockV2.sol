@@ -1,9 +1,5 @@
 pragma solidity 0.8.9;
 
-// interfaces
-//TODO: [mario] never used - what for it is?
-import "../../interfaces/aave/AaveInterestRateStrategy.sol";
-
 contract AaveInterestRateStrategyMockV2 {
     uint256 private _borrowRate;
     uint256 private _supplyRate;

@@ -3,7 +3,6 @@ pragma solidity 0.8.9;
 import "../interfaces/compound/CErc20.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
-import "../interfaces/compound/COMPInterface.sol";
 import "../interfaces/IERC20Decimal.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";

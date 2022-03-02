@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/compound/CErc20Mock.sol";
 import "../../libraries/AmMath.sol";
-import "hardhat/console.sol";
 
 contract CDAIMock is ERC20, CErc20Mock {
     address private _dai;
@@ -116,11 +115,4 @@ contract CDAIMock is ERC20, CErc20Mock {
     function underlying() external view returns (address) {}
 
     function exchangeRateCurrent() external view override returns (uint256) {}
-
-    function redeemUnderlying(uint256)
-        external
-        view
-        override
-        returns (uint256)
-    {}
 }

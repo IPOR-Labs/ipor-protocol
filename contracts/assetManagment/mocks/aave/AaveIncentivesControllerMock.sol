@@ -34,22 +34,4 @@ contract AaveIncentivesControllerMock is IAaveIncentivesController {
     {
         return _rewards;
     }
-
-    // function getAssetData(address asset)
-    //     external
-    //     view
-    //     override
-    //     returns (
-    //         uint256,
-    //         uint256,
-    //         uint256
-    //     )
-    // {}
-
-    // function getRewardsBalance(address[] calldata assets, address user)
-    //     external
-    //     view
-    //     override
-    //     returns (uint256)
-    // {}
 }
