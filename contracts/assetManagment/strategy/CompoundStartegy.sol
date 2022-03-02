@@ -1,7 +1,6 @@
 pragma solidity 0.8.9;
 
 import "../interfaces/compound/CErc20.sol";
-import "../interfaces/compound/CEth.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
 import "../interfaces/compound/COMPInterface.sol";
