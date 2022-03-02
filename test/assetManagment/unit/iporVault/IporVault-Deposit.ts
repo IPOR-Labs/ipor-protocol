@@ -83,7 +83,7 @@ describe("Stanley -> Deposit", () => {
         //                        AAVE Mock
         //##############################################################
 
-        const ADAIMockFactory = await hre.ethers.getContractFactory("aDAIMock");
+        const ADAIMockFactory = await hre.ethers.getContractFactory("ADAIMock");
         aDAI = (await ADAIMockFactory.deploy(
             DAI.address,
             await admin.getAddress()
@@ -96,10 +96,10 @@ describe("Stanley -> Deposit", () => {
             BigNumber.from(2).pow(255)
         )) as TestERC20;
         const aaveLendingPoolProviderMock = await hre.ethers.getContractFactory(
-            "aaveLendingPoolProviderMock"
+            "AaveLendingPoolProviderMock"
         );
         const aaveLendingPoolCoreMock = await hre.ethers.getContractFactory(
-            "aaveLendingPoolCoreMock"
+            "AaveLendingPoolCoreMock"
         );
         const aaveInterestRateStrategyMockV2 =
             await hre.ethers.getContractFactory(
@@ -112,7 +112,7 @@ describe("Stanley -> Deposit", () => {
             "AaveVariableDebtTokenMock"
         );
         const aaveLendingPoolMock = await hre.ethers.getContractFactory(
-            "aaveLendingPoolMockV2"
+            "AaveLendingPoolMockV2"
         );
         const stakedAaveMock = await hre.ethers.getContractFactory(
             "StakedAaveMock"
@@ -150,12 +150,12 @@ describe("Stanley -> Deposit", () => {
         await AAVE.transfer(stakedAave.address, one.mul(1000));
         await addressProvider._setLendingPoolCore(lendingPoolCore.address);
         await addressProvider._setLendingPool(lendingPool.address);
-        await lendingPoolCore._setReserve(interestRateStrategyV2.address);
+        await lendingPoolCore.setReserve(interestRateStrategyV2.address);
         await lendingPoolCore.setReserveCurrentLiquidityRate(
             oneRay.div("100").mul("2")
         );
-        await interestRateStrategyV2._setSupplyRate(oneRay.div("100").mul("2"));
-        await interestRateStrategyV2._setBorrowRate(oneRay.div("100").mul("3"));
+        await interestRateStrategyV2.setSupplyRate(oneRay.div("100").mul("2"));
+        await interestRateStrategyV2.setBorrowRate(oneRay.div("100").mul("3"));
         await lendingPool.setStableDebtTokenAddress(stableDebtToken.address);
         await lendingPool.setVariableDebtTokenAddress(
             variableDebtToken.address
@@ -179,7 +179,7 @@ describe("Stanley -> Deposit", () => {
         //##############################################################
         //                        Compound Mock
         //##############################################################
-        const CDAIMockFactory = await hre.ethers.getContractFactory("cDAIMock");
+        const CDAIMockFactory = await hre.ethers.getContractFactory("CDAIMock");
         COMP = (await tokenFactory.deploy(
             BigNumber.from(2).pow(255)
         )) as TestERC20;

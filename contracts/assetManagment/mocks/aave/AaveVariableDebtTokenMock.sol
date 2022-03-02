@@ -1,13 +1,13 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 contract AaveVariableDebtTokenMock {
-  uint256 public _scaledTotalSupply;
+    uint256 private _scaledTotalSupply;
 
-  constructor(uint256 value) public {
-    _scaledTotalSupply = value;
-  }
+    constructor(uint256 value) {
+        _scaledTotalSupply = value;
+    }
 
-  function scaledTotalSupply() external view returns (uint256) {
-    return _scaledTotalSupply;
-  }
+    function scaledTotalSupply() external view returns (uint256) {
+        return _scaledTotalSupply;
+    }
 }

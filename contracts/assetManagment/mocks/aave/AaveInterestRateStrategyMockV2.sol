@@ -5,13 +5,11 @@ pragma solidity 0.8.9;
 import "../../interfaces/aave/AaveInterestRateStrategy.sol";
 
 contract AaveInterestRateStrategyMockV2 {
-    uint256 public borrowRate;
-    uint256 public supplyRate;
-
-    constructor() public {}
+    uint256 private _borrowRate;
+    uint256 private _supplyRate;
 
     function getBaseVariableBorrowRate() external view returns (uint256) {
-        return borrowRate;
+        return _borrowRate;
     }
 
     function calculateInterestRates(
@@ -30,15 +28,15 @@ contract AaveInterestRateStrategyMockV2 {
             uint256
         )
     {
-        return (supplyRate, borrowRate, borrowRate);
+        return (_supplyRate, _borrowRate, _borrowRate);
     }
 
     // mocked methods
-    function _setSupplyRate(uint256 _supplyRate) external {
-        supplyRate = _supplyRate;
+    function setSupplyRate(uint256 supplyRate) external {
+        _supplyRate = supplyRate;
     }
 
-    function _setBorrowRate(uint256 _borrowRate) external {
-        borrowRate = _borrowRate;
+    function setBorrowRate(uint256 borrowRate) external {
+        _borrowRate = borrowRate;
     }
 }

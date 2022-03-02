@@ -17,73 +17,69 @@ import "hardhat/console.sol";
 contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    AaveLendingPoolProviderV2 public provider;
-    StakedAaveInterface public stakedAaveInterface;
-    AaveIncentivesInterface public aaveIncentive;
+    AaveLendingPoolProviderV2 private _provider;
+    StakedAaveInterface private _stakedAaveInterface;
+    AaveIncentivesInterface private _aaveIncentive;
 
-    address public underlyingToken; // underlyingToken
-    address public aToken; // shareToken
-
-    address public aave;
-    address public stkAave;
+    address private _underlyingToken; // _underlyingToken
+    address private _aToken; // shareToken
+    address private _aave;
+    address private _stkAave;
 
     /**
-     * @param _underlyingToken underlying token like DAI, USDT etc.
-     * @param _aToken share token like aDAI etc.
-     * @param _addressesProvider AAVE address provider.
-     * @param _stkAave stakedAAVE token.
-     * @param _aaveIncentive AAVE incentive to claim AAVE token.
-     * @param _aaveToken AAVE ERC20 token address.
+     * @param underlyingToken underlying token like DAI, USDT etc.
+     * @param aToken share token like aDAI etc.
+     * @param addressesProvider AAVE address _provider.
+     * @param stkAave stakedAAVE token.
+     * @param aaveIncentive AAVE incentive to claim AAVE token.
+     * @param aaveToken AAVE ERC20 token address.
      */
     function initialize(
-        address _underlyingToken,
-        address _aToken,
-        address _addressesProvider,
-        address _stkAave,
-        address _aaveIncentive,
-        address _aaveToken
+        address underlyingToken,
+        address aToken,
+        address addressesProvider,
+        address stkAave,
+        address aaveIncentive,
+        address aaveToken
     ) public initializer {
         __Ownable_init();
-        underlyingToken = _underlyingToken;
-        aToken = _aToken;
+        _underlyingToken = underlyingToken;
+        _aToken = aToken;
 
-        provider = AaveLendingPoolProviderV2(_addressesProvider);
-        IERC20Upgradeable(underlyingToken).safeApprove(
-            provider.getLendingPool(),
+        _provider = AaveLendingPoolProviderV2(addressesProvider);
+        IERC20Upgradeable(_underlyingToken).safeApprove(
+            _provider.getLendingPool(),
             type(uint256).max
         );
-        stakedAaveInterface = StakedAaveInterface(_stkAave);
-        aaveIncentive = AaveIncentivesInterface(_aaveIncentive);
-        stkAave = _stkAave;
-        aave = _aaveToken;
+        _stakedAaveInterface = StakedAaveInterface(stkAave);
+        _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
+        _stkAave = stkAave;
+        _aave = aaveToken;
     }
 
-    // TODO: this empty ????
-    function _authorizeUpgrade(address) internal override onlyOwner {}
-
     /**
-     * @dev underlyingToken return
+     * @dev _underlyingToken return
      */
-    function getUnderlyingToken() public view override returns (address) {
-        return underlyingToken;
+    function getUnderlyingToken() external view override returns (address) {
+        return _underlyingToken;
     }
 
     /**
-     * @dev Share token to track underlyingToken (DAI -> aDAI)
+     * @dev Share token to track _underlyingToken (DAI -> aDAI)
      */
     function shareToken() external view override returns (address) {
-        return aToken;
+        return _aToken;
     }
 
     /**
      * @dev get current APY.
      */
-    function getApy() public view override returns (uint256) {
+    function getApy() external view override returns (uint256) {
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(
-            provider.getLendingPool()
+            _provider.getLendingPool()
         );
         DataTypes.ReserveData memory reserveData = lendingPool.getReserveData(
-            underlyingToken
+            _underlyingToken
         );
         return
             AmMath.division(uint256(reserveData.currentLiquidityRate), (10**7));
@@ -93,55 +89,55 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @dev Total Balance = Principal Amount + Interest Amount.
      * returns uint with 18 Decimals
      */
-    function balanceOf() public view override returns (uint256) {
-        return IERC20Upgradeable(aToken).balanceOf(address(this));
+    function balanceOf() external view override returns (uint256) {
+        return IERC20Upgradeable(_aToken).balanceOf(address(this));
     }
 
     /**
      * @dev Change owner address.
      * @notice Change can only done by current owner.
-     * @param _newOwner New owner address.
+     * @param newOwner New owner address.
      */
-    function changeOwnership(address _newOwner) public override {
-        require(_newOwner != address(0), Errors.ZERO_ADDRESS);
-        transferOwnership(_newOwner);
+    function changeOwnership(address newOwner) external override {
+        require(newOwner != address(0), Errors.ZERO_ADDRESS);
+        transferOwnership(newOwner);
     }
 
     /**
      * @dev Change staked AAVE token address.
      * @notice Change can only done by current governance.
-     * @param _stkAave stakedAAVE token
+     * @param stkAave stakedAAVE token
      */
-    function setStkAave(address _stkAave) public onlyOwner {
-        stkAave = _stkAave;
+    function setStkAave(address stkAave) external onlyOwner {
+        _stkAave = stkAave;
     }
 
     /**
-     * @dev Deposit into aave lending.
+     * @dev Deposit into _aave lending.
      * @notice deposit can only done by owner.
-     * @param _amount amount to deposit in aave lending.
+     * @param amount amount to deposit in _aave lending.
      */
-    function deposit(uint256 _amount) external override onlyOwner {
-        IERC20Upgradeable(underlyingToken).safeTransferFrom(
+    function deposit(uint256 amount) external override onlyOwner {
+        IERC20Upgradeable(_underlyingToken).safeTransferFrom(
             msg.sender,
             address(this),
-            _amount
+            amount
         );
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(
-            provider.getLendingPool()
+            _provider.getLendingPool()
         );
-        lendingPool.deposit(underlyingToken, _amount, address(this), 0); // 29 -> referral
+        lendingPool.deposit(_underlyingToken, amount, address(this), 0); // 29 -> referral
     }
 
     /**
-     * @dev withdraw from aave lending.
+     * @dev withdraw from _aave lending.
      * @notice withdraw can only done by owner.
-     * @param _amount amount to withdraw from aave lending.
+     * @param amount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 _amount) external override onlyOwner {
-        AaveLendingPoolV2(provider.getLendingPool()).withdraw(
-            underlyingToken,
-            _amount,
+    function withdraw(uint256 amount) external override onlyOwner {
+        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(
+            _underlyingToken,
+            amount,
             msg.sender
         );
     }
@@ -149,11 +145,11 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     /**
      * @dev Claim extra reward of Governace token(AAVE).
      * @notice claim can only done by owner.
-     * @notice you have to claim first staked aave then aave token. 
+     * @notice you have to claim first staked _aave then _aave token. 
         so you have to claim beforeClaim function. 
-        when window is open you can call this function to claim aave
+        when window is open you can call this function to claim _aave
      * @param vault vault address where send to claimed AAVE token.
-     * @param assets assets for claim aave gov token.
+     * @param assets assets for claim _aave gov token.
      */
     function doClaim(address vault, address[] memory assets)
         external
@@ -161,24 +157,24 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         override
         onlyOwner
     {
-        uint256 cooldownStartTimestamp = stakedAaveInterface.stakersCooldowns(
+        uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(
             address(this)
         );
-        uint256 cooldownSeconds = stakedAaveInterface.COOLDOWN_SECONDS();
-        uint256 unstakeWindow = stakedAaveInterface.UNSTAKE_WINDOW();
+        uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
+        uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
         if (
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
             (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <=
             unstakeWindow
         ) {
             // claim AAVE governace token second after claim stakedAave token
-            stakedAaveInterface.redeem(
+            _stakedAaveInterface.redeem(
                 address(this),
-                IERC20Upgradeable(stkAave).balanceOf(address(this))
+                IERC20Upgradeable(_stkAave).balanceOf(address(this))
             );
-            IERC20Upgradeable(aave).safeTransfer(
+            IERC20Upgradeable(_aave).safeTransfer(
                 vault,
-                IERC20Upgradeable(aave).balanceOf(address(this))
+                IERC20Upgradeable(_aave).balanceOf(address(this))
             );
         }
     }
@@ -186,15 +182,17 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     /**
      * @dev Claim stakedAAVE token first.
      * @notice Internal method.
-     * @param assets assets for claim aave gov token.
-     * @param _amount amount to claim staked aave token from aave incentive.
+     * @param assets assets for claim _aave gov token.
+     * @param amount amount to claim staked _aave token from _aave incentive.
      */
-    function beforeClaim(address[] memory assets, uint256 _amount)
-        public
+    function beforeClaim(address[] memory assets, uint256 amount)
+        external
         payable
         onlyOwner
     {
-        aaveIncentive.claimRewards(assets, _amount, address(this));
-        stakedAaveInterface.cooldown();
+        _aaveIncentive.claimRewards(assets, amount, address(this));
+        _stakedAaveInterface.cooldown();
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

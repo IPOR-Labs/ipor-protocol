@@ -7,9 +7,9 @@ import "../../stanley/ExchangeRate.sol";
 contract ExchangeRateMock is ExchangeRate {
     // TODO: REmove dollar
     function calculateExchangeRate(
-        uint256 _totalAssetsDollar,
-        uint256 _totalTokensIssued
-    ) public pure returns (uint256) {
-        return _calculateExchangeRate(_totalAssetsDollar, _totalTokensIssued);
+        uint256 totalAssetsDollar,
+        uint256 totalTokensIssued
+    ) external pure returns (uint256) {
+        return _calculateExchangeRate(totalAssetsDollar, totalTokensIssued);
     }
 }
