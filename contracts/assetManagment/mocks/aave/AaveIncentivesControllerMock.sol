@@ -1,40 +1,55 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/IAaveIncentivesController.sol";
 
 contract AaveIncentivesControllerMock is IAaveIncentivesController {
-  uint256 public rewards;
-  address public stkAaveMock;
+    uint256 internal _rewards;
+    address internal _stkAaveMock;
 
-  constructor(address _stkAaveMock) public {
-    stkAaveMock = _stkAaveMock;
-  }
+    constructor(address stkAaveMock) public {
+        _stkAaveMock = stkAaveMock;
+    }
 
-  function _setRewards(uint256 _rewards) external {
-    rewards = _rewards;
-  }
+    function _setRewards(uint256 rewards) external {
+        _rewards = rewards;
+    }
 
-  function claimRewards(
-    address[] calldata,
-    uint256 amount,
-    address to
-  ) external override returns (uint256) {
-    // require(amount == rewards, 'Rewards are different');
-    IERC20(stkAaveMock).transfer(to, 100e18);
-    return amount;
-  }
+    function claimRewards(
+        address[] calldata,
+        uint256 amount,
+        address to
+    ) external override returns (uint256) {
+        // require(amount == rewards, 'Rewards are different');
+        IERC20(_stkAaveMock).transfer(to, 100e18);
+        return amount;
+    }
 
-  function getUserUnclaimedRewards(address) external override view returns (uint256) {
-    return rewards;
-  }
+    function getUserUnclaimedRewards(address)
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _rewards;
+    }
 
-  function getAssetData(address asset) external override view returns (uint256, uint256, uint256) {
+    function getAssetData(address asset)
+        external
+        view
+        override
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {}
 
-  }
-  function getRewardsBalance(address[] calldata assets, address user) external override view returns(uint256) {
-    
-  }
-
+    function getRewardsBalance(address[] calldata assets, address user)
+        external
+        view
+        override
+        returns (uint256)
+    {}
 }

@@ -1,52 +1,52 @@
 pragma solidity 0.8.9;
 import "../interfaces/IPOR/IStrategy.sol";
 
-// simple mock for total balance tests
+// simple mock for total _balance tests
 contract StrategyMock is IStrategy {
-    uint256 public balance;
-    address public shareTokens;
-    uint256 public apy;
-    address public underlyingToken;
-    address public owner;
+    uint256 internal _balance;
+    address internal _shareTokens;
+    uint256 internal _apy;
+    address internal _underlyingToken;
+    address internal _owner;
 
     function deposit(uint256 amount) external {}
 
     function withdraw(uint256 amount) external {}
 
     function changeOwnership(address newOwner) external {
-        owner = newOwner;
+        _owner = newOwner;
     }
 
     function getUnderlyingToken() external view returns (address) {
-        return underlyingToken;
+        return _underlyingToken;
     }
 
-    function setUnderlyingToken(address _underlyingToken) external {
-        underlyingToken = _underlyingToken;
+    function setUnderlyingToken(address underlyingToken) external {
+        _underlyingToken = underlyingToken;
     }
 
     function getApy() external view returns (uint256) {
-        return apy;
+        return _apy;
     }
 
-    function setApy(uint256 _apy) public {
-        apy = _apy;
+    function setApy(uint256 apy) public {
+        _apy = apy;
     }
 
-    function balanceOf() public view override returns (uint256) {
-        return balance;
+    function balanceOf() public view returns (uint256) {
+        return _balance;
     }
 
-    function setBalance(uint256 _balance) public {
-        balance = _balance;
+    function setBalance(uint256 balance) public {
+        _balance = balance;
     }
 
     function shareToken() external view override returns (address) {
-        return shareTokens;
+        return _shareTokens;
     }
 
-    function setShareToken(address _shareToken) public {
-        shareTokens = _shareToken;
+    function setShareToken(address shareToken) public {
+        _shareTokens = shareToken;
     }
 
     function doClaim(address vault, address[] memory assets)
@@ -56,10 +56,10 @@ contract StrategyMock is IStrategy {
     {}
 
     function transferOwnership(address newOwner) external {
-        owner = newOwner;
+        _owner = newOwner;
     }
 
-    function beforeClaim(address[] memory assets, uint256 _amount)
+    function beforeClaim(address[] memory assets, uint256 amount)
         external
         payable
     {}

@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 pragma experimental ABIEncoderV2;
 
 // interfaces
@@ -6,51 +6,65 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/AaveLendingPoolV2.sol";
 import "../../interfaces/aave/DataTypes.sol";
 import "../../interfaces/aave/AToken.sol";
-import "./aDAIMock.sol";
+import "./ADAIMock.sol";
 
-contract aaveLendingPoolMockV2 is AaveLendingPoolV2 {
-  address public dai;
-  address public aDai;
-  address public stableDebtTokenAddress;
-  address public variableDebtTokenAddress;
-  address public interestRateStrategyAddress;
-  uint128 public currentLiquidityRate;
+contract AaveLendingPoolMockV2 is AaveLendingPoolV2 {
+    address internal _dai;
+    address internal _aDai;
+    address internal _stableDebtTokenAddress;
+    address internal _variableDebtTokenAddress;
+    address internal _interestRateStrategyAddress;
+    uint128 internal _currentLiquidityRate;
 
-  constructor (address _dai, address _aDai) public {
-    dai = _dai;
-    aDai = _aDai;
-  }
+    constructor(address dai, address aDai) public {
+        _dai = dai;
+        _aDai = aDai;
+    }
 
-  function deposit(address, uint256 _amount, address _recipient, uint16) external override {
-    IERC20(aDai).transfer(_recipient, _amount);
-  }
+    function deposit(
+        address,
+        uint256 amount,
+        address recipient,
+        uint16
+    ) external override {
+        IERC20(_aDai).transfer(recipient, amount);
+    }
 
-  function setStableDebtTokenAddress(address a) public {
-    stableDebtTokenAddress = a;
-  }
+    function setStableDebtTokenAddress(address a) public {
+        _stableDebtTokenAddress = a;
+    }
 
-  function setVariableDebtTokenAddress(address a) public {
-    variableDebtTokenAddress = a;
-  }
+    function setVariableDebtTokenAddress(address a) public {
+        _variableDebtTokenAddress = a;
+    }
 
-  function setInterestRateStrategyAddress(address a) public {
-    interestRateStrategyAddress = a;
-  }
+    function setInterestRateStrategyAddress(address a) public {
+        _interestRateStrategyAddress = a;
+    }
 
-  function setCurrentLiquidityRate(uint128 v) public {
-    currentLiquidityRate = v;
-  }
+    function setCurrentLiquidityRate(uint128 v) public {
+        _currentLiquidityRate = v;
+    }
 
-  function getReserveData(address _reserve) external override view returns(DataTypes.ReserveData memory) {
-    DataTypes.ReserveData memory d;
-    d.stableDebtTokenAddress = stableDebtTokenAddress;
-    d.variableDebtTokenAddress = variableDebtTokenAddress;
-    d.interestRateStrategyAddress = interestRateStrategyAddress;
-    d.currentLiquidityRate = currentLiquidityRate;
-    return d;
-  }
+    function getReserveData(address reserve)
+        external
+        view
+        override
+        returns (DataTypes.ReserveData memory)
+    {
+        DataTypes.ReserveData memory d;
+        d.stableDebtTokenAddress = _stableDebtTokenAddress;
+        d.variableDebtTokenAddress = _variableDebtTokenAddress;
+        d.interestRateStrategyAddress = _interestRateStrategyAddress;
+        d.currentLiquidityRate = _currentLiquidityRate;
+        return d;
+    }
 
-  function withdraw(address _asset, uint256 _amount, address _to) external override {
-    AToken(aDai).burn(msg.sender, _to, _amount, 0);
-  }
+    function withdraw(
+        address asset,
+        uint256 amount,
+        address to
+    ) external override {
+        AToken(_aDai).burn(msg.sender, to, amount, 0);
+    }
 }

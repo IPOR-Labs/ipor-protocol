@@ -1,16 +1,16 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 // interfaces
 import "../../interfaces/aave/AaveLendingPoolCore.sol";
 
 // TODO: Capital letter
-contract aaveLendingPoolCoreMock is AaveLendingPoolCore {
-    address public reserve;
-    uint256 public liquidity;
-    uint256 public borrowsStable;
-    uint256 public borrowsVariable;
-    uint256 public stableBorrowRate;
-    uint256 public apr;
+contract AaveLendingPoolCoreMock is AaveLendingPoolCore {
+    address internal _reserve;
+    uint256 internal _liquidity;
+    uint256 internal _borrowsStable;
+    uint256 internal _borrowsVariable;
+    uint256 internal _stableBorrowRate;
+    uint256 internal _apr;
 
     function getReserveInterestRateStrategyAddress(address)
         external
@@ -18,11 +18,11 @@ contract aaveLendingPoolCoreMock is AaveLendingPoolCore {
         override
         returns (address)
     {
-        return reserve;
+        return _reserve;
     }
 
-    function _setReserve(address _reserve) external {
-        reserve = _reserve;
+    function _setReserve(address reserve) external {
+        _reserve = reserve;
     }
 
     function getReserveAvailableLiquidity(address)
@@ -31,11 +31,11 @@ contract aaveLendingPoolCoreMock is AaveLendingPoolCore {
         override
         returns (uint256)
     {
-        return liquidity;
+        return _liquidity;
     }
 
-    function setReserveAvailableLiquidity(uint256 _newVal) external {
-        liquidity = _newVal;
+    function setReserveAvailableLiquidity(uint256 newVal) external {
+        _liquidity = newVal;
     }
 
     function getReserveTotalBorrowsStable(address)
@@ -44,11 +44,11 @@ contract aaveLendingPoolCoreMock is AaveLendingPoolCore {
         override
         returns (uint256)
     {
-        return borrowsStable;
+        return _borrowsStable;
     }
 
-    function setReserveTotalBorrowsStable(uint256 _newVal) external {
-        borrowsStable = _newVal;
+    function setReserveTotalBorrowsStable(uint256 newVal) external {
+        _borrowsStable = newVal;
     }
 
     function getReserveTotalBorrowsVariable(address)
@@ -57,11 +57,11 @@ contract aaveLendingPoolCoreMock is AaveLendingPoolCore {
         override
         returns (uint256)
     {
-        return borrowsVariable;
+        return _borrowsVariable;
     }
 
-    function setReserveTotalBorrowsVariable(uint256 _newVal) external {
-        borrowsVariable = _newVal;
+    function setReserveTotalBorrowsVariable(uint256 newVal) external {
+        _borrowsVariable = newVal;
     }
 
     function getReserveCurrentAverageStableBorrowRate(address)
@@ -70,13 +70,11 @@ contract aaveLendingPoolCoreMock is AaveLendingPoolCore {
         override
         returns (uint256)
     {
-        return stableBorrowRate;
+        return _stableBorrowRate;
     }
 
-    function setReserveCurrentAverageStableBorrowRate(uint256 _newVal)
-        external
-    {
-        stableBorrowRate = _newVal;
+    function setReserveCurrentAverageStableBorrowRate(uint256 newVal) external {
+        _stableBorrowRate = newVal;
     }
 
     function getReserveCurrentLiquidityRate(address)
@@ -85,10 +83,10 @@ contract aaveLendingPoolCoreMock is AaveLendingPoolCore {
         override
         returns (uint256 liquidityRate)
     {
-        return apr;
+        return _apr;
     }
 
-    function setReserveCurrentLiquidityRate(uint256 _newVal) external {
-        apr = _newVal;
+    function setReserveCurrentLiquidityRate(uint256 newVal) external {
+        _apr = newVal;
     }
 }

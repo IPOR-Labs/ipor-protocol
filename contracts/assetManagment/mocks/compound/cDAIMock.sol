@@ -7,26 +7,26 @@ import "../../interfaces/compound/CErc20Mock.sol";
 import "../../libraries/AmMath.sol";
 import "hardhat/console.sol";
 
-contract cDAIMock is ERC20, CErc20Mock {
-    address public dai;
-    uint256 public toTransfer;
-    uint256 public toMint;
+contract CDAIMock is ERC20, CErc20Mock {
+    address internal _dai;
+    uint256 internal _toTransfer;
+    uint256 internal _toMint;
 
-    address public _interestRateModel;
-    uint256 public _supplyRate;
-    uint256 public _exchangeRate;
-    uint256 public _totalBorrows;
-    uint256 public _totalReserves;
-    uint256 public _reserveFactorMantissa;
-    uint256 public _getCash;
-    address public _comptroller;
+    address internal _interestRateModel;
+    uint256 internal _supplyRate;
+    uint256 internal _exchangeRate;
+    uint256 internal _totalBorrows;
+    uint256 internal _totalReserves;
+    uint256 internal _reserveFactorMantissa;
+    uint256 internal _getCash;
+    address internal _comptroller;
 
     constructor(
-        address _dai,
+        address dai,
         address tokenOwner,
         address interestRateModel
     ) public ERC20("cDAI", "cDAI") {
-        dai = _dai;
+        _dai = dai;
         _interestRateModel = interestRateModel;
         _exchangeRate = 200000000000000000000000000;
         _supplyRate = 32847953230;
@@ -45,7 +45,7 @@ contract cDAIMock is ERC20, CErc20Mock {
 
     function mint(uint256 amount) external override returns (uint256) {
         require(
-            IERC20(dai).transferFrom(msg.sender, address(this), amount),
+            IERC20(_dai).transferFrom(msg.sender, address(this), amount),
             "Error during transferFrom"
         ); // 1 DAI
         _mint(msg.sender, AmMath.division((amount * 10**18), _exchangeRate));
@@ -56,7 +56,7 @@ contract cDAIMock is ERC20, CErc20Mock {
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
-            IERC20(dai).transfer(
+            IERC20(_dai).transfer(
                 msg.sender,
                 AmMath.division(amount * _exchangeRate, 10**18)
             ),
@@ -78,12 +78,12 @@ contract cDAIMock is ERC20, CErc20Mock {
         return _exchangeRate;
     }
 
-    function _setExchangeRateStored(uint256 _rate) external returns (uint256) {
-        _exchangeRate = _rate;
+    function _setExchangeRateStored(uint256 rate) external returns (uint256) {
+        _exchangeRate = rate;
     }
 
-    function _setComptroller(address _comp) external {
-        _comptroller = _comp;
+    function _setComptroller(address comp) external {
+        _comptroller = comp;
     }
 
     function supplyRatePerBlock() external view override returns (uint256) {

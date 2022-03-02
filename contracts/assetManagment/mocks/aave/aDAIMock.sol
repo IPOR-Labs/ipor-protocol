@@ -5,35 +5,35 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/AToken.sol";
 
 // TODO: We shouldn't start from small letter
-contract aDAIMock is ERC20, AToken {
-    address public dai;
-    address public controller;
-    uint256 public price = 10**18;
+contract ADAIMock is ERC20, AToken {
+    address internal _dai;
+    address internal _controller;
+    uint256 internal _price = 10**18;
 
-    constructor(address _dai, address tokenOwner) public ERC20("aDAI", "aDAI") {
-        dai = _dai;
+    constructor(address dai, address tokenOwner) ERC20("aDAI", "aDAI") {
+        _dai = dai;
         _mint(address(this), 10**24); // 1.000.000 aDAI
         _mint(tokenOwner, 10**23); // 100.000 aDAI
     }
 
     function UNDERLYING_ASSET_ADDRESS() external view returns (address) {
-        return dai;
+        return _dai;
     }
 
     function redeem(uint256 amount) external override {
         _burn(msg.sender, amount);
         require(
-            IERC20(dai).transfer(msg.sender, amount),
+            IERC20(_dai).transfer(msg.sender, amount),
             "Error during transfer"
         ); // 1 DAI
     }
 
-    function setPriceForTest(uint256 _price) external {
-        price = _price;
+    function setPriceForTest(uint256 price) external {
+        _price = price;
     }
 
-    function setController(address _controller) external {
-        controller = _controller;
+    function setController(address controller) external {
+        _controller = controller;
     }
 
     function burn(
@@ -44,7 +44,7 @@ contract aDAIMock is ERC20, AToken {
     ) external override {
         _burn(user, amount);
         require(
-            IERC20(dai).transfer(receiverOfUnderlying, amount),
+            IERC20(_dai).transfer(receiverOfUnderlying, amount),
             "Error during transfer"
         );
     }
@@ -55,6 +55,6 @@ contract aDAIMock is ERC20, AToken {
         override
         returns (address)
     {
-        return controller;
+        return _controller;
     }
 }

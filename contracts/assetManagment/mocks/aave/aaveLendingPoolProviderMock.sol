@@ -1,24 +1,26 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 // interfaces
 import "../../interfaces/aave/AaveLendingPoolProviderV2.sol";
 
-contract aaveLendingPoolProviderMock is AaveLendingPoolProviderV2 {
-  address public pool;
-  address public core;
+contract AaveLendingPoolProviderMock is AaveLendingPoolProviderV2 {
+    address internal _pool;
+    address internal _core;
 
-  function getLendingPool() external override view returns (address) {
-    return pool;
-  }
-  function getLendingPoolCore() external override view returns (address) {
-    return core;
-  }
+    function getLendingPool() external view override returns (address) {
+        return _pool;
+    }
 
-  // mocked methods
-  function _setLendingPool(address _pool) external {
-    pool = _pool;
-  }
-  function _setLendingPoolCore(address _core) external {
-    core = _core;
-  }
+    function getLendingPoolCore() external view override returns (address) {
+        return _core;
+    }
+
+    // mocked methods
+    function _setLendingPool(address pool) external {
+        _pool = pool;
+    }
+
+    function _setLendingPoolCore(address core) external {
+        _core = core;
+    }
 }
