@@ -139,7 +139,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
 
-				<tr>
+                <tr>
                     <td>
                         <strong>Redeem</strong>
                     </td>
@@ -263,7 +263,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="depositToVault"
+                                    method="depositToStanley"
                                 />
                             </div>
                         ) : (
@@ -271,7 +271,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="depositToVault"
+                                    method="depositToStanley"
                                 />
                             </div>
                         )}
@@ -282,7 +282,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="depositToVault"
+                                    method="depositToStanley"
                                 />
                             </div>
                         ) : (
@@ -290,7 +290,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="depositToVault"
+                                    method="depositToStanley"
                                 />
                             </div>
                         )}
@@ -301,7 +301,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="depositToVault"
+                                    method="depositToStanley"
                                 />
                             </div>
                         ) : (
@@ -309,7 +309,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="depositToVault"
+                                    method="depositToStanley"
                                 />
                             </div>
                         )}
@@ -326,7 +326,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="withdrawFromVault"
+                                    method="withdrawFromStanley"
                                 />
                             </div>
                         ) : (
@@ -334,7 +334,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="withdrawFromVault"
+                                    method="withdrawFromStanley"
                                 />
                             </div>
                         )}
@@ -345,7 +345,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="withdrawFromVault"
+                                    method="withdrawFromStanley"
                                 />
                             </div>
                         ) : (
@@ -353,7 +353,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="withdrawFromVault"
+                                    method="withdrawFromStanley"
                                 />
                             </div>
                         )}
@@ -364,7 +364,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="withdrawFromVault"
+                                    method="withdrawFromStanley"
                                 />
                             </div>
                         ) : (
@@ -372,7 +372,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="withdrawFromVault"
+                                    method="withdrawFromStanley"
                                 />
                             </div>
                         )}

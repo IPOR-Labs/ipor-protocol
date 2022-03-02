@@ -9,11 +9,10 @@ library DataTypes {
 
     //@notice Swap direction (long = pay fixed and receive a floating or short = receive fixed and pay a floating)
     enum SwapDirection {
-        //TODO: use consistent names in enums
         //@notice In long position the trader will pay a fixed rate and receive a floating rate.
-        PayFixedReceiveFloating,
+        PAY_FIXED_RECEIVE_FLOATING,
         //@notice In short position the trader will receive fixed rate and pay a floating rate.
-        PayFloatingReceiveFixed
+        PAY_FLOATING_RECEIVE_FIXED
     }
 
     struct MiltonExtendedBalanceMemory {

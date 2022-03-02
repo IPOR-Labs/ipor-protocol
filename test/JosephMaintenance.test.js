@@ -82,12 +82,12 @@ describe("Joseph", () => {
         );
 
         await assertError(
-            testData.josephDai.connect(userOne).depositToVault(123),
+            testData.josephDai.connect(userOne).depositToStanley(123),
             "Pausable: paused"
         );
 
         await assertError(
-            testData.josephDai.connect(userOne).withdrawFromVault(123),
+            testData.josephDai.connect(userOne).withdrawFromStanley(123),
             "Pausable: paused"
         );
 

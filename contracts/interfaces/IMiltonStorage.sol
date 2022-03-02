@@ -8,10 +8,6 @@ interface IMiltonStorage {
 
     function getLastSwapId() external view returns (uint256);
 
-    function setMilton(address milton) external;
-
-    function setJoseph(address joseph) external;
-
     function getBalance()
         external
         view
@@ -26,58 +22,6 @@ interface IMiltonStorage {
         external
         view
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
-
-    function addLiquidity(uint256 liquidityAmount) external;
-
-    function subtractLiquidity(uint256 liquidityAmount) external;
-
-    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
-        external;
-
-    function updateStorageWhenTransferTreasure(uint256 transferedValue)
-        external;
-
-    function updateStorageWhenOpenSwapPayFixed(
-        DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
-    ) external returns (uint256);
-
-    function updateStorageWhenOpenSwapReceiveFixed(
-        DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
-    ) external returns (uint256);
-
-    function updateStorageWhenCloseSwapPayFixed(
-        address account,
-        DataTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
-        uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
-    ) external;
-
-    function updateStorageWhenCloseSwapReceiveFixed(
-        address account,
-        DataTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
-        uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
-    ) external;
-
-    function updateStorageWhenWithdrawFromVault(
-        uint256 withdrawnValue,
-        uint256 vaultBalance
-    ) external;
-
-    function updateStorageWhenDepositToVault(
-        uint256 depositValue,
-        uint256 vaultBalance
-    ) external;
 
     function getSwapPayFixed(uint256 swapId)
         external
@@ -127,4 +71,60 @@ interface IMiltonStorage {
         uint256 ibtPrice,
         uint256 calculateTimestamp
     ) external view returns (int256 soapRf);
+
+    function addLiquidity(uint256 liquidityAmount) external;
+
+    function subtractLiquidity(uint256 liquidityAmount) external;
+
+    function updateStorageWhenOpenSwapPayFixed(
+        DataTypes.NewSwap memory newSwap,
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
+    ) external returns (uint256);
+
+    function updateStorageWhenOpenSwapReceiveFixed(
+        DataTypes.NewSwap memory newSwap,
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
+    ) external returns (uint256);
+
+    function updateStorageWhenCloseSwapPayFixed(
+        address account,
+        DataTypes.IporSwapMemory memory iporSwap,
+        int256 positionValue,
+        uint256 closingTimestamp,
+        uint256 cfgIncomeTaxPercentage
+    ) external;
+
+    function updateStorageWhenCloseSwapReceiveFixed(
+        address account,
+        DataTypes.IporSwapMemory memory iporSwap,
+        int256 positionValue,
+        uint256 closingTimestamp,
+        uint256 cfgIncomeTaxPercentage
+    ) external;
+
+    function updateStorageWhenWithdrawFromStanley(
+        uint256 withdrawnValue,
+        uint256 vaultBalance
+    ) external;
+
+    function updateStorageWhenDepositToStanley(
+        uint256 depositValue,
+        uint256 vaultBalance
+    ) external;
+
+    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
+        external;
+
+    function updateStorageWhenTransferTreasure(uint256 transferedValue)
+        external;
+
+    function setMilton(address milton) external;
+
+    function setJoseph(address joseph) external;
 }

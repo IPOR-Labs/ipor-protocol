@@ -9,7 +9,11 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporVault.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-contract JosephConfiguration is PausableUpgradeable,, IporOwnableUpgradeable, IJosephConfiguration {
+contract JosephConfiguration is
+    PausableUpgradeable,
+    IporOwnableUpgradeable,
+    IJosephConfiguration
+{
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
     uint256 internal constant _MILTON_STANLEY_BALANCE_PERCENTAGE = 85e15;
 
@@ -33,7 +37,7 @@ contract JosephConfiguration is PausableUpgradeable,, IporOwnableUpgradeable, IJ
         external
         override
         onlyOwner
-		whenNotPaused		
+        whenNotPaused
     {
         require(
             newCharlieTreasurer != address(0),
@@ -51,7 +55,7 @@ contract JosephConfiguration is PausableUpgradeable,, IporOwnableUpgradeable, IJ
         external
         override
         onlyOwner
-		whenNotPaused
+        whenNotPaused
     {
         require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
         _treasureTreasurer = newTreasureTreasurer;
@@ -71,7 +75,7 @@ contract JosephConfiguration is PausableUpgradeable,, IporOwnableUpgradeable, IJ
         external
         override
         onlyOwner
-		whenNotPaused
+        whenNotPaused
     {
         require(
             address(0) != publicationFeeTransferer,
@@ -89,7 +93,7 @@ contract JosephConfiguration is PausableUpgradeable,, IporOwnableUpgradeable, IJ
         external
         override
         onlyOwner
-		whenNotPaused
+        whenNotPaused
     {
         require(address(0) != treasureTransferer, IporErrors.WRONG_ADDRESS);
         _treasureTransferer = treasureTransferer;

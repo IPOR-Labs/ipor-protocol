@@ -18,7 +18,7 @@ import "../libraries/Constants.sol";
 import "hardhat/console.sol";
 
 contract Joseph is
-    UUPSUpgradeable,    
+    UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
     JosephConfiguration,
     IJoseph
@@ -68,12 +68,16 @@ contract Joseph is
         return 1;
     }
 
-    function pause() external override onlyOwner {
-        _pause();
+    function provideLiquidity(uint256 liquidityAmount)
+        external
+        override
+        whenNotPaused
+    {
+        _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
     }
 
-    function unpause() external override onlyOwner {
-        _unpause();
+    function redeem(uint256 ipTokenValue) external override whenNotPaused {
+        _redeem(ipTokenValue, block.timestamp);
     }
 
     function rebalance() external override whenNotPaused {
@@ -96,7 +100,7 @@ contract Joseph is
                         (miltonAssetBalance + iporVaultAssetBalance),
                     Constants.D18
                 );
-            _milton.depositToVault(assetValue);
+            _milton.depositToStanley(assetValue);
         } else {
             uint256 assetValue = IporMath.division(
                 _MILTON_STANLEY_BALANCE_PERCENTAGE *
@@ -104,38 +108,26 @@ contract Joseph is
                 Constants.D18
             ) - miltonAssetBalance;
 
-            _milton.withdrawFromVault(assetValue);
+            _milton.withdrawFromStanley(assetValue);
         }
     }
 
-    function depositToVault(uint256 assetValue)
+    function depositToStanley(uint256 assetValue)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        _milton.depositToVault(assetValue);
+        _milton.depositToStanley(assetValue);
     }
 
-    function withdrawFromVault(uint256 assetValue)
+    function withdrawFromStanley(uint256 assetValue)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        _milton.withdrawFromVault(assetValue);
-    }
-
-    function provideLiquidity(uint256 liquidityAmount)
-        external
-        override
-        whenNotPaused
-    {
-        _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
-    }
-
-    function redeem(uint256 ipTokenValue) external override whenNotPaused {
-        _redeem(ipTokenValue, block.timestamp);
+        _milton.withdrawFromStanley(assetValue);
     }
 
     function transferTreasury(uint256 assetValue)
@@ -188,6 +180,14 @@ contract Joseph is
         returns (uint256)
     {
         return _checkVaultReservesRatio();
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     function _checkVaultReservesRatio() internal view returns (uint256) {

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IWarren.sol";
@@ -9,7 +10,11 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IIporVault.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
+contract MiltonConfiguration is
+    PausableUpgradeable,
+    IporOwnableUpgradeable,
+    IMiltonConfiguration
+{
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 

@@ -6,15 +6,38 @@ import "../libraries/types/DataTypes.sol";
 interface IMilton {
     function getVersion() external pure returns (uint256);
 
-    function pause() external;
+    function getAccruedBalance()
+        external
+        view
+        returns (DataTypes.MiltonBalanceMemory memory);
 
-    function unpause() external;
+    function calculateSpread()
+        external
+        view
+        returns (uint256 spreadPf, uint256 spreadRf);
 
-    function setupMaxAllowance(address spender) external;
+    function calculateSoap()
+        external
+        view
+        returns (
+            int256 soapPf,
+            int256 soapRf,
+            int256 soap
+        );
 
-    function depositToVault(uint256 assetValue) external;
+    function calculateExchangeRate(uint256 calculateTimestamp)
+        external
+        view
+        returns (uint256);
 
-    function withdrawFromVault(uint256 assetValue) external;
+    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
+        external
+        view
+        returns (int256);
+
+    function calculateSwapReceiveFixedValue(
+        DataTypes.IporSwapMemory memory swap
+    ) external view returns (int256);
 
     function openSwapPayFixed(
         uint256 totalAmount,
@@ -30,38 +53,15 @@ interface IMilton {
 
     function closeSwapPayFixed(uint256 swapId) external;
 
-    function closeSwapReceiveFixed(uint256 swapId) external;
+    function closeSwapReceiveFixed(uint256 swapId) external;    
 
-    function calculateSoap()
-        external
-        view
-        returns (
-            int256 soapPf,
-            int256 soapRf,
-            int256 soap
-        );
+    function depositToStanley(uint256 assetValue) external;
 
-    function calculateSpread()
-        external
-        view
-        returns (uint256 spreadPf, uint256 spreadRf);
+    function withdrawFromStanley(uint256 assetValue) external;
 
-    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
-        external
-        view
-        returns (int256);
+	function setupMaxAllowance(address spender) external;
 
-    function calculateSwapReceiveFixedValue(
-        DataTypes.IporSwapMemory memory swap
-    ) external view returns (int256);
+    function pause() external;
 
-    function calculateExchangeRate(uint256 calculateTimestamp)
-        external
-        view
-        returns (uint256);
-
-    function getAccruedBalance()
-        external
-        view
-        returns (DataTypes.MiltonBalanceMemory memory);
+    function unpause() external;
 }
