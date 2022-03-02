@@ -8,7 +8,7 @@ contract MockIporLogic {
     function accrueQuasiIbtPrice(
         DataTypes.IPOR memory ipor,
         uint256 accrueTimestamp
-    ) public pure returns (uint256) {
+    ) public pure returns (uint256) {		
         return IporLogic.accrueQuasiIbtPrice(ipor, accrueTimestamp);
     }
 

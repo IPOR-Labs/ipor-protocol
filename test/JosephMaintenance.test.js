@@ -31,7 +31,7 @@ const {
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
 
-describe("Joseph", () => {
+describe("Joseph Maintenance", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
@@ -82,12 +82,12 @@ describe("Joseph", () => {
         );
 
         await assertError(
-            testData.josephDai.connect(userOne).depositToStanley(123),
+            testData.josephDai.connect(admin).depositToStanley(123),
             "Pausable: paused"
         );
 
         await assertError(
-            testData.josephDai.connect(userOne).withdrawFromStanley(123),
+            testData.josephDai.connect(admin).withdrawFromStanley(123),
             "Pausable: paused"
         );
 
@@ -113,25 +113,25 @@ describe("Joseph", () => {
 
         await assertError(
             testData.josephDai
-                .connect(userOne)
+                .connect(admin)
                 .setCharlieTreasurer(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
             testData.josephDai
-                .connect(userOne)
+                .connect(admin)
                 .setTreasureTreasurer(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
             testData.josephDai
-                .connect(userOne)
+                .connect(admin)
                 .setPublicationFeeTransferer(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
             testData.josephDai
-                .connect(userOne)
+                .connect(admin)
                 .setTreasureTransferer(userTwo.address),
             "Pausable: paused"
         );
@@ -139,13 +139,16 @@ describe("Joseph", () => {
 
     it("should NOT pause Smart Contract specific methods when paused", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            1,
-            1
+            data
         );
+
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC, timestamp);
 
         //when
         await testData.josephDai.connect(admin).pause();

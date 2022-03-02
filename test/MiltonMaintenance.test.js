@@ -19,7 +19,9 @@ const {
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_28_000_18DEC,
+    USD_50_000_18DEC,
     USD_28_000_6DEC,
+
     TC_COLLATERAL_18DEC,
     USD_10_000_000_6DEC,
 
@@ -69,130 +71,215 @@ describe("Milton Maintenance", () => {
             1
         );
     });
-    //TODO: fix it
+
     it("should pause Smart Contract, sender is an admin", async () => {
-        //when
-        let testData = await prepareTestData(
+        //given
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            1,
-            1
+            data
         );
+
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
+        //when
         await testData.miltonDai.connect(admin).pause();
 
         //then
         await assertError(
-            testData.miltonDai.connect(userOne).provideLiquidity(123),
+            testData.miltonDai
+                .connect(userOne)
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                ),
             "Pausable: paused"
         );
     });
-    //TODO: fix it
+
     it("should pause Smart Contract specific methods", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            1,
-            1
+            data
         );
 
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
+        //simulate that userTwo is a Joseph
+        await testData.miltonDai.connect(admin).setJoseph(userTwo.address);
+
         //when
-        await testData.josephDai.connect(admin).pause();
+        await testData.miltonDai.connect(admin).pause();
 
         //then
         await assertError(
-            testData.josephDai.connect(userOne).rebalance(),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            testData.josephDai.connect(userOne).depositToStanley(123),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            testData.josephDai.connect(userOne).withdrawFromStanley(123),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            testData.josephDai.connect(userOne).provideLiquidity(123),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            testData.josephDai.connect(userOne).redeem(123),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            testData.josephDai.connect(userOne).transferTreasury(123),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            testData.josephDai.connect(userOne).transferPublicationFee(123),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            testData.josephDai
+            testData.miltonDai
                 .connect(userOne)
-                .setCharlieTreasurer(userTwo.address),
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                ),
             "Pausable: paused"
         );
+
         await assertError(
-            testData.josephDai
+            testData.miltonDai
                 .connect(userOne)
-                .setTreasureTreasurer(userTwo.address),
+                .openSwapReceiveFixed(
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                ),
             "Pausable: paused"
         );
+
         await assertError(
-            testData.josephDai
-                .connect(userOne)
-                .setPublicationFeeTransferer(userTwo.address),
+            testData.miltonDai.connect(userOne).closeSwapPayFixed(1),
             "Pausable: paused"
         );
+
         await assertError(
-            testData.josephDai
-                .connect(userOne)
-                .setTreasureTransferer(userTwo.address),
+            testData.miltonDai.connect(userOne).closeSwapReceiveFixed(1),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.miltonDai.connect(userTwo).depositToStanley(1),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.miltonDai.connect(userTwo).withdrawFromStanley(1),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.miltonDai
+                .connect(admin)
+                .setupMaxAllowance(userThree.address),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.miltonDai.connect(admin).setJoseph(userThree.address),
             "Pausable: paused"
         );
     });
-    //TODO: fix it
+
     it("should NOT pause Smart Contract specific methods when paused", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            1,
-            1
+            data
         );
 
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                params.asset,
+                PERCENTAGE_3_18DEC,
+                params.openTimestamp
+            );
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_18DEC, params.openTimestamp);
+
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+        const swapPayFixed = await testData.miltonStorageDai
+            .connect(userTwo)
+            .getSwapPayFixed(1);
+
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.slippageValue,
+                params.collateralizationFactor
+            );
+
+        const swapReceiveFixed = await testData.miltonStorageDai
+            .connect(userTwo)
+            .getSwapReceiveFixed(1);
+
         //when
-        await testData.josephDai.connect(admin).pause();
+        await testData.miltonDai.connect(admin).pause();
 
         //then
-        await testData.josephDai.connect(userOne).getVersion();
-        await testData.josephDai.connect(userOne).checkVaultReservesRatio();
-        await testData.josephDai.connect(userOne).getCharlieTreasurer();
-        await testData.josephDai.connect(userOne).getTreasureTreasurer();
-        await testData.josephDai.connect(userOne).getPublicationFeeTransferer();
-        await testData.josephDai.connect(userOne).getTreasureTransferer();
-        await testData.josephDai
+        await testData.miltonDai.connect(userOne).getVersion();
+        await testData.miltonDai.connect(userOne).getAccruedBalance();
+        await testData.miltonDai.connect(userOne).calculateSpread();
+        await testData.miltonDai.connect(userOne).calculateSoap();
+        await testData.miltonDai
             .connect(userOne)
-            .getRedeemLpMaxUtilizationPercentage();
-        await testData.josephDai
+            .calculateExchangeRate(params.openTimestamp);
+        await testData.miltonDai
             .connect(userOne)
-            .getMiltonStanleyBalancePercentage();
-        await testData.josephDai.connect(userOne).decimals();
-        await testData.josephDai.connect(userOne).asset();
+            .calculateSwapPayFixedValue(swapPayFixed);
+        await testData.miltonDai
+            .connect(userOne)
+            .calculateSwapReceiveFixedValue(swapReceiveFixed);
+        await testData.miltonDai.connect(userOne).getMiltonSpreadModel();
+        await testData.miltonDai.connect(userOne).getMaxSwapCollateralAmount();
+        await testData.miltonDai.connect(userOne).getMaxSlippagePercentage();
+        await testData.miltonDai
+            .connect(userOne)
+            .getMaxLpUtilizationPercentage();
+        await testData.miltonDai
+            .connect(userOne)
+            .getMaxLpUtilizationPerLegPercentage();
+        await testData.miltonDai.connect(userOne).getIncomeTaxPercentage();
+        await testData.miltonDai.connect(userOne).getOpeningFeePercentage();
+        await testData.miltonDai
+            .connect(userOne)
+            .getOpeningFeeForTreasuryPercentage();
+        await testData.miltonDai.connect(userOne).getIporPublicationFeeAmount();
+        await testData.miltonDai.connect(userOne).getLiquidationDepositAmount();
+        await testData.miltonDai
+            .connect(userOne)
+            .getMaxCollateralizationFactorValue();
+        await testData.miltonDai
+            .connect(userOne)
+            .getMinCollateralizationFactorValue();
+        await testData.miltonDai.connect(userOne).getJoseph();
     });
-    //TODO: fix it
+
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
         //given
         const testData = await prepareTestDataDaiCase1(
@@ -202,12 +289,12 @@ describe("Milton Maintenance", () => {
 
         //when
         await assertError(
-            testData.josephDai.connect(userThree).pause(),
+            testData.miltonDai.connect(userThree).pause(),
             //then
             "Ownable: caller is not the owner"
         );
     });
-    //TODO: fix it
+
     it("should unpause Smart Contract, sender is an admin", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase00(
@@ -215,29 +302,52 @@ describe("Milton Maintenance", () => {
             data
         );
 
-        await testData.josephDai.connect(admin).pause();
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+        const timestamp = params.openTimestamp - 2000;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, timestamp);
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_18DEC, timestamp);
+
+        await testData.miltonDai.connect(admin).pause();
 
         await assertError(
-            testData.josephDai.connect(userOne).provideLiquidity(123),
+            testData.miltonDai
+                .connect(userTwo)
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.slippageValue,
+                    params.collateralizationFactor
+                ),
             "Pausable: paused"
         );
 
-        const expectedIpTokenBalance = BigInt("123");
+        const expectedCollateral = BigInt("9967009897030890732780");
 
         //when
-        await testData.josephDai.connect(admin).unpause();
-        await testData.josephDai.connect(userOne).provideLiquidity(123);
+        await testData.miltonDai.connect(admin).unpause();
+        await testData.miltonDai
+            .connect(userTwo)
+            .openSwapPayFixed(
+                params.totalAmount,
+                params.slippageValue,
+                params.collateralizationFactor
+            );
 
         //then
-        const actualIpTokenBalance = BigInt(
-            await testData.ipTokenDai.balanceOf(userOne.address)
-        );
-        expect(actualIpTokenBalance, "Incorrect IpToken balance.").to.be.eql(
-            expectedIpTokenBalance
+        const swapPayFixed = await testData.miltonStorageDai
+            .connect(userTwo)
+            .getSwapPayFixed(1);
+        const actualCollateral = BigInt(swapPayFixed.collateral);
+
+        expect(actualCollateral, "Incorrect collateral").to.be.eql(
+            expectedCollateral
         );
     });
 
-    //TODO: fix it
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
         //given
         const testData = await prepareTestDataDaiCase1(
@@ -245,11 +355,11 @@ describe("Milton Maintenance", () => {
             data
         );
 
-        await testData.josephDai.connect(admin).pause();
+        await testData.miltonDai.connect(admin).pause();
 
         //when
         await assertError(
-            testData.josephDai.connect(userThree).unpause(),
+            testData.miltonDai.connect(userThree).unpause(),
             //then
             "Ownable: caller is not the owner"
         );

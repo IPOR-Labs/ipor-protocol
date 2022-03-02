@@ -64,7 +64,7 @@ contract Warren is
         DataTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
         return (
             indexValue = ipor.indexValue,
@@ -88,7 +88,7 @@ contract Warren is
         DataTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
 
         accruedIpor = DataTypes.AccruedIpor(
@@ -183,7 +183,7 @@ contract Warren is
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
         delete _indexes[asset];
         emit IporIndexRemoveAsset(asset);
@@ -220,7 +220,7 @@ contract Warren is
         DataTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
 
         uint256 newQuasiIbtPrice;

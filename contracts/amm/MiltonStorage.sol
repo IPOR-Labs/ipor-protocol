@@ -24,6 +24,7 @@ contract MiltonStorage is
     uint64 private _lastSwapId;
     address private _milton;
     address private _joseph;
+
     DataTypes.MiltonBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;

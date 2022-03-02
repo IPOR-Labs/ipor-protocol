@@ -194,11 +194,9 @@ contract Joseph is
         address miltonAddr = address(_milton);
         uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(miltonAddr);
         uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
-        return
-            IporMath.division(
-                miltonBalance * _decimals,
-                miltonBalance + iporVaultAssetBalance
-            );
+        uint256 balance = miltonBalance + iporVaultAssetBalance;
+        require(balance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
+        return IporMath.division(miltonBalance * _decimals, balance);
     }
 
     //@param liquidityAmount in decimals like asset
