@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 import {AmMath} from "../libraries/AmMath.sol";
 
+// TODO: take into account decimals specific for asset
 abstract contract ExchangeRate {
     function _calculateExchangeRate(uint256 _assetAmount, uint256 _tokenAmount)
         internal

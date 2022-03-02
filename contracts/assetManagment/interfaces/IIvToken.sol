@@ -14,5 +14,6 @@ interface IIvToken is IERC20 {
 
     function burn(address user, uint256 amount) external;
 
+    // TODO: Use only assetAddress
     function getUnderlyingAssetAddress() external view returns (address);
 }

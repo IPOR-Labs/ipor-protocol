@@ -34,6 +34,7 @@ contract cDAIMock is ERC20, CErc20Mock {
         _mint(tokenOwner, 10**13); // 100.000 cDAI
     }
 
+    // TODO: Why 8? You are simulate DAI
     function decimals() public view override returns (uint8) {
         return 8;
     }

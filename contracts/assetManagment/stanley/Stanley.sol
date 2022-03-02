@@ -8,22 +8,27 @@ import "../interfaces/IPOR/IIporOwnableUpgradeable.sol";
 import "../interfaces/IIvToken.sol";
 import "./StanleyAccessControl.sol";
 import "./ExchangeRate.sol";
+// TODO: use errors from Ipor Protocol
 import "../errors/Errors.sol";
 
 // import "hardhat/console.sol";
 
 // IPORVault
 // TODO: public -> external
+// TODO: Add IStanley with busineess methods
 contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    // TODO: use consistent way for fields
     address private _aaveStrategy;
     address private _aaveShareTokens;
     address private _compoundStrategy;
     address private _compoundShareTokens;
+    // TODO: underlyingToken -> assetToken
     address public underlyingToken;
     address public ivToken;
 
+    // TODO: maybe better move to interface (all in AM)
     event SetStrategy(address _strategy, address _shareToken);
     event Deposit(address _strategy, uint256 _amount);
     event Withdraw(address _strategy, uint256 _shares);
@@ -32,7 +37,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         address _newStrategy,
         uint256 _amount
     );
-    event DoClame(address _strategy, address _account);
+    event DoClaim(address _strategy, address _account);
 
     /**
      * @dev Deploy IPORVault.
@@ -40,6 +45,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
      * @param _underlyingToken underlying token like DAI, USDT etc.
      */
     function initialize(
+        // TODO: I am using _ only for private method and fields
         address _underlyingToken,
         address _ivToken,
         address _aStrategy,
@@ -63,16 +69,19 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         _setCompoundStrategy(_strategy);
     }
 
+    // TODO: Consider reorder checks in this way that method will have less calculation (gas opt)
     function _setCompoundStrategy(address _strategy) internal {
         require(_strategy != address(0), Errors.ZERO_ADDRESS);
         IERC20Upgradeable uToken = IERC20Upgradeable(underlyingToken);
         IStrategy strategy = IStrategy(_strategy);
         IERC20Upgradeable csToken = IERC20Upgradeable(_compoundShareTokens);
         if (_compoundStrategy != address(0)) {
+            // TODO: safeIncreaseAllowance
             uToken.safeApprove(_compoundStrategy, 0);
             csToken.safeApprove(_compoundStrategy, 0);
         }
         address _compoundUnderlyingToken = strategy.getUnderlyingToken();
+        // TODO: COMPATIBLE
         require(
             _compoundUnderlyingToken == address(underlyingToken),
             Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY
@@ -137,7 +146,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     function getMaxApyStrategy() public view returns (IStrategy depositAsset) {
         IStrategy aave = IStrategy(_aaveStrategy);
         IStrategy compound = IStrategy(_compoundStrategy);
-
+        // TODO: check if use the same number of decimals
         if (aave.getApy() < compound.getApy()) {
             return compound;
         }
@@ -246,6 +255,8 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             token.burn(msg.sender, tokensToBurn);
             _withdraw(address(compoundStrategy), compoundBalance, true);
         } else {
+            // TODO: Cannot do this in this way, take into account asset decimals
+            // TODO: Add tests for DAI(18 decimals) and for USDT (6 decimals)
             uint256 tokensToBurn = AmMath.division(
                 aaveBalance * 1e18,
                 _exchangeRate
@@ -350,7 +361,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         address[] memory assets = new address[](1);
         assets[0] = strategy.shareToken();
         strategy.doClaim(_account, assets);
-        emit DoClame(strategyAddress, _account);
+        emit DoClaim(strategyAddress, _account);
     }
 
     function aaveBeforeClaim(address[] memory assets, uint256 _amount)
