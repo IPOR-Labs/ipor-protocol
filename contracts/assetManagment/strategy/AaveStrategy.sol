@@ -94,16 +94,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     }
 
     /**
-     * @dev Change owner address.
-     * @notice Change can only done by current owner.
-     * @param newOwner New owner address.
-     */
-    function changeOwnership(address newOwner) external override {
-        require(newOwner != address(0), Errors.ZERO_ADDRESS);
-        transferOwnership(newOwner);
-    }
-
-    /**
      * @dev Change staked AAVE token address.
      * @notice Change can only done by current governance.
      * @param stkAave stakedAAVE token

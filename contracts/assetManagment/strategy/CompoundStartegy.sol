@@ -104,16 +104,6 @@ contract CompoundStrategy is
     }
 
     /**
-     * @dev Change owner address.
-     * @notice Change can only done by current owner.
-     * @param newOwner New owner address.
-     */
-    function changeOwnership(address newOwner) public override {
-        require(newOwner != address(0), Errors.ZERO_ADDRESS);
-        transferOwnership(newOwner);
-    }
-
-    /**
      * @dev Deposit into compound lending.
      * @notice deposit can only done by owner.
      * @param amount amount to deposit in compound lending.

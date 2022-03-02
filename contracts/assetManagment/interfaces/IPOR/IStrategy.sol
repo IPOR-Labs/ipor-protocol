@@ -5,9 +5,6 @@ interface IStrategy {
 
     function withdraw(uint256 amount) external;
 
-    // TODO: remove this method and use IporOwnableUpgradeable
-    function changeOwnership(address newOwner) external;
-
     function getAsset() external view returns (address);
 
     function getApy() external view returns (uint256);
@@ -23,4 +20,6 @@ interface IStrategy {
     function beforeClaim(address[] memory assets, uint256 _amount)
         external
         payable;
+
+    // TODO: Add function transferStrategyOwnership
 }

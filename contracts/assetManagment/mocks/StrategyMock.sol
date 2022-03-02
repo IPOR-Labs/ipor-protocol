@@ -13,10 +13,6 @@ contract StrategyMock is IStrategy {
 
     function withdraw(uint256 amount) external {}
 
-    function changeOwnership(address newOwner) external {
-        _owner = newOwner;
-    }
-
     function getAsset() external view returns (address) {
         return _asset;
     }

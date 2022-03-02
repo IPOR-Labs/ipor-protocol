@@ -13,8 +13,6 @@ import "../errors/Errors.sol";
 
 // import "hardhat/console.sol";
 
-// IPORVault
-// TODO: public -> external
 // TODO: Add IStanley with busineess methods
 contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     using SafeERC20Upgradeable for IERC20Upgradeable;
