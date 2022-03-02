@@ -5,8 +5,8 @@ pragma solidity 0.8.9;
 import "../../interfaces/aave/AaveInterestRateStrategy.sol";
 
 contract AaveInterestRateStrategyMockV2 {
-    uint256 internal _borrowRate;
-    uint256 internal _supplyRate;
+    uint256 private _borrowRate;
+    uint256 private _supplyRate;
 
     function getBaseVariableBorrowRate() external view returns (uint256) {
         return _borrowRate;

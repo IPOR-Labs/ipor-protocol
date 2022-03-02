@@ -5,14 +5,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/IAaveIncentivesController.sol";
 
 contract AaveIncentivesControllerMock is IAaveIncentivesController {
-    uint256 internal _rewards;
-    address internal _stkAaveMock;
+    uint256 private _rewards;
+    address private _stkAaveMock;
 
-    constructor(address stkAaveMock) public {
+    constructor(address stkAaveMock) {
         _stkAaveMock = stkAaveMock;
     }
 
-    function _setRewards(uint256 rewards) external {
+    function setRewards(uint256 rewards) external {
         _rewards = rewards;
     }
 

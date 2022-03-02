@@ -7,14 +7,14 @@ import "../../interfaces/aave/AaveLendingPool.sol";
 import "../../interfaces/aave/DataTypes.sol";
 
 contract AaveLendingPoolMock is AaveLendingPool {
-    address internal _dai;
-    address internal _aDai;
-    address internal _stableDebtTokenAddress;
-    address internal _variableDebtTokenAddress;
-    address internal _interestRateStrategyAddress;
-    uint128 internal _currentLiquidityRate;
+    address private _dai;
+    address private _aDai;
+    address private _stableDebtTokenAddress;
+    address private _variableDebtTokenAddress;
+    address private _interestRateStrategyAddress;
+    uint128 private _currentLiquidityRate;
 
-    constructor(address dai, address aDai) public {
+    constructor(address dai, address aDai) {
         _dai = dai;
         _aDai = aDai;
     }
@@ -28,19 +28,19 @@ contract AaveLendingPoolMock is AaveLendingPool {
         IERC20(_aDai).transfer(msg.sender, amount);
     }
 
-    function setStableDebtTokenAddress(address a) public {
+    function setStableDebtTokenAddress(address a) external {
         _stableDebtTokenAddress = a;
     }
 
-    function setVariableDebtTokenAddress(address a) public {
+    function setVariableDebtTokenAddress(address a) external {
         _variableDebtTokenAddress = a;
     }
 
-    function setInterestRateStrategyAddress(address a) public {
+    function setInterestRateStrategyAddress(address a) external {
         _interestRateStrategyAddress = a;
     }
 
-    function setCurrentLiquidityRate(uint128 v) public {
+    function setCurrentLiquidityRate(uint128 v) external {
         _currentLiquidityRate = v;
     }
 

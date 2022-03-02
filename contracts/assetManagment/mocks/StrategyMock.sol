@@ -3,11 +3,11 @@ import "../interfaces/IPOR/IStrategy.sol";
 
 // simple mock for total _balance tests
 contract StrategyMock is IStrategy {
-    uint256 internal _balance;
-    address internal _shareTokens;
-    uint256 internal _apy;
-    address internal _underlyingToken;
-    address internal _owner;
+    uint256 private _balance;
+    address private _shareTokens;
+    uint256 private _apy;
+    address private _underlyingToken;
+    address private _owner;
 
     function deposit(uint256 amount) external {}
 
@@ -29,15 +29,15 @@ contract StrategyMock is IStrategy {
         return _apy;
     }
 
-    function setApy(uint256 apy) public {
+    function setApy(uint256 apy) external {
         _apy = apy;
     }
 
-    function balanceOf() public view returns (uint256) {
+    function balanceOf() external view returns (uint256) {
         return _balance;
     }
 
-    function setBalance(uint256 balance) public {
+    function setBalance(uint256 balance) external {
         _balance = balance;
     }
 
@@ -45,7 +45,7 @@ contract StrategyMock is IStrategy {
         return _shareTokens;
     }
 
-    function setShareToken(address shareToken) public {
+    function setShareToken(address shareToken) external {
         _shareTokens = shareToken;
     }
 

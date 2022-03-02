@@ -148,7 +148,7 @@ describe("Stanley -> Withdraw", () => {
         await AAVE.transfer(stakedAave.address, one.mul(1000));
         await addressProvider._setLendingPoolCore(lendingPoolCore.address);
         await addressProvider._setLendingPool(lendingPool.address);
-        await lendingPoolCore._setReserve(interestRateStrategyV2.address);
+        await lendingPoolCore.setReserve(interestRateStrategyV2.address);
         await lendingPoolCore.setReserveCurrentLiquidityRate(
             oneRay.div("100").mul("2")
         );

@@ -6,9 +6,9 @@ import "../../interfaces/aave/AToken.sol";
 
 // TODO: We shouldn't start from small letter
 contract ADAIMock is ERC20, AToken {
-    address internal _dai;
-    address internal _controller;
-    uint256 internal _price = 10**18;
+    address private _dai;
+    address private _controller;
+    uint256 private _price = 10**18;
 
     constructor(address dai, address tokenOwner) ERC20("aDAI", "aDAI") {
         _dai = dai;

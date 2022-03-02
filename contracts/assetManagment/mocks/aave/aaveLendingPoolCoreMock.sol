@@ -5,12 +5,12 @@ import "../../interfaces/aave/AaveLendingPoolCore.sol";
 
 // TODO: Capital letter
 contract AaveLendingPoolCoreMock is AaveLendingPoolCore {
-    address internal _reserve;
-    uint256 internal _liquidity;
-    uint256 internal _borrowsStable;
-    uint256 internal _borrowsVariable;
-    uint256 internal _stableBorrowRate;
-    uint256 internal _apr;
+    address private _reserve;
+    uint256 private _liquidity;
+    uint256 private _borrowsStable;
+    uint256 private _borrowsVariable;
+    uint256 private _stableBorrowRate;
+    uint256 private _apr;
 
     function getReserveInterestRateStrategyAddress(address)
         external
@@ -21,7 +21,7 @@ contract AaveLendingPoolCoreMock is AaveLendingPoolCore {
         return _reserve;
     }
 
-    function _setReserve(address reserve) external {
+    function setReserve(address reserve) external {
         _reserve = reserve;
     }
 

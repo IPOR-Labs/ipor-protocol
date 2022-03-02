@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 import "../../interfaces/compound/WhitePaperInterestRateModel.sol";
 
 contract WhitePaperMock is WhitePaperInterestRateModel {
-    uint256 internal _borrowRate;
-    uint256 internal _supplyRate;
+    uint256 private _borrowRate;
+    uint256 private _supplyRate;
     uint256 public override baseRate;
     uint256 public override multiplier;
     uint256 public override blocksPerYear;
@@ -21,7 +21,7 @@ contract WhitePaperMock is WhitePaperInterestRateModel {
         uint256 _reserves
     ) external view override returns (uint256, uint256) {}
 
-    function setSupplyRate(uint256 rate) public {
+    function setSupplyRate(uint256 rate) external {
         _supplyRate = rate;
     }
 

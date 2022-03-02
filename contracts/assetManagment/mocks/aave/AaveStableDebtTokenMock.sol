@@ -1,10 +1,10 @@
 pragma solidity 0.8.9;
 
 contract AaveStableDebtTokenMock {
-    uint256 internal _totalStableDebt;
-    uint256 internal _avgStableRate;
+    uint256 private _totalStableDebt;
+    uint256 private _avgStableRate;
 
-    constructor(uint256 debt, uint256 rate) public {
+    constructor(uint256 debt, uint256 rate) {
         _totalStableDebt = debt;
         _avgStableRate = rate;
     }

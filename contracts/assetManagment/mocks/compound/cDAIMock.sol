@@ -8,18 +8,17 @@ import "../../libraries/AmMath.sol";
 import "hardhat/console.sol";
 
 contract CDAIMock is ERC20, CErc20Mock {
-    address internal _dai;
-    uint256 internal _toTransfer;
-    uint256 internal _toMint;
-
-    address internal _interestRateModel;
-    uint256 internal _supplyRate;
-    uint256 internal _exchangeRate;
-    uint256 internal _totalBorrows;
-    uint256 internal _totalReserves;
-    uint256 internal _reserveFactorMantissa;
-    uint256 internal _getCash;
-    address internal _comptroller;
+    address private _dai;
+    uint256 private _toTransfer;
+    uint256 private _toMint;
+    address private _interestRateModel;
+    uint256 private _supplyRate;
+    uint256 private _exchangeRate;
+    uint256 private _totalBorrows;
+    uint256 private _totalReserves;
+    uint256 private _reserveFactorMantissa;
+    uint256 private _getCash;
+    address private _comptroller;
 
     constructor(
         address dai,
@@ -65,7 +64,7 @@ contract CDAIMock is ERC20, CErc20Mock {
         return 0;
     }
 
-    function setParams(uint256[] memory params) public {
+    function setParams(uint256[] memory params) external {
         _totalBorrows = params[2];
         _totalReserves = params[4];
         _reserveFactorMantissa = 50000000000000000;

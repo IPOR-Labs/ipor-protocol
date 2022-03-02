@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/compound/Comptroller.sol";
 
 contract ComptrollerMock is Comptroller {
-    address internal _compAddr;
-    address internal _cTokenAddr;
-    uint256 internal _amount;
+    address private _compAddr;
+    address private _cTokenAddr;
+    uint256 private _amount;
 
     constructor(address comp, address cToken) public {
         _compAddr = comp;

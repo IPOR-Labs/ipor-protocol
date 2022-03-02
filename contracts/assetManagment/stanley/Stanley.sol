@@ -24,122 +24,42 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     address private _aaveShareTokens;
     address private _compoundStrategy;
     address private _compoundShareTokens;
-    // TODO: underlyingToken -> assetToken
-    address public underlyingToken;
-    address public ivToken;
+    // TODO: _underlyingToken -> assetToken
+    address private _underlyingToken;
+    address private _ivToken;
 
     // TODO: maybe better move to interface (all in AM)
-    event SetStrategy(address _strategy, address _shareToken);
-    event Deposit(address _strategy, uint256 _amount);
-    event Withdraw(address _strategy, uint256 _shares);
+    event SetStrategy(address strategy, address shareToken);
+    event Deposit(address strategy, uint256 amount);
+    event Withdraw(address strategy, uint256 shares);
     event MigrateAsset(
-        address _currentStrategy,
-        address _newStrategy,
-        uint256 _amount
+        address currentStrategy,
+        address newStrategy,
+        uint256 amount
     );
-    event DoClaim(address _strategy, address _account);
+    event DoClaim(address strategyAddress, address _account);
 
     /**
      * @dev Deploy IPORVault.
      * @notice Deploy IPORVault.
-     * @param _underlyingToken underlying token like DAI, USDT etc.
+     * @param underlyingToken underlying token like DAI, USDT etc.
      */
     function initialize(
         // TODO: I am using _ only for private method and fields
-        address _underlyingToken,
-        address _ivToken,
-        address _aStrategy,
-        address _cStrategy
+        address underlyingToken,
+        address ivToken,
+        address aStrategy,
+        address cStrategy
     ) public initializer {
         _init();
-        require(_underlyingToken != address(0), Errors.ZERO_ADDRESS);
-        require(_ivToken != address(0), Errors.ZERO_ADDRESS);
+        require(underlyingToken != address(0), Errors.ZERO_ADDRESS);
+        require(ivToken != address(0), Errors.ZERO_ADDRESS);
 
-        underlyingToken = _underlyingToken;
-        ivToken = _ivToken;
+        _underlyingToken = underlyingToken;
+        _ivToken = ivToken;
 
-        _setAaveStrategy(_aStrategy);
-        _setCompoundStrategy(_cStrategy);
-    }
-
-    function setCompoundStrategy(address _strategy)
-        external
-        onlyRole(_GOVERNANCE_ROLE)
-    {
-        _setCompoundStrategy(_strategy);
-    }
-
-    // TODO: Consider reorder checks in this way that method will have less calculation (gas opt)
-    function _setCompoundStrategy(address _strategy) internal {
-        require(_strategy != address(0), Errors.ZERO_ADDRESS);
-        IERC20Upgradeable uToken = IERC20Upgradeable(underlyingToken);
-        IStrategy strategy = IStrategy(_strategy);
-        IERC20Upgradeable csToken = IERC20Upgradeable(_compoundShareTokens);
-        if (_compoundStrategy != address(0)) {
-            // TODO: safeIncreaseAllowance
-            uToken.safeApprove(_compoundStrategy, 0);
-            csToken.safeApprove(_compoundStrategy, 0);
-        }
-        address _compoundUnderlyingToken = strategy.getUnderlyingToken();
-        // TODO: COMPATIBLE
-        require(
-            _compoundUnderlyingToken == address(underlyingToken),
-            Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY
-        );
-
-        _compoundStrategy = _strategy;
-        _compoundShareTokens = IStrategy(_strategy).shareToken();
-        IERC20Upgradeable newCsToken = IERC20Upgradeable(_compoundShareTokens);
-        uToken.safeApprove(_strategy, 0);
-        uToken.safeApprove(_strategy, type(uint256).max);
-        newCsToken.safeApprove(_strategy, 0);
-        newCsToken.safeApprove(_strategy, type(uint256).max);
-        emit SetStrategy(_strategy, _compoundShareTokens);
-    }
-
-    function setAaveStrategy(address _strategy)
-        external
-        onlyRole(_GOVERNANCE_ROLE)
-    {
-        _setAaveStrategy(_strategy);
-    }
-
-    function _setAaveStrategy(address _strategy) internal {
-        require(_strategy != address(0), Errors.ZERO_ADDRESS);
-        IERC20Upgradeable uToken = IERC20Upgradeable(underlyingToken);
-        IStrategy strategy = IStrategy(_strategy);
-        if (_aaveStrategy != address(0)) {
-            uToken.safeApprove(_aaveStrategy, 0);
-            IERC20Upgradeable(_aaveShareTokens).safeApprove(_aaveStrategy, 0);
-        }
-        address _aaveUnderlyingToken = strategy.getUnderlyingToken();
-        require(
-            _aaveUnderlyingToken == address(underlyingToken),
-            Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY
-        );
-
-        _aaveShareTokens = strategy.shareToken();
-        IERC20Upgradeable asToken = IERC20Upgradeable(_aaveShareTokens);
-        _aaveStrategy = _strategy;
-        uToken.safeApprove(_strategy, 0);
-        uToken.safeApprove(_strategy, type(uint256).max);
-        asToken.safeApprove(_strategy, 0);
-        asToken.safeApprove(_strategy, type(uint256).max);
-        emit SetStrategy(_strategy, _aaveShareTokens);
-    }
-
-    // TODO: this empty ????
-    function _authorizeUpgrade(address)
-        internal
-        override
-        onlyRole(_ADMIN_ROLE)
-    {}
-
-    function confirmTransferOwnership(address strategy)
-        external
-        onlyRole(_GOVERNANCE_ROLE)
-    {
-        IIporOwnableUpgradeable(strategy).confirmTransferOwnership();
+        _setAaveStrategy(aStrategy);
+        _setCompoundStrategy(cStrategy);
     }
 
     // Find highest apy strategy to deposit underlying asset
@@ -171,7 +91,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         require(_amount != 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         IStrategy strategy = getMaxApyStrategy();
 
-        IIvToken token = IIvToken(ivToken);
+        IIvToken token = IIvToken(_ivToken);
         uint256 _totalAsset = totalStrategiesBalance();
         uint256 _tokenAmount = token.totalSupply();
         uint256 _exchangeRate = _calculateExchangeRate(
@@ -184,6 +104,27 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         token.mint(msg.sender, AmMath.division(_amount * 1e18, _exchangeRate));
     }
 
+    function setCompoundStrategy(address strategy)
+        external
+        onlyRole(_GOVERNANCE_ROLE)
+    {
+        _setCompoundStrategy(strategy);
+    }
+
+    function confirmTransferOwnership(address strategy)
+        external
+        onlyRole(_GOVERNANCE_ROLE)
+    {
+        IIporOwnableUpgradeable(strategy).confirmTransferOwnership();
+    }
+
+    function setAaveStrategy(address strategyAddress)
+        external
+        onlyRole(_GOVERNANCE_ROLE)
+    {
+        _setAaveStrategy(strategyAddress);
+    }
+
     /**
      * @dev to withdraw asset from current strategy.
      * @notice only owner can withdraw.
@@ -194,7 +135,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     // TODO: balanse before withdraw and aftre
     function withdraw(uint256 _tokens) external onlyRole(_WITHDRAW_ROLE) {
         require(_tokens != 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
-        IIvToken token = IIvToken(ivToken);
+        IIvToken token = IIvToken(_ivToken);
 
         require(
             token.balanceOf(msg.sender) >= _tokens,
@@ -273,7 +214,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             IStrategy(_compoundStrategy).balanceOf(),
             false
         );
-        IERC20Upgradeable uToken = IERC20Upgradeable(underlyingToken);
+        IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
         uint256 _balance = uToken.balanceOf(address(this));
         uToken.safeTransfer(msg.sender, _balance);
     }
@@ -303,33 +244,11 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             require(_shares > 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
             IStrategy(_aaveStrategy).withdraw(_shares);
         }
-        uint256 _amount = IERC20Upgradeable(underlyingToken).balanceOf(
+        uint256 _amount = IERC20Upgradeable(_underlyingToken).balanceOf(
             address(this)
         );
         _deposit(maxApyStrategy, _amount);
         emit MigrateAsset(from, address(maxApyStrategy), _amount);
-    }
-
-    /**
-     * @dev to withdraw asset from current strategy.
-     * @notice internal method.
-     * @param _strategy strategy from amount to withdraw
-     * @param _amount _amount is interest bearing token like aDAI, cDAI etc.
-     */
-    function _withdraw(
-        address _strategy,
-        uint256 _amount,
-        bool transfer
-    ) internal {
-        if (_amount != 0) {
-            IStrategy(_strategy).withdraw(_amount);
-            IERC20Upgradeable utoken = IERC20Upgradeable(underlyingToken);
-            uint256 _balance = utoken.balanceOf(address(this));
-            if (transfer) {
-                utoken.safeTransfer(msg.sender, _balance);
-            }
-            emit Withdraw(_strategy, _amount);
-        }
     }
 
     /**
@@ -346,6 +265,14 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         _doClaim(_account, _aaveStrategy);
     }
 
+    function aaveBeforeClaim(address[] memory assets, uint256 amount)
+        external
+        payable
+        onlyRole(_CLAIM_ROLE)
+    {
+        IStrategy(_aaveStrategy).beforeClaim(assets, amount);
+    }
+
     // TODO: Consider to convert _account variable in contract and change fincton to no parameters
     function compoundDoClaim(address _account)
         external
@@ -353,6 +280,87 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         onlyRole(_CLAIM_ROLE)
     {
         _doClaim(_account, _compoundStrategy);
+    }
+
+    // TODO: Consider reorder checks in this way that method will have less calculation (gas opt)
+    function _setCompoundStrategy(address strategyAddress) internal {
+        require(strategyAddress != address(0), Errors.ZERO_ADDRESS);
+        IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
+        IStrategy strategy = IStrategy(strategyAddress);
+        IERC20Upgradeable csToken = IERC20Upgradeable(_compoundShareTokens);
+        if (_compoundStrategy != address(0)) {
+            // TODO: safeIncreaseAllowance
+            uToken.safeApprove(_compoundStrategy, 0);
+            csToken.safeApprove(_compoundStrategy, 0);
+        }
+        address _compoundUnderlyingToken = strategy.getUnderlyingToken();
+        // TODO: COMPATIBLE
+        require(
+            _compoundUnderlyingToken == address(_underlyingToken),
+            Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY
+        );
+
+        _compoundStrategy = strategyAddress;
+        _compoundShareTokens = IStrategy(strategyAddress).shareToken();
+        IERC20Upgradeable newCsToken = IERC20Upgradeable(_compoundShareTokens);
+        uToken.safeApprove(strategyAddress, 0);
+        uToken.safeApprove(strategyAddress, type(uint256).max);
+        newCsToken.safeApprove(strategyAddress, 0);
+        newCsToken.safeApprove(strategyAddress, type(uint256).max);
+        emit SetStrategy(strategyAddress, _compoundShareTokens);
+    }
+
+    function _setAaveStrategy(address strategyAddress) internal {
+        require(strategyAddress != address(0), Errors.ZERO_ADDRESS);
+        IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
+        IStrategy strategy = IStrategy(strategyAddress);
+        if (_aaveStrategy != address(0)) {
+            uToken.safeApprove(_aaveStrategy, 0);
+            IERC20Upgradeable(_aaveShareTokens).safeApprove(_aaveStrategy, 0);
+        }
+        address _aaveUnderlyingToken = strategy.getUnderlyingToken();
+        require(
+            _aaveUnderlyingToken == address(_underlyingToken),
+            Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY
+        );
+
+        _aaveShareTokens = strategy.shareToken();
+        IERC20Upgradeable asToken = IERC20Upgradeable(_aaveShareTokens);
+        _aaveStrategy = strategyAddress;
+        uToken.safeApprove(strategyAddress, 0);
+        uToken.safeApprove(strategyAddress, type(uint256).max);
+        asToken.safeApprove(strategyAddress, 0);
+        asToken.safeApprove(strategyAddress, type(uint256).max);
+        emit SetStrategy(strategyAddress, _aaveShareTokens);
+    }
+
+    // TODO: this empty ????
+    function _authorizeUpgrade(address)
+        internal
+        override
+        onlyRole(_ADMIN_ROLE)
+    {}
+
+    /**
+     * @dev to withdraw asset from current strategy.
+     * @notice internal method.
+     * @param strategyAddress strategy from amount to withdraw
+     * @param _amount _amount is interest bearing token like aDAI, cDAI etc.
+     */
+    function _withdraw(
+        address strategyAddress,
+        uint256 _amount,
+        bool transfer
+    ) internal {
+        if (_amount != 0) {
+            IStrategy(strategyAddress).withdraw(_amount);
+            IERC20Upgradeable utoken = IERC20Upgradeable(_underlyingToken);
+            uint256 _balance = utoken.balanceOf(address(this));
+            if (transfer) {
+                utoken.safeTransfer(msg.sender, _balance);
+            }
+            emit Withdraw(strategyAddress, _amount);
+        }
     }
 
     function _doClaim(address _account, address strategyAddress) internal {
@@ -364,27 +372,19 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         emit DoClaim(strategyAddress, _account);
     }
 
-    function aaveBeforeClaim(address[] memory assets, uint256 _amount)
-        external
-        payable
-        onlyRole(_CLAIM_ROLE)
-    {
-        IStrategy(_aaveStrategy).beforeClaim(assets, _amount);
-    }
-
     /**  Internal Methods */
     /**
      * @dev to deposit asset in current strategy.
      * @notice internal method.
-     * @param _strategy strategy from amount to deposit
-     * @param _amount _amount is underlyingToken token like DAI.
+     * @param strategyAddress strategy from amount to deposit
+     * @param amount _amount is _underlyingToken token like DAI.
      */
-    function _deposit(IStrategy _strategy, uint256 _amount) internal {
-        IERC20Upgradeable(underlyingToken).safeTransferFrom(
+    function _deposit(IStrategy strategyAddress, uint256 amount) internal {
+        IERC20Upgradeable(_underlyingToken).safeTransferFrom(
             msg.sender,
             address(this),
-            _amount
+            amount
         );
-        _strategy.deposit(_amount);
+        strategyAddress.deposit(amount);
     }
 }

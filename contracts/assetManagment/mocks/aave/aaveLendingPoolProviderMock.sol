@@ -4,8 +4,8 @@ pragma solidity 0.8.9;
 import "../../interfaces/aave/AaveLendingPoolProviderV2.sol";
 
 contract AaveLendingPoolProviderMock is AaveLendingPoolProviderV2 {
-    address internal _pool;
-    address internal _core;
+    address private _pool;
+    address private _core;
 
     function getLendingPool() external view override returns (address) {
         return _pool;
