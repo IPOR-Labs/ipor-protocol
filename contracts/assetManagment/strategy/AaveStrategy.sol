@@ -21,13 +21,13 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     StakedAaveInterface private _stakedAaveInterface;
     AaveIncentivesInterface private _aaveIncentive;
 
-    address private _underlyingToken; // _underlyingToken
+    address private _asset; // _asset
     address private _aToken; // shareToken
     address private _aave;
     address private _stkAave;
 
     /**
-     * @param underlyingToken underlying token like DAI, USDT etc.
+     * @param asset underlying token like DAI, USDT etc.
      * @param aToken share token like aDAI etc.
      * @param addressesProvider AAVE address _provider.
      * @param stkAave stakedAAVE token.
@@ -35,7 +35,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param aaveToken AAVE ERC20 token address.
      */
     function initialize(
-        address underlyingToken,
+        address asset,
         address aToken,
         address addressesProvider,
         address stkAave,
@@ -43,11 +43,11 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         address aaveToken
     ) public initializer {
         __Ownable_init();
-        _underlyingToken = underlyingToken;
+        _asset = asset;
         _aToken = aToken;
 
         _provider = AaveLendingPoolProviderV2(addressesProvider);
-        IERC20Upgradeable(_underlyingToken).safeApprove(
+        IERC20Upgradeable(_asset).safeApprove(
             _provider.getLendingPool(),
             type(uint256).max
         );
@@ -58,14 +58,14 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     }
 
     /**
-     * @dev _underlyingToken return
+     * @dev _asset return
      */
-    function getUnderlyingToken() external view override returns (address) {
-        return _underlyingToken;
+    function getAsset() external view override returns (address) {
+        return _asset;
     }
 
     /**
-     * @dev Share token to track _underlyingToken (DAI -> aDAI)
+     * @dev Share token to track _asset (DAI -> aDAI)
      */
     function shareToken() external view override returns (address) {
         return _aToken;
@@ -79,7 +79,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
             _provider.getLendingPool()
         );
         DataTypes.ReserveData memory reserveData = lendingPool.getReserveData(
-            _underlyingToken
+            _asset
         );
         return
             AmMath.division(uint256(reserveData.currentLiquidityRate), (10**7));
@@ -118,7 +118,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param amount amount to deposit in _aave lending.
      */
     function deposit(uint256 amount) external override onlyOwner {
-        IERC20Upgradeable(_underlyingToken).safeTransferFrom(
+        IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
             amount
@@ -126,7 +126,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(
             _provider.getLendingPool()
         );
-        lendingPool.deposit(_underlyingToken, amount, address(this), 0); // 29 -> referral
+        lendingPool.deposit(_asset, amount, address(this), 0); // 29 -> referral
     }
 
     /**
@@ -136,7 +136,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      */
     function withdraw(uint256 amount) external override onlyOwner {
         AaveLendingPoolV2(_provider.getLendingPool()).withdraw(
-            _underlyingToken,
+            _asset,
             amount,
             msg.sender
         );

@@ -293,7 +293,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             uToken.safeApprove(_compoundStrategy, 0);
             csToken.safeApprove(_compoundStrategy, 0);
         }
-        address _compoundUnderlyingToken = strategy.getUnderlyingToken();
+        address _compoundUnderlyingToken = strategy.getAsset();
         // TODO: COMPATIBLE
         require(
             _compoundUnderlyingToken == address(_underlyingToken),
@@ -318,7 +318,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             uToken.safeApprove(_aaveStrategy, 0);
             IERC20Upgradeable(_aaveShareTokens).safeApprove(_aaveStrategy, 0);
         }
-        address _aaveUnderlyingToken = strategy.getUnderlyingToken();
+        address _aaveUnderlyingToken = strategy.getAsset();
         require(
             _aaveUnderlyingToken == address(_underlyingToken),
             Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY

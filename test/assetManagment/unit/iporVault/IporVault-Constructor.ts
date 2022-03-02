@@ -43,13 +43,13 @@ describe("Stanley -> constructor", () => {
         );
         aaveStrategy = (await AaveStrategy.deploy()) as StrategyMock;
         await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setUnderlyingToken(DAI.address);
+        await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
             "StrategyMock"
         );
         compoundStrategy = (await CompoundStrategy.deploy()) as StrategyMock;
         await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setUnderlyingToken(DAI.address);
+        await compoundStrategy.setAsset(DAI.address);
     });
 
     it("Shoud throw error when underlyingToken address is 0", async () => {
@@ -126,9 +126,9 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
     });
 
-    it("Shoud throw error when aaveStrategy underlyingToken != from IporVault underlyingToken", async () => {
+    it("Shoud throw error when aaveStrategy asset != from IporVault asset", async () => {
         // given
-        await aaveStrategy.setUnderlyingToken(USDt.address);
+        await aaveStrategy.setAsset(USDt.address);
         // when
         await expect(
             //when
@@ -142,9 +142,9 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_04");
     });
 
-    it("Shoud throw error when compoundStrategy underlyingToken != from IporVault underlyingToken", async () => {
+    it("Shoud throw error when compoundStrategy asset != from IporVault asset", async () => {
         // given
-        await compoundStrategy.setUnderlyingToken(USDt.address);
+        await compoundStrategy.setAsset(USDt.address);
         // when
         await expect(
             //when

@@ -41,13 +41,13 @@ describe("Stanley -> SetStrategy", () => {
         );
         aaveStrategy = (await AaveStrategy.deploy()) as StrategyMock;
         await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setUnderlyingToken(DAI.address);
+        await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
             "StrategyMock"
         );
         compoundStrategy = (await CompoundStrategy.deploy()) as StrategyMock;
         await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setUnderlyingToken(DAI.address);
+        await compoundStrategy.setAsset(DAI.address);
 
         const Stanley = await hre.ethers.getContractFactory("Stanley");
         stanley = (await await upgrades.deployProxy(Stanley, [
@@ -73,7 +73,7 @@ describe("Stanley -> SetStrategy", () => {
             );
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
-            await newAaveStrategy.setUnderlyingToken(DAI.address);
+            await newAaveStrategy.setAsset(DAI.address);
             //when
             await expect(stanley.setAaveStrategy(newAaveStrategy.address))
                 //then
@@ -88,7 +88,7 @@ describe("Stanley -> SetStrategy", () => {
             );
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
-            await newAaveStrategy.setUnderlyingToken(USDt.address);
+            await newAaveStrategy.setAsset(USDt.address);
             await expect(
                 //when
                 stanley.setAaveStrategy(newAaveStrategy.address)
@@ -117,7 +117,7 @@ describe("Stanley -> SetStrategy", () => {
             );
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
-            await newCompoundStrategy.setUnderlyingToken(DAI.address);
+            await newCompoundStrategy.setAsset(DAI.address);
             //when
             await expect(
                 stanley.setCompoundStrategy(newCompoundStrategy.address)
@@ -135,7 +135,7 @@ describe("Stanley -> SetStrategy", () => {
             );
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
-            await newCompoundStrategy.setUnderlyingToken(USDt.address);
+            await newCompoundStrategy.setAsset(USDt.address);
             await expect(
                 //when
                 stanley.setCompoundStrategy(newCompoundStrategy.address)

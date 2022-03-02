@@ -23,7 +23,7 @@ contract CompoundStrategy is
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     uint256 private _blocksPerYear;
-    address private _underlyingToken;
+    address private _asset;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
@@ -32,41 +32,40 @@ contract CompoundStrategy is
     /**
      * @dev Deploy CompoundStrategy.
      * @notice Deploy CompoundStrategy.
-     * @param underlyingToken underlying token like DAI, USDT etc.
+     * @param asset underlying token like DAI, USDT etc.
      * @param cErc20Contract share token like cDAI
      * @param comptroller _comptroller to claim comp
      * @param compToken comp token.
      */
     function initialize(
-        address underlyingToken,
+        address asset,
         address cErc20Contract,
         address comptroller,
         address compToken
     ) public initializer {
         __Ownable_init();
-        _underlyingToken = underlyingToken;
+        _asset = asset;
         _cToken = CErc20(cErc20Contract);
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
-        IERC20Upgradeable(_underlyingToken).safeApprove(
+        IERC20Upgradeable(_asset).safeApprove(
             cErc20Contract,
             type(uint256).max
         );
         _blocksPerYear = 2102400;
     }
 
-    // TODO: this empty ????
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     /**
-     * @dev _underlyingToken return
+     * @dev _asset return
      */
-    function getUnderlyingToken() public view override returns (address) {
-        return _underlyingToken;
+    function getAsset() public view override returns (address) {
+        return _asset;
     }
 
     /**
-     * @dev Share token to track _underlyingToken (DAI -> cDAI)
+     * @dev Share token to track _asset (DAI -> cDAI)
      */
     function shareToken() external view override returns (address) {
         return address(_cToken);
@@ -99,7 +98,7 @@ contract CompoundStrategy is
             AmMath.division(
                 (_cToken.exchangeRateStored() *
                     _cToken.balanceOf(address(this))),
-                (10**IERC20Decimal(_underlyingToken).decimals())
+                (10**IERC20Decimal(_asset).decimals())
             )
         );
     }
@@ -120,7 +119,7 @@ contract CompoundStrategy is
      * @param amount amount to deposit in compound lending.
      */
     function deposit(uint256 amount) external override onlyOwner {
-        IERC20Upgradeable(_underlyingToken).safeTransferFrom(
+        IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
             amount
@@ -137,9 +136,9 @@ contract CompoundStrategy is
         _cToken.redeem(
             AmMath.division(amount * 1e18, _cToken.exchangeRateStored())
         );
-        IERC20Upgradeable(address(_underlyingToken)).safeTransfer(
+        IERC20Upgradeable(address(_asset)).safeTransfer(
             msg.sender,
-            IERC20Upgradeable(_underlyingToken).balanceOf(address(this))
+            IERC20Upgradeable(_asset).balanceOf(address(this))
         );
     }
 

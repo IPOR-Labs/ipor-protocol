@@ -32,13 +32,13 @@ describe("Stanley -> totalStrategiesBalance", () => {
         );
         aaveStrategy = (await AaveStrategy.deploy()) as StrategyMock;
         await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setUnderlyingToken(DAI.address);
+        await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
             "StrategyMock"
         );
         compoundStrategy = (await CompoundStrategy.deploy()) as StrategyMock;
         await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setUnderlyingToken(DAI.address);
+        await compoundStrategy.setAsset(DAI.address);
 
         const ivToken = await tokenFactoryIvToken.deploy(
             "IvToken",

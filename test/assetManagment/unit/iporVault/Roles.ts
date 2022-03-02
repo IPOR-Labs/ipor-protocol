@@ -67,13 +67,13 @@ describe("#Roles Localhost test", () => {
         );
         const aaveStrategy = await AaveStrategy.deploy();
         await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setUnderlyingToken(DAI.address);
+        await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
             "StrategyMock"
         );
         const compoundStrategy = await CompoundStrategy.deploy();
         await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setUnderlyingToken(DAI.address);
+        await compoundStrategy.setAsset(DAI.address);
 
         const StanleyFactory = await hre.ethers.getContractFactory("Stanley");
         stanley = (await await upgrades.deployProxy(StanleyFactory, [
