@@ -15,7 +15,7 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
     using SafeMath for uint256;
 
     uint8 private immutable _decimals;
-    address private immutable _underlyingAsset;
+    address private immutable _asset;
     address private _vault;
 
     modifier onlyVault() {
@@ -26,10 +26,10 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
     constructor(
         string memory aTokenName,
         string memory aTokenSymbol,
-        address underlyingAsset
+        address asset
     ) ERC20(aTokenName, aTokenSymbol) {
-        require(address(0) != underlyingAsset, Errors.ZERO_ADDRESS);
-        _underlyingAsset = underlyingAsset;
+        require(address(0) != asset, Errors.ZERO_ADDRESS);
+        _asset = asset;
         _decimals = 18;
     }
 
@@ -62,12 +62,7 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         emit Burn(user, amount);
     }
 
-    function getUnderlyingAssetAddress()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _underlyingAsset;
+    function assetAddress() external view override returns (address) {
+        return _asset;
     }
 }
