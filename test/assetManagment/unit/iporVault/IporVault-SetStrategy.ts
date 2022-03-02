@@ -93,7 +93,7 @@ describe("Stanley -> SetStrategy", () => {
                 //when
                 stanley.setAaveStrategy(newAaveStrategy.address)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_04");
+            ).to.revertedWith("IPOR_102");
         });
 
         it("Should not setup new strategy when pass zero address", async () => {
@@ -105,7 +105,7 @@ describe("Stanley -> SetStrategy", () => {
                 //when
                 stanley.setAaveStrategy(constants.AddressZero)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_05");
+            ).to.revertedWith("IPOR_37");
         });
     });
 
@@ -140,7 +140,7 @@ describe("Stanley -> SetStrategy", () => {
                 //when
                 stanley.setCompoundStrategy(newCompoundStrategy.address)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_04");
+            ).to.revertedWith("IPOR_102");
         });
 
         it("Should not setup new strategy when pass zero address", async () => {
@@ -152,7 +152,7 @@ describe("Stanley -> SetStrategy", () => {
                 //when
                 stanley.setCompoundStrategy(constants.AddressZero)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_05");
+            ).to.revertedWith("IPOR_37");
         });
     });
 });

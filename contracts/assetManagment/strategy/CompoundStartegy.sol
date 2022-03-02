@@ -11,7 +11,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "../../security/IporOwnableUpgradeable.sol";
 
 import "hardhat/console.sol";
-import "../errors/Errors.sol";
+import "../../IporErrors.sol";
 import "../libraries/AmMath.sol";
 
 contract CompoundStrategy is
@@ -83,7 +83,7 @@ contract CompoundStrategy is
      * @param blocksPerYear amount to deposit in aave lending.
      */
     function setBlocksPerYear(uint256 blocksPerYear) external onlyOwner {
-        require(blocksPerYear != 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+        require(blocksPerYear != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         _blocksPerYear = blocksPerYear;
     }
 
@@ -143,7 +143,7 @@ contract CompoundStrategy is
         override
         onlyOwner
     {
-        require(vault != address(0), Errors.ZERO_ADDRESS);
+        require(vault != address(0), IporErrors.WRONG_ADDRESS);
         _comptroller.claimComp(address(this), assets);
         uint256 compBal = _compToken.balanceOf(address(this));
         _compToken.safeTransfer(vault, compBal);

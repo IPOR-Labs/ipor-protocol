@@ -145,7 +145,7 @@ describe("#Roles Localhost test", () => {
                 //when
                 stanley.revokeRole(ADMIN_ROLE, await admin.getAddress())
                 //then
-            ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_01");
+            ).to.be.revertedWith("IPOR_50");
         });
 
         it("should be able to grant ADMIN_ROLE", async () => {

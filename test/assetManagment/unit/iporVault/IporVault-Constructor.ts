@@ -64,7 +64,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
     it("Shoud deploy new IporVault", async () => {
@@ -93,7 +93,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
     it("Shoud throw error when aaveStrategy address is 0", async () => {
@@ -108,7 +108,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
     it("Shoud throw error when compoundStrategy address is 0", async () => {
@@ -123,7 +123,7 @@ describe("Stanley -> constructor", () => {
                 constants.AddressZero,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
     it("Shoud throw error when aaveStrategy asset != from IporVault asset", async () => {
@@ -139,7 +139,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_04");
+        ).to.be.revertedWith("IPOR_102");
     });
 
     it("Shoud throw error when compoundStrategy asset != from IporVault asset", async () => {
@@ -155,6 +155,6 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_04");
+        ).to.be.revertedWith("IPOR_102");
     });
 });

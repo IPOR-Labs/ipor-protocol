@@ -534,6 +534,6 @@ describe("Stanley -> Deposit", () => {
         //when
         await expect(
             stanley.connect(userOne).deposit(BigNumber.from("0"))
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_06");
+        ).to.be.revertedWith("IPOR_103");
     });
 });

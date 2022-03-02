@@ -212,5 +212,16 @@ library IporErrors {
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
 
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_60";
-	string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";
+    string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";
+
+    // Asset managment
+    //@notice amount should be > 0
+    string public constant IPOR_VAULT_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_100";
+    //@notice amount should be > 0
+    string public constant IPOR_VAULT_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_101";
+    string public constant UNDERLYINGTOKEN_IS_NOT_COMPATIBLE = "IPOR_102";
+    string public constant UINT_SHOULD_BE_GRATER_THEN_ZERO = "IPOR_103";
+
+    // only vault can have access to function
+    string public constant ONLY_VAULT = "IPOR_104";
 }

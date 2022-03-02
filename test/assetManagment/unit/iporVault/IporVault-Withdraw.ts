@@ -573,7 +573,7 @@ describe("Stanley -> Withdraw", () => {
         //when
 
         await expect(stanley.withdraw(one.mul(20))).to.be.revertedWith(
-            "IPOR_ASSET_MANAGMENT_06"
+            "IPOR_103"
         );
     });
 });

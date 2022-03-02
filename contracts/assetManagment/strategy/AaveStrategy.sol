@@ -9,7 +9,7 @@ import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../errors/Errors.sol";
+import "../../IporErrors.sol";
 import "../libraries/AmMath.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "hardhat/console.sol";

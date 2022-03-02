@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-import "../errors/Errors.sol";
+import "../../IporErrors.sol";
 
 abstract contract StanleyAccessControl is AccessControl {
     bytes32 internal constant _ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -31,7 +31,7 @@ abstract contract StanleyAccessControl is AccessControl {
         } else {
             require(
                 _msgSender() != account,
-                Errors.CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED
+                IporErrors.CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED
             );
             super.revokeRole(role, account);
         }
