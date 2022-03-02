@@ -49,14 +49,6 @@ contract Warren is
         return 1;
     }
 
-    function pause() external onlyOwner {
-        _pause();
-    }
-
-    function unpause() external onlyOwner {
-        _unpause();
-    }
-
     function getIndex(address asset)
         external
         view
@@ -137,6 +129,35 @@ contract Warren is
         _updateIndexes(assets, indexValues, block.timestamp);
     }
 
+    function addUpdater(address updater)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        _updaters[updater] = 1;
+        emit IporIndexAddUpdater(updater);
+    }
+
+    function removeUpdater(address updater)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        _updaters[updater] = 0;
+        emit IporIndexRemoveUpdater(updater);
+    }
+
+    function isUpdater(address updater)
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _updaters[updater];
+    }
+
     function addAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
@@ -168,33 +189,12 @@ contract Warren is
         emit IporIndexRemoveAsset(asset);
     }
 
-    function addUpdater(address updater)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        _updaters[updater] = 1;
-        emit IporIndexAddUpdater(updater);
+    function pause() external override onlyOwner {
+        _pause();
     }
 
-    function removeUpdater(address updater)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        _updaters[updater] = 0;
-        emit IporIndexRemoveUpdater(updater);
-    }
-
-    function isUpdater(address updater)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _updaters[updater];
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     function _updateIndexes(
