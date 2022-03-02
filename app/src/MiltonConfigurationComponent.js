@@ -34,6 +34,106 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
+                        <strong>Joseph Address</strong>
+                        <small></small>
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="ItfMiltonUsdt"
+                                    method="getJoseph"
+                                />
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfMiltonUsdt"
+                                    method="setJoseph"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="MiltonUsdt"
+                                    method="getJoseph"
+                                />
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="MiltonUsdt"
+                                    method="setJoseph"
+                                />
+                            </div>
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="ItfMiltonUsdc"
+                                    method="getJoseph"
+                                />
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfMiltonUsdc"
+                                    method="setJoseph"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="MiltonUsdc"
+                                    method="getJoseph"
+                                />
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="MiltonUsdc"
+                                    method="setJoseph"
+                                />
+                            </div>
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <div>
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="ItfMiltonDai"
+                                    method="getJoseph"
+                                />
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfMiltonDai"
+                                    method="setJoseph"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="MiltonDai"
+                                    method="getJoseph"
+                                />
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="MiltonDai"
+                                    method="setJoseph"
+                                />
+                            </div>
+                        )}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
                         <strong>Milton Spread Model Address</strong>
                     </td>
                     <td>
@@ -99,7 +199,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -113,7 +213,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -130,7 +230,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -144,7 +244,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -161,7 +261,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -175,7 +275,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMaxSwapTotalAmount"
+                                method="getMaxSwapCollateralAmount"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

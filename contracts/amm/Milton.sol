@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
-import "../libraries/IporMath.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-
+import "../libraries/types/DataTypes.sol";
+import "../libraries/IporMath.sol";
 import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
@@ -18,11 +16,12 @@ import "./MiltonStorage.sol";
 import "../configuration/MiltonConfiguration.sol";
 import "../interfaces/IMiltonEvents.sol";
 import "../tokenization/IpToken.sol";
-
-import "../interfaces/IIporAssetConfiguration.sol";
+import "../interfaces/IIporVault.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
+
+import "hardhat/console.sol";
 
 /**
  * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
@@ -32,7 +31,6 @@ import "../interfaces/IJoseph.sol";
 //TODO: add pausable modifier for methodds
 contract Milton is
     UUPSUpgradeable,
-    OwnableUpgradeable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     MiltonConfiguration,
@@ -45,14 +43,18 @@ contract Milton is
     using SafeCast for int256;
     using IporSwapLogic for DataTypes.IporSwapMemory;
 
+    modifier onlyJoseph() {
+        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
+        _;
+    }
+
     function initialize(
         address asset,
         address ipToken,
         address warren,
         address miltonStorage,
         address miltonSpreadModel,
-        address initialIporConfiguration,
-        address iporAssetConfigurationAddr
+        address iporVault
     ) public initializer {
         __Ownable_init();
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
@@ -63,14 +65,6 @@ contract Milton is
             address(miltonSpreadModel) != address(0),
             IporErrors.WRONG_ADDRESS
         );
-        require(
-            address(initialIporConfiguration) != address(0),
-            IporErrors.INCORRECT_IPOR_CONFIGURATION_ADDRESS
-        );
-        _iporConfiguration = IIporConfiguration(initialIporConfiguration);
-        _iporAssetConfiguration = IIporAssetConfiguration(
-            iporAssetConfigurationAddr
-        );
 
         _decimals = ERC20Upgradeable(asset).decimals();
         _miltonStorage = IMiltonStorage(miltonStorage);
@@ -78,21 +72,11 @@ contract Milton is
         _warren = IWarren(warren);
         _ipToken = IIpToken(ipToken);
         _asset = asset;
+        _iporVault = IIporVault(iporVault);
     }
 
     function getVersion() external pure override returns (uint256) {
         return 1;
-    }
-
-    function _authorizeUpgrade(address) internal override onlyOwner {}
-
-    modifier onlyPublicationFeeTransferer() {
-        require(
-            msg.sender ==
-                _iporConfiguration.getMiltonPublicationFeeTransferer(),
-            IporErrors.MILTON_CALLER_NOT_MILTON_PUBLICATION_FEE_TRANSFERER
-        );
-        _;
     }
 
     function pause() external override onlyOwner {
@@ -103,50 +87,46 @@ contract Milton is
         _unpause();
     }
 
-    //    fallback() external payable  {
-    //        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
-    //    }
+    function depositToVault(uint256 assetValue)
+        external
+        nonReentrant
+        onlyJoseph
+    {
+        uint256 balance = _iporVault.deposit(assetValue);
+        _miltonStorage.updateStorageWhenDepositToVault(assetValue, balance);
+    }
 
-    function authorizeJoseph(address joseph)
+    function withdrawFromVault(uint256 assetValue)
+        external
+        nonReentrant
+        onlyJoseph
+    {
+        (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
+            assetValue
+        );
+        _miltonStorage.updateStorageWhenWithdrawFromVault(
+            withdrawnValue,
+            vaultBalance
+        );
+    }
+
+    function setupMaxAllowance(address spender)
         external
         override
         onlyOwner
         whenNotPaused
     {
         IERC20Upgradeable(_asset).safeIncreaseAllowance(
-            joseph,
+            spender,
             Constants.MAX_VALUE
         );
-    }
-
-    //@notice transfer publication fee to configured charlie treasurer address
-    function transferPublicationFee(uint256 amount)
-        external
-        onlyPublicationFeeTransferer
-    {
-        require(amount != 0, IporErrors.MILTON_NOT_ENOUGH_AMOUNT_TO_TRANSFER);
-
-        require(
-            amount <= _miltonStorage.getBalance().openingFee,
-            IporErrors.MILTON_NOT_ENOUGH_OPENING_FEE_BALANCE
-        );
-        address charlieTreasurer = _iporAssetConfiguration
-            .getCharlieTreasurer();
-        require(
-            address(0) != charlieTreasurer,
-            IporErrors.MILTON_INCORRECT_CHARLIE_TREASURER_ADDRESS
-        );
-        _miltonStorage.updateStorageWhenTransferPublicationFee(amount);
-        //TODO: user Address from OZ and use call
-        //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
-        IERC20Upgradeable(_asset).safeTransfer(charlieTreasurer, amount);
     }
 
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) external override returns (uint256) {
+    ) external override nonReentrant returns (uint256) {
         return
             _openSwapPayFixed(
                 block.timestamp,
@@ -160,7 +140,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) external override returns (uint256) {
+    ) external override nonReentrant returns (uint256) {
         return
             _openSwapReceiveFixed(
                 block.timestamp,
@@ -224,7 +204,6 @@ contract Milton is
         return _calculateSwapReceiveFixedValue(block.timestamp, swap);
     }
 
-    //TODO: refactor in this way that timestamp is not visible in external milton method
     function calculateExchangeRate(uint256 calculateTimestamp)
         external
         view
@@ -233,8 +212,7 @@ contract Milton is
     {
         (, , int256 soap) = _calculateSoap(calculateTimestamp);
 
-        int256 balance = _miltonStorage.getBalance().liquidityPool.toInt256() -
-            soap;
+        int256 balance = _getAccruedBalance().liquidityPool.toInt256() - soap;
 
         require(
             balance >= 0,
@@ -250,6 +228,30 @@ contract Milton is
         } else {
             return Constants.D18;
         }
+    }
+
+    function getAccruedBalance()
+        external
+        view
+        override
+        returns (DataTypes.MiltonBalanceMemory memory)
+    {
+        return _getAccruedBalance();
+    }
+
+    function _getAccruedBalance()
+        internal
+        view
+        returns (DataTypes.MiltonBalanceMemory memory)
+    {
+        DataTypes.MiltonBalanceMemory memory accruedBalance = _miltonStorage
+            .getBalance();
+        uint256 actualVaultBalance = _iporVault.totalBalance(address(this));
+        accruedBalance.liquidityPool =
+            accruedBalance.liquidityPool +
+            (actualVaultBalance - accruedBalance.vault);
+        accruedBalance.vault = actualVaultBalance;
+        return accruedBalance;
     }
 
     function _calculateSwapPayFixedValue(
@@ -306,6 +308,19 @@ contract Milton is
         }
     }
 
+    function _calculateIncomeTaxValue(int256 positionValue)
+        internal
+        pure
+        returns (uint256)
+    {
+        return
+            IporMath.division(
+                IporMath.absoluteValue(positionValue) *
+                    _getIncomeTaxPercentage(),
+                Constants.D18
+            );
+    }
+
     function _calculateSpread(uint256 calculateTimestamp)
         internal
         view
@@ -316,40 +331,24 @@ contract Milton is
             _asset
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = _getAccruedBalance();
 
-        try
-            _miltonSpreadModel.calculateSpreadPayFixed(
-                _miltonStorage.calculateSoapPayFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadPayFixedValue) {
-            spreadPayFixedValue = _spreadPayFixedValue;
-        } catch {
-            spreadPayFixedValue = 0;
-        }
-
-        try
-            _miltonSpreadModel.calculateSpreadRecFixed(
-                _miltonStorage.calculateSoapReceiveFixed(
-                    accruedIpor.ibtPrice,
-                    calculateTimestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadRecFixedValue) {
-            spreadRecFixedValue = _spreadRecFixedValue;
-        } catch {
-            spreadRecFixedValue = 0;
-        }
+        spreadPayFixedValue = _miltonSpreadModel.calculateSpreadPayFixed(
+            _miltonStorage.calculateSoapPayFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            ),
+            accruedIpor,
+            balance
+        );
+        spreadRecFixedValue = _miltonSpreadModel.calculateSpreadRecFixed(
+            _miltonStorage.calculateSoapReceiveFixed(
+                accruedIpor.ibtPrice,
+                calculateTimestamp
+            ),
+            accruedIpor,
+            balance
+        );
     }
 
     function _calculateSoap(uint256 calculateTimestamp)
@@ -403,10 +402,6 @@ contract Milton is
                 _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
-        require(
-            wadTotalAmount <= _getMaxSwapTotalAmount(),
-            IporErrors.MILTON_TOTAL_AMOUNT_TOO_HIGH
-        );
 
         require(
             maximumSlippage <= _getMaxSlippagePercentage(),
@@ -424,6 +419,11 @@ contract Milton is
                 _getIporPublicationFeeAmount(),
                 _getOpeningFeePercentage()
             );
+
+        require(
+            collateral <= _getMaxSwapCollateralAmount(),
+            IporErrors.MILTON_COLLATERAL_AMOUNT_TOO_HIGH
+        );
 
         require(
             wadTotalAmount >
@@ -450,7 +450,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) internal nonReentrant returns (uint256) {
+    ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
@@ -458,9 +458,7 @@ contract Milton is
             collateralizationFactor
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
-            .getBalance();
-
+        DataTypes.MiltonBalanceMemory memory balance = _getAccruedBalance();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
         balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
 
@@ -475,8 +473,7 @@ contract Milton is
                 openTimestamp
             ),
             bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral
+            balance
         );
 
         DataTypes.IporSwapIndicator
@@ -504,11 +501,6 @@ contract Milton is
             _getOpeningFeeForTreasuryPercentage()
         );
 
-        //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
-        //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
-        //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
-        //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        //TODO: sendValue z Address (use with ReentrancyGuard)
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
@@ -533,7 +525,7 @@ contract Milton is
         uint256 totalAmount,
         uint256 maximumSlippage,
         uint256 collateralizationFactor
-    ) internal nonReentrant returns (uint256) {
+    ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
@@ -541,8 +533,7 @@ contract Milton is
             collateralizationFactor
         );
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = _getAccruedBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
         balance.receiveFixedSwaps =
@@ -560,8 +551,7 @@ contract Milton is
                 openTimestamp
             ),
             bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral
+            balance
         );
 
         DataTypes.IporSwapIndicator
@@ -590,11 +580,6 @@ contract Milton is
                 _getOpeningFeeForTreasuryPercentage()
             );
 
-        //TODO:Use call() instead, without hardcoded gas limits along with checks-effects-interactions pattern or reentrancy guards for reentrancy protection.
-        //TODO: https://swcregistry.io/docs/SWC-134, https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/
-        //TODO: change transfer to call - transfer rely on gas cost :EDIT May 2021: call{value: amount}("") should now be used for transferring ether (Do not use send or transfer.)
-        //TODO: https://ethereum.stackexchange.com/questions/19341/address-send-vs-address-transfer-best-practice-usage/38642
-        //TODO: sendValue z Address (use with ReentrancyGuard)
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
@@ -777,9 +762,9 @@ contract Milton is
         uint256 _calculationTimestamp,
         uint256 incomeTaxPercentage
     ) internal {
-        uint256 abspositionValue = IporMath.absoluteValue(positionValue);
+        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
 
-        if (abspositionValue < derivativeItem.collateral) {
+        if (absPositionValue < derivativeItem.collateral) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (msg.sender != derivativeItem.buyer) {
                 require(
@@ -796,9 +781,9 @@ contract Milton is
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral +
-                    abspositionValue -
+                    absPositionValue -
                     IporMath.division(
-                        abspositionValue * incomeTaxPercentage,
+                        absPositionValue * incomeTaxPercentage,
                         Constants.D18
                     )
             );
@@ -807,7 +792,7 @@ contract Milton is
             _transferDerivativeAmount(
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
-                derivativeItem.collateral - abspositionValue
+                derivativeItem.collateral - absPositionValue
             );
         }
     }
@@ -821,7 +806,6 @@ contract Milton is
         if (msg.sender == buyer) {
             transferAmount = transferAmount + liquidationDepositAmount;
         } else {
-            //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             //transfer liquidation deposit amount from Milton to Sender
             IERC20Upgradeable(_asset).safeTransfer(
                 msg.sender,
@@ -834,7 +818,6 @@ contract Milton is
 
         if (transferAmount != 0) {
             //transfer from Milton to Trader
-            //TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
             IERC20Upgradeable(_asset).safeTransfer(
                 buyer,
                 IporMath.convertWadToAssetDecimals(transferAmount, _decimals)
@@ -861,19 +844,17 @@ contract Milton is
             (totalAmount -
                 liquidationDepositAmount -
                 iporPublicationFeeAmount) * Constants.D18,
-            Constants.D18 +
-                IporMath.division(
-                    collateralizationFactor * openingFeePercentage,
-                    Constants.D18
-                )
+            Constants.D18 + openingFeePercentage
         );
         notional = IporMath.division(
             collateralizationFactor * collateral,
             Constants.D18
         );
         openingFee = IporMath.division(
-            notional * openingFeePercentage,
+            collateral * openingFeePercentage,
             Constants.D18
         );
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

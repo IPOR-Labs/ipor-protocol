@@ -4,19 +4,23 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonStorage {
-
     function getVersion() external pure returns (uint256);
 
-	function getLastSwapId() external view returns (uint256);
+    function getLastSwapId() external view returns (uint256);
 
     function setMilton(address milton) external;
 
-    function setJoseph(address joseph) external;    
+    function setJoseph(address joseph) external;
 
     function getBalance()
         external
         view
-        returns (DataTypes.MiltonTotalBalanceMemory memory);
+        returns (DataTypes.MiltonBalanceMemory memory);
+
+    function getExtendedBalance()
+        external
+        view
+        returns (DataTypes.MiltonExtendedBalanceMemory memory);
 
     function getTotalOutstandingNotional()
         external
@@ -27,7 +31,10 @@ interface IMiltonStorage {
 
     function subtractLiquidity(uint256 liquidityAmount) external;
 
-    function updateStorageWhenTransferPublicationFee(uint256 transferedAmount)
+    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
+        external;
+
+    function updateStorageWhenTransferTreasure(uint256 transferedValue)
         external;
 
     function updateStorageWhenOpenSwapPayFixed(
@@ -51,7 +58,7 @@ interface IMiltonStorage {
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
     ) external;
 
     function updateStorageWhenCloseSwapReceiveFixed(
@@ -59,7 +66,17 @@ interface IMiltonStorage {
         DataTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-		uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeTaxPercentage
+    ) external;
+
+    function updateStorageWhenWithdrawFromVault(
+        uint256 withdrawnValue,
+        uint256 vaultBalance
+    ) external;
+
+    function updateStorageWhenDepositToVault(
+        uint256 depositValue,
+        uint256 vaultBalance
     ) external;
 
     function getSwapPayFixed(uint256 swapId)

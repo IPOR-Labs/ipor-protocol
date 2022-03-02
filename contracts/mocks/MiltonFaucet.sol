@@ -24,7 +24,6 @@ contract MiltonFaucet {
         uint256 decimals = token.decimals();
         uint256 maxValue = 1000000 * decimals * 10**token.decimals();
         require(value <= maxValue, "Too much value for transfer");
-		//TODO: C33 - Don't use address.transfer() or address.send(). Use .call.value(...)("") instead. (SWC-134)
         IERC20(asset).safeTransfer(msg.sender, value);
     }
 

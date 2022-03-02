@@ -1,14 +1,9 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const {
-    assertError,
-    prepareData,
-    prepareTestData,
-    getLibraries,
-} = require("./Utils");
+const { assertError, prepareData, prepareTestData } = require("./Utils");
 
-const { USD_10_000_18DEC, ZERO } = require("./Const.js");
+const { TC_TOTAL_AMOUNT_10_000_18DEC, ZERO } = require("./Const.js");
 const ONE_18DEC = BigInt("1000000000000000000");
 const YEAR_IN_SECONDS = BigInt("31536000");
 
@@ -364,7 +359,7 @@ describe("IporLogic", () => {
         const exponentialMovingAverage = BigInt("113000000000000000");
         const indexValue = BigInt("500000000000000000");
 
-		//when
+        //when
         await assertError(
             //when
             iporLogic.calculateExponentialWeightedMovingVariance(

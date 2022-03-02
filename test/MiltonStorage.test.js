@@ -11,7 +11,7 @@ const {
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_14_000_18DEC,
     USD_28_000_18DEC,
@@ -22,7 +22,6 @@ const {
 
 const {
     assertError,
-    getLibraries,
     setupTokenUsdtInitialValuesForUsers,
     prepareApproveForUsers,
     prepareData,
@@ -39,10 +38,8 @@ describe("MiltonStorage", () => {
         userThree,
         liquidityProvider,
         miltonStorageAddress;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [
             admin,
             userOne,
@@ -51,13 +48,167 @@ describe("MiltonStorage", () => {
             liquidityProvider,
             miltonStorageAddress,
         ] = await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
+    });
+
+    it("should transfer ownership - simple case 1", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0,
+            1
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.miltonStorageDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.miltonStorageDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //then
+        const actualNewOwner = await testData.miltonStorageDai
+            .connect(userOne)
+            .owner();
+        expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
+    });
+
+    it("should NOT transfer ownership - sender not current owner", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0,
+            1
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await assertError(
+            testData.miltonStorageDai
+                .connect(userThree)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0,
+            1
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.miltonStorageDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await assertError(
+            testData.miltonStorageDai
+                .connect(userThree)
+                .confirmTransferOwnership(),
+            //then
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0,
+            1
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.miltonStorageDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.miltonStorageDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        await assertError(
+            testData.miltonStorageDai
+                .connect(expectedNewOwner)
+                .confirmTransferOwnership(),
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT transfer ownership - sender already lost ownership", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0,
+            1
+        );
+        const expectedNewOwner = userTwo;
+
+        await testData.miltonStorageDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.miltonStorageDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //when
+        await assertError(
+            testData.miltonStorageDai
+                .connect(admin)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should have rights to transfer ownership - sender still have rights", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            0,
+            1
+        );
+        const expectedNewOwner = userTwo;
+
+        await testData.miltonStorageDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //when
+        await testData.miltonStorageDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //then
+        const actualNewOwner = await testData.miltonStorageDai
+            .connect(userOne)
+            .owner();
+        expect(admin.address).to.be.eql(actualNewOwner);
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {
@@ -73,7 +224,8 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -115,7 +267,8 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
         const derivativeStruct =
             await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
@@ -148,7 +301,8 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -164,7 +318,7 @@ describe("MiltonStorage", () => {
 
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
@@ -223,7 +377,8 @@ describe("MiltonStorage", () => {
             ],
             ["USDT"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -299,7 +454,8 @@ describe("MiltonStorage", () => {
             ],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -314,7 +470,7 @@ describe("MiltonStorage", () => {
         );
         const derivativeParams = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),

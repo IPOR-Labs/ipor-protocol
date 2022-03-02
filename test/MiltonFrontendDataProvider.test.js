@@ -11,7 +11,7 @@ const {
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
@@ -21,7 +21,6 @@ const {
 } = require("./Const.js");
 
 const {
-    getLibraries,
     setupTokenUsdtInitialValuesForUsers,
     prepareApproveForUsers,
     prepareData,
@@ -38,10 +37,8 @@ describe("MiltonFrontendDataProvider", () => {
         userThree,
         liquidityProvider,
         miltonStorageAddress;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [
             admin,
             userOne,
@@ -50,13 +47,10 @@ describe("MiltonFrontendDataProvider", () => {
             liquidityProvider,
             miltonStorageAddress,
         ] = await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
 
     it("should list correct number DAI, USDC, USDT items", async () => {
@@ -72,7 +66,8 @@ describe("MiltonFrontendDataProvider", () => {
             ],
             ["DAI", "USDC", "USDT"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -110,7 +105,7 @@ describe("MiltonFrontendDataProvider", () => {
 
         const paramsDai = {
             asset: testData.tokenDai.address,
-            totalAmount: USD_10_000_18DEC,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             slippageValue: 3,
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),

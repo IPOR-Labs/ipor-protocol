@@ -16,32 +16,47 @@ library DataTypes {
         PayFloatingReceiveFixed
     }
 
-    struct MiltonTotalBalanceMemory {
+    struct MiltonExtendedBalanceMemory {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint256 payFixedSwaps;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
         uint256 receiveFixedSwaps;
-        uint256 openingFee;
-        uint256 liquidationDeposit;
-        uint256 iporPublicationFee;
         //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 liquidityPool;
+        //@notice Actual Balance on IporVault site in Asset Management
+        uint128 vault;
+        uint256 openingFee;
+        uint256 liquidationDeposit;
+        uint256 iporPublicationFee;
         //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 treasury;
     }
-    struct MiltonTotalBalanceStorage {
+
+    struct MiltonBalanceMemory {
+        //@notice derivatives balance for Pay Fixed & Receive Floating leg
+        uint256 payFixedSwaps;
+        //@notice derivatives balance for Pay Floating & Receive Fixed leg
+        uint256 receiveFixedSwaps;
+        //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
+        //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
+        uint256 liquidityPool;
+        uint256 vault;
+    }
+    struct MiltonBalanceStorage {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint128 payFixedSwaps;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
         uint128 receiveFixedSwaps;
-        uint128 openingFee;
-        uint128 liquidationDeposit;
-        uint128 iporPublicationFee;
         //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 liquidityPool;
+        //@notice Actual Balance on IporVault site in Asset Management
+        uint128 vault;
+        uint128 openingFee;
+        uint128 liquidationDeposit;
+        uint128 iporPublicationFee;
         //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 treasury;
@@ -118,7 +133,6 @@ library DataTypes {
         uint256 ibtQuantity;
         //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
-        //TODO: rename quoteValue
     }
     struct NewSwap {
         address buyer;

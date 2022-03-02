@@ -2,7 +2,9 @@
 pragma solidity 0.8.9;
 
 interface IMiltonConfiguration {
-    function getMaxSwapTotalAmount() external pure returns (uint256);
+    event JosephUpdated(address indexed newJoseph);
+
+    function getMaxSwapCollateralAmount() external pure returns (uint256);
 
     function getMaxSlippagePercentage() external pure returns (uint256);
 
@@ -37,4 +39,8 @@ interface IMiltonConfiguration {
         returns (uint256);
 
     function getMiltonSpreadModel() external view returns (address);
+
+    function getJoseph() external view returns (address);
+
+    function setJoseph(address joseph) external;
 }

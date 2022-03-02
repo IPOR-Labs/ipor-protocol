@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
@@ -14,7 +14,7 @@ import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
 
 contract MiltonFrontendDataProvider is
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     UUPSUpgradeable,
     IMiltonFrontendDataProvider
 {
@@ -187,9 +187,8 @@ contract MiltonFrontendDataProvider is
         IMiltonStorage miltonStorage = IMiltonStorage(
             iporAssetConfiguration.getMiltonStorage()
         );
-        IMiltonConfiguration milton = IMiltonConfiguration(
-            iporAssetConfiguration.getMilton()
-        );
+        address miltonAddr = iporAssetConfiguration.getMilton();
+        IMiltonConfiguration milton = IMiltonConfiguration(miltonAddr);
 
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
             milton.getMiltonSpreadModel()
@@ -198,42 +197,26 @@ contract MiltonFrontendDataProvider is
         DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren)
             .getAccruedIndex(timestamp, asset);
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = IMilton(miltonAddr)
+            .getAccruedBalance();
 
-        uint256 spreadPayFixedValue;
-        try
-            spreadModel.calculateSpreadPayFixed(
-                miltonStorage.calculateSoapPayFixed(
-                    accruedIpor.ibtPrice,
-                    timestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadPayFixedValue) {
-            spreadPayFixedValue = _spreadPayFixedValue;
-        } catch {
-            spreadPayFixedValue = 0;
-        }
+        uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
+            miltonStorage.calculateSoapPayFixed(
+                accruedIpor.ibtPrice,
+                timestamp
+            ),
+            accruedIpor,
+            balance
+        );
 
-        uint256 spreadRecFixedValue;
-        try
-            spreadModel.calculateSpreadRecFixed(
-                miltonStorage.calculateSoapReceiveFixed(
-                    accruedIpor.ibtPrice,
-                    timestamp
-                ),
-                accruedIpor,
-                balance,
-                0
-            )
-        returns (uint256 _spreadRecFixedValue) {
-            spreadRecFixedValue = _spreadRecFixedValue;
-        } catch {
-            spreadRecFixedValue = 0;
-        }
+        uint256 spreadRecFixedValue = spreadModel.calculateSpreadRecFixed(
+            miltonStorage.calculateSoapReceiveFixed(
+                accruedIpor.ibtPrice,
+                timestamp
+            ),
+            accruedIpor,
+            balance
+        );
 
         iporAssetConfigurationFront = IporAssetConfigurationFront(
             asset,

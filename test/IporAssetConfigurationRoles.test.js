@@ -11,21 +11,6 @@ const roles = [
         adminRole: keccak256("ROLES_INFO_ADMIN_ROLE"),
         role: keccak256("ROLES_INFO_ROLE"),
     },
-    {
-        name: "CHARLIE_TREASURER_ROLE",
-        adminRole: keccak256("CHARLIE_TREASURER_ADMIN_ROLE"),
-        role: keccak256("CHARLIE_TREASURER_ROLE"),
-    },
-    {
-        name: "TREASURE_TREASURER_ROLE",
-        adminRole: keccak256("TREASURE_TREASURER_ADMIN_ROLE"),
-        role: keccak256("TREASURE_TREASURER_ROLE"),
-    },
-    {
-        name: "ASSET_MANAGEMENT_VAULT_ROLE",
-        adminRole: keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"),
-        role: keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
-    },
 ];
 
 const rolesNotGrant = [
@@ -35,40 +20,9 @@ const rolesNotGrant = [
         role: keccak256("ROLES_INFO_ROLE"),
     },
     {
-        name: "CHARLIE_TREASURER_ROLE",
-        code: "0x0a8c46bed2194419383260fcc83e7085079a16a3dce173fb3d66eb1f81c71f6e",
-        role: keccak256("CHARLIE_TREASURER_ROLE"),
-    },
-    {
-        name: "TREASURE_TREASURER_ROLE",
-        code: "0x1ba824e22ad2e0dc1d7a152742f3b5890d88c5a849ed8e57f4c9d84203d3ea9c",
-        role: keccak256("TREASURE_TREASURER_ROLE"),
-    },
-    {
-        name: "ASSET_MANAGEMENT_VAULT_ROLE",
-        code: "0x1d3c5c61c32255cb922b09e735c0e9d76d2aacc424c3f7d9b9b85c478946fa26",
-        role: keccak256("ASSET_MANAGEMENT_VAULT_ROLE"),
-    },
-
-    {
         name: "ROLES_INFO_ADMIN_ROLE",
         code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
         role: keccak256("ROLES_INFO_ADMIN_ROLE"),
-    },
-    {
-        name: "CHARLIE_TREASURER_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("CHARLIE_TREASURER_ADMIN_ROLE"),
-    },
-    {
-        name: "TREASURE_TREASURER_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("TREASURE_TREASURER_ADMIN_ROLE"),
-    },
-    {
-        name: "ASSET_MANAGEMENT_VAULT_ADMIN_ROLE",
-        code: "0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775",
-        role: keccak256("ASSET_MANAGEMENT_VAULT_ADMIN_ROLE"),
     },
 ];
 

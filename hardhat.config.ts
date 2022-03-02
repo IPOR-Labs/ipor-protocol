@@ -6,10 +6,14 @@ import "@nomiclabs/hardhat-web3";
 import { task } from "hardhat/config";
 import "hardhat-tracer";
 import "solidity-coverage";
+import "@typechain/hardhat";
 
+import networks from "./hardhat.network";
 import "dotenv";
 
 require("dotenv").config();
+
+require("hardhat-contract-sizer");
 
 if (process.env.REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
@@ -37,11 +41,18 @@ export default {
         settings: {
             optimizer: {
                 enabled: true,
-                runs: 1000,
+                runs: 200,
             },
         },
     },
+    networks,
     paths: {
         tests: "./test",
+    },
+    typechain: {
+        outDir: "types",
+        target: "ethers-v5",
+        alwaysGenerateOverloads: true, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
+        externalArtifacts: ["externalArtifacts/*.json"], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
     },
 };

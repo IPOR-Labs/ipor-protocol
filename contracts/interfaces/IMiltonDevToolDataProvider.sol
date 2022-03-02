@@ -37,4 +37,9 @@ interface IMiltonDevToolDataProvider {
         external
         view
         returns (DataTypes.IporSwapMemory[] memory items);
+
+    function calculateSpread(address asset)
+        external
+        view
+        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue);
 }

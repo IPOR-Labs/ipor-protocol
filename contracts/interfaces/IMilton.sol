@@ -4,14 +4,17 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMilton {
-
-	function getVersion() external pure returns(uint256);
-    
-	function authorizeJoseph(address joseph) external;
+    function getVersion() external pure returns (uint256);
 
     function pause() external;
 
     function unpause() external;
+
+    function setupMaxAllowance(address spender) external;
+
+    function depositToVault(uint256 assetValue) external;
+
+    function withdrawFromVault(uint256 assetValue) external;
 
     function openSwapPayFixed(
         uint256 totalAmount,
@@ -43,9 +46,10 @@ interface IMilton {
         view
         returns (uint256 spreadPf, uint256 spreadRf);
 
-    function calculateSwapPayFixedValue(
-        DataTypes.IporSwapMemory memory swap
-    ) external view returns (int256);
+    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
+        external
+        view
+        returns (int256);
 
     function calculateSwapReceiveFixedValue(
         DataTypes.IporSwapMemory memory swap
@@ -55,4 +59,9 @@ interface IMilton {
         external
         view
         returns (uint256);
+
+    function getAccruedBalance()
+        external
+        view
+        returns (DataTypes.MiltonBalanceMemory memory);
 }

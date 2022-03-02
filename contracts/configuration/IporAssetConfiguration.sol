@@ -39,11 +39,6 @@ contract IporAssetConfiguration is
 
     address private _assetManagementVault;
 
-    address private _charlieTreasurer;
-
-    //TODO: fix this name; treasureManager
-    address private _treasureTreasurer;
-
     function initialize(address asset, address ipToken) public initializer {
         _init();
         _asset = asset;
@@ -102,60 +97,8 @@ contract IporAssetConfiguration is
         return _decimals;
     }
 
-    function getCharlieTreasurer() external view override returns (address) {
-        return _charlieTreasurer;
-    }
-
-    function setCharlieTreasurer(address newCharlieTreasurer)
-        external
-        override
-        onlyRole(_CHARLIE_TREASURER_ROLE)
-    {
-        require(newCharlieTreasurer != address(0), IporErrors.WRONG_ADDRESS);
-        _charlieTreasurer = newCharlieTreasurer;
-        emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
-    }
-
-    function getTreasureTreasurer() external view override returns (address) {
-        return _treasureTreasurer;
-    }
-
-    function setTreasureTreasurer(address newTreasureTreasurer)
-        external
-        override
-        onlyRole(_TREASURE_TREASURER_ROLE)
-    {
-        require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
-        _treasureTreasurer = newTreasureTreasurer;
-        emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
-    }
-
     function getIpToken() external view override returns (address) {
         return _ipToken;
     }
 
-    function getAssetManagementVault()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _assetManagementVault;
-    }
-
-    function setAssetManagementVault(address newAssetManagementVaultAddress)
-        external
-        override
-        onlyRole(_ASSET_MANAGEMENT_VAULT_ROLE)
-    {
-        require(
-            newAssetManagementVaultAddress != address(0),
-            IporErrors.WRONG_ADDRESS
-        );
-        _assetManagementVault = newAssetManagementVaultAddress;
-        emit AssetManagementVaultUpdated(
-            _asset,
-            newAssetManagementVaultAddress
-        );
-    }
 }

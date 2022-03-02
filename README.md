@@ -1,3 +1,14 @@
+# ipor-protocol
+
+IPOR smart contracts
+
+## Job statuses
+
+* [![CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml)
+* [![CD](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml)
+
+## Usage
+
 ### Pre-run steps
 
 - Install `python3-pip`.

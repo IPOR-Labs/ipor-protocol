@@ -19,21 +19,20 @@ const {
     USD_10_6DEC,
     USD_10_18DEC,
     USD_20_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
     USD_28_000_18DEC,
     USD_14_000_6DEC,
     USD_28_000_6DEC,
-    USD_9063__63_18DEC,
+    TC_COLLATERAL_18DEC,
     USD_10_000_000_6DEC,
 
     USD_10_000_000_18DEC,
     TC_OPENING_FEE_6DEC,
     TC_OPENING_FEE_18DEC,
     TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
@@ -50,7 +49,6 @@ const {
 
 const {
     assertError,
-    getLibraries,
     getStandardDerivativeParamsDAI,
     getStandardDerivativeParamsUSDT,
     getPayFixedDerivativeParamsDAICase1,
@@ -68,7 +66,6 @@ describe("MiltonConfiguration", () => {
     let miltonConfiguration = null;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         const MiltonConfiguration = await ethers.getContractFactory(
@@ -80,7 +77,8 @@ describe("MiltonConfiguration", () => {
 
     it("should setup init value for Max Swap Total Amount", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMaxSwapTotalAmount();
+        let actualValue =
+            await miltonConfiguration.getMaxSwapCollateralAmount();
         //then
         expect(actualValue).to.be.eq(BigInt("100000000000000000000000"));
     });
@@ -119,7 +117,7 @@ describe("MiltonConfiguration", () => {
         //when
         let actualValue = await miltonConfiguration.getOpeningFeePercentage();
         //then
-        expect(actualValue).to.be.eq(BigInt("300000000000000"));
+        expect(actualValue).to.be.eq(BigInt("10000000000000000"));
     });
     it("should setup init value for Opening Fee Treasury Percentage", async () => {
         //when
@@ -157,5 +155,20 @@ describe("MiltonConfiguration", () => {
             await miltonConfiguration.getMinCollateralizationFactorValue();
         //then
         expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
+    });
+
+    it("should init value for Opening Fee Treasury Percentage lower than 100%", async () => {
+        //when
+        let actualValue =
+            await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        //then
+        expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
+    });
+
+    it("should init value for Income Tax Percentage lower than 100%", async () => {
+        //when
+        let actualValue = await miltonConfiguration.getIncomeTaxPercentage();
+        //then
+        expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
     });
 });

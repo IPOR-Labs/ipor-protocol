@@ -2,6 +2,9 @@ const path = require("path");
 require("dotenv").config();
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 
+const Web3 = require("web3");
+const web3 = new Web3();
+
 module.exports = {
     plugins: [
         "truffle-contract-size",
@@ -25,17 +28,17 @@ module.exports = {
         docker: {
             provider: () => {
                 return new HDWalletProvider(
-                    process.env.ADMIN_PRIV_KEY,
+                    [process.env.ADMIN_PRIV_KEY, process.env.IPOR_INDEX_ADMIN_PRIV_KEY],
                     process.env.ETH_BC_URL
                 );
             },
-            network_id: "5777",
+            network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
         },
         docker_debug: {
             host: "127.0.0.1",
             port: 9545,
-            network_id: "5777",
+            network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
         },
         develop: {
@@ -47,7 +50,7 @@ module.exports = {
         develop2: {
             host: "127.0.0.1",
             port: 7545,
-            network_id: "5777",
+            network_id: process.env.ETH_BC_NETWORK_ID,
         },
         kovan: {
             networkCheckTimeout: 10000,
@@ -58,6 +61,7 @@ module.exports = {
                 );
             },
             network_id: "42",
+            gasPrice: web3.utils.toWei("10", "gwei"),
         },
 
         ropsten: {

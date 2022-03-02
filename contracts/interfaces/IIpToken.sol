@@ -8,12 +8,12 @@ interface IIpToken is IERC20 {
 
     event Burn(address indexed from, address indexed target, uint256 value);
 
-    function mint(address account, uint256 amount) external;
+    function mint(address account, uint256 value) external;
 
     function burn(
         address account,
         address receiverOfUnderlying,
-        uint256 amount
+        uint256 value
     ) external;
 
     function getUnderlyingAssetAddress() external view returns (address);

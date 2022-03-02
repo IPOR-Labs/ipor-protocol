@@ -6,13 +6,12 @@ import "../interfaces/IIpToken.sol";
 import "../interfaces/IWarren.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IIporConfiguration.sol";
+import "../interfaces/IIporVault.sol";
+import "../security/IporOwnableUpgradeable.sol";
 
-import "../interfaces/IIporAssetConfiguration.sol";
-
-contract MiltonConfiguration is IMiltonConfiguration {
+contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
     //@notice max total amount used when opening position
-    uint256 internal constant _MAX_SWAP_TOTAL_AMOUNT = 1e23;
+    uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
     uint256 internal constant _MAX_SLIPPAGE_PERCENTAGE = 1e18;
 
@@ -23,7 +22,7 @@ contract MiltonConfiguration is IMiltonConfiguration {
 
     uint256 internal constant _INCOME_TAX_PERCENTAGE = 1e17;
 
-    uint256 internal constant _OPENING_FEE_PERCENTAGE = 3e14;
+    uint256 internal constant _OPENING_FEE_PERCENTAGE = 1e16;
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big pie going to Treasury Balance
     uint256 internal constant _OPENING_FEE_FOR_TREASURY_PERCENTAGE = 0;
@@ -36,21 +35,27 @@ contract MiltonConfiguration is IMiltonConfiguration {
 
     uint256 internal constant _MIN_COLLATERALIZATION_FACTOR_VALUE = 10 * 1e18;
 
-	uint8 internal _decimals;
+    uint8 internal _decimals;
     address internal _asset;
     IIpToken internal _ipToken;
     IWarren internal _warren;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
-    IIporConfiguration internal _iporConfiguration;
-    IIporAssetConfiguration internal _iporAssetConfiguration;
+    IIporVault internal _iporVault;
 
-	function getMiltonSpreadModel() external view override returns(address) {
-		return address(_miltonSpreadModel);
-	}
+    address internal _joseph;
 
-    function getMaxSwapTotalAmount() external pure override returns (uint256) {
-        return _MAX_SWAP_TOTAL_AMOUNT;
+    function getMiltonSpreadModel() external view override returns (address) {
+        return address(_miltonSpreadModel);
+    }
+
+    function getMaxSwapCollateralAmount()
+        external
+        pure
+        override
+        returns (uint256)
+    {
+        return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
     function getMaxSlippagePercentage()
@@ -138,8 +143,21 @@ contract MiltonConfiguration is IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 
-    function _getMaxSwapTotalAmount() internal pure virtual returns (uint256) {
-        return _MAX_SWAP_TOTAL_AMOUNT;
+	function getJoseph() external override view returns(address){
+		return _joseph;
+	}
+    function setJoseph(address joseph) external override onlyOwner {
+        _joseph = joseph;
+        emit JosephUpdated(joseph);
+    }
+
+    function _getMaxSwapCollateralAmount()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
     function _getMaxSlippagePercentage()
@@ -227,4 +245,3 @@ contract MiltonConfiguration is IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 }
-

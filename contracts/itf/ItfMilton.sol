@@ -4,7 +4,6 @@ pragma solidity 0.8.9;
 import "../amm/Milton.sol";
 
 contract ItfMilton is Milton {
-
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -87,4 +86,8 @@ contract ItfMilton is Milton {
             .getSwapReceiveFixed(swapId);
         return _calculateSwapReceiveFixedValue(calculateTimestamp, swap);
     }
+
+	function itfCalculateIncomeTaxValue(int256 positionValue) external pure returns(uint256) {
+		return _calculateIncomeTaxValue(positionValue);
+	}
 }

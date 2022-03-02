@@ -4,62 +4,309 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 
 const {
-    PERCENTAGE_2_18DEC,
     PERCENTAGE_2_5_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_8_18DEC,
     PERCENTAGE_50_18DEC,
-    PERCENTAGE_160_18DEC,
-    PERCENTAGE_365_18DEC,
-    USD_10_000_18DEC,
-    USD_10_18DEC,
-    USD_10_400_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
     ZERO,
-
     PERIOD_25_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
 const {
     assertError,
-    getLibraries,
     getStandardDerivativeParamsDAI,
     getStandardDerivativeParamsUSDT,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
+    prepareComplexTestDataDaiCase00,
+    prepareTestDataUsdtCase1,
+    prepareTestDataDaiCase1,
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
-    absValue,
 } = require("./Utils");
 
 describe("Joseph", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
+
+    it("should pause Smart Contract, sender is an admin", async () => {
+        //when
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            1,
+            1
+        );
+        await testData.josephDai.connect(admin).pause();
+
+        //then
+        await assertError(
+            testData.josephDai.connect(userOne).provideLiquidity(123),
+            "Pausable: paused"
+        );
+    });
+
+    it("should pause Smart Contract specific methods", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            1,
+            1
+        );
+        await testData.josephDai.connect(admin).pause();
+
+        //when
+        await assertError(
+            testData.josephDai.connect(userOne).provideLiquidity(123),
+            "Pausable: paused"
+        );
+
+        await assertError(
+            testData.josephDai.connect(userOne).redeem(123),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT pause Smart Contract specific methods when paused", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            1,
+            1
+        );
+        await testData.josephDai.connect(admin).pause();
+
+        //when
+        await testData.josephDai.connect(userOne).decimals();
+        await testData.josephDai.connect(userOne).asset();
+    });
+
+    it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        //when
+        await assertError(
+            testData.josephDai.connect(userThree).pause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should unpause Smart Contract, sender is an admin", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase00(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        await testData.josephDai.connect(admin).pause();
+
+        await assertError(
+            testData.josephDai.connect(userOne).provideLiquidity(123),
+            "Pausable: paused"
+        );
+
+        const expectedIpTokenBalance = BigInt("123");
+
+        //when
+        await testData.josephDai.connect(admin).unpause();
+        await testData.josephDai.connect(userOne).provideLiquidity(123);
+
+        //then
+        const actualIpTokenBalance = BigInt(
+            await testData.ipTokenDai.balanceOf(userOne.address)
+        );
+        expect(actualIpTokenBalance, "Incorrect IpToken balance.").to.be.eql(
+            expectedIpTokenBalance
+        );
+    });
+
+    it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        await testData.josephDai.connect(admin).pause();
+
+        //when
+        await assertError(
+            testData.josephDai.connect(userThree).unpause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should transfer ownership - simple case 1", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.josephDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //then
+        const actualNewOwner = await testData.josephDai
+            .connect(userOne)
+            .owner();
+        expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
+    });
+
+    it("should NOT transfer ownership - sender not current owner", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await assertError(
+            testData.josephDai
+                .connect(userThree)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await assertError(
+            testData.josephDai.connect(userThree).confirmTransferOwnership(),
+            //then
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        const expectedNewOwner = userTwo;
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.josephDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        await assertError(
+            testData.josephDai
+                .connect(expectedNewOwner)
+                .confirmTransferOwnership(),
+            "IPOR_6"
+        );
+    });
+
+    it("should NOT transfer ownership - sender already lost ownership", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        const expectedNewOwner = userTwo;
+
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        await testData.josephDai
+            .connect(expectedNewOwner)
+            .confirmTransferOwnership();
+
+        //when
+        await assertError(
+            testData.josephDai
+                .connect(admin)
+                .transferOwnership(expectedNewOwner.address),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should have rights to transfer ownership - sender still have rights", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase1(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        const expectedNewOwner = userTwo;
+
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //when
+        await testData.josephDai
+            .connect(admin)
+            .transferOwnership(expectedNewOwner.address);
+
+        //then
+        const actualNewOwner = await testData.josephDai
+            .connect(userOne)
+            .owner();
+        expect(admin.address).to.be.eql(actualNewOwner);
+    });
+
     it("should setup init value for Redeem LP Max Utilization Percentage", async () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT", "USDC"],
             data,
-            0
+            0,
+            1
         );
 
         //when
@@ -78,22 +325,11 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
         const liquidityAmount = USD_14_000_18DEC;
@@ -117,7 +353,7 @@ describe("Joseph", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageDai.getBalance()
+                await testData.miltonDai.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -147,11 +383,9 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - USDT 6 decimals", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataUsdtCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -185,7 +419,7 @@ describe("Joseph", () => {
         );
         const actualLiquidityPoolBalanceMilton = BigInt(
             await (
-                await testData.miltonStorageUsdt.getBalance()
+                await testData.miltonUsdt.getAccruedBalance()
             ).liquidityPool
         );
         const actualUnderlyingBalanceSender = BigInt(
@@ -215,22 +449,11 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance and ipToken Total Supply is zero", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
 
         const expectedExchangeRate = BigInt("1000000000000000000");
@@ -252,22 +475,11 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, DAI 18 decimals", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
@@ -296,6 +508,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
+            0,
             0
         );
         await prepareApproveForUsers(
@@ -334,22 +547,11 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is zero and ipToken Total Supply is NOT zero", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
+
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
@@ -357,14 +559,17 @@ describe("Joseph", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_10_000_18DEC, params.openTimestamp);
+            .itfProvideLiquidity(
+                TC_TOTAL_AMOUNT_10_000_18DEC,
+                params.openTimestamp
+            );
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
 
         await testData.miltonStorageDai.setJoseph(userOne.address);
         await testData.miltonStorageDai
             .connect(userOne)
-            .subtractLiquidity(USD_10_000_18DEC);
+            .subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
@@ -382,26 +587,14 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000747756729810568");
+        let expectedExchangeRate = BigInt("1000074977506747976");
 
         await testData.warren
             .connect(userOne)
@@ -442,21 +635,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -491,9 +672,9 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("1004250360789776789");
+        const expectedExchangeRate = BigInt("1003093533812002519");
 
         //when
         let actualExchangeRate = BigInt(
@@ -513,21 +694,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -570,9 +739,9 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("1002879245824171323");
+        const expectedExchangeRate = BigInt("1001673731442211174");
 
         //when
         let actualExchangeRate = BigInt(
@@ -593,21 +762,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -651,9 +808,9 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("989066232808424041");
+        const expectedExchangeRate = BigInt("987823434476506361");
 
         //when
         let actualExchangeRate = BigInt(
@@ -673,21 +830,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -730,9 +875,9 @@ describe("Joseph", () => {
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigInt("989066232808424042");
+        const expectedExchangeRate = BigInt("987823434476506362");
 
         //when
         let actualExchangeRate = BigInt(
@@ -751,21 +896,9 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -815,13 +948,13 @@ describe("Joseph", () => {
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         // Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("8471981316324997495722");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("8494848805632282803369");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -843,21 +976,9 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -907,13 +1028,13 @@ describe("Joseph", () => {
             params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("8471981316324997665162");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("8494848805632282973266");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -934,21 +1055,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1000,15 +1109,15 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("232016605434837042");
+        const expectedExchangeRate = BigInt("231204643857984158");
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("-8840328330078258430809");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("-8864190058051077882737");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1027,21 +1136,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
 
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1093,16 +1190,16 @@ describe("Joseph", () => {
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
         );
-        const expectedExchangeRate = BigInt("232016605434837039");
+        const expectedExchangeRate = BigInt("231204643857984155");
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigInt("-8840328330078258261370");
-        const expectedLiquidityPoolBalance = BigInt("5080667996011964107677");
+        const expectedSoap = BigInt("-8864190058051077712840");
+        const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
         const soap = await testData.miltonDai.itfCalculateSoap(
             calculateTimestamp
         );
-        const balance = await testData.miltonStorageDai.getBalance();
+        const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
 
@@ -1125,6 +1222,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
+            0,
             0
         );
         await prepareApproveForUsers(
@@ -1140,7 +1238,7 @@ describe("Joseph", () => {
         await setupIpTokenUsdtInitialValues(liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsUSDT(userTwo, testData);
 
-        let expectedExchangeRate = BigInt("1000747756729810568");
+        let expectedExchangeRate = BigInt("1000074977506747976");
 
         await testData.warren
             .connect(userOne)
@@ -1180,21 +1278,9 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareComplexTestDataDaiCase00(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
+            data
         );
         await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
@@ -1222,7 +1308,7 @@ describe("Joseph", () => {
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - provide liquidity without mint ipToken
 
-        let balance = await testData.miltonStorageDai.getBalance();
+        let balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedIpTokenDaiBalance = ZERO;
 
@@ -1247,13 +1333,14 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
     });
 
-    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity, initial Exchange Rate equal to 1.5", async () => {
+    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity, DAI 18 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1291,16 +1378,15 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
         const expectedIpTokenBalanceForUserThree = BigInt(
-            "874999999999999999854"
+            "1142857142857142857143"
         );
 
-        // //when
+        //when
         await testData.josephDai
             .connect(userThree)
             .itfProvideLiquidity(
@@ -1335,13 +1421,14 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
     });
 
-    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, DAI 18 decimals", async () => {
+    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, DAI 18 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            1
+            1,
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1379,12 +1466,13 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
-        const expectedIpTokenBalanceForUserThree = BigInt("0");
+        const expectedIpTokenBalanceForUserThree = BigInt(
+            "267857142857142857289"
+        );
 
         //when
         await testData.josephDai
@@ -1424,13 +1512,14 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
     });
 
-    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, initial Exchange Rate equal to 1.5, USDT 6 decimals", async () => {
+    it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1468,14 +1557,15 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        //after this withdraw initial exchange rate is 1,5
-        const expectedExchangeRate = BigInt("1714285714285714286");
+        const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonUsdt.calculateExchangeRate(
                 params.openTimestamp
             )
         );
-        const expectedIpTokenBalanceForUserThree = BigInt("0");
+        const expectedIpTokenBalanceForUserThree = BigInt(
+            "267857142857142857289"
+        );
 
         //when
         await testData.josephUsdt
@@ -1516,11 +1606,9 @@ describe("Joseph", () => {
 
     it("should NOT provide liquidity because of empty Liquidity Pool", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestDataDaiCase1(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            0
+            data
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

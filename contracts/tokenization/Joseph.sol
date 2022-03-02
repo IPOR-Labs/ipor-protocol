@@ -2,68 +2,193 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../interfaces/IIpToken.sol";
+
+import "../configuration/JosephConfiguration.sol";
 import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
 import {IporErrors} from "../IporErrors.sol";
-import "../interfaces/IMiltonStorage.sol";
 import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
-import "../interfaces/IMilton.sol";
+import "hardhat/console.sol";
 
-contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
+contract Joseph is
+    UUPSUpgradeable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    JosephConfiguration,
+    IJoseph
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
+    modifier onlyPublicationFeeTransferer() {
+        require(
+            msg.sender == _publicationFeeTransferer,
+            IporErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
+        );
+        _;
+    }
 
-    uint8 internal _decimals;
-    address internal _asset;
-    IIpToken private _ipToken;
-    IMilton private _milton;
-    IMiltonStorage private _miltonStorage;
+    modifier onlyTreasureTransferer() {
+        require(
+            msg.sender == _treasureTransferer,
+            IporErrors.CALLER_NOT_TREASURE_TRANSFERER
+        );
+        _;
+    }
 
     function initialize(
         address assetAddress,
         address ipToken,
         address milton,
-        address miltonStorage
+        address miltonStorage,
+        address iporVault
     ) public initializer {
         __Ownable_init();
         require(address(assetAddress) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(iporVault) != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = assetAddress;
         _decimals = ERC20Upgradeable(assetAddress).decimals();
         _ipToken = IIpToken(ipToken);
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
+        _iporVault = IIporVault(iporVault);
     }
 
-    function _authorizeUpgrade(address) internal override onlyOwner {}
-
-    function decimals() external view returns (uint8) {
-        return _decimals;
+    function getVersion() external pure override returns (uint256) {
+        return 1;
     }
 
-    function asset() external view returns (address) {
-        return _asset;
+    function pause() external override onlyOwner {
+        _pause();
     }
 
-    function provideLiquidity(uint256 liquidityAmount) external override {
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
+
+    function rebalance() external override {
+        address miltonAddr = address(_milton);
+        uint256 miltonAssetBalance = IERC20Upgradeable(_asset).balanceOf(
+            miltonAddr
+        );
+
+        uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
+
+        uint256 ratio = IporMath.division(
+            miltonAssetBalance * Constants.D18,
+            miltonAssetBalance + iporVaultAssetBalance
+        );
+
+        if (ratio > _MILTON_STANLEY_BALANCE_PERCENTAGE) {
+            uint256 assetValue = miltonAssetBalance -
+                IporMath.division(
+                    _MILTON_STANLEY_BALANCE_PERCENTAGE *
+                        (miltonAssetBalance + iporVaultAssetBalance),
+                    Constants.D18
+                );
+            _milton.depositToVault(assetValue);
+        } else {
+            uint256 assetValue = IporMath.division(
+                _MILTON_STANLEY_BALANCE_PERCENTAGE *
+                    (miltonAssetBalance + iporVaultAssetBalance),
+                Constants.D18
+            ) - miltonAssetBalance;
+
+            _milton.withdrawFromVault(assetValue);
+        }
+    }
+
+    function depositToVault(uint256 assetValue) external override onlyOwner {
+        _milton.depositToVault(assetValue);
+    }
+
+    function withdrawFromVault(uint256 assetValue) external override onlyOwner {
+        _milton.withdrawFromVault(assetValue);
+    }
+
+    function provideLiquidity(uint256 liquidityAmount)
+        external
+        override
+        whenNotPaused
+    {
         _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
     }
 
-    function redeem(uint256 ipTokenValue) external override {
+    function redeem(uint256 ipTokenValue) external override whenNotPaused {
         _redeem(ipTokenValue, block.timestamp);
+    }
+
+    function transferTreasury(uint256 assetValue)
+        external
+        override
+        onlyTreasureTransferer
+        nonReentrant
+    {
+        require(
+            address(0) != _treasureTreasurer,
+            IporErrors.INCORRECT_TREASURE_TREASURER_ADDRESS
+        );
+
+        _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
+
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            address(_milton),
+            _treasureTreasurer,
+            assetValue
+        );
+    }
+
+    function transferPublicationFee(uint256 assetValue)
+        external
+        override
+        onlyPublicationFeeTransferer
+        nonReentrant
+    {
+        require(
+            address(0) != _charlieTreasurer,
+            IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS
+        );
+
+        _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
+
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            address(_milton),
+            _charlieTreasurer,
+            assetValue
+        );
+    }
+
+    //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
+    function checkVaultReservesRatio()
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _checkVaultReservesRatio();
+    }
+
+    function _checkVaultReservesRatio() internal view returns (uint256) {
+        address miltonAddr = address(_milton);
+        uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(miltonAddr);
+        uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
+        return
+            IporMath.division(
+                miltonBalance * _decimals,
+                miltonBalance + iporVaultAssetBalance
+            );
     }
 
     //@param liquidityAmount in decimals like asset
@@ -85,10 +210,6 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
 
         _miltonStorage.addLiquidity(wadAssetValue);
 
-        //TODO: account Address from OZ and use call
-        //TODO: use call instead transfer if possible!!
-
-        //TODO: add from address to black list
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(milton),
@@ -102,6 +223,7 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
         _ipToken.mint(msg.sender, ipTokenValue);
 
         emit ProvideLiquidity(
+            timestamp,
             msg.sender,
             address(milton),
             exchangeRate,
@@ -121,8 +243,8 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        DataTypes.MiltonTotalBalanceMemory memory balance = _miltonStorage
-            .getBalance();
+        DataTypes.MiltonBalanceMemory memory balance = _milton
+            .getAccruedBalance();
 
         uint256 wadAssetValue = IporMath.division(
             ipTokenValue * exchangeRate,
@@ -161,6 +283,7 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
         );
 
         emit Redeem(
+            timestamp,
             address(milton),
             msg.sender,
             exchangeRate,
@@ -180,4 +303,6 @@ contract Joseph is UUPSUpgradeable, OwnableUpgradeable, IJoseph {
                 totalLiquidityPoolBalance - redeemedAmount
             );
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

@@ -2,11 +2,10 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-
+import "../security/IporOwnableUpgradeable.sol";
 import {IporErrors} from "../IporErrors.sol";
 import "../interfaces/IWarren.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
@@ -21,17 +20,17 @@ import {IporMath} from "../libraries/IporMath.sol";
  */
 contract Warren is
     UUPSUpgradeable,
-    OwnableUpgradeable,
+    IporOwnableUpgradeable,
     PausableUpgradeable,
     IWarren
 {
     using SafeCast for uint256;
     using IporLogic for DataTypes.IPOR;
 
-    uint256 private constant _DECAY_FACTOR_VALUE = 1e17;
+    uint256 internal constant _DECAY_FACTOR_VALUE = 5e17;
 
     mapping(address => uint256) internal _updaters;
-	
+
     mapping(address => DataTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {
@@ -44,6 +43,18 @@ contract Warren is
 
     function initialize() public initializer {
         __Ownable_init();
+    }
+
+    function getVersion() external pure returns (uint256) {
+        return 1;
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 
     function getIndex(address asset)
@@ -109,6 +120,7 @@ contract Warren is
         external
         override
         onlyUpdater
+        whenNotPaused
     {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = indexValue;
@@ -121,11 +133,11 @@ contract Warren is
     function updateIndexes(
         address[] memory assets,
         uint256[] memory indexValues
-    ) external override onlyUpdater {
+    ) external override onlyUpdater whenNotPaused {
         _updateIndexes(assets, indexValues, block.timestamp);
     }
 
-    function addAsset(address asset) external override onlyOwner {
+    function addAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
@@ -141,7 +153,12 @@ contract Warren is
         emit IporIndexAddAsset(asset);
     }
 
-    function removeAsset(address asset) external override onlyOwner {
+    function removeAsset(address asset)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
@@ -151,19 +168,34 @@ contract Warren is
         emit IporIndexRemoveAsset(asset);
     }
 
-    function addUpdater(address updater) external override onlyOwner {
+    function addUpdater(address updater)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _updaters[updater] = 1;
         emit IporIndexAddUpdater(updater);
     }
 
-    function removeUpdater(address updater) external override onlyOwner {
+    function removeUpdater(address updater)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _updaters[updater] = 0;
         emit IporIndexRemoveUpdater(updater);
     }
 
-	function isUpdater(address updater) external view override returns(uint256) {
-		return _updaters[updater];
-	}
+    function isUpdater(address updater)
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return _updaters[updater];
+    }
 
     function _updateIndexes(
         address[] memory assets,

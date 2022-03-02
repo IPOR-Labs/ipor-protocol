@@ -19,20 +19,19 @@ const {
     USD_10_6DEC,
     USD_10_18DEC,
     USD_20_18DEC,
-    USD_10_000_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_10_400_18DEC,
     USD_14_000_18DEC,
     USD_28_000_18DEC,
     USD_14_000_6DEC,
-    USD_9063__63_18DEC,
+    TC_COLLATERAL_18DEC,
     USD_10_000_000_6DEC,
 
     USD_10_000_000_18DEC,
     TC_OPENING_FEE_6DEC,
     TC_OPENING_FEE_18DEC,
     TC_COLLATERAL_6DEC,
-    TC_COLLATERAL_18DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
@@ -49,7 +48,6 @@ const {
 
 const {
     assertError,
-    getLibraries,
     getPayFixedDerivativeParamsDAICase1,
     prepareApproveForUsers,
     prepareData,
@@ -60,19 +58,14 @@ const {
 describe("Milton - Utilization Rate", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
-    let libraries;
 
     before(async () => {
-        libraries = await getLibraries();
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
-        data = await prepareData(libraries, [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-        ]);
+        data = await prepareData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            1
+        );
     });
 
     //TODO: clarify when spread equasion will be clarified
@@ -82,22 +75,6 @@ describe("Milton - Utilization Rate", () => {
     //         [admin, userOne, userTwo, userThree, liquidityProvider],
     //         ["DAI"],
     //         data
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("OPENING_FEE_PERCENTAGE_ADMIN_ROLE"),
-    //         admin.address
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("OPENING_FEE_PERCENTAGE_ROLE"),
-    //         admin.address
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ADMIN_ROLE"),
-    //         admin.address
-    //     );
-    //     await testData.iporAssetConfigurationDai.grantRole(
-    //         keccak256("LP_MAX_UTILIZATION_PERCENTAGE_ROLE"),
-    //         admin.address
     //     );
     //     await prepareApproveForUsers(
     //         [userOne, userTwo, userThree, liquidityProvider],
@@ -113,11 +90,6 @@ describe("Milton - Utilization Rate", () => {
     //         userTwo,
     //         testData
     //     );
-
-    //     let oldLpMaxUtilizationPercentage =
-    //         await testData.iporAssetConfigurationDai.getLiquidityPoolMaxUtilizationPercentage();
-    //     let oldOpeningFeePercentage =
-    //         await testData.iporAssetConfigurationDai.getOpeningFeePercentage();
 
     //     await testData.warren.connect(userOne).itfUpdateIndex(
     //         params.asset,
@@ -144,13 +116,6 @@ describe("Milton - Utilization Rate", () => {
     //         //then
     //         "IPOR_35"
     //     );
-
-    //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-    //         oldLpMaxUtilizationPercentage
-    //     );
-    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(
-    //         oldOpeningFeePercentage
-    //     );
     // });
 
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
@@ -159,7 +124,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -203,7 +169,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -247,7 +214,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(
@@ -294,7 +262,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(
@@ -341,7 +310,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -389,7 +359,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(
@@ -437,7 +408,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            0
+            0,
+            1
         );
 
         await prepareApproveForUsers(
@@ -485,7 +457,8 @@ describe("Milton - Utilization Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             data,
-            6
+            6,
+            1
         );
 
         await prepareApproveForUsers(
