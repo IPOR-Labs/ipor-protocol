@@ -49,14 +49,6 @@ contract Warren is
         return 1;
     }
 
-    function pause() external onlyOwner {
-        _pause();
-    }
-
-    function unpause() external onlyOwner {
-        _unpause();
-    }
-
     function getIndex(address asset)
         external
         view
@@ -72,7 +64,7 @@ contract Warren is
         DataTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
         return (
             indexValue = ipor.indexValue,
@@ -96,7 +88,7 @@ contract Warren is
         DataTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
 
         accruedIpor = DataTypes.AccruedIpor(
@@ -137,37 +129,6 @@ contract Warren is
         _updateIndexes(assets, indexValues, block.timestamp);
     }
 
-    function addAsset(address asset) external override onlyOwner whenNotPaused {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
-        );
-        _indexes[asset] = DataTypes.IPOR(
-            0,
-            0,
-            Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-            0,
-            0
-        );
-        emit IporIndexAddAsset(asset);
-    }
-
-    function removeAsset(address asset)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-        );
-        delete _indexes[asset];
-        emit IporIndexRemoveAsset(asset);
-    }
-
     function addUpdater(address updater)
         external
         override
@@ -197,6 +158,45 @@ contract Warren is
         return _updaters[updater];
     }
 
+    function addAsset(address asset) external override onlyOwner whenNotPaused {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(
+            _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
+            IporErrors.MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
+        );
+        _indexes[asset] = DataTypes.IPOR(
+            0,
+            0,
+            Constants.WAD_YEAR_IN_SECONDS.toUint128(),
+            0,
+            0
+        );
+        emit IporIndexAddAsset(asset);
+    }
+
+    function removeAsset(address asset)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(
+            _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
+        );
+        delete _indexes[asset];
+        emit IporIndexRemoveAsset(asset);
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
+
     function _updateIndexes(
         address[] memory assets,
         uint256[] memory indexValues,
@@ -220,7 +220,7 @@ contract Warren is
         DataTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
 
         uint256 newQuasiIbtPrice;

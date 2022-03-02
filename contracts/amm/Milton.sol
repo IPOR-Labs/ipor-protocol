@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -31,7 +30,6 @@ import "hardhat/console.sol";
 //TODO: add pausable modifier for methodds
 contract Milton is
     UUPSUpgradeable,
-    PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     MiltonConfiguration,
     IMiltonEvents,
@@ -79,87 +77,13 @@ contract Milton is
         return 1;
     }
 
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
-    function depositToVault(uint256 assetValue)
+    function getAccruedBalance()
         external
-        nonReentrant
-        onlyJoseph
-    {
-        uint256 balance = _iporVault.deposit(assetValue);
-        _miltonStorage.updateStorageWhenDepositToVault(assetValue, balance);
-    }
-
-    function withdrawFromVault(uint256 assetValue)
-        external
-        nonReentrant
-        onlyJoseph
-    {
-        (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
-            assetValue
-        );
-        _miltonStorage.updateStorageWhenWithdrawFromVault(
-            withdrawnValue,
-            vaultBalance
-        );
-    }
-
-    function setupMaxAllowance(address spender)
-        external
+        view
         override
-        onlyOwner
-        whenNotPaused
+        returns (DataTypes.MiltonBalanceMemory memory)
     {
-        IERC20Upgradeable(_asset).safeIncreaseAllowance(
-            spender,
-            Constants.MAX_VALUE
-        );
-    }
-
-    function openSwapPayFixed(
-        uint256 totalAmount,
-        uint256 maximumSlippage,
-        uint256 collateralizationFactor
-    ) external override nonReentrant returns (uint256) {
-        return
-            _openSwapPayFixed(
-                block.timestamp,
-                totalAmount,
-                maximumSlippage,
-                collateralizationFactor
-            );
-    }
-
-    function openSwapReceiveFixed(
-        uint256 totalAmount,
-        uint256 maximumSlippage,
-        uint256 collateralizationFactor
-    ) external override nonReentrant returns (uint256) {
-        return
-            _openSwapReceiveFixed(
-                block.timestamp,
-                totalAmount,
-                maximumSlippage,
-                collateralizationFactor
-            );
-    }
-
-    function closeSwapPayFixed(uint256 swapId) external override nonReentrant {
-        _closeSwapPayFixed(swapId, block.timestamp);
-    }
-
-    function closeSwapReceiveFixed(uint256 swapId)
-        external
-        override
-        nonReentrant
-    {
-        _closeSwapReceiveFixed(swapId, block.timestamp);
+        return _getAccruedBalance();
     }
 
     function calculateSpread()
@@ -189,21 +113,6 @@ contract Milton is
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
-        external
-        view
-        override
-        returns (int256)
-    {
-        return _calculateSwapPayFixedValue(block.timestamp, swap);
-    }
-
-    function calculateSwapReceiveFixedValue(
-        DataTypes.IporSwapMemory memory swap
-    ) external view override returns (int256) {
-        return _calculateSwapReceiveFixedValue(block.timestamp, swap);
-    }
-
     function calculateExchangeRate(uint256 calculateTimestamp)
         external
         view
@@ -230,13 +139,110 @@ contract Milton is
         }
     }
 
-    function getAccruedBalance()
+    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
         external
         view
         override
-        returns (DataTypes.MiltonBalanceMemory memory)
+        returns (int256)
     {
-        return _getAccruedBalance();
+        return _calculateSwapPayFixedValue(block.timestamp, swap);
+    }
+
+    function calculateSwapReceiveFixedValue(
+        DataTypes.IporSwapMemory memory swap
+    ) external view override returns (int256) {
+        return _calculateSwapReceiveFixedValue(block.timestamp, swap);
+    }
+
+    function openSwapPayFixed(
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) external override nonReentrant whenNotPaused returns (uint256) {
+        return
+            _openSwapPayFixed(
+                block.timestamp,
+                totalAmount,
+                maximumSlippage,
+                collateralizationFactor
+            );
+    }
+
+    function openSwapReceiveFixed(
+        uint256 totalAmount,
+        uint256 maximumSlippage,
+        uint256 collateralizationFactor
+    ) external override nonReentrant whenNotPaused returns (uint256) {
+        return
+            _openSwapReceiveFixed(
+                block.timestamp,
+                totalAmount,
+                maximumSlippage,
+                collateralizationFactor
+            );
+    }
+
+    function closeSwapPayFixed(uint256 swapId)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+    {
+        _closeSwapPayFixed(swapId, block.timestamp);
+    }
+
+    function closeSwapReceiveFixed(uint256 swapId)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+    {
+        _closeSwapReceiveFixed(swapId, block.timestamp);
+    }
+
+    function depositToStanley(uint256 assetValue)
+        external
+        onlyJoseph
+        nonReentrant
+        whenNotPaused
+    {
+        uint256 balance = _iporVault.deposit(assetValue);
+        _miltonStorage.updateStorageWhenDepositToStanley(assetValue, balance);
+    }
+
+    function withdrawFromStanley(uint256 assetValue)
+        external
+        onlyJoseph
+        nonReentrant
+        whenNotPaused
+    {
+        (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
+            assetValue
+        );
+        _miltonStorage.updateStorageWhenWithdrawFromStanley(
+            withdrawnValue,
+            vaultBalance
+        );
+    }
+
+    function setupMaxAllowance(address spender)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        IERC20Upgradeable(_asset).safeIncreaseAllowance(
+            spender,
+            Constants.MAX_VALUE
+        );
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     function _getAccruedBalance()

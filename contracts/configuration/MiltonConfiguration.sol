@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IWarren.sol";
@@ -9,7 +10,11 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IIporVault.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
+contract MiltonConfiguration is
+    PausableUpgradeable,
+    IporOwnableUpgradeable,
+    IMiltonConfiguration
+{
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
@@ -143,10 +148,16 @@ contract MiltonConfiguration is IporOwnableUpgradeable, IMiltonConfiguration {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 
-	function getJoseph() external override view returns(address){
-		return _joseph;
-	}
-    function setJoseph(address joseph) external override onlyOwner {
+    function getJoseph() external view override returns (address) {
+        return _joseph;
+    }
+
+    function setJoseph(address joseph)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
         _joseph = joseph;
         emit JosephUpdated(joseph);
     }

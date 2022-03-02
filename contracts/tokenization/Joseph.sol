@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -20,7 +20,6 @@ import "hardhat/console.sol";
 
 contract Joseph is
     UUPSUpgradeable,
-    PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     JosephConfiguration,
     IJoseph
@@ -70,15 +69,19 @@ contract Joseph is
         return 1;
     }
 
-    function pause() external override onlyOwner {
-        _pause();
+    function provideLiquidity(uint256 liquidityAmount)
+        external
+        override
+        whenNotPaused
+    {
+        _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
     }
 
-    function unpause() external override onlyOwner {
-        _unpause();
+    function redeem(uint256 ipTokenValue) external override whenNotPaused {
+        _redeem(ipTokenValue, block.timestamp);
     }
 
-    function rebalance() external override {
+    function rebalance() external override whenNotPaused {
         address miltonAddr = address(_milton);
         uint256 miltonAssetBalance = IERC20Upgradeable(_asset).balanceOf(
             miltonAddr
@@ -98,7 +101,7 @@ contract Joseph is
                         (miltonAssetBalance + iporVaultAssetBalance),
                     Constants.D18
                 );
-            _milton.depositToVault(assetValue);
+            _milton.depositToStanley(assetValue);
         } else {
             uint256 assetValue = IporMath.division(
                 _MILTON_STANLEY_BALANCE_PERCENTAGE *
@@ -106,35 +109,34 @@ contract Joseph is
                 Constants.D18
             ) - miltonAssetBalance;
 
-            _milton.withdrawFromVault(assetValue);
+            _milton.withdrawFromStanley(assetValue);
         }
     }
 
-    function depositToVault(uint256 assetValue) external override onlyOwner {
-        _milton.depositToVault(assetValue);
-    }
-
-    function withdrawFromVault(uint256 assetValue) external override onlyOwner {
-        _milton.withdrawFromVault(assetValue);
-    }
-
-    function provideLiquidity(uint256 liquidityAmount)
+    function depositToStanley(uint256 assetValue)
         external
         override
+        onlyOwner
         whenNotPaused
     {
-        _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
+        _milton.depositToStanley(assetValue);
     }
 
-    function redeem(uint256 ipTokenValue) external override whenNotPaused {
-        _redeem(ipTokenValue, block.timestamp);
+    function withdrawFromStanley(uint256 assetValue)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        _milton.withdrawFromStanley(assetValue);
     }
 
     function transferTreasury(uint256 assetValue)
         external
         override
-        onlyTreasureTransferer
         nonReentrant
+        whenNotPaused
+        onlyTreasureTransferer
     {
         require(
             address(0) != _treasureTreasurer,
@@ -153,8 +155,9 @@ contract Joseph is
     function transferPublicationFee(uint256 assetValue)
         external
         override
-        onlyPublicationFeeTransferer
         nonReentrant
+        whenNotPaused
+        onlyPublicationFeeTransferer
     {
         require(
             address(0) != _charlieTreasurer,
@@ -180,15 +183,21 @@ contract Joseph is
         return _checkVaultReservesRatio();
     }
 
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
+
     function _checkVaultReservesRatio() internal view returns (uint256) {
         address miltonAddr = address(_milton);
         uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(miltonAddr);
         uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
-        return
-            IporMath.division(
-                miltonBalance * _decimals,
-                miltonBalance + iporVaultAssetBalance
-            );
+        uint256 balance = miltonBalance + iporVaultAssetBalance;
+        require(balance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
+        return IporMath.division(miltonBalance * _decimals, balance);
     }
 
     //@param liquidityAmount in decimals like asset

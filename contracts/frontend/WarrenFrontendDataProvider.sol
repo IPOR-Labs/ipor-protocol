@@ -37,13 +37,13 @@ contract WarrenFrontendDataProvider is
 
     function getIndexes() external view override returns (IporFront[] memory) {
         IporFront[] memory indexes = new IporFront[](3);
-        indexes[0] = _createIporFrond(_assetDai);
-        indexes[1] = _createIporFrond(_assetUsdt);
-        indexes[2] = _createIporFrond(_assetUsdc);
+        indexes[0] = _createIporFront(_assetDai);
+        indexes[1] = _createIporFront(_assetUsdt);
+        indexes[2] = _createIporFront(_assetUsdc);
         return indexes;
     }
 
-    function _createIporFrond(address asset)
+    function _createIporFront(address asset)
         internal
         view
         returns (IporFront memory iporFront)

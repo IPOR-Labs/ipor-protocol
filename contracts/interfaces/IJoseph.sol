@@ -17,23 +17,19 @@ interface IJoseph {
         uint256 exchangeRate,
         uint256 assetValue,
         uint256 ipTokenValue
-    );    
+    );
 
     function getVersion() external pure returns (uint256);
-
-    function pause() external;
-
-    function unpause() external;    
-
-    function rebalance() external;
-
-    function depositToVault(uint256 assetValue) external;
-
-    function withdrawFromVault(uint256 assetValue) external;
 
     function provideLiquidity(uint256 liquidityAmount) external;
 
     function redeem(uint256 ipTokenVolume) external;
+
+    function rebalance() external;
+
+    function depositToStanley(uint256 assetValue) external;
+
+    function withdrawFromStanley(uint256 assetValue) external;
 
     //@notice Transfers asset value from Miltons's Treasure Balance to Treasure Treaserer account
     function transferTreasury(uint256 assetValue) external;
@@ -42,4 +38,8 @@ interface IJoseph {
     function transferPublicationFee(uint256 assetValue) external;
 
     function checkVaultReservesRatio() external returns (uint256);
+
+    function pause() external;
+
+    function unpause() external;
 }

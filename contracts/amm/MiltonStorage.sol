@@ -24,6 +24,7 @@ contract MiltonStorage is
     uint64 private _lastSwapId;
     address private _milton;
     address private _joseph;
+
     DataTypes.MiltonBalanceStorage internal _balances;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
     DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
@@ -48,14 +49,8 @@ contract MiltonStorage is
         return 1;
     }
 
-    function _authorizeUpgrade(address) internal override onlyOwner {}
-
-    function setMilton(address milton) external override onlyOwner {
-        _milton = milton;
-    }
-
-    function setJoseph(address joseph) external override onlyOwner {
-        _joseph = joseph;
+    function getLastSwapId() external view override returns (uint256) {
+        return _lastSwapId;
     }
 
     function getBalance()
@@ -100,42 +95,6 @@ contract MiltonStorage is
     {
         payFixedTotalNotional = _soapIndicatorsPayFixed.totalNotional;
         recFixedTotalNotional = _soapIndicatorsReceiveFixed.totalNotional;
-    }
-
-    function getLastSwapId() external view override returns (uint256) {
-        return _lastSwapId;
-    }
-
-    function addLiquidity(uint256 liquidityAmount)
-        external
-        override
-        onlyJoseph
-    {
-        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
-        _balances.liquidityPool =
-            _balances.liquidityPool +
-            liquidityAmount.toUint128();
-    }
-
-    // TODO: Removed after Internal and Investor tests liquidityAmount in WAND
-    function addLiquidityAssetManagmentMock(uint256 liquidityAmount)
-        public
-        onlyOwner
-    {
-        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
-        _balances.liquidityPool =
-            _balances.liquidityPool +
-            liquidityAmount.toUint128();
-    }
-
-    function subtractLiquidity(uint256 liquidityAmount)
-        external
-        override
-        onlyJoseph
-    {
-        _balances.liquidityPool =
-            _balances.liquidityPool -
-            liquidityAmount.toUint128();
     }
 
     function getSwapPayFixed(uint256 swapId)
@@ -188,149 +147,6 @@ contract MiltonStorage is
             );
     }
 
-    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
-        external
-        override
-        onlyJoseph
-    {
-        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
-
-        uint256 balance = _balances.iporPublicationFee;
-
-        require(
-            transferedValue <= balance,
-            IporErrors.IPOR_PUBLICATION_FEE_BALANCE_TOO_LOW
-        );
-
-        balance = balance - transferedValue;
-
-        _balances.iporPublicationFee = balance.toUint128();
-    }
-
-    function updateStorageWhenTransferTreasure(uint256 transferedValue)
-        external
-        override
-        onlyJoseph
-    {
-        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
-
-        uint256 balance = _balances.treasury;
-
-        require(
-            transferedValue <= balance,
-            IporErrors.TREASURE_BALANCE_TOO_LOW
-        );
-
-        balance = balance - transferedValue;
-
-        _balances.treasury = balance.toUint128();
-    }
-
-    function updateStorageWhenOpenSwapPayFixed(
-        DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
-    ) external override onlyMilton returns (uint256) {
-        uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
-        _updateBalancesWhenOpenSwapPayFixed(
-            newSwap.collateral,
-            openingAmount,
-            cfgLiquidationDepositAmount,
-            cfgIporPublicationFeeAmount,
-            cfgOpeningFeeForTreasuryPercentage
-        );
-        _updateSoapIndicatorsWhenOpenSwapPayFixed(newSwap);
-        return id;
-    }
-
-    function updateStorageWhenOpenSwapReceiveFixed(
-        DataTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
-    ) external override onlyMilton returns (uint256) {
-        uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
-        _updateBalancesWhenOpenSwapReceiveFixed(
-            newSwap.collateral,
-            openingAmount,
-            cfgLiquidationDepositAmount,
-            cfgIporPublicationFeeAmount,
-            cfgOpeningFeeForTreasuryPercentage
-        );
-        _updateSoapIndicatorsWhenOpenSwapReceiveFixed(newSwap);
-        return id;
-    }
-
-    function updateStorageWhenCloseSwapPayFixed(
-        address account,
-        DataTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
-        uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
-    ) external override onlyMilton {
-        _updateSwapsWhenClosePayFixed(iporSwap);
-        _updateBalancesWhenCloseSwapPayFixed(
-            account,
-            iporSwap,
-            positionValue,
-            closingTimestamp,
-            cfgIncomeTaxPercentage
-        );
-        _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
-    }
-
-    function updateStorageWhenCloseSwapReceiveFixed(
-        address account,
-        DataTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
-        uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
-    ) external override onlyMilton {
-        _updateSwapsWhenCloseReceiveFixed(iporSwap);
-        _updateBalancesWhenCloseSwapReceiveFixed(
-            account,
-            iporSwap,
-            positionValue,
-            closingTimestamp,
-            cfgIncomeTaxPercentage
-        );
-        _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
-            iporSwap,
-            closingTimestamp
-        );
-    }
-
-    function updateStorageWhenWithdrawFromVault(
-        uint256 withdrawnValue,
-        uint256 vaultBalance
-    ) external override onlyMilton {
-        uint256 currentVaultBalance = _balances.vault;
-        uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
-        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
-        _balances.liquidityPool = liquidityPoolBalance.toUint128();
-        _balances.vault = vaultBalance.toUint128();
-    }
-
-    function updateStorageWhenDepositToVault(
-        uint256 depositValue,
-        uint256 vaultBalance
-    ) external override onlyMilton {
-        uint256 currentVaultBalance = _balances.vault;
-        require(
-            currentVaultBalance <= (vaultBalance - depositValue),
-            IporErrors.IPOR_VAULT_BALANCE_TOO_LOW
-        );
-        uint256 interest = currentVaultBalance != 0
-            ? (vaultBalance - currentVaultBalance - depositValue)
-            : 0;
-        _balances.vault = vaultBalance.toUint128();
-        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
-        _balances.liquidityPool = liquidityPoolBalance.toUint128();
-    }
-
     function getSwapsPayFixed(address account)
         external
         view
@@ -351,36 +167,6 @@ contract MiltonStorage is
                 _swapsReceiveFixed.swaps,
                 _swapsReceiveFixed.ids[account]
             );
-    }
-
-    function _getPositions(
-        mapping(uint128 => DataTypes.IporSwap) storage swaps,
-        uint128[] storage ids
-    ) internal view returns (DataTypes.IporSwapMemory[] memory) {
-        uint256 swapsIdsLength = ids.length;
-        DataTypes.IporSwapMemory[]
-            memory derivatives = new DataTypes.IporSwapMemory[](swapsIdsLength);
-        uint256 i = 0;
-
-        for (i; i != swapsIdsLength; i++) {
-            uint128 id = ids[i];
-            DataTypes.IporSwap storage swap = swaps[id];
-            derivatives[i] = DataTypes.IporSwapMemory(
-                uint256(swaps[id].state),
-                swap.buyer,
-                swap.startingTimestamp,
-                swap.startingTimestamp +
-                    Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-                swap.id,
-                swap.idsIndex,
-                swap.collateral,
-                swap.liquidationDepositAmount,
-                swap.notionalAmount,
-                swap.fixedInterestRate,
-                swap.ibtQuantity
-            );
-        }
-        return derivatives;
     }
 
     function getSwapPayFixedIds(address account)
@@ -463,6 +249,219 @@ contract MiltonStorage is
             qSoapRf,
             Constants.WAD_P2_YEAR_IN_SECONDS_INT
         );
+    }
+
+    function addLiquidity(uint256 liquidityAmount)
+        external
+        override
+        onlyJoseph
+    {
+        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
+        _balances.liquidityPool =
+            _balances.liquidityPool +
+            liquidityAmount.toUint128();
+    }
+
+    function subtractLiquidity(uint256 liquidityAmount)
+        external
+        override
+        onlyJoseph
+    {
+        _balances.liquidityPool =
+            _balances.liquidityPool -
+            liquidityAmount.toUint128();
+    }
+
+    // TODO: Removed after Internal and Investor tests liquidityAmount in WAND
+    function addLiquidityAssetManagmentMock(uint256 liquidityAmount)
+        public
+        onlyOwner
+    {
+        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
+        _balances.liquidityPool =
+            _balances.liquidityPool +
+            liquidityAmount.toUint128();
+    }
+
+    function updateStorageWhenOpenSwapPayFixed(
+        DataTypes.NewSwap memory newSwap,
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
+    ) external override onlyMilton returns (uint256) {
+        uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
+        _updateBalancesWhenOpenSwapPayFixed(
+            newSwap.collateral,
+            openingAmount,
+            cfgLiquidationDepositAmount,
+            cfgIporPublicationFeeAmount,
+            cfgOpeningFeeForTreasuryPercentage
+        );
+        _updateSoapIndicatorsWhenOpenSwapPayFixed(newSwap);
+        return id;
+    }
+
+    function updateStorageWhenOpenSwapReceiveFixed(
+        DataTypes.NewSwap memory newSwap,
+        uint256 openingAmount,
+        uint256 cfgLiquidationDepositAmount,
+        uint256 cfgIporPublicationFeeAmount,
+        uint256 cfgOpeningFeeForTreasuryPercentage
+    ) external override onlyMilton returns (uint256) {
+        uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
+        _updateBalancesWhenOpenSwapReceiveFixed(
+            newSwap.collateral,
+            openingAmount,
+            cfgLiquidationDepositAmount,
+            cfgIporPublicationFeeAmount,
+            cfgOpeningFeeForTreasuryPercentage
+        );
+        _updateSoapIndicatorsWhenOpenSwapReceiveFixed(newSwap);
+        return id;
+    }
+
+    function updateStorageWhenCloseSwapPayFixed(
+        address account,
+        DataTypes.IporSwapMemory memory iporSwap,
+        int256 positionValue,
+        uint256 closingTimestamp,
+        uint256 cfgIncomeTaxPercentage
+    ) external override onlyMilton {
+        _updateSwapsWhenClosePayFixed(iporSwap);
+        _updateBalancesWhenCloseSwapPayFixed(
+            account,
+            iporSwap,
+            positionValue,
+            closingTimestamp,
+            cfgIncomeTaxPercentage
+        );
+        _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
+    }
+
+    function updateStorageWhenCloseSwapReceiveFixed(
+        address account,
+        DataTypes.IporSwapMemory memory iporSwap,
+        int256 positionValue,
+        uint256 closingTimestamp,
+        uint256 cfgIncomeTaxPercentage
+    ) external override onlyMilton {
+        _updateSwapsWhenCloseReceiveFixed(iporSwap);
+        _updateBalancesWhenCloseSwapReceiveFixed(
+            account,
+            iporSwap,
+            positionValue,
+            closingTimestamp,
+            cfgIncomeTaxPercentage
+        );
+        _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
+            iporSwap,
+            closingTimestamp
+        );
+    }
+
+    function updateStorageWhenWithdrawFromStanley(
+        uint256 withdrawnValue,
+        uint256 vaultBalance
+    ) external override onlyMilton {
+        uint256 currentVaultBalance = _balances.vault;
+        uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
+        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
+        _balances.liquidityPool = liquidityPoolBalance.toUint128();
+        _balances.vault = vaultBalance.toUint128();
+    }
+
+    function updateStorageWhenDepositToStanley(
+        uint256 depositValue,
+        uint256 vaultBalance
+    ) external override onlyMilton {
+        uint256 currentVaultBalance = _balances.vault;
+        require(
+            currentVaultBalance <= (vaultBalance - depositValue),
+            IporErrors.IPOR_VAULT_BALANCE_TOO_LOW
+        );
+        uint256 interest = currentVaultBalance != 0
+            ? (vaultBalance - currentVaultBalance - depositValue)
+            : 0;
+        _balances.vault = vaultBalance.toUint128();
+        uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
+        _balances.liquidityPool = liquidityPoolBalance.toUint128();
+    }
+
+    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
+        external
+        override
+        onlyJoseph
+    {
+        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+
+        uint256 balance = _balances.iporPublicationFee;
+
+        require(
+            transferedValue <= balance,
+            IporErrors.IPOR_PUBLICATION_FEE_BALANCE_TOO_LOW
+        );
+
+        balance = balance - transferedValue;
+
+        _balances.iporPublicationFee = balance.toUint128();
+    }
+
+    function updateStorageWhenTransferTreasure(uint256 transferedValue)
+        external
+        override
+        onlyJoseph
+    {
+        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+
+        uint256 balance = _balances.treasury;
+
+        require(
+            transferedValue <= balance,
+            IporErrors.TREASURE_BALANCE_TOO_LOW
+        );
+
+        balance = balance - transferedValue;
+
+        _balances.treasury = balance.toUint128();
+    }
+
+    function setMilton(address milton) external override onlyOwner {
+        _milton = milton;
+    }
+
+    function setJoseph(address joseph) external override onlyOwner {
+        _joseph = joseph;
+    }
+
+    function _getPositions(
+        mapping(uint128 => DataTypes.IporSwap) storage swaps,
+        uint128[] storage ids
+    ) internal view returns (DataTypes.IporSwapMemory[] memory) {
+        uint256 swapsIdsLength = ids.length;
+        DataTypes.IporSwapMemory[]
+            memory derivatives = new DataTypes.IporSwapMemory[](swapsIdsLength);
+        uint256 i = 0;
+
+        for (i; i != swapsIdsLength; i++) {
+            uint128 id = ids[i];
+            DataTypes.IporSwap storage swap = swaps[id];
+            derivatives[i] = DataTypes.IporSwapMemory(
+                uint256(swaps[id].state),
+                swap.buyer,
+                swap.startingTimestamp,
+                swap.startingTimestamp +
+                    Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                swap.id,
+                swap.idsIndex,
+                swap.collateral,
+                swap.liquidationDepositAmount,
+                swap.notionalAmount,
+                swap.fixedInterestRate,
+                swap.ibtQuantity
+            );
+        }
+        return derivatives;
     }
 
     function _calculateQuasiSoap(uint256 ibtPrice, uint256 calculateTimestamp)
@@ -989,4 +988,6 @@ contract MiltonStorage is
             rf.quasiHypotheticalInterestCumulative
         );
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

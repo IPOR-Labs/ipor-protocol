@@ -70,7 +70,9 @@ describe("AssetManagementIntegration", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_20_000_18DEC, timestamp);
 
-        await testData.josephDai.connect(admin).depositToVault(USD_1_000_18DEC);
+        await testData.josephDai
+            .connect(admin)
+            .depositToStanley(USD_1_000_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
         await testData.iporVaultDai
@@ -165,7 +167,7 @@ describe("AssetManagementIntegration", () => {
 
         await testData.josephDai
             .connect(admin)
-            .depositToVault(USD_19_997_18DEC);
+            .depositToStanley(USD_19_997_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
         await testData.iporVaultDai
@@ -260,7 +262,7 @@ describe("AssetManagementIntegration", () => {
 
         await testData.josephDai
             .connect(admin)
-            .depositToVault(USD_19_997_18DEC);
+            .depositToStanley(USD_19_997_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
         await testData.iporVaultDai

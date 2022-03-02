@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../interfaces/IJosephConfiguration.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IMilton.sol";
@@ -8,7 +9,11 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IIporVault.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
+contract JosephConfiguration is
+    PausableUpgradeable,
+    IporOwnableUpgradeable,
+    IJosephConfiguration
+{
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
     uint256 internal constant _MILTON_STANLEY_BALANCE_PERCENTAGE = 85e15;
 
@@ -32,6 +37,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         external
         override
         onlyOwner
+        whenNotPaused
     {
         require(
             newCharlieTreasurer != address(0),
@@ -49,6 +55,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         external
         override
         onlyOwner
+        whenNotPaused
     {
         require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
         _treasureTreasurer = newTreasureTreasurer;
@@ -68,6 +75,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         external
         override
         onlyOwner
+        whenNotPaused
     {
         require(
             address(0) != publicationFeeTransferer,
@@ -85,6 +93,7 @@ contract JosephConfiguration is IporOwnableUpgradeable, IJosephConfiguration {
         external
         override
         onlyOwner
+        whenNotPaused
     {
         require(address(0) != treasureTransferer, IporErrors.WRONG_ADDRESS);
         _treasureTransferer = treasureTransferer;

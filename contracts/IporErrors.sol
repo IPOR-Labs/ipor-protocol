@@ -135,8 +135,9 @@ library IporErrors {
         "IPOR_38";
 
     //@notice Asset address not supported
-    //@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS
-    string public constant MILTON_ASSET_ADDRESS_NOT_SUPPORTED = "IPOR_39";
+    //@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS.
+    //When quasiIbtPrice is lower than WAD_YEAR_IN_SECONDS (ibtPrice lower than 1), then we assume that asset is not supported.
+    string public constant WARREN_ASSET_NOT_SUPPORTED = "IPOR_39";
 
     //@notice IP Token Value which should be minted is too low
     string public constant IP_TOKEN_MINT_VALUE_TOO_LOW = "IPOR_40";
@@ -211,4 +212,5 @@ library IporErrors {
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
 
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_60";
+	string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";
 }
