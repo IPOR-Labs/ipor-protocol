@@ -8,10 +8,9 @@ import "../amm/MiltonStorage.sol";
 import "../tokenization/Joseph.sol";
 import "../itf/ItfMilton.sol";
 import "../itf/ItfJoseph.sol";
-import "../assetManagment/stanley/Stanley.sol";
-
-import "../assetManagment/tokenization/IvToken.sol";
-import "../assetManagment/mocks/MockStrategy.sol";
+import "../vault/Stanley.sol";
+import "../vault/tokenization/IvToken.sol";
+import "../vault/mocks/MockStrategy.sol";
 
 contract IporAssetConfigurationUsdt is IporAssetConfiguration {}
 
