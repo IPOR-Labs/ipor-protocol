@@ -8,6 +8,7 @@ import "../amm/MiltonStorage.sol";
 import "../tokenization/Joseph.sol";
 import "../itf/ItfMilton.sol";
 import "../itf/ItfJoseph.sol";
+import "../assetManagment/stanley/Stanley.sol";
 
 contract IporAssetConfigurationUsdt is IporAssetConfiguration {}
 
@@ -68,3 +69,9 @@ contract ItfJosephUsdt is ItfJoseph {}
 contract ItfJosephUsdc is ItfJoseph {}
 
 contract ItfJosephDai is ItfJoseph {}
+
+contract StanleyUsdt is Stanley {}
+
+contract StanleyUsdc is Stanley {}
+
+contract StanleyDai is Stanley {}

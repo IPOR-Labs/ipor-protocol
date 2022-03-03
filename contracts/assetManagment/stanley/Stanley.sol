@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "../../interfaces/IIporOwnableUpgradeable.sol";
 import "../interfaces/IIvToken.sol";
@@ -15,7 +16,12 @@ import "../../IporErrors.sol";
 
 // TODO: Add function transferStrategyOwnership
 // TODO: Add IStanley with busineess methods
-contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
+contract Stanley is
+    UUPSUpgradeable,
+    StanleyAccessControl,
+    PausableUpgradeable,
+    ExchangeRate
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     // TODO: use consistent way for fields
