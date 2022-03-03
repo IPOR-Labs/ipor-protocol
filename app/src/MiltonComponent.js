@@ -340,6 +340,104 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
             </tr>
+
+			<tr>
+                <td>Transfer Ownership</td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="ItfMiltonUsdt"
+                            method="transferOwnership"
+                        />
+                    ) : (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="MiltonUsdt"
+                            method="transferOwnership"
+                        />
+                    )}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="ItfMiltonUsdc"
+                            method="transferOwnership"
+                        />
+                    ) : (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="MiltonUsdc"
+                            method="transferOwnership"
+                        />
+                    )}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="ItfMiltonDai"
+                            method="transferOwnership"
+                        />
+                    ) : (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="MiltonDai"
+                            method="transferOwnership"
+                        />
+                    )}
+                </td>
+            </tr>
+
+			<tr>
+                <td>Confirm Transfer Ownership</td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="ItfMiltonUsdt"
+                            method="confirmTransferOwnership"
+                        />
+                    ) : (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="MiltonUsdt"
+                            method="confirmTransferOwnership"
+                        />
+                    )}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="ItfMiltonUsdc"
+                            method="confirmTransferOwnership"
+                        />
+                    ) : (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="MiltonUsdc"
+                            method="confirmTransferOwnership"
+                        />
+                    )}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="ItfMiltonDai"
+                            method="confirmTransferOwnership"
+                        />
+                    ) : (
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="MiltonDai"
+                            method="confirmTransferOwnership"
+                        />
+                    )}
+                </td>
+            </tr>
         </table>
     </div>
 );

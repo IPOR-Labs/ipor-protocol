@@ -27,6 +27,9 @@ import JosephDai from "./contracts/JosephDai.json";
 import ItfJosephUsdt from "./contracts/ItfJosephUsdt.json";
 import ItfJosephUsdc from "./contracts/ItfJosephUsdc.json";
 import ItfJosephDai from "./contracts/ItfJosephDai.json";
+import StanleyUsdt from "./contracts/StanleyUsdt.json";
+import StanleyUsdc from "./contracts/StanleyUsdc.json";
+import StanleyDai from "./contracts/StanleyDai.json";
 const options = {
     web3: {
         fallback: {
@@ -36,7 +39,7 @@ const options = {
     },
 
     contracts: [
-		MiltonDevToolDataProvider,
+        MiltonDevToolDataProvider,
         MiltonFrontendDataProvider,
         IporConfiguration,
         Warren,
@@ -60,6 +63,9 @@ const options = {
         ItfJosephUsdt,
         ItfJosephUsdc,
         ItfJosephDai,
+        StanleyUsdt,
+        StanleyUsdc,
+        StanleyDai,
         MiltonFaucet,
         IporAssetConfigurationDai,
         IporAssetConfigurationUsdt,

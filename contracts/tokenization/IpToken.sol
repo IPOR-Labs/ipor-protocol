@@ -10,8 +10,9 @@ import {IporErrors} from "../IporErrors.sol";
 contract IpToken is IporOwnable, IIpToken, ERC20 {
     using SafeERC20 for IERC20;
 
-    address private immutable _underlyingAsset;
+    address private immutable _asset;
     uint8 private immutable _decimals;
+
     address private _joseph;
 
     modifier onlyJoseph() {
@@ -20,14 +21,18 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
     }
 
     constructor(
-        address underlyingAsset,
-        string memory aTokenName,
-        string memory aTokenSymbol
-    ) ERC20(aTokenName, aTokenSymbol) {
-        require(address(0) != underlyingAsset, IporErrors.WRONG_ADDRESS);
-        _underlyingAsset = underlyingAsset;
+        address asset,
+        string memory name,
+        string memory symbol
+    ) ERC20(name, symbol) {
+        require(address(0) != asset, IporErrors.WRONG_ADDRESS);
+        _asset = asset;
         _decimals = 18;
         _joseph = msg.sender;
+    }
+
+    function getAsset() external view override returns (address) {
+        return _asset;
     }
 
     function decimals() public view override returns (uint8) {
@@ -47,22 +52,13 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
 
     function burn(
         address account,
-        address receiverOfUnderlying,
+        address assetReceiver,
         uint256 value
     ) external override onlyJoseph {
         require(value != 0, IporErrors.IP_TOKEN_BURN_VALUE_TOO_LOW);
         _burn(account, value);
 
         emit Transfer(account, address(0), value);
-        emit Burn(account, receiverOfUnderlying, value);
-    }
-
-    function getUnderlyingAssetAddress()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _underlyingAsset;
+        emit Burn(account, assetReceiver, value);
     }
 }

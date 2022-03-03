@@ -242,7 +242,7 @@ describe("IpToken", () => {
         const expectedUnderlyingTokenAddress = testData.tokenDai.address;
         //when
         let actualUnderlyingTokenAddress =
-            await testData.ipTokenDai.getUnderlyingAssetAddress();
+            await testData.ipTokenDai.getAsset();
 
         //then
         expect(

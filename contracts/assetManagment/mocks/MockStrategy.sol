@@ -9,6 +9,8 @@ contract MockStrategy is IStrategy {
     address private _asset;
     address private _owner;
 
+    //TODO: use constructor
+
     function deposit(uint256 amount) external {}
 
     function withdraw(uint256 amount) external {}
