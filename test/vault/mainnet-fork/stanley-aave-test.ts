@@ -49,7 +49,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let stakeAaveContract: ERC20;
     let compoundStrategyContract_Instance: CompoundStrategy;
     let ivToken: IvToken;
-    let iporVault: Stanley;
+    let stanley: Stanley;
 
     if (process.env.FORK_ENABLED != "true") {
         return;
@@ -191,55 +191,44 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         )) as IvToken;
 
         //  ********************************************************************************************
-        //  **************                       IPORVault                                **************
+        //  **************                        Stanley                                 **************
         //  ********************************************************************************************
         const IPORVaultFactory = await hre.ethers.getContractFactory(
             "Stanley",
             signer
         );
 
-        iporVault = (await await upgrades.deployProxy(IPORVaultFactory, [
+        stanley = (await await upgrades.deployProxy(IPORVaultFactory, [
             daiAddress,
             ivToken.address,
             aaveStrategyContract_Instance.address,
             compoundStrategyContract_Instance.address,
         ])) as Stanley;
 
-        await iporVault.grantRole(
+        await stanley.grantRole(
             keccak256("GOVERNANCE_ROLE"),
             await signer.getAddress()
         );
 
-        await compoundStrategyContract_Instance.transferOwnership(
-            iporVault.address
-        );
-        await iporVault.confirmTransferOwnership(
-            compoundStrategyContract_Instance.address
-        );
+        await aaveStrategyContract_Instance.setStanley(stanley.address);
+        await compoundStrategyContract_Instance.setStanley(stanley.address);
 
-        await aaveStrategyContract_Instance.transferOwnership(
-            iporVault.address
-        );
-        await iporVault.confirmTransferOwnership(
-            aaveStrategyContract_Instance.address
-        );
-
-        await iporVault.grantRole(
+        await stanley.grantRole(
             keccak256("DEPOSIT_ROLE"),
             await signer.getAddress()
         );
-        await iporVault.grantRole(
+        await stanley.grantRole(
             keccak256("WITHDRAW_ROLE"),
             await signer.getAddress()
         );
-        await iporVault.grantRole(
+        await stanley.grantRole(
             keccak256("CLAIM_ROLE"),
             await signer.getAddress()
         );
 
         await daiContract.approve(await signer.getAddress(), maxValue);
-        await daiContract.approve(iporVault.address, maxValue);
-        await ivToken.setStanley(iporVault.address);
+        await daiContract.approve(stanley.address, maxValue);
+        await ivToken.setStanley(stanley.address);
     });
 
     it("Should accept deposit and transfer tokens into AAVE", async () => {
@@ -257,7 +246,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
 
         //When
-        await iporVault.connect(signer).deposit(depositAmound);
+        await stanley.connect(signer).deposit(depositAmound);
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
         expect(userIvTokenAfter, "userIvTokenAfter = 10 * 10^18").to.be.equal(
@@ -300,8 +289,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
 
         //When
-        await iporVault.connect(signer).deposit(depositAmound);
-        await iporVault.connect(signer).deposit(depositAmound);
+        await stanley.connect(signer).deposit(depositAmound);
+        await stanley.connect(signer).deposit(depositAmound);
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
         expect(
@@ -352,7 +341,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
 
         //when
-        await iporVault.withdraw(withdrawAmmond);
+        await stanley.withdraw(withdrawAmmond);
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
         expect(
@@ -411,7 +400,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
 
         //when
-        await iporVault.withdraw(withdrawAmmond);
+        await stanley.withdraw(withdrawAmmond);
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
         expect(userIvTokenAfter, "ivToken = 0").to.be.equal(zero);
@@ -472,13 +461,13 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         );
 
         // when
-        await iporVault.aaveBeforeClaim([aDaiAddress], maxValue);
+        await stanley.aaveBeforeClaim([aDaiAddress], maxValue);
 
         await hre.network.provider.send("evm_setNextBlockTimestamp", [
             timestamp + 865000,
         ]);
         await hre.network.provider.send("evm_mine");
-        await iporVault.aaveDoClaim(userOneAddres);
+        await stanley.aaveDoClaim(userOneAddres);
 
         // then
 

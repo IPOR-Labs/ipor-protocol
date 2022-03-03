@@ -217,12 +217,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             await signer.getAddress()
         );
 
-        await compoundStrategyContract_Instance.transferOwnership(
-            stanley.address
-        );
-        await stanley.confirmTransferOwnership(
-            compoundStrategyContract_Instance.address
-        );
+        await aaveStrategyContract_Instance.setStanley(stanley.address);
+        await compoundStrategyContract_Instance.setStanley(stanley.address);
 
         await stanley.grantRole(
             keccak256("DEPOSIT_ROLE"),

@@ -222,12 +222,8 @@ describe("Stanley -> Withdraw", () => {
             keccak256("GOVERNANCE_ROLE"),
             await admin.getAddress()
         );
-        await aaveNewStartegyInstance.transferOwnership(stanley.address);
-        await stanley.confirmTransferOwnership(aaveNewStartegyInstance.address);
-        await compoundStartegyInstance.transferOwnership(stanley.address);
-        await stanley.confirmTransferOwnership(
-            compoundStartegyInstance.address
-        );
+        await aaveNewStartegyInstance.setStanley(stanley.address);
+        await compoundStartegyInstance.setStanley(stanley.address);
         await ivToken.setStanley(stanley.address);
 
         //##############################################################

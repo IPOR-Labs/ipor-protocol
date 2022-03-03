@@ -2,6 +2,11 @@
 pragma solidity 0.8.9;
 
 //TODO: organize per smart contract (consider this) use internal, reorder in more intuitive way
+// 000-199 - general codes
+// 200-299- warren
+// 300-399-milton
+// 400-499-joseph
+// 500-599-stanley
 library IporErrors {
     //@notice The caller must be the Milton smart contract
     string public constant MILTON_CALLER_NOT_MILTON = "IPOR_1";
@@ -224,4 +229,7 @@ library IporErrors {
 
     // only vault can have access to function
     string public constant CALLER_NOT_STANLEY = "IPOR_104";
+
+    //@notice The caller of strategy must be Stanley
+    string public constant STRATEGY_CALLER_NOT_STANLEY = "IPOR_500";
 }

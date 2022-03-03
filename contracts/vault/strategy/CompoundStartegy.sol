@@ -20,6 +20,7 @@ contract CompoundStrategy is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    address private _stanley;
     uint256 private _blocksPerYear;
     address private _asset;
 
@@ -51,6 +52,16 @@ contract CompoundStrategy is
             type(uint256).max
         );
         _blocksPerYear = 2102400;
+    }
+
+    modifier _onlyStanley() {
+        require(msg.sender == _stanley, IporErrors.STRATEGY_CALLER_NOT_STANLEY);
+        _;
+    }
+
+    function setStanley(address stanley) external {
+        _stanley = stanley;
+        emit SetStanley(msg.sender, stanley, address(this));
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
@@ -105,7 +116,7 @@ contract CompoundStrategy is
      * @notice deposit can only done by owner.
      * @param amount amount to deposit in compound lending.
      */
-    function deposit(uint256 amount) external override onlyOwner {
+    function deposit(uint256 amount) external override _onlyStanley {
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
@@ -119,7 +130,7 @@ contract CompoundStrategy is
      * @notice withdraw can only done by owner.
      * @param amount amount to withdraw from compound lending.
      */
-    function withdraw(uint256 amount) external override onlyOwner {
+    function withdraw(uint256 amount) external override _onlyStanley {
         _cToken.redeem(
             IporMath.division(amount * 1e18, _cToken.exchangeRateStored())
         );
@@ -139,7 +150,7 @@ contract CompoundStrategy is
         external
         payable
         override
-        onlyOwner
+        _onlyStanley
     {
         require(vault != address(0), IporErrors.WRONG_ADDRESS);
         _comptroller.claimComp(address(this), assets);
@@ -153,7 +164,7 @@ contract CompoundStrategy is
     function beforeClaim(address[] memory assets, uint256 amount)
         public
         payable
-        onlyOwner
+        _onlyStanley
     {
         // No implementation
     }

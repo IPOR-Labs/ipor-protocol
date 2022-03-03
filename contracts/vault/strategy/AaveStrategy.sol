@@ -16,11 +16,13 @@ import {IporMath} from "../../libraries/IporMath.sol";
 contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    address private _stanley;
+
     AaveLendingPoolProviderV2 private _provider;
     StakedAaveInterface private _stakedAaveInterface;
     AaveIncentivesInterface private _aaveIncentive;
 
-    address private _asset; 
+    address private _asset;
     address private _aToken; // shareToken
     address private _aave;
     address private _stkAave;
@@ -44,7 +46,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         __Ownable_init();
         _asset = asset;
         _aToken = aToken;
-
         _provider = AaveLendingPoolProviderV2(addressesProvider);
         IERC20Upgradeable(_asset).safeApprove(
             _provider.getLendingPool(),
@@ -54,6 +55,16 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
         _stkAave = stkAave;
         _aave = aaveToken;
+    }
+
+    modifier _onlyStanley() {
+        require(msg.sender == _stanley, IporErrors.STRATEGY_CALLER_NOT_STANLEY);
+        _;
+    }
+
+    function setStanley(address stanley) external onlyOwner {
+        _stanley = stanley;
+        emit SetStanley(msg.sender, stanley, address(this));
     }
 
     /**
@@ -109,7 +120,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice deposit can only done by owner.
      * @param amount amount to deposit in _aave lending.
      */
-    function deposit(uint256 amount) external override onlyOwner {
+    function deposit(uint256 amount) external override _onlyStanley {
         IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
@@ -126,7 +137,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice withdraw can only done by owner.
      * @param amount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 amount) external override onlyOwner {
+    function withdraw(uint256 amount) external override _onlyStanley {
         AaveLendingPoolV2(_provider.getLendingPool()).withdraw(
             _asset,
             amount,
@@ -147,7 +158,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         external
         payable
         override
-        onlyOwner
+        _onlyStanley
     {
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(
             address(this)
@@ -180,7 +191,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     function beforeClaim(address[] memory assets, uint256 amount)
         external
         payable
-        onlyOwner
+        _onlyStanley
     {
         _aaveIncentive.claimRewards(assets, amount, address(this));
         _stakedAaveInterface.cooldown();

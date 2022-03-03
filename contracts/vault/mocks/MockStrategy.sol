@@ -3,6 +3,7 @@ import "../interfaces/IPOR/IStrategy.sol";
 
 // simple mock for total _balance tests
 contract MockStrategy is IStrategy {
+    address private _stanley;
     uint256 private _balance;
     address private _shareTokens;
     uint256 private _apy;
@@ -61,4 +62,8 @@ contract MockStrategy is IStrategy {
         external
         payable
     {}
+
+    function setStanley(address stanley) external {
+        _stanley = stanley;
+    }
 }
