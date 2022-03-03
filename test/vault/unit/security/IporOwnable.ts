@@ -7,6 +7,7 @@ const { expect } = chai;
 
 import { IporOwnable } from "../../../../types";
 
+
 describe("IporOwnable", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
     let iporOwnable: IporOwnable;

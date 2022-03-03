@@ -62,7 +62,7 @@ describe("Stanley -> SetStrategy", () => {
             await admin.getAddress()
         );
 
-        await ivToken.setVault(stanley.address);
+        await ivToken.setStanley(stanley.address);
     });
 
     describe("aaveStrategy", () => {

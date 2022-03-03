@@ -145,7 +145,6 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         aaveStrategyContract_Instance =
             (await AaveStrategy.deploy()) as MockStrategy;
 
-			
         await aaveStrategyContract_Instance.setShareToken(daiAddress);
         await aaveStrategyContract_Instance.setAsset(daiAddress);
 
@@ -240,7 +239,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         await daiContract.approve(await signer.getAddress(), maxValue);
         await daiContract.approve(stanley.address, maxValue);
-        await ivToken.setVault(stanley.address);
+        await ivToken.setStanley(stanley.address);
     });
 
     it("Shoiuld compand APY > aave APY ", async () => {

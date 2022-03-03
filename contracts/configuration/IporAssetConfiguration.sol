@@ -12,7 +12,6 @@ import {IporErrors} from "../IporErrors.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
-import "../interfaces/IMiltonEvents.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 
 import "../interfaces/IIporAssetConfiguration.sol";

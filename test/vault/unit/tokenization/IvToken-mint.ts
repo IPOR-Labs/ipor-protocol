@@ -33,7 +33,7 @@ describe("#IvToken mint function tests", () => {
     it("should not be able to mint when amount is  0", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setVault(mockIporVaultAddress);
+        await ivToken.setStanley(mockIporVaultAddress);
         const amount = BigNumber.from("0");
         await expect(
             //when
@@ -45,7 +45,7 @@ describe("#IvToken mint function tests", () => {
     it("should not be able to mint when pass zero address", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setVault(mockIporVaultAddress);
+        await ivToken.setStanley(mockIporVaultAddress);
         const amount = BigNumber.from("0");
         await expect(
             //when
@@ -59,7 +59,7 @@ describe("#IvToken mint function tests", () => {
     it("should mint new tokens", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setVault(mockIporVaultAddress);
+        await ivToken.setStanley(mockIporVaultAddress);
         const amount = BigNumber.from("10");
         const addressOne = await userOne.getAddress();
 

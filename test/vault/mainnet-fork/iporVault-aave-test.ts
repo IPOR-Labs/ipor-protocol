@@ -239,7 +239,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         await daiContract.approve(await signer.getAddress(), maxValue);
         await daiContract.approve(iporVault.address, maxValue);
-        await ivToken.setVault(iporVault.address);
+        await ivToken.setStanley(iporVault.address);
     });
 
     it("Should accept deposit and transfer tokens into AAVE", async () => {

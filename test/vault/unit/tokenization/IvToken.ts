@@ -33,7 +33,7 @@ describe("IvToken", () => {
         await expect(
             ivToken
                 .connect(userOne)
-                .setVault("0x6b175474e89094c44da98b954eedeac495271d0f"),
+                .setStanley("0x6b175474e89094c44da98b954eedeac495271d0f"),
             "Only owner should be able to set vault address"
         ).revertedWith("Ownable: caller is not the owner");
     });
@@ -41,7 +41,7 @@ describe("IvToken", () => {
     // it("Should be able to set Vault address", async () => {
     //when
 
-    // ivToken.setVault("0X6B175474E89094C44DA98B954EEDEAC495271D0F");
+    // ivToken.setStanley("0X6B175474E89094C44DA98B954EEDEAC495271D0F");
 
     // .to.emit(ivToken, "Vault")
     // .withArgs(

@@ -13,7 +13,6 @@ import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../interfaces/IWarren.sol";
 import "./MiltonStorage.sol";
 import "../configuration/MiltonConfiguration.sol";
-import "../interfaces/IMiltonEvents.sol";
 import "../tokenization/IpToken.sol";
 import "../interfaces/IIporVault.sol";
 import "../interfaces/IMilton.sol";
@@ -27,12 +26,10 @@ import "hardhat/console.sol";
  *
  * @author IPOR Labs
  */
-//TODO: add pausable modifier for methodds
 contract Milton is
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
     MiltonConfiguration,
-    IMiltonEvents,
     IMilton
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;

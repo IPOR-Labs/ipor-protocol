@@ -58,7 +58,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
             keccak256("GOVERNANCE_ROLE"),
             await admin.getAddress()
         );
-        await ivToken.setVault(stanley.address);
+        await ivToken.setStanley(stanley.address);
     });
 
     it("Should should return balance from aave", async () => {

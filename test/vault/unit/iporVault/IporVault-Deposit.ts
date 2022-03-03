@@ -231,7 +231,7 @@ describe("Stanley -> Deposit", () => {
         await stanley.confirmTransferOwnership(
             compoundStartegyInstance.address
         );
-        await ivToken.setVault(stanley.address);
+        await ivToken.setStanley(stanley.address);
 
         //##############################################################
         //                        admin user setup
