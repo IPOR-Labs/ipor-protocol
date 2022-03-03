@@ -73,8 +73,8 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
+            <id>ipor-protocol</id>
+            <name>GitHub Packages for ipor-protocol</name>
             <url>https://maven.pkg.github.com/IPOR-Labs/ipor-protocol</url>
         </repository>
     </distributionManagement>
