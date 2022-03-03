@@ -16,16 +16,20 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
 
     uint8 private immutable _decimals;
     address private immutable _asset;
+    //TODO: change to _stanley
     address private _vault;
 
+    //TODO: change to onlyStanley
     modifier onlyVault() {
         require(msg.sender == _vault, IporErrors.ONLY_VAULT);
         _;
     }
 
     constructor(
+        //TODO: change name to name, symbol
         string memory aTokenName,
         string memory aTokenSymbol,
+        //TODO: order params in constructor in the same way like IpToken
         address asset
     ) ERC20(aTokenName, aTokenSymbol) {
         require(address(0) != asset, IporErrors.WRONG_ADDRESS);
@@ -37,8 +41,10 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         return _decimals;
     }
 
+    //TODO: change name to setStanley, newStanley
     function setVault(address newVault) external onlyOwner {
         _vault = newVault;
+        //TODO: change name to StanleyChanged
         emit Vault(msg.sender, newVault);
     }
 

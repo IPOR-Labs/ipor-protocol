@@ -144,6 +144,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         );
         aaveStrategyContract_Instance =
             (await AaveStrategy.deploy()) as MockStrategy;
+
+			
         await aaveStrategyContract_Instance.setShareToken(daiAddress);
         await aaveStrategyContract_Instance.setAsset(daiAddress);
 

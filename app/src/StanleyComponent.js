@@ -40,7 +40,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="JosephUsdt"
+                                contract="StanleyUsdt"
                                 method="pause"
                             />
                         </div>
@@ -49,7 +49,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="JosephUsdc"
+                                contract="StanleyUsdc"
                                 method="pause"
                             />
                         </div>
@@ -58,7 +58,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="JosephDai"
+                                contract="StanleyDai"
                                 method="pause"
                             />
                         </div>
@@ -73,7 +73,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="JosephUsdt"
+                                contract="StanleyUsdt"
                                 method="unpause"
                             />
                         </div>
@@ -82,7 +82,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="JosephUsdc"
+                                contract="StanleyUsdc"
                                 method="unpause"
                             />
                         </div>
@@ -91,32 +91,33 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="JosephDai"
+                                contract="StanleyDai"
                                 method="unpause"
                             />
                         </div>
                     </td>
                 </tr>
-                <tr>
+
+                {/* <tr>
                     <td>Transfer Ownership</td>
                     <td>
                         <ContractForm
                             drizzle={drizzle}
-                            contract="JosephUsdt"
+                            contract="StanleyUsdt"
                             method="transferOwnership"
                         />
                     </td>
                     <td>
                         <ContractForm
                             drizzle={drizzle}
-                            contract="JosephUsdc"
+                            contract="StanleyUsdc"
                             method="transferOwnership"
                         />
                     </td>
                     <td>
                         <ContractForm
                             drizzle={drizzle}
-                            contract="JosephDai"
+                            contract="StanleyDai"
                             method="transferOwnership"
                         />
                     </td>
@@ -127,25 +128,25 @@ export default ({ drizzle, drizzleState }) => (
                     <td>
                         <ContractForm
                             drizzle={drizzle}
-                            contract="JosephUsdt"
+                            contract="StanleyUsdt"
                             method="confirmTransferOwnership"
                         />
                     </td>
                     <td>
                         <ContractForm
                             drizzle={drizzle}
-                            contract="JosephUsdc"
+                            contract="StanleyUsdc"
                             method="confirmTransferOwnership"
                         />
                     </td>
                     <td>
                         <ContractForm
                             drizzle={drizzle}
-                            contract="JosephDai"
+                            contract="StanleyDai"
                             method="confirmTransferOwnership"
                         />
                     </td>
-                </tr>
+                </tr> */}
             </table>
         </div>
     </div>

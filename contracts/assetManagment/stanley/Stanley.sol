@@ -18,8 +18,8 @@ import "../../IporErrors.sol";
 // TODO: Add IStanley with busineess methods
 contract Stanley is
     UUPSUpgradeable,
-    StanleyAccessControl,
     PausableUpgradeable,
+	StanleyAccessControl,    
     ExchangeRate
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -55,7 +55,7 @@ contract Stanley is
         address ivToken,
         address aStrategy,
         address cStrategy
-    ) public initializer {
+    ) public initializer {		
         _init();
         require(underlyingToken != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);

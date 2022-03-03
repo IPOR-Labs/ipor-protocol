@@ -16,5 +16,5 @@ interface IIpToken is IERC20 {
         uint256 value
     ) external;
 
-    function getUnderlyingAssetAddress() external view returns (address);
+    function getAsset() external view returns (address);
 }

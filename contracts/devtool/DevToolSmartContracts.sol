@@ -10,6 +10,9 @@ import "../itf/ItfMilton.sol";
 import "../itf/ItfJoseph.sol";
 import "../assetManagment/stanley/Stanley.sol";
 
+import "../assetManagment/tokenization/IvToken.sol";
+import "../assetManagment/mocks/MockStrategy.sol";
+
 contract IporAssetConfigurationUsdt is IporAssetConfiguration {}
 
 contract IporAssetConfigurationUsdc is IporAssetConfiguration {}
@@ -18,26 +21,50 @@ contract IporAssetConfigurationDai is IporAssetConfiguration {}
 
 contract IpTokenUsdt is IpToken {
     constructor(
-        address underlyingAsset,
-        string memory aTokenName,
-        string memory aTokenSymbol
-    ) IpToken(underlyingAsset, aTokenName, aTokenSymbol) {}
+        address asset,
+        string memory name,
+        string memory symbol
+    ) IpToken(asset, name, symbol) {}
 }
 
 contract IpTokenUsdc is IpToken {
     constructor(
-        address underlyingAsset,
-        string memory aTokenName,
-        string memory aTokenSymbol
-    ) IpToken(underlyingAsset, aTokenName, aTokenSymbol) {}
+        address asset,
+        string memory name,
+        string memory symbol
+    ) IpToken(asset, name, symbol) {}
 }
 
 contract IpTokenDai is IpToken {
     constructor(
-        address underlyingAsset,
-        string memory aTokenName,
-        string memory aTokenSymbol
-    ) IpToken(underlyingAsset, aTokenName, aTokenSymbol) {}
+        address asset,
+        string memory name,
+        string memory symbol
+    ) IpToken(asset, name, symbol) {}
+}
+
+contract IvTokenUsdt is IvToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IvToken(name, symbol, asset) {}
+}
+
+contract IvTokenUsdc is IvToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IvToken(name, symbol, asset) {}
+}
+
+contract IvTokenDai is IvToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IvToken(name, symbol, asset) {}
 }
 
 contract MiltonUsdt is Milton {}
@@ -75,3 +102,15 @@ contract StanleyUsdt is Stanley {}
 contract StanleyUsdc is Stanley {}
 
 contract StanleyDai is Stanley {}
+
+contract MockStrategyAaveUsdt is MockStrategy {}
+
+contract MockStrategyAaveUsdc is MockStrategy {}
+
+contract MockStrategyAaveDai is MockStrategy {}
+
+contract MockStrategyCompoundUsdt is MockStrategy {}
+
+contract MockStrategyCompoundUsdc is MockStrategy {}
+
+contract MockStrategyCompoundDai is MockStrategy {}
