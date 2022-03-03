@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import {IporMath} from "../../libraries/IporMath.sol";
+import {IporMath} from "../libraries/IporMath.sol";
 
 // TODO: take into account decimals specific for asset
 abstract contract ExchangeRate {
