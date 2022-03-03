@@ -23,18 +23,4 @@ interface IAaveIncentivesController {
         external
         view
         returns (uint256);
-
-    function getAssetData(address asset)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
-        );
-
-    function getRewardsBalance(address[] calldata assets, address user)
-        external
-        view
-        returns (uint256);
 }

@@ -63,17 +63,17 @@ describe("#Roles Localhost test", () => {
         );
 
         const AaveStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
         const aaveStrategy = await AaveStrategy.deploy();
         await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setUnderlyingToken(DAI.address);
+        await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
         const compoundStrategy = await CompoundStrategy.deploy();
         await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setUnderlyingToken(DAI.address);
+        await compoundStrategy.setAsset(DAI.address);
 
         const StanleyFactory = await hre.ethers.getContractFactory("Stanley");
         stanley = (await await upgrades.deployProxy(StanleyFactory, [
@@ -145,7 +145,7 @@ describe("#Roles Localhost test", () => {
                 //when
                 stanley.revokeRole(ADMIN_ROLE, await admin.getAddress())
                 //then
-            ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_01");
+            ).to.be.revertedWith("IPOR_50");
         });
 
         it("should be able to grant ADMIN_ROLE", async () => {

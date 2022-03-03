@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/IAaveIncentivesController.sol";
 
-contract AaveIncentivesControllerMock is IAaveIncentivesController {
+contract MockAaveIncentivesController is IAaveIncentivesController {
     uint256 private _rewards;
     address private _stkAaveMock;
 
@@ -34,22 +34,4 @@ contract AaveIncentivesControllerMock is IAaveIncentivesController {
     {
         return _rewards;
     }
-
-    function getAssetData(address asset)
-        external
-        view
-        override
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {}
-
-    function getRewardsBalance(address[] calldata assets, address user)
-        external
-        view
-        override
-        returns (uint256)
-    {}
 }

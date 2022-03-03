@@ -9,12 +9,11 @@ import "../interfaces/IIvToken.sol";
 import "./StanleyAccessControl.sol";
 import "./ExchangeRate.sol";
 // TODO: use errors from Ipor Protocol
-import "../errors/Errors.sol";
+import "../../IporErrors.sol";
 
 // import "hardhat/console.sol";
 
-// IPORVault
-// TODO: public -> external
+// TODO: Add function transferStrategyOwnership
 // TODO: Add IStanley with busineess methods
 contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -52,8 +51,8 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         address cStrategy
     ) public initializer {
         _init();
-        require(underlyingToken != address(0), Errors.ZERO_ADDRESS);
-        require(ivToken != address(0), Errors.ZERO_ADDRESS);
+        require(underlyingToken != address(0), IporErrors.WRONG_ADDRESS);
+        require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
 
         _underlyingToken = underlyingToken;
         _ivToken = ivToken;
@@ -88,20 +87,17 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     //  TODO: ADD tests for _amount = 0
     //  TODO: return balanse before deposit
     function deposit(uint256 _amount) external onlyRole(_DEPOSIT_ROLE) {
-        require(_amount != 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+        require(_amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         IStrategy strategy = getMaxApyStrategy();
 
         IIvToken token = IIvToken(_ivToken);
-        uint256 _totalAsset = totalStrategiesBalance();
-        uint256 _tokenAmount = token.totalSupply();
-        uint256 _exchangeRate = _calculateExchangeRate(
-            _totalAsset,
-            _tokenAmount
-        );
+        uint256 totalAsset = totalStrategiesBalance();
+        uint256 tokenAmount = token.totalSupply();
+        uint256 exchangeRate = _calculateExchangeRate(totalAsset, tokenAmount);
         _deposit(strategy, _amount);
         emit Deposit(address(strategy), _amount);
 
-        token.mint(msg.sender, AmMath.division(_amount * 1e18, _exchangeRate));
+        token.mint(msg.sender, IporMath.division(_amount * 1e18, exchangeRate));
     }
 
     function setCompoundStrategy(address strategy)
@@ -134,12 +130,12 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     // TODO: return amount of withdraw,
     // TODO: balanse before withdraw and aftre
     function withdraw(uint256 _tokens) external onlyRole(_WITHDRAW_ROLE) {
-        require(_tokens != 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+        require(_tokens != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         IIvToken token = IIvToken(_ivToken);
 
         require(
             token.balanceOf(msg.sender) >= _tokens,
-            Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO
+            IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO
         );
 
         IStrategy maxApyStrategy = getMaxApyStrategy();
@@ -154,7 +150,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             _totalAsset,
             _tokenAmount
         );
-        uint256 amount = AmMath.division(
+        uint256 amount = IporMath.division(
             _tokens * _exchangeRateRoundDown,
             1e18
         );
@@ -189,7 +185,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             return;
         }
         if (aaveBalance < compoundBalance) {
-            uint256 tokensToBurn = AmMath.division(
+            uint256 tokensToBurn = IporMath.division(
                 compoundBalance * 1e18,
                 _exchangeRate
             );
@@ -198,7 +194,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         } else {
             // TODO: Cannot do this in this way, take into account asset decimals
             // TODO: Add tests for DAI(18 decimals) and for USDT (6 decimals)
-            uint256 tokensToBurn = AmMath.division(
+            uint256 tokensToBurn = IporMath.division(
                 aaveBalance * 1e18,
                 _exchangeRate
             );
@@ -234,14 +230,14 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             uint256 _shares = IERC20Upgradeable(_compoundShareTokens).balanceOf(
                 from
             );
-            require(_shares > 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+            require(_shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
             IStrategy(_compoundStrategy).withdraw(_shares);
         } else {
             from = _aaveStrategy;
             uint256 _shares = IERC20Upgradeable(_aaveShareTokens).balanceOf(
                 from
             );
-            require(_shares > 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+            require(_shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
             IStrategy(_aaveStrategy).withdraw(_shares);
         }
         uint256 _amount = IERC20Upgradeable(_underlyingToken).balanceOf(
@@ -284,7 +280,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
 
     // TODO: Consider reorder checks in this way that method will have less calculation (gas opt)
     function _setCompoundStrategy(address strategyAddress) internal {
-        require(strategyAddress != address(0), Errors.ZERO_ADDRESS);
+        require(strategyAddress != address(0), IporErrors.WRONG_ADDRESS);
         IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
         IStrategy strategy = IStrategy(strategyAddress);
         IERC20Upgradeable csToken = IERC20Upgradeable(_compoundShareTokens);
@@ -293,11 +289,10 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             uToken.safeApprove(_compoundStrategy, 0);
             csToken.safeApprove(_compoundStrategy, 0);
         }
-        address _compoundUnderlyingToken = strategy.getUnderlyingToken();
-        // TODO: COMPATIBLE
+        address _compoundUnderlyingToken = strategy.getAsset();
         require(
             _compoundUnderlyingToken == address(_underlyingToken),
-            Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY
+            IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
         );
 
         _compoundStrategy = strategyAddress;
@@ -311,17 +306,17 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     }
 
     function _setAaveStrategy(address strategyAddress) internal {
-        require(strategyAddress != address(0), Errors.ZERO_ADDRESS);
+        require(strategyAddress != address(0), IporErrors.WRONG_ADDRESS);
         IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
         IStrategy strategy = IStrategy(strategyAddress);
         if (_aaveStrategy != address(0)) {
             uToken.safeApprove(_aaveStrategy, 0);
             IERC20Upgradeable(_aaveShareTokens).safeApprove(_aaveStrategy, 0);
         }
-        address _aaveUnderlyingToken = strategy.getUnderlyingToken();
+        address _aaveUnderlyingToken = strategy.getAsset();
         require(
             _aaveUnderlyingToken == address(_underlyingToken),
-            Errors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLY
+            IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
         );
 
         _aaveShareTokens = strategy.shareToken();
@@ -364,7 +359,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     }
 
     function _doClaim(address _account, address strategyAddress) internal {
-        require(_account != address(0), Errors.ZERO_ADDRESS);
+        require(_account != address(0), IporErrors.WRONG_ADDRESS);
         IStrategy strategy = IStrategy(strategyAddress);
         address[] memory assets = new address[](1);
         assets[0] = strategy.shareToken();

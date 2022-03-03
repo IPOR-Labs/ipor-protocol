@@ -14,6 +14,14 @@ library IporMath {
         z = (x + (y / 2)) / y;
     }
 
+    function divisionWithoutRound(uint256 x, uint256 y)
+        internal
+        pure
+        returns (uint256 z)
+    {
+        z = x / y;
+    }
+
     function convertWadToAssetDecimals(uint256 value, uint256 assetDecimals)
         internal
         pure
@@ -41,7 +49,6 @@ library IporMath {
             return value * 10**(18 - assetDecimals);
         }
     }
-
 
     function absoluteValue(int256 value) internal pure returns (uint256) {
         return (uint256)(value < 0 ? -value : value);

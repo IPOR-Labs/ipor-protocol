@@ -13,27 +13,12 @@ interface AaveIncentivesInterface {
         address to
     ) external returns (uint256);
 
-    // TODO: Remove redundant methods from interfaces
     /**
      * @dev returns the unclaimed rewards of the user
      * @param user the address of the user
      * @return the unclaimed user rewards
      */
     function getUserUnclaimedRewards(address user)
-        external
-        view
-        returns (uint256);
-
-    function getAssetData(address asset)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
-        );
-
-    function getRewardsBalance(address[] calldata assets, address user)
         external
         view
         returns (uint256);

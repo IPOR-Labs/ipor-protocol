@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { StrategyMock, Stanley, TestERC20 } from "../../../../types";
+import { MockStrategy, Stanley, TestERC20 } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -14,8 +14,8 @@ describe("Stanley -> SetStrategy", () => {
     let stanley: Stanley;
     let DAI: TestERC20;
     let USDt: TestERC20;
-    let aaveStrategy: StrategyMock;
-    let compoundStrategy: StrategyMock;
+    let aaveStrategy: MockStrategy;
+    let compoundStrategy: MockStrategy;
 
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
@@ -37,17 +37,17 @@ describe("Stanley -> SetStrategy", () => {
         );
 
         const AaveStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        aaveStrategy = (await AaveStrategy.deploy()) as StrategyMock;
+        aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setUnderlyingToken(DAI.address);
+        await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        compoundStrategy = (await CompoundStrategy.deploy()) as StrategyMock;
+        compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setUnderlyingToken(DAI.address);
+        await compoundStrategy.setAsset(DAI.address);
 
         const Stanley = await hre.ethers.getContractFactory("Stanley");
         stanley = (await await upgrades.deployProxy(Stanley, [
@@ -69,11 +69,11 @@ describe("Stanley -> SetStrategy", () => {
         it("Should setup aave strategy", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
-            await newAaveStrategy.setUnderlyingToken(DAI.address);
+            await newAaveStrategy.setAsset(DAI.address);
             //when
             await expect(stanley.setAaveStrategy(newAaveStrategy.address))
                 //then
@@ -84,28 +84,28 @@ describe("Stanley -> SetStrategy", () => {
         it("Should not setup new strategy when underlying Token don't match", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
-            await newAaveStrategy.setUnderlyingToken(USDt.address);
+            await newAaveStrategy.setAsset(USDt.address);
             await expect(
                 //when
                 stanley.setAaveStrategy(newAaveStrategy.address)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_04");
+            ).to.revertedWith("IPOR_102");
         });
 
         it("Should not setup new strategy when pass zero address", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             await expect(
                 //when
                 stanley.setAaveStrategy(constants.AddressZero)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_05");
+            ).to.revertedWith("IPOR_37");
         });
     });
 
@@ -113,11 +113,11 @@ describe("Stanley -> SetStrategy", () => {
         it("Should setup compound strategy", async () => {
             //given
             const NewCompoundStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
-            await newCompoundStrategy.setUnderlyingToken(DAI.address);
+            await newCompoundStrategy.setAsset(DAI.address);
             //when
             await expect(
                 stanley.setCompoundStrategy(newCompoundStrategy.address)
@@ -131,28 +131,28 @@ describe("Stanley -> SetStrategy", () => {
         it("Should not setup new strategy when underlying Token don't match", async () => {
             //given
             const NewCompoundStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
-            await newCompoundStrategy.setUnderlyingToken(USDt.address);
+            await newCompoundStrategy.setAsset(USDt.address);
             await expect(
                 //when
                 stanley.setCompoundStrategy(newCompoundStrategy.address)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_04");
+            ).to.revertedWith("IPOR_102");
         });
 
         it("Should not setup new strategy when pass zero address", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             await expect(
                 //when
                 stanley.setCompoundStrategy(constants.AddressZero)
                 //then
-            ).to.revertedWith("IPOR_ASSET_MANAGMENT_05");
+            ).to.revertedWith("IPOR_37");
         });
     });
 });

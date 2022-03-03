@@ -3,8 +3,6 @@ pragma solidity 0.8.9;
 import "../interfaces/compound/CErc20.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
-import "../interfaces/compound/COMPInterface.sol";
-import "../interfaces/IERC20Decimal.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -12,8 +10,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "../../security/IporOwnableUpgradeable.sol";
 
 import "hardhat/console.sol";
-import "../errors/Errors.sol";
-import "../libraries/AmMath.sol";
+import "../../IporErrors.sol";
+import "../../libraries/IporMath.sol";
 
 contract CompoundStrategy is
     UUPSUpgradeable,
@@ -23,7 +21,7 @@ contract CompoundStrategy is
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     uint256 private _blocksPerYear;
-    address private _underlyingToken;
+    address private _asset;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
@@ -32,41 +30,40 @@ contract CompoundStrategy is
     /**
      * @dev Deploy CompoundStrategy.
      * @notice Deploy CompoundStrategy.
-     * @param underlyingToken underlying token like DAI, USDT etc.
+     * @param asset underlying token like DAI, USDT etc.
      * @param cErc20Contract share token like cDAI
      * @param comptroller _comptroller to claim comp
      * @param compToken comp token.
      */
     function initialize(
-        address underlyingToken,
+        address asset,
         address cErc20Contract,
         address comptroller,
         address compToken
     ) public initializer {
         __Ownable_init();
-        _underlyingToken = underlyingToken;
+        _asset = asset;
         _cToken = CErc20(cErc20Contract);
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
-        IERC20Upgradeable(_underlyingToken).safeApprove(
+        IERC20Upgradeable(_asset).safeApprove(
             cErc20Contract,
             type(uint256).max
         );
         _blocksPerYear = 2102400;
     }
 
-    // TODO: this empty ????
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     /**
-     * @dev _underlyingToken return
+     * @dev _asset return
      */
-    function getUnderlyingToken() public view override returns (address) {
-        return _underlyingToken;
+    function getAsset() public view override returns (address) {
+        return _asset;
     }
 
     /**
-     * @dev Share token to track _underlyingToken (DAI -> cDAI)
+     * @dev Share token to track _asset (DAI -> cDAI)
      */
     function shareToken() external view override returns (address) {
         return address(_cToken);
@@ -85,7 +82,7 @@ contract CompoundStrategy is
      * @param blocksPerYear amount to deposit in aave lending.
      */
     function setBlocksPerYear(uint256 blocksPerYear) external onlyOwner {
-        require(blocksPerYear != 0, Errors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+        require(blocksPerYear != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         _blocksPerYear = blocksPerYear;
     }
 
@@ -93,25 +90,14 @@ contract CompoundStrategy is
      * @dev Total Balance = Principal Amount + Interest Amount.
      * returns uint256 with 18 Decimals
      */
-    //  TODO: [Pete] use AmMath to div without round
     function balanceOf() public view override returns (uint256) {
         return (
-            AmMath.division(
+            IporMath.division(
                 (_cToken.exchangeRateStored() *
                     _cToken.balanceOf(address(this))),
-                (10**IERC20Decimal(_underlyingToken).decimals())
+                (10**ERC20Upgradeable(_asset).decimals())
             )
         );
-    }
-
-    /**
-     * @dev Change owner address.
-     * @notice Change can only done by current owner.
-     * @param newOwner New owner address.
-     */
-    function changeOwnership(address newOwner) public override {
-        require(newOwner != address(0), Errors.ZERO_ADDRESS);
-        transferOwnership(newOwner);
     }
 
     /**
@@ -120,7 +106,7 @@ contract CompoundStrategy is
      * @param amount amount to deposit in compound lending.
      */
     function deposit(uint256 amount) external override onlyOwner {
-        IERC20Upgradeable(_underlyingToken).safeTransferFrom(
+        IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
             amount
@@ -135,11 +121,11 @@ contract CompoundStrategy is
      */
     function withdraw(uint256 amount) external override onlyOwner {
         _cToken.redeem(
-            AmMath.division(amount * 1e18, _cToken.exchangeRateStored())
+            IporMath.division(amount * 1e18, _cToken.exchangeRateStored())
         );
-        IERC20Upgradeable(address(_underlyingToken)).safeTransfer(
+        IERC20Upgradeable(address(_asset)).safeTransfer(
             msg.sender,
-            IERC20Upgradeable(_underlyingToken).balanceOf(address(this))
+            IERC20Upgradeable(_asset).balanceOf(address(this))
         );
     }
 
@@ -155,7 +141,7 @@ contract CompoundStrategy is
         override
         onlyOwner
     {
-        require(vault != address(0), Errors.ZERO_ADDRESS);
+        require(vault != address(0), IporErrors.WRONG_ADDRESS);
         _comptroller.claimComp(address(this), assets);
         uint256 compBal = _compToken.balanceOf(address(this));
         _compToken.safeTransfer(vault, compBal);

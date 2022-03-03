@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { StrategyMock, Stanley, TestERC20, IvToken } from "../../../../types";
+import { MockStrategy, Stanley, TestERC20, IvToken } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -14,8 +14,8 @@ describe("Stanley -> constructor", () => {
     let stanley: Stanley;
     let DAI: TestERC20;
     let USDt: TestERC20;
-    let aaveStrategy: StrategyMock;
-    let compoundStrategy: StrategyMock;
+    let aaveStrategy: MockStrategy;
+    let compoundStrategy: MockStrategy;
     let StanleyFactory: any;
     let ivToken: IvToken;
 
@@ -39,17 +39,17 @@ describe("Stanley -> constructor", () => {
         )) as IvToken;
 
         const AaveStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        aaveStrategy = (await AaveStrategy.deploy()) as StrategyMock;
+        aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setUnderlyingToken(DAI.address);
+        await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        compoundStrategy = (await CompoundStrategy.deploy()) as StrategyMock;
+        compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setUnderlyingToken(DAI.address);
+        await compoundStrategy.setAsset(DAI.address);
     });
 
     it("Shoud throw error when underlyingToken address is 0", async () => {
@@ -64,7 +64,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
     it("Shoud deploy new IporVault", async () => {
@@ -93,7 +93,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
     it("Shoud throw error when aaveStrategy address is 0", async () => {
@@ -108,7 +108,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
     it("Shoud throw error when compoundStrategy address is 0", async () => {
@@ -123,12 +123,12 @@ describe("Stanley -> constructor", () => {
                 constants.AddressZero,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_05");
+        ).to.be.revertedWith("IPOR_37");
     });
 
-    it("Shoud throw error when aaveStrategy underlyingToken != from IporVault underlyingToken", async () => {
+    it("Shoud throw error when aaveStrategy asset != from IporVault asset", async () => {
         // given
-        await aaveStrategy.setUnderlyingToken(USDt.address);
+        await aaveStrategy.setAsset(USDt.address);
         // when
         await expect(
             //when
@@ -139,12 +139,12 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_04");
+        ).to.be.revertedWith("IPOR_102");
     });
 
-    it("Shoud throw error when compoundStrategy underlyingToken != from IporVault underlyingToken", async () => {
+    it("Shoud throw error when compoundStrategy asset != from IporVault asset", async () => {
         // given
-        await compoundStrategy.setUnderlyingToken(USDt.address);
+        await compoundStrategy.setAsset(USDt.address);
         // when
         await expect(
             //when
@@ -155,6 +155,6 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_04");
+        ).to.be.revertedWith("IPOR_102");
     });
 });

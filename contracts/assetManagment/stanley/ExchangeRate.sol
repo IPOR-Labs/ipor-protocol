@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import {AmMath} from "../libraries/AmMath.sol";
+import {IporMath} from "../../libraries/IporMath.sol";
 
 // TODO: take into account decimals specific for asset
 abstract contract ExchangeRate {
@@ -13,7 +13,7 @@ abstract contract ExchangeRate {
         if (_tokenAmount == 0 || _assetAmount == 0) {
             return 1e18;
         }
-        return AmMath.division(_assetAmount * 1e18, _tokenAmount);
+        return IporMath.division(_assetAmount * 1e18, _tokenAmount);
     }
 
     function _calculateExchangeRateRoundDown(
@@ -23,6 +23,6 @@ abstract contract ExchangeRate {
         if (_tokenAmount == 0 || _assetAmount == 0) {
             return 1e18;
         }
-        return AmMath.divisionRoundDown(_assetAmount * 1e18, _tokenAmount);
+        return IporMath.divisionWithoutRound(_assetAmount * 1e18, _tokenAmount);
     }
 }

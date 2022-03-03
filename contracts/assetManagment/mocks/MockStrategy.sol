@@ -2,27 +2,23 @@ pragma solidity 0.8.9;
 import "../interfaces/IPOR/IStrategy.sol";
 
 // simple mock for total _balance tests
-contract StrategyMock is IStrategy {
+contract MockStrategy is IStrategy {
     uint256 private _balance;
     address private _shareTokens;
     uint256 private _apy;
-    address private _underlyingToken;
+    address private _asset;
     address private _owner;
 
     function deposit(uint256 amount) external {}
 
     function withdraw(uint256 amount) external {}
 
-    function changeOwnership(address newOwner) external {
-        _owner = newOwner;
+    function getAsset() external view returns (address) {
+        return _asset;
     }
 
-    function getUnderlyingToken() external view returns (address) {
-        return _underlyingToken;
-    }
-
-    function setUnderlyingToken(address underlyingToken) external {
-        _underlyingToken = underlyingToken;
+    function setAsset(address asset) external {
+        _asset = asset;
     }
 
     function getApy() external view returns (uint256) {

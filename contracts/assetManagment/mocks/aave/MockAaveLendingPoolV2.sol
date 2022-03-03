@@ -3,10 +3,12 @@ pragma experimental ABIEncoderV2;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../../interfaces/aave/AaveLendingPool.sol";
+import "../../interfaces/aave/AaveLendingPoolV2.sol";
 import "../../interfaces/aave/DataTypes.sol";
+import "../../interfaces/aave/AToken.sol";
+import "./MockADAI.sol";
 
-contract AaveLendingPoolMock is AaveLendingPool {
+contract MockAaveLendingPoolV2 is AaveLendingPoolV2 {
     address private _dai;
     address private _aDai;
     address private _stableDebtTokenAddress;
@@ -22,10 +24,10 @@ contract AaveLendingPoolMock is AaveLendingPool {
     function deposit(
         address,
         uint256 amount,
+        address recipient,
         uint16
     ) external override {
-        /* require(IERC20(_dai).transferFrom(msg.sender, address(this), _amount), "Error during transferFrom"); */
-        IERC20(_aDai).transfer(msg.sender, amount);
+        IERC20(_aDai).transfer(recipient, amount);
     }
 
     function setStableDebtTokenAddress(address a) external {
@@ -56,5 +58,13 @@ contract AaveLendingPoolMock is AaveLendingPool {
         d.interestRateStrategyAddress = _interestRateStrategyAddress;
         d.currentLiquidityRate = _currentLiquidityRate;
         return d;
+    }
+
+    function withdraw(
+        address asset,
+        uint256 amount,
+        address to
+    ) external override {
+        AToken(_aDai).burn(msg.sender, to, amount, 0);
     }
 }

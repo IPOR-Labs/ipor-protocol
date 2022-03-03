@@ -5,11 +5,7 @@ interface IStrategy {
 
     function withdraw(uint256 amount) external;
 
-    // TODO: remove this method and use IporOwnableUpgradeable
-    function changeOwnership(address newOwner) external;
-
-    // TODO: getAsset
-    function getUnderlyingToken() external view returns (address);
+    function getAsset() external view returns (address);
 
     function getApy() external view returns (uint256);
 

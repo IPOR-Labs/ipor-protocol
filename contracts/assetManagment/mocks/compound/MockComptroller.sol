@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/compound/Comptroller.sol";
 
-contract ComptrollerMock is Comptroller {
+contract MockComptroller is Comptroller {
     address private _compAddr;
     address private _cTokenAddr;
     uint256 private _amount;

@@ -1,6 +1,6 @@
 pragma solidity 0.8.9;
 
-contract AaveStableDebtTokenMock {
+contract MockAaveStableDebtToken {
     uint256 private _totalStableDebt;
     uint256 private _avgStableRate;
 
