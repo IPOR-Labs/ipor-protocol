@@ -27,7 +27,7 @@ describe("#IvToken mint function tests", () => {
             //when
             ivToken.mint(await userOne.getAddress(), BigNumber.from("10"))
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_08");
+        ).to.be.revertedWith("IPOR_104");
     });
 
     it("should not be able to mint when amount is  0", async () => {
@@ -39,7 +39,7 @@ describe("#IvToken mint function tests", () => {
             //when
             ivToken.connect(userOne).mint(await userOne.getAddress(), amount)
             //then
-        ).to.be.revertedWith("IPOR_ASSET_MANAGMENT_02");
+        ).to.be.revertedWith("IPOR_100");
     });
 
     it("should not be able to mint when pass zero address", async () => {

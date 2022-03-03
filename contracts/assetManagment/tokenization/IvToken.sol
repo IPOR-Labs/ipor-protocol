@@ -8,28 +8,28 @@ import "hardhat/console.sol";
 
 import "../interfaces/IIvToken.sol";
 import "../../security/IporOwnable.sol";
-import "../errors/Errors.sol";
+import "../../IporErrors.sol";
 
 contract IvToken is IporOwnable, IIvToken, ERC20 {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     uint8 private immutable _decimals;
-    address private immutable _underlyingAsset;
+    address private immutable _asset;
     address private _vault;
 
     modifier onlyVault() {
-        require(msg.sender == _vault, Errors.ONLY_VAULT);
+        require(msg.sender == _vault, IporErrors.ONLY_VAULT);
         _;
     }
 
     constructor(
         string memory aTokenName,
         string memory aTokenSymbol,
-        address underlyingAsset
+        address asset
     ) ERC20(aTokenName, aTokenSymbol) {
-        require(address(0) != underlyingAsset, Errors.ZERO_ADDRESS);
-        _underlyingAsset = underlyingAsset;
+        require(address(0) != asset, IporErrors.WRONG_ADDRESS);
+        _asset = asset;
         _decimals = 18;
     }
 
@@ -48,26 +48,21 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         onlyVault
         returns (bool)
     {
-        require(amount > 0, Errors.IPOR_VAULT_TOKEN_MINT_AMOUNT_TOO_LOW);
+        require(amount != 0, IporErrors.IPOR_VAULT_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(user, amount);
         emit Transfer(address(0), user, amount);
         emit Mint(user, amount);
     }
 
     function burn(address user, uint256 amount) external override onlyVault {
-        require(amount > 0, Errors.IPOR_VAULT_TOKEN_BURN_AMOUNT_TOO_LOW);
+        require(amount != 0, IporErrors.IPOR_VAULT_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(user, amount);
 
         emit Transfer(user, address(0), amount);
         emit Burn(user, amount);
     }
 
-    function getUnderlyingAssetAddress()
-        external
-        view
-        override
-        returns (address)
-    {
-        return _underlyingAsset;
+    function assetAddress() external view override returns (address) {
+        return _asset;
     }
 }

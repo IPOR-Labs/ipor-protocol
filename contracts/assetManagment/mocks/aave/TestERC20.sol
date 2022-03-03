@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 import "../../interfaces/IERC20Minimal.sol";
-import "hardhat/console.sol";
 
 contract TestERC20 is IERC20Minimal {
-    mapping(address => uint256) public balance;
+    mapping(address => uint256) private _balance;
     mapping(address => mapping(address => uint256)) public override allowance;
 
     constructor(uint256 amountToMint) {
@@ -13,9 +12,9 @@ contract TestERC20 is IERC20Minimal {
     }
 
     function mint(address to, uint256 amount) public {
-        uint256 balanceNext = balance[to] + amount;
+        uint256 balanceNext = _balance[to] + amount;
         require(balanceNext >= amount, "overflow balance");
-        balance[to] = balanceNext;
+        _balance[to] = balanceNext;
     }
 
     function transfer(address recipient, uint256 amount)
@@ -23,16 +22,16 @@ contract TestERC20 is IERC20Minimal {
         override
         returns (bool)
     {
-        uint256 balanceBefore = balance[msg.sender];
+        uint256 balanceBefore = _balance[msg.sender];
         require(balanceBefore >= amount, "insufficient balance");
-        balance[msg.sender] = balanceBefore - amount;
+        _balance[msg.sender] = balanceBefore - amount;
 
-        uint256 balanceRecipient = balance[recipient];
+        uint256 balanceRecipient = _balance[recipient];
         require(
             balanceRecipient + amount >= balanceRecipient,
             "recipient balance overflow"
         );
-        balance[recipient] = balanceRecipient + amount;
+        _balance[recipient] = balanceRecipient + amount;
 
         emit Transfer(msg.sender, recipient, amount);
         return true;
@@ -58,21 +57,21 @@ contract TestERC20 is IERC20Minimal {
 
         allowance[sender][msg.sender] = allowanceBefore - amount;
 
-        uint256 balanceRecipient = balance[recipient];
+        uint256 balanceRecipient = _balance[recipient];
         require(
             balanceRecipient + amount >= balanceRecipient,
             "overflow balance recipient"
         );
-        balance[recipient] = balanceRecipient + amount;
-        uint256 balanceSender = balance[sender];
+        _balance[recipient] = balanceRecipient + amount;
+        uint256 balanceSender = _balance[sender];
         require(balanceSender >= amount, "underflow balance sender");
-        balance[sender] = balanceSender - amount;
+        _balance[sender] = balanceSender - amount;
         emit Transfer(sender, recipient, amount);
         return true;
     }
 
     function balanceOf(address account) external view returns (uint256) {
-        return balance[account];
+        return _balance[account];
     }
 
     function decimals() external view returns (uint256) {
