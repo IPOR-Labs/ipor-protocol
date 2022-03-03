@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/AaveLendingPool.sol";
 import "../../interfaces/aave/DataTypes.sol";
 
-contract AaveLendingPoolMock is AaveLendingPool {
+contract MockAaveLendingPool is AaveLendingPool {
     address private _dai;
     address private _aDai;
     address private _stableDebtTokenAddress;

@@ -63,13 +63,13 @@ describe("#Roles Localhost test", () => {
         );
 
         const AaveStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
         const aaveStrategy = await AaveStrategy.deploy();
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
         const compoundStrategy = await CompoundStrategy.deploy();
         await compoundStrategy.setShareToken(DAI.address);

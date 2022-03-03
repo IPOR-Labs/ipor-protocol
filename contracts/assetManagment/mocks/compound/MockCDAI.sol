@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/compound/CErc20Mock.sol";
 import "../../../libraries/IporMath.sol";
 
-contract CDAIMock is ERC20, CErc20Mock {
+contract MockCDAI is ERC20, CErc20Mock {
     address private _dai;
     uint256 private _toTransfer;
     uint256 private _toMint;

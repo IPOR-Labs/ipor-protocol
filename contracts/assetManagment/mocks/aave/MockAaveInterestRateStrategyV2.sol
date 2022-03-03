@@ -1,6 +1,6 @@
 pragma solidity 0.8.9;
 
-contract AaveInterestRateStrategyMockV2 {
+contract AaveInterestRateMockStrategyV2 {
     uint256 private _borrowRate;
     uint256 private _supplyRate;
 

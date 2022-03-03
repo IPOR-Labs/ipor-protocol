@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { StrategyMock, Stanley, TestERC20 } from "../../../../types";
+import { MockStrategy, Stanley, TestERC20 } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -14,8 +14,8 @@ describe("Stanley -> SetStrategy", () => {
     let stanley: Stanley;
     let DAI: TestERC20;
     let USDt: TestERC20;
-    let aaveStrategy: StrategyMock;
-    let compoundStrategy: StrategyMock;
+    let aaveStrategy: MockStrategy;
+    let compoundStrategy: MockStrategy;
 
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
@@ -37,15 +37,15 @@ describe("Stanley -> SetStrategy", () => {
         );
 
         const AaveStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        aaveStrategy = (await AaveStrategy.deploy()) as StrategyMock;
+        aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        compoundStrategy = (await CompoundStrategy.deploy()) as StrategyMock;
+        compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
 
@@ -69,7 +69,7 @@ describe("Stanley -> SetStrategy", () => {
         it("Should setup aave strategy", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
@@ -84,7 +84,7 @@ describe("Stanley -> SetStrategy", () => {
         it("Should not setup new strategy when underlying Token don't match", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
@@ -99,7 +99,7 @@ describe("Stanley -> SetStrategy", () => {
         it("Should not setup new strategy when pass zero address", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             await expect(
                 //when
@@ -113,7 +113,7 @@ describe("Stanley -> SetStrategy", () => {
         it("Should setup compound strategy", async () => {
             //given
             const NewCompoundStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
@@ -131,7 +131,7 @@ describe("Stanley -> SetStrategy", () => {
         it("Should not setup new strategy when underlying Token don't match", async () => {
             //given
             const NewCompoundStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
@@ -146,7 +146,7 @@ describe("Stanley -> SetStrategy", () => {
         it("Should not setup new strategy when pass zero address", async () => {
             //given
             const NewAaveStrategy = await hre.ethers.getContractFactory(
-                "StrategyMock"
+                "MockStrategy"
             );
             await expect(
                 //when

@@ -1,6 +1,6 @@
 pragma solidity 0.8.9;
 
-contract AaveVariableDebtTokenMock {
+contract MockAaveVariableDebtToken {
     uint256 private _scaledTotalSupply;
 
     constructor(uint256 value) {

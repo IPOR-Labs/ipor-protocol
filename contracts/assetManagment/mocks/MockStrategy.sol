@@ -2,7 +2,7 @@ pragma solidity 0.8.9;
 import "../interfaces/IPOR/IStrategy.sol";
 
 // simple mock for total _balance tests
-contract StrategyMock is IStrategy {
+contract MockStrategy is IStrategy {
     uint256 private _balance;
     address private _shareTokens;
     uint256 private _apy;

@@ -18,23 +18,23 @@ import {
     AaveStrategy,
     CompoundStrategy,
     TestERC20,
-    ADAIMock,
-    AaveLendingPoolProviderMock,
-    AaveLendingPoolCoreMock,
-    AaveInterestRateStrategyMockV2,
-    AaveStableDebtTokenMock,
-    AaveVariableDebtTokenMock,
-    AaveLendingPoolMockV2,
-    StakedAaveMock,
-    AaveIncentivesControllerMock,
+    MockADAI,
+    MockAaveLendingPoolProvider,
+    MockAaveLendingPoolCore,
+    AaveInterestRateMockStrategyV2,
+    MockAaveStableDebtToken,
+    MockAaveVariableDebtToken,
+    MockAaveLendingPoolV2,
+    MockStakedAave,
+    MockAaveIncentivesController,
     Stanley,
-    CDAIMock,
-    WhitePaperMock,
-    ComptrollerMock,
+    MockCDAI,
+    MockWhitePaper,
+    MockComptroller,
     IvToken,
     ERC20,
     IAaveIncentivesController,
-    StrategyMock,
+    MockStrategy,
 } from "../../../types";
 
 // // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
@@ -44,7 +44,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let accountToImpersonate: string;
     let daiAddress: string;
     let daiContract: ERC20;
-    let aaveStrategyContract_Instance: StrategyMock;
+    let aaveStrategyContract_Instance: MockStrategy;
     let signer: Signer;
     let aDaiAddress: string;
     let AAVE: string;
@@ -140,10 +140,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         ) as IAaveIncentivesController;
 
         const AaveStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
         aaveStrategyContract_Instance =
-            (await AaveStrategy.deploy()) as StrategyMock;
+            (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategyContract_Instance.setShareToken(daiAddress);
         await aaveStrategyContract_Instance.setAsset(daiAddress);
 

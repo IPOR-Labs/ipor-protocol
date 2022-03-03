@@ -2,7 +2,7 @@ pragma solidity 0.8.9;
 
 import "../../interfaces/compound/WhitePaperInterestRateModel.sol";
 
-contract WhitePaperMock is WhitePaperInterestRateModel {
+contract MockWhitePaper is WhitePaperInterestRateModel {
     uint256 private _borrowRate;
     uint256 private _supplyRate;
     uint256 public blocksPerYear;

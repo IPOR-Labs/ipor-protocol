@@ -3,8 +3,7 @@ pragma solidity 0.8.9;
 
 import "../../stanley/ExchangeRate.sol";
 
-// TODO: We have to decide Mock is a prefix or postfix and use this approach consistently everywhere
-contract ExchangeRateMock is ExchangeRate {
+contract MockExchangeRate is ExchangeRate {
     function calculateExchangeRate(uint256 totalAssets, uint256 totalTokens)
         external
         pure

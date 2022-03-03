@@ -4,7 +4,7 @@ import { BigNumber } from "ethers";
 import { solidity } from "ethereum-waffle";
 chai.use(solidity);
 const { expect } = chai;
-import { ExchangeRateMock } from "../../../../types";
+import { MockExchangeRate } from "../../../../types";
 const itParam = require("mocha-param");
 
 type TestData = {
@@ -52,10 +52,10 @@ const data: TestData[] = [
 ];
 
 describe("#ExchangeRate test", () => {
-    let exchangeRate: ExchangeRateMock;
+    let exchangeRate: MockExchangeRate;
     beforeEach(async () => {
         const ExchangeRate = await hre.ethers.getContractFactory(
-            "ExchangeRateMock"
+            "MockExchangeRate"
         );
         exchangeRate = await ExchangeRate.deploy();
     });

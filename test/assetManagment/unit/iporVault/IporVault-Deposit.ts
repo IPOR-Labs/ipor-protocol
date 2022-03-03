@@ -8,19 +8,19 @@ import {
     AaveStrategy,
     CompoundStrategy,
     TestERC20,
-    ADAIMock,
-    AaveLendingPoolProviderMock,
-    AaveLendingPoolCoreMock,
-    AaveInterestRateStrategyMockV2,
-    AaveStableDebtTokenMock,
-    AaveVariableDebtTokenMock,
-    AaveLendingPoolMockV2,
-    StakedAaveMock,
-    AaveIncentivesControllerMock,
+    MockADAI,
+    MockAaveLendingPoolProvider,
+    MockAaveLendingPoolCore,
+    AaveInterestRateMockStrategyV2,
+    MockAaveStableDebtToken,
+    MockAaveVariableDebtToken,
+    MockAaveLendingPoolV2,
+    MockStakedAave,
+    MockAaveIncentivesController,
     Stanley,
-    CDAIMock,
-    WhitePaperMock,
-    ComptrollerMock,
+    MockCDAI,
+    MockWhitePaper,
+    MockComptroller,
     IvToken,
 } from "../../../../types";
 
@@ -40,15 +40,15 @@ describe("Stanley -> Deposit", () => {
     let DAI: TestERC20;
     let tokenFactory: any;
 
-    let aDAI: ADAIMock;
+    let aDAI: MockADAI;
     let AAVE: TestERC20;
     let aaveNewStartegyInstance: AaveStrategy;
-    let lendingPool: AaveLendingPoolMockV2;
-    let stakedAave: StakedAaveMock;
+    let lendingPool: MockAaveLendingPoolV2;
+    let stakedAave: MockStakedAave;
 
-    let cDAI: CDAIMock;
+    let cDAI: MockCDAI;
     let compoundStartegyInstance: CompoundStrategy;
-    let comptroller: ComptrollerMock;
+    let comptroller: MockComptroller;
     let COMP: TestERC20;
     let ivToken: IvToken;
 
@@ -83,11 +83,11 @@ describe("Stanley -> Deposit", () => {
         //                        AAVE Mock
         //##############################################################
 
-        const ADAIMockFactory = await hre.ethers.getContractFactory("ADAIMock");
-        aDAI = (await ADAIMockFactory.deploy(
+        const MockADAIFactory = await hre.ethers.getContractFactory("MockADAI");
+        aDAI = (await MockADAIFactory.deploy(
             DAI.address,
             await admin.getAddress()
-        )) as ADAIMock;
+        )) as MockADAI;
         DAI.mint(aDAI.address, one.mul(10000));
         AAVE = (await tokenFactory.deploy(
             BigNumber.from(2).pow(255)
@@ -95,54 +95,54 @@ describe("Stanley -> Deposit", () => {
         const stkAAVE = (await tokenFactory.deploy(
             BigNumber.from(2).pow(255)
         )) as TestERC20;
-        const aaveLendingPoolProviderMock = await hre.ethers.getContractFactory(
-            "AaveLendingPoolProviderMock"
+        const MockAaveLendingPoolProvider = await hre.ethers.getContractFactory(
+            "MockAaveLendingPoolProvider"
         );
-        const aaveLendingPoolCoreMock = await hre.ethers.getContractFactory(
-            "AaveLendingPoolCoreMock"
+        const MockAaveLendingPoolCore = await hre.ethers.getContractFactory(
+            "MockAaveLendingPoolCore"
         );
-        const aaveInterestRateStrategyMockV2 =
+        const aaveInterestRateMockStrategyV2 =
             await hre.ethers.getContractFactory(
-                "AaveInterestRateStrategyMockV2"
+                "AaveInterestRateMockStrategyV2"
             );
-        const aaveStableDebtTokenMock = await hre.ethers.getContractFactory(
-            "AaveStableDebtTokenMock"
+        const MockAaveStableDebtToken = await hre.ethers.getContractFactory(
+            "MockAaveStableDebtToken"
         );
-        const aaveVariableDebtTokenMock = await hre.ethers.getContractFactory(
-            "AaveVariableDebtTokenMock"
+        const MockAaveVariableDebtToken = await hre.ethers.getContractFactory(
+            "MockAaveVariableDebtToken"
         );
-        const aaveLendingPoolMock = await hre.ethers.getContractFactory(
-            "AaveLendingPoolMockV2"
+        const MockAaveLendingPool = await hre.ethers.getContractFactory(
+            "MockAaveLendingPoolV2"
         );
-        const stakedAaveMock = await hre.ethers.getContractFactory(
-            "StakedAaveMock"
+        const MockStakedAave = await hre.ethers.getContractFactory(
+            "MockStakedAave"
         );
-        const aaveIncentivesControllerMock =
-            await hre.ethers.getContractFactory("AaveIncentivesControllerMock");
+        const MockAaveIncentivesController =
+            await hre.ethers.getContractFactory("MockAaveIncentivesController");
         const addressProvider =
-            (await aaveLendingPoolProviderMock.deploy()) as AaveLendingPoolProviderMock;
+            (await MockAaveLendingPoolProvider.deploy()) as MockAaveLendingPoolProvider;
         const lendingPoolCore =
-            (await aaveLendingPoolCoreMock.deploy()) as AaveLendingPoolCoreMock;
+            (await MockAaveLendingPoolCore.deploy()) as MockAaveLendingPoolCore;
         const interestRateStrategyV2 =
-            (await aaveInterestRateStrategyMockV2.deploy()) as AaveInterestRateStrategyMockV2;
-        const stableDebtToken = (await aaveStableDebtTokenMock.deploy(
+            (await aaveInterestRateMockStrategyV2.deploy()) as AaveInterestRateMockStrategyV2;
+        const stableDebtToken = (await MockAaveStableDebtToken.deploy(
             0,
             0
-        )) as AaveStableDebtTokenMock;
-        const variableDebtToken = (await aaveVariableDebtTokenMock.deploy(
+        )) as MockAaveStableDebtToken;
+        const variableDebtToken = (await MockAaveVariableDebtToken.deploy(
             0
-        )) as AaveVariableDebtTokenMock;
-        lendingPool = (await aaveLendingPoolMock.deploy(
+        )) as MockAaveVariableDebtToken;
+        lendingPool = (await MockAaveLendingPool.deploy(
             DAI.address,
             aDAI.address
-        )) as AaveLendingPoolMockV2;
-        stakedAave = (await stakedAaveMock.deploy(
+        )) as MockAaveLendingPoolV2;
+        stakedAave = (await MockStakedAave.deploy(
             AAVE.address
-        )) as StakedAaveMock;
+        )) as MockStakedAave;
         const aaveIncentivesController =
-            (await aaveIncentivesControllerMock.deploy(
+            (await MockAaveIncentivesController.deploy(
                 stakedAave.address
-            )) as AaveIncentivesControllerMock;
+            )) as MockAaveIncentivesController;
         await stakedAave.transfer(
             aaveIncentivesController.address,
             one.mul(1000)
@@ -179,28 +179,28 @@ describe("Stanley -> Deposit", () => {
         //##############################################################
         //                        Compound Mock
         //##############################################################
-        const CDAIMockFactory = await hre.ethers.getContractFactory("CDAIMock");
+        const MockCDAIFactory = await hre.ethers.getContractFactory("MockCDAI");
         COMP = (await tokenFactory.deploy(
             BigNumber.from(2).pow(255)
         )) as TestERC20;
-        const whitePaperMock = await hre.ethers.getContractFactory(
-            "WhitePaperMock"
+        const MockWhitePaper = await hre.ethers.getContractFactory(
+            "MockWhitePaper"
         );
-        let whitePaperMockInstance =
-            (await whitePaperMock.deploy()) as WhitePaperMock;
-        cDAI = (await CDAIMockFactory.deploy(
+        let MockWhitePaperInstance =
+            (await MockWhitePaper.deploy()) as MockWhitePaper;
+        cDAI = (await MockCDAIFactory.deploy(
             DAI.address,
             await admin.getAddress(),
-            whitePaperMockInstance.address
-        )) as CDAIMock;
+            MockWhitePaperInstance.address
+        )) as MockCDAI;
         DAI.mint(cDAI.address, one.mul(10000));
-        const ComptrollerMock = await hre.ethers.getContractFactory(
-            "ComptrollerMock"
+        const MockComptroller = await hre.ethers.getContractFactory(
+            "MockComptroller"
         );
-        comptroller = (await ComptrollerMock.deploy(
+        comptroller = (await MockComptroller.deploy(
             COMP.address,
             cDAI.address
-        )) as ComptrollerMock;
+        )) as MockComptroller;
         await COMP.transfer(comptroller.address, one.mul(1000));
         const compoundNewStartegy = await hre.ethers.getContractFactory(
             "CompoundStrategy"

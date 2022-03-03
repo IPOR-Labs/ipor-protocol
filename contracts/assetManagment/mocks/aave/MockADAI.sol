@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/AToken.sol";
 
-contract ADAIMock is ERC20, AToken {
+contract MockADAI is ERC20, AToken {
     address private _dai;
     address private _controller;
     uint256 private _price = 10**18;

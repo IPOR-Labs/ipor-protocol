@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { StrategyMock, Stanley, TestERC20, IvToken } from "../../../../types";
+import { MockStrategy, Stanley, TestERC20, IvToken } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -14,8 +14,8 @@ describe("Stanley -> constructor", () => {
     let stanley: Stanley;
     let DAI: TestERC20;
     let USDt: TestERC20;
-    let aaveStrategy: StrategyMock;
-    let compoundStrategy: StrategyMock;
+    let aaveStrategy: MockStrategy;
+    let compoundStrategy: MockStrategy;
     let StanleyFactory: any;
     let ivToken: IvToken;
 
@@ -39,15 +39,15 @@ describe("Stanley -> constructor", () => {
         )) as IvToken;
 
         const AaveStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        aaveStrategy = (await AaveStrategy.deploy()) as StrategyMock;
+        aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
         const CompoundStrategy = await hre.ethers.getContractFactory(
-            "StrategyMock"
+            "MockStrategy"
         );
-        compoundStrategy = (await CompoundStrategy.deploy()) as StrategyMock;
+        compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
     });

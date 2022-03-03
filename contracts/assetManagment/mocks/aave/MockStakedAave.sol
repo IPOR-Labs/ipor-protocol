@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract StakedAaveMock is ERC20 {
+contract MockStakedAave is ERC20 {
     address private _aaveMock;
     uint256 private _cooldownStartTimestamp;
 

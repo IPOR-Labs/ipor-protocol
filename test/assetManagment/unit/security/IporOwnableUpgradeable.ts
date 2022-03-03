@@ -16,7 +16,7 @@ describe("IporOwnableUpgradeable", () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
 
         const IporOwnableUpgradeable = await hre.ethers.getContractFactory(
-            "IporOwnableUpgradeableMock"
+            "MockIporOwnableUpgradeable"
         );
         iporOwnable =
             (await IporOwnableUpgradeable.deploy()) as IporOwnableUpgradeable;
