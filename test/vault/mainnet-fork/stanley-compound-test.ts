@@ -212,26 +212,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             compoundStrategyContract_Instance.address,
         ])) as Stanley;
 
-        await stanley.grantRole(
-            keccak256("GOVERNANCE_ROLE"),
-            await signer.getAddress()
-        );
-
+        await stanley.setMilton(await signer.getAddress());
         await aaveStrategyContract_Instance.setStanley(stanley.address);
         await compoundStrategyContract_Instance.setStanley(stanley.address);
-
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await signer.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("WITHDRAW_ROLE"),
-            await signer.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("CLAIM_ROLE"),
-            await signer.getAddress()
-        );
 
         await daiContract.approve(await signer.getAddress(), maxValue);
         await daiContract.approve(stanley.address, maxValue);
@@ -436,8 +419,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
         expect(
             userDaiBalanceAfter,
-            "userDaiBalanceAfter = 334678735341909434725498"
-        ).to.be.equal(BigNumber.from("334678735341909434725498"));
+            "userDaiBalanceAfter = 334678735341909606609623"
+        ).to.be.equal(BigNumber.from("334678735341909606609623"));
         const strategyCTokenContractAfter = await aTokenContract.balanceOf(
             aaveStrategyContract_Instance.address
         );

@@ -6,9 +6,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "./interfaces/IPOR/IStrategy.sol";
 import "../interfaces/IIporOwnableUpgradeable.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "./interfaces/IIvToken.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "./StanleyAccessControl.sol";
 import "./ExchangeRate.sol";
 import "../IporErrors.sol";
 
@@ -17,7 +17,7 @@ import "../IporErrors.sol";
 contract Stanley is
     UUPSUpgradeable,
     PausableUpgradeable,
-    StanleyAccessControl,
+    IporOwnableUpgradeable,
     ExchangeRate
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -25,7 +25,7 @@ contract Stanley is
     uint8 internal _decimals;
     address internal _asset;
 
-    // TODO: use consistent way for fields
+    address private _milton;
     address private _aaveStrategy;
     address private _aaveShareTokens;
     address private _compoundStrategy;
@@ -57,7 +57,7 @@ contract Stanley is
         address aStrategy,
         address cStrategy
     ) public initializer {
-        _init();
+        __Ownable_init();
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -67,6 +67,11 @@ contract Stanley is
 
         _setAaveStrategy(aStrategy);
         _setCompoundStrategy(cStrategy);
+    }
+
+    modifier _onlyMilton() {
+        require(msg.sender == _milton, IporErrors.STANLEY_CALLER_NOT_MILTON);
+        _;
     }
 
     // Find highest apy strategy to deposit underlying asset
@@ -87,6 +92,10 @@ contract Stanley is
             IStrategy(_compoundStrategy).balanceOf();
     }
 
+    function setMilton(address milton) external onlyOwner {
+        _milton = milton;
+    }
+
     /**
      * @dev to deposit asset in higher apy strategy.
      * @notice only owner can deposit.
@@ -94,7 +103,7 @@ contract Stanley is
      */
     //  TODO: ADD tests for _amount = 0
     //  TODO: return balanse before deposit
-    function deposit(uint256 _amount) external onlyRole(_DEPOSIT_ROLE) {
+    function deposit(uint256 _amount) external _onlyMilton {
         require(_amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         IStrategy strategy = getMaxApyStrategy();
 
@@ -108,24 +117,15 @@ contract Stanley is
         token.mint(msg.sender, IporMath.division(_amount * 1e18, exchangeRate));
     }
 
-    function setCompoundStrategy(address strategy)
-        external
-        onlyRole(_GOVERNANCE_ROLE)
-    {
+    function setCompoundStrategy(address strategy) external onlyOwner {
         _setCompoundStrategy(strategy);
     }
 
-    function confirmTransferOwnership(address strategy)
-        external
-        onlyRole(_GOVERNANCE_ROLE)
-    {
+    function confirmTransferOwnership(address strategy) external onlyOwner {
         IIporOwnableUpgradeable(strategy).confirmTransferOwnership();
     }
 
-    function setAaveStrategy(address strategyAddress)
-        external
-        onlyRole(_GOVERNANCE_ROLE)
-    {
+    function setAaveStrategy(address strategyAddress) external onlyOwner {
         _setAaveStrategy(strategyAddress);
     }
 
@@ -137,7 +137,7 @@ contract Stanley is
     */
     // TODO: return amount of withdraw,
     // TODO: balanse before withdraw and aftre
-    function withdraw(uint256 _tokens) external onlyRole(_WITHDRAW_ROLE) {
+    function withdraw(uint256 _tokens) external _onlyMilton {
         require(_tokens != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         IIvToken token = IIvToken(_ivToken);
 
@@ -211,7 +211,7 @@ contract Stanley is
         }
     }
 
-    function withdrawAll() external onlyRole(_WITHDRAW_ROLE) {
+    function withdrawAll() external _onlyMilton {
         _withdraw(_aaveStrategy, IStrategy(_aaveStrategy).balanceOf(), false);
         _withdraw(
             _compoundStrategy,
@@ -227,10 +227,7 @@ contract Stanley is
      * @dev to migrate all asset from current strategy to another higher apy strategy.
      * @notice only owner can migrate.
      */
-    function migrateAssetInMaxApyStrategy()
-        external
-        onlyRole(_GOVERNANCE_ROLE)
-    {
+    function migrateAssetInMaxApyStrategy() external onlyOwner {
         IStrategy maxApyStrategy = getMaxApyStrategy();
         address from;
         if (address(maxApyStrategy) == _aaveStrategy) {
@@ -259,28 +256,20 @@ contract Stanley is
      * @param _account send claimed gove token to _account
      */
     // TODO: Consider to convert _account variable in contract and change fincton to no parameters
-    function aaveDoClaim(address _account)
-        external
-        payable
-        onlyRole(_CLAIM_ROLE)
-    {
+    function aaveDoClaim(address _account) external payable onlyOwner {
         _doClaim(_account, _aaveStrategy);
     }
 
     function aaveBeforeClaim(address[] memory assets, uint256 amount)
         external
         payable
-        onlyRole(_CLAIM_ROLE)
+        onlyOwner
     {
         IStrategy(_aaveStrategy).beforeClaim(assets, amount);
     }
 
     // TODO: Consider to convert _account variable in contract and change fincton to no parameters
-    function compoundDoClaim(address _account)
-        external
-        payable
-        onlyRole(_CLAIM_ROLE)
-    {
+    function compoundDoClaim(address _account) external payable onlyOwner {
         _doClaim(_account, _compoundStrategy);
     }
 
@@ -336,11 +325,7 @@ contract Stanley is
     }
 
     // TODO: this empty ????
-    function _authorizeUpgrade(address)
-        internal
-        override
-        onlyRole(_ADMIN_ROLE)
-    {}
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     /**
      * @dev to withdraw asset from current strategy.

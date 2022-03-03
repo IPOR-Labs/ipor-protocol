@@ -205,26 +205,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             compoundStrategyContract_Instance.address,
         ])) as Stanley;
 
-        await stanley.grantRole(
-            keccak256("GOVERNANCE_ROLE"),
-            await signer.getAddress()
-        );
-
+        await stanley.setMilton(await signer.getAddress());
         await aaveStrategyContract_Instance.setStanley(stanley.address);
         await compoundStrategyContract_Instance.setStanley(stanley.address);
-
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await signer.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("WITHDRAW_ROLE"),
-            await signer.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("CLAIM_ROLE"),
-            await signer.getAddress()
-        );
 
         await daiContract.approve(await signer.getAddress(), maxValue);
         await daiContract.approve(stanley.address, maxValue);

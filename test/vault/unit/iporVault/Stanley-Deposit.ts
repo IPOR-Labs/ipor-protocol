@@ -221,10 +221,7 @@ describe("Stanley -> Deposit", () => {
             aaveNewStartegyInstance.address,
             compoundStartegyInstance.address,
         ])) as Stanley;
-        await stanley.grantRole(
-            keccak256("GOVERNANCE_ROLE"),
-            await admin.getAddress()
-        );
+        await stanley.setMilton(await admin.getAddress());
         await aaveNewStartegyInstance.setStanley(stanley.address);
         await compoundStartegyInstance.setStanley(stanley.address);
         await ivToken.setStanley(stanley.address);
@@ -233,10 +230,6 @@ describe("Stanley -> Deposit", () => {
         //                        admin user setup
         //##############################################################
         await DAI.mint(await admin.getAddress(), one.mul(10000));
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await admin.getAddress()
-        );
     });
 
     describe("Mock setup example", () => {
@@ -396,23 +389,17 @@ describe("Stanley -> Deposit", () => {
 
     it("Should 2 diffrent user deposit into aave", async () => {
         // given
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await userOne.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await userTwo.getAddress()
-        );
         await DAI.mint(await userOne.getAddress(), one.mul(10000));
         await DAI.mint(await userTwo.getAddress(), one.mul(10000));
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
         await DAI.connect(userTwo).approve(stanley.address, one.mul(10000));
 
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
-
+        await stanley.setMilton(await userOne.getAddress());
         //when
+
         await stanley.connect(userOne).deposit(one.mul(10));
+        await stanley.setMilton(await userTwo.getAddress());
         await stanley.connect(userTwo).deposit(one.mul(20));
 
         //then
@@ -433,21 +420,15 @@ describe("Stanley -> Deposit", () => {
     });
     it("Should 2 diffrent user deposit into compound", async () => {
         // given
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await userOne.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await userTwo.getAddress()
-        );
         await DAI.mint(await userOne.getAddress(), one.mul(10000));
         await DAI.mint(await userTwo.getAddress(), one.mul(10000));
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
         await DAI.connect(userTwo).approve(stanley.address, one.mul(10000));
 
         //when
+        await stanley.setMilton(await userOne.getAddress());
         await stanley.connect(userOne).deposit(one.mul(10));
+        await stanley.setMilton(await userTwo.getAddress());
         await stanley.connect(userTwo).deposit(one.mul(20));
 
         //then
@@ -467,21 +448,15 @@ describe("Stanley -> Deposit", () => {
     });
     it("Should first user deposit into compound second into aave", async () => {
         // given
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await userOne.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await userTwo.getAddress()
-        );
         await DAI.mint(await userOne.getAddress(), one.mul(10000));
         await DAI.mint(await userTwo.getAddress(), one.mul(10000));
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
         await DAI.connect(userTwo).approve(stanley.address, one.mul(10000));
 
         //when
+        await stanley.setMilton(await userOne.getAddress());
         await stanley.connect(userOne).deposit(one.mul(10));
+        await stanley.setMilton(await userTwo.getAddress());
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
         await stanley.connect(userTwo).deposit(one.mul(20));
 
@@ -503,7 +478,7 @@ describe("Stanley -> Deposit", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
 
-    it("Should not deposit when user has no DEPOSIT_ROLE", async () => {
+    it("Should not deposit when is not milton", async () => {
         // given
 
         await DAI.mint(await userOne.getAddress(), one.mul(10000));
@@ -512,20 +487,15 @@ describe("Stanley -> Deposit", () => {
         //when
         await expect(
             stanley.connect(userOne).deposit(one.mul(10))
-        ).to.be.revertedWith(
-            "AccessControl: account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x2561bf26f818282a3be40719542054d2173eb0d38539e8a8d3cff22f29fd2384"
-        );
+        ).to.be.revertedWith("IPOR_501");
     });
 
     it("Should not deposit when user try deposit 0", async () => {
         // given
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await userOne.getAddress()
-        );
 
         await DAI.mint(await userOne.getAddress(), one.mul(10000));
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
+        await stanley.setMilton(await userOne.getAddress());
 
         //when
         await expect(

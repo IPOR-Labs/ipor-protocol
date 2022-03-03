@@ -232,4 +232,5 @@ library IporErrors {
 
     //@notice The caller of strategy must be Stanley
     string public constant STRATEGY_CALLER_NOT_STANLEY = "IPOR_500";
+    string public constant STANLEY_CALLER_NOT_MILTON = "IPOR_501";
 }
