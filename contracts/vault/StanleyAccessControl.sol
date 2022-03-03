@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-import "../../IporErrors.sol";
+import "../IporErrors.sol";
 
 abstract contract StanleyAccessControl is AccessControlUpgradeable {
     bytes32 internal constant _ADMIN_ROLE = keccak256("ADMIN_ROLE");

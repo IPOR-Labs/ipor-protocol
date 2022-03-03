@@ -5,7 +5,7 @@ import { constants, BigNumber } from "ethers";
 
 const { MaxUint256 } = constants;
 import { solidity } from "ethereum-waffle";
-import daiAbi from "../../../../artifacts/contracts/assetManagment/mocks/aave/MockDAI.sol/MockDAI.json";
+import daiAbi from "../../../../artifacts/contracts/vault/mocks/aave/MockDAI.sol/MockDAI.json";
 // import daiAbi from "../../../../"
 import {
     AaveStrategy,

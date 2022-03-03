@@ -3,23 +3,20 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "./interfaces/IPOR/IStrategy.sol";
+import "../interfaces/IIporOwnableUpgradeable.sol";
+import "./interfaces/IIvToken.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../interfaces/IPOR/IStrategy.sol";
-import "../../interfaces/IIporOwnableUpgradeable.sol";
-import "../interfaces/IIvToken.sol";
 import "./StanleyAccessControl.sol";
 import "./ExchangeRate.sol";
-// TODO: use errors from Ipor Protocol
-import "../../IporErrors.sol";
-
-// import "hardhat/console.sol";
+import "../IporErrors.sol";
 
 // TODO: Add function transferStrategyOwnership
 // TODO: Add IStanley with busineess methods
 contract Stanley is
     UUPSUpgradeable,
     PausableUpgradeable,
-	StanleyAccessControl,    
+    StanleyAccessControl,
     ExchangeRate
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -55,7 +52,7 @@ contract Stanley is
         address ivToken,
         address aStrategy,
         address cStrategy
-    ) public initializer {		
+    ) public initializer {
         _init();
         require(underlyingToken != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
