@@ -121,10 +121,6 @@ contract Stanley is
         _setCompoundStrategy(strategy);
     }
 
-    function confirmTransferOwnership(address strategy) external onlyOwner {
-        IIporOwnableUpgradeable(strategy).confirmTransferOwnership();
-    }
-
     function setAaveStrategy(address strategyAddress) external onlyOwner {
         _setAaveStrategy(strategyAddress);
     }
