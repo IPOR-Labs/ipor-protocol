@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/compound/CErc20Mock.sol";
-import "../../libraries/AmMath.sol";
+import "../../../libraries/IporMath.sol";
 
 contract CDAIMock is ERC20, CErc20Mock {
     address private _dai;
@@ -32,9 +32,8 @@ contract CDAIMock is ERC20, CErc20Mock {
         _mint(tokenOwner, 10**13); // 100.000 cDAI
     }
 
-    // TODO: Why 8? You are simulate DAI
     function decimals() public view override returns (uint8) {
-        return 8;
+        return 16;
     }
 
     function setSupplyRate(uint128 v) public {
@@ -46,7 +45,7 @@ contract CDAIMock is ERC20, CErc20Mock {
             IERC20(_dai).transferFrom(msg.sender, address(this), amount),
             "Error during transferFrom"
         ); // 1 DAI
-        _mint(msg.sender, AmMath.division((amount * 10**18), _exchangeRate));
+        _mint(msg.sender, IporMath.division((amount * 10**18), _exchangeRate));
 
         return 0;
     }
@@ -56,7 +55,7 @@ contract CDAIMock is ERC20, CErc20Mock {
         require(
             IERC20(_dai).transfer(
                 msg.sender,
-                AmMath.division(amount * _exchangeRate, 10**18)
+                IporMath.division(amount * _exchangeRate, 10**18)
             ),
             "Error during transfer"
         ); // 1 DAI

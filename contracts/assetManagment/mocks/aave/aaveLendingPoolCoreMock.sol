@@ -3,7 +3,6 @@ pragma solidity 0.8.9;
 // interfaces
 import "../../interfaces/aave/AaveLendingPoolCore.sol";
 
-// TODO: Capital letter
 contract AaveLendingPoolCoreMock is AaveLendingPoolCore {
     address private _reserve;
     uint256 private _liquidity;

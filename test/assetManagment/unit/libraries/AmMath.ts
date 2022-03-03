@@ -4,7 +4,7 @@ import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 chai.use(solidity);
 const { expect } = chai;
-import { AmMathMock } from "../../../../types";
+import { MockIporMath } from "../../../../types";
 const itParam = require("mocha-param");
 
 type DivisionDataType = {};
@@ -17,7 +17,7 @@ type DataForDivision = {
 
 describe("#AmMath division", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
-    let amMath: AmMathMock;
+    let amMath: MockIporMath;
 
     const dataForDivision: DataForDivision[] = [
         { numerator: "0", denominator: "1", result: "0" },
@@ -29,7 +29,7 @@ describe("#AmMath division", () => {
 
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
-        const AmMathMock = await hre.ethers.getContractFactory("AmMathMock");
+        const AmMathMock = await hre.ethers.getContractFactory("MockIporMath");
         amMath = await AmMathMock.deploy();
     });
 

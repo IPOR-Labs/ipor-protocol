@@ -20,6 +20,4 @@ interface IStrategy {
     function beforeClaim(address[] memory assets, uint256 _amount)
         external
         payable;
-
-    // TODO: Add function transferStrategyOwnership
 }

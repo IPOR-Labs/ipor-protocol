@@ -13,7 +13,6 @@ interface AaveIncentivesInterface {
         address to
     ) external returns (uint256);
 
-    // TODO: Remove redundant methods from interfaces
     /**
      * @dev returns the unclaimed rewards of the user
      * @param user the address of the user

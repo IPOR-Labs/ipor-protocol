@@ -10,9 +10,8 @@ import "../interfaces/aave/StakedAaveInterface.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../IporErrors.sol";
-import "../libraries/AmMath.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import "hardhat/console.sol";
+import {IporMath} from "../../libraries/IporMath.sol";
 
 contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -82,7 +81,10 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
             _asset
         );
         return
-            AmMath.division(uint256(reserveData.currentLiquidityRate), (10**7));
+            IporMath.division(
+                uint256(reserveData.currentLiquidityRate),
+                (10**7)
+            );
     }
 
     /**

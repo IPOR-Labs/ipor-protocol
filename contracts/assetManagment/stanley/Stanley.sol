@@ -13,6 +13,7 @@ import "../../IporErrors.sol";
 
 // import "hardhat/console.sol";
 
+// TODO: Add function transferStrategyOwnership
 // TODO: Add IStanley with busineess methods
 contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -96,7 +97,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         _deposit(strategy, _amount);
         emit Deposit(address(strategy), _amount);
 
-        token.mint(msg.sender, AmMath.division(_amount * 1e18, exchangeRate));
+        token.mint(msg.sender, IporMath.division(_amount * 1e18, exchangeRate));
     }
 
     function setCompoundStrategy(address strategy)
@@ -149,7 +150,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             _totalAsset,
             _tokenAmount
         );
-        uint256 amount = AmMath.division(
+        uint256 amount = IporMath.division(
             _tokens * _exchangeRateRoundDown,
             1e18
         );
@@ -184,7 +185,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
             return;
         }
         if (aaveBalance < compoundBalance) {
-            uint256 tokensToBurn = AmMath.division(
+            uint256 tokensToBurn = IporMath.division(
                 compoundBalance * 1e18,
                 _exchangeRate
             );
@@ -193,7 +194,7 @@ contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
         } else {
             // TODO: Cannot do this in this way, take into account asset decimals
             // TODO: Add tests for DAI(18 decimals) and for USDT (6 decimals)
-            uint256 tokensToBurn = AmMath.division(
+            uint256 tokensToBurn = IporMath.division(
                 aaveBalance * 1e18,
                 _exchangeRate
             );

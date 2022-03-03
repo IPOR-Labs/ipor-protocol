@@ -3,7 +3,6 @@ pragma solidity 0.8.9;
 import "../interfaces/compound/CErc20.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
-import "../interfaces/IERC20Decimal.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -12,7 +11,7 @@ import "../../security/IporOwnableUpgradeable.sol";
 
 import "hardhat/console.sol";
 import "../../IporErrors.sol";
-import "../libraries/AmMath.sol";
+import "../../libraries/IporMath.sol";
 
 contract CompoundStrategy is
     UUPSUpgradeable,
@@ -91,13 +90,12 @@ contract CompoundStrategy is
      * @dev Total Balance = Principal Amount + Interest Amount.
      * returns uint256 with 18 Decimals
      */
-    //  TODO: [Pete] use AmMath to div without round
     function balanceOf() public view override returns (uint256) {
         return (
-            AmMath.division(
+            IporMath.division(
                 (_cToken.exchangeRateStored() *
                     _cToken.balanceOf(address(this))),
-                (10**IERC20Decimal(_asset).decimals())
+                (10**ERC20Upgradeable(_asset).decimals())
             )
         );
     }
@@ -123,7 +121,7 @@ contract CompoundStrategy is
      */
     function withdraw(uint256 amount) external override onlyOwner {
         _cToken.redeem(
-            AmMath.division(amount * 1e18, _cToken.exchangeRateStored())
+            IporMath.division(amount * 1e18, _cToken.exchangeRateStored())
         );
         IERC20Upgradeable(address(_asset)).safeTransfer(
             msg.sender,
