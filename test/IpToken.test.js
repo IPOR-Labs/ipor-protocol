@@ -195,11 +195,7 @@ describe("IpToken", () => {
             //when
             testData.ipTokenDai
                 .connect(userTwo)
-                .burn(
-                    userOne.address,
-                    userTwo.address,
-                    TC_TOTAL_AMOUNT_10_000_18DEC
-                ),
+                .burn(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
             "IPOR_46"
         );
@@ -241,8 +237,7 @@ describe("IpToken", () => {
         //given
         const expectedUnderlyingTokenAddress = testData.tokenDai.address;
         //when
-        let actualUnderlyingTokenAddress =
-            await testData.ipTokenDai.getAsset();
+        let actualUnderlyingTokenAddress = await testData.ipTokenDai.getAsset();
 
         //then
         expect(

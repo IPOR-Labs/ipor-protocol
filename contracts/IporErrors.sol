@@ -140,7 +140,7 @@ library IporErrors {
     string public constant WARREN_ASSET_NOT_SUPPORTED = "IPOR_39";
 
     //@notice IP Token Value which should be minted is too low
-    string public constant IP_TOKEN_MINT_VALUE_TOO_LOW = "IPOR_40";
+    string public constant IP_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_40";
 
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = "IPOR_41";
@@ -153,7 +153,7 @@ library IporErrors {
         "IPOR_43";
 
     //@notice Amount which should be burned is too low
-    string public constant IP_TOKEN_BURN_VALUE_TOO_LOW = "IPOR_44";
+    string public constant IP_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_44";
 
     //@notice Liquidity Pool balance is equal 0
     string public constant MILTON_LIQUIDITY_POOL_IS_EMPTY = "IPOR_45";
@@ -216,12 +216,12 @@ library IporErrors {
 
     // Asset managment
     //@notice amount should be > 0
-    string public constant IPOR_VAULT_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_100";
+    string public constant STANLEY_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_100";
     //@notice amount should be > 0
-    string public constant IPOR_VAULT_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_101";
+    string public constant STANLEY_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_101";
     string public constant UNDERLYINGTOKEN_IS_NOT_COMPATIBLE = "IPOR_102";
     string public constant UINT_SHOULD_BE_GRATER_THEN_ZERO = "IPOR_103";
 
     // only vault can have access to function
-    string public constant ONLY_VAULT = "IPOR_104";
+    string public constant CALLER_NOT_STANLEY = "IPOR_104";
 }

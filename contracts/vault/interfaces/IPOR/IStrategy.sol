@@ -1,5 +1,6 @@
 pragma solidity 0.8.9;
 
+//TODO: remove folder IPOR, not needed.
 interface IStrategy {
     function deposit(uint256 amount) external;
 

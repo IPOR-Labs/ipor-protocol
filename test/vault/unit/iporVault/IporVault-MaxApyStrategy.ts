@@ -57,7 +57,7 @@ describe("Stanley -> maxApyStrategy", () => {
             keccak256("GOVERNANCE_ROLE"),
             await admin.getAddress()
         );
-        await ivToken.setVault(stanley.address);
+        await ivToken.setStanley(stanley.address);
     });
 
     it("Should select aave strategy", async () => {

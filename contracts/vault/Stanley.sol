@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -21,13 +22,16 @@ contract Stanley is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    uint8 internal _decimals;
+    address internal _asset;
+
     // TODO: use consistent way for fields
     address private _aaveStrategy;
     address private _aaveShareTokens;
     address private _compoundStrategy;
     address private _compoundShareTokens;
-    // TODO: _underlyingToken -> assetToken
-    address private _underlyingToken;
+    // TODO: _asset -> assetToken
+
     address private _ivToken;
 
     // TODO: maybe better move to interface (all in AM)
@@ -44,20 +48,21 @@ contract Stanley is
     /**
      * @dev Deploy IPORVault.
      * @notice Deploy IPORVault.
-     * @param underlyingToken underlying token like DAI, USDT etc.
+     * @param asset underlying token like DAI, USDT etc.
      */
     function initialize(
         // TODO: I am using _ only for private method and fields
-        address underlyingToken,
+        address asset,
         address ivToken,
         address aStrategy,
         address cStrategy
     ) public initializer {
         _init();
-        require(underlyingToken != address(0), IporErrors.WRONG_ADDRESS);
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
 
-        _underlyingToken = underlyingToken;
+        _asset = asset;
+        _decimals = ERC20Upgradeable(asset).decimals();
         _ivToken = ivToken;
 
         _setAaveStrategy(aStrategy);
@@ -213,7 +218,7 @@ contract Stanley is
             IStrategy(_compoundStrategy).balanceOf(),
             false
         );
-        IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
+        IERC20Upgradeable uToken = IERC20Upgradeable(_asset);
         uint256 _balance = uToken.balanceOf(address(this));
         uToken.safeTransfer(msg.sender, _balance);
     }
@@ -243,9 +248,7 @@ contract Stanley is
             require(_shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
             IStrategy(_aaveStrategy).withdraw(_shares);
         }
-        uint256 _amount = IERC20Upgradeable(_underlyingToken).balanceOf(
-            address(this)
-        );
+        uint256 _amount = IERC20Upgradeable(_asset).balanceOf(address(this));
         _deposit(maxApyStrategy, _amount);
         emit MigrateAsset(from, address(maxApyStrategy), _amount);
     }
@@ -284,7 +287,7 @@ contract Stanley is
     // TODO: Consider reorder checks in this way that method will have less calculation (gas opt)
     function _setCompoundStrategy(address strategyAddress) internal {
         require(strategyAddress != address(0), IporErrors.WRONG_ADDRESS);
-        IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
+        IERC20Upgradeable uToken = IERC20Upgradeable(_asset);
         IStrategy strategy = IStrategy(strategyAddress);
         IERC20Upgradeable csToken = IERC20Upgradeable(_compoundShareTokens);
         if (_compoundStrategy != address(0)) {
@@ -294,7 +297,7 @@ contract Stanley is
         }
         address _compoundUnderlyingToken = strategy.getAsset();
         require(
-            _compoundUnderlyingToken == address(_underlyingToken),
+            _compoundUnderlyingToken == address(_asset),
             IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
         );
 
@@ -310,7 +313,7 @@ contract Stanley is
 
     function _setAaveStrategy(address strategyAddress) internal {
         require(strategyAddress != address(0), IporErrors.WRONG_ADDRESS);
-        IERC20Upgradeable uToken = IERC20Upgradeable(_underlyingToken);
+        IERC20Upgradeable uToken = IERC20Upgradeable(_asset);
         IStrategy strategy = IStrategy(strategyAddress);
         if (_aaveStrategy != address(0)) {
             uToken.safeApprove(_aaveStrategy, 0);
@@ -318,7 +321,7 @@ contract Stanley is
         }
         address _aaveUnderlyingToken = strategy.getAsset();
         require(
-            _aaveUnderlyingToken == address(_underlyingToken),
+            _aaveUnderlyingToken == address(_asset),
             IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
         );
 
@@ -352,7 +355,7 @@ contract Stanley is
     ) internal {
         if (_amount != 0) {
             IStrategy(strategyAddress).withdraw(_amount);
-            IERC20Upgradeable utoken = IERC20Upgradeable(_underlyingToken);
+            IERC20Upgradeable utoken = IERC20Upgradeable(_asset);
             uint256 _balance = utoken.balanceOf(address(this));
             if (transfer) {
                 utoken.safeTransfer(msg.sender, _balance);
@@ -375,10 +378,10 @@ contract Stanley is
      * @dev to deposit asset in current strategy.
      * @notice internal method.
      * @param strategyAddress strategy from amount to deposit
-     * @param amount _amount is _underlyingToken token like DAI.
+     * @param amount _amount is _asset token like DAI.
      */
     function _deposit(IStrategy strategyAddress, uint256 amount) internal {
-        IERC20Upgradeable(_underlyingToken).safeTransferFrom(
+        IERC20Upgradeable(_asset).safeTransferFrom(
             msg.sender,
             address(this),
             amount

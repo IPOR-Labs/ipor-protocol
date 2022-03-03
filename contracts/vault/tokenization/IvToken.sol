@@ -15,60 +15,56 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
     using SafeMath for uint256;
 
     uint8 private immutable _decimals;
-    address private immutable _asset;
-    //TODO: change to _stanley
-    address private _vault;
 
-    //TODO: change to onlyStanley
-    modifier onlyVault() {
-        require(msg.sender == _vault, IporErrors.ONLY_VAULT);
+    address private immutable _asset;
+
+    address private _stanley;
+
+    modifier onlyStanley() {
+        require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
         _;
     }
 
     constructor(
-        //TODO: change name to name, symbol
-        string memory aTokenName,
-        string memory aTokenSymbol,
-        //TODO: order params in constructor in the same way like IpToken
+        string memory name,
+        string memory symbol,
         address asset
-    ) ERC20(aTokenName, aTokenSymbol) {
+    ) ERC20(name, symbol) {
         require(address(0) != asset, IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _decimals = 18;
+    }
+
+    function getAsset() external view override returns (address) {
+        return _asset;
     }
 
     function decimals() public view override returns (uint8) {
         return _decimals;
     }
 
-    //TODO: change name to setStanley, newStanley
-    function setVault(address newVault) external onlyOwner {
-        _vault = newVault;
-        //TODO: change name to StanleyChanged
-        emit Vault(msg.sender, newVault);
+    function setStanley(address newStanley) external onlyOwner {
+        _stanley = newStanley;
+        emit StanleyChanged(msg.sender, newStanley);
     }
 
-    function mint(address user, uint256 amount)
+    function mint(address account, uint256 amount)
         external
         override
-        onlyVault
-        returns (bool)
+        onlyStanley
     {
-        require(amount != 0, IporErrors.IPOR_VAULT_TOKEN_MINT_AMOUNT_TOO_LOW);
-        _mint(user, amount);
-        emit Transfer(address(0), user, amount);
-        emit Mint(user, amount);
+        require(amount != 0, IporErrors.STANLEY_TOKEN_MINT_AMOUNT_TOO_LOW);
+        _mint(account, amount);
+        emit Mint(account, amount);
     }
 
-    function burn(address user, uint256 amount) external override onlyVault {
-        require(amount != 0, IporErrors.IPOR_VAULT_TOKEN_BURN_AMOUNT_TOO_LOW);
-        _burn(user, amount);
-
-        emit Transfer(user, address(0), amount);
-        emit Burn(user, amount);
-    }
-
-    function assetAddress() external view override returns (address) {
-        return _asset;
+    function burn(address account, uint256 amount)
+        external
+        override
+        onlyStanley
+    {
+        require(amount != 0, IporErrors.STANLEY_TOKEN_BURN_AMOUNT_TOO_LOW);
+        _burn(account, amount);
+        emit Burn(account, amount);
     }
 }

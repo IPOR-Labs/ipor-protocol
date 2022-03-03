@@ -20,7 +20,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     StakedAaveInterface private _stakedAaveInterface;
     AaveIncentivesInterface private _aaveIncentive;
 
-    address private _asset; // _asset
+    address private _asset; 
     address private _aToken; // shareToken
     address private _aave;
     address private _stkAave;

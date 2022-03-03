@@ -7,7 +7,7 @@ chai.use(solidity);
 const { expect } = chai;
 
 import { IporOwnableUpgradeable } from "../../../../types";
-
+//TODO: move outsite vault - it is a general functionality
 describe("IporOwnableUpgradeable", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
     let iporOwnable: IporOwnableUpgradeable;

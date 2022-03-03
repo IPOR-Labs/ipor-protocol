@@ -2,23 +2,6 @@
 pragma solidity 0.8.9;
 
 interface IJoseph {
-    event ProvideLiquidity(
-        uint256 timestamp,
-        address from,
-        address to,
-        uint256 exchangeRate,
-        uint256 assetValue,
-        uint256 ipTokenValue
-    );
-    event Redeem(
-        uint256 timestamp,
-        address from,
-        address to,
-        uint256 exchangeRate,
-        uint256 assetValue,
-        uint256 ipTokenValue
-    );
-
     function getVersion() external pure returns (uint256);
 
     function provideLiquidity(uint256 liquidityAmount) external;
@@ -42,4 +25,21 @@ interface IJoseph {
     function pause() external;
 
     function unpause() external;
+
+    event ProvideLiquidity(
+        uint256 timestamp,
+        address from,
+        address to,
+        uint256 exchangeRate,
+        uint256 assetValue,
+        uint256 ipTokenValue
+    );
+    event Redeem(
+        uint256 timestamp,
+        address from,
+        address to,
+        uint256 exchangeRate,
+        uint256 assetValue,
+        uint256 ipTokenValue
+    );
 }

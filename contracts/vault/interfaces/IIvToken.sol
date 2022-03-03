@@ -4,15 +4,15 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IIvToken is IERC20 {
-    event Mint(address indexed user, uint256 value);
+    function getAsset() external view returns (address);
 
-    event Burn(address indexed from, uint256 value);
+    function mint(address account, uint256 amount) external;
 
-    event Vault(address setupBy, address vault);
+    function burn(address account, uint256 amount) external;
 
-    function mint(address user, uint256 amount) external returns (bool);
+    event Mint(address indexed account, uint256 amount);
 
-    function burn(address user, uint256 amount) external;
+    event Burn(address indexed account, uint256 amount);
 
-    function assetAddress() external view returns (address);
+    event StanleyChanged(address changedBy, address newStanleyAddress);
 }

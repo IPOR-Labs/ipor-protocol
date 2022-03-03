@@ -82,7 +82,7 @@ describe("#Roles Localhost test", () => {
             aaveStrategy.address,
             compoundStrategy.address,
         ])) as Stanley;
-        await ivToken.setVault(stanley.address);
+        await ivToken.setStanley(stanley.address);
     });
 
     describe("#ADMIN ROLE Localhost test", () => {

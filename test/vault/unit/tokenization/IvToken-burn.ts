@@ -34,7 +34,7 @@ describe("#IvToken burn function tests", () => {
     it("should not be able to burn when amount is 0", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setVault(mockIporVaultAddress);
+        await ivToken.setStanley(mockIporVaultAddress);
         const amount = BigNumber.from("0");
         await expect(
             //when
@@ -46,7 +46,7 @@ describe("#IvToken burn function tests", () => {
     it("should not be able to burn when pass zero address", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setVault(mockIporVaultAddress);
+        await ivToken.setStanley(mockIporVaultAddress);
         const amount = BigNumber.from("0");
         await expect(
             //when
@@ -60,7 +60,7 @@ describe("#IvToken burn function tests", () => {
     it("should not be able to burn when burn amount exceeds balance", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setVault(mockIporVaultAddress);
+        await ivToken.setStanley(mockIporVaultAddress);
         const amount = BigNumber.from("10");
         const addressOne = await userOne.getAddress();
 
@@ -73,7 +73,7 @@ describe("#IvToken burn function tests", () => {
     it("should burn tokens", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setVault(mockIporVaultAddress);
+        await ivToken.setStanley(mockIporVaultAddress);
         const amount = BigNumber.from("10");
         const addressOne = await userOne.getAddress();
         ivToken.connect(userOne).mint(await userOne.getAddress(), amount);

@@ -11,6 +11,7 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
     using SafeERC20 for IERC20;
 
     address private immutable _asset;
+
     uint8 private immutable _decimals;
 
     address private _joseph;
@@ -28,7 +29,6 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         require(address(0) != asset, IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _decimals = 18;
-        _joseph = msg.sender;
     }
 
     function getAsset() external view override returns (address) {
@@ -41,24 +41,26 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
 
     function setJoseph(address newJoseph) external onlyOwner {
         _joseph = newJoseph;
+        emit JosephChanged(msg.sender, newJoseph);
     }
 
-    function mint(address account, uint256 value) external override onlyJoseph {
-        require(value != 0, IporErrors.IP_TOKEN_MINT_VALUE_TOO_LOW);
-        _mint(account, value);
-        emit Transfer(address(0), account, value);
-        emit Mint(account, value);
+    function mint(address account, uint256 amount)
+        external
+        override
+        onlyJoseph
+    {
+        require(amount != 0, IporErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
+        _mint(account, amount);
+        emit Mint(account, amount);
     }
 
-    function burn(
-        address account,
-        address assetReceiver,
-        uint256 value
-    ) external override onlyJoseph {
-        require(value != 0, IporErrors.IP_TOKEN_BURN_VALUE_TOO_LOW);
-        _burn(account, value);
-
-        emit Transfer(account, address(0), value);
-        emit Burn(account, assetReceiver, value);
+    function burn(address account, uint256 amount)
+        external
+        override
+        onlyJoseph
+    {
+        require(amount != 0, IporErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
+        _burn(account, amount);
+        emit Burn(account, amount);
     }
 }

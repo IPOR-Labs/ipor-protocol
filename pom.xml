@@ -165,8 +165,7 @@
                         <argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonEvents.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>                        
                         <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonSpreadConfiguration.sol</argument>
