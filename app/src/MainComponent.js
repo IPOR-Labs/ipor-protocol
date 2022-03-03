@@ -6,6 +6,7 @@ import { Tab } from "bootstrap";
 import WarrenComponent from "./WarrenComponent";
 import MiltonComponent from "./MiltonComponent";
 import JosephComponent from "./JosephComponent";
+import StanleyComponent from "./StanleyComponent";
 import MyPositions from "./MyPositions";
 import IporAssetConfigurationComponent from "./IporAssetConfigurationComponent";
 import JosephConfigurationComponent from "./JosephConfigurationComponent";
@@ -79,6 +80,12 @@ export default ({ drizzle, drizzleState }) => {
                 </Tab>
                 <Tab eventKey="joseph" title="Joseph">
                     <JosephComponent
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                    />
+                </Tab>
+                <Tab eventKey="stanley" title="Stanley">
+                    <StanleyComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />

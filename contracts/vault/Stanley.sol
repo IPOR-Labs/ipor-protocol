@@ -6,16 +6,19 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "./interfaces/IPOR/IStrategy.sol";
 import "../interfaces/IIporOwnableUpgradeable.sol";
 import "./interfaces/IIvToken.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./StanleyAccessControl.sol";
 import "./ExchangeRate.sol";
-// TODO: use errors from Ipor Protocol
 import "../IporErrors.sol";
-
-// import "hardhat/console.sol";
 
 // TODO: Add function transferStrategyOwnership
 // TODO: Add IStanley with busineess methods
-contract Stanley is UUPSUpgradeable, StanleyAccessControl, ExchangeRate {
+contract Stanley is
+    UUPSUpgradeable,
+    PausableUpgradeable,
+    StanleyAccessControl,
+    ExchangeRate
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     // TODO: use consistent way for fields

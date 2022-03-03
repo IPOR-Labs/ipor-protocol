@@ -11,6 +11,20 @@ const DaiMockedToken = artifacts.require("DaiMockedToken");
 const IpTokenUsdt = artifacts.require("IpTokenUsdt");
 const IpTokenUsdc = artifacts.require("IpTokenUsdc");
 const IpTokenDai = artifacts.require("IpTokenDai");
+
+const IvTokenUsdt = artifacts.require("IvTokenUsdt");
+const IvTokenUsdc = artifacts.require("IvTokenUsdc");
+const IvTokenDai = artifacts.require("IvTokenDai");
+const MockStrategyAaveUsdt = artifacts.require("MockStrategyAaveUsdt");
+const MockStrategyAaveUsdc = artifacts.require("MockStrategyAaveUsdc");
+const MockStrategyAaveDai = artifacts.require("MockStrategyAaveDai");
+const MockStrategyCompoundUsdt = artifacts.require("MockStrategyCompoundUsdt");
+const MockStrategyCompoundUsdc = artifacts.require("MockStrategyCompoundUsdc");
+const MockStrategyCompoundDai = artifacts.require("MockStrategyCompoundDai");
+const StanleyUsdt = artifacts.require("StanleyUsdt");
+const StanleyUsdc = artifacts.require("StanleyUsdc");
+const StanleyDai = artifacts.require("StanleyDai");
+
 const IporAssetConfigurationUsdt = artifacts.require(
     "IporAssetConfigurationUsdt"
 );
@@ -76,6 +90,57 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(IpTokenUsdc, mockedUsdc.address, "IP USDC", "ipUSDC");
     const ipUsdcToken = await IpTokenUsdc.deployed();
 
+    await deployer.deploy(IpTokenDai, mockedDai.address, "IP DAI", "ipDAI");
+    const ipDaiToken = await IpTokenDai.deployed();
+
+    await deployer.deploy(IvTokenUsdt, "IV USDT", "ivUSDT", mockedUsdt.address);
+    const ivUsdtToken = await IvTokenUsdt.deployed();
+
+    await deployer.deploy(IvTokenUsdc, "IV USDC", "ivUSDC", mockedUsdc.address);
+    const ivUsdcToken = await IvTokenUsdc.deployed();
+
+    await deployer.deploy(IvTokenDai, "IV DAI", "ivDAI", mockedDai.address);
+    const ivDaiToken = await IvTokenDai.deployed();
+
+    //TODO: fix it all!
+    await deployer.deploy(MockStrategyAaveUsdt);
+    const strategyAaveUsdt = await MockStrategyAaveUsdt.deployed();
+
+    await strategyAaveUsdt.setShareToken(mockedUsdt.address);
+    await strategyAaveUsdt.setAsset(mockedUsdt.address);
+
+    await deployer.deploy(MockStrategyAaveUsdc);
+    const strategyAaveUsdc = await MockStrategyAaveUsdc.deployed();
+
+    await strategyAaveUsdc.setShareToken(mockedUsdc.address);
+    await strategyAaveUsdc.setAsset(mockedUsdc.address);
+
+    await deployer.deploy(MockStrategyAaveDai);
+    const strategyAaveDai = await MockStrategyAaveDai.deployed();
+
+    await strategyAaveDai.setShareToken(mockedDai.address);
+    await strategyAaveDai.setAsset(mockedDai.address);
+
+    await deployer.deploy(MockStrategyCompoundUsdt);
+    const strategyCompoundUsdt = await MockStrategyCompoundUsdt.deployed();
+
+    await strategyCompoundUsdt.setShareToken(mockedUsdt.address);
+    await strategyCompoundUsdt.setAsset(mockedUsdt.address);
+
+    await deployer.deploy(MockStrategyCompoundUsdc);
+    const strategyCompoundUsdc = await MockStrategyCompoundUsdc.deployed();
+
+    await strategyCompoundUsdc.setShareToken(mockedUsdc.address);
+    await strategyCompoundUsdc.setAsset(mockedUsdc.address);
+
+    await deployer.deploy(MockStrategyCompoundDai);
+    const strategyCompoundDai = await MockStrategyCompoundDai.deployed();
+
+    await strategyCompoundDai.setShareToken(mockedDai.address);
+    await strategyCompoundDai.setAsset(mockedDai.address);
+
+    MockStrategyAaveUsdt;
+
     await deployer.deploy(MockCaseBaseIporVault, mockedUsdt.address);
     const iporVaultUsdt = await MockCaseBaseIporVault.deployed();
 
@@ -84,9 +149,6 @@ module.exports = async function (deployer, _network) {
 
     await deployer.deploy(MockCaseBaseIporVault, mockedDai.address);
     const iporVaultDai = await MockCaseBaseIporVault.deployed();
-
-    await deployer.deploy(IpTokenDai, mockedDai.address, "IP DAI", "ipDAI");
-    const ipDaiToken = await IpTokenDai.deployed();
 
     const iporAssetConfigurationUsdt = await deployProxy(
         IporAssetConfigurationUsdt,
@@ -167,7 +229,7 @@ module.exports = async function (deployer, _network) {
             ipUsdtToken.address,
             warren.address,
             miltonStorageUsdt.address,
-            miltonSpreadModel.address,            
+            miltonSpreadModel.address,
             iporVaultUsdt.address,
         ],
         {
@@ -350,6 +412,51 @@ module.exports = async function (deployer, _network) {
             itfMiltonDai.address,
             miltonStorageDai.address,
             iporVaultDai.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const stanleyUsdt = await deployProxy(
+        StanleyUsdt,
+        [
+            mockedUsdt.address,
+            ivUsdtToken.address,
+            strategyAaveUsdt.address,
+            strategyCompoundUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const stanleyUsdc = await deployProxy(
+        StanleyUsdc,
+        [
+            mockedUsdc.address,
+            ivUsdcToken.address,
+            strategyAaveUsdc.address,
+            strategyCompoundUsdc.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const stanleyDai = await deployProxy(
+        StanleyDai,
+        [
+            mockedDai.address,
+            ivDaiToken.address,
+            strategyAaveDai.address,
+            strategyCompoundDai.address,
         ],
         {
             deployer: deployer,
