@@ -218,30 +218,15 @@ describe("Stanley -> Withdraw", () => {
             aaveNewStartegyInstance.address,
             compoundStartegyInstance.address,
         ])) as Stanley;
-        await stanley.grantRole(
-            keccak256("GOVERNANCE_ROLE"),
-            await admin.getAddress()
-        );
-        await aaveNewStartegyInstance.transferOwnership(stanley.address);
-        await stanley.confirmTransferOwnership(aaveNewStartegyInstance.address);
-        await compoundStartegyInstance.transferOwnership(stanley.address);
-        await stanley.confirmTransferOwnership(
-            compoundStartegyInstance.address
-        );
+        await aaveNewStartegyInstance.setStanley(stanley.address);
+        await compoundStartegyInstance.setStanley(stanley.address);
         await ivToken.setStanley(stanley.address);
+        await stanley.setMilton(await admin.getAddress());
 
         //##############################################################
         //                        admin user setup
         //##############################################################
         await DAI.mint(await admin.getAddress(), one.mul(10000));
-        await stanley.grantRole(
-            keccak256("DEPOSIT_ROLE"),
-            await admin.getAddress()
-        );
-        await stanley.grantRole(
-            keccak256("WITHDRAW_ROLE"),
-            await admin.getAddress()
-        );
     });
 
     it("Should withdraw from AAVE when only AAVE has funds and AAVE has max APY", async () => {

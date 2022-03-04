@@ -54,10 +54,6 @@ describe("Stanley -> totalStrategiesBalance", () => {
             compoundStrategy.address,
         ])) as Stanley;
 
-        await stanley.grantRole(
-            keccak256("GOVERNANCE_ROLE"),
-            await admin.getAddress()
-        );
         await ivToken.setStanley(stanley.address);
     });
 

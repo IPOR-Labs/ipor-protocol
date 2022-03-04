@@ -104,6 +104,10 @@ describe("compound deployed Contract on Mainnet fork", function () {
                 [daiAddress, cDaiAddress, ComptrollerAddress, COMP]
             );
 
+            await strategyContract_Instance.setStanley(
+                await signer.getAddress()
+            );
+
             compTrollerContract = new hre.ethers.Contract(
                 ComptrollerAddress,
                 comptrollerAbi,

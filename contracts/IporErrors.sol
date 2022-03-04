@@ -2,6 +2,11 @@
 pragma solidity 0.8.9;
 
 //TODO: organize per smart contract (consider this) use internal, reorder in more intuitive way
+// 000-199 - general codes
+// 200-299- warren
+// 300-399-milton
+// 400-499-joseph
+// 500-599-stanley
 library IporErrors {
     //@notice The caller must be the Milton smart contract
     string public constant MILTON_CALLER_NOT_MILTON = "IPOR_1";
@@ -222,6 +227,9 @@ library IporErrors {
     string public constant UNDERLYINGTOKEN_IS_NOT_COMPATIBLE = "IPOR_102";
     string public constant UINT_SHOULD_BE_GRATER_THEN_ZERO = "IPOR_103";
 
-    // only vault can have access to function
+    // only stanley can have access to function
     string public constant CALLER_NOT_STANLEY = "IPOR_104";
+
+    //only milton can have access to function
+    string public constant CALLER_NOT_MILTON = "IPOR_105";
 }
