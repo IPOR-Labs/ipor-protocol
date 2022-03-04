@@ -281,7 +281,7 @@ contract Joseph is
             IporErrors.JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
-        _ipToken.burn(msg.sender, ipTokenValue);
+        _ipToken.burn(msg.sender, msg.sender, ipTokenValue);
 
         _miltonStorage.subtractLiquidity(wadAssetValue);
 
