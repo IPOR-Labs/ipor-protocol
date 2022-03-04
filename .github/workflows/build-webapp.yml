@@ -1,0 +1,102 @@
+name: Build webapp
+
+on:
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        required: false
+      AWS_ACCOUNT_ID:
+        required: false
+
+    inputs:
+      node-version:
+        description: 'NodeJS version'
+        type: string
+        default: 16.13.2
+
+      ecr-repository-name:
+        description: 'AWS ECR repository name for target docker image'
+        type: string
+
+      build-enabled:
+        description: 'Enable build'
+        type: boolean
+        default: true
+
+      tests-enabled:
+        description: 'Enable tests'
+        type: boolean
+        default: true
+
+      push-docker-enabled:
+        description: 'Enable push docker artifacts'
+        type: boolean
+        default: false
+
+jobs:
+  webapp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # from tag: v3.0.0
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
+
+      - name: Set up node
+        # from tag: v3.0.0
+        uses: actions/setup-node@9ced9a43a244f3ac94f13bfd896db8c8f30da67a
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Set up node_modules cache
+        if: inputs.smart-contracts-compile-enabled
+        # from tag: v2.1.7
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Set up docker cache
+        if: inputs.push-docker-enabled
+        # from tag: v0.0.11
+        uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
+        continue-on-error: true
+
+      - name: Install npm modules
+        run: npm install -g yarn
+
+      - name: Build
+        if: inputs.build-enabled
+        run: yarn install && yarn build
+        env:
+          SKIP_PREFLIGHT_CHECK: true
+          CI: false
+
+      - name: Tests
+        if: inputs.tests-enabled
+        run: yarn test
+        env:
+          SKIP_PREFLIGHT_CHECK: true
+          REACT_APP_COMMON_UNITS_DECIMALS: 18
+          REACT_APP_MILTON_FRONTEND_DATA_PROVIDER_CONTRACT_ADDRESS: '0xE348f991440653C02067A9F394E26536DE6EF0cD'
+          REACT_APP_USDC_CONTRACT_ADDRESS: '0xc68c6b250cac95F16a92cf5839A7081E9cB851E7'
+          REACT_APP_FRONT_IPOR_URL_WITH_AUTH: http://localhost:9545
+          REACT_APP_FRONT_IPOR_URL: http://localhost:9545
+          REACT_APP_FRONT_IPOR_USER: ABC
+          REACT_APP_FRONT_IPOR_BASIC_AUTH_REQUIRED: false
+          REACT_APP_FRONT_IPOR_PASSWORD: ABC
+          REACT_APP_FRONT_IPOR_CHAIN_ID: 5777
+          REACT_APP_FRONT_IPOR_CHAIN_NAME: localhost
+
+      - name: Push docker
+        if: inputs.push-docker-enabled
+        # from tag: v4
+        uses: docker://ghcr.io/kciter/aws-ecr-action@sha256:fb211ece872fdfb5be4c6cb731765967b081a72c3ef3944d4f0d15e7d885d1e8
+        with:
+          access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+          repo: ${{ inputs.ecr-repository-name }}
+          region: eu-central-1
+          tags: latest,${{ github.sha }}
