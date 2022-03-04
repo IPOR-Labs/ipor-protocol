@@ -1,0 +1,40 @@
+name: Slack notify
+
+on:
+  workflow_call:
+
+    secrets:
+      SLACK_BOT_TOKEN:
+        required: true
+
+    inputs:
+
+      status-slack-channel-name:
+        description: 'Slack channel name used for jobs statuses'
+        type: string
+        default: github-ci
+
+    outputs:
+
+      slack-status-msg-id:
+        description: "Slack status message id"
+        value: ${{ jobs.slack.outputs.slack-status-msg-id }}
+
+jobs:
+
+  slack:
+    runs-on: ubuntu-latest
+    outputs:
+      slack-status-msg-id: ${{ steps.slack-status.outputs.message_id }}
+    steps:
+
+      - name: Slack status start
+        id: slack-status
+        # from tag: v1.5.0-ipor-v2
+        uses: IPOR-Labs/github-action-slack-notify-build@3c8c336d9f03897665305e2283e5aa9a547c94bc
+        with:
+          channel: ${{ inputs.status-slack-channel-name }}
+          status: STARTING
+          color: warning
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

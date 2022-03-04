@@ -110,6 +110,10 @@ describe("aave deployed Contract on Mainnet fork", function () {
                 ]
             );
 
+            await strategyContract_Instance.setStanley(
+                await signer.getAddress()
+            );
+
             aaveIncentiveContract = new hre.ethers.Contract(
                 aaveIncentiveAddress,
                 aaveIncentiveContractAbi,
