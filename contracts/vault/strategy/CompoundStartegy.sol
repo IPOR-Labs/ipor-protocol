@@ -59,7 +59,7 @@ contract CompoundStrategy is
         _;
     }
 
-    function setStanley(address stanley) external {
+    function setStanley(address stanley) external onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
     }
