@@ -64,7 +64,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
         //  when
-        const balance = await stanley.totalStrategiesBalance();
+        const balance = await stanley.totalBalance(await admin.getAddress());
         //  then
         expect(balance).to.be.equal(aaveBalance);
     });
@@ -76,7 +76,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
         //  when
-        const balance = await stanley.totalStrategiesBalance();
+        const balance = await stanley.totalBalance(await admin.getAddress());
         //  then
         expect(balance).to.be.equal(compoundBalance);
     });
@@ -91,7 +91,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
         //  when
-        const balance = await stanley.totalStrategiesBalance();
+        const balance = await stanley.totalBalance(await admin.getAddress());
         //  then
         expect(balance).to.be.equal(compoundBalance.add(aaveBalance));
     });

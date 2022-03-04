@@ -16,16 +16,15 @@ import {IporMath} from "../../libraries/IporMath.sol";
 contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    address private _asset;
+    address private _aToken; // shareToken
+    address private _aave;
+    address private _stkAave;
     address private _stanley;
 
     AaveLendingPoolProviderV2 private _provider;
     StakedAaveInterface private _stakedAaveInterface;
     AaveIncentivesInterface private _aaveIncentive;
-
-    address private _asset;
-    address private _aToken; // shareToken
-    address private _aave;
-    address private _stkAave;
 
     /**
      * @param asset underlying token like DAI, USDT etc.
@@ -60,6 +59,14 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     modifier _onlyStanley() {
         require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
         _;
+    }
+
+    /**
+     * @dev Total Balance = Principal Amount + Interest Amount.
+     * returns amount of stable based on aToken volume in ration 1:1 with stable
+     */
+    function balanceOf() external view override returns (uint256) {
+        return IERC20Upgradeable(_aToken).balanceOf(address(this));
     }
 
     function setStanley(address stanley) external onlyOwner {
@@ -99,14 +106,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     }
 
     /**
-     * @dev Total Balance = Principal Amount + Interest Amount.
-     * returns uint with 18 Decimals
-     */
-    function balanceOf() external view override returns (uint256) {
-        return IERC20Upgradeable(_aToken).balanceOf(address(this));
-    }
-
-    /**
      * @dev Change staked AAVE token address.
      * @notice Change can only done by current governance.
      * @param stkAave stakedAAVE token
@@ -121,15 +120,19 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param amount amount to deposit in _aave lending.
      */
     function deposit(uint256 amount) external override _onlyStanley {
-        IERC20Upgradeable(_asset).safeTransferFrom(
+        address asset = _asset;
+
+        IERC20Upgradeable(asset).safeTransferFrom(
             msg.sender,
             address(this),
             amount
         );
+
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(
             _provider.getLendingPool()
         );
-        lendingPool.deposit(_asset, amount, address(this), 0); // 29 -> referral
+
+        lendingPool.deposit(asset, amount, address(this), 0); // 29 -> referral
     }
 
     /**

@@ -14,7 +14,7 @@ import "../interfaces/IWarren.sol";
 import "./MiltonStorage.sol";
 import "../configuration/MiltonConfiguration.sol";
 import "../tokenization/IpToken.sol";
-import "../interfaces/IIporVault.sol";
+import "../interfaces/IStanley.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IJoseph.sol";
@@ -49,7 +49,7 @@ contract Milton is
         address warren,
         address miltonStorage,
         address miltonSpreadModel,
-        address iporVault
+        address stanley
     ) public initializer {
         __Ownable_init();
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
@@ -67,7 +67,7 @@ contract Milton is
         _warren = IWarren(warren);
         _ipToken = IIpToken(ipToken);
         _asset = asset;
-        _iporVault = IIporVault(iporVault);
+        _stanley = IStanley(stanley);
     }
 
     function getVersion() external pure override returns (uint256) {
@@ -203,7 +203,7 @@ contract Milton is
         nonReentrant
         whenNotPaused
     {
-        uint256 balance = _iporVault.deposit(assetValue);
+        uint256 balance = _stanley.deposit(assetValue);
         _miltonStorage.updateStorageWhenDepositToStanley(assetValue, balance);
     }
 
@@ -213,7 +213,7 @@ contract Milton is
         nonReentrant
         whenNotPaused
     {
-        (uint256 withdrawnValue, uint256 vaultBalance) = _iporVault.withdraw(
+        (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdraw(
             assetValue
         );
         _miltonStorage.updateStorageWhenWithdrawFromStanley(
@@ -228,7 +228,7 @@ contract Milton is
         onlyOwner
         whenNotPaused
     {
-        IERC20Upgradeable(_asset).safeIncreaseAllowance(
+	IERC20Upgradeable(_asset).safeIncreaseAllowance(
             spender,
             Constants.MAX_VALUE
         );
@@ -249,7 +249,7 @@ contract Milton is
     {
         DataTypes.MiltonBalanceMemory memory accruedBalance = _miltonStorage
             .getBalance();
-        uint256 actualVaultBalance = _iporVault.totalBalance(address(this));
+        uint256 actualVaultBalance = _stanley.totalBalance(address(this));
         accruedBalance.liquidityPool =
             accruedBalance.liquidityPool +
             (actualVaultBalance - accruedBalance.vault);
@@ -616,6 +616,8 @@ contract Milton is
         } else {
             utilizationRate = Constants.MAX_VALUE;
         }
+
+        //TODO: utilization 80%
 
         require(
             utilizationRate <= _getMaxLpUtilizationPerLegPercentage(),

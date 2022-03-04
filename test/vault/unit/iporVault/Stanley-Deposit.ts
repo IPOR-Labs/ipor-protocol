@@ -286,7 +286,7 @@ describe("Stanley -> Deposit", () => {
     it("Should accept deposit and transfer tokens into Compound", async () => {
         //given
         const adminAddress = await await admin.getAddress();
-        await DAI.approve(await admin.getAddress(), one.mul(10000));
+        await DAI.approve(adminAddress, one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when

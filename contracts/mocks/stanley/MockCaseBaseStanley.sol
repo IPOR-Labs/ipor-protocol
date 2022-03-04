@@ -3,11 +3,11 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../../interfaces/IIporVault.sol";
+import "../../interfaces/IStanley.sol";
 import "../../libraries/IporMath.sol";
 import {IporErrors} from "../../IporErrors.sol";
 
-contract MockCaseBaseIporVault is IIporVault {
+contract MockCaseBaseStanley is IStanley {
     using SafeERC20 for IERC20;
     IERC20 private _asset;
 
@@ -25,7 +25,7 @@ contract MockCaseBaseIporVault is IIporVault {
         override
         returns (uint256)
     {
-        //@dev for simplicity we assome that reading total balance not include interest
+        //@dev for simplicity we assume that reading total balance not include interest
         return _balance[who];
     }
 
@@ -70,6 +70,8 @@ contract MockCaseBaseIporVault is IIporVault {
 
         _asset.safeTransfer(msg.sender, finalAssetValue);
     }
+
+    function withdrawAll() external override {}
 
     function _getCurrentInterest() internal pure virtual returns (uint256) {
         //@dev for test purposes always the same fixed interest for any msg.sender
