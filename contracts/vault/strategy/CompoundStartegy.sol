@@ -55,7 +55,7 @@ contract CompoundStrategy is
     }
 
     modifier _onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.STRATEGY_CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
         _;
     }
 

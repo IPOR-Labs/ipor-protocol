@@ -227,10 +227,9 @@ library IporErrors {
     string public constant UNDERLYINGTOKEN_IS_NOT_COMPATIBLE = "IPOR_102";
     string public constant UINT_SHOULD_BE_GRATER_THEN_ZERO = "IPOR_103";
 
-    // only vault can have access to function
+    // only stanley can have access to function
     string public constant CALLER_NOT_STANLEY = "IPOR_104";
 
-    //@notice The caller of strategy must be Stanley
-    string public constant STRATEGY_CALLER_NOT_STANLEY = "IPOR_500";
-    string public constant STANLEY_CALLER_NOT_MILTON = "IPOR_501";
+    //only milton can have access to function
+    string public constant CALLER_NOT_MILTON = "IPOR_105";
 }

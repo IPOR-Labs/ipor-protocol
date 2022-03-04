@@ -69,8 +69,8 @@ contract Stanley is
         _setCompoundStrategy(cStrategy);
     }
 
-    modifier _onlyMilton() {
-        require(msg.sender == _milton, IporErrors.STANLEY_CALLER_NOT_MILTON);
+    modifier onlyMilton() {
+        require(msg.sender == _milton, IporErrors.CALLER_NOT_MILTON);
         _;
     }
 
@@ -103,7 +103,7 @@ contract Stanley is
      */
     //  TODO: ADD tests for _amount = 0
     //  TODO: return balanse before deposit
-    function deposit(uint256 _amount) external _onlyMilton {
+    function deposit(uint256 _amount) external onlyMilton {
         require(_amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         IStrategy strategy = getMaxApyStrategy();
 
@@ -133,7 +133,7 @@ contract Stanley is
     */
     // TODO: return amount of withdraw,
     // TODO: balanse before withdraw and aftre
-    function withdraw(uint256 _tokens) external _onlyMilton {
+    function withdraw(uint256 _tokens) external onlyMilton {
         require(_tokens != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         IIvToken token = IIvToken(_ivToken);
 
@@ -207,7 +207,7 @@ contract Stanley is
         }
     }
 
-    function withdrawAll() external _onlyMilton {
+    function withdrawAll() external onlyMilton {
         _withdraw(_aaveStrategy, IStrategy(_aaveStrategy).balanceOf(), false);
         _withdraw(
             _compoundStrategy,

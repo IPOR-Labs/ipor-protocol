@@ -487,7 +487,7 @@ describe("Stanley -> Deposit", () => {
         //when
         await expect(
             stanley.connect(userOne).deposit(one.mul(10))
-        ).to.be.revertedWith("IPOR_501");
+        ).to.be.revertedWith("IPOR_105");
     });
 
     it("Should not deposit when user try deposit 0", async () => {
