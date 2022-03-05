@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, Stanley, TestERC20 } from "../../../../types";
+import { MockStrategy, Stanley, TestERC20, IvToken } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -16,6 +16,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
     let admin: Signer;
     let stanley: Stanley;
     let DAI: TestERC20;
+    let ivTokenDai: IvToken;
     let aaveStrategy: MockStrategy;
     let compoundStrategy: MockStrategy;
 
@@ -25,7 +26,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
         DAI = (await tokenFactory.deploy(
             BigNumber.from(2).pow(255)
         )) as TestERC20;
-        const StanleyFactory = await hre.ethers.getContractFactory("Stanley");
+
         const tokenFactoryIvToken = await hre.ethers.getContractFactory(
             "IvToken"
         );
@@ -36,6 +37,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
         aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
+
         const CompoundStrategy = await hre.ethers.getContractFactory(
             "MockStrategy"
         );
@@ -43,21 +45,21 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
 
-        const ivToken = await tokenFactoryIvToken.deploy(
+        ivTokenDai = (await tokenFactoryIvToken.deploy(
             "IvToken",
             "IVT",
             "0x6b175474e89094c44da98b954eedeac495271d0f"
-        );
+        )) as IvToken;
 
         const Stanley = await hre.ethers.getContractFactory("Stanley");
-        stanley = (await await upgrades.deployProxy(Stanley, [
+        stanley = (await upgrades.deployProxy(Stanley, [
             DAI.address,
-            ivToken.address,
+            ivTokenDai.address,
             aaveStrategy.address,
             compoundStrategy.address,
         ])) as Stanley;
 
-        await ivToken.setStanley(stanley.address);
+        await ivTokenDai.setStanley(stanley.address);
         await stanley.setMilton(await admin.getAddress());
     });
 
@@ -77,73 +79,97 @@ describe("Stanley -> totalStrategiesBalance", () => {
         );
 
         //then
+        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(
+            await admin.getAddress()
+        );
         const actualAssetBalanceAave = await DAI.balanceOf(
             aaveStrategy.address
         );
         const actualAssetBalanceCompound = await DAI.balanceOf(
             compoundStrategy.address
         );
-        expect(actualAssetBalanceAave).to.be.equal(expectedBalance);
-        expect(actualAssetBalanceCompound).to.be.equal(0);
+
+        expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
         expect(actualBalance).to.be.equal(expectedBalance);
+
+        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
+        // expect(actualAssetBalanceAave).to.be.equal(expectedBalance);
+        // expect(actualAssetBalanceCompound).to.be.equal(0);
     });
 
-    // it("Should should return balance from Compound - 18 decimals", async () => {
-    //     //given
-    //     const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
-    //     await DAI.approve(stanley.address, expectedBalance);
+    it("Should should return balance from Compound - 18 decimals", async () => {
+        //given
+        const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
+        await DAI.approve(stanley.address, expectedBalance);
 
-    //     await aaveStrategy.setApy(BigNumber.from("33333333"));
-    //     await compoundStrategy.setApy(BigNumber.from("55555555"));
+        await aaveStrategy.setApy(BigNumber.from("33333333"));
+        await compoundStrategy.setApy(BigNumber.from("55555555"));
 
-    //     await stanley.deposit(expectedBalance);
+        await stanley.deposit(expectedBalance);
 
-    //     //when
-    //     const actualBalance = await stanley.totalBalance(
-    //         await admin.getAddress()
-    //     );
+        //when
+        const actualBalance = await stanley.totalBalance(
+            await admin.getAddress()
+        );
 
-    //     //then
-    //     const actualAssetBalanceAave = await DAI.balanceOf(
-    //         aaveStrategy.address
-    //     );
-    //     const actualAssetBalanceCompound = await DAI.balanceOf(
-    //         compoundStrategy.address
-    //     );
-    //     expect(actualAssetBalanceAave).to.be.equal(0);
-    //     expect(actualAssetBalanceCompound).to.be.equal(expectedBalance);
-    //     expect(actualBalance).to.be.equal(expectedBalance);
-    // });
+        //then
+        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(
+            await admin.getAddress()
+        );
+        const actualAssetBalanceAave = await DAI.balanceOf(
+            aaveStrategy.address
+        );
+        const actualAssetBalanceCompound = await DAI.balanceOf(
+            compoundStrategy.address
+        );
 
-    // it("Should should return sum of balances from Aave and Compound - 18 decimals", async () => {
-    //     //given
-    //     const expectedTotalBalance = TC_AMOUNT_20000_USD_18DEC;
-    //     await DAI.approve(stanley.address, expectedTotalBalance);
+        expect(actualBalance).to.be.equal(expectedBalance);
+        expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
 
-    //     await aaveStrategy.setApy(BigNumber.from("33333333"));
-    //     await compoundStrategy.setApy(BigNumber.from("55555555"));
-    //     await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
+        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
+        // expect(actualAssetBalanceAave).to.be.equal(0);
+        // expect(actualAssetBalanceCompound).to.be.equal(expectedBalance);
+    });
 
-    //     await aaveStrategy.setApy(BigNumber.from("55555555"));
-    //     await compoundStrategy.setApy(BigNumber.from("33333333"));
-    //     await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
+    it("Should should return sum of balances from Aave and Compound - 18 decimals", async () => {
+        //given
+        const expectedTotalBalance = TC_AMOUNT_20000_USD_18DEC;
+        await DAI.approve(stanley.address, expectedTotalBalance);
 
-    //     //when
-    //     const actualTotalBalance = await stanley.totalBalance(
-    //         await admin.getAddress()
-    //     );
+        await aaveStrategy.setApy(BigNumber.from("33333333"));
+        await compoundStrategy.setApy(BigNumber.from("55555555"));
+        await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
-    //     //then
-    //     const actualAssetBalanceAave = await DAI.balanceOf(
-    //         aaveStrategy.address
-    //     );
-    //     const actualAssetBalanceCompound = await DAI.balanceOf(
-    //         compoundStrategy.address
-    //     );
-    //     expect(actualAssetBalanceAave).to.be.equal(TC_AMOUNT_10000_USD_18DEC);
-    //     expect(actualAssetBalanceCompound).to.be.equal(
-    //         TC_AMOUNT_10000_USD_18DEC
-    //     );
-    //     expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
-    // });
+        await aaveStrategy.setApy(BigNumber.from("55555555"));
+        await compoundStrategy.setApy(BigNumber.from("33333333"));
+        await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
+
+        //when
+        const actualTotalBalance = await stanley.totalBalance(
+            await admin.getAddress()
+        );
+
+        //then
+        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(
+            await admin.getAddress()
+        );
+
+        const actualAssetBalanceAave = await DAI.balanceOf(
+            aaveStrategy.address
+        );
+        const actualAssetBalanceCompound = await DAI.balanceOf(
+            compoundStrategy.address
+        );
+
+        expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
+        expect(actualMiltonIvTokenBalance).to.be.equal(expectedTotalBalance);
+
+        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
+        // expect(actualAssetBalanceAave).to.be.equal(TC_AMOUNT_10000_USD_18DEC);
+        // expect(actualAssetBalanceCompound).to.be.equal(
+        //     TC_AMOUNT_10000_USD_18DEC
+        // );
+    });
+
+    //TODO: add tests for 6 decimals !!!
 });

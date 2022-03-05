@@ -99,11 +99,6 @@ contract Stanley is
             exchangeRate
         );
 
-        console.log("[deposit] strategyMaxApy=", address(strategyMaxApy));
-        console.log("[deposit] ivTokenValue=", ivTokenValue);
-        console.log("[deposit] amount=", amount);
-        console.log("[deposit] exchangeRate=", exchangeRate);
-
         _depositToStrategy(strategyMaxApy, amount);
 
         _ivToken.mint(msg.sender, ivTokenValue);
