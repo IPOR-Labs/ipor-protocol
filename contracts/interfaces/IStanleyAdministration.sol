@@ -2,13 +2,11 @@
 pragma solidity 0.8.9;
 
 interface IStanleyAdministration {
-    function aaveBeforeClaim(address[] memory assets, uint256 amount)
-        external
-        payable;
+    function aaveBeforeClaim(address[] memory assets, uint256 amount) external;
 
-    function aaveDoClaim(address account) external payable;
+    function aaveDoClaim(address account) external;
 
-    function compoundDoClaim(address account) external payable;
+    function compoundDoClaim(address account) external;
 
     function migrateAssetToStrategyWithMaxApy() external;
 

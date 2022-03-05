@@ -300,7 +300,6 @@ contract Stanley is
 
     function aaveBeforeClaim(address[] memory assets, uint256 amount)
         external
-        payable
         override
         onlyOwner
     {
@@ -313,20 +312,16 @@ contract Stanley is
      * @param account send claimed gove token to _account
      */
     // TODO: Consider to convert account variable in contract and change fincton to no parameters
-    function aaveDoClaim(address account) external payable override onlyOwner {
+    function aaveDoClaim(address account) external override onlyOwner {
         _doClaim(account, _aaveStrategy);
     }
 
     // TODO: Consider to convert _account variable in contract and change fincton to no parameters
-    function compoundDoClaim(address account)
-        external
-        payable
-        override
-        onlyOwner
-    {
+    function compoundDoClaim(address account) external override onlyOwner {
         _doClaim(account, _compoundStrategy);
     }
 
+    //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
     function migrateAssetToStrategyWithMaxApy() external onlyOwner {
         (
             IStrategy strategyMaxApy,
@@ -338,18 +333,16 @@ contract Stanley is
 
         if (address(strategyMaxApy) == address(strategyAave)) {
             from = address(strategyCompound);
-            uint256 _shares = IERC20Upgradeable(_compoundShareToken).balanceOf(
+            uint256 shares = IERC20Upgradeable(_compoundShareToken).balanceOf(
                 from
             );
-            require(_shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
-            strategyCompound.withdraw(_shares);
+            require(shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+            strategyCompound.withdraw(shares);
         } else {
             from = address(strategyAave);
-            uint256 _shares = IERC20Upgradeable(_aaveShareToken).balanceOf(
-                from
-            );
-            require(_shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
-            strategyAave.withdraw(_shares);
+            uint256 shares = IERC20Upgradeable(_aaveShareToken).balanceOf(from);
+            require(shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+            strategyAave.withdraw(shares);
         }
 
         uint256 amount = ERC20Upgradeable(_asset).balanceOf(address(this));
@@ -397,8 +390,6 @@ contract Stanley is
 
     function _totalBalance(address who) internal view returns (uint256) {
         (uint256 exchangeRate, , ) = _calcExchangeRate(10**_decimals);
-        console.log("[_totalBalance] exchangeRate=", exchangeRate);
-        console.log("[_totalBalance] balanceOf=", _ivToken.balanceOf(who));
         return _ivToken.balanceOf(who) * exchangeRate;
     }
 
@@ -408,59 +399,66 @@ contract Stanley is
      */
 
     // TODO: Consider reorder checks in this way that method will have less calculation (gas opt)
-    function _setCompoundStrategy(address strategyAddress) internal {
-        require(strategyAddress != address(0), IporErrors.WRONG_ADDRESS);
+    function _setCompoundStrategy(address newStrategy) internal {
+        require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
+
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
-        IStrategy strategy = IStrategy(strategyAddress);
-        IERC20Upgradeable csToken = IERC20Upgradeable(_compoundShareToken);
+        IStrategy strategy = IStrategy(newStrategy);
+        IERC20Upgradeable shareToken = IERC20Upgradeable(_compoundShareToken);
+
         if (_compoundStrategy != address(0)) {
-            asset.safeDecreaseAllowance(_compoundStrategy, 0);
-            csToken.safeDecreaseAllowance(_compoundStrategy, 0);
+            asset.safeApprove(_compoundStrategy, 0);
+            shareToken.safeApprove(_compoundStrategy, 0);
         }
-        address _compoundUnderlyingToken = strategy.getAsset();
+        address assetStrategy = strategy.getAsset();
         require(
-            _compoundUnderlyingToken == address(asset),
+            assetStrategy == address(asset),
             IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
         );
 
-        _compoundStrategy = strategyAddress;
-        _compoundShareToken = IStrategy(strategyAddress).getShareToken();
-        IERC20Upgradeable newCsToken = IERC20Upgradeable(_compoundShareToken);
-        asset.safeApprove(strategyAddress, 0);
-        asset.safeApprove(strategyAddress, type(uint256).max);
-        newCsToken.safeApprove(strategyAddress, 0);
-        newCsToken.safeApprove(strategyAddress, type(uint256).max);
-        emit SetStrategy(strategyAddress, _compoundShareToken);
+        _compoundStrategy = newStrategy;
+        _compoundShareToken = IStrategy(newStrategy).getShareToken();
+
+        IERC20Upgradeable newShareToken = IERC20Upgradeable(
+            _compoundShareToken
+        );
+
+        asset.safeApprove(newStrategy, 0);
+        asset.safeApprove(newStrategy, type(uint256).max);
+        newShareToken.safeApprove(newStrategy, 0);
+        newShareToken.safeApprove(newStrategy, type(uint256).max);
+
+        emit SetStrategy(newStrategy, _compoundShareToken);
     }
 
-    function _setAaveStrategy(address strategyAddress) internal {
-        require(strategyAddress != address(0), IporErrors.WRONG_ADDRESS);
+    function _setAaveStrategy(address newStrategy) internal {
+        require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
         IERC20Upgradeable asset = ERC20Upgradeable(_asset);
-        IStrategy strategy = IStrategy(strategyAddress);
+        IStrategy strategy = IStrategy(newStrategy);
 
         if (_aaveStrategy != address(0)) {
-            asset.safeDecreaseAllowance(_aaveStrategy, 0);
-            IERC20Upgradeable(_aaveShareToken).safeDecreaseAllowance(
-                _aaveStrategy,
-                0
-            );
+            asset.safeApprove(_aaveStrategy, 0);
+            IERC20Upgradeable(_aaveShareToken).safeApprove(_aaveStrategy, 0);
         }
-        address _aaveUnderlyingToken = strategy.getAsset();
+        address newStrategy = strategy.getAsset();
         require(
-            _aaveUnderlyingToken == address(asset),
+            newStrategy == address(asset),
             IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
         );
 
         _aaveShareToken = strategy.getShareToken();
-        IERC20Upgradeable asToken = IERC20Upgradeable(_aaveShareToken);
-        _aaveStrategy = strategyAddress;
-        asset.safeApprove(strategyAddress, 0);
-        asset.safeApprove(strategyAddress, type(uint256).max);
-        asToken.safeApprove(strategyAddress, 0);
-        asToken.safeApprove(strategyAddress, type(uint256).max);
-        emit SetStrategy(strategyAddress, _aaveShareToken);
+        _aaveStrategy = newStrategy;
+
+        IERC20Upgradeable newShareToken = IERC20Upgradeable(_aaveShareToken);
+
+        asset.safeApprove(newStrategy, 0);
+        asset.safeApprove(newStrategy, type(uint256).max);
+        newShareToken.safeApprove(newStrategy, 0);
+        newShareToken.safeApprove(newStrategy, type(uint256).max);
+
+        emit SetStrategy(newStrategy, _aaveShareToken);
     }
 
     /**
