@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 interface IStanley {
-    //@notice return amount in stable
+    //@notice return amount of assset token
     function totalBalance(address who) external view returns (uint256);
 
     //@notice in return balance before deposit

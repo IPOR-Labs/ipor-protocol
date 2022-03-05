@@ -10,6 +10,9 @@ chai.use(solidity);
 const { expect } = chai;
 
 describe("Stanley -> totalStrategiesBalance", () => {
+    const ONE_18DEC: any = BigNumber.from("1000000000000000000");
+    const TC_AMOUNT_10000_USD_18DEC = ONE_18DEC.mul(10000);
+    const TC_AMOUNT_20000_USD_18DEC = ONE_18DEC.mul(20000);
     let admin: Signer;
     let stanley: Stanley;
     let DAI: TestERC20;
@@ -55,49 +58,92 @@ describe("Stanley -> totalStrategiesBalance", () => {
         ])) as Stanley;
 
         await ivToken.setStanley(stanley.address);
+        await stanley.setMilton(await admin.getAddress());
     });
 
-    it("Should should return balance from aave", async () => {
-        //  given
-        const expectedBalance = BigNumber.from("100000");
-        await aaveStrategy.setBalance(expectedBalance);
-        await stanley.setAaveStrategy(aaveStrategy.address);
-        await stanley.setCompoundStrategy(compoundStrategy.address);
+    it("Should should return balance from Aave - 18 decimals", async () => {
+        //given
+        const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
+        await DAI.approve(stanley.address, expectedBalance);
 
-        //  when
+        await aaveStrategy.setApy(BigNumber.from("555"));
+        await compoundStrategy.setApy(BigNumber.from("444"));
+
+        await stanley.deposit(expectedBalance);
+
+        //when
         const actualBalance = await stanley.totalBalance(
             await admin.getAddress()
         );
-        console.log("actualBalance=", actualBalance);
 
-        //  then
+        //then
+        const actualAssetBalanceAave = await DAI.balanceOf(
+            aaveStrategy.address
+        );
+        const actualAssetBalanceCompound = await DAI.balanceOf(
+            compoundStrategy.address
+        );
+        expect(actualAssetBalanceAave).to.be.equal(expectedBalance);
+        expect(actualAssetBalanceCompound).to.be.equal(0);
         expect(actualBalance).to.be.equal(expectedBalance);
     });
 
-    it("Should should return balance from compound", async () => {
-        //  given
-        const compoundBalance = BigNumber.from("100000");
-        await compoundStrategy.setBalance(compoundBalance);
-        await stanley.setAaveStrategy(aaveStrategy.address);
-        await stanley.setCompoundStrategy(compoundStrategy.address);
-        //  when
-        const balance = await stanley.totalBalance(await admin.getAddress());
-        //  then
-        expect(balance).to.be.equal(compoundBalance);
-    });
+    // it("Should should return balance from Compound - 18 decimals", async () => {
+    //     //given
+    //     const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
+    //     await DAI.approve(stanley.address, expectedBalance);
 
-    it("Should should return sum of balances from aave and compound", async () => {
-        //  given
-        const aaveBalance = BigNumber.from("9999");
-        await aaveStrategy.setBalance(aaveBalance);
-        const compoundBalance = BigNumber.from("100000");
-        await compoundStrategy.setBalance(compoundBalance);
+    //     await aaveStrategy.setApy(BigNumber.from("33333333"));
+    //     await compoundStrategy.setApy(BigNumber.from("55555555"));
 
-        await stanley.setAaveStrategy(aaveStrategy.address);
-        await stanley.setCompoundStrategy(compoundStrategy.address);
-        //  when
-        const balance = await stanley.totalBalance(await admin.getAddress());
-        //  then
-        expect(balance).to.be.equal(compoundBalance.add(aaveBalance));
-    });
+    //     await stanley.deposit(expectedBalance);
+
+    //     //when
+    //     const actualBalance = await stanley.totalBalance(
+    //         await admin.getAddress()
+    //     );
+
+    //     //then
+    //     const actualAssetBalanceAave = await DAI.balanceOf(
+    //         aaveStrategy.address
+    //     );
+    //     const actualAssetBalanceCompound = await DAI.balanceOf(
+    //         compoundStrategy.address
+    //     );
+    //     expect(actualAssetBalanceAave).to.be.equal(0);
+    //     expect(actualAssetBalanceCompound).to.be.equal(expectedBalance);
+    //     expect(actualBalance).to.be.equal(expectedBalance);
+    // });
+
+    // it("Should should return sum of balances from Aave and Compound - 18 decimals", async () => {
+    //     //given
+    //     const expectedTotalBalance = TC_AMOUNT_20000_USD_18DEC;
+    //     await DAI.approve(stanley.address, expectedTotalBalance);
+
+    //     await aaveStrategy.setApy(BigNumber.from("33333333"));
+    //     await compoundStrategy.setApy(BigNumber.from("55555555"));
+    //     await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
+
+    //     await aaveStrategy.setApy(BigNumber.from("55555555"));
+    //     await compoundStrategy.setApy(BigNumber.from("33333333"));
+    //     await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
+
+    //     //when
+    //     const actualTotalBalance = await stanley.totalBalance(
+    //         await admin.getAddress()
+    //     );
+
+    //     //then
+    //     const actualAssetBalanceAave = await DAI.balanceOf(
+    //         aaveStrategy.address
+    //     );
+    //     const actualAssetBalanceCompound = await DAI.balanceOf(
+    //         compoundStrategy.address
+    //     );
+    //     expect(actualAssetBalanceAave).to.be.equal(TC_AMOUNT_10000_USD_18DEC);
+    //     expect(actualAssetBalanceCompound).to.be.equal(
+    //         TC_AMOUNT_10000_USD_18DEC
+    //     );
+    //     expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
+    // });
 });

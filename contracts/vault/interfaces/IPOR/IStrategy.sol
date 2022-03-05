@@ -8,6 +8,7 @@ interface IStrategy {
 
     function getApy() external view returns (uint256);
 
+	//@notice return amount of asset token (stable tokens)
 	function balanceOf() external view returns (uint256);    
 
     function deposit(uint256 amount) external;
