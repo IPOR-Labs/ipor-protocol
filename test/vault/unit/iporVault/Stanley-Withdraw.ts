@@ -249,8 +249,6 @@ describe("Stanley -> Withdraw", () => {
         const aaveBalanceBefore = await aaveNewStartegyInstance.balanceOf();
         const userIvTokenBefore = await ivToken.balanceOf(adminAddress);
 
-        console.log("userIvTokenBefore=", userIvTokenBefore);
-
         expect(aaveBalanceBefore).to.be.equal(TC_AMOUNT_10_USD_18DEC);
         expect(userIvTokenBefore).to.be.equal(TC_AMOUNT_10_USD_18DEC);
 
