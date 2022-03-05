@@ -15,8 +15,6 @@ interface IStanley {
 
     function withdrawAll() external;
 
-    event SetStrategy(address strategy, address shareToken);
-
     event Deposit(
         uint256 timestamp,
         address from,
@@ -34,11 +32,4 @@ interface IStanley {
         uint256 amount,
         uint256 ivTokenValue
     );
-
-    event MigrateAsset(
-        address currentStrategy,
-        address newStrategy,
-        uint256 amount
-    );
-    event DoClaim(address strategyAddress, address _account);
 }

@@ -59,14 +59,19 @@ describe("Stanley -> totalStrategiesBalance", () => {
 
     it("Should should return balance from aave", async () => {
         //  given
-        const aaveBalance = BigNumber.from("100000");
-        await aaveStrategy.setBalance(aaveBalance);
+        const expectedBalance = BigNumber.from("100000");
+        await aaveStrategy.setBalance(expectedBalance);
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
+
         //  when
-        const balance = await stanley.totalBalance(await admin.getAddress());
+        const actualBalance = await stanley.totalBalance(
+            await admin.getAddress()
+        );
+        console.log("actualBalance=", actualBalance);
+
         //  then
-        expect(balance).to.be.equal(aaveBalance);
+        expect(actualBalance).to.be.equal(expectedBalance);
     });
 
     it("Should should return balance from compound", async () => {

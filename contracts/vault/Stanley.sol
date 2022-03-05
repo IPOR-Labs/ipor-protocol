@@ -4,35 +4,34 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "./interfaces/IPOR/IStrategy.sol";
 import "../interfaces/IStanley.sol";
-import "../interfaces/IIporOwnableUpgradeable.sol";
-import "../security/IporOwnableUpgradeable.sol";
+import "../interfaces/IStanleyAdministration.sol";
 import "./interfaces/IIvToken.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "./ExchangeRate.sol";
 import "../IporErrors.sol";
+import "../libraries/IporMath.sol";
+import "hardhat/console.sol";
 
-// TODO: Add function transferStrategyOwnership
-// TODO: Add IStanley with busineess methods
 contract Stanley is
     UUPSUpgradeable,
     PausableUpgradeable,
     IporOwnableUpgradeable,
-    ExchangeRate,
-    IStanley
+    IStanley,
+    IStanleyAdministration
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     uint8 internal _decimals;
     address internal _asset;
-    IIvToken private _ivToken;
+    IIvToken internal _ivToken;
 
-    address private _milton;
-    address private _aaveStrategy;
-    address private _aaveShareToken;
-    address private _compoundStrategy;
-    address private _compoundShareToken;
+    address internal _milton;
+    address internal _aaveStrategy;
+    address internal _aaveShareToken;
+    address internal _compoundStrategy;
+    address internal _compoundShareToken;
 
     /**
      * @dev Deploy IPORVault.
@@ -87,16 +86,16 @@ contract Stanley is
 
         (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
 
-        uint256 decimals = _decimals;
+        uint256 multiplicator = 10**_decimals;
 
         (
             uint256 exchangeRate,
             uint256 balanceAave,
             uint256 balanceCompound
-        ) = _calcExchangeRate(decimals);
+        ) = _calcExchangeRate(multiplicator);
 
         uint256 ivTokenValue = IporMath.division(
-            amount * decimals,
+            amount * multiplicator,
             exchangeRate
         );
 
@@ -130,7 +129,7 @@ contract Stanley is
     {
         require(amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
 
-        uint256 decimals = _decimals;
+        uint256 multiplicator = 10**_decimals;
         IIvToken ivToken = _ivToken;
 
         (
@@ -143,10 +142,10 @@ contract Stanley is
             uint256 exchangeRate,
             uint256 balanceAave,
             uint256 balanceCompound
-        ) = _calcExchangeRate(decimals);
+        ) = _calcExchangeRate(multiplicator);
 
         uint256 ivTokenValue = IporMath.division(
-            amount * decimals,
+            amount * multiplicator,
             exchangeRate
         );
 
@@ -223,7 +222,7 @@ contract Stanley is
 
         if (balanceAave < balanceCompound) {
             uint256 ivTokenValuePart = IporMath.division(
-                balanceCompound * decimals,
+                balanceCompound * multiplicator,
                 exchangeRate
             );
 
@@ -240,7 +239,7 @@ contract Stanley is
         } else {
             // TODO: Add tests for DAI(18 decimals) and for USDT (6 decimals)
             uint256 ivTokenValuePart = IporMath.division(
-                balanceAave * decimals,
+                balanceAave * multiplicator,
                 exchangeRate
             );
             ivToken.burn(msg.sender, ivTokenValuePart);
@@ -259,14 +258,15 @@ contract Stanley is
     }
 
     function withdrawAll() external onlyMilton {
-        uint256 decimals = _decimals;
+        uint256 multiplicator = 10**_decimals;
+
         IStrategy strategyAave = IStrategy(_aaveStrategy);
 
-        (uint256 exchangeRate, , ) = _calcExchangeRate(decimals);
+        (uint256 exchangeRate, , ) = _calcExchangeRate(multiplicator);
 
         uint256 amountAave = strategyAave.balanceOf();
         uint256 ivTokenValueAave = IporMath.division(
-            amountAave * decimals,
+            amountAave * multiplicator,
             exchangeRate
         );
 
@@ -282,7 +282,7 @@ contract Stanley is
 
         uint256 amountCompound = strategyCompound.balanceOf();
         uint256 ivTokenValueCompound = IporMath.division(
-            amountCompound * decimals,
+            amountCompound * multiplicator,
             exchangeRate
         );
 
@@ -298,48 +298,36 @@ contract Stanley is
         IERC20Upgradeable(_asset).safeTransfer(msg.sender, balance);
     }
 
-    // Find highest apy strategy to deposit underlying asset
-    function _getMaxApyStrategy()
-        internal
-        view
-        returns (
-            IStrategy strategyMaxApy,
-            IStrategy strategyAave,
-            IStrategy strategyCompound
-        )
+    function aaveBeforeClaim(address[] memory assets, uint256 amount)
+        external
+        payable
+        override
+        onlyOwner
     {
-        strategyAave = IStrategy(_aaveStrategy);
-        strategyCompound = IStrategy(_compoundStrategy);
-
-        if (strategyAave.getApy() < strategyCompound.getApy()) {
-            strategyMaxApy = strategyCompound;
-        } else {
-            strategyMaxApy = strategyAave;
-        }
-    }
-
-    function _totalBalance(address who) internal view returns (uint256) {
-        (uint256 exchangeRate, , ) = _calcExchangeRate(_decimals);
-        return _ivToken.balanceOf(who) * exchangeRate;
-    }
-
-    function setAaveStrategy(address strategyAddress) external onlyOwner {
-        _setAaveStrategy(strategyAddress);
-    }
-
-    function setCompoundStrategy(address strategy) external onlyOwner {
-        _setCompoundStrategy(strategy);
-    }
-
-    function setMilton(address milton) external onlyOwner {
-        _milton = milton;
+        IStrategy(_aaveStrategy).beforeClaim(assets, amount);
     }
 
     /**
-     * @dev to migrate all asset from current strategy to another higher apy strategy.
-     * @notice only owner can migrate.
+     * @dev claim Gov token from current strategy.
+     * @notice only owner can claim.
+     * @param account send claimed gove token to _account
      */
-    function migrateAssetInMaxApyStrategy() external onlyOwner {
+    // TODO: Consider to convert account variable in contract and change fincton to no parameters
+    function aaveDoClaim(address account) external payable override onlyOwner {
+        _doClaim(account, _aaveStrategy);
+    }
+
+    // TODO: Consider to convert _account variable in contract and change fincton to no parameters
+    function compoundDoClaim(address account)
+        external
+        payable
+        override
+        onlyOwner
+    {
+        _doClaim(account, _compoundStrategy);
+    }
+
+    function migrateAssetToStrategyWithMaxApy() external onlyOwner {
         (
             IStrategy strategyMaxApy,
             IStrategy strategyAave,
@@ -371,28 +359,53 @@ contract Stanley is
         emit MigrateAsset(from, address(strategyMaxApy), amount);
     }
 
-    /**
-     * @dev claim Gov token from current strategy.
-     * @notice only owner can claim.
-     * @param _account send claimed gove token to _account
-     */
-    // TODO: Consider to convert _account variable in contract and change fincton to no parameters
-    function aaveDoClaim(address _account) external payable onlyOwner {
-        _doClaim(_account, _aaveStrategy);
-    }
-
-    function aaveBeforeClaim(address[] memory assets, uint256 amount)
+    function setAaveStrategy(address strategyAddress)
         external
-        payable
+        override
         onlyOwner
     {
-        IStrategy(_aaveStrategy).beforeClaim(assets, amount);
+        _setAaveStrategy(strategyAddress);
     }
 
-    // TODO: Consider to convert _account variable in contract and change fincton to no parameters
-    function compoundDoClaim(address _account) external payable onlyOwner {
-        _doClaim(_account, _compoundStrategy);
+    function setCompoundStrategy(address strategy) external override onlyOwner {
+        _setCompoundStrategy(strategy);
     }
+
+    function setMilton(address milton) external override onlyOwner {
+        _milton = milton;
+    }
+
+    // Find highest apy strategy to deposit underlying asset
+    function _getMaxApyStrategy()
+        internal
+        view
+        returns (
+            IStrategy strategyMaxApy,
+            IStrategy strategyAave,
+            IStrategy strategyCompound
+        )
+    {
+        strategyAave = IStrategy(_aaveStrategy);
+        strategyCompound = IStrategy(_compoundStrategy);
+
+        if (strategyAave.getApy() < strategyCompound.getApy()) {
+            strategyMaxApy = strategyCompound;
+        } else {
+            strategyMaxApy = strategyAave;
+        }
+    }
+
+    function _totalBalance(address who) internal view returns (uint256) {
+        (uint256 exchangeRate, , ) = _calcExchangeRate(10**_decimals);
+        console.log("[_totalBalance] exchangeRate=", exchangeRate);
+        console.log("[_totalBalance] balanceOf=", _ivToken.balanceOf(who));
+        return _ivToken.balanceOf(who) * exchangeRate;
+    }
+
+    /**
+     * @dev to migrate all asset from current strategy to another higher apy strategy.
+     * @notice only owner can migrate.
+     */
 
     // TODO: Consider reorder checks in this way that method will have less calculation (gas opt)
     function _setCompoundStrategy(address strategyAddress) internal {
@@ -412,7 +425,7 @@ contract Stanley is
         );
 
         _compoundStrategy = strategyAddress;
-        _compoundShareToken = IStrategy(strategyAddress).shareToken();
+        _compoundShareToken = IStrategy(strategyAddress).getShareToken();
         IERC20Upgradeable newCsToken = IERC20Upgradeable(_compoundShareToken);
         asset.safeApprove(strategyAddress, 0);
         asset.safeApprove(strategyAddress, type(uint256).max);
@@ -440,7 +453,7 @@ contract Stanley is
             IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
         );
 
-        _aaveShareToken = strategy.shareToken();
+        _aaveShareToken = strategy.getShareToken();
         IERC20Upgradeable asToken = IERC20Upgradeable(_aaveShareToken);
         _aaveStrategy = strategyAddress;
         asset.safeApprove(strategyAddress, 0);
@@ -449,8 +462,6 @@ contract Stanley is
         asToken.safeApprove(strategyAddress, type(uint256).max);
         emit SetStrategy(strategyAddress, _aaveShareToken);
     }
-
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     /**
      * @dev to withdraw asset from current strategy.
@@ -491,8 +502,9 @@ contract Stanley is
         require(_account != address(0), IporErrors.WRONG_ADDRESS);
         IStrategy strategy = IStrategy(strategyAddress);
         address[] memory assets = new address[](1);
-        assets[0] = strategy.shareToken();
+        assets[0] = strategy.getShareToken();
         strategy.doClaim(_account, assets);
+        //TODO: more information in event
         emit DoClaim(strategyAddress, _account);
     }
 
@@ -514,7 +526,7 @@ contract Stanley is
         strategyAddress.deposit(amount);
     }
 
-    function _calcExchangeRate(uint256 decimals)
+    function _calcExchangeRate(uint256 multiplicator)
         internal
         view
         returns (
@@ -531,12 +543,14 @@ contract Stanley is
         uint256 ivTokenBalance = _ivToken.totalSupply();
 
         if (totalAssetBalance == 0 || ivTokenBalance == 0) {
-            exchangeRate = 10**decimals;
+            exchangeRate = multiplicator;
         } else {
             exchangeRate = IporMath.division(
-                totalAssetBalance * decimals,
+                totalAssetBalance * multiplicator,
                 ivTokenBalance
             );
         }
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

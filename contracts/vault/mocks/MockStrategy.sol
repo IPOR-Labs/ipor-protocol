@@ -40,7 +40,7 @@ contract MockStrategy is IStrategy {
         _balance = balance;
     }
 
-    function shareToken() external view override returns (address) {
+    function getShareToken() external view override returns (address) {
         return _shareTokens;
     }
 
@@ -50,7 +50,6 @@ contract MockStrategy is IStrategy {
 
     function doClaim(address vault, address[] memory assets)
         external
-        payable
         override
     {}
 
@@ -58,10 +57,7 @@ contract MockStrategy is IStrategy {
         _owner = newOwner;
     }
 
-    function beforeClaim(address[] memory assets, uint256 amount)
-        external
-        payable
-    {}
+    function beforeClaim(address[] memory assets, uint256 amount) external {}
 
     function setStanley(address stanley) external {
         _stanley = stanley;
