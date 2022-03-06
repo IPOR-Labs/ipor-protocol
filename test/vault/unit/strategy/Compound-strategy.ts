@@ -33,38 +33,28 @@ describe("Compound strategy", () => {
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
 
-        const DAIFactory = await hre.ethers.getContractFactory(
-            "DaiMockedToken"
-        );
+        const DAIFactory = await hre.ethers.getContractFactory("DaiMockedToken");
         DAI = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
         COMP = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
-        const MockWhitePaper = await hre.ethers.getContractFactory(
-            "MockWhitePaper"
-        );
+        const MockWhitePaper = await hre.ethers.getContractFactory("MockWhitePaper");
         const MockCDAIFactory = await hre.ethers.getContractFactory("MockCDAI");
-        const MockWhitePaperInstance =
-            (await MockWhitePaper.deploy()) as MockWhitePaper;
+        const MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
 
         cDAI = (await MockCDAIFactory.deploy(
             DAI.address,
             await admin.getAddress(),
             MockWhitePaperInstance.address
         )) as MockCDAI;
-        const MockComptroller = await hre.ethers.getContractFactory(
-            "MockComptroller"
-        );
-        comptroller = (await MockComptroller.deploy(
-            COMP.address,
-            cDAI.address
-        )) as MockComptroller;
+        const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
+        comptroller = (await MockComptroller.deploy(COMP.address, cDAI.address)) as MockComptroller;
 
-        const compoundNewStartegy = await hre.ethers.getContractFactory(
-            "CompoundStrategy"
-        );
-        compoundStrategyInstance = await upgrades.deployProxy(
-            compoundNewStartegy,
-            [DAI.address, cDAI.address, comptroller.address, COMP.address]
-        );
+        const compoundNewStartegy = await hre.ethers.getContractFactory("CompoundStrategy");
+        compoundStrategyInstance = await upgrades.deployProxy(compoundNewStartegy, [
+            DAI.address,
+            cDAI.address,
+            comptroller.address,
+            COMP.address,
+        ]);
     });
 
     it("Should be able to setup Stanley", async () => {
@@ -73,11 +63,7 @@ describe("Compound strategy", () => {
         //when
         await expect(compoundStrategyInstance.setStanley(stanleyAddress))
             .to.emit(compoundStrategyInstance, "SetStanley")
-            .withArgs(
-                await admin.getAddress,
-                stanleyAddress,
-                compoundStrategyInstance.address
-            );
+            .withArgs(await admin.getAddress, stanleyAddress, compoundStrategyInstance.address);
     });
 
     it("Should not be able to setup Stanley when non owner want to setup new address", async () => {

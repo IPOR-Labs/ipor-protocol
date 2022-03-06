@@ -1,9 +1,9 @@
 pragma solidity 0.8.9;
 
 interface AToken {
-    function getIncentivesController() external view returns (address);
+    // function getIncentivesController() external view returns (address);
 
-    function redeem(uint256 amount) external;
+    // function redeem(uint256 amount) external;
 
     function burn(
         address user,

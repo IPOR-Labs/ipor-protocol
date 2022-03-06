@@ -19,7 +19,7 @@ contract MockADAI is ERC20, AToken {
         return _dai;
     }
 
-    function redeem(uint256 amount) external override {
+    function redeem(uint256 amount) external {
         _burn(msg.sender, amount);
         require(
             IERC20(_dai).transfer(msg.sender, amount),
@@ -48,12 +48,11 @@ contract MockADAI is ERC20, AToken {
         );
     }
 
-    function getIncentivesController()
-        external
-        view
-        override
-        returns (address)
-    {
+    function getIncentivesController() external view returns (address) {
         return _controller;
+    }
+
+    function mint(address account, uint256 amount) external {
+        _mint(account, amount);
     }
 }
