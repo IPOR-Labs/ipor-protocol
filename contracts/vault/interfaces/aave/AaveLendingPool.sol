@@ -1,6 +1,6 @@
 pragma solidity 0.8.9;
 
-import "./DataTypes.sol";
+import "./DataTypesContract.sol";
 
 interface AaveLendingPool {
     function deposit(
@@ -12,5 +12,5 @@ interface AaveLendingPool {
     function getReserveData(address reserve)
         external
         view
-        returns (DataTypes.ReserveData memory);
+        returns (DataTypesContract.ReserveData memory);
 }

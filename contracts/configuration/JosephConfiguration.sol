@@ -6,7 +6,7 @@ import "../interfaces/IJosephConfiguration.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IIporVault.sol";
+import "../interfaces/IStanley.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 contract JosephConfiguration is
@@ -22,7 +22,7 @@ contract JosephConfiguration is
     IIpToken internal _ipToken;
     IMilton internal _milton;
     IMiltonStorage internal _miltonStorage;
-    IIporVault internal _iporVault;
+    IStanley internal _stanley;
 
     address internal _charlieTreasurer;
     address internal _treasureTreasurer;

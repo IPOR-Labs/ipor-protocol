@@ -16,13 +16,14 @@ import "../../libraries/IporMath.sol";
 contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address private _stanley;
-    uint256 private _blocksPerYear;
     address private _asset;
+    CErc20 private _cToken;
+    uint256 private _blocksPerYear;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
-    CErc20 private _cToken;
+
+    address private _stanley;
 
     /**
      * @dev Deploy CompoundStrategy.
@@ -47,17 +48,10 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
         _blocksPerYear = 2102400;
     }
 
-    modifier _onlyStanley() {
+    modifier onlyStanley() {
         require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
         _;
     }
-
-    function setStanley(address stanley) external onlyOwner {
-        _stanley = stanley;
-        emit SetStanley(msg.sender, stanley, address(this));
-    }
-
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     /**
      * @dev _asset return
@@ -69,7 +63,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev Share token to track _asset (DAI -> cDAI)
      */
-    function shareToken() external view override returns (address) {
+    function getShareToken() external view override returns (address) {
         return address(_cToken);
     }
 
@@ -79,15 +73,6 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     function getApy() external view override returns (uint256 apr) {
         uint256 cRate = _cToken.supplyRatePerBlock(); // interest % per block
         apr = (cRate * _blocksPerYear) * 100;
-    }
-
-    /**
-     * @dev set blocks per year.
-     * @param blocksPerYear amount to deposit in aave lending.
-     */
-    function setBlocksPerYear(uint256 blocksPerYear) external onlyOwner {
-        require(blocksPerYear != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
-        _blocksPerYear = blocksPerYear;
     }
 
     /**
@@ -108,7 +93,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @notice deposit can only done by Stanley .
      * @param amount amount to deposit in compound lending.
      */
-    function deposit(uint256 amount) external override _onlyStanley {
+    function deposit(uint256 amount) external override onlyStanley {
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), amount);
         _cToken.mint(amount);
     }
@@ -118,12 +103,22 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @notice withdraw can only done by owner.
      * @param amount amount to withdraw from compound lending.
      */
-    function withdraw(uint256 amount) external override _onlyStanley {
+    function withdraw(uint256 amount) external override onlyStanley {
         _cToken.redeem(IporMath.division(amount * 1e18, _cToken.exchangeRateStored()));
         IERC20Upgradeable(address(_asset)).safeTransfer(
             msg.sender,
             IERC20Upgradeable(_asset).balanceOf(address(this))
         );
+    }
+
+    /**
+     * @dev beforeClaim is not needed to implement
+     */
+    function beforeClaim(address[] memory assets, uint256 amount)
+        public
+        onlyStanley
+    {
+        // No implementation
     }
 
     /**
@@ -134,9 +129,8 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      */
     function doClaim(address vault, address[] memory assets)
         external
-        payable
         override
-        _onlyStanley
+        onlyStanley
     {
         require(vault != address(0), IporErrors.WRONG_ADDRESS);
         _comptroller.claimComp(address(this), assets);
@@ -144,10 +138,19 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
         _compToken.safeTransfer(vault, compBal);
     }
 
-    /**
-     * @dev beforeClaim is not needed to implement
-     */
-    function beforeClaim(address[] memory assets, uint256 amount) public payable _onlyStanley {
-        // No implementation
+    function setStanley(address stanley) external onlyOwner {
+        _stanley = stanley;
+        emit SetStanley(msg.sender, stanley, address(this));
     }
+
+    /**
+     * @dev set blocks per year.
+     * @param blocksPerYear amount to deposit in aave lending.
+     */
+    function setBlocksPerYear(uint256 blocksPerYear) external onlyOwner {
+        require(blocksPerYear != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+        _blocksPerYear = blocksPerYear;
+    }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

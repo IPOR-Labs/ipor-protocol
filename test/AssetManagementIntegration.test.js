@@ -51,7 +51,7 @@ describe("AssetManagementIntegration", () => {
 
         await testData.tokenDai
             .connect(liquidityProvider)
-            .approve(testData.iporVaultDai.address, TOTAL_SUPPLY_18_DECIMALS);
+            .approve(testData.stanleyDai.address, TOTAL_SUPPLY_18_DECIMALS);
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -75,7 +75,7 @@ describe("AssetManagementIntegration", () => {
             .depositToStanley(USD_1_000_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
-        await testData.iporVaultDai
+        await testData.stanleyDai
             .connect(liquidityProvider)
             .testDeposit(testData.miltonDai.address, USD_3_18DEC);
 
@@ -97,9 +97,7 @@ describe("AssetManagementIntegration", () => {
             testData.miltonDai.address
         );
         const actualIporVaultStableBalance =
-            await testData.iporVaultDai.totalBalance(
-                testData.miltonDai.address
-            );
+            await testData.stanleyDai.totalBalance(testData.miltonDai.address);
 
         const actualMiltonBalance =
             await testData.miltonStorageDai.getBalance();
@@ -141,7 +139,7 @@ describe("AssetManagementIntegration", () => {
 
         await testData.tokenDai
             .connect(liquidityProvider)
-            .approve(testData.iporVaultDai.address, TOTAL_SUPPLY_18_DECIMALS);
+            .approve(testData.stanleyDai.address, TOTAL_SUPPLY_18_DECIMALS);
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -170,7 +168,7 @@ describe("AssetManagementIntegration", () => {
             .depositToStanley(USD_19_997_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
-        await testData.iporVaultDai
+        await testData.stanleyDai
             .connect(liquidityProvider)
             .testDeposit(testData.miltonDai.address, USD_3_18DEC);
 
@@ -192,9 +190,7 @@ describe("AssetManagementIntegration", () => {
             testData.miltonDai.address
         );
         const actualIporVaultStableBalance =
-            await testData.iporVaultDai.totalBalance(
-                testData.miltonDai.address
-            );
+            await testData.stanleyDai.totalBalance(testData.miltonDai.address);
 
         const actualMiltonBalance =
             await testData.miltonStorageDai.getBalance();
@@ -236,7 +232,7 @@ describe("AssetManagementIntegration", () => {
 
         await testData.tokenDai
             .connect(liquidityProvider)
-            .approve(testData.iporVaultDai.address, TOTAL_SUPPLY_18_DECIMALS);
+            .approve(testData.stanleyDai.address, TOTAL_SUPPLY_18_DECIMALS);
 
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -265,7 +261,7 @@ describe("AssetManagementIntegration", () => {
             .depositToStanley(USD_19_997_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
-        await testData.iporVaultDai
+        await testData.stanleyDai
             .connect(liquidityProvider)
             .testDeposit(testData.miltonDai.address, USD_3_18DEC);
 
@@ -287,9 +283,7 @@ describe("AssetManagementIntegration", () => {
             testData.miltonDai.address
         );
         const actualIporVaultStableBalance =
-            await testData.iporVaultDai.totalBalance(
-                testData.miltonDai.address
-            );
+            await testData.stanleyDai.totalBalance(testData.miltonDai.address);
 
         const actualMiltonBalance =
             await testData.miltonStorageDai.getBalance();

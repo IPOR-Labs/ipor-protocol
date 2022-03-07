@@ -219,7 +219,7 @@ contract Warren is
     ) internal {
         DataTypes.IPOR memory ipor = _indexes[asset];
         require(
-            ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
+            ipor.quasiIbtPrice != 0,
             IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
 
