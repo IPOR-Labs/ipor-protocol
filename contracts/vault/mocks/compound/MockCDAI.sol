@@ -19,17 +19,13 @@ contract MockCDAI is ERC20, CErc20Mock {
     uint256 private _getCash;
     address private _comptroller;
 
-    constructor(
-        address dai,
-        address tokenOwner,
-        address interestRateModel
-    ) public ERC20("cDAI", "cDAI") {
+    constructor(address dai, address interestRateModel) public ERC20("cDAI", "cDAI") {
         _dai = dai;
         _interestRateModel = interestRateModel;
         _exchangeRate = 200000000000000000000000000;
         _supplyRate = 32847953230;
         _mint(address(this), 10**14); // 1.000.000 cDAI
-        _mint(tokenOwner, 10**13); // 100.000 cDAI
+        _mint(msg.sender, 10**13); // 100.000 cDAI
     }
 
     function decimals() public view override returns (uint8) {
@@ -53,10 +49,7 @@ contract MockCDAI is ERC20, CErc20Mock {
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
-            IERC20(_dai).transfer(
-                msg.sender,
-                IporMath.division(amount * _exchangeRate, 10**18)
-            ),
+            IERC20(_dai).transfer(msg.sender, IporMath.division(amount * _exchangeRate, 10**18)),
             "Error during transfer"
         ); // 1 DAI
         return 0;

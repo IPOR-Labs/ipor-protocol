@@ -46,10 +46,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         _asset = asset;
         _shareToken = aToken;
         _provider = AaveLendingPoolProviderV2(addressesProvider);
-        IERC20Upgradeable(_asset).safeApprove(
-            _provider.getLendingPool(),
-            type(uint256).max
-        );
+        IERC20Upgradeable(_asset).safeApprove(_provider.getLendingPool(), type(uint256).max);
         _stakedAaveInterface = StakedAaveInterface(stkAave);
         _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
         _stkAave = stkAave;
@@ -79,17 +76,9 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @dev get current APY.
      */
     function getApy() external view override returns (uint256) {
-        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(
-            _provider.getLendingPool()
-        );
-        DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(
-            _asset
-        );
-        return
-            IporMath.division(
-                uint256(reserveData.currentLiquidityRate),
-                (10**7)
-            );
+        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
+        DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(_asset);
+        return IporMath.division(uint256(reserveData.currentLiquidityRate), (10**7));
     }
 
     /**
@@ -108,15 +97,9 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     function deposit(uint256 amount) external override onlyStanley {
         address asset = _asset;
 
-        IERC20Upgradeable(asset).safeTransferFrom(
-            msg.sender,
-            address(this),
-            amount
-        );
+        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
 
-        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(
-            _provider.getLendingPool()
-        );
+        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
 
         lendingPool.deposit(asset, amount, address(this), 0); // 29 -> referral
     }
@@ -127,11 +110,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param amount amount to withdraw from _aave lending.
      */
     function withdraw(uint256 amount) external override onlyStanley {
-        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(
-            _asset,
-            amount,
-            msg.sender
-        );
+        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(_asset, amount, msg.sender);
     }
 
     /**
@@ -140,11 +119,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param assets assets for claim _aave gov token.
      * @param amount amount to claim staked _aave token from _aave incentive.
      */
-    function beforeClaim(address[] memory assets, uint256 amount)
-        external        
-        override
-        onlyStanley
-    {
+    function beforeClaim(address[] memory assets, uint256 amount) external override onlyStanley {
         _aaveIncentive.claimRewards(assets, amount, address(this));
         _stakedAaveInterface.cooldown();
     }
@@ -158,20 +133,13 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param vault vault address where send to claimed AAVE token.
      * @param assets assets for claim _aave gov token.
      */
-    function doClaim(address vault, address[] memory assets)
-        external        
-        override
-        onlyStanley
-    {
-        uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(
-            address(this)
-        );
+    function doClaim(address vault, address[] memory assets) external override onlyStanley {
+        uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
         if (
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
-            (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <=
-            unstakeWindow
+            (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <= unstakeWindow
         ) {
             // claim AAVE governace token second after claim stakedAave token
             _stakedAaveInterface.redeem(

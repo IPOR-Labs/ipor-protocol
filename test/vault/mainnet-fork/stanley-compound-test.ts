@@ -337,8 +337,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         expect(compoundStrategyBalanceAfter, "aaveStrategyBalanceAfter").to.be.equal(zero);
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
-        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909606609623").to.be.equal(
-            BigNumber.from("334678735341909606609623")
+        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909606610778").to.be.equal(
+            BigNumber.from("334678735341909606610778")
         );
         const strategyCTokenContractAfter = await aTokenContract.balanceOf(
             aaveStrategyContract_Instance.address

@@ -151,7 +151,6 @@ describe("Stanley -> Deposit", () => {
         let MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
         cDAI = (await MockCDAIFactory.deploy(
             DAI.address,
-            await admin.getAddress(),
             MockWhitePaperInstance.address
         )) as MockCDAI;
         DAI.mint(cDAI.address, one.mul(10000));
@@ -311,7 +310,7 @@ describe("Stanley -> Deposit", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
     it("Should accept deposits and transfer tokens first into Compound second into AAVE when one user make deposits", async () => {
-        const adminAddress = await await admin.getAddress();        
+        const adminAddress = await await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when

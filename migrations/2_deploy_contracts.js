@@ -19,12 +19,12 @@ const MockADai = artifacts.require("MockADai");
 const IvTokenUsdt = artifacts.require("IvTokenUsdt");
 const IvTokenUsdc = artifacts.require("IvTokenUsdc");
 const IvTokenDai = artifacts.require("IvTokenDai");
-const MockStrategyAaveUsdt = artifacts.require("MockStrategyAaveUsdt");
-const MockStrategyAaveUsdc = artifacts.require("MockStrategyAaveUsdc");
-const MockStrategyAaveDai = artifacts.require("MockStrategyAaveDai");
-const MockStrategyCompoundUsdt = artifacts.require("MockStrategyCompoundUsdt");
-const MockStrategyCompoundUsdc = artifacts.require("MockStrategyCompoundUsdc");
-const MockStrategyCompoundDai = artifacts.require("MockStrategyCompoundDai");
+const StrategyAaveUsdt = artifacts.require("StrategyAaveUsdt");
+const StrategyAaveUsdc = artifacts.require("StrategyAaveUsdc");
+const StrategyAaveDai = artifacts.require("StrategyAaveDai");
+const StrategyCompoundUsdt = artifacts.require("StrategyCompoundUsdt");
+const StrategyCompoundUsdc = artifacts.require("StrategyCompoundUsdc");
+const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
 const StanleyUsdt = artifacts.require("StanleyUsdt");
 const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
@@ -60,10 +60,11 @@ const MockProviderAave = artifacts.require("MockProviderAave");
 const MockStakedAave = artifacts.require("MockStakedAave");
 const AAVEMockedToken = artifacts.require("AAVEMockedToken");
 const MockAaveIncentivesController = artifacts.require("MockAaveIncentivesController");
-
-const MockCaseBaseIporVault = artifacts.require("MockCaseBaseIporVault");
-
 const MockWhitePaper = artifacts.require("MockWhitePaper");
+const MockedCOMPToken = artifacts.require("MockedCOMPToken");
+const MockComptrollerUSDT = artifacts.require("MockComptrollerUSDT");
+const MockComptrollerUSDC = artifacts.require("MockComptrollerUSDC");
+const MockComptrollerDAI = artifacts.require("MockComptrollerDAI");
 const MockCDai = artifacts.require("MockCDai");
 const MockCUSDT = artifacts.require("MockCUSDT");
 const MockCUSDC = artifacts.require("MockCUSDC");
@@ -137,10 +138,8 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockAaveIncentivesController, stakedAave.address);
     const aaveIncentivesController = await MockAaveIncentivesController.deployed();
 
-    //TODO: fix it all!
-    // await deployer.deploy(MockStrategyAaveUsdt);
     const strategyAaveUsdt = await deployProxy(
-        MockStrategyAaveUsdt,
+        StrategyAaveUsdt,
         [
             mockedUsdt.address,
             mockedAUsdt.address,
@@ -156,9 +155,8 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    // await deployer.deploy(MockStrategyAaveUsdc);
     const strategyAaveUsdc = await deployProxy(
-        MockStrategyAaveUsdc,
+        StrategyAaveUsdc,
         [
             mockedUsdc.address,
             mockedAUsdc.address,
@@ -174,9 +172,8 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    // await deployer.deploy(MockStrategyAaveDai);
     const strategyAaveDai = await deployProxy(
-        MockStrategyAaveDai,
+        StrategyAaveDai,
         [
             mockedDai.address,
             mockedADai.address,
@@ -195,14 +192,14 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockWhitePaper);
     const mockWhitePaperInstance = await MockWhitePaper.deployed();
 
-    await deployer.deploy(MockCUSDC, USDC.address, mockWhitePaperInstance.address);
+    await deployer.deploy(MockCUSDC, mockedUsdc.address, mockWhitePaperInstance.address);
     const mockedCUsdc = await MockCUSDC.deployed();
-    await deployer.deploy(MockCUSDC, USDT.address, mockWhitePaperInstance.address);
+    await deployer.deploy(MockCUSDT, mockedUsdt.address, mockWhitePaperInstance.address);
     const mockedCUsdt = await MockCUSDT.deployed();
-    await deployer.deploy(MockCUSDC, UDAI.address, mockWhitePaperInstance.address);
+    await deployer.deploy(MockCDai, mockedDai.address, mockWhitePaperInstance.address);
     const mockedCDai = await MockCDai.deployed();
 
-    await deployer.deploy(MockedCOMPToken);
+    await deployer.deploy(MockedCOMPToken, stableTotalSupply6Decimals, 6);
     const mockedCOMP = await MockedCOMPToken.deployed();
 
     await deployer.deploy(MockComptrollerUSDT, mockedCOMP.address, mockedCUsdt.address);
@@ -211,12 +208,11 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockComptrollerUSDC, mockedCOMP.address, mockedCUsdc.address);
     const mockComptrollerUSDC = await MockComptrollerUSDC.deployed();
 
-    await deployer.deploy(MockComptrollerDAI, mockedDAI.address, mockedCDai.address);
+    await deployer.deploy(MockComptrollerDAI, mockedDai.address, mockedCDai.address);
     const mockComptrollerDAI = await MockComptrollerDAI.deployed();
 
-    // await deployer.deploy(MockStrategyCompoundUsdt);
     const strategyCompoundUsdt = await deployProxy(
-        MockStrategyCompoundUsdt,
+        StrategyCompoundUsdt,
         [mockedUsdt.address, mockedCUsdt.address, mockComptrollerUSDT.address, mockedCOMP.address],
         {
             deployer: deployer,
@@ -225,9 +221,8 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    // await deployer.deploy(MockStrategyCompoundUsdc);
     const strategyCompoundUsdc = await deployProxy(
-        MockStrategyCompoundUsdc,
+        StrategyCompoundUsdc,
         [mockedUsdc.address, mockedCUsdc.address, mockComptrollerUSDC.address, mockedCOMP.address],
         {
             deployer: deployer,
@@ -236,9 +231,8 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    // await deployer.deploy(MockStrategyCompoundDai);
     const strategyCompoundDai = await deployProxy(
-        MockStrategyCompoundUsdt,
+        StrategyCompoundDai,
         [mockedDai.address, mockedCDai.address, mockComptrollerDAI.address, mockedCOMP.address],
         {
             deployer: deployer,
