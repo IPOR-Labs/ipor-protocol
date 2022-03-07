@@ -52,8 +52,6 @@ const WarrenFrontendDataProvider = artifacts.require("WarrenFrontendDataProvider
 const MiltonDevToolDataProvider = artifacts.require("MiltonDevToolDataProvider");
 const MiltonFrontendDataProvider = artifacts.require("MiltonFrontendDataProvider");
 
-const MockCaseBaseStanley = artifacts.require("MockCaseBaseStanley");
-
 module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
@@ -125,16 +123,50 @@ module.exports = async function (deployer, _network) {
     await strategyCompoundDai.setShareToken(mockedDai.address);
     await strategyCompoundDai.setAsset(mockedDai.address);
 
-    MockStrategyAaveUsdt;
+    const stanleyUsdt = await deployProxy(
+        StanleyUsdt,
+        [
+            mockedUsdt.address,
+            ivUsdtToken.address,
+            strategyAaveUsdt.address,
+            strategyCompoundUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    await deployer.deploy(MockCaseBaseStanley, mockedUsdt.address);
-    const mockStanleyUsdt = await MockCaseBaseStanley.deployed();
+    const stanleyUsdc = await deployProxy(
+        StanleyUsdc,
+        [
+            mockedUsdc.address,
+            ivUsdcToken.address,
+            strategyAaveUsdc.address,
+            strategyCompoundUsdc.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    await deployer.deploy(MockCaseBaseStanley, mockedUsdc.address);
-    const mockStanleyUsdc = await MockCaseBaseStanley.deployed();
-
-    await deployer.deploy(MockCaseBaseStanley, mockedDai.address);
-    const mockStanleyDai = await MockCaseBaseStanley.deployed();
+    const stanleyDai = await deployProxy(
+        StanleyDai,
+        [
+            mockedDai.address,
+            ivDaiToken.address,
+            strategyAaveDai.address,
+            strategyCompoundDai.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
     const iporAssetConfigurationUsdt = await deployProxy(
         IporAssetConfigurationUsdt,
@@ -216,7 +248,7 @@ module.exports = async function (deployer, _network) {
             warren.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
-            mockStanleyUsdt.address,
+            stanleyUsdt.address,
         ],
         {
             deployer: deployer,
@@ -233,7 +265,7 @@ module.exports = async function (deployer, _network) {
             itfWarren.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
-            mockStanleyUsdt.address,
+            stanleyUsdt.address,
         ],
         {
             deployer: deployer,
@@ -250,7 +282,7 @@ module.exports = async function (deployer, _network) {
             warren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
-            mockStanleyUsdc.address,
+            stanleyUsdc.address,
         ],
         {
             deployer: deployer,
@@ -267,7 +299,7 @@ module.exports = async function (deployer, _network) {
             itfWarren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
-            mockStanleyUsdc.address,
+            stanleyUsdc.address,
         ],
         {
             deployer: deployer,
@@ -284,7 +316,7 @@ module.exports = async function (deployer, _network) {
             warren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
-            mockStanleyDai.address,
+            stanleyDai.address,
         ],
         {
             deployer: deployer,
@@ -301,7 +333,7 @@ module.exports = async function (deployer, _network) {
             itfWarren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
-            mockStanleyDai.address,
+            stanleyDai.address,
         ],
         {
             deployer: deployer,
@@ -317,7 +349,7 @@ module.exports = async function (deployer, _network) {
             ipUsdtToken.address,
             miltonUsdt.address,
             miltonStorageUsdt.address,
-            mockStanleyUsdt.address,
+            stanleyUsdt.address,
         ],
         {
             deployer: deployer,
@@ -333,7 +365,7 @@ module.exports = async function (deployer, _network) {
             ipUsdtToken.address,
             itfMiltonUsdt.address,
             miltonStorageUsdt.address,
-            mockStanleyUsdt.address,
+            stanleyUsdt.address,
         ],
         {
             deployer: deployer,
@@ -349,7 +381,7 @@ module.exports = async function (deployer, _network) {
             ipUsdcToken.address,
             miltonUsdc.address,
             miltonStorageUsdc.address,
-            mockStanleyUsdc.address,
+            stanleyUsdc.address,
         ],
         {
             deployer: deployer,
@@ -365,7 +397,7 @@ module.exports = async function (deployer, _network) {
             ipUsdcToken.address,
             itfMiltonUsdc.address,
             miltonStorageUsdc.address,
-            mockStanleyUsdc.address,
+            stanleyUsdc.address,
         ],
         {
             deployer: deployer,
@@ -381,7 +413,7 @@ module.exports = async function (deployer, _network) {
             ipDaiToken.address,
             miltonDai.address,
             miltonStorageDai.address,
-            mockStanleyDai.address,
+            stanleyDai.address,
         ],
         {
             deployer: deployer,
@@ -397,52 +429,7 @@ module.exports = async function (deployer, _network) {
             ipDaiToken.address,
             itfMiltonDai.address,
             miltonStorageDai.address,
-            mockStanleyDai.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const stanleyUsdt = await deployProxy(
-        StanleyUsdt,
-        [
-            mockedUsdt.address,
-            ivUsdtToken.address,
-            strategyAaveUsdt.address,
-            strategyCompoundUsdt.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const stanleyUsdc = await deployProxy(
-        StanleyUsdc,
-        [
-            mockedUsdc.address,
-            ivUsdcToken.address,
-            strategyAaveUsdc.address,
-            strategyCompoundUsdc.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const stanleyDai = await deployProxy(
-        StanleyDai,
-        [
-            mockedDai.address,
-            ivDaiToken.address,
-            strategyAaveDai.address,
-            strategyCompoundDai.address,
+            stanleyDai.address,
         ],
         {
             deployer: deployer,
