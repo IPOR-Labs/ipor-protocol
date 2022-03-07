@@ -6,15 +6,9 @@ import "../libraries/types/DataTypes.sol";
 interface IMilton {
     function getVersion() external pure returns (uint256);
 
-    function getAccruedBalance()
-        external
-        view
-        returns (DataTypes.MiltonBalanceMemory memory);
+    function getAccruedBalance() external view returns (DataTypes.MiltonBalanceMemory memory);
 
-    function calculateSpread()
-        external
-        view
-        returns (uint256 spreadPf, uint256 spreadRf);
+    function calculateSpread() external view returns (uint256 spreadPf, uint256 spreadRf);
 
     function calculateSoap()
         external
@@ -25,19 +19,17 @@ interface IMilton {
             int256 soap
         );
 
-    function calculateExchangeRate(uint256 calculateTimestamp)
-        external
-        view
-        returns (uint256);
+    function calculateExchangeRate(uint256 calculateTimestamp) external view returns (uint256);
 
     function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
         external
         view
         returns (int256);
 
-    function calculateSwapReceiveFixedValue(
-        DataTypes.IporSwapMemory memory swap
-    ) external view returns (int256);
+    function calculateSwapReceiveFixedValue(DataTypes.IporSwapMemory memory swap)
+        external
+        view
+        returns (int256);
 
     function openSwapPayFixed(
         uint256 totalAmount,
@@ -71,14 +63,10 @@ interface IMilton {
         address indexed buyer,
         address asset,
         DataTypes.SwapDirection direction,
-        uint256 collateral,
-        uint256 liquidationDepositAmount,
-        uint256 notionalAmount,
+        DataTypes.OpenSwapMoney money,
         uint256 startingTimestamp,
         uint256 endingTimestamp,
         DataTypes.IporSwapIndicator indicator,
-        uint256 openingAmount,
-        uint256 iporPublicationAmount,
         uint256 spreadValue
     );
 
@@ -86,6 +74,9 @@ interface IMilton {
     event CloseSwap(
         uint256 indexed swapId,
         address asset,
-        uint256 closeTimestamp
+        uint256 closeTimestamp,
+        address liquidator,
+        uint256 transferedToBuyer,
+        uint256 transferedToLiquidator
     );
 }
