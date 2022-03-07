@@ -11,6 +11,9 @@ import "../itf/ItfJoseph.sol";
 import "../vault/Stanley.sol";
 import "../vault/tokenization/IvToken.sol";
 import "../vault/mocks/MockStrategy.sol";
+import {AaveStrategy} from "../vault/strategy/AaveStrategy.sol";
+import {MockCToken} from "../vault/mocks/compound/MockCToken.sol";
+import {MockComptroller} from "../vault/mocks/compound/MockComptroller.sol";
 
 contract IporAssetConfigurationUsdt is IporAssetConfiguration {}
 
@@ -102,14 +105,44 @@ contract StanleyUsdc is Stanley {}
 
 contract StanleyDai is Stanley {}
 
-contract MockStrategyAaveUsdt is MockStrategy {}
+contract MockStrategyAaveUsdt is AaveStrategy {}
 
-contract MockStrategyAaveUsdc is MockStrategy {}
+contract MockStrategyAaveUsdc is AaveStrategy {}
 
-contract MockStrategyAaveDai is MockStrategy {}
+contract MockStrategyAaveDai is AaveStrategy {}
 
 contract MockStrategyCompoundUsdt is MockStrategy {}
 
 contract MockStrategyCompoundUsdc is MockStrategy {}
 
 contract MockStrategyCompoundDai is MockStrategy {}
+
+contract MockCDai is MockCToken {
+    constructor(address asset, address interestRateModel)
+        MockCToken(asset, interestRateModel, 18, "cDAI", "cDAI")
+    {}
+}
+
+contract MockCUSDT is MockCToken {
+    constructor(address asset, address interestRateModel)
+        MockCToken(asset, interestRateModel, 6, "cUSDT", "cUSDT")
+    {}
+}
+
+contract MockCUSDC is MockCToken {
+    constructor(address asset, address interestRateModel)
+        MockCToken(asset, interestRateModel, 6, "cUSDC", "cUSDC")
+    {}
+}
+
+contract MockComptrollerUSDT is MockComptroller {
+    constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
+}
+
+contract MockComptrollerUSDC is MockComptroller {
+    constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
+}
+
+contract MockComptrollerDAI is MockComptroller {
+    constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
+}

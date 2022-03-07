@@ -12,6 +12,10 @@ const IpTokenUsdt = artifacts.require("IpTokenUsdt");
 const IpTokenUsdc = artifacts.require("IpTokenUsdc");
 const IpTokenDai = artifacts.require("IpTokenDai");
 
+const MockAUsdc = artifacts.require("MockAUsdc");
+const MockAUsdt = artifacts.require("MockAUsdt");
+const MockADai = artifacts.require("MockADai");
+
 const IvTokenUsdt = artifacts.require("IvTokenUsdt");
 const IvTokenUsdc = artifacts.require("IvTokenUsdc");
 const IvTokenDai = artifacts.require("IvTokenDai");
@@ -25,15 +29,9 @@ const StanleyUsdt = artifacts.require("StanleyUsdt");
 const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
 
-const IporAssetConfigurationUsdt = artifacts.require(
-    "IporAssetConfigurationUsdt"
-);
-const IporAssetConfigurationUsdc = artifacts.require(
-    "IporAssetConfigurationUsdc"
-);
-const IporAssetConfigurationDai = artifacts.require(
-    "IporAssetConfigurationDai"
-);
+const IporAssetConfigurationUsdt = artifacts.require("IporAssetConfigurationUsdt");
+const IporAssetConfigurationUsdc = artifacts.require("IporAssetConfigurationUsdc");
+const IporAssetConfigurationDai = artifacts.require("IporAssetConfigurationDai");
 const IporConfiguration = artifacts.require("IporConfiguration");
 const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
@@ -53,20 +51,23 @@ const JosephDai = artifacts.require("JosephDai");
 const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
-const WarrenDevToolDataProvider = artifacts.require(
-    "WarrenDevToolDataProvider"
-);
-const WarrenFrontendDataProvider = artifacts.require(
-    "WarrenFrontendDataProvider"
-);
-const MiltonDevToolDataProvider = artifacts.require(
-    "MiltonDevToolDataProvider"
-);
-const MiltonFrontendDataProvider = artifacts.require(
-    "MiltonFrontendDataProvider"
-);
+const WarrenDevToolDataProvider = artifacts.require("WarrenDevToolDataProvider");
+const WarrenFrontendDataProvider = artifacts.require("WarrenFrontendDataProvider");
+const MiltonDevToolDataProvider = artifacts.require("MiltonDevToolDataProvider");
+const MiltonFrontendDataProvider = artifacts.require("MiltonFrontendDataProvider");
+
+const MockLendingPoolAave = artifacts.require("MockLendingPoolAave");
+const MockProviderAave = artifacts.require("MockProviderAave");
+const MockStakedAave = artifacts.require("MockStakedAave");
+const AAVEMockedToken = artifacts.require("AAVEMockedToken");
+const MockAaveIncentivesController = artifacts.require("MockAaveIncentivesController");
 
 const MockCaseBaseIporVault = artifacts.require("MockCaseBaseIporVault");
+
+const MockWhitePaper = artifacts.require("MockWhitePaper");
+const MockCDai = artifacts.require("MockCDai");
+const MockCUSDT = artifacts.require("MockCUSDT");
+const MockCUSDC = artifacts.require("MockCUSDC");
 
 module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
@@ -83,6 +84,18 @@ module.exports = async function (deployer, _network) {
 
     await deployer.deploy(DaiMockedToken, stableTotalSupply18Decimals, 18);
     const mockedDai = await DaiMockedToken.deployed();
+
+    await deployer.deploy(MockAUsdc);
+    const mockedAUsdc = await MockAUsdc.deployed();
+
+    await deployer.deploy(MockAUsdt);
+    const mockedAUsdt = await MockAUsdt.deployed();
+
+    await deployer.deploy(MockADai);
+    const mockedADai = await MockADai.deployed();
+
+    await deployer.deploy(AAVEMockedToken, stableTotalSupply18Decimals, 18);
+    const AAVE = await AAVEMockedToken.deployed();
 
     await deployer.deploy(IpTokenUsdt, mockedUsdt.address, "IP USDT", "ipUSDT");
     const ipUsdtToken = await IpTokenUsdt.deployed();
@@ -102,44 +115,138 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(IvTokenDai, "IV DAI", "ivDAI", mockedDai.address);
     const ivDaiToken = await IvTokenDai.deployed();
 
+    await deployer.deploy(
+        MockLendingPoolAave,
+        mockedDai.address,
+        mockedADai.address,
+        BigInt("100000"),
+        mockedUsdc.address,
+        mockedAUsdc.address,
+        BigInt("200000"),
+        mockedUsdt.address,
+        mockedAUsdt.address,
+        BigInt("200000")
+    );
+    const lendingPool = await MockLendingPoolAave.deployed();
+
+    await deployer.deploy(MockProviderAave, lendingPool.address);
+    const aaveProvider = await MockProviderAave.deployed();
+
+    await deployer.deploy(MockStakedAave, AAVE.address);
+    const stakedAave = await MockStakedAave.deployed();
+
+    await deployer.deploy(MockAaveIncentivesController, stakedAave.address);
+    const aaveIncentivesController = await MockAaveIncentivesController.deployed();
+
     //TODO: fix it all!
-    await deployer.deploy(MockStrategyAaveUsdt);
-    const strategyAaveUsdt = await MockStrategyAaveUsdt.deployed();
+    // await deployer.deploy(MockStrategyAaveUsdt);
+    const strategyAaveUsdt = await deployProxy(
+        MockStrategyAaveUsdt,
+        [
+            mockedUsdt.address,
+            mockedAUsdt.address,
+            aaveProvider.address,
+            stakedAave.address,
+            aaveIncentivesController.address,
+            AAVE.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    await strategyAaveUsdt.setShareToken(mockedUsdt.address);
-    await strategyAaveUsdt.setAsset(mockedUsdt.address);
+    // await deployer.deploy(MockStrategyAaveUsdc);
+    const strategyAaveUsdc = await deployProxy(
+        MockStrategyAaveUsdc,
+        [
+            mockedUsdc.address,
+            mockedAUsdc.address,
+            aaveProvider.address,
+            stakedAave.address,
+            aaveIncentivesController.address,
+            AAVE.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    await deployer.deploy(MockStrategyAaveUsdc);
-    const strategyAaveUsdc = await MockStrategyAaveUsdc.deployed();
+    // await deployer.deploy(MockStrategyAaveDai);
+    const strategyAaveDai = await deployProxy(
+        MockStrategyAaveDai,
+        [
+            mockedDai.address,
+            mockedADai.address,
+            aaveProvider.address,
+            stakedAave.address,
+            aaveIncentivesController.address,
+            AAVE.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    await strategyAaveUsdc.setShareToken(mockedUsdc.address);
-    await strategyAaveUsdc.setAsset(mockedUsdc.address);
+    await deployer.deploy(MockWhitePaper);
+    const mockWhitePaperInstance = await MockWhitePaper.deployed();
 
-    await deployer.deploy(MockStrategyAaveDai);
-    const strategyAaveDai = await MockStrategyAaveDai.deployed();
+    await deployer.deploy(MockCUSDC, USDC.address, mockWhitePaperInstance.address);
+    const mockedCUsdc = await MockCUSDC.deployed();
+    await deployer.deploy(MockCUSDC, USDT.address, mockWhitePaperInstance.address);
+    const mockedCUsdt = await MockCUSDT.deployed();
+    await deployer.deploy(MockCUSDC, UDAI.address, mockWhitePaperInstance.address);
+    const mockedCDai = await MockCDai.deployed();
 
-    await strategyAaveDai.setShareToken(mockedDai.address);
-    await strategyAaveDai.setAsset(mockedDai.address);
+    await deployer.deploy(MockedCOMPToken);
+    const mockedCOMP = await MockedCOMPToken.deployed();
 
-    await deployer.deploy(MockStrategyCompoundUsdt);
-    const strategyCompoundUsdt = await MockStrategyCompoundUsdt.deployed();
+    await deployer.deploy(MockComptrollerUSDT, mockedCOMP.address, mockedCUsdt.address);
+    const mockComptrollerUSDT = await MockComptrollerUSDT.deployed();
 
-    await strategyCompoundUsdt.setShareToken(mockedUsdt.address);
-    await strategyCompoundUsdt.setAsset(mockedUsdt.address);
+    await deployer.deploy(MockComptrollerUSDC, mockedCOMP.address, mockedCUsdc.address);
+    const mockComptrollerUSDC = await MockComptrollerUSDC.deployed();
 
-    await deployer.deploy(MockStrategyCompoundUsdc);
-    const strategyCompoundUsdc = await MockStrategyCompoundUsdc.deployed();
+    await deployer.deploy(MockComptrollerDAI, mockedDAI.address, mockedCDai.address);
+    const mockComptrollerDAI = await MockComptrollerDAI.deployed();
 
-    await strategyCompoundUsdc.setShareToken(mockedUsdc.address);
-    await strategyCompoundUsdc.setAsset(mockedUsdc.address);
+    // await deployer.deploy(MockStrategyCompoundUsdt);
+    const strategyCompoundUsdt = await deployProxy(
+        MockStrategyCompoundUsdt,
+        [mockedUsdt.address, mockedCUsdt.address, mockComptrollerUSDT.address, mockedCOMP.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    await deployer.deploy(MockStrategyCompoundDai);
-    const strategyCompoundDai = await MockStrategyCompoundDai.deployed();
+    // await deployer.deploy(MockStrategyCompoundUsdc);
+    const strategyCompoundUsdc = await deployProxy(
+        MockStrategyCompoundUsdc,
+        [mockedUsdc.address, mockedCUsdc.address, mockComptrollerUSDC.address, mockedCOMP.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
-    await strategyCompoundDai.setShareToken(mockedDai.address);
-    await strategyCompoundDai.setAsset(mockedDai.address);
-
-    MockStrategyAaveUsdt;
+    // await deployer.deploy(MockStrategyCompoundDai);
+    const strategyCompoundDai = await deployProxy(
+        MockStrategyCompoundUsdt,
+        [mockedDai.address, mockedCDai.address, mockComptrollerDAI.address, mockedCOMP.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
     await deployer.deploy(MockCaseBaseIporVault, mockedUsdt.address);
     const iporVaultUsdt = await MockCaseBaseIporVault.deployed();
@@ -467,12 +574,7 @@ module.exports = async function (deployer, _network) {
 
     const warrenDevToolDataProvider = await deployProxy(
         WarrenDevToolDataProvider,
-        [
-            warren.address,
-            mockedDai.address,
-            mockedUsdc.address,
-            mockedUsdt.address,
-        ],
+        [warren.address, mockedDai.address, mockedUsdc.address, mockedUsdt.address],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -482,12 +584,7 @@ module.exports = async function (deployer, _network) {
 
     const warrenFrontendDataProvider = await deployProxy(
         WarrenFrontendDataProvider,
-        [
-            warren.address,
-            mockedDai.address,
-            mockedUsdt.address,
-            mockedUsdc.address,
-        ],
+        [warren.address, mockedDai.address, mockedUsdt.address, mockedUsdc.address],
         {
             deployer: deployer,
             initializer: "initialize",

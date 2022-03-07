@@ -13,11 +13,7 @@ import "hardhat/console.sol";
 import "../../IporErrors.sol";
 import "../../libraries/IporMath.sol";
 
-contract CompoundStrategy is
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IStrategy
-{
+contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address private _stanley;
@@ -47,10 +43,7 @@ contract CompoundStrategy is
         _cToken = CErc20(cErc20Contract);
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
-        IERC20Upgradeable(_asset).safeApprove(
-            cErc20Contract,
-            type(uint256).max
-        );
+        IERC20Upgradeable(_asset).safeApprove(cErc20Contract, type(uint256).max);
         _blocksPerYear = 2102400;
     }
 
@@ -104,8 +97,7 @@ contract CompoundStrategy is
     function balanceOf() public view override returns (uint256) {
         return (
             IporMath.division(
-                (_cToken.exchangeRateStored() *
-                    _cToken.balanceOf(address(this))),
+                (_cToken.exchangeRateStored() * _cToken.balanceOf(address(this))),
                 (10**ERC20Upgradeable(_asset).decimals())
             )
         );
@@ -113,15 +105,11 @@ contract CompoundStrategy is
 
     /**
      * @dev Deposit into compound lending.
-     * @notice deposit can only done by owner.
+     * @notice deposit can only done by Stanley .
      * @param amount amount to deposit in compound lending.
      */
     function deposit(uint256 amount) external override _onlyStanley {
-        IERC20Upgradeable(_asset).safeTransferFrom(
-            msg.sender,
-            address(this),
-            amount
-        );
+        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), amount);
         _cToken.mint(amount);
     }
 
@@ -131,9 +119,7 @@ contract CompoundStrategy is
      * @param amount amount to withdraw from compound lending.
      */
     function withdraw(uint256 amount) external override _onlyStanley {
-        _cToken.redeem(
-            IporMath.division(amount * 1e18, _cToken.exchangeRateStored())
-        );
+        _cToken.redeem(IporMath.division(amount * 1e18, _cToken.exchangeRateStored()));
         IERC20Upgradeable(address(_asset)).safeTransfer(
             msg.sender,
             IERC20Upgradeable(_asset).balanceOf(address(this))
@@ -161,11 +147,7 @@ contract CompoundStrategy is
     /**
      * @dev beforeClaim is not needed to implement
      */
-    function beforeClaim(address[] memory assets, uint256 amount)
-        public
-        payable
-        _onlyStanley
-    {
+    function beforeClaim(address[] memory assets, uint256 amount) public payable _onlyStanley {
         // No implementation
     }
 }

@@ -11,7 +11,7 @@ import {
     AaveStrategy,
     CompoundStrategy,
     TestERC20,
-    MockADAI,
+    MockADai,
     MockAaveLendingPoolProvider,
     MockAaveLendingPoolCore,
     AaveInterestRateMockStrategyV2,
@@ -39,7 +39,7 @@ describe.skip("#Claim Localhost test", () => {
     let accounts: any;
     let tokenFactory: any;
 
-    let aDAI: MockADAI;
+    let aDAI: MockADai;
     let AAVE: TestERC20;
     let aaveNewStartegyInstance: AaveStrategy;
     let lendingPool: MockAaveLendingPoolV2;

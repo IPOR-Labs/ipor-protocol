@@ -18,7 +18,7 @@ import {
     AaveStrategy,
     CompoundStrategy,
     TestERC20,
-    MockADAI,
+    MockADai,
     MockAaveLendingPoolProvider,
     MockAaveLendingPoolCore,
     AaveInterestRateMockStrategyV2,
@@ -90,26 +90,11 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         });
 
         signer = await hre.ethers.provider.getSigner(accountToImpersonate);
-        daiContract = new hre.ethers.Contract(
-            daiAddress,
-            daiAbi,
-            signer
-        ) as ERC20;
-        const impersonateBalanceBefore = await daiContract.balanceOf(
-            accountToImpersonate
-        );
-        await daiContract.transfer(
-            await accounts[0].getAddress(),
-            impersonateBalanceBefore
-        );
-        signer = await hre.ethers.provider.getSigner(
-            await accounts[0].getAddress()
-        );
-        daiContract = new hre.ethers.Contract(
-            daiAddress,
-            daiAbi,
-            signer
-        ) as ERC20;
+        daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer) as ERC20;
+        const impersonateBalanceBefore = await daiContract.balanceOf(accountToImpersonate);
+        await daiContract.transfer(await accounts[0].getAddress(), impersonateBalanceBefore);
+        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
+        daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer) as ERC20;
 
         //  ********************************************************************************************
         //  **************                         AAVE                                   **************
@@ -122,16 +107,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         stkAave = "0x4da27a545c0c5B758a6BA100e3a049001de870f5";
 
         aaveContract = new hre.ethers.Contract(AAVE, daiAbi, signer) as ERC20;
-        stakeAaveContract = new hre.ethers.Contract(
-            stkAave,
-            daiAbi,
-            signer
-        ) as ERC20;
-        aTokenContract = new hre.ethers.Contract(
-            aDaiAddress,
-            daiAbi,
-            signer
-        ) as ERC20;
+        stakeAaveContract = new hre.ethers.Contract(stkAave, daiAbi, signer) as ERC20;
+        aTokenContract = new hre.ethers.Contract(aDaiAddress, daiAbi, signer) as ERC20;
 
         aaveIncentiveContract = new hre.ethers.Contract(
             aaveIncentiveAddress,
@@ -139,11 +116,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             signer
         ) as IAaveIncentivesController;
 
-        const AaveStrategy = await hre.ethers.getContractFactory(
-            "MockStrategy"
-        );
-        aaveStrategyContract_Instance =
-            (await AaveStrategy.deploy()) as MockStrategy;
+        const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
+        aaveStrategyContract_Instance = (await AaveStrategy.deploy()) as MockStrategy;
 
         await aaveStrategyContract_Instance.setShareToken(daiAddress);
         await aaveStrategyContract_Instance.setAsset(daiAddress);
@@ -158,52 +132,34 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         signer = await hre.ethers.provider.getSigner(accountToImpersonate);
         compContract = new hre.ethers.Contract(COMP, daiAbi, signer) as ERC20;
-        cTokenContract = new hre.ethers.Contract(
-            cDaiAddress,
-            daiAbi,
-            signer
-        ) as ERC20;
-        signer = await hre.ethers.provider.getSigner(
-            await accounts[0].getAddress()
-        );
+        cTokenContract = new hre.ethers.Contract(cDaiAddress, daiAbi, signer) as ERC20;
+        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
 
         const compoundStrategyContract = await hre.ethers.getContractFactory(
             "CompoundStrategy",
             signer
         );
 
-        compoundStrategyContract_Instance = (await upgrades.deployProxy(
-            compoundStrategyContract,
-            [daiAddress, cDaiAddress, ComptrollerAddress, COMP]
-        )) as CompoundStrategy;
-
-        compTrollerContract = new hre.ethers.Contract(
+        compoundStrategyContract_Instance = (await upgrades.deployProxy(compoundStrategyContract, [
+            daiAddress,
+            cDaiAddress,
             ComptrollerAddress,
-            comptrollerAbi,
-            signer
-        );
+            COMP,
+        ])) as CompoundStrategy;
+
+        compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
 
         //  ********************************************************************************************
         //  **************                        IvToken                                 **************
         //  ********************************************************************************************
 
-        const tokenFactoryIvToken = await hre.ethers.getContractFactory(
-            "IvToken",
-            signer
-        );
-        ivToken = (await tokenFactoryIvToken.deploy(
-            "IvToken",
-            "IVT",
-            daiAddress
-        )) as IvToken;
+        const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken", signer);
+        ivToken = (await tokenFactoryIvToken.deploy("IvToken", "IVT", daiAddress)) as IvToken;
 
         //  ********************************************************************************************
         //  **************                       Stanley                                **************
         //  ********************************************************************************************
-        const StanleyFactory = await hre.ethers.getContractFactory(
-            "Stanley",
-            signer
-        );
+        const StanleyFactory = await hre.ethers.getContractFactory("Stanley", signer);
 
         stanley = (await await upgrades.deployProxy(StanleyFactory, [
             daiAddress,
@@ -235,28 +191,20 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
-        const compoundStrategyBalanceBefore =
-            await compoundStrategyContract_Instance.balanceOf();
-        expect(
-            compoundStrategyBalanceBefore,
-            "compoundStrategyBalanceBefore = 0"
-        ).to.be.equal(zero);
+        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
+        expect(compoundStrategyBalanceBefore, "compoundStrategyBalanceBefore = 0").to.be.equal(
+            zero
+        );
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
 
         //When
         await stanley.connect(signer).deposit(depositAmound);
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        expect(userIvTokenAfter, "userIvTokenAfter = depositAmound").to.be.equal(depositAmound);
+        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
         expect(
-            userIvTokenAfter,
-            "userIvTokenAfter = depositAmound"
-        ).to.be.equal(depositAmound);
-        const compoundStrategyBalanceAfter =
-            await compoundStrategyContract_Instance.balanceOf();
-        expect(
-            compoundStrategyBalanceAfter.gt(
-                BigNumber.from("9999999999000000000")
-            ),
+            compoundStrategyBalanceAfter.gt(BigNumber.from("9999999999000000000")),
             "compoundStrategyBalanceAfter > 9999999999000000000"
         ).to.be.true;
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
@@ -278,16 +226,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const depositAmound = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        expect(userIvTokenBefore, "userIvTokenBefore = depositAmound").to.be.equal(depositAmound);
+        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         expect(
-            userIvTokenBefore,
-            "userIvTokenBefore = depositAmound"
-        ).to.be.equal(depositAmound);
-        const compoundStrategyBalanceBefore =
-            await compoundStrategyContract_Instance.balanceOf();
-        expect(
-            compoundStrategyBalanceBefore.gt(
-                BigNumber.from("9999999999000000000")
-            ),
+            compoundStrategyBalanceBefore.gt(BigNumber.from("9999999999000000000")),
             "compoundStrategyBalanceBefore = 9999999999000000000"
         ).to.be.true;
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
@@ -301,21 +243,16 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             userIvTokenAfter.gt(BigNumber.from("29999999950000000000")),
             "ivToken > 29999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceAfter =
-            await compoundStrategyContract_Instance.balanceOf();
+        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
         expect(
-            compoundStrategyBalanceAfter.gt(
-                BigNumber.from("30000000000000000000")
-            ),
+            compoundStrategyBalanceAfter.gt(BigNumber.from("30000000000000000000")),
             "aaveStrategyBalanceAfter > 30 * 10^18"
         ).to.be.true;
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
         expect(
             userDaiBalanceAfter,
             "userDaiBalanceAfter = userDaiBalanceBefore - 2 * depositAmound"
-        ).to.be.equal(
-            userDaiBalanceBefore.sub(depositAmound).sub(depositAmound)
-        );
+        ).to.be.equal(userDaiBalanceBefore.sub(depositAmound).sub(depositAmound));
         const strategyCTokenContractAfter = await cTokenContract.balanceOf(
             compoundStrategyContract_Instance.address
         );
@@ -335,12 +272,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             userIvTokenBefore.gt(BigNumber.from("29999999950000000000")),
             "userIvTokenBefore = 29999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceBefore =
-            await compoundStrategyContract_Instance.balanceOf();
+        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         expect(
-            compoundStrategyBalanceBefore.gt(
-                BigNumber.from("30000000000000000000")
-            ),
+            compoundStrategyBalanceBefore.gt(BigNumber.from("30000000000000000000")),
             "compoundStrategyBalanceBefore > 30 * 10^18"
         ).to.be.true;
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
@@ -353,18 +287,13 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             userIvTokenAfter.gt(BigNumber.from("19999999950000000000")),
             "ivToken = 19999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceAfter =
-            await compoundStrategyContract_Instance.balanceOf();
+        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
         expect(
-            compoundStrategyBalanceAfter.gt(
-                BigNumber.from("20000000000000000000")
-            ),
+            compoundStrategyBalanceAfter.gt(BigNumber.from("20000000000000000000")),
             "compoundStrategyBalanceAfter > 20 * 10 ^18"
         ).to.be.true;
         expect(
-            compoundStrategyBalanceAfter.lt(
-                BigNumber.from("30000000000000000000")
-            ),
+            compoundStrategyBalanceAfter.lt(BigNumber.from("30000000000000000000")),
             "compoundStrategyBalanceAfter < 30 * 10 ^18"
         ).to.be.true;
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
@@ -390,12 +319,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             userIvTokenBefore.gt(BigNumber.from("19999999950000000000")),
             "userIvTokenBefore = 19999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceBefore =
-            await compoundStrategyContract_Instance.balanceOf();
+        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         expect(
-            compoundStrategyBalanceBefore.gt(
-                BigNumber.from("20000000000000000000")
-            ),
+            compoundStrategyBalanceBefore.gt(BigNumber.from("20000000000000000000")),
             "compomudStrategyBalanceBefore = 20000000000000000000"
         ).to.be.true;
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
@@ -405,50 +331,32 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
         expect(userIvTokenAfter, "ivToken = 0").to.be.equal(zero);
-        const compoundStrategyBalanceAfter =
-            await compoundStrategyContract_Instance.balanceOf();
-        expect(
-            compoundStrategyBalanceAfter,
-            "compoundStrategyBalanceAfter = 0"
-        ).to.be.equal(zero);
+        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
+        expect(compoundStrategyBalanceAfter, "compoundStrategyBalanceAfter = 0").to.be.equal(zero);
 
-        expect(
-            compoundStrategyBalanceAfter,
-            "aaveStrategyBalanceAfter"
-        ).to.be.equal(zero);
+        expect(compoundStrategyBalanceAfter, "aaveStrategyBalanceAfter").to.be.equal(zero);
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
-        expect(
-            userDaiBalanceAfter,
-            "userDaiBalanceAfter = 334678735341909606609623"
-        ).to.be.equal(BigNumber.from("334678735341909606609623"));
+        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909606609623").to.be.equal(
+            BigNumber.from("334678735341909606609623")
+        );
         const strategyCTokenContractAfter = await aTokenContract.balanceOf(
             aaveStrategyContract_Instance.address
         );
-        expect(
-            strategyCTokenContractAfter,
-            "strategyATokenContractAfter = 0"
-        ).to.be.equal(zero);
+        expect(strategyCTokenContractAfter, "strategyATokenContractAfter = 0").to.be.equal(zero);
     });
     it("Should Clame from COMPOUND", async () => {
         //given
         const userOneAddres = await accounts[1].getAddress();
         const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
-        await hre.network.provider.send("evm_setNextBlockTimestamp", [
-            timestamp,
-        ]);
+        await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
         await hre.network.provider.send("evm_mine");
 
         const cDaiBalance = await cTokenContract.balanceOf(
             compoundStrategyContract_Instance.address
         );
         console.log("cDaiBalance: ", cDaiBalance.toString());
-        const compoundBalanceBefore = await compContract.balanceOf(
-            userOneAddres
-        );
-        expect(
-            compoundBalanceBefore,
-            "Cliamed Compound Balance Before = 0"
-        ).to.be.equal(zero);
+        const compoundBalanceBefore = await compContract.balanceOf(userOneAddres);
+        expect(compoundBalanceBefore, "Cliamed Compound Balance Before = 0").to.be.equal(zero);
 
         // when
         await stanley.compoundDoClaim(userOneAddres);
