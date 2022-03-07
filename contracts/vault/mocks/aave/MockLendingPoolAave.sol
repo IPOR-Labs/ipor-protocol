@@ -2,7 +2,7 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "./MockIAToken.sol";
+import "./aTokens/MockIAToken.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 contract MockLendingPoolAave {
@@ -66,11 +66,7 @@ contract MockLendingPoolAave {
         aToken.burn(msg.sender, amount);
     }
 
-    function getReserveData(address asset)
-        public
-        view
-        returns (MockReserveData memory)
-    {
+    function getReserveData(address asset) public view returns (MockReserveData memory) {
         return _liquidityRates[asset];
     }
 }
