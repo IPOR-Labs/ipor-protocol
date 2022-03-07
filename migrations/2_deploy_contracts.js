@@ -62,12 +62,14 @@ const MockStakedAave = artifacts.require("MockStakedAave");
 const AAVEMockedToken = artifacts.require("AAVEMockedToken");
 const MockAaveIncentivesController = artifacts.require("MockAaveIncentivesController");
 
-const MockCaseBaseIporVault = artifacts.require("MockCaseBaseIporVault");
-
 const MockWhitePaper = artifacts.require("MockWhitePaper");
 const MockCDai = artifacts.require("MockCDai");
 const MockCUSDT = artifacts.require("MockCUSDT");
 const MockCUSDC = artifacts.require("MockCUSDC");
+const MockedCOMPToken = artifacts.require("MockedCOMPToken");
+const MockComptrollerUSDT = artifacts.require("MockComptrollerUSDT");
+const MockComptrollerUSDC = artifacts.require("MockComptrollerUSDC");
+const MockComptrollerDAI = artifacts.require("MockComptrollerDAI");
 
 module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
@@ -196,14 +198,16 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockWhitePaper);
     const mockWhitePaperInstance = await MockWhitePaper.deployed();
 
-    await deployer.deploy(MockCUSDC, USDC.address, mockWhitePaperInstance.address);
+    await deployer.deploy(MockCUSDC, mockedUsdc.address, mockWhitePaperInstance.address);
     const mockedCUsdc = await MockCUSDC.deployed();
-    await deployer.deploy(MockCUSDC, USDT.address, mockWhitePaperInstance.address);
+
+    await deployer.deploy(MockCUSDT, mockedUsdt.address, mockWhitePaperInstance.address);
     const mockedCUsdt = await MockCUSDT.deployed();
-    await deployer.deploy(MockCUSDC, UDAI.address, mockWhitePaperInstance.address);
+
+    await deployer.deploy(MockCDai, mockedDai.address, mockWhitePaperInstance.address);
     const mockedCDai = await MockCDai.deployed();
 
-    await deployer.deploy(MockedCOMPToken);
+    await deployer.deploy(MockedCOMPToken, 0);
     const mockedCOMP = await MockedCOMPToken.deployed();
 
     await deployer.deploy(MockComptrollerUSDT, mockedCOMP.address, mockedCUsdt.address);
@@ -212,7 +216,7 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockComptrollerUSDC, mockedCOMP.address, mockedCUsdc.address);
     const mockComptrollerUSDC = await MockComptrollerUSDC.deployed();
 
-    await deployer.deploy(MockComptrollerDAI, mockedDAI.address, mockedCDai.address);
+    await deployer.deploy(MockComptrollerDAI, mockedCOMP.address, mockedCDai.address);
     const mockComptrollerDAI = await MockComptrollerDAI.deployed();
 
     // await deployer.deploy(MockStrategyCompoundUsdt);
@@ -239,7 +243,7 @@ module.exports = async function (deployer, _network) {
 
     // await deployer.deploy(MockStrategyCompoundDai);
     const strategyCompoundDai = await deployProxy(
-        MockStrategyCompoundUsdt,
+        MockStrategyCompoundDai,
         [mockedDai.address, mockedCDai.address, mockComptrollerDAI.address, mockedCOMP.address],
         {
             deployer: deployer,
