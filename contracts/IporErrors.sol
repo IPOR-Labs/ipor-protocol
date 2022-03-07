@@ -225,6 +225,7 @@ library IporErrors {
     //@notice amount should be > 0
     string public constant STANLEY_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_101";
     string public constant UNDERLYINGTOKEN_IS_NOT_COMPATIBLE = "IPOR_102";
+    //TODO: better name for this error..
     string public constant UINT_SHOULD_BE_GRATER_THEN_ZERO = "IPOR_103";
 
     // only stanley can have access to function

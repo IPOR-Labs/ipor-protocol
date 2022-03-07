@@ -1,7 +1,7 @@
 pragma solidity 0.8.9;
 pragma experimental ABIEncoderV2;
 
-import "./DataTypes.sol";
+import "./DataTypesContract.sol";
 
 interface AaveLendingPoolV2 {
     function deposit(
@@ -20,5 +20,5 @@ interface AaveLendingPoolV2 {
     function getReserveData(address asset)
         external
         view
-        returns (DataTypes.ReserveData memory);
+        returns (DataTypesContract.ReserveData memory);
 }

@@ -49,20 +49,20 @@ contract Joseph is
         address ipToken,
         address milton,
         address miltonStorage,
-        address iporVault
+        address stanley
     ) public initializer {
         __Ownable_init();
         require(address(assetAddress) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(iporVault) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(stanley) != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = assetAddress;
         _decimals = ERC20Upgradeable(assetAddress).decimals();
         _ipToken = IIpToken(ipToken);
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
-        _iporVault = IIporVault(iporVault);
+        _stanley = IStanley(stanley);
     }
 
     function getVersion() external pure override returns (uint256) {
@@ -87,7 +87,7 @@ contract Joseph is
             miltonAddr
         );
 
-        uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
+        uint256 iporVaultAssetBalance = _stanley.totalBalance(miltonAddr);
 
         uint256 ratio = IporMath.division(
             miltonAssetBalance * Constants.D18,
@@ -194,7 +194,7 @@ contract Joseph is
     function _checkVaultReservesRatio() internal view returns (uint256) {
         address miltonAddr = address(_milton);
         uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(miltonAddr);
-        uint256 iporVaultAssetBalance = _iporVault.totalBalance(miltonAddr);
+        uint256 iporVaultAssetBalance = _stanley.totalBalance(miltonAddr);
         uint256 balance = miltonBalance + iporVaultAssetBalance;
         require(balance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
         return IporMath.division(miltonBalance * _decimals, balance);
