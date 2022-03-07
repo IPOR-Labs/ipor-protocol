@@ -7,7 +7,7 @@ import "../interfaces/IIpToken.sol";
 import "../interfaces/IWarren.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IIporVault.sol";
+import "../interfaces/IStanley.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 contract MiltonConfiguration is
@@ -43,12 +43,11 @@ contract MiltonConfiguration is
     uint8 internal _decimals;
     address internal _asset;
     IIpToken internal _ipToken;
+    address internal _joseph;
     IWarren internal _warren;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
-    IIporVault internal _iporVault;
-
-    address internal _joseph;
+    IStanley internal _stanley;
 
     function getMiltonSpreadModel() external view override returns (address) {
         return address(_miltonSpreadModel);

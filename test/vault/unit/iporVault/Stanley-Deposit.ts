@@ -216,7 +216,7 @@ describe("Stanley -> Deposit", () => {
         //given
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
-        await DAI.approve(await admin.getAddress(), one.mul(10000));
+        // await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -236,7 +236,6 @@ describe("Stanley -> Deposit", () => {
     it("Should accept deposit and transfer tokens into Compound", async () => {
         //given
         const adminAddress = await await admin.getAddress();
-        await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -255,7 +254,6 @@ describe("Stanley -> Deposit", () => {
     it("Should accept deposits and transfer tokens into AAVE 2 times when one user make deposits", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
-        await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -275,7 +273,6 @@ describe("Stanley -> Deposit", () => {
     it("Should accept deposits and transfer tokens into Compound 2 times when one user make deposits", async () => {
         //given
         const adminAddress = await await admin.getAddress();
-        await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -294,7 +291,6 @@ describe("Stanley -> Deposit", () => {
     it("Should accept deposits and transfer tokens first into AAVE second into Compound when one user make deposits", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
-        await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -315,8 +311,7 @@ describe("Stanley -> Deposit", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
     it("Should accept deposits and transfer tokens first into Compound second into AAVE when one user make deposits", async () => {
-        const adminAddress = await await admin.getAddress();
-        await DAI.approve(await admin.getAddress(), one.mul(10000));
+        const adminAddress = await await admin.getAddress();        
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when

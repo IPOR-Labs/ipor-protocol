@@ -4,14 +4,19 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, Stanley, TestERC20 } from "../../../../types";
+import {
+    MockStrategy,
+    Stanley,
+    ItfStanley,
+    TestERC20,
+} from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
 
 describe("Stanley -> maxApyStrategy", () => {
     let admin: Signer;
-    let stanley: Stanley;
+    let stanley: ItfStanley;
     let DAI: TestERC20;
     let aaveStrategy: MockStrategy;
     let compoundStrategy: MockStrategy;
@@ -45,13 +50,13 @@ describe("Stanley -> maxApyStrategy", () => {
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
 
-        const Stanley = await hre.ethers.getContractFactory("Stanley");
-        stanley = (await await upgrades.deployProxy(Stanley, [
+        const ItfStanley = await hre.ethers.getContractFactory("ItfStanley");
+        stanley = (await await upgrades.deployProxy(ItfStanley, [
             DAI.address,
             ivToken.address,
             aaveStrategy.address,
             compoundStrategy.address,
-        ])) as Stanley;
+        ])) as ItfStanley;
         await ivToken.setStanley(stanley.address);
     });
 
@@ -64,9 +69,9 @@ describe("Stanley -> maxApyStrategy", () => {
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
         //  when
-        const maxApyStrategy = await stanley.getMaxApyStrategy();
+        const result = await stanley.getMaxApyStrategy();
         //  then
-        expect(maxApyStrategy).to.be.equal(aaveStrategy.address);
+        expect(result.strategyMaxApy).to.be.equal(aaveStrategy.address);
     });
 
     it("Should select aave strategy when aaveApy == compoundApy", async () => {
@@ -77,9 +82,9 @@ describe("Stanley -> maxApyStrategy", () => {
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
         //  when
-        const maxApyStrategy = await stanley.getMaxApyStrategy();
+        const result = await stanley.getMaxApyStrategy();
         //  then
-        expect(maxApyStrategy).to.be.equal(aaveStrategy.address);
+        expect(result.strategyMaxApy).to.be.equal(aaveStrategy.address);
     });
 
     it("Should select compound strategy", async () => {
@@ -89,9 +94,11 @@ describe("Stanley -> maxApyStrategy", () => {
 
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
+
         //  when
-        const maxApyStrategy = await stanley.getMaxApyStrategy();
+        const result = await stanley.getMaxApyStrategy();
+
         //  then
-        expect(maxApyStrategy).to.be.equal(compoundStrategy.address);
+        expect(result.strategyMaxApy).to.be.equal(compoundStrategy.address);
     });
 });

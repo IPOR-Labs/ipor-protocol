@@ -149,7 +149,7 @@ jobs:
       - name: Push docker
         if: inputs.push-docker-enabled
         # from tag: v4
-        uses: docker://ghcr.io/kciter/aws-ecr-action@sha256:189a65b6d80fad7a7ce0edbfb15b7714f9f73f82933fef480f265d7c08de8028
+        uses: docker://ghcr.io/kciter/aws-ecr-action@sha256:fb211ece872fdfb5be4c6cb731765967b081a72c3ef3944d4f0d15e7d885d1e8
         with:
           access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
