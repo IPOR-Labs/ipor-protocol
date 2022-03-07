@@ -5,15 +5,12 @@ import { constants, BigNumber, Signer } from "ethers";
 
 const { MaxUint256 } = constants;
 import { solidity } from "ethereum-waffle";
-import daiAbi from "../../../../artifacts/contracts/vault/mocks/aave/MockDAI.sol/MockDAI.json";
-// import daiAbi from "../../../../"
 import {
     AaveStrategy,
     ERC20,
     DaiMockedToken,
     MockStakedAave,
     MockAaveIncentivesController,
-    MockAaveLendingPoolV2,
 } from "../../../../types";
 
 chai.use(solidity);
@@ -74,8 +71,6 @@ describe("AAVE strategy", () => {
         AAVE = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
         await AAVE.deployed();
 
-        // new Mock Start
-
         // #################################################################################
         // #####################         AAVE MOCK       ###################################
         // #################################################################################
@@ -85,12 +80,12 @@ describe("AAVE strategy", () => {
             DAI.address,
             aDAI.address,
             BigNumber.from("100000"),
-            USDC.address, // usdc
-            aUSDC.address, // usdc
-            BigNumber.from("200000"), // usdc
-            USDT.address, // usdt
-            aUSDT.address, // usdt
-            BigNumber.from("200000") // usdt
+            USDC.address,
+            aUSDC.address,
+            BigNumber.from("200000"),
+            USDT.address,
+            aUSDT.address,
+            BigNumber.from("200000")
         );
 
         const MockProviderAave = await hre.ethers.getContractFactory("MockProviderAave");
