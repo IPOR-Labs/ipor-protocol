@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/aave/AaveLendingPoolV2.sol";
-import "../../interfaces/aave/DataTypes.sol";
+import "../../interfaces/aave/DataTypesContract.sol";
 import "../../interfaces/aave/AToken.sol";
 import "./MockADAI.sol";
 
@@ -50,9 +50,9 @@ contract MockAaveLendingPoolV2 is AaveLendingPoolV2 {
         external
         view
         override
-        returns (DataTypes.ReserveData memory)
+        returns (DataTypesContract.ReserveData memory)
     {
-        DataTypes.ReserveData memory d;
+        DataTypesContract.ReserveData memory d;
         d.stableDebtTokenAddress = _stableDebtTokenAddress;
         d.variableDebtTokenAddress = _variableDebtTokenAddress;
         d.interestRateStrategyAddress = _interestRateStrategyAddress;

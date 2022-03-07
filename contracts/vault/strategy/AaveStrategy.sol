@@ -82,7 +82,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(
             _provider.getLendingPool()
         );
-        DataTypes.ReserveData memory reserveData = lendingPool.getReserveData(
+        DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(
             _asset
         );
         return

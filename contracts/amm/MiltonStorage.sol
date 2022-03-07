@@ -7,7 +7,6 @@ import "../security/IporOwnableUpgradeable.sol";
 import {DataTypes} from "../libraries/types/DataTypes.sol";
 import "../libraries/IporSwapLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
-import "../libraries/types/DataTypes.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
 import "hardhat/console.sol";
