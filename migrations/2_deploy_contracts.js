@@ -200,6 +200,7 @@ module.exports = async function (deployer, _network) {
     const mockedCDai = await MockCDai.deployed();
 
     await deployer.deploy(MockedCOMPToken, stableTotalSupply6Decimals, 6);
+
     const mockedCOMP = await MockedCOMPToken.deployed();
 
     await deployer.deploy(MockComptrollerUSDT, mockedCOMP.address, mockedCUsdt.address);
