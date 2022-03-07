@@ -426,13 +426,12 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
 
         _emitOpenSwapEvent(
             newSwapId,
-            totalAmount,
+            bosStruct.wadTotalAmount,
             newSwap,
             indicator,
             0,
             bosStruct.openingFee,
-            bosStruct.iporPublicationFeeAmount,
-            quoteValue
+            bosStruct.iporPublicationFeeAmount
         );
 
         return newSwapId;
@@ -497,8 +496,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             indicator,
             1,
             bosStruct.openingFee,
-            bosStruct.iporPublicationFeeAmount,
-            quoteValue
+            bosStruct.iporPublicationFeeAmount
         );
 
         return newSwapId;
@@ -534,13 +532,8 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         DataTypes.IporSwapIndicator memory indicator,
         uint256 direction,
         uint256 openingAmount,
-        uint256 iporPublicationAmount,
-        uint256 quoteValue
+        uint256 iporPublicationAmount
     ) internal {
-        //TODO: add openingAmount to event and check in tests
-        //TODO: add iporPublicationAmount to event and check in test
-        //TODO: add quoteValue to event and check in test
-
         emit OpenSwap(
             newSwapId,
             newSwap.buyer,
@@ -556,8 +549,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             ),
             newSwap.startingTimestamp,
             newSwap.startingTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-            indicator,
-            quoteValue
+            indicator
         );
     }
 

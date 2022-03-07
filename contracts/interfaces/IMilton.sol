@@ -66,8 +66,7 @@ interface IMilton {
         DataTypes.OpenSwapMoney money,
         uint256 startingTimestamp,
         uint256 endingTimestamp,
-        DataTypes.IporSwapIndicator indicator,
-        uint256 spreadValue
+        DataTypes.IporSwapIndicator indicator
     );
 
     // @notice Close swap position

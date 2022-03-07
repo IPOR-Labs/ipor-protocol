@@ -60,41 +60,20 @@ module.exports.getStandardDerivativeParamsUSDT = (user, testData) => {
     };
 };
 
-module.exports.grantAllRoleIporAssetConfiguration = async (
-    iporAssetConfiguration,
-    accounts
-) => {
-    await iporAssetConfiguration.grantRole(
-        keccak256("MILTON_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporAssetConfiguration.grantRole(
-        keccak256("MILTON_ROLE"),
-        accounts[0].address
-    );
+module.exports.grantAllRoleIporAssetConfiguration = async (iporAssetConfiguration, accounts) => {
+    await iporAssetConfiguration.grantRole(keccak256("MILTON_ADMIN_ROLE"), accounts[0].address);
+    await iporAssetConfiguration.grantRole(keccak256("MILTON_ROLE"), accounts[0].address);
 
     await iporAssetConfiguration.grantRole(
         keccak256("MILTON_STORAGE_ADMIN_ROLE"),
         accounts[0].address
     );
-    await iporAssetConfiguration.grantRole(
-        keccak256("MILTON_STORAGE_ROLE"),
-        accounts[0].address
-    );
+    await iporAssetConfiguration.grantRole(keccak256("MILTON_STORAGE_ROLE"), accounts[0].address);
 
-    await iporAssetConfiguration.grantRole(
-        keccak256("JOSEPH_ADMIN_ROLE"),
-        accounts[0].address
-    );
-    await iporAssetConfiguration.grantRole(
-        keccak256("JOSEPH_ROLE"),
-        accounts[0].address
-    );
+    await iporAssetConfiguration.grantRole(keccak256("JOSEPH_ADMIN_ROLE"), accounts[0].address);
+    await iporAssetConfiguration.grantRole(keccak256("JOSEPH_ROLE"), accounts[0].address);
 };
-module.exports.grantAllRoleIporConfiguration = async (
-    iporConfiguration,
-    accounts
-) => {
+module.exports.grantAllRoleIporConfiguration = async (iporConfiguration, accounts) => {
     await iporConfiguration.grantRole(
         keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
         accounts[0].address
@@ -105,12 +84,7 @@ module.exports.grantAllRoleIporConfiguration = async (
     );
 };
 
-module.exports.prepareApproveForUsers = async (
-    users,
-    asset,
-    data,
-    testData
-) => {
+module.exports.prepareApproveForUsers = async (users, asset, data, testData) => {
     for (let i = 0; i < users.length; i++) {
         if (asset === "USDT") {
             await testData.tokenUsdt
@@ -142,9 +116,7 @@ module.exports.prepareApproveForUsers = async (
 };
 
 module.exports.prepareData = async (accounts, spreadmiltonCaseNumber) => {
-    const IporConfiguration = await ethers.getContractFactory(
-        "IporConfiguration"
-    );
+    const IporConfiguration = await ethers.getContractFactory("IporConfiguration");
     const iporConfiguration = await IporConfiguration.deploy();
     await iporConfiguration.deployed();
     await iporConfiguration.initialize();
@@ -154,9 +126,7 @@ module.exports.prepareData = async (accounts, spreadmiltonCaseNumber) => {
     let MockCase1MiltonSpreadModel = null;
 
     if (spreadmiltonCaseNumber == 0) {
-        MockCase1MiltonSpreadModel = await ethers.getContractFactory(
-            "MockBaseMiltonSpreadModel"
-        );
+        MockCase1MiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
     } else {
         MockCase1MiltonSpreadModel = await ethers.getContractFactory(
             "MockCase" + spreadmiltonCaseNumber + "MiltonSpreadModel"
@@ -176,9 +146,7 @@ module.exports.prepareData = async (accounts, spreadmiltonCaseNumber) => {
 };
 
 module.exports.prepareMiltonSpreadBase = async () => {
-    const MockBaseMiltonSpreadModel = await ethers.getContractFactory(
-        "MockBaseMiltonSpreadModel"
-    );
+    const MockBaseMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
     const miltonSpread = await MockBaseMiltonSpreadModel.deploy();
     await miltonSpread.deployed();
     await miltonSpread.initialize();
@@ -286,17 +254,13 @@ module.exports.prepareMiltonSpreadCase11 = async () => {
 module.exports.getMockStanleyCase = async (stanleyCaseNumber, assetAddress) => {
     let MockCaseStanley = null;
 
-    MockCaseStanley = await ethers.getContractFactory(
-        "MockCase" + stanleyCaseNumber + "Stanley"
-    );
+    MockCaseStanley = await ethers.getContractFactory("MockCase" + stanleyCaseNumber + "Stanley");
     const mockCaseStanley = await MockCaseStanley.deploy(assetAddress);
     return mockCaseStanley;
 };
 module.exports.getMockMiltonCase = async (miltonCaseNumber) => {
     let MockCaseMilton = null;
-    MockCaseMilton = await ethers.getContractFactory(
-        "MockCase" + miltonCaseNumber + "Milton"
-    );
+    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "Milton");
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
 };
@@ -320,6 +284,13 @@ module.exports.prepareComplexTestDataDaiCase00 = async (accounts, data) => {
     const testData = await this.prepareTestDataDaiCase1(accounts, data);
     await this.prepareApproveForUsers(accounts, "DAI", data, testData);
     await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+module.exports.prepareComplexTestDataUsdtCase00 = async (accounts, data) => {
+    const testData = await this.prepareTestDataUsdtCase1(accounts, data);
+    await this.prepareApproveForUsers(accounts, "USDT", data, testData);
+    await this.setupTokenUsdtInitialValuesForUsers(accounts, testData);
     return testData;
 };
 
@@ -366,9 +337,7 @@ module.exports.prepareTestData = async (
     let stanleyUsdc = null;
     let stanleyDai = null;
 
-    const IporAssetConfiguration = await ethers.getContractFactory(
-        "IporAssetConfiguration"
-    );
+    const IporAssetConfiguration = await ethers.getContractFactory("IporAssetConfiguration");
     const IpToken = await ethers.getContractFactory("IpToken");
     const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
@@ -380,48 +349,30 @@ module.exports.prepareTestData = async (
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
-            tokenUsdt = await UsdtMockedToken.deploy(
-                TOTAL_SUPPLY_6_DECIMALS,
-                6
-            );
+            tokenUsdt = await UsdtMockedToken.deploy(TOTAL_SUPPLY_6_DECIMALS, 6);
             await tokenUsdt.deployed();
 
-            stanleyUsdt = await this.getMockStanleyCase(
-                stanleyCaseNumber,
-                tokenUsdt.address
-            );
+            stanleyUsdt = await this.getMockStanleyCase(stanleyCaseNumber, tokenUsdt.address);
 
-            ipTokenUsdt = await IpToken.deploy(
-                tokenUsdt.address,
-                "IP USDT",
-                "ipUSDT"
-            );
+            ipTokenUsdt = await IpToken.deploy(tokenUsdt.address, "IP USDT", "ipUSDT");
             await ipTokenUsdt.deployed();
 
             iporAssetConfigurationUsdt = await IporAssetConfiguration.deploy();
             await iporAssetConfigurationUsdt.deployed();
-            await iporAssetConfigurationUsdt.initialize(
-                tokenUsdt.address,
-                ipTokenUsdt.address
-            );
+            await iporAssetConfigurationUsdt.initialize(tokenUsdt.address, ipTokenUsdt.address);
 
             await data.iporConfiguration.setIporAssetConfiguration(
                 tokenUsdt.address,
                 await iporAssetConfigurationUsdt.address
             );
 
-            await this.grantAllRoleIporAssetConfiguration(
-                iporAssetConfigurationUsdt,
-                accounts
-            );
+            await this.grantAllRoleIporAssetConfiguration(iporAssetConfigurationUsdt, accounts);
 
             miltonStorageUsdt = await MiltonStorage.deploy();
             await miltonStorageUsdt.deployed();
             miltonStorageUsdt.initialize();
 
-            await iporAssetConfigurationUsdt.setMiltonStorage(
-                miltonStorageUsdt.address
-            );
+            await iporAssetConfigurationUsdt.setMiltonStorage(miltonStorageUsdt.address);
 
             miltonUsdt = await this.getMockMiltonCase(miltonCaseNumber);
             await miltonUsdt.deployed();
@@ -458,30 +409,17 @@ module.exports.prepareTestData = async (
             await warren.addAsset(tokenUsdt.address);
         }
         if (assets[k] === "USDC") {
-            tokenUsdc = await UsdcMockedToken.deploy(
-                TOTAL_SUPPLY_6_DECIMALS,
-                6
-            );
+            tokenUsdc = await UsdcMockedToken.deploy(TOTAL_SUPPLY_6_DECIMALS, 6);
             await tokenUsdc.deployed();
 
-            stanleyUsdc = await this.getMockStanleyCase(
-                stanleyCaseNumber,
-                tokenUsdc.address
-            );
+            stanleyUsdc = await this.getMockStanleyCase(stanleyCaseNumber, tokenUsdc.address);
 
-            ipTokenUsdc = await IpToken.deploy(
-                tokenUsdc.address,
-                "IP USDC",
-                "ipUSDC"
-            );
+            ipTokenUsdc = await IpToken.deploy(tokenUsdc.address, "IP USDC", "ipUSDC");
             ipTokenUsdc.deployed();
 
             iporAssetConfigurationUsdc = await IporAssetConfiguration.deploy();
             await iporAssetConfigurationUsdc.deployed();
-            await iporAssetConfigurationUsdc.initialize(
-                tokenUsdc.address,
-                ipTokenUsdc.address
-            );
+            await iporAssetConfigurationUsdc.initialize(tokenUsdc.address, ipTokenUsdc.address);
 
             await data.iporConfiguration.setIporAssetConfiguration(
                 tokenUsdc.address,
@@ -492,14 +430,9 @@ module.exports.prepareTestData = async (
             await miltonStorageUsdc.deployed();
             miltonStorageUsdc.initialize();
 
-            await this.grantAllRoleIporAssetConfiguration(
-                iporAssetConfigurationUsdc,
-                accounts
-            );
+            await this.grantAllRoleIporAssetConfiguration(iporAssetConfigurationUsdc, accounts);
 
-            await iporAssetConfigurationUsdc.setMiltonStorage(
-                miltonStorageUsdc.address
-            );
+            await iporAssetConfigurationUsdc.setMiltonStorage(miltonStorageUsdc.address);
 
             miltonUsdc = await this.getMockMiltonCase(miltonCaseNumber);
             await miltonUsdc.deployed();
@@ -536,30 +469,17 @@ module.exports.prepareTestData = async (
             await warren.addAsset(tokenUsdc.address);
         }
         if (assets[k] === "DAI") {
-            tokenDai = await DaiMockedToken.deploy(
-                TOTAL_SUPPLY_18_DECIMALS,
-                18
-            );
+            tokenDai = await DaiMockedToken.deploy(TOTAL_SUPPLY_18_DECIMALS, 18);
             await tokenDai.deployed();
 
-            stanleyDai = await this.getMockStanleyCase(
-                stanleyCaseNumber,
-                tokenDai.address
-            );
+            stanleyDai = await this.getMockStanleyCase(stanleyCaseNumber, tokenDai.address);
 
-            ipTokenDai = await IpToken.deploy(
-                tokenDai.address,
-                "IP DAI",
-                "ipDAI"
-            );
+            ipTokenDai = await IpToken.deploy(tokenDai.address, "IP DAI", "ipDAI");
             await ipTokenDai.deployed();
 
             iporAssetConfigurationDai = await IporAssetConfiguration.deploy();
             await iporAssetConfigurationDai.deployed();
-            await iporAssetConfigurationDai.initialize(
-                tokenDai.address,
-                ipTokenDai.address
-            );
+            await iporAssetConfigurationDai.initialize(tokenDai.address, ipTokenDai.address);
 
             await data.iporConfiguration.setIporAssetConfiguration(
                 tokenDai.address,
@@ -570,14 +490,9 @@ module.exports.prepareTestData = async (
             await miltonStorageDai.deployed();
             miltonStorageDai.initialize();
 
-            await this.grantAllRoleIporAssetConfiguration(
-                iporAssetConfigurationDai,
-                accounts
-            );
+            await this.grantAllRoleIporAssetConfiguration(iporAssetConfigurationDai, accounts);
 
-            await iporAssetConfigurationDai.setMiltonStorage(
-                miltonStorageDai.address
-            );
+            await iporAssetConfigurationDai.setMiltonStorage(miltonStorageDai.address);
             miltonDai = await this.getMockMiltonCase(miltonCaseNumber);
             await miltonDai.deployed();
             miltonDai.initialize(
@@ -649,61 +564,37 @@ module.exports.setupIpTokenDaiInitialValues = async (
     initialAmount
 ) => {
     if (initialAmount > 0) {
-        await testData.iporAssetConfigurationDai.setJoseph(
-            liquidityProvider.address
-        );
+        await testData.iporAssetConfigurationDai.setJoseph(liquidityProvider.address);
         await testData.ipTokenDai
             .connect(liquidityProvider)
             .mint(liquidityProvider.address, initialAmount);
-        await testData.iporAssetConfigurationDai.setJoseph(
-            testData.josephDai.address
-        );
+        await testData.iporAssetConfigurationDai.setJoseph(testData.josephDai.address);
     }
 };
 
-module.exports.setupIpTokenUsdtInitialValues = async (
-    liquidityProvider,
-    initialAmount
-) => {
+module.exports.setupIpTokenUsdtInitialValues = async (liquidityProvider, initialAmount) => {
     if (initialAmount > 0) {
         await data.iporConfiguration.setJoseph(liquidityProvider.address);
-        await data.ipTokenUsdt
-            .connect(liquidityProvider)
-            .mint(liquidityProvider, initialAmount);
+        await data.ipTokenUsdt.connect(liquidityProvider).mint(liquidityProvider, initialAmount);
         await data.iporConfiguration.setJoseph(data.joseph.address);
     }
 };
 
 module.exports.setupTokenDaiInitialValuesForUsers = async (users, testData) => {
     for (let i = 0; i < users.length; i++) {
-        await testData.tokenDai.setupInitialAmount(
-            users[i].address,
-            USER_SUPPLY_10MLN_18DEC
-        );
+        await testData.tokenDai.setupInitialAmount(users[i].address, USER_SUPPLY_10MLN_18DEC);
     }
 };
 
-module.exports.setupTokenUsdcInitialValuesForUsers = async (
-    users,
-    testData
-) => {
+module.exports.setupTokenUsdcInitialValuesForUsers = async (users, testData) => {
     for (let i = 0; i < users.length; i++) {
-        await testData.tokenUsdc.setupInitialAmount(
-            users[i].address,
-            USER_SUPPLY_6_DECIMALS
-        );
+        await testData.tokenUsdc.setupInitialAmount(users[i].address, USER_SUPPLY_6_DECIMALS);
     }
 };
 
-module.exports.setupTokenUsdtInitialValuesForUsers = async (
-    users,
-    testData
-) => {
+module.exports.setupTokenUsdtInitialValuesForUsers = async (users, testData) => {
     for (let i = 0; i < users.length; i++) {
-        await testData.tokenUsdt.setupInitialAmount(
-            users[i].address,
-            USER_SUPPLY_6_DECIMALS
-        );
+        await testData.tokenUsdt.setupInitialAmount(users[i].address, USER_SUPPLY_6_DECIMALS);
     }
 };
 
