@@ -22,7 +22,7 @@ contract MockCDAI is ERC20, CErc20Mock {
     constructor(address dai, address interestRateModel) public ERC20("cDAI", "cDAI") {
         _dai = dai;
         _interestRateModel = interestRateModel;
-        _exchangeRate = 200000000000000000000000000;
+        _exchangeRate = 200000000000000000;
         _supplyRate = 32847953230;
         _mint(address(this), 10**14); // 1.000.000 cDAI
         _mint(msg.sender, 10**13); // 100.000 cDAI

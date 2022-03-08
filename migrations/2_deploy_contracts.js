@@ -61,7 +61,9 @@ const MockStakedAave = artifacts.require("MockStakedAave");
 const AAVEMockedToken = artifacts.require("AAVEMockedToken");
 const MockAaveIncentivesController = artifacts.require("MockAaveIncentivesController");
 const MockWhitePaper = artifacts.require("MockWhitePaper");
-const MockedCOMPToken = artifacts.require("MockedCOMPToken");
+const MockedCOMPTokenUSDT = artifacts.require("MockedCOMPTokenUSDT");
+const MockedCOMPTokenUSDC = artifacts.require("MockedCOMPTokenUSDC");
+const MockedCOMPTokenDAI = artifacts.require("MockedCOMPTokenDAI");
 const MockComptrollerUSDT = artifacts.require("MockComptrollerUSDT");
 const MockComptrollerUSDC = artifacts.require("MockComptrollerUSDC");
 const MockComptrollerDAI = artifacts.require("MockComptrollerDAI");
@@ -199,22 +201,32 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockCDai, mockedDai.address, mockWhitePaperInstance.address);
     const mockedCDai = await MockCDai.deployed();
 
-    await deployer.deploy(MockedCOMPToken, stableTotalSupply6Decimals, 6);
+    await deployer.deploy(MockedCOMPTokenDAI, stableTotalSupply18Decimals, 18);
+    const mockedCOMPDAI = await MockedCOMPTokenDAI.deployed();
 
-    const mockedCOMP = await MockedCOMPToken.deployed();
+    await deployer.deploy(MockedCOMPTokenUSDC, stableTotalSupply6Decimals, 6);
+    const mockedCOMPUSDC = await MockedCOMPTokenUSDC.deployed();
 
-    await deployer.deploy(MockComptrollerUSDT, mockedCOMP.address, mockedCUsdt.address);
+    await deployer.deploy(MockedCOMPTokenUSDT, stableTotalSupply6Decimals, 6);
+    const mockedCOMPUSDT = await MockedCOMPTokenUSDT.deployed();
+
+    await deployer.deploy(MockComptrollerUSDT, mockedCOMPUSDT.address, mockedCUsdt.address);
     const mockComptrollerUSDT = await MockComptrollerUSDT.deployed();
 
-    await deployer.deploy(MockComptrollerUSDC, mockedCOMP.address, mockedCUsdc.address);
+    await deployer.deploy(MockComptrollerUSDC, mockedCOMPUSDC.address, mockedCUsdc.address);
     const mockComptrollerUSDC = await MockComptrollerUSDC.deployed();
 
-    await deployer.deploy(MockComptrollerDAI, mockedDai.address, mockedCDai.address);
+    await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
     const mockComptrollerDAI = await MockComptrollerDAI.deployed();
 
     const strategyCompoundUsdt = await deployProxy(
         StrategyCompoundUsdt,
-        [mockedUsdt.address, mockedCUsdt.address, mockComptrollerUSDT.address, mockedCOMP.address],
+        [
+            mockedUsdt.address,
+            mockedCUsdt.address,
+            mockComptrollerUSDT.address,
+            mockedCOMPUSDT.address,
+        ],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -224,7 +236,12 @@ module.exports = async function (deployer, _network) {
 
     const strategyCompoundUsdc = await deployProxy(
         StrategyCompoundUsdc,
-        [mockedUsdc.address, mockedCUsdc.address, mockComptrollerUSDC.address, mockedCOMP.address],
+        [
+            mockedUsdc.address,
+            mockedCUsdc.address,
+            mockComptrollerUSDC.address,
+            mockedCOMPUSDC.address,
+        ],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -234,7 +251,7 @@ module.exports = async function (deployer, _network) {
 
     const strategyCompoundDai = await deployProxy(
         StrategyCompoundDai,
-        [mockedDai.address, mockedCDai.address, mockComptrollerDAI.address, mockedCOMP.address],
+        [mockedDai.address, mockedCDai.address, mockComptrollerDAI.address, mockedCOMPDAI.address],
         {
             deployer: deployer,
             initializer: "initialize",
