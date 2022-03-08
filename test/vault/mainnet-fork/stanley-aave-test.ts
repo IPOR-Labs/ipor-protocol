@@ -378,7 +378,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(aaveBalanceBefore, "Cliamed Aave Balance Before").to.be.equal(zero);
 
         // when
-        await aaveStrategyContract_Instance.beforeClaim([aDaiAddress], maxValue);
+        await aaveStrategyContract_Instance.beforeClaim();
 
         await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
         await hre.network.provider.send("evm_mine");
