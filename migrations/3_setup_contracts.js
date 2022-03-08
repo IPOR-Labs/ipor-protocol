@@ -19,6 +19,16 @@ const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
 const MiltonStorageDai = artifacts.require("MiltonStorageDai");
 
+const StrategyAaveUsdt = artifacts.require("StrategyAaveUsdt");
+const StrategyAaveUsdc = artifacts.require("StrategyAaveUsdc");
+const StrategyAaveDai = artifacts.require("StrategyAaveDai");
+const StrategyCompoundUsdt = artifacts.require("StrategyCompoundUsdt");
+const StrategyCompoundUsdc = artifacts.require("StrategyCompoundUsdc");
+const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
+const StanleyUsdt = artifacts.require("StanleyUsdt");
+const StanleyUsdc = artifacts.require("StanleyUsdc");
+const StanleyDai = artifacts.require("StanleyDai");
+
 const Warren = artifacts.require("Warren");
 
 const JosephUsdt = artifacts.require("JosephUsdt");
@@ -39,15 +49,9 @@ const ItfMiltonUsdt = artifacts.require("ItfMiltonUsdt");
 const ItfMiltonUsdc = artifacts.require("ItfMiltonUsdc");
 const ItfMiltonDai = artifacts.require("ItfMiltonDai");
 
-const IporAssetConfigurationUsdt = artifacts.require(
-    "IporAssetConfigurationUsdt"
-);
-const IporAssetConfigurationUsdc = artifacts.require(
-    "IporAssetConfigurationUsdc"
-);
-const IporAssetConfigurationDai = artifacts.require(
-    "IporAssetConfigurationDai"
-);
+const IporAssetConfigurationUsdt = artifacts.require("IporAssetConfigurationUsdt");
+const IporAssetConfigurationUsdc = artifacts.require("IporAssetConfigurationUsdc");
+const IporAssetConfigurationDai = artifacts.require("IporAssetConfigurationDai");
 
 module.exports = async function (deployer, _network, addresses) {
     console.log("Setup Smart contracts...");
@@ -71,25 +75,13 @@ module.exports = async function (deployer, _network, addresses) {
     const mockedUsdc = await UsdcMockedToken.deployed();
     const mockedDai = await DaiMockedToken.deployed();
 
-    const iporAssetConfigurationUsdtProxy =
-        await IporAssetConfigurationUsdt.deployed();
-    const iporAssetConfigurationUsdcProxy =
-        await IporAssetConfigurationUsdc.deployed();
-    const iporAssetConfigurationDaiProxy =
-        await IporAssetConfigurationDai.deployed();
+    const iporAssetConfigurationUsdtProxy = await IporAssetConfigurationUsdt.deployed();
+    const iporAssetConfigurationUsdcProxy = await IporAssetConfigurationUsdc.deployed();
+    const iporAssetConfigurationDaiProxy = await IporAssetConfigurationDai.deployed();
 
-    await grandRolesForAssetConfiguration(
-        admin,
-        iporAssetConfigurationUsdtProxy
-    );
-    await grandRolesForAssetConfiguration(
-        admin,
-        iporAssetConfigurationUsdcProxy
-    );
-    await grandRolesForAssetConfiguration(
-        admin,
-        iporAssetConfigurationDaiProxy
-    );
+    await grandRolesForAssetConfiguration(admin, iporAssetConfigurationUsdtProxy);
+    await grandRolesForAssetConfiguration(admin, iporAssetConfigurationUsdcProxy);
+    await grandRolesForAssetConfiguration(admin, iporAssetConfigurationDaiProxy);
 
     await iporConfigurationProxy.setIporAssetConfiguration(
         mockedUsdt.address,
@@ -108,15 +100,9 @@ module.exports = async function (deployer, _network, addresses) {
     const miltonStorageUsdcProxy = await MiltonStorageUsdc.deployed();
     const miltonStorageDaiProxy = await MiltonStorageDai.deployed();
 
-    await iporAssetConfigurationUsdtProxy.setMiltonStorage(
-        miltonStorageUsdtProxy.address
-    );
-    await iporAssetConfigurationUsdcProxy.setMiltonStorage(
-        miltonStorageUsdcProxy.address
-    );
-    await iporAssetConfigurationDaiProxy.setMiltonStorage(
-        miltonStorageDaiProxy.address
-    );
+    await iporAssetConfigurationUsdtProxy.setMiltonStorage(miltonStorageUsdtProxy.address);
+    await iporAssetConfigurationUsdcProxy.setMiltonStorage(miltonStorageUsdcProxy.address);
+    await iporAssetConfigurationDaiProxy.setMiltonStorage(miltonStorageDaiProxy.address);
 
     //#####################################################################
     // CONFIG STABLE - END
@@ -142,28 +128,28 @@ module.exports = async function (deployer, _network, addresses) {
     const itfMiltonUsdcProxy = await ItfMiltonUsdc.deployed();
     const itfMiltonDaiProxy = await ItfMiltonDai.deployed();
 
+    const stanleyUsdtProxy = await StanleyUsdt.deployed();
+    const stanleyUsdcProxy = await StanleyUsdc.deployed();
+    const stanleyDaiProxy = await StanleyDai.deployed();
+
+    const strategyAaveUsdtProxy = await StrategyAaveUsdt.deployed();
+    const strategyAaveUsdcProxy = await StrategyAaveUsdc.deployed();
+    const strategyAaveDaiProxy = await StrategyAaveDai.deployed();
+
+    const strategyCompoundUsdtProxy = await StrategyCompoundUsdt.deployed();
+    const strategyCompoundUsdcProxy = await StrategyCompoundUsdc.deployed();
+    const strategyCompoundDaiProxy = await StrategyCompoundDai.deployed();
+
     if (process.env.ITF_ENABLED === "true") {
         console.log("Setup contracts for Ipor Test Framework...");
 
-        await iporAssetConfigurationUsdtProxy.setMilton(
-            itfMiltonUsdtProxy.address
-        );
-        await iporAssetConfigurationUsdcProxy.setMilton(
-            itfMiltonUsdcProxy.address
-        );
-        await iporAssetConfigurationDaiProxy.setMilton(
-            itfMiltonDaiProxy.address
-        );
+        await iporAssetConfigurationUsdtProxy.setMilton(itfMiltonUsdtProxy.address);
+        await iporAssetConfigurationUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
+        await iporAssetConfigurationDaiProxy.setMilton(itfMiltonDaiProxy.address);
 
-        await iporAssetConfigurationUsdtProxy.setJoseph(
-            itfJosephUsdtProxy.address
-        );
-        await iporAssetConfigurationUsdcProxy.setJoseph(
-            itfJosephUsdcProxy.address
-        );
-        await iporAssetConfigurationDaiProxy.setJoseph(
-            itfJosephDaiProxy.address
-        );
+        await iporAssetConfigurationUsdtProxy.setJoseph(itfJosephUsdtProxy.address);
+        await iporAssetConfigurationUsdcProxy.setJoseph(itfJosephUsdcProxy.address);
+        await iporAssetConfigurationDaiProxy.setJoseph(itfJosephDaiProxy.address);
         await itfMiltonUsdtProxy.setJoseph(itfJosephUsdtProxy.address);
         await itfMiltonUsdcProxy.setJoseph(itfJosephUsdcProxy.address);
         await itfMiltonDaiProxy.setJoseph(itfJosephDaiProxy.address);
@@ -192,6 +178,18 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonStorageUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
         await miltonStorageDaiProxy.setMilton(itfMiltonDaiProxy.address);
 
+        await stanleyUsdtProxy.setMilton(itfMiltonUsdtProxy.address);
+        await stanleyUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
+        await stanleyDaiProxy.setMilton(itfMiltonDaiProxy.address);
+
+        await strategyAaveUsdtProxy.setStanley(stanleyUsdtProxy.address);
+        await strategyAaveUsdcProxy.setStanley(stanleyUsdcProxy.address);
+        await strategyAaveDaiProxy.setStanley(stanleyDaiProxy.address);
+
+        await strategyCompoundUsdtProxy.setStanley(stanleyUsdtProxy.address);
+        await strategyCompoundUsdcProxy.setStanley(stanleyUsdcProxy.address);
+        await strategyCompoundDaiProxy.setStanley(stanleyDaiProxy.address);
+
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Setup initial IPOR values...");
             await itfWarrenProxy.updateIndexes(
@@ -207,20 +205,12 @@ module.exports = async function (deployer, _network, addresses) {
     } else {
         console.log("Setup contracts...");
 
-        await iporAssetConfigurationUsdtProxy.setMilton(
-            miltonUsdtProxy.address
-        );
-        await iporAssetConfigurationUsdcProxy.setMilton(
-            miltonUsdcProxy.address
-        );
+        await iporAssetConfigurationUsdtProxy.setMilton(miltonUsdtProxy.address);
+        await iporAssetConfigurationUsdcProxy.setMilton(miltonUsdcProxy.address);
         await iporAssetConfigurationDaiProxy.setMilton(miltonDaiProxy.address);
 
-        await iporAssetConfigurationUsdtProxy.setJoseph(
-            josephUsdtProxy.address
-        );
-        await iporAssetConfigurationUsdcProxy.setJoseph(
-            josephUsdcProxy.address
-        );
+        await iporAssetConfigurationUsdtProxy.setJoseph(josephUsdtProxy.address);
+        await iporAssetConfigurationUsdcProxy.setJoseph(josephUsdcProxy.address);
         await iporAssetConfigurationDaiProxy.setJoseph(josephDaiProxy.address);
 
         await miltonUsdtProxy.setJoseph(josephUsdtProxy.address);
@@ -250,6 +240,18 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonStorageUsdcProxy.setMilton(miltonUsdcProxy.address);
         await miltonStorageDaiProxy.setMilton(miltonDaiProxy.address);
 
+        await stanleyUsdtProxy.setMilton(miltonUsdtProxy.address);
+        await stanleyUsdcProxy.setMilton(miltonUsdcProxy.address);
+        await stanleyDaiProxy.setMilton(miltonDaiProxy.address);
+
+        await strategyAaveUsdtProxy.setStanley(stanleyUsdtProxy.address);
+        await strategyAaveUsdcProxy.setStanley(stanleyUsdcProxy.address);
+        await strategyAaveDaiProxy.setStanley(stanleyDaiProxy.address);
+
+        await strategyCompoundUsdtProxy.setStanley(stanleyUsdtProxy.address);
+        await strategyCompoundUsdcProxy.setStanley(stanleyUsdcProxy.address);
+        await strategyCompoundDaiProxy.setStanley(stanleyDaiProxy.address);
+
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Setup initial IPOR values...");
             await warrenProxy.updateIndexes(
@@ -278,58 +280,22 @@ module.exports = async function (deployer, _network, addresses) {
     console.log("Congratulations! Setup Smart Contracts finished!");
 };
 async function grandRolesForConfiguration(admin, iporConfigurationProxy) {
-    await iporConfigurationProxy.grantRole(
-        keccak256("ROLES_INFO_ADMIN_ROLE"),
-        admin
-    );
+    await iporConfigurationProxy.grantRole(keccak256("ROLES_INFO_ADMIN_ROLE"), admin);
     await iporConfigurationProxy.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
 
-    await iporConfigurationProxy.grantRole(
-        keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"),
-        admin
-    );
-    await iporConfigurationProxy.grantRole(
-        keccak256("IPOR_ASSET_CONFIGURATION_ROLE"),
-        admin
-    );
+    await iporConfigurationProxy.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ADMIN_ROLE"), admin);
+    await iporConfigurationProxy.grantRole(keccak256("IPOR_ASSET_CONFIGURATION_ROLE"), admin);
 }
-async function grandRolesForAssetConfiguration(
-    admin,
-    iporAssetConfigurationProxy
-) {
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("ROLES_INFO_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("ROLES_INFO_ROLE"),
-        admin
-    );
+async function grandRolesForAssetConfiguration(admin, iporAssetConfigurationProxy) {
+    await iporAssetConfigurationProxy.grantRole(keccak256("ROLES_INFO_ADMIN_ROLE"), admin);
+    await iporAssetConfigurationProxy.grantRole(keccak256("ROLES_INFO_ROLE"), admin);
 
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("MILTON_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("MILTON_ROLE"),
-        admin
-    );
+    await iporAssetConfigurationProxy.grantRole(keccak256("MILTON_ADMIN_ROLE"), admin);
+    await iporAssetConfigurationProxy.grantRole(keccak256("MILTON_ROLE"), admin);
 
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("MILTON_STORAGE_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("MILTON_STORAGE_ROLE"),
-        admin
-    );
+    await iporAssetConfigurationProxy.grantRole(keccak256("MILTON_STORAGE_ADMIN_ROLE"), admin);
+    await iporAssetConfigurationProxy.grantRole(keccak256("MILTON_STORAGE_ROLE"), admin);
 
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("JOSEPH_ADMIN_ROLE"),
-        admin
-    );
-    await iporAssetConfigurationProxy.grantRole(
-        keccak256("JOSEPH_ROLE"),
-        admin
-   );
+    await iporAssetConfigurationProxy.grantRole(keccak256("JOSEPH_ADMIN_ROLE"), admin);
+    await iporAssetConfigurationProxy.grantRole(keccak256("JOSEPH_ROLE"), admin);
 }

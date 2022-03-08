@@ -217,7 +217,7 @@ library IporErrors {
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
 
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_60";
-    string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";
+    string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";	
 
     // Asset managment
     //@notice amount should be > 0

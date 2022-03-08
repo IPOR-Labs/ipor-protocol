@@ -18,7 +18,7 @@ import {
     AaveStrategy,
     CompoundStrategy,
     TestERC20,
-    MockADAI,
+    MockADai,
     MockAaveLendingPoolProvider,
     MockAaveLendingPoolCore,
     AaveInterestRateMockStrategyV2,
@@ -370,6 +370,3 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         ).to.be.true;
     });
 });
-
-20000000497590239551;
-20000000066503965671;
