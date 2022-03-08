@@ -279,25 +279,6 @@ contract Stanley is
         IERC20Upgradeable(_asset).safeTransfer(msg.sender, balance);
     }
 
-    function aaveBeforeClaim(address[] memory assets, uint256 amount) external override onlyOwner {
-        IStrategy(_aaveStrategy).beforeClaim(assets, amount);
-    }
-
-    /**
-     * @dev claim Gov token from current strategy.
-     * @notice only owner can claim.
-     * @param account send claimed gove token to _account
-     */
-    // TODO: Consider to convert account variable in contract and change fincton to no parameters
-    function aaveDoClaim(address account) external override onlyOwner {
-        _doClaim(account, _aaveStrategy);
-    }
-
-    // TODO: Consider to convert _account variable in contract and change fincton to no parameters
-    function compoundDoClaim(address account) external override onlyOwner {
-        _doClaim(account, _compoundStrategy);
-    }
-
     //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
     function migrateAssetToStrategyWithMaxApy() external onlyOwner {
         (
@@ -482,16 +463,6 @@ contract Stanley is
                 ivTokenValue
             );
         }
-    }
-
-    function _doClaim(address _account, address strategyAddress) internal {
-        require(_account != address(0), IporErrors.WRONG_ADDRESS);
-        IStrategy strategy = IStrategy(strategyAddress);
-        address[] memory assets = new address[](1);
-        assets[0] = strategy.getShareToken();
-        strategy.doClaim(_account, assets);
-        //TODO: more information in event
-        emit DoClaim(strategyAddress, _account);
     }
 
     /**  Internal Methods */

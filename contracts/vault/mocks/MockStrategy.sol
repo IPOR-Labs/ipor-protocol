@@ -48,10 +48,7 @@ contract MockStrategy is IStrategy {
         _shareTokens = shareToken;
     }
 
-    function doClaim(address vault, address[] memory assets)
-        external
-        override
-    {}
+    function doClaim() external override {}
 
     function transferOwnership(address newOwner) external {
         _owner = newOwner;

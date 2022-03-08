@@ -104,6 +104,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             stkAave,
             aaveIncentiveAddress,
             AAVE,
+            await signer.getAddress(),
         ])) as AaveStrategy;
         // getUserUnclaimedRewards
         aaveIncentiveContract = new hre.ethers.Contract(
@@ -135,6 +136,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             cDaiAddress,
             ComptrollerAddress,
             COMP,
+            await signer.getAddress(),
         ])) as CompoundStrategy;
 
         compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
@@ -350,6 +352,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             "strategyATokenContractAfter"
         ).to.be.true;
     });
+    // TODO:CLAIME
     it("Should Claim from AAVE", async () => {
         //given
         const depositAmound = one.mul(10);
@@ -372,15 +375,15 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(aaveBalanceBefore, "Cliamed Aave Balance Before").to.be.equal(zero);
 
         // when
-        await stanley.aaveBeforeClaim([aDaiAddress], maxValue);
+        await aaveStrategyContract_Instance.beforeClaim([aDaiAddress], maxValue);
 
         await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
         await hre.network.provider.send("evm_mine");
-        await stanley.aaveDoClaim(userOneAddres);
+        await aaveStrategyContract_Instance.doClaim();
 
         // then
 
-        const userOneBalance = await aaveContract.balanceOf(userOneAddres);
+        const userOneBalance = await aaveContract.balanceOf(await signer.getAddress());
         expect(userOneBalance.gt(zero), "Cliamed Aave Balance > 0").to.be.true;
     });
 });

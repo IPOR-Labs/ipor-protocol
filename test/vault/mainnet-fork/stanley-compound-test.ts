@@ -145,6 +145,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             cDaiAddress,
             ComptrollerAddress,
             COMP,
+            await signer.getAddress(),
         ])) as CompoundStrategy;
 
         compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
@@ -345,6 +346,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         );
         expect(strategyCTokenContractAfter, "strategyATokenContractAfter = 0").to.be.equal(zero);
     });
+    // TODO:CLAIM
     it("Should Clame from COMPOUND", async () => {
         //given
         const userOneAddres = await accounts[1].getAddress();
@@ -360,16 +362,13 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(compoundBalanceBefore, "Cliamed Compound Balance Before = 0").to.be.equal(zero);
 
         // when
-        await stanley.compoundDoClaim(userOneAddres);
+        await compoundStrategyContract_Instance.doClaim();
 
         // then
-        const userOneBalance = await compContract.balanceOf(userOneAddres);
+        const userOneBalance = await compContract.balanceOf(await signer.getAddress());
         expect(
             userOneBalance.gt(BigNumber.from("1821261900")),
             "Cliamed compound Balance = 1821261900"
         ).to.be.true;
     });
 });
-
-20000000497590239551;
-20000000066503965671;

@@ -13,16 +13,13 @@ import "hardhat/console.sol";
 import "../../IporErrors.sol";
 import "../../libraries/IporMath.sol";
 
-contract CompoundStrategy is
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IStrategy
-{
+contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address private _asset;
     CErc20 private _cToken;
     uint256 private _blocksPerYear;
+    address private _claimAddress;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
@@ -41,18 +38,18 @@ contract CompoundStrategy is
         address asset,
         address cErc20Contract,
         address comptroller,
-        address compToken
+        address compToken,
+        address claimAddress
     ) public initializer {
         __Ownable_init();
+        require(claimAddress != address(0), IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _cToken = CErc20(cErc20Contract);
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
-        IERC20Upgradeable(_asset).safeApprove(
-            cErc20Contract,
-            type(uint256).max
-        );
+        IERC20Upgradeable(_asset).safeApprove(cErc20Contract, type(uint256).max);
         _blocksPerYear = 2102400;
+        _claimAddress = claimAddress;
     }
 
     modifier onlyStanley() {
@@ -89,8 +86,7 @@ contract CompoundStrategy is
     function balanceOf() public view override returns (uint256) {
         return (
             IporMath.division(
-                (_cToken.exchangeRateStored() *
-                    _cToken.balanceOf(address(this))),
+                (_cToken.exchangeRateStored() * _cToken.balanceOf(address(this))),
                 (10**ERC20Upgradeable(_asset).decimals())
             )
         );
@@ -102,11 +98,7 @@ contract CompoundStrategy is
      * @param amount amount to deposit in compound lending.
      */
     function deposit(uint256 amount) external override onlyStanley {
-        IERC20Upgradeable(_asset).safeTransferFrom(
-            msg.sender,
-            address(this),
-            amount
-        );
+        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), amount);
         _cToken.mint(amount);
     }
 
@@ -116,9 +108,7 @@ contract CompoundStrategy is
      * @param amount amount to withdraw from compound lending.
      */
     function withdraw(uint256 amount) external override onlyStanley {
-        _cToken.redeem(
-            IporMath.division(amount * 1e18, _cToken.exchangeRateStored())
-        );
+        _cToken.redeem(IporMath.division(amount * 1e18, _cToken.exchangeRateStored()));
         IERC20Upgradeable(address(_asset)).safeTransfer(
             msg.sender,
             IERC20Upgradeable(_asset).balanceOf(address(this))
@@ -128,28 +118,21 @@ contract CompoundStrategy is
     /**
      * @dev beforeClaim is not needed to implement
      */
-    function beforeClaim(address[] memory assets, uint256 amount)
-        public
-        onlyStanley
-    {
+    function beforeClaim(address[] memory assets, uint256 amount) public {
         // No implementation
     }
 
     /**
      * @dev Claim extra reward of Governace token(COMP).
      * @notice claim can only done by owner.
-     * @param vault vault address where send to claimed COMP token.
-     * @param assets assets for claim COMP gov token.
      */
-    function doClaim(address vault, address[] memory assets)
-        external
-        override
-        onlyStanley
-    {
-        require(vault != address(0), IporErrors.WRONG_ADDRESS);
+    function doClaim() external override {
+        address[] memory assets = new address[](1);
+        assets[0] = address(_cToken);
         _comptroller.claimComp(address(this), assets);
         uint256 compBal = _compToken.balanceOf(address(this));
-        _compToken.safeTransfer(vault, compBal);
+        _compToken.safeTransfer(_claimAddress, compBal);
+        emit DoClaim(address(this), assets, _claimAddress, compBal);
     }
 
     function setStanley(address stanley) external onlyOwner {

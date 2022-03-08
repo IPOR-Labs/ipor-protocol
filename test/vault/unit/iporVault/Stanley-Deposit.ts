@@ -63,66 +63,46 @@ describe("Stanley -> Deposit", () => {
         //##############################################################
 
         tokenFactory = await hre.ethers.getContractFactory("TestERC20");
-        DAI = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
+        DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
 
         //##############################################################
         //                        IvToken
         //##############################################################
-        const tokenFactoryIvToken = await hre.ethers.getContractFactory(
-            "IvToken"
-        );
-        ivToken = (await tokenFactoryIvToken.deploy(
-            "IvToken",
-            "IVT",
-            DAI.address
-        )) as IvToken;
+        const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
+        ivToken = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
 
         //##############################################################
         //                        AAVE Mock
         //##############################################################
 
         const MockADAIFactory = await hre.ethers.getContractFactory("MockADAI");
-        aDAI = (await MockADAIFactory.deploy(
-            DAI.address,
-            await admin.getAddress()
-        )) as MockADAI;
+        aDAI = (await MockADAIFactory.deploy(DAI.address, await admin.getAddress())) as MockADAI;
         DAI.mint(aDAI.address, one.mul(10000));
-        AAVE = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
-        const stkAAVE = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
+        AAVE = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        const stkAAVE = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         const MockAaveLendingPoolProvider = await hre.ethers.getContractFactory(
             "MockAaveLendingPoolProvider"
         );
         const MockAaveLendingPoolCore = await hre.ethers.getContractFactory(
             "MockAaveLendingPoolCore"
         );
-        const aaveInterestRateMockStrategyV2 =
-            await hre.ethers.getContractFactory(
-                "AaveInterestRateMockStrategyV2"
-            );
+        const aaveInterestRateMockStrategyV2 = await hre.ethers.getContractFactory(
+            "AaveInterestRateMockStrategyV2"
+        );
         const MockAaveStableDebtToken = await hre.ethers.getContractFactory(
             "MockAaveStableDebtToken"
         );
         const MockAaveVariableDebtToken = await hre.ethers.getContractFactory(
             "MockAaveVariableDebtToken"
         );
-        const MockAaveLendingPool = await hre.ethers.getContractFactory(
-            "MockAaveLendingPoolV2"
+        const MockAaveLendingPool = await hre.ethers.getContractFactory("MockAaveLendingPoolV2");
+        const MockStakedAave = await hre.ethers.getContractFactory("MockStakedAave");
+        const MockAaveIncentivesController = await hre.ethers.getContractFactory(
+            "MockAaveIncentivesController"
         );
-        const MockStakedAave = await hre.ethers.getContractFactory(
-            "MockStakedAave"
-        );
-        const MockAaveIncentivesController =
-            await hre.ethers.getContractFactory("MockAaveIncentivesController");
         const addressProvider =
             (await MockAaveLendingPoolProvider.deploy()) as MockAaveLendingPoolProvider;
-        const lendingPoolCore =
-            (await MockAaveLendingPoolCore.deploy()) as MockAaveLendingPoolCore;
+        const lendingPoolCore = (await MockAaveLendingPoolCore.deploy()) as MockAaveLendingPoolCore;
         const interestRateStrategyV2 =
             (await aaveInterestRateMockStrategyV2.deploy()) as AaveInterestRateMockStrategyV2;
         const stableDebtToken = (await MockAaveStableDebtToken.deploy(
@@ -136,38 +116,24 @@ describe("Stanley -> Deposit", () => {
             DAI.address,
             aDAI.address
         )) as MockAaveLendingPoolV2;
-        stakedAave = (await MockStakedAave.deploy(
-            AAVE.address
-        )) as MockStakedAave;
-        const aaveIncentivesController =
-            (await MockAaveIncentivesController.deploy(
-                stakedAave.address
-            )) as MockAaveIncentivesController;
-        await stakedAave.transfer(
-            aaveIncentivesController.address,
-            one.mul(1000)
-        );
+        stakedAave = (await MockStakedAave.deploy(AAVE.address)) as MockStakedAave;
+        const aaveIncentivesController = (await MockAaveIncentivesController.deploy(
+            stakedAave.address
+        )) as MockAaveIncentivesController;
+        await stakedAave.transfer(aaveIncentivesController.address, one.mul(1000));
         await AAVE.transfer(stakedAave.address, one.mul(1000));
         await addressProvider._setLendingPoolCore(lendingPoolCore.address);
         await addressProvider._setLendingPool(lendingPool.address);
         await lendingPoolCore.setReserve(interestRateStrategyV2.address);
-        await lendingPoolCore.setReserveCurrentLiquidityRate(
-            oneRay.div("100").mul("2")
-        );
+        await lendingPoolCore.setReserveCurrentLiquidityRate(oneRay.div("100").mul("2"));
         await interestRateStrategyV2.setSupplyRate(oneRay.div("100").mul("2"));
         await interestRateStrategyV2.setBorrowRate(oneRay.div("100").mul("3"));
         await lendingPool.setStableDebtTokenAddress(stableDebtToken.address);
-        await lendingPool.setVariableDebtTokenAddress(
-            variableDebtToken.address
-        );
-        await lendingPool.setInterestRateStrategyAddress(
-            interestRateStrategyV2.address
-        );
+        await lendingPool.setVariableDebtTokenAddress(variableDebtToken.address);
+        await lendingPool.setInterestRateStrategyAddress(interestRateStrategyV2.address);
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("2"));
         aDAI.connect(admin).transfer(lendingPool.address, one.mul(1000));
-        const aaveNewStartegy = await hre.ethers.getContractFactory(
-            "AaveStrategy"
-        );
+        const aaveNewStartegy = await hre.ethers.getContractFactory("AaveStrategy");
         aaveNewStartegyInstance = (await upgrades.deployProxy(aaveNewStartegy, [
             DAI.address,
             aDAI.address,
@@ -175,41 +141,33 @@ describe("Stanley -> Deposit", () => {
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
+            await userTwo.getAddress(),
         ])) as AaveStrategy;
         //##############################################################
         //                        Compound Mock
         //##############################################################
         const MockCDAIFactory = await hre.ethers.getContractFactory("MockCDAI");
-        COMP = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
-        const MockWhitePaper = await hre.ethers.getContractFactory(
-            "MockWhitePaper"
-        );
-        let MockWhitePaperInstance =
-            (await MockWhitePaper.deploy()) as MockWhitePaper;
+        COMP = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        const MockWhitePaper = await hre.ethers.getContractFactory("MockWhitePaper");
+        let MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
         cDAI = (await MockCDAIFactory.deploy(
             DAI.address,
             await admin.getAddress(),
             MockWhitePaperInstance.address
         )) as MockCDAI;
         DAI.mint(cDAI.address, one.mul(10000));
-        const MockComptroller = await hre.ethers.getContractFactory(
-            "MockComptroller"
-        );
-        comptroller = (await MockComptroller.deploy(
-            COMP.address,
-            cDAI.address
-        )) as MockComptroller;
+        const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
+        comptroller = (await MockComptroller.deploy(COMP.address, cDAI.address)) as MockComptroller;
         await COMP.transfer(comptroller.address, one.mul(1000));
-        const compoundNewStartegy = await hre.ethers.getContractFactory(
-            "CompoundStrategy"
-        );
+        const compoundNewStartegy = await hre.ethers.getContractFactory("CompoundStrategy");
 
-        compoundStartegyInstance = (await upgrades.deployProxy(
-            compoundNewStartegy,
-            [DAI.address, cDAI.address, comptroller.address, COMP.address]
-        )) as CompoundStrategy;
+        compoundStartegyInstance = (await upgrades.deployProxy(compoundNewStartegy, [
+            DAI.address,
+            cDAI.address,
+            comptroller.address,
+            COMP.address,
+            await userTwo.getAddress(),
+        ])) as CompoundStrategy;
 
         //##############################################################
         //                        Stanley
@@ -237,14 +195,10 @@ describe("Stanley -> Deposit", () => {
             //given
             const apyBefore = await aaveNewStartegyInstance.getApy();
             // when
-            await lendingPool.setCurrentLiquidityRate(
-                oneRay.div("100").mul("5")
-            );
+            await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("5"));
             // then
             const apyAfter = await aaveNewStartegyInstance.getApy();
-            expect(apyBefore).to.be.equal(
-                BigNumber.from("2000000000000000000")
-            );
+            expect(apyBefore).to.be.equal(BigNumber.from("2000000000000000000"));
             expect(apyAfter).to.be.equal(BigNumber.from("5000000000000000000"));
         });
 
@@ -255,9 +209,7 @@ describe("Stanley -> Deposit", () => {
             await cDAI.setSupplyRate(BigNumber.from("10"));
             // then
             const apyAfter = await compoundStartegyInstance.getApy();
-            expect(apyBefore).to.be.equal(
-                BigNumber.from("6905953687075200000")
-            );
+            expect(apyBefore).to.be.equal(BigNumber.from("6905953687075200000"));
             expect(apyAfter).to.be.equal(BigNumber.from("2102400000"));
         });
     });
@@ -361,7 +313,7 @@ describe("Stanley -> Deposit", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
     it("Should accept deposits and transfer tokens first into Compound second into AAVE when one user make deposits", async () => {
-        const adminAddress = await await admin.getAddress();        
+        const adminAddress = await await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -400,12 +352,8 @@ describe("Stanley -> Deposit", () => {
         //then
 
         const aaveBalance = await aaveNewStartegyInstance.balanceOf();
-        const userOneIvToken = await ivToken.balanceOf(
-            await userOne.getAddress()
-        );
-        const userTwoIvToken = await ivToken.balanceOf(
-            await userTwo.getAddress()
-        );
+        const userOneIvToken = await ivToken.balanceOf(await userOne.getAddress());
+        const userTwoIvToken = await ivToken.balanceOf(await userTwo.getAddress());
         const balanceOfIporeVault = await DAI.balanceOf(stanley.address);
 
         expect(aaveBalance).to.be.equal(one.mul(30));
@@ -428,12 +376,8 @@ describe("Stanley -> Deposit", () => {
 
         //then
         const compoundBalance = await compoundStartegyInstance.balanceOf();
-        const userOneIvToken = await ivToken.balanceOf(
-            await userOne.getAddress()
-        );
-        const userTwoIvToken = await ivToken.balanceOf(
-            await userTwo.getAddress()
-        );
+        const userOneIvToken = await ivToken.balanceOf(await userOne.getAddress());
+        const userTwoIvToken = await ivToken.balanceOf(await userTwo.getAddress());
         const balanceOfIporeVault = await DAI.balanceOf(stanley.address);
 
         expect(compoundBalance).to.be.equal(one.mul(30));
@@ -458,12 +402,8 @@ describe("Stanley -> Deposit", () => {
         //then
         const compoundBalance = await compoundStartegyInstance.balanceOf();
         const aaveBalance = await aaveNewStartegyInstance.balanceOf();
-        const userOneIvToken = await ivToken.balanceOf(
-            await userOne.getAddress()
-        );
-        const userTwoIvToken = await ivToken.balanceOf(
-            await userTwo.getAddress()
-        );
+        const userOneIvToken = await ivToken.balanceOf(await userOne.getAddress());
+        const userTwoIvToken = await ivToken.balanceOf(await userTwo.getAddress());
         const balanceOfIporeVault = await DAI.balanceOf(stanley.address);
 
         expect(compoundBalance).to.be.equal(one.mul(10));
@@ -480,9 +420,7 @@ describe("Stanley -> Deposit", () => {
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
 
         //when
-        await expect(
-            stanley.connect(userOne).deposit(one.mul(10))
-        ).to.be.revertedWith("IPOR_105");
+        await expect(stanley.connect(userOne).deposit(one.mul(10))).to.be.revertedWith("IPOR_105");
     });
 
     it("Should not deposit when user try deposit 0", async () => {
@@ -493,8 +431,8 @@ describe("Stanley -> Deposit", () => {
         await stanley.setMilton(await userOne.getAddress());
 
         //when
-        await expect(
-            stanley.connect(userOne).deposit(BigNumber.from("0"))
-        ).to.be.revertedWith("IPOR_103");
+        await expect(stanley.connect(userOne).deposit(BigNumber.from("0"))).to.be.revertedWith(
+            "IPOR_103"
+        );
     });
 });

@@ -57,56 +57,35 @@ describe("compound deployed Contract on Mainnet fork", function () {
 
             daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer);
             compContract = new hre.ethers.Contract(COMP, daiAbi, signer);
-            cTokenContract = new hre.ethers.Contract(
-                cDaiAddress,
-                daiAbi,
-                signer
-            );
+            cTokenContract = new hre.ethers.Contract(cDaiAddress, daiAbi, signer);
 
-            impersonateBalanceBefore = await daiContract.balanceOf(
-                accountToImpersonate
-            );
+            impersonateBalanceBefore = await daiContract.balanceOf(accountToImpersonate);
 
-            console.log(
-                "impersonateBalanceBefore: ",
-                impersonateBalanceBefore.toString()
-            );
-            ourAccountBalanceBefore = await daiContract.balanceOf(
-                accounts[0].address
-            );
+            console.log("impersonateBalanceBefore: ", impersonateBalanceBefore.toString());
+            ourAccountBalanceBefore = await daiContract.balanceOf(accounts[0].address);
 
-            await daiContract.transfer(
-                accounts[0].address,
-                impersonateBalanceBefore
-            );
+            await daiContract.transfer(accounts[0].address, impersonateBalanceBefore);
 
             signer = await hre.ethers.provider.getSigner(accounts[0].address);
             daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer);
 
-            ourAccountBalanceAfter = await daiContract.balanceOf(
-                accounts[0].address
-            );
-            console.log(
-                "ourAccountBalanceAfter: ",
-                ourAccountBalanceAfter.toString()
-            );
+            ourAccountBalanceAfter = await daiContract.balanceOf(accounts[0].address);
+            console.log("ourAccountBalanceAfter: ", ourAccountBalanceAfter.toString());
 
             //  ********************************************************************************************
             //  **************                      Deploy strategy                           **************
             //  ********************************************************************************************
 
-            strategyContract = await hre.ethers.getContractFactory(
-                "CompoundStrategy",
-                signer
-            );
-            strategyContract_Instance = await upgrades.deployProxy(
-                strategyContract,
-                [daiAddress, cDaiAddress, ComptrollerAddress, COMP]
-            );
+            strategyContract = await hre.ethers.getContractFactory("CompoundStrategy", signer);
+            strategyContract_Instance = await upgrades.deployProxy(strategyContract, [
+                daiAddress,
+                cDaiAddress,
+                ComptrollerAddress,
+                COMP,
+                await signer.getAddress(),
+            ]);
 
-            await strategyContract_Instance.setStanley(
-                await signer.getAddress()
-            );
+            await strategyContract_Instance.setStanley(await signer.getAddress());
 
             compTrollerContract = new hre.ethers.Contract(
                 ComptrollerAddress,
@@ -116,32 +95,21 @@ describe("compound deployed Contract on Mainnet fork", function () {
         });
 
         it("hardhat_impersonateAccount and check transfered balance to our account", async function () {
-            let daiBalanceBefore = await daiContract.balanceOf(
-                accounts[0].address
-            );
+            let daiBalanceBefore = await daiContract.balanceOf(accounts[0].address);
             console.log("Dai Balance Before", daiBalanceBefore.toString());
 
-            await daiContract.approve(
-                strategyContract_Instance.address,
-                maxValue
-            );
+            await daiContract.approve(strategyContract_Instance.address, maxValue);
 
-            await strategyContract_Instance
-                .connect(signer)
-                .deposit("10000000000000000000");
+            await strategyContract_Instance.connect(signer).deposit("10000000000000000000");
             console.log("Deposite complete");
 
             const timestamp = Math.floor(Date.now() / 1000) + 864000 * 4;
             console.log("Timestamp: ", timestamp);
 
-            await hre.network.provider.send("evm_setNextBlockTimestamp", [
-                timestamp,
-            ]);
+            await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
             await hre.network.provider.send("evm_mine");
 
-            const cTokenBal = await cTokenContract.balanceOf(
-                strategyContract_Instance.address
-            );
+            const cTokenBal = await cTokenContract.balanceOf(strategyContract_Instance.address);
             console.log("cToken Balance: ", cTokenBal.toString());
 
             await cTokenContract
@@ -150,18 +118,12 @@ describe("compound deployed Contract on Mainnet fork", function () {
             await strategyContract_Instance.withdraw(cTokenBal);
             console.log("Withdraw Complete");
 
-            await strategyContract_Instance.doClaim(accounts[0].address, [
-                cDaiAddress,
-            ]);
+            await strategyContract_Instance.doClaim();
 
-            let compGoveBalance = await compContract.balanceOf(
-                accounts[0].address
-            );
+            let compGoveBalance = await compContract.balanceOf(accounts[0].address);
             console.log("Claimed Comp Balance", compGoveBalance.toString());
 
-            let daiBalanceAfter = await daiContract.balanceOf(
-                accounts[0].address
-            );
+            let daiBalanceAfter = await daiContract.balanceOf(accounts[0].address);
             console.log("Dai Balance After", daiBalanceAfter.toString());
         });
     });
