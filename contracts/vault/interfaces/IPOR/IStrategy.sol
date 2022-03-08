@@ -21,9 +21,13 @@ interface IStrategy {
 
     function setStanley(address stanley) external;
 
+    function setTreasury(address treasury) external;
+
     event SetStanley(address sender, address newStanley, address strategy);
 
     event DoClaim(address strategy, address[] assets, address claimAddress, uint256 amount);
 
     event DoBeforeClaim(address strategy, address[] assets, uint256 amount);
+
+    event SetTreasury(address strategy, address newTreasury);
 }

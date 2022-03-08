@@ -42,11 +42,9 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         address addressesProvider,
         address stkAave,
         address aaveIncentive,
-        address aaveToken,
-        address treasury
+        address aaveToken
     ) public initializer {
         __Ownable_init();
-        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _shareToken = aToken;
         _provider = AaveLendingPoolProviderV2(addressesProvider);
@@ -55,7 +53,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
         _stkAave = stkAave;
         _aave = aaveToken;
-        _treasury = treasury;
     }
 
     modifier onlyStanley() {
@@ -125,6 +122,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param amount amount to claim staked _aave token from _aave incentive.
      */
     function beforeClaim(address[] memory assets, uint256 amount) external override {
+        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
         _aaveIncentive.claimRewards(assets, amount, address(this));
         _stakedAaveInterface.cooldown();
         emit DoBeforeClaim(address(this), assets, amount);
@@ -138,6 +136,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         when window is open you can call this function to claim _aave
      */
     function doClaim() external override {
+        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
@@ -163,6 +162,13 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     function setStanley(address stanley) external override onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
+    }
+
+    function setTreasury(address treasury) external onlyOwner {
+        console.log("AaveStrategy -> setTreasury -> treasury: ", treasury);
+        require(treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+        _treasury = treasury;
+        emit SetTreasury(address(this), treasury);
     }
 
     /**

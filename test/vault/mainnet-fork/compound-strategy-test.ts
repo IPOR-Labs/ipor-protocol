@@ -82,8 +82,8 @@ describe("compound deployed Contract on Mainnet fork", function () {
                 cDaiAddress,
                 ComptrollerAddress,
                 COMP,
-                await signer.getAddress(),
             ]);
+            await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             await strategyContract_Instance.setStanley(await signer.getAddress());
 

@@ -54,8 +54,8 @@ describe("Compound strategy", () => {
             cDAI.address,
             comptroller.address,
             COMP.address,
-            await userTwo.getAddress(),
         ]);
+        await compoundStrategyInstance.setTreasury(await userTwo.getAddress());
     });
 
     it("Should be able to setup Stanley", async () => {

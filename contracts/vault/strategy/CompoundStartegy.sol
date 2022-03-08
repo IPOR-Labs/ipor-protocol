@@ -38,18 +38,15 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
         address asset,
         address cErc20Contract,
         address comptroller,
-        address compToken,
-        address treasury
+        address compToken
     ) public initializer {
         __Ownable_init();
-        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _cToken = CErc20(cErc20Contract);
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
         IERC20Upgradeable(_asset).safeApprove(cErc20Contract, type(uint256).max);
         _blocksPerYear = 2102400;
-        _treasury = treasury;
     }
 
     modifier onlyStanley() {
@@ -127,6 +124,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @notice claim can only done by owner.
      */
     function doClaim() external override {
+        require(_treasury != address(0), IporErrors.WRONG_ADDRESS);
         address[] memory assets = new address[](1);
         assets[0] = address(_cToken);
         _comptroller.claimComp(address(this), assets);
@@ -138,6 +136,12 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     function setStanley(address stanley) external onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
+    }
+
+    function setTreasury(address treasury) external onlyOwner {
+        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
+        _treasury = treasury;
+        emit SetTreasury(address(this), treasury);
     }
 
     /**

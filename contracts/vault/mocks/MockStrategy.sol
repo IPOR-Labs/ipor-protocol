@@ -9,6 +9,7 @@ contract MockStrategy is IStrategy {
     uint256 private _apy;
     address private _asset;
     address private _owner;
+    address private _treasury;
 
     //TODO: use constructor
 
@@ -46,6 +47,10 @@ contract MockStrategy is IStrategy {
 
     function setShareToken(address shareToken) external {
         _shareTokens = shareToken;
+    }
+
+    function setTreasury(address treasury) external {
+        _treasury = treasury;
     }
 
     function doClaim() external override {}

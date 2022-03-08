@@ -74,8 +74,8 @@ describe("AAVE strategy", () => {
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
-            await userTwo.getAddress(),
         ]);
+        await aaveStrategyInstance.setTreasury(await userTwo.getAddress());
     });
 
     it("Should be able to setup Stanley", async () => {
@@ -97,16 +97,6 @@ describe("AAVE strategy", () => {
     });
 
     it("Should not be able to create aave strategy", async () => {
-        await expect(
-            upgrades.deployProxy(AaveStrategyInstance, [
-                DAI.address,
-                aDAI.address,
-                addressProvider.address,
-                stakedAave.address,
-                aaveIncentivesController.address,
-                AAVE.address,
-                AddressZero,
-            ])
-        ).to.be.revertedWith("IPOR_37");
+        await expect(aaveStrategyInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_500");
     });
 });

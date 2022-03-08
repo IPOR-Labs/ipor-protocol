@@ -104,9 +104,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             stkAave,
             aaveIncentiveAddress,
             AAVE,
-            await signer.getAddress(),
         ])) as AaveStrategy;
-        // getUserUnclaimedRewards
+
+        await aaveStrategyContract_Instance.setTreasury(await signer.getAddress());
+
         aaveIncentiveContract = new hre.ethers.Contract(
             aaveIncentiveAddress,
             aaveIncentiveContractAbi,
@@ -136,8 +137,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             cDaiAddress,
             ComptrollerAddress,
             COMP,
-            await signer.getAddress(),
         ])) as CompoundStrategy;
+
+        await compoundStrategyContract_Instance.setTreasury(await signer.getAddress());
 
         compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
 
