@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../IporErrors.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import {IporMath} from "../../libraries/IporMath.sol";
+import "hardhat/console.sol";
 
 contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -21,7 +22,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     address private _aave;
     address private _stkAave;
     address private _stanley;
-    address private _claimAddress;
+    address private _treasury;
 
     AaveLendingPoolProviderV2 private _provider;
     StakedAaveInterface private _stakedAaveInterface;
@@ -42,10 +43,10 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         address stkAave,
         address aaveIncentive,
         address aaveToken,
-        address claimAddress
+        address treasury
     ) public initializer {
         __Ownable_init();
-        require(claimAddress != address(0), IporErrors.WRONG_ADDRESS);
+        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _shareToken = aToken;
         _provider = AaveLendingPoolProviderV2(addressesProvider);
@@ -54,7 +55,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
         _stkAave = stkAave;
         _aave = aaveToken;
-        _claimAddress = claimAddress;
+        _treasury = treasury;
     }
 
     modifier onlyStanley() {
@@ -123,7 +124,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @param assets assets for claim _aave gov token.
      * @param amount amount to claim staked _aave token from _aave incentive.
      */
-    function beforeClaim(address[] memory assets, uint256 amount) public override {
+    function beforeClaim(address[] memory assets, uint256 amount) external override {
         _aaveIncentive.claimRewards(assets, amount, address(this));
         _stakedAaveInterface.cooldown();
         emit DoBeforeClaim(address(this), assets, amount);
@@ -136,7 +137,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         so you have to claim beforeClaim function. 
         when window is open you can call this function to claim _aave
      */
-    function doClaim() public override {
+    function doClaim() external override {
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
@@ -150,10 +151,12 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
                 IERC20Upgradeable(_stkAave).balanceOf(address(this))
             );
             uint256 balance = IERC20Upgradeable(_aave).balanceOf(address(this));
-            IERC20Upgradeable(_aave).safeTransfer(_claimAddress, balance);
+            IERC20Upgradeable(_aave).safeTransfer(_treasury, balance);
             address[] memory assets = new address[](1);
             assets[0] = _aave;
-            emit DoClaim(address(this), assets, _claimAddress, balance);
+            console.log("AaveStrategy -> doClaim -> DoClaim");
+            emit DoClaim(address(this), assets, _treasury, balance);
+            console.log("AaveStrategy -> doClaim -> DoClaim -> after");
         }
     }
 
