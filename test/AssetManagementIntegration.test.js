@@ -29,12 +29,8 @@ describe("AssetManagementIntegration", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     beforeEach(async () => {});
@@ -70,9 +66,7 @@ describe("AssetManagementIntegration", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_20_000_18DEC, timestamp);
 
-        await testData.josephDai
-            .connect(admin)
-            .depositToStanley(USD_1_000_18DEC);
+        await testData.josephDai.connect(admin).depositToStanley(USD_1_000_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
         await testData.stanleyDai
@@ -81,13 +75,9 @@ describe("AssetManagementIntegration", () => {
 
         const expectedMiltonStableBalance = BigInt("1700255000000000000000");
         //collateral + opening fee + ipor vault interest
-        const expectedMiltonLiquidityPoolBalance = BigInt(
-            "20003000000000000000000"
-        );
+        const expectedMiltonLiquidityPoolBalance = BigInt("20003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt(
-            "18302745000000000000000"
-        );
+        const expectedIporVaultStableBalance = BigInt("18302745000000000000000");
 
         //when
         await testData.josephDai.connect(userOne).rebalance();
@@ -96,24 +86,21 @@ describe("AssetManagementIntegration", () => {
         const actualMiltonStableBalance = await testData.tokenDai.balanceOf(
             testData.miltonDai.address
         );
-        const actualIporVaultStableBalance =
-            await testData.stanleyDai.totalBalance(testData.miltonDai.address);
+        const actualIporVaultStableBalance = await testData.stanleyDai.totalBalance(
+            testData.miltonDai.address
+        );
 
-        const actualMiltonBalance =
-            await testData.miltonStorageDai.getBalance();
+        const actualMiltonBalance = await testData.miltonStorageDai.getBalance();
 
-        const actualMiltonAccruedBalance =
-            await testData.miltonDai.getAccruedBalance();
+        const actualMiltonAccruedBalance = await testData.miltonDai.getAccruedBalance();
 
-        expect(
-            expectedMiltonStableBalance,
-            `Incorrect Milton stables balance`
-        ).to.be.eq(actualMiltonStableBalance);
+        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.eq(
+            actualMiltonStableBalance
+        );
 
-        expect(
-            expectedIporVaultStableBalance,
-            `Incorrect Ipor Vault stables balance`
-        ).to.be.eq(actualIporVaultStableBalance);
+        expect(expectedIporVaultStableBalance, `Incorrect Ipor Vault stables balance`).to.be.eq(
+            actualIporVaultStableBalance
+        );
 
         expect(
             expectedMiltonLiquidityPoolBalance,
@@ -158,14 +145,9 @@ describe("AssetManagementIntegration", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_1_000_18DEC, timestamp);
 
-        await testData.tokenDai.transfer(
-            testData.miltonDai.address,
-            USD_19_997_18DEC
-        );
+        await testData.tokenDai.transfer(testData.miltonDai.address, USD_19_997_18DEC);
 
-        await testData.josephDai
-            .connect(admin)
-            .depositToStanley(USD_19_997_18DEC);
+        await testData.josephDai.connect(admin).depositToStanley(USD_19_997_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
         await testData.stanleyDai
@@ -174,13 +156,9 @@ describe("AssetManagementIntegration", () => {
 
         const expectedMiltonStableBalance = BigInt("1785000000000000000000");
 
-        const expectedMiltonLiquidityPoolBalance = BigInt(
-            "1003000000000000000000"
-        );
+        const expectedMiltonLiquidityPoolBalance = BigInt("1003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt(
-            "19215000000000000000000"
-        );
+        const expectedIporVaultStableBalance = BigInt("19215000000000000000000");
 
         //when
         await testData.josephDai.connect(userOne).rebalance();
@@ -189,24 +167,21 @@ describe("AssetManagementIntegration", () => {
         const actualMiltonStableBalance = await testData.tokenDai.balanceOf(
             testData.miltonDai.address
         );
-        const actualIporVaultStableBalance =
-            await testData.stanleyDai.totalBalance(testData.miltonDai.address);
+        const actualIporVaultStableBalance = await testData.stanleyDai.totalBalance(
+            testData.miltonDai.address
+        );
 
-        const actualMiltonBalance =
-            await testData.miltonStorageDai.getBalance();
+        const actualMiltonBalance = await testData.miltonStorageDai.getBalance();
 
-        const actualMiltonAccruedBalance =
-            await testData.miltonDai.getAccruedBalance();
+        const actualMiltonAccruedBalance = await testData.miltonDai.getAccruedBalance();
 
-        expect(
-            expectedMiltonStableBalance,
-            `Incorrect Milton stables balance`
-        ).to.be.eq(actualMiltonStableBalance);
+        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.eq(
+            actualMiltonStableBalance
+        );
 
-        expect(
-            expectedIporVaultStableBalance,
-            `Incorrect Ipor Vault stables balance`
-        ).to.be.eq(actualIporVaultStableBalance);
+        expect(expectedIporVaultStableBalance, `Incorrect Ipor Vault stables balance`).to.be.eq(
+            actualIporVaultStableBalance
+        );
 
         expect(
             expectedMiltonLiquidityPoolBalance,
@@ -251,14 +226,9 @@ describe("AssetManagementIntegration", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_1_000_18DEC, timestamp);
 
-        await testData.tokenDai.transfer(
-            testData.miltonDai.address,
-            USD_19_997_18DEC
-        );
+        await testData.tokenDai.transfer(testData.miltonDai.address, USD_19_997_18DEC);
 
-        await testData.josephDai
-            .connect(admin)
-            .depositToStanley(USD_19_997_18DEC);
+        await testData.josephDai.connect(admin).depositToStanley(USD_19_997_18DEC);
 
         //Force deposit to simulate that IporVault earn money for Milton $3
         await testData.stanleyDai
@@ -267,13 +237,9 @@ describe("AssetManagementIntegration", () => {
 
         const expectedMiltonStableBalance = BigInt("1628000000000000000000");
 
-        const expectedMiltonLiquidityPoolBalance = BigInt(
-            "1003000000000000000000"
-        );
+        const expectedMiltonLiquidityPoolBalance = BigInt("1003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt(
-            "19372000000000000000000"
-        );
+        const expectedIporVaultStableBalance = BigInt("19372000000000000000000");
 
         //when
         await testData.josephDai.connect(userOne).rebalance();
@@ -282,24 +248,21 @@ describe("AssetManagementIntegration", () => {
         const actualMiltonStableBalance = await testData.tokenDai.balanceOf(
             testData.miltonDai.address
         );
-        const actualIporVaultStableBalance =
-            await testData.stanleyDai.totalBalance(testData.miltonDai.address);
+        const actualIporVaultStableBalance = await testData.stanleyDai.totalBalance(
+            testData.miltonDai.address
+        );
 
-        const actualMiltonBalance =
-            await testData.miltonStorageDai.getBalance();
+        const actualMiltonBalance = await testData.miltonStorageDai.getBalance();
 
-        const actualMiltonAccruedBalance =
-            await testData.miltonDai.getAccruedBalance();
+        const actualMiltonAccruedBalance = await testData.miltonDai.getAccruedBalance();
 
-        expect(
-            expectedMiltonStableBalance,
-            `Incorrect Milton stables balance`
-        ).to.be.eq(actualMiltonStableBalance);
+        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.eq(
+            actualMiltonStableBalance
+        );
 
-        expect(
-            expectedIporVaultStableBalance,
-            `Incorrect Ipor Vault stables balance`
-        ).to.be.eq(actualIporVaultStableBalance);
+        expect(expectedIporVaultStableBalance, `Incorrect Ipor Vault stables balance`).to.be.eq(
+            actualIporVaultStableBalance
+        );
 
         expect(
             expectedMiltonLiquidityPoolBalance,
