@@ -90,7 +90,7 @@ export default ({ drizzle, drizzleState }) => {
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                {/* <Tab eventKey="globalConfig" title="Global Config">
+                <Tab eventKey="globalConfig" title="Global Config">
                     <GlobalConfigurationComponent
                         drizzle={drizzle}
                         drizzleState={drizzleState}
@@ -137,7 +137,7 @@ export default ({ drizzle, drizzleState }) => {
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                     />
-                </Tab> */}
+                </Tab>
             </Tabs>
         </div>
     );
