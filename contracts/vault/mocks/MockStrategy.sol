@@ -59,7 +59,7 @@ contract MockStrategy is IStrategy {
         _owner = newOwner;
     }
 
-    function beforeClaim(address[] memory assets, uint256 amount) external {}
+    function beforeClaim() external {}
 
     function setStanley(address stanley) external {
         _stanley = stanley;

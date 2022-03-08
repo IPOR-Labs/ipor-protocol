@@ -115,7 +115,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev beforeClaim is not needed to implement
      */
-    function beforeClaim(address[] memory assets, uint256 amount) external {
+    function beforeClaim() external {
         // No implementation
     }
 

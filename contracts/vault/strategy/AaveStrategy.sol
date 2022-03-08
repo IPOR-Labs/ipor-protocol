@@ -118,14 +118,14 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     /**
      * @dev Claim stakedAAVE token first.
      * @notice Internal method.
-     * @param assets assets for claim _aave gov token.
-     * @param amount amount to claim staked _aave token from _aave incentive.
      */
-    function beforeClaim(address[] memory assets, uint256 amount) external override {
+    function beforeClaim() external override {
         require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
-        _aaveIncentive.claimRewards(assets, amount, address(this));
+        address[] memory assets = new address[](1);
+        assets[0] = _aave;
+        _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
         _stakedAaveInterface.cooldown();
-        emit DoBeforeClaim(address(this), assets, amount);
+        emit DoBeforeClaim(address(this), assets);
     }
 
     /**

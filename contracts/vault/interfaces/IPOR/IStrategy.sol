@@ -15,7 +15,7 @@ interface IStrategy {
 
     function withdraw(uint256 amount) external;
 
-    function beforeClaim(address[] memory assets, uint256 amount) external;
+    function beforeClaim() external;
 
     function doClaim() external;
 
@@ -24,10 +24,10 @@ interface IStrategy {
     function setTreasury(address treasury) external;
 
     event SetStanley(address sender, address newStanley, address strategy);
-
+    // TODO: ADD test for events into fork test
     event DoClaim(address strategy, address[] assets, address claimAddress, uint256 amount);
 
-    event DoBeforeClaim(address strategy, address[] assets, uint256 amount);
+    event DoBeforeClaim(address strategy, address[] assets);
 
     event SetTreasury(address strategy, address newTreasury);
 }
