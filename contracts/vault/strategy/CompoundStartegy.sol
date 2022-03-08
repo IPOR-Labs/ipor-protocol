@@ -19,7 +19,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     address private _asset;
     CErc20 private _cToken;
     uint256 private _blocksPerYear;
-    address private _claimAddress;
+    address private _treasury;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
@@ -39,17 +39,17 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
         address cErc20Contract,
         address comptroller,
         address compToken,
-        address claimAddress
+        address treasury
     ) public initializer {
         __Ownable_init();
-        require(claimAddress != address(0), IporErrors.WRONG_ADDRESS);
+        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
         _asset = asset;
         _cToken = CErc20(cErc20Contract);
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
         IERC20Upgradeable(_asset).safeApprove(cErc20Contract, type(uint256).max);
         _blocksPerYear = 2102400;
-        _claimAddress = claimAddress;
+        _treasury = treasury;
     }
 
     modifier onlyStanley() {
@@ -118,7 +118,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev beforeClaim is not needed to implement
      */
-    function beforeClaim(address[] memory assets, uint256 amount) public {
+    function beforeClaim(address[] memory assets, uint256 amount) external {
         // No implementation
     }
 
@@ -131,8 +131,8 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
         assets[0] = address(_cToken);
         _comptroller.claimComp(address(this), assets);
         uint256 compBal = _compToken.balanceOf(address(this));
-        _compToken.safeTransfer(_claimAddress, compBal);
-        emit DoClaim(address(this), assets, _claimAddress, compBal);
+        _compToken.safeTransfer(_treasury, compBal);
+        emit DoClaim(address(this), assets, _treasury, compBal);
     }
 
     function setStanley(address stanley) external onlyOwner {

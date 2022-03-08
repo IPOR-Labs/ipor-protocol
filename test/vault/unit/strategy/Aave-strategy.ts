@@ -3,7 +3,7 @@ import chai from "chai";
 const keccak256 = require("keccak256");
 import { constants, BigNumber, Signer } from "ethers";
 
-const { MaxUint256 } = constants;
+const { MaxUint256, AddressZero } = constants;
 import { solidity } from "ethereum-waffle";
 import daiAbi from "../../../../artifacts/contracts/vault/mocks/aave/MockDAI.sol/MockDAI.json";
 // import daiAbi from "../../../../"
@@ -29,6 +29,9 @@ describe("AAVE strategy", () => {
     let AAVE: ERC20;
     let stakedAave: MockStakedAave;
     let admin: Signer, userOne: Signer, userTwo: Signer;
+    let addressProvider: MockAaveLendingPoolProvider;
+    let aaveIncentivesController: MockAaveIncentivesController;
+    let AaveStrategyInstance: any;
 
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
@@ -45,7 +48,7 @@ describe("AAVE strategy", () => {
         const MockAaveLendingPoolProvider = await hre.ethers.getContractFactory(
             "MockAaveLendingPoolProvider"
         );
-        const addressProvider =
+        addressProvider =
             (await MockAaveLendingPoolProvider.deploy()) as MockAaveLendingPoolProvider;
         const MockAaveLendingPool = await hre.ethers.getContractFactory("MockAaveLendingPoolV2");
         const lendingPool = (await MockAaveLendingPool.deploy(
@@ -59,11 +62,11 @@ describe("AAVE strategy", () => {
         const MockAaveIncentivesController = await hre.ethers.getContractFactory(
             "MockAaveIncentivesController"
         );
-        const aaveIncentivesController = (await MockAaveIncentivesController.deploy(
+        aaveIncentivesController = (await MockAaveIncentivesController.deploy(
             stakedAave.address
         )) as MockAaveIncentivesController;
 
-        const AaveStrategyInstance = await hre.ethers.getContractFactory("AaveStrategy");
+        AaveStrategyInstance = await hre.ethers.getContractFactory("AaveStrategy");
         aaveStrategyInstance = await upgrades.deployProxy(AaveStrategyInstance, [
             DAI.address,
             aDAI.address,
@@ -91,5 +94,19 @@ describe("AAVE strategy", () => {
         await expect(
             aaveStrategyInstance.connect(userOne).setStanley(stanleyAddress)
         ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+    it("Should not be able to create aave strategy", async () => {
+        await expect(
+            upgrades.deployProxy(AaveStrategyInstance, [
+                DAI.address,
+                aDAI.address,
+                addressProvider.address,
+                stakedAave.address,
+                aaveIncentivesController.address,
+                AAVE.address,
+                AddressZero,
+            ])
+        ).to.be.revertedWith("IPOR_37");
     });
 });

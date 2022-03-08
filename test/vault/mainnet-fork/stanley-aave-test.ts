@@ -380,6 +380,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
         await hre.network.provider.send("evm_mine");
         await aaveStrategyContract_Instance.doClaim();
+        await expect(aaveStrategyContract_Instance.doClaim()).to.emit(
+            aaveStrategyContract_Instance,
+            "DoClaim"
+        );
 
         // then
 
