@@ -33,6 +33,7 @@ library DataTypes {
         uint256 treasury;
     }
 
+    //@dev all balances in 18 decimals
     struct MiltonBalanceMemory {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint256 payFixedSwaps;
@@ -43,6 +44,8 @@ library DataTypes {
         uint256 liquidityPool;
         uint256 vault;
     }
+
+    //@dev all balances in 18 decimals
     struct MiltonBalanceStorage {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
         uint128 payFixedSwaps;

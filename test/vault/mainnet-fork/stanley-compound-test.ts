@@ -177,10 +177,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await ivToken.setStanley(stanley.address);
     });
 
-    it("Shoiuld compand APY > aave APY ", async () => {
+    it("Shoiuld compand APR > aave APR ", async () => {
         // when
-        const aaveApy = await aaveStrategyContract_Instance.getApy();
-        const compoundApy = await compoundStrategyContract_Instance.getApy();
+        const aaveApy = await aaveStrategyContract_Instance.getApr();
+        const compoundApy = await compoundStrategyContract_Instance.getApr();
         // then
         expect(compoundApy.gt(aaveApy)).to.be.true;
     });

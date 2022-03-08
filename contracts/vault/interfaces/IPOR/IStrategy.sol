@@ -6,7 +6,7 @@ interface IStrategy {
 
     function getShareToken() external view returns (address);
 
-    function getApy() external view returns (uint256);
+    function getApr() external view returns (uint256);
 
 	//@notice return amount of asset token (stable tokens)
 	function balanceOf() external view returns (uint256);    
