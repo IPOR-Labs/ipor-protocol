@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.9;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/compound/CErc20Mock.sol";
 import "../../../libraries/IporMath.sol";
 
-contract MockCDAI is ERC20, CErc20Mock {
-    address private _dai;
+contract MockCToken is ERC20, CErc20Mock {
+    address private _asset;
     uint256 private _toTransfer;
     uint256 private _toMint;
     address private _interestRateModel;
@@ -18,18 +18,26 @@ contract MockCDAI is ERC20, CErc20Mock {
     uint256 private _reserveFactorMantissa;
     uint256 private _getCash;
     address private _comptroller;
+    uint8 private _detiomal;
 
-    constructor(address dai, address interestRateModel) public ERC20("cDAI", "cDAI") {
-        _dai = dai;
+    constructor(
+        address asset,
+        address interestRateModel,
+        uint8 decimal,
+        string memory name,
+        string memory code
+    ) public ERC20(name, code) {
+        _asset = asset;
         _interestRateModel = interestRateModel;
-        _exchangeRate = 200000000000000000;
+        _detiomal = decimal;
+        _exchangeRate = 20000000000000000000000000;
         _supplyRate = 32847953230;
-        _mint(address(this), 10**14); // 1.000.000 cDAI
-        _mint(msg.sender, 10**13); // 100.000 cDAI
+        _mint(address(this), 10**14); // 1.000.000 cToken
+        _mint(msg.sender, 10**13); // 100.000 cToken
     }
 
     function decimals() public view override returns (uint8) {
-        return 16;
+        return _detiomal;
     }
 
     function setSupplyRate(uint128 v) public {
@@ -38,9 +46,9 @@ contract MockCDAI is ERC20, CErc20Mock {
 
     function mint(uint256 amount) external override returns (uint256) {
         require(
-            IERC20(_dai).transferFrom(msg.sender, address(this), amount),
+            IERC20(_asset).transferFrom(msg.sender, address(this), amount),
             "Error during transferFrom"
-        ); // 1 DAI
+        );
         _mint(msg.sender, IporMath.division((amount * 10**18), _exchangeRate));
 
         return 0;
@@ -49,9 +57,9 @@ contract MockCDAI is ERC20, CErc20Mock {
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
-            IERC20(_dai).transfer(msg.sender, IporMath.division(amount * _exchangeRate, 10**18)),
+            IERC20(_asset).transfer(msg.sender, IporMath.division(amount * _exchangeRate, 10**18)),
             "Error during transfer"
-        ); // 1 DAI
+        );
         return 0;
     }
 

@@ -152,7 +152,6 @@ describe("Stanley -> Deposit", () => {
         let MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
         cDAI = (await MockCDAIFactory.deploy(
             DAI.address,
-            await admin.getAddress(),
             MockWhitePaperInstance.address
         )) as MockCDAI;
         DAI.mint(cDAI.address, one.mul(10000));

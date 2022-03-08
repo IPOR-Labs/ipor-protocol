@@ -91,7 +91,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
 
     /**
      * @dev Deposit into compound lending.
-     * @notice deposit can only done by owner.
+     * @notice deposit can only done by Stanley .
      * @param amount amount to deposit in compound lending.
      */
     function deposit(uint256 amount) external override onlyStanley {

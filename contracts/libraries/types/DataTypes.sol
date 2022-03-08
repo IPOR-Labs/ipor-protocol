@@ -133,6 +133,14 @@ library DataTypes {
         //@notice Fixed interest rate at which the position has been locked (Refference leg +/- spread per leg), it is quote from spread documentation
         uint256 fixedInterestRate;
     }
+    struct OpenSwapMoney {
+        uint256 totalAmount;
+        uint256 collateral;
+        uint256 notionalAmount;
+        uint256 openingAmount;
+        uint256 iporPublicationAmount;
+        uint256 liquidationDepositAmount;
+    }
     struct NewSwap {
         address buyer;
         uint256 startingTimestamp;

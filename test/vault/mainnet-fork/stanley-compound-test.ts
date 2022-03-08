@@ -18,7 +18,7 @@ import {
     AaveStrategy,
     CompoundStrategy,
     TestERC20,
-    MockADAI,
+    MockADai,
     MockAaveLendingPoolProvider,
     MockAaveLendingPoolCore,
     AaveInterestRateMockStrategyV2,

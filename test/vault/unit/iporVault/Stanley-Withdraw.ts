@@ -8,7 +8,7 @@ import {
     AaveStrategy,
     CompoundStrategy,
     TestERC20,
-    MockADAI,
+    MockADai as MockADAI,
     MockAaveLendingPoolProvider,
     MockAaveLendingPoolCore,
     AaveInterestRateMockStrategyV2,
@@ -154,7 +154,6 @@ describe("Stanley -> Withdraw", () => {
         let MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
         cDAI = (await MockCDAIFactory.deploy(
             DAI.address,
-            await admin.getAddress(),
             MockWhitePaperInstance.address
         )) as MockCDAI;
         DAI.mint(cDAI.address, TC_AMOUNT_10000_USD_18DEC);

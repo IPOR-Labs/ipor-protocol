@@ -19,12 +19,9 @@ contract MockADAI is ERC20, AToken {
         return _dai;
     }
 
-    function redeem(uint256 amount) external override {
+    function redeem(uint256 amount) external {
         _burn(msg.sender, amount);
-        require(
-            IERC20(_dai).transfer(msg.sender, amount),
-            "Error during transfer"
-        ); // 1 DAI
+        require(IERC20(_dai).transfer(msg.sender, amount), "Error during transfer"); // 1 DAI
     }
 
     function setPriceForTest(uint256 price) external {
@@ -42,18 +39,14 @@ contract MockADAI is ERC20, AToken {
         uint256 index
     ) external override {
         _burn(user, amount);
-        require(
-            IERC20(_dai).transfer(receiverOfUnderlying, amount),
-            "Error during transfer"
-        );
+        require(IERC20(_dai).transfer(receiverOfUnderlying, amount), "Error during transfer");
     }
 
-    function getIncentivesController()
-        external
-        view
-        override
-        returns (address)
-    {
+    function getIncentivesController() external view returns (address) {
         return _controller;
+    }
+
+    function mint(address account, uint256 amount) external {
+        _mint(account, amount);
     }
 }
