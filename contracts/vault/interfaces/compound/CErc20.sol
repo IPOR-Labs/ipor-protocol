@@ -12,4 +12,6 @@ interface CErc20 {
     function exchangeRateStored() external view returns (uint256);
 
     function redeem(uint256) external returns (uint256);
+
+    function decimals() external view returns (uint8);
 }

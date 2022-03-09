@@ -104,7 +104,12 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @param amount amount to withdraw from compound lending.
      */
     function withdraw(uint256 amount) external override onlyStanley {
-        _cToken.redeem(IporMath.division(amount * 1e18, _cToken.exchangeRateStored()));
+        _cToken.redeem(
+            IporMath.division(
+                amount * 10**(ERC20Upgradeable(_asset).decimals()),
+                _cToken.exchangeRateStored()
+            )
+        );
         IERC20Upgradeable(address(_asset)).safeTransfer(
             msg.sender,
             IERC20Upgradeable(_asset).balanceOf(address(this))

@@ -31,7 +31,7 @@ describe("compound deployed Contract on Mainnet fork", function () {
         return;
     }
 
-    describe("create functions", () => {
+    describe("Compound Strategy Dai", () => {
         before(async () => {
             maxValue =
                 "115792089237316195423570985008687907853269984665640564039457584007913129639935";
@@ -57,56 +57,34 @@ describe("compound deployed Contract on Mainnet fork", function () {
 
             daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer);
             compContract = new hre.ethers.Contract(COMP, daiAbi, signer);
-            cTokenContract = new hre.ethers.Contract(
-                cDaiAddress,
-                daiAbi,
-                signer
-            );
+            cTokenContract = new hre.ethers.Contract(cDaiAddress, daiAbi, signer);
 
-            impersonateBalanceBefore = await daiContract.balanceOf(
-                accountToImpersonate
-            );
+            impersonateBalanceBefore = await daiContract.balanceOf(accountToImpersonate);
 
-            console.log(
-                "impersonateBalanceBefore: ",
-                impersonateBalanceBefore.toString()
-            );
-            ourAccountBalanceBefore = await daiContract.balanceOf(
-                accounts[0].address
-            );
+            console.log("impersonateBalanceBefore: ", impersonateBalanceBefore.toString());
+            ourAccountBalanceBefore = await daiContract.balanceOf(accounts[0].address);
 
-            await daiContract.transfer(
-                accounts[0].address,
-                impersonateBalanceBefore
-            );
+            await daiContract.transfer(accounts[0].address, impersonateBalanceBefore);
 
             signer = await hre.ethers.provider.getSigner(accounts[0].address);
             daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer);
 
-            ourAccountBalanceAfter = await daiContract.balanceOf(
-                accounts[0].address
-            );
-            console.log(
-                "ourAccountBalanceAfter: ",
-                ourAccountBalanceAfter.toString()
-            );
+            ourAccountBalanceAfter = await daiContract.balanceOf(accounts[0].address);
+            console.log("ourAccountBalanceAfter: ", ourAccountBalanceAfter.toString());
 
             //  ********************************************************************************************
             //  **************                      Deploy strategy                           **************
             //  ********************************************************************************************
 
-            strategyContract = await hre.ethers.getContractFactory(
-                "CompoundStrategy",
-                signer
-            );
-            strategyContract_Instance = await upgrades.deployProxy(
-                strategyContract,
-                [daiAddress, cDaiAddress, ComptrollerAddress, COMP]
-            );
+            strategyContract = await hre.ethers.getContractFactory("CompoundStrategy", signer);
+            strategyContract_Instance = await upgrades.deployProxy(strategyContract, [
+                daiAddress,
+                cDaiAddress,
+                ComptrollerAddress,
+                COMP,
+            ]);
 
-            await strategyContract_Instance.setStanley(
-                await signer.getAddress()
-            );
+            await strategyContract_Instance.setStanley(await signer.getAddress());
 
             compTrollerContract = new hre.ethers.Contract(
                 ComptrollerAddress,
@@ -115,54 +93,48 @@ describe("compound deployed Contract on Mainnet fork", function () {
             );
         });
 
-        it("hardhat_impersonateAccount and check transfered balance to our account", async function () {
-            let daiBalanceBefore = await daiContract.balanceOf(
-                accounts[0].address
-            );
-            console.log("Dai Balance Before", daiBalanceBefore.toString());
+        it("Should pass flow deposit, withdraw, claim for dai", async function () {
+            let usdcBalanceBefore = await daiContract.balanceOf(accounts[0].address);
+            console.log("DAI Balance Before", usdcBalanceBefore.toString());
 
-            await daiContract.approve(
-                strategyContract_Instance.address,
-                maxValue
+            const strategyBalanceBeforeDeposit = await strategyContract_Instance.balanceOf();
+            console.log(
+                "Strategy balanse befor deposit: ",
+                strategyBalanceBeforeDeposit.toString()
             );
 
-            await strategyContract_Instance
-                .connect(signer)
-                .deposit("10000000000000000000");
+            await daiContract.approve(strategyContract_Instance.address, maxValue);
+            console.log("Deposite amound: 1000000000000000000");
+            await strategyContract_Instance.connect(signer).deposit("1000000000000000000");
             console.log("Deposite complete");
+            const strategyBalanceAfterDeposit = await strategyContract_Instance.balanceOf();
+            console.log("Strategy balanse after deposit: ", strategyBalanceAfterDeposit.toString());
 
             const timestamp = Math.floor(Date.now() / 1000) + 864000 * 4;
-            console.log("Timestamp: ", timestamp);
-
-            await hre.network.provider.send("evm_setNextBlockTimestamp", [
-                timestamp,
-            ]);
+            await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
             await hre.network.provider.send("evm_mine");
 
-            const cTokenBal = await cTokenContract.balanceOf(
-                strategyContract_Instance.address
-            );
+            const cTokenBal = await cTokenContract.balanceOf(strategyContract_Instance.address);
             console.log("cToken Balance: ", cTokenBal.toString());
 
             await cTokenContract
                 .connect(signer)
                 .approve(strategyContract_Instance.address, maxValue);
-            await strategyContract_Instance.withdraw(cTokenBal);
+            await strategyContract_Instance.withdraw(strategyBalanceAfterDeposit);
             console.log("Withdraw Complete");
+            const strategyBalAfterWithdraw = await strategyContract_Instance.balanceOf();
+            console.log("Strategy Balance after withdraw: ", strategyBalAfterWithdraw.toString());
 
-            await strategyContract_Instance.doClaim(accounts[0].address, [
-                cDaiAddress,
-            ]);
+            let compGoveBalanceBeforeClaim = await compContract.balanceOf(accounts[0].address);
+            console.log("Comp Balance before claim", compGoveBalanceBeforeClaim.toString());
 
-            let compGoveBalance = await compContract.balanceOf(
-                accounts[0].address
-            );
-            console.log("Claimed Comp Balance", compGoveBalance.toString());
+            await strategyContract_Instance.doClaim(accounts[0].address, [cDaiAddress]);
 
-            let daiBalanceAfter = await daiContract.balanceOf(
-                accounts[0].address
-            );
-            console.log("Dai Balance After", daiBalanceAfter.toString());
+            let compGoveBalance = await compContract.balanceOf(accounts[0].address);
+            console.log("Claimed Comp Balance after claim", compGoveBalance.toString());
+
+            let usdcBalanceAfter = await daiContract.balanceOf(accounts[0].address);
+            console.log("USDT Balance After", usdcBalanceAfter.toString());
         });
     });
 });
