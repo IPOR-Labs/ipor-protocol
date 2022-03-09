@@ -59,7 +59,7 @@ library IporErrors {
         public constant MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY =
         "IPOR_16";
 
-		string public constant MILTON_LP_UTILIZATION_EXCEEDED = "IPOR_17";
+    string public constant MILTON_LP_UTILIZATION_EXCEEDED = "IPOR_17";
 
     //@notice Input arrays which should have the same length - mismatch
     string public constant WARREN_INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
@@ -209,4 +209,6 @@ library IporErrors {
 
     //only milton can have access to function
     string public constant CALLER_NOT_MILTON = "IPOR_105";
+
+    string public constant TREASURY_COULD_NOT_BE_ZERO = "IPOR_500";
 }

@@ -50,7 +50,6 @@ describe("Compound strategy", () => {
 
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
-
         const MockWhitePaper = await hre.ethers.getContractFactory("MockWhitePaper");
         const MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
 
@@ -120,18 +119,21 @@ describe("Compound strategy", () => {
             comptrollerDAI.address,
             COMP.address,
         ]);
+        await compoundStrategyInstanceDAI.setTreasury(await admin.getAddress());
         compoundStrategyInstanceUSDT = await upgrades.deployProxy(compoundNewStartegy, [
             USDT.address,
             cUSDT.address,
             comptrollerUSDT.address,
             COMP.address,
         ]);
+        await compoundStrategyInstanceUSDT.setTreasury(await admin.getAddress());
         compoundStrategyInstanceUSDC = await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
             cUSDC.address,
             comptrollerUSDT.address,
             COMP.address,
         ]);
+        await compoundStrategyInstanceUSDC.setTreasury(await admin.getAddress());
     });
 
     it("Should be able to setup Stanley", async () => {

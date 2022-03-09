@@ -20,6 +20,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     address private _asset;
     CErc20 private _cToken;
     uint256 private _blocksPerYear;
+    address private _treasury;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
@@ -128,26 +129,33 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev beforeClaim is not needed to implement
      */
-    function beforeClaim(address[] memory assets, uint256 amount) public onlyStanley {
+    function beforeClaim() external {
         // No implementation
     }
 
     /**
      * @dev Claim extra reward of Governace token(COMP).
      * @notice claim can only done by owner.
-     * @param vault vault address where send to claimed COMP token.
-     * @param assets assets for claim COMP gov token.
      */
-    function doClaim(address vault, address[] memory assets) external override onlyStanley {
-        require(vault != address(0), IporErrors.WRONG_ADDRESS);
+    function doClaim() external override {
+        require(_treasury != address(0), IporErrors.WRONG_ADDRESS);
+        address[] memory assets = new address[](1);
+        assets[0] = address(_cToken);
         _comptroller.claimComp(address(this), assets);
         uint256 compBal = _compToken.balanceOf(address(this));
-        _compToken.safeTransfer(vault, compBal);
+        _compToken.safeTransfer(_treasury, compBal);
+        emit DoClaim(address(this), assets, _treasury, compBal);
     }
 
     function setStanley(address stanley) external onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
+    }
+
+    function setTreasury(address treasury) external onlyOwner {
+        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
+        _treasury = treasury;
+        emit SetTreasury(address(this), treasury);
     }
 
     /**
