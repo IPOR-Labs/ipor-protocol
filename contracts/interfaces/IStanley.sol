@@ -2,18 +2,27 @@
 pragma solidity 0.8.9;
 
 interface IStanley {
-    //@notice return amount of assset token
+    //@notice return amount of assset token always in 18 decimals
     function totalBalance(address who) external view returns (uint256);
 
     //@notice in return balance before deposit
-    function deposit(uint256 amount) external returns (uint256 balance);
+    //@dev input and output values are represented in 18 decimals
+    //@param amount - deposited amount
+    //@return current balance
+    function deposit(uint256 amount) external returns (uint256 vaultBalance);
 
     //@notice withdraw specific amount of stable
+    //@dev input and output values are represented in 18 decimals
+    //@param amount - deposited amount
+    //@return withdrawnValue final withdrawn value of underlying tokens, widthdrawnValue can be different
+    //than amount because balance on strategy site can be too low or exchangeRate of shareToken could change
+    //or calculation could influence on final value.
+    //@return balance - current balance in all strategies
     function withdraw(uint256 amount)
         external
-        returns (uint256 withdrawnValue, uint256 balance);
+        returns (uint256 withdrawnValue, uint256 vaultBalance);
 
-    function withdrawAll() external;
+    function withdrawAll() external returns (uint256 withdrawnValue, uint256 vaultBalance);
 
     event Deposit(
         uint256 timestamp,

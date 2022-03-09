@@ -105,7 +105,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveIncentiveAddress,
             AAVE,
         ])) as AaveStrategy;
-        // getUserUnclaimedRewards
+
+        await aaveStrategyContract_Instance.setTreasury(await signer.getAddress());
+
         aaveIncentiveContract = new hre.ethers.Contract(
             aaveIncentiveAddress,
             aaveIncentiveContractAbi,
@@ -136,6 +138,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             ComptrollerAddress,
             COMP,
         ])) as CompoundStrategy;
+
+        await compoundStrategyContract_Instance.setTreasury(await signer.getAddress());
 
         compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
 
@@ -350,6 +354,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             "strategyATokenContractAfter"
         ).to.be.true;
     });
+    // TODO:CLAIME add event check
     it("Should Claim from AAVE", async () => {
         //given
         const depositAmound = one.mul(10);
@@ -366,21 +371,21 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const claimable = await aaveIncentiveContract.getUserUnclaimedRewards(
             aaveStrategyContract_Instance.address
         );
-        expect(claimable, "Aave Claimable Amount").to.be.equal(BigNumber.from("64932860"));
+        expect(claimable.gte(BigNumber.from("64932860")), "Aave Claimable Amount > 64932860").to.be
+            .true;
 
         const aaveBalanceBefore = await aaveContract.balanceOf(userOneAddres);
         expect(aaveBalanceBefore, "Cliamed Aave Balance Before").to.be.equal(zero);
 
         // when
-        await stanley.aaveBeforeClaim([aDaiAddress], maxValue);
+        await aaveStrategyContract_Instance.beforeClaim();
 
         await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
         await hre.network.provider.send("evm_mine");
-        await stanley.aaveDoClaim(userOneAddres);
-
+        await aaveStrategyContract_Instance.doClaim();
         // then
 
-        const userOneBalance = await aaveContract.balanceOf(userOneAddres);
+        const userOneBalance = await aaveContract.balanceOf(await signer.getAddress());
         expect(userOneBalance.gt(zero), "Cliamed Aave Balance > 0").to.be.true;
     });
 });

@@ -19,21 +19,13 @@ contract MockCaseBaseStanley is IStanley {
         _asset = IERC20(asset);
     }
 
-    function totalBalance(address who)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function totalBalance(address who) external view override returns (uint256) {
         //@dev for simplicity we assume that reading total balance not include interest
         return _balance[who];
     }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
-    function testDeposit(address recipient, uint256 assetValue)
-        external
-        returns (uint256 balance)
-    {
+    function testDeposit(address recipient, uint256 assetValue) external returns (uint256 balance) {
         balance = _balance[recipient] + assetValue;
 
         _balance[recipient] = balance;
@@ -41,11 +33,7 @@ contract MockCaseBaseStanley is IStanley {
         _asset.safeTransferFrom(msg.sender, address(this), assetValue);
     }
 
-    function deposit(uint256 assetValue)
-        external
-        override
-        returns (uint256 balance)
-    {
+    function deposit(uint256 assetValue) external override returns (uint256 balance) {
         balance = _balance[msg.sender] + assetValue;
 
         _balance[msg.sender] = balance;
@@ -71,7 +59,11 @@ contract MockCaseBaseStanley is IStanley {
         _asset.safeTransfer(msg.sender, finalAssetValue);
     }
 
-    function withdrawAll() external override {}
+    function withdrawAll()
+        external
+        override
+        returns (uint256 withdrawnValue, uint256 vaultBalance)
+    {}
 
     function _getCurrentInterest() internal pure virtual returns (uint256) {
         //@dev for test purposes always the same fixed interest for any msg.sender

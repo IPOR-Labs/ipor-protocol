@@ -134,6 +134,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         return _calculateSwapReceiveFixedValue(block.timestamp, swap);
     }
 
+    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
@@ -148,6 +149,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             );
     }
 
+    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
         uint256 maximumSlippage,
@@ -178,11 +180,13 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
 
+    //@param assetValue underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetValue) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 balance = _stanley.deposit(assetValue);
-        _miltonStorage.updateStorageWhenDepositToStanley(assetValue, balance);
+        uint256 vaultBalance = _stanley.deposit(assetValue);
+        _miltonStorage.updateStorageWhenDepositToStanley(assetValue, vaultBalance);
     }
 
+    //@param assetValue underlying token amount represented in 18 decimals
     function withdrawFromStanley(uint256 assetValue)
         external
         onlyJoseph
@@ -190,6 +194,11 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         whenNotPaused
     {
         (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdraw(assetValue);
+        _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
+    }
+
+    function withdrawAllFromStanley() external onlyJoseph nonReentrant whenNotPaused {
+        (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdrawAll();
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
 
@@ -381,6 +390,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             );
     }
 
+    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function _openSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -398,7 +408,11 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
         balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
 
-        _validateLiqudityPoolUtylization(balance.liquidityPool, balance.payFixedSwaps);
+        _validateLiqudityPoolUtylization(
+            balance.liquidityPool,
+            balance.payFixedSwaps,
+            balance.payFixedSwaps + balance.receiveFixedSwaps
+        );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
             _miltonStorage.calculateSoapPayFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
@@ -445,6 +459,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         return newSwapId;
     }
 
+    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function _openSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -463,7 +478,11 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
         balance.receiveFixedSwaps = balance.receiveFixedSwaps + bosStruct.collateral;
 
-        _validateLiqudityPoolUtylization(balance.liquidityPool, balance.receiveFixedSwaps);
+        _validateLiqudityPoolUtylization(
+            balance.liquidityPool,
+            balance.receiveFixedSwaps,
+            balance.payFixedSwaps + balance.receiveFixedSwaps
+        );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
             _miltonStorage.calculateSoapReceiveFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
@@ -512,24 +531,35 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
 
     function _validateLiqudityPoolUtylization(
         uint256 totalLiquidityPoolBalance,
-        uint256 totalCollateralPerLegBalance
+        uint256 collateralPerLegBalance,
+        uint256 totalCollateralBalance
     ) internal pure {
         uint256 utilizationRate;
+        uint256 utilizationRatePerLeg;
 
         if (totalLiquidityPoolBalance != 0) {
             utilizationRate = IporMath.division(
-                totalCollateralPerLegBalance * Constants.D18,
+                totalCollateralBalance * Constants.D18,
+                totalLiquidityPoolBalance
+            );
+
+            utilizationRatePerLeg = IporMath.division(
+                collateralPerLegBalance * Constants.D18,
                 totalLiquidityPoolBalance
             );
         } else {
             utilizationRate = Constants.MAX_VALUE;
+            utilizationRatePerLeg = Constants.MAX_VALUE;
         }
 
-        //TODO: utilization 80%
+        require(
+            utilizationRate <= _getMaxLpUtilizationPercentage(),
+            IporErrors.MILTON_LP_UTILIZATION_EXCEEDED
+        );
 
         require(
-            utilizationRate <= _getMaxLpUtilizationPerLegPercentage(),
-            IporErrors.MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED
+            utilizationRatePerLeg <= _getMaxLpUtilizationPerLegPercentage(),
+            IporErrors.MILTON_LP_UTILIZATION_PER_LEG_EXCEEDED
         );
     }
 

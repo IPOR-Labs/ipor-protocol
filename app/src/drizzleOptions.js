@@ -30,6 +30,12 @@ import ItfJosephDai from "./contracts/ItfJosephDai.json";
 import StanleyUsdt from "./contracts/StanleyUsdt.json";
 import StanleyUsdc from "./contracts/StanleyUsdc.json";
 import StanleyDai from "./contracts/StanleyDai.json";
+import StrategyAaveUsdt from "./contracts/StrategyAaveUsdt.json";
+import StrategyAaveUsdc from "./contracts/StrategyAaveUsdc.json";
+import StrategyAaveDai from "./contracts/StrategyAaveDai.json";
+import StrategyCompoundUsdt from "./contracts/StrategyCompoundUsdt.json";
+import StrategyCompoundUsdc from "./contracts/StrategyCompoundUsdc.json";
+import StrategyCompoundDai from "./contracts/StrategyCompoundDai.json";
 const options = {
     web3: {
         fallback: {
@@ -71,6 +77,12 @@ const options = {
         IporAssetConfigurationUsdt,
         IporAssetConfigurationUsdc,
         MiltonSpreadModel,
+        StrategyAaveUsdt,
+        StrategyAaveUsdc,
+        StrategyAaveDai,
+        StrategyCompoundUsdt,
+        StrategyCompoundUsdc,
+        StrategyCompoundDai
     ],
     // events: {
     // },
