@@ -142,6 +142,7 @@ describe("Stanley -> Deposit", () => {
             aaveIncentivesController.address,
             AAVE.address,
         ])) as AaveStrategy;
+        await aaveNewStartegyInstance.setTreasury(await userTwo.getAddress());
         //##############################################################
         //                        Compound Mock
         //##############################################################
@@ -166,6 +167,7 @@ describe("Stanley -> Deposit", () => {
             COMP.address,
         ])) as CompoundStrategy;
 
+        await compoundStartegyInstance.setTreasury(await userTwo.getAddress());
         //##############################################################
         //                        Stanley
         //##############################################################
@@ -188,26 +190,27 @@ describe("Stanley -> Deposit", () => {
     });
 
     describe("Mock setup example", () => {
-        it("Should change AVE APY", async () => {
+        it("Should change AVE APR", async () => {
             //given
-            const apyBefore = await aaveNewStartegyInstance.getApy();
+            const apyBefore = await aaveNewStartegyInstance.getApr();
             // when
             await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("5"));
             // then
-            const apyAfter = await aaveNewStartegyInstance.getApy();
-            expect(apyBefore).to.be.equal(BigNumber.from("2000000000000000000"));
-            expect(apyAfter).to.be.equal(BigNumber.from("5000000000000000000"));
+            const apyAfter = await aaveNewStartegyInstance.getApr();
+            expect(apyBefore).to.be.equal(BigNumber.from("20000000000000000"));
+            expect(apyAfter).to.be.equal(BigNumber.from("50000000000000000"));
+			
         });
 
         it("Should change Compound APY", async () => {
             //
-            const apyBefore = await compoundStartegyInstance.getApy();
+            const apyBefore = await compoundStartegyInstance.getApr();
             // when
             await cDAI.setSupplyRate(BigNumber.from("10"));
             // then
-            const apyAfter = await compoundStartegyInstance.getApy();
-            expect(apyBefore).to.be.equal(BigNumber.from("6905953687075200000"));
-            expect(apyAfter).to.be.equal(BigNumber.from("2102400000"));
+            const apyAfter = await compoundStartegyInstance.getApr();
+            expect(apyBefore).to.be.equal(BigNumber.from("69059536870752000"));
+            expect(apyAfter).to.be.equal(BigNumber.from("21024000"));
         });
     });
 

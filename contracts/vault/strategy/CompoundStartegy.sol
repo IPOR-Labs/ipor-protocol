@@ -4,6 +4,7 @@ import "../interfaces/compound/CErc20.sol";
 import "../interfaces/IPOR/IStrategy.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
 import "../interfaces/IPOR/IStrategy.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -19,6 +20,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     address private _asset;
     CErc20 private _cToken;
     uint256 private _blocksPerYear;
+    address private _treasury;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
@@ -70,9 +72,9 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev get current APY.
      */
-    function getApy() external view override returns (uint256 apr) {
+    function getApr() external view override returns (uint256 apr) {
         uint256 cRate = _cToken.supplyRatePerBlock(); // interest % per block
-        apr = (cRate * _blocksPerYear) * 100;
+        apr = cRate * _blocksPerYear;
     }
 
     /**
@@ -83,7 +85,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
         return (
             IporMath.division(
                 (_cToken.exchangeRateStored() * _cToken.balanceOf(address(this))),
-                (10**ERC20Upgradeable(_asset).decimals())
+                (10**IERC20Metadata(_asset).decimals())
             )
         );
     }
@@ -91,54 +93,70 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev Deposit into compound lending.
      * @notice deposit can only done by Stanley .
-     * @param amount amount to deposit in compound lending.
+     * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
-    function deposit(uint256 amount) external override onlyStanley {
-        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), amount);
+    function deposit(uint256 wadAmount) external override onlyStanley {
+        address asset = _asset;
+        uint256 amount = IporMath.convertWadToAssetDecimals(
+            wadAmount,
+            IERC20Metadata(asset).decimals()
+        );
+        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
         _cToken.mint(amount);
     }
 
     /**
      * @dev withdraw from compound lending.
      * @notice withdraw can only done by owner.
-     * @param amount amount to withdraw from compound lending.
+     * @param wadAmount amount to withdraw from compound lending, amount represented in 18 decimals
      */
-    function withdraw(uint256 amount) external override onlyStanley {
-        _cToken.redeem(
-            IporMath.division(
-                amount * 10**(ERC20Upgradeable(_asset).decimals()),
-                _cToken.exchangeRateStored()
-            )
+    function withdraw(uint256 wadAmount) external override onlyStanley {
+        address asset = _asset;
+
+        uint256 amount = IporMath.convertWadToAssetDecimals(
+            wadAmount,
+            IERC20Metadata(asset).decimals()
         );
-        IERC20Upgradeable(address(_asset)).safeTransfer(
+        _cToken.redeem(
+            IporMath.divisionWithoutRound(amount * Constants.D18, _cToken.exchangeRateStored())
+        );
+
+        IERC20Upgradeable(address(asset)).safeTransfer(
             msg.sender,
-            IERC20Upgradeable(_asset).balanceOf(address(this))
+            IERC20Upgradeable(asset).balanceOf(address(this))
         );
     }
 
     /**
      * @dev beforeClaim is not needed to implement
      */
-    function beforeClaim(address[] memory assets, uint256 amount) public onlyStanley {
+    function beforeClaim() external {
         // No implementation
     }
 
     /**
      * @dev Claim extra reward of Governace token(COMP).
      * @notice claim can only done by owner.
-     * @param vault vault address where send to claimed COMP token.
-     * @param assets assets for claim COMP gov token.
      */
-    function doClaim(address vault, address[] memory assets) external override onlyStanley {
-        require(vault != address(0), IporErrors.WRONG_ADDRESS);
+    function doClaim() external override {
+        require(_treasury != address(0), IporErrors.WRONG_ADDRESS);
+        address[] memory assets = new address[](1);
+        assets[0] = address(_cToken);
         _comptroller.claimComp(address(this), assets);
         uint256 compBal = _compToken.balanceOf(address(this));
-        _compToken.safeTransfer(vault, compBal);
+        _compToken.safeTransfer(_treasury, compBal);
+        emit DoClaim(address(this), assets, _treasury, compBal);
     }
 
     function setStanley(address stanley) external onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
+    }
+
+    function setTreasury(address treasury) external onlyOwner {
+        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
+        _treasury = treasury;
+        emit SetTreasury(address(this), treasury);
     }
 
     /**

@@ -87,6 +87,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             ]);
 
             await strategyContract_Instance.setStanley(await signer.getAddress());
+            await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             aaveIncentiveContract = new hre.ethers.Contract(
                 aaveIncentiveAddress,
@@ -109,7 +110,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             );
             console.log("aTokens balance before deposit: ", aUsdtBalanceBeforeDeposit.toString());
 
-            await strategyContract_Instance.deposit(BigNumber.from("10000000000"));
+            await strategyContract_Instance.deposit(BigNumber.from("100000000000000000000"));
             console.log("Deposite complete");
             const aUsdtBalanceAfterDeposit = await aTokenContract.balanceOf(
                 strategyContract_Instance.address
@@ -136,7 +137,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             await aTokenContract
                 .connect(signer)
                 .approve(strategyContract_Instance.address, maxValue);
-            await strategyContract_Instance.withdraw(aUsdtBalanceAfterAddTime);
+            await strategyContract_Instance.withdraw(strategyBalance);
             console.log("Withdraw complete");
 
             const aUsdtBalanceAfterWithdraw = await aTokenContract.balanceOf(
@@ -149,7 +150,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             );
             console.log("Aave Claimable Amount: ", claimable2.toString());
 
-            await strategyContract_Instance.beforeClaim([aUsdtAddress], claimable2);
+            await strategyContract_Instance.beforeClaim();
 
             await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
             await hre.network.provider.send("evm_mine");
@@ -157,7 +158,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             const aaveBalanceBefore = await aaveContract.balanceOf(accounts[0].address);
             console.log("Cliamed Aave Balance Before", aaveBalanceBefore.toString());
 
-            await strategyContract_Instance.doClaim(accounts[0].address, [aUsdtAddress]);
+            await strategyContract_Instance.doClaim();
 
             const aaveBalance = await aaveContract.balanceOf(accounts[0].address);
             console.log("Cliamed Aave Balance", aaveBalance.toString()); // should be non-zero

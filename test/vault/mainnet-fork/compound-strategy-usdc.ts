@@ -84,6 +84,7 @@ describe("compound deployed Contract on Mainnet fork", function () {
             ]);
 
             await strategyContract_Instance.setStanley(await signer.getAddress());
+            await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             compTrollerContract = new hre.ethers.Contract(
                 ComptrollerAddress,
@@ -101,8 +102,8 @@ describe("compound deployed Contract on Mainnet fork", function () {
             console.log("USDC Balance Before", usdcBalanceBefore.toString());
 
             await usdcContract.approve(strategyContract_Instance.address, maxValue);
-            console.log("Deposite amound: 10000000000");
-            await strategyContract_Instance.connect(signer).deposit("10000000000");
+            console.log("Deposite amound: 100000000000000000000");
+            await strategyContract_Instance.connect(signer).deposit("100000000000000000000");
             console.log("Deposite complete");
             const strategyBalanceAfterDeposit = await strategyContract_Instance.balanceOf();
             console.log("Strategy balanse after deposit: ", strategyBalanceAfterDeposit.toString());
@@ -125,7 +126,7 @@ describe("compound deployed Contract on Mainnet fork", function () {
             let compGoveBalanceBeforeClaim = await compContract.balanceOf(accounts[0].address);
             console.log("Comp Balance before claim", compGoveBalanceBeforeClaim.toString());
 
-            await strategyContract_Instance.doClaim(accounts[0].address, [cUsdcAddress]);
+            await strategyContract_Instance.doClaim();
 
             let compGoveBalance = await compContract.balanceOf(accounts[0].address);
             console.log("Claimed Comp Balance after claim", compGoveBalance.toString());

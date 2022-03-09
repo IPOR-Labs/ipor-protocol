@@ -85,6 +85,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             ]);
 
             await strategyContract_Instance.setStanley(await signer.getAddress());
+            await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             aaveIncentiveContract = new hre.ethers.Contract(
                 aaveIncentiveAddress,
@@ -148,7 +149,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             );
             console.log("Aave Claimable Amount: ", claimable2.toString());
 
-            await strategyContract_Instance.beforeClaim([aDaiAddress], claimable2);
+            await strategyContract_Instance.beforeClaim();
 
             await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
             await hre.network.provider.send("evm_mine");
@@ -156,7 +157,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             const aaveBalanceBefore = await aaveContract.balanceOf(accounts[0].address);
             console.log("Cliamed Aave Balance Before", aaveBalanceBefore.toString());
 
-            await strategyContract_Instance.doClaim(accounts[0].address, [aDaiAddress]);
+            await strategyContract_Instance.doClaim();
 
             const aaveBalance = await aaveContract.balanceOf(accounts[0].address);
             console.log("Cliamed Aave Balance", aaveBalance.toString()); // should be non-zero
