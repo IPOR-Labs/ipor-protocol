@@ -25,7 +25,7 @@ contract MockStrategy is IStrategy {
         _asset = asset;
     }
 
-    function getApy() external view returns (uint256) {
+    function getApr() external view returns (uint256) {
         return _apy;
     }
 

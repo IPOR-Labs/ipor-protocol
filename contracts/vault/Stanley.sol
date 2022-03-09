@@ -68,7 +68,7 @@ contract Stanley is
     /**
      * @dev to deposit asset in higher apy strategy.
      * @notice only owner can deposit.
-     * @param amount amount to deposit.
+     * @param amount underlying token amount represented in 18 decimals
      */
     //  TODO: ADD tests for amount = 0
     function deposit(uint256 amount) external override onlyMilton returns (uint256) {
@@ -79,15 +79,13 @@ contract Stanley is
 
         (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
 
-        uint256 multiplicator = 10**_decimals;
-
         (
             uint256 exchangeRate,
             uint256 assetBalanceAave,
             uint256 assetBalanceCompound
-        ) = _calcExchangeRate(multiplicator);
+        ) = _calcExchangeRate();
 
-        uint256 ivTokenValue = IporMath.division(amount * multiplicator, exchangeRate);
+        uint256 ivTokenValue = IporMath.division(amount * Constants.D18, exchangeRate);
 
         _depositToStrategy(strategyMaxApy, amount);
 
@@ -108,7 +106,7 @@ contract Stanley is
     /**
      * @dev to withdraw asset from current strategy.
      * @notice only owner can withdraw.
-     * @param amount of shares want to withdraw.
+     * @param amount underlying token amount represented in 18 decimals
             Shares means aTokens, cTokens
     */
     function withdraw(uint256 amount)
@@ -120,7 +118,6 @@ contract Stanley is
         console.log("Stanley -> withdraw -> amount: ", amount);
         require(amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
 
-        uint256 multiplicator = 10**_decimals;
         IIvToken ivToken = _ivToken;
 
         (
@@ -133,17 +130,20 @@ contract Stanley is
             uint256 exchangeRate,
             uint256 assetBalanceAave,
             uint256 assetBalanceCompound
-        ) = _calcExchangeRate(multiplicator);
+        ) = _calcExchangeRate();
+
         console.log("Stanley -> withdraw -> exchangeRate: ", exchangeRate);
         console.log("Stanley -> withdraw -> assetBalanceAave: ", assetBalanceAave);
         console.log("Stanley -> withdraw -> assetBalanceCompound: ", assetBalanceCompound);
 
-        uint256 ivTokenValue = IporMath.division(amount * multiplicator, exchangeRate);
+        uint256 ivTokenValue = IporMath.division(amount * Constants.D18, exchangeRate);
+
         console.log("Stanley -> withdraw -> ivTokenValue: ", ivTokenValue);
         console.log(
             "Stanley -> withdraw -> ivToken -> balanceOf -> msg.sender: ",
             ivToken.balanceOf(msg.sender)
         );
+
         require(
             ivToken.balanceOf(msg.sender) >= ivTokenValue,
             IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO
@@ -169,8 +169,10 @@ contract Stanley is
 
             withdrawnValue = amount;
             balance = assetBalanceAave + assetBalanceCompound - withdrawnValue;
+
             console.log("Stanley -> withdraw -> withdrawnValue: ", withdrawnValue);
             console.log("Stanley -> withdraw -> balance: ", balance);
+
             return (withdrawnValue, balance);
         }
 
@@ -195,17 +197,19 @@ contract Stanley is
 
             withdrawnValue = amount;
             balance = assetBalanceAave + assetBalanceCompound - withdrawnValue;
+
             console.log(
                 "Stanley -> withdraw -> amount <= assetBalanceAave -> withdrawnValue: ",
                 withdrawnValue
             );
             console.log("Stanley -> withdraw -> amount <= assetBalanceAave -> balance: ", balance);
+
             return (withdrawnValue, balance);
         }
 
         if (assetBalanceAave < assetBalanceCompound) {
             uint256 ivTokenValuePart = IporMath.division(
-                assetBalanceCompound * multiplicator,
+                assetBalanceCompound * Constants.D18,
                 exchangeRate
             );
 
@@ -222,7 +226,7 @@ contract Stanley is
         } else {
             // TODO: Add tests for DAI(18 decimals) and for USDT (6 decimals)
             uint256 ivTokenValuePart = IporMath.division(
-                assetBalanceAave * multiplicator,
+                assetBalanceAave * Constants.D18,
                 exchangeRate
             );
             ivToken.burn(msg.sender, ivTokenValuePart);
@@ -237,23 +241,31 @@ contract Stanley is
         }
 
         balance = assetBalanceAave + assetBalanceCompound - withdrawnValue;
+
         return (withdrawnValue, balance);
     }
 
-    function withdrawAll() external onlyMilton {
+    function withdrawAll()
+        external
+        override
+        onlyMilton
+        returns (uint256 withdrawnValue, uint256 vaultBalance)
+    {
         console.log("Stanley -> withdrawAll -> Start");
-        uint256 multiplicator = 10**_decimals;
 
         IStrategy strategyAave = IStrategy(_aaveStrategy);
 
-        (uint256 exchangeRate, , ) = _calcExchangeRate(multiplicator);
+        (uint256 exchangeRate, , ) = _calcExchangeRate();
 
-        uint256 amountAave = strategyAave.balanceOf();
-        uint256 ivTokenValueAave = IporMath.division(amountAave * multiplicator, exchangeRate);
+        uint256 assetBalanceAave = strategyAave.balanceOf();
+        uint256 ivTokenValueAave = IporMath.division(
+            assetBalanceAave * Constants.D18,
+            exchangeRate
+        );
 
         _withdrawFromStrategy(
             address(strategyAave),
-            amountAave,
+            assetBalanceAave,
             ivTokenValueAave,
             exchangeRate,
             false
@@ -261,22 +273,30 @@ contract Stanley is
 
         IStrategy strategyCompound = IStrategy(_compoundStrategy);
 
-        uint256 amountCompound = strategyCompound.balanceOf();
+        uint256 assetBalanceCompound = strategyCompound.balanceOf();
         uint256 ivTokenValueCompound = IporMath.division(
-            amountCompound * multiplicator,
+            assetBalanceCompound * Constants.D18,
             exchangeRate
         );
 
         _withdrawFromStrategy(
             address(strategyCompound),
-            amountCompound,
+            assetBalanceCompound,
             ivTokenValueCompound,
             exchangeRate,
             false
         );
 
         uint256 balance = ERC20Upgradeable(_asset).balanceOf(address(this));
-        IERC20Upgradeable(_asset).safeTransfer(msg.sender, balance);
+        uint256 wadBalance;
+
+        if (balance != 0) {
+            IERC20Upgradeable(_asset).safeTransfer(msg.sender, balance);
+            wadBalance = IporMath.convertToWad(balance, _decimals);
+        }
+
+        withdrawnValue = assetBalanceAave + assetBalanceCompound + wadBalance;
+        vaultBalance = 0;
     }
 
     //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
@@ -287,25 +307,26 @@ contract Stanley is
             IStrategy strategyCompound
         ) = _getMaxApyStrategy();
 
+        uint256 decimals = _decimals;
         address from;
 
         if (address(strategyMaxApy) == address(strategyAave)) {
             from = address(strategyCompound);
             uint256 shares = IERC20Upgradeable(_compoundShareToken).balanceOf(from);
             require(shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
-            strategyCompound.withdraw(shares);
+            strategyCompound.withdraw(IporMath.convertToWad(shares, decimals));
         } else {
             from = address(strategyAave);
             uint256 shares = IERC20Upgradeable(_aaveShareToken).balanceOf(from);
             require(shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
-            strategyAave.withdraw(shares);
+            strategyAave.withdraw(IporMath.convertToWad(shares, decimals));
         }
 
         uint256 amount = ERC20Upgradeable(_asset).balanceOf(address(this));
+        uint256 wadAmount = IporMath.convertToWad(amount, decimals);
+        _depositToStrategy(strategyMaxApy, wadAmount);
 
-        _depositToStrategy(strategyMaxApy, amount);
-
-        emit MigrateAsset(from, address(strategyMaxApy), amount);
+        emit MigrateAsset(from, address(strategyMaxApy), wadAmount);
     }
 
     function setAaveStrategy(address strategyAddress) external override onlyOwner {
@@ -333,7 +354,7 @@ contract Stanley is
         strategyAave = IStrategy(_aaveStrategy);
         strategyCompound = IStrategy(_compoundStrategy);
 
-        if (strategyAave.getApy() < strategyCompound.getApy()) {
+        if (strategyAave.getApr() < strategyCompound.getApr()) {
             strategyMaxApy = strategyCompound;
         } else {
             strategyMaxApy = strategyAave;
@@ -341,9 +362,8 @@ contract Stanley is
     }
 
     function _totalBalance(address who) internal view returns (uint256) {
-        uint256 multiplicator = 10**_decimals;
-        (uint256 exchangeRate, , ) = _calcExchangeRate(multiplicator);
-        return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, multiplicator);
+        (uint256 exchangeRate, , ) = _calcExchangeRate();
+        return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, Constants.D18);
     }
 
     /**
@@ -470,14 +490,23 @@ contract Stanley is
      * @dev to deposit asset in current strategy.
      * @notice internal method.
      * @param strategyAddress strategy from amount to deposit
-     * @param amount _amount is _asset token like DAI.
+     * @param wadAmount _amount is _asset token like DAI.
      */
-    function _depositToStrategy(IStrategy strategyAddress, uint256 amount) internal {
-        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), amount);
-        strategyAddress.deposit(amount);
+    function _depositToStrategy(IStrategy strategyAddress, uint256 wadAmount) internal {
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, _decimals);
+        _depositToStrategy(strategyAddress, wadAmount, amount);
     }
 
-    function _calcExchangeRate(uint256 multiplicator)
+    function _depositToStrategy(
+        IStrategy strategyAddress,
+        uint256 wadAmount,
+        uint256 amount
+    ) internal {
+        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), amount);
+        strategyAddress.deposit(wadAmount);
+    }
+
+    function _calcExchangeRate()
         internal
         view
         returns (
@@ -494,9 +523,9 @@ contract Stanley is
         uint256 ivTokenBalance = _ivToken.totalSupply();
 
         if (totalAssetBalance == 0 || ivTokenBalance == 0) {
-            exchangeRate = multiplicator;
+            exchangeRate = Constants.D18;
         } else {
-            exchangeRate = IporMath.division(totalAssetBalance * multiplicator, ivTokenBalance);
+            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenBalance);
         }
     }
 

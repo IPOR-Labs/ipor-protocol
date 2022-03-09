@@ -59,6 +59,8 @@ library IporErrors {
         public constant MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY =
         "IPOR_16";
 
+    string public constant MILTON_LP_UTILIZATION_EXCEEDED = "IPOR_17";
+
     //@notice Input arrays which should have the same length - mismatch
     string public constant WARREN_INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
 
@@ -111,8 +113,8 @@ library IporErrors {
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 
-    //@notice Liquidity Pool Utilization exceeded
-    string public constant MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED = "IPOR_35";
+    //@notice Liquidity Pool Utilization Per Leg exceeded
+    string public constant MILTON_LP_UTILIZATION_PER_LEG_EXCEEDED = "IPOR_35";
 
     //@notice Updater address is wrong
     string public constant WARREN_WRONG_UPDATER_ADDRESS = "IPOR_36";
@@ -191,7 +193,7 @@ library IporErrors {
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
 
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_60";
-    string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";	
+    string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";
 
     // Asset managment
     //@notice amount should be > 0
