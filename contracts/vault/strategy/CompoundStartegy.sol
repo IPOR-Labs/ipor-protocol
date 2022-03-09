@@ -92,7 +92,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev Deposit into compound lending.
      * @notice deposit can only done by Stanley .
-     * @param wadAmount amount to deposit in compound lending.
+     * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
     function deposit(uint256 wadAmount) external override onlyStanley {
         address asset = _asset;
@@ -107,10 +107,11 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev withdraw from compound lending.
      * @notice withdraw can only done by owner.
-     * @param wadAmount amount to withdraw from compound lending.
+     * @param wadAmount amount to withdraw from compound lending, amount represented in 18 decimals
      */
     function withdraw(uint256 wadAmount) external override onlyStanley {
         address asset = _asset;
+
         uint256 amount = IporMath.convertWadToAssetDecimals(
             wadAmount,
             IERC20Metadata(asset).decimals()

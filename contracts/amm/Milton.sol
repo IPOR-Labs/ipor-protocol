@@ -189,9 +189,9 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
 
-    function withdrawAllFromStanley() external onlyJoseph nonReentrant whenNotPaused {        
-		(uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdrawAll();
-		_miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
+    function withdrawAllFromStanley() external onlyJoseph nonReentrant whenNotPaused {
+        (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdrawAll();
+        _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
 
     function setupMaxAllowance(address spender) external override onlyOwner whenNotPaused {

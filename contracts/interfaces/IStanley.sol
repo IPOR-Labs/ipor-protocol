@@ -14,7 +14,9 @@ interface IStanley {
     //@notice withdraw specific amount of stable
     //@dev input and output values are represented in 18 decimals
     //@param amount - deposited amount
-    //@return withdrawnValue final withdrawn value of underlying tokens
+    //@return withdrawnValue final withdrawn value of underlying tokens, widthdrawnValue can be different
+    //than amount because balance on strategy site can be too low or exchangeRate of shareToken could change
+    //or calculation could influence on final value.
     //@return balance - current balance in all strategies
     function withdraw(uint256 amount)
         external

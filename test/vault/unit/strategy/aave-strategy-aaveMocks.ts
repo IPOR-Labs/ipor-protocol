@@ -19,6 +19,14 @@ const { expect } = chai;
 const stableTotalSupply18Decimals = "1000000000000000000000000000000";
 const totalSupply6Decimals = "100000000000000000000";
 
+const ZERO = BigNumber.from("0");
+const TC_1000_USD_6DEC = BigNumber.from("1000000000");
+const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
+const TC_9_000_USD_18DEC = BigNumber.from("9000000000000000000000");
+const TC_10_000_USD_18DEC = BigNumber.from("10000000000000000000000");
+const TC_9_000_USD_6DEC = BigNumber.from("9000000000");
+const TC_10_000_USD_6DEC = BigNumber.from("10000000000");
+
 describe("AAVE strategy", () => {
     let aaveStrategyInstanceDAI: AaveStrategy;
     let aaveStrategyInstanceUSDC: AaveStrategy;
@@ -134,76 +142,58 @@ describe("AAVE strategy", () => {
         ]);
     });
 
-    it("Should be able to setup Stanley and interacti with DAI", async () => {
+    it("Should be able to setup Stanley and interact with DAI", async () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(aaveStrategyInstanceDAI.setStanley(stanleyAddress))
             .to.emit(aaveStrategyInstanceDAI, "SetStanley")
             .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceDAI.address);
 
-        await DAI.setupInitialAmount(stanleyAddress, BigNumber.from("100000000000000000000"));
+        await DAI.setupInitialAmount(stanleyAddress, TC_10_000_USD_18DEC);
 
         DAI.connect(userTwo).increaseAllowance(
             aaveStrategyInstanceDAI.address,
-            BigNumber.from("100000000000000000000")
+            TC_10_000_USD_18DEC
         );
 
-        await aaveStrategyInstanceDAI
-            .connect(userTwo)
-            .deposit(BigNumber.from("1000000000000000000"));
+        await aaveStrategyInstanceDAI.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
-        expect((await DAI.balanceOf(stanleyAddress)).toString()).to.be.equal(
-            "99000000000000000000"
-        );
-        expect((await aDAI.balanceOf(aaveStrategyInstanceDAI.address)).toString()).to.be.equal(
-            "1000000000000000000"
+        expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_9_000_USD_18DEC);
+        expect(await aDAI.balanceOf(aaveStrategyInstanceDAI.address)).to.be.equal(
+            TC_1000_USD_18DEC
         );
 
-        await aaveStrategyInstanceDAI
-            .connect(userTwo)
-            .withdraw(BigNumber.from("1000000000000000000"));
+        await aaveStrategyInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
-        expect((await DAI.balanceOf(stanleyAddress)).toString()).to.be.equal(
-            "100000000000000000000"
-        );
-        expect((await aDAI.balanceOf(aaveStrategyInstanceDAI.address)).toString()).to.be.equal("0");
+        expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_18DEC);
+        expect(await aDAI.balanceOf(aaveStrategyInstanceDAI.address)).to.be.equal(ZERO);
     });
 
-    it("Should be able to setup Stanley and interacti with USDC", async () => {
+    it("Should be able to setup Stanley and interact with USDC", async () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(aaveStrategyInstanceUSDC.setStanley(stanleyAddress))
             .to.emit(aaveStrategyInstanceUSDC, "SetStanley")
             .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceUSDC.address);
 
-        await USDC.setupInitialAmount(stanleyAddress, BigNumber.from("100000000000000000000"));
+        await USDC.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);
 
         USDC.connect(userTwo).increaseAllowance(
             aaveStrategyInstanceUSDC.address,
-            BigNumber.from("100000000000000000000")
+            TC_10_000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDC
-            .connect(userTwo)
-            .deposit(BigNumber.from("1000000000000000000"));
+        await aaveStrategyInstanceUSDC.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
-        expect((await USDC.balanceOf(stanleyAddress)).toString()).to.be.equal(
-            "99000000000000000000"
-        );
-        expect((await aUSDC.balanceOf(aaveStrategyInstanceUSDC.address)).toString()).to.be.equal(
-            "1000000000000000000"
+        expect((await USDC.balanceOf(stanleyAddress)).toString()).to.be.equal(TC_9_000_USD_6DEC);
+        expect(await aUSDC.balanceOf(aaveStrategyInstanceUSDC.address)).to.be.equal(
+            TC_1000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDC
-            .connect(userTwo)
-            .withdraw(BigNumber.from("1000000000000000000"));
+        await aaveStrategyInstanceUSDC.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
-        expect((await USDC.balanceOf(stanleyAddress)).toString()).to.be.equal(
-            "100000000000000000000"
-        );
-        expect((await aUSDC.balanceOf(aaveStrategyInstanceUSDT.address)).toString()).to.be.equal(
-            "0"
-        );
+        expect(await USDC.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
+        expect(await aUSDC.balanceOf(aaveStrategyInstanceUSDT.address)).to.be.equal(ZERO);
     });
 
     it("Should be able to setup Stanley and interacti with USDT", async () => {
@@ -213,33 +203,23 @@ describe("AAVE strategy", () => {
             .to.emit(aaveStrategyInstanceUSDT, "SetStanley")
             .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceUSDT.address);
 
-        await USDT.setupInitialAmount(stanleyAddress, BigNumber.from("100000000000000000000"));
+        await USDT.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);
 
         USDT.connect(userTwo).increaseAllowance(
             aaveStrategyInstanceUSDT.address,
-            BigNumber.from("100000000000000000000")
+            TC_10_000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDT
-            .connect(userTwo)
-            .deposit(BigNumber.from("1000000000000000000"));
+        await aaveStrategyInstanceUSDT.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
-        expect((await USDT.balanceOf(stanleyAddress)).toString()).to.be.equal(
-            "99000000000000000000"
-        );
-        expect((await aUSDT.balanceOf(aaveStrategyInstanceUSDT.address)).toString()).to.be.equal(
-            "1000000000000000000"
+        expect(await USDT.balanceOf(stanleyAddress)).to.be.equal(TC_9_000_USD_6DEC);
+        expect(await aUSDT.balanceOf(aaveStrategyInstanceUSDT.address)).to.be.equal(
+            TC_1000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDT
-            .connect(userTwo)
-            .withdraw(BigNumber.from("1000000000000000000"));
+        await aaveStrategyInstanceUSDT.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
-        expect((await USDT.balanceOf(stanleyAddress)).toString()).to.be.equal(
-            "100000000000000000000"
-        );
-        expect((await aUSDT.balanceOf(aaveStrategyInstanceUSDT.address)).toString()).to.be.equal(
-            "0"
-        );
+        expect(await USDT.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
+        expect(await aUSDT.balanceOf(aaveStrategyInstanceUSDT.address)).to.be.equal(ZERO);
     });
 });

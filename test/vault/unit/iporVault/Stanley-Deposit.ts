@@ -195,8 +195,9 @@ describe("Stanley -> Deposit", () => {
             await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("5"));
             // then
             const apyAfter = await aaveNewStartegyInstance.getApr();
-            expect(apyBefore).to.be.equal(BigNumber.from("2000000000000000000"));
-            expect(apyAfter).to.be.equal(BigNumber.from("5000000000000000000"));
+            expect(apyBefore).to.be.equal(BigNumber.from("20000000000000000"));
+            expect(apyAfter).to.be.equal(BigNumber.from("50000000000000000"));
+			
         });
 
         it("Should change Compound APY", async () => {
@@ -206,8 +207,8 @@ describe("Stanley -> Deposit", () => {
             await cDAI.setSupplyRate(BigNumber.from("10"));
             // then
             const apyAfter = await compoundStartegyInstance.getApr();
-            expect(apyBefore).to.be.equal(BigNumber.from("6905953687075200000"));
-            expect(apyAfter).to.be.equal(BigNumber.from("2102400000"));
+            expect(apyBefore).to.be.equal(BigNumber.from("69059536870752000"));
+            expect(apyAfter).to.be.equal(BigNumber.from("21024000"));
         });
     });
 
