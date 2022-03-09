@@ -60,50 +60,48 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
         return 1;
     }
 
+    //@param liquidityAmount underlying token amount represented in decimals specific for underlying asset
     function provideLiquidity(uint256 liquidityAmount) external override whenNotPaused {
         _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
     }
 
+    //@param ipTokenValue IpToken amount represented in 18 decimals
     function redeem(uint256 ipTokenValue) external override whenNotPaused {
         _redeem(ipTokenValue, block.timestamp);
     }
 
     function rebalance() external override whenNotPaused {
-        address miltonAddr = address(_milton);
-        uint256 miltonAssetBalance = IERC20Upgradeable(_asset).balanceOf(miltonAddr);
+        (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
-        uint256 iporVaultAssetBalance = _stanley.totalBalance(miltonAddr);
+        require(totalBalance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
 
-        uint256 balance = miltonAssetBalance + iporVaultAssetBalance;
-
-        require(balance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
-
-        uint256 wadBalance = IporMath.convertToWad(balance, _decimals);
-
-        uint256 ratio = IporMath.division(miltonAssetBalance * Constants.D18, wadBalance);
+        uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
 
         if (ratio > _MILTON_STANLEY_BALANCE_PERCENTAGE) {
-            uint256 assetValue = miltonAssetBalance -
-                IporMath.division(_MILTON_STANLEY_BALANCE_PERCENTAGE * balance, Constants.D18);
+            uint256 assetValue = wadMiltonAssetBalance -
+                IporMath.division(_MILTON_STANLEY_BALANCE_PERCENTAGE * totalBalance, Constants.D18);
             _milton.depositToStanley(assetValue);
         } else {
             uint256 assetValue = IporMath.division(
-                _MILTON_STANLEY_BALANCE_PERCENTAGE * balance,
+                _MILTON_STANLEY_BALANCE_PERCENTAGE * totalBalance,
                 Constants.D18
-            ) - miltonAssetBalance;
+            ) - wadMiltonAssetBalance;
 
             _milton.withdrawFromStanley(assetValue);
         }
     }
 
+    //@param assetValue underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetValue) external override onlyOwner whenNotPaused {
         _milton.depositToStanley(assetValue);
     }
 
+    //@param assetValue underlying token amount represented in 18 decimals
     function withdrawFromStanley(uint256 assetValue) external override onlyOwner whenNotPaused {
         _milton.withdrawFromStanley(assetValue);
     }
 
+    //@param assetValue underlying token amount represented in 18 decimals
     function transferTreasury(uint256 assetValue)
         external
         override
@@ -115,13 +113,16 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
 
         _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
 
+        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(assetValue, _decimals);
+
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
             _treasureTreasurer,
-            assetValue
+            assetValueAssetDecimals
         );
     }
 
+    //@param assetValue underlying token amount represented in 18 decimals
     function transferPublicationFee(uint256 assetValue)
         external
         override
@@ -133,7 +134,13 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
 
         _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(address(_milton), _charlieTreasurer, assetValue);
+        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(assetValue, _decimals);
+
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            address(_milton),
+            _charlieTreasurer,
+            assetValueAssetDecimals
+        );
     }
 
     //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
@@ -150,15 +157,27 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
     }
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
-        address miltonAddr = address(_milton);
-        uint256 miltonBalance = IERC20Upgradeable(_asset).balanceOf(miltonAddr);
-        uint256 iporVaultAssetBalance = _stanley.totalBalance(miltonAddr);
-        uint256 balance = miltonBalance + iporVaultAssetBalance;
-        require(balance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
-        return IporMath.division(miltonBalance * _decimals, balance);
+        (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
+        require(totalBalance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
+        return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 
-    //@param liquidityAmount in decimals like asset
+    function _getIporTotalBalance()
+        internal
+        view
+        returns (uint256 totalBalance, uint256 wadMiltonAssetBalance)
+    {
+        address miltonAddr = address(_milton);
+
+        wadMiltonAssetBalance = IporMath.convertToWad(
+            IERC20Upgradeable(_asset).balanceOf(miltonAddr),
+            _decimals
+        );
+
+        totalBalance = wadMiltonAssetBalance + _stanley.totalBalance(miltonAddr);
+    }
+
+    //@param assetValue in decimals like asset
     function _provideLiquidity(
         uint256 assetValue,
         uint256 assetDecimals,

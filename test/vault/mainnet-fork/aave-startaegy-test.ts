@@ -57,34 +57,13 @@ describe("aave deployed Contract on Mainnet fork", function () {
 
             daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer);
             aaveContract = new hre.ethers.Contract(AAVE, daiAbi, signer);
-            stakeAaveContract = new hre.ethers.Contract(
-                stkAave,
-                daiAbi,
-                signer
-            );
-            aTokenContract = new hre.ethers.Contract(
-                aDaiAddress,
-                daiAbi,
-                signer
-            );
-            impersonateBalanceBefore = await daiContract.balanceOf(
-                accountToImpersonate
-            );
-            console.log(
-                "impersonateBalanceBefore: ",
-                impersonateBalanceBefore.toString()
-            );
-            await daiContract.transfer(
-                accounts[0].address,
-                impersonateBalanceBefore
-            );
-            const impersonateBalanceAfter = await daiContract.balanceOf(
-                accountToImpersonate
-            );
-            console.log(
-                "impersonateBalanceAfter: ",
-                impersonateBalanceAfter.toString()
-            );
+            stakeAaveContract = new hre.ethers.Contract(stkAave, daiAbi, signer);
+            aTokenContract = new hre.ethers.Contract(aDaiAddress, daiAbi, signer);
+            impersonateBalanceBefore = await daiContract.balanceOf(accountToImpersonate);
+            console.log("impersonateBalanceBefore: ", impersonateBalanceBefore.toString());
+            await daiContract.transfer(accounts[0].address, impersonateBalanceBefore);
+            const impersonateBalanceAfter = await daiContract.balanceOf(accountToImpersonate);
+            console.log("impersonateBalanceAfter: ", impersonateBalanceAfter.toString());
             signer = await hre.ethers.provider.getSigner(accounts[0].address);
             daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer);
             daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer);
@@ -93,26 +72,20 @@ describe("aave deployed Contract on Mainnet fork", function () {
             //  **************                      Deploy strategy                           **************
             //  ********************************************************************************************
 
-            strategyContract = await hre.ethers.getContractFactory(
-                "AaveStrategy",
-                signer
-            );
+            strategyContract = await hre.ethers.getContractFactory("AaveStrategy", signer);
 
-            strategyContract_Instance = await upgrades.deployProxy(
-                strategyContract,
-                [
-                    daiAddress,
-                    aDaiAddress,
-                    addressProvider,
-                    stkAave,
-                    aaveIncentiveAddress,
-                    AAVE,
-                ]
-            );
+            strategyContract_Instance = await upgrades.deployProxy(strategyContract, [
+                daiAddress,
+                aDaiAddress,
+                addressProvider,
+                stkAave,
+                aaveIncentiveAddress,
+                AAVE,
+            ]);
 
-            await strategyContract_Instance.setStanley(
-                await signer.getAddress()
-            );
+            await strategyContract_Instance.setStanley(await signer.getAddress());
+
+            await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             aaveIncentiveContract = new hre.ethers.Contract(
                 aaveIncentiveAddress,
@@ -122,15 +95,10 @@ describe("aave deployed Contract on Mainnet fork", function () {
         });
 
         it("hardhat_impersonateAccount and check transfered balance to our account", async function () {
-            const daiBalanceBefore = await daiContract.balanceOf(
-                accounts[0].address
-            );
+            const daiBalanceBefore = await daiContract.balanceOf(accounts[0].address);
             console.log("Dai Balance Before", daiBalanceBefore.toString());
 
-            await daiContract.approve(
-                strategyContract_Instance.address,
-                maxValue
-            );
+            await daiContract.approve(strategyContract_Instance.address, maxValue);
             const aDaiBalanceBefore = await aTokenContract.balanceOf(
                 strategyContract_Instance.address
             );
@@ -142,14 +110,10 @@ describe("aave deployed Contract on Mainnet fork", function () {
             const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
             console.log("Timestamp: ", timestamp);
 
-            await hre.network.provider.send("evm_setNextBlockTimestamp", [
-                timestamp,
-            ]);
+            await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
             await hre.network.provider.send("evm_mine");
 
-            const aDaiBalance = await aTokenContract.balanceOf(
-                strategyContract_Instance.address
-            );
+            const aDaiBalance = await aTokenContract.balanceOf(strategyContract_Instance.address);
             console.log("abal1: ", aDaiBalance.toString());
 
             await aTokenContract
@@ -158,42 +122,25 @@ describe("aave deployed Contract on Mainnet fork", function () {
             await strategyContract_Instance.withdraw(aDaiBalance);
             console.log("Withdraw complete");
 
-            const claimable2 =
-                await aaveIncentiveContract.getUserUnclaimedRewards(
-                    strategyContract_Instance.address
-                );
+            const claimable2 = await aaveIncentiveContract.getUserUnclaimedRewards(
+                strategyContract_Instance.address
+            );
             console.log("Aave Claimable Amount: ", claimable2.toString());
 
-            await strategyContract_Instance.beforeClaim(
-                [aDaiAddress],
-                maxValue
-            );
+            await strategyContract_Instance.beforeClaim();
 
-            await hre.network.provider.send("evm_setNextBlockTimestamp", [
-                timestamp + 865000,
-            ]);
+            await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
             await hre.network.provider.send("evm_mine");
 
-            const aaveBalanceBefore = await aaveContract.balanceOf(
-                accounts[0].address
-            );
-            console.log(
-                "Cliamed Aave Balance Before",
-                aaveBalanceBefore.toString()
-            );
+            const aaveBalanceBefore = await aaveContract.balanceOf(accounts[0].address);
+            console.log("Cliamed Aave Balance Before", aaveBalanceBefore.toString());
 
-            await strategyContract_Instance.doClaim(accounts[0].address, [
-                aDaiAddress,
-            ]);
+            await strategyContract_Instance.doClaim();
 
-            const aaveBalance = await aaveContract.balanceOf(
-                accounts[0].address
-            );
+            const aaveBalance = await aaveContract.balanceOf(accounts[0].address);
             console.log("Cliamed Aave Balance", aaveBalance.toString()); // should be non-zero
 
-            const daiBalanceAfter = await daiContract.balanceOf(
-                accounts[0].address
-            );
+            const daiBalanceAfter = await daiContract.balanceOf(accounts[0].address);
             console.log("Dai Balance After", daiBalanceAfter.toString());
         });
     });

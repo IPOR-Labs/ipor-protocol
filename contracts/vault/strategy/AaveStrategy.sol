@@ -3,6 +3,10 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
@@ -12,15 +16,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../IporErrors.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import {IporMath} from "../../libraries/IporMath.sol";
+import "hardhat/console.sol";
 
 contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
+    using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address private _asset;
-    address private _shareToken; // shareToken
+    address private _shareToken;
     address private _aave;
     address private _stkAave;
     address private _stanley;
+    address private _treasury;
 
     AaveLendingPoolProviderV2 private _provider;
     StakedAaveInterface private _stakedAaveInterface;
@@ -73,29 +80,36 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     }
 
     /**
-     * @dev get current APY.
+     * @dev get current APY, represented in 18 decimals
      */
-    function getApy() external view override returns (uint256) {
+    function getApr() external view override returns (uint256 apr) {
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
         DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(_asset);
-        return IporMath.division(uint256(reserveData.currentLiquidityRate), (10**7));
+        apr = IporMath.division(uint256(reserveData.currentLiquidityRate), (10**9));
     }
 
     /**
      * @dev Total Balance = Principal Amount + Interest Amount.
-     * returns amount of stable based on aToken volume in ration 1:1 with stable
+     * returns amount of stable based on aToken volume in ration 1:1 with stable in 18 decimals
      */
     function balanceOf() external view override returns (uint256) {
-        return IERC20Upgradeable(_shareToken).balanceOf(address(this));
+        IERC20Metadata shareToken = IERC20Metadata(_shareToken);
+        uint256 balance = shareToken.balanceOf(address(this));
+        return IporMath.convertToWad(balance, shareToken.decimals());
     }
 
     /**
      * @dev Deposit into _aave lending.
      * @notice deposit can only done by owner.
-     * @param amount amount to deposit in _aave lending.
+     * @param wadAmount amount to deposit in _aave lending.
      */
-    function deposit(uint256 amount) external override onlyStanley {
+    function deposit(uint256 wadAmount) external override onlyStanley {
         address asset = _asset;
+
+        uint256 amount = IporMath.convertWadToAssetDecimals(
+            wadAmount,
+            IERC20Metadata(asset).decimals()
+        );
 
         IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
 
@@ -107,21 +121,30 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     /**
      * @dev withdraw from _aave lending.
      * @notice withdraw can only done by owner.
-     * @param amount amount to withdraw from _aave lending.
+     * @param wadAmount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 amount) external override onlyStanley {
-        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(_asset, amount, msg.sender);
+    function withdraw(uint256 wadAmount) external override onlyStanley {
+        address asset = _asset;
+        uint256 amount = IporMath.convertWadToAssetDecimals(
+            wadAmount,
+            IERC20Metadata(asset).decimals()
+        );
+        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(asset, amount, msg.sender);
     }
 
     /**
      * @dev Claim stakedAAVE token first.
      * @notice Internal method.
-     * @param assets assets for claim _aave gov token.
-     * @param amount amount to claim staked _aave token from _aave incentive.
+
      */
-    function beforeClaim(address[] memory assets, uint256 amount) external override onlyStanley {
-        _aaveIncentive.claimRewards(assets, amount, address(this));
+    function beforeClaim() external override {
+        console.log("AaveStrategy -> doClaim -> DoClaim");
+        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+        address[] memory assets = new address[](1);
+        assets[0] = _shareToken;
+        _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
         _stakedAaveInterface.cooldown();
+        emit DoBeforeClaim(address(this), assets);
     }
 
     /**
@@ -130,10 +153,9 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice you have to claim first staked _aave then _aave token. 
         so you have to claim beforeClaim function. 
         when window is open you can call this function to claim _aave
-     * @param vault vault address where send to claimed AAVE token.
-     * @param assets assets for claim _aave gov token.
      */
-    function doClaim(address vault, address[] memory assets) external override onlyStanley {
+    function doClaim() external override {
+        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
@@ -141,21 +163,31 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
             (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <= unstakeWindow
         ) {
+            address aave = _aave;
             // claim AAVE governace token second after claim stakedAave token
             _stakedAaveInterface.redeem(
                 address(this),
                 IERC20Upgradeable(_stkAave).balanceOf(address(this))
             );
-            IERC20Upgradeable(_aave).safeTransfer(
-                vault,
-                IERC20Upgradeable(_aave).balanceOf(address(this))
-            );
+            uint256 balance = IERC20Upgradeable(aave).balanceOf(address(this));
+            IERC20Upgradeable(aave).safeTransfer(_treasury, balance);
+            address[] memory assets = new address[](1);
+            assets[0] = _shareToken;
+            console.log("AaveStrategy -> doClaim -> DoClaim");
+            emit DoClaim(address(this), assets, _treasury, balance);
         }
     }
 
     function setStanley(address stanley) external override onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
+    }
+
+    function setTreasury(address treasury) external onlyOwner {
+        console.log("AaveStrategy -> setTreasury -> treasury: ", treasury);
+        require(treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+        _treasury = treasury;
+        emit SetTreasury(address(this), treasury);
     }
 
     /**

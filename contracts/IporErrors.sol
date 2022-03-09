@@ -27,14 +27,11 @@ library IporErrors {
     string public constant SENDER_NOT_APPOINTED_OWNER = "IPOR_6";
 
     //@notice Liquidity Pool for given asset symbol not exists
-    string
-        public constant CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG =
+    string public constant CONFIG_LP_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION_PER_LEG =
         "IPOR_7";
 
     //@notice Swap direction not exists
-    string
-        public constant CONFIG_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_TOO_HIGH =
-        "IPOR_8";
+    string public constant CONFIG_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_TOO_HIGH = "IPOR_8";
 
     //@notice Maximum Slippage is too high
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_9";
@@ -51,13 +48,10 @@ library IporErrors {
     string public constant MILTON_ASSET_BALANCE_OF_TOO_LOW = "IPOR_13";
 
     //@notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
-    string
-        public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW =
-        "IPOR_14";
+    string public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW = "IPOR_14";
 
     //@notcie Swap cannot be closed because liquidation deposit balance is to low to pay sender for liquidation
-    string
-        public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW =
+    string public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW =
         "IPOR_15";
 
     //@notice Swap cannot be closed because sender is not an owner of derivative and derivative maturity not achieved
@@ -65,45 +59,39 @@ library IporErrors {
         public constant MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY =
         "IPOR_16";
 
+    string public constant MILTON_LP_UTILIZATION_EXCEEDED = "IPOR_17";
+
     //@notice Input arrays which should have the same length - mismatch
     string public constant INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
 
     //@notice Swap Notional Amount is higher than Total Notional
-    string
-        public constant MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL =
-        "IPOR_19";
+    string public constant MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = "IPOR_19";
 
     //@notice Calculation timestamp is higher than derivative open timestamp, but should be lower or equal
-    string
-        public constant MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP =
-        "IPOR_20";
+    string public constant MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP = "IPOR_20";
 
     //@notice Calculation timestamp is lower than last rebalance in soap indicator timestamp, but should be higher or equal
-    string
-        public constant MILTON_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP =
+    string public constant MILTON_CALC_TIMESTAMP_LOWER_THAN_SOAP_INDICATOR_REBALANCE_TIMESTAMP =
         "IPOR_21";
 
     //@notice Swap id used in input has incorrect value (like 0) or not exists
     string public constant MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID = "IPOR_22";
 
     //@notice Swap has incorrect status
-    string public constant MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS =
-        "IPOR_23";
+    string public constant MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS = "IPOR_23";
 
     //@notice General error, max value exceeded
     string public constant MILTON_CONFIG_MAX_VALUE_EXCEEDED = "IPOR_24";
 
     //@notice Swap closing timestamp cannot be before derivative starting timestamp
-    string
-        public constant MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP =
+    string public constant MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP =
         "IPOR_25";
 
     //@notice ibtPrice has to be higher than 0
     string public constant MILTON_IBT_PRICE_CANNOT_BE_ZERO = "IPOR_26";
 
     //@notice Actual IPOR Index timestamp is higher than accrue timestamp
-    string public constant WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP =
-        "IPOR_27";
+    string public constant WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP = "IPOR_27";
 
     //@notice Opening Fee Balance is too low
     string public constant IPOR_PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_28";
@@ -125,9 +113,8 @@ library IporErrors {
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 
-    //@notice Liquidity Pool Utilization exceeded
-    string public constant MILTON_LIQUIDITY_POOL_UTILIZATION_EXCEEDED =
-        "IPOR_35";
+    //@notice Liquidity Pool Utilization Per Leg exceeded
+    string public constant MILTON_LP_UTILIZATION_PER_LEG_EXCEEDED = "IPOR_35";
 
     //@notice Updater address is wrong
     string public constant WARREN_WRONG_UPDATER_ADDRESS = "IPOR_36";
@@ -136,8 +123,7 @@ library IporErrors {
     string public constant WRONG_ADDRESS = "IPOR_37";
 
     //@notice Cannot add new asset to asset list, because already exists
-    string public constant MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS =
-        "IPOR_38";
+    string public constant MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS = "IPOR_38";
 
     //@notice Asset address not supported
     //@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS.
@@ -154,8 +140,7 @@ library IporErrors {
     string public constant MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW = "IPOR_42";
 
     //@notice Liquidity provider cannot withdraw because liquidity pool is too low
-    string public constant MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW =
-        "IPOR_43";
+    string public constant MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = "IPOR_43";
 
     //@notice Amount which should be burned is too low
     string public constant IP_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_44";
@@ -167,15 +152,13 @@ library IporErrors {
     string public constant MILTON_CALLER_NOT_JOSEPH = "IPOR_46";
 
     //@notice Summary SOAP and Miltion Liquidity Pool Balance is less than zero. SOAP can be negative, Sum of SOAM and Liquidity Pool Balance can be negative, but this is undesirable
-    string public constant JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW =
-        "IPOR_47";
+    string public constant JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW = "IPOR_47";
 
     //@notice Decay factor cannot be higher than 1 * D18
     string public constant CONFIG_DECAY_FACTOR_TOO_HIGH = "IPOR_48";
 
     //@notice Liquiditiy
-    string public constant MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO =
-        "IPOR_49";
+    string public constant MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO = "IPOR_49";
 
     //@notice ADMIN_ROLE can be revoked only by different account with ADMIN_ROLE
     string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_50";
@@ -190,26 +173,19 @@ library IporErrors {
 
     //TODO: try to add test for this
     //@notice Spread value cannot be higher than Ipor Index Value for particular asset
-    string
-        public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX =
-        "IPOR_53";
+    string public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX = "IPOR_53";
 
     //@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1
-    string public constant MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE =
-        "IPOR_54";
+    string public constant MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_54";
 
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
-    string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE =
-        "IPOR_55";
+    string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_55";
 
     //@notice Max Utilization Rate when Redeem should be higher than Liquidity Pool Max Utilization rate
-    string
-        public constant CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION =
-        "IPOR_56";
+    string public constant CONFIG_REDEEM_MAX_UTILIZATION_LOWER_THAN_LP_MAX_UTILIZATION = "IPOR_56";
 
     //@notice Redeem Max Utilization Rate is too high
-    string public constant CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH =
-        "IPOR_57";
+    string public constant CONFIG_REDEEM_MAX_UTILIZATION_PERCENTAGE_TOO_HIGH = "IPOR_57";
 
     string public constant JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED = "IPOR_58";
 
@@ -217,7 +193,7 @@ library IporErrors {
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_59";
 
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_60";
-    string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";	
+    string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";
 
     // Asset managment
     //@notice amount should be > 0
@@ -233,4 +209,6 @@ library IporErrors {
 
     //only milton can have access to function
     string public constant CALLER_NOT_MILTON = "IPOR_105";
+
+    string public constant TREASURY_COULD_NOT_BE_ZERO = "IPOR_500";
 }

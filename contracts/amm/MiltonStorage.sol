@@ -11,6 +11,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
 import "hardhat/console.sol";
 
+//@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
     //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using SafeCast for uint256;
@@ -305,7 +306,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
     }
-
     function updateStorageWhenDepositToStanley(uint256 depositValue, uint256 vaultBalance)
         external
         override
