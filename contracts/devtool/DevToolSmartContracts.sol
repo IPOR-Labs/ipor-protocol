@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../configuration/IporAssetConfiguration.sol";
 import "../tokenization/IpToken.sol";
 import "../amm/Milton.sol";
 import "../amm/MiltonStorage.sol";
@@ -14,12 +13,6 @@ import {AaveStrategy} from "../vault/strategy/AaveStrategy.sol";
 import {CompoundStrategy} from "../vault/strategy/CompoundStartegy.sol";
 import {MockCToken} from "../vault/mocks/compound/MockCToken.sol";
 import {MockComptroller} from "../vault/mocks/compound/MockComptroller.sol";
-
-contract IporAssetConfigurationUsdt is IporAssetConfiguration {}
-
-contract IporAssetConfigurationUsdc is IporAssetConfiguration {}
-
-contract IporAssetConfigurationDai is IporAssetConfiguration {}
 
 contract IpTokenUsdt is IpToken {
     constructor(

@@ -175,7 +175,6 @@ describe("MiltonFrontendDataProvider", () => {
             await MiltonFrontendDataProvider.deploy();
         await miltonFrontendDataProvider.deployed();
         await miltonFrontendDataProvider.initialize(
-            data.iporConfiguration.address,
             testData.warren.address,
             testData.miltonDai.address,
             testData.miltonUsdt.address,

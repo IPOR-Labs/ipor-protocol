@@ -4,6 +4,14 @@ pragma solidity 0.8.9;
 import "../libraries/types/DataTypes.sol";
 
 interface IMiltonDevToolDataProvider {
+	struct AssetConfig {
+		address milton;
+		address miltonStorage;
+		address joseph;
+		address ipToken;
+		
+	}
+
     function getMyTotalSupply(address asset) external view returns (uint256);
 
     function getMyIpTokenBalance(address asset) external view returns (uint256);

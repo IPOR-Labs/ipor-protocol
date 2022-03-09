@@ -30,33 +30,7 @@ export default ({ drizzle, drizzleState }) => (
                         <br />
                         <br />
                     </th>
-                </tr>
-                <tr>
-                    <td>
-                        <br />
-                        <strong>Ipor Asset Configuration Address</strong>
-                        <br />
-                        <br />
-                    </td>
-                    <td>
-                        <br />
-                        {drizzle.contracts.IporAssetConfigurationUsdt.address}
-                        <br />
-                        <br />
-                    </td>
-                    <td>
-                        <br />
-                        {drizzle.contracts.IporAssetConfigurationUsdc.address}
-                        <br />
-                        <br />
-                    </td>
-                    <td>
-                        <br />
-                        {drizzle.contracts.IporAssetConfigurationDai.address}
-                        <br />
-                        <br />
-                    </td>
-                </tr>
+                </tr>                
                 <tr>
                     <td>
                         <strong>IP Token Address</strong>

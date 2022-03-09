@@ -8,7 +8,6 @@ import MiltonComponent from "./MiltonComponent";
 import JosephComponent from "./JosephComponent";
 import StanleyComponent from "./StanleyComponent";
 import MyPositions from "./MyPositions";
-import IporAssetConfigurationComponent from "./IporAssetConfigurationComponent";
 import JosephConfigurationComponent from "./JosephConfigurationComponent";
 import MiltonConfigurationComponent from "./MiltonConfigurationComponent";
 import MiltonSpreadConfigurationComponent from "./MiltonSpreadConfigurationComponent";

@@ -97,12 +97,7 @@ describe("Milton - Utilization Rate", () => {
     //         params.openTimestamp
     //     );
 
-    //     await testData.iporAssetConfigurationDai.setOpeningFeePercentage(ZERO);
-    //     //very high value
-    //     await testData.iporAssetConfigurationDai.setLiquidityPoolMaxUtilizationPercentage(
-    //         BigInt(99999999999999999999999999999999999999999)
-    //     );
-
+    
     //     await assertError(
     //         //when
     //         data.milton.connect(userTwo).itfOpenSwap(

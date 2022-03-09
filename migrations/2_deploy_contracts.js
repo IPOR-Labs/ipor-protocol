@@ -29,10 +29,6 @@ const StanleyUsdt = artifacts.require("StanleyUsdt");
 const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
 
-const IporAssetConfigurationUsdt = artifacts.require("IporAssetConfigurationUsdt");
-const IporAssetConfigurationUsdc = artifacts.require("IporAssetConfigurationUsdc");
-const IporAssetConfigurationDai = artifacts.require("IporAssetConfigurationDai");
-const IporConfiguration = artifacts.require("IporConfiguration");
 const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
 const MiltonStorageDai = artifacts.require("MiltonStorageDai");
@@ -304,36 +300,6 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const iporAssetConfigurationUsdt = await deployProxy(
-        IporAssetConfigurationUsdt,
-        [mockedUsdt.address, ipUsdtToken.address],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const iporAssetConfigurationUsdc = await deployProxy(
-        IporAssetConfigurationUsdc,
-        [mockedUsdc.address, ipUsdcToken.address],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const iporAssetConfigurationDai = await deployProxy(
-        IporAssetConfigurationDai,
-        [mockedDai.address, ipDaiToken.address],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
     const miltonStorageUsdt = await deployProxy(MiltonStorageUsdt, {
         deployer: deployer,
         initializer: "initialize",
@@ -347,12 +313,6 @@ module.exports = async function (deployer, _network) {
     });
 
     const miltonStorageDai = await deployProxy(MiltonStorageDai, {
-        deployer: deployer,
-        initializer: "initialize",
-        kind: "uups",
-    });
-
-    const iporConfiguration = await deployProxy(IporConfiguration, {
         deployer: deployer,
         initializer: "initialize",
         kind: "uups",
@@ -596,7 +556,7 @@ module.exports = async function (deployer, _network) {
 
     const miltonDevToolDataProvider = await deployProxy(
         MiltonDevToolDataProvider,
-        [iporConfiguration.address],
+        [],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -607,7 +567,6 @@ module.exports = async function (deployer, _network) {
     const miltonFrontendDataProvider = await deployProxy(
         MiltonFrontendDataProvider,
         [
-            iporConfiguration.address,
             warren.address,
             mockedDai.address,
             mockedUsdt.address,
