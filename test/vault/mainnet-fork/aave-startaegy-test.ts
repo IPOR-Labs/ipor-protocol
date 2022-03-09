@@ -127,7 +127,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             );
             console.log("Aave Claimable Amount: ", claimable2.toString());
 
-            await strategyContract_Instance.beforeClaim([aDaiAddress], maxValue);
+            await strategyContract_Instance.beforeClaim();
 
             await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
             await hre.network.provider.send("evm_mine");

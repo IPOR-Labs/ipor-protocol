@@ -120,9 +120,10 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice Internal method.
      */
     function beforeClaim() external override {
+        console.log("AaveStrategy -> doClaim -> DoClaim");
         require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
         address[] memory assets = new address[](1);
-        assets[0] = _aave;
+        assets[0] = _shareToken;
         _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
         _stakedAaveInterface.cooldown();
         emit DoBeforeClaim(address(this), assets);
@@ -152,10 +153,9 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
             uint256 balance = IERC20Upgradeable(_aave).balanceOf(address(this));
             IERC20Upgradeable(_aave).safeTransfer(_treasury, balance);
             address[] memory assets = new address[](1);
-            assets[0] = _aave;
+            assets[0] = _shareToken;
             console.log("AaveStrategy -> doClaim -> DoClaim");
             emit DoClaim(address(this), assets, _treasury, balance);
-            console.log("AaveStrategy -> doClaim -> DoClaim -> after");
         }
     }
 
