@@ -31,39 +31,18 @@ const {
 
 describe("MiltonFrontendDataProvider", () => {
     let data = null;
-    let admin,
-        userOne,
-        userTwo,
-        userThree,
-        liquidityProvider,
-        miltonStorageAddress;
+    let admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress;
 
     before(async () => {
-        [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-            miltonStorageAddress,
-        ] = await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
+            await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should list correct number DAI, USDC, USDT items", async () => {
         //given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI", "USDC", "USDT"],
             data,
             0,
@@ -132,27 +111,15 @@ describe("MiltonFrontendDataProvider", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsDai.asset,
-                PERCENTAGE_5_18DEC,
-                paramsDai.openTimestamp
-            );
+            .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdc.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdc.openTimestamp
-            );
+            .itfUpdateIndex(paramsUsdc.asset, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdt.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdt.openTimestamp
-            );
+            .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -171,14 +138,18 @@ describe("MiltonFrontendDataProvider", () => {
         const MiltonFrontendDataProvider = await ethers.getContractFactory(
             "MiltonFrontendDataProvider"
         );
-        const miltonFrontendDataProvider =
-            await MiltonFrontendDataProvider.deploy();
+        const miltonFrontendDataProvider = await MiltonFrontendDataProvider.deploy();
         await miltonFrontendDataProvider.deployed();
+
         await miltonFrontendDataProvider.initialize(
             testData.warren.address,
-            testData.miltonDai.address,
-            testData.miltonUsdt.address,
-            testData.miltonUsdc.address
+            [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
+            [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
+            [
+                testData.miltonStorageDai.address,
+                testData.miltonStorageUsdt.address,
+                testData.miltonStorageUsdc.address,
+            ]
         );
 
         //when
@@ -202,9 +173,7 @@ describe("MiltonFrontendDataProvider", () => {
         const actualUsdcSwapsLength = itemsUsdc.length;
         const actualUsdtSwapsLength = itemsUsdt.length;
         const actualSwapsLength =
-            actualDaiSwapsLength +
-            actualUsdcSwapsLength +
-            actualUsdtSwapsLength;
+            actualDaiSwapsLength + actualUsdcSwapsLength + actualUsdtSwapsLength;
 
         //then
         expect(expectedSwapsLength).to.be.eq(actualSwapsLength);

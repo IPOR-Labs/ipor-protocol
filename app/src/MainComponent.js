@@ -66,46 +66,25 @@ export default ({ drizzle, drizzleState }) => {
             </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
                 <Tab eventKey="iporIndex" title="Warren">
-                    <WarrenComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <WarrenComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="miltonOverview" title="Milton">
-                    <MiltonComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <MiltonComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="joseph" title="Joseph">
-                    <JosephComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <JosephComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="stanley" title="Stanley">
-                    <StanleyComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <StanleyComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="globalConfig" title="Global Config">
-                    <GlobalConfigurationComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <GlobalConfigurationComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="josephConfig" title="Joseph Config">
-                    <JosephConfigurationComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <JosephConfigurationComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="miltonConfig" title="Milton Config">
-                    <MiltonConfigurationComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <MiltonConfigurationComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="spreadConfig" title="Spread Config">
                     <MiltonSpreadConfigurationComponent
@@ -113,29 +92,14 @@ export default ({ drizzle, drizzleState }) => {
                         drizzleState={drizzleState}
                     />
                 </Tab>
-                <Tab eventKey="assetConfig" title="Asset Configuration">
-                    <IporAssetConfigurationComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
-                </Tab>
                 <Tab eventKey="myPositions" title="My positions">
-                    <MyPositions
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <MyPositions drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="faucet" title="Faucet">
-                    <FaucetComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <FaucetComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="frontend" title="Frontend Data Provider">
-                    <FrontendComponent
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                    />
+                    <FrontendComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
             </Tabs>
         </div>

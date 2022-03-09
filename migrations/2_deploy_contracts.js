@@ -105,13 +105,13 @@ module.exports = async function (deployer, _network) {
     const ipDaiToken = await IpTokenDai.deployed();
 
     await deployer.deploy(IvTokenUsdt, "IV USDT", "ivUSDT", mockedUsdt.address);
-    const ivUsdtToken = await IvTokenUsdt.deployed();
+    const ivTokenUsdt = await IvTokenUsdt.deployed();
 
     await deployer.deploy(IvTokenUsdc, "IV USDC", "ivUSDC", mockedUsdc.address);
-    const ivUsdcToken = await IvTokenUsdc.deployed();
+    const ivTokenUsdc = await IvTokenUsdc.deployed();
 
     await deployer.deploy(IvTokenDai, "IV DAI", "ivDAI", mockedDai.address);
-    const ivDaiToken = await IvTokenDai.deployed();
+    const ivTokenDai = await IvTokenDai.deployed();
 
     await deployer.deploy(
         MockLendingPoolAave,
@@ -259,7 +259,7 @@ module.exports = async function (deployer, _network) {
         StanleyUsdt,
         [
             mockedUsdt.address,
-            ivUsdtToken.address,
+            ivTokenUsdt.address,
             strategyAaveUsdt.address,
             strategyCompoundUsdt.address,
         ],
@@ -274,7 +274,7 @@ module.exports = async function (deployer, _network) {
         StanleyUsdc,
         [
             mockedUsdc.address,
-            ivUsdcToken.address,
+            ivTokenUsdc.address,
             strategyAaveUsdc.address,
             strategyCompoundUsdc.address,
         ],
@@ -289,7 +289,7 @@ module.exports = async function (deployer, _network) {
         StanleyDai,
         [
             mockedDai.address,
-            ivDaiToken.address,
+            ivTokenDai.address,
             strategyAaveDai.address,
             strategyCompoundDai.address,
         ],
@@ -536,7 +536,7 @@ module.exports = async function (deployer, _network) {
 
     const warrenDevToolDataProvider = await deployProxy(
         WarrenDevToolDataProvider,
-        [warren.address, mockedDai.address, mockedUsdc.address, mockedUsdt.address],
+        [[mockedDai.address, mockedUsdc.address, mockedUsdt.address], warren.address],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -546,31 +546,56 @@ module.exports = async function (deployer, _network) {
 
     const warrenFrontendDataProvider = await deployProxy(
         WarrenFrontendDataProvider,
-        [warren.address, mockedDai.address, mockedUsdt.address, mockedUsdc.address],
+        [[mockedDai.address, mockedUsdt.address, mockedUsdc.address], warren.address],
         {
             deployer: deployer,
             initializer: "initialize",
             kind: "uups",
         }
     );
-
-    const miltonDevToolDataProvider = await deployProxy(
-        MiltonDevToolDataProvider,
-        [],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
+    if (process.env.ITF_ENABLED === "true") {
+        const miltonDevToolDataProvider = await deployProxy(
+            MiltonDevToolDataProvider,
+            [
+                itfWarren.address,
+                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
+                [itfMiltonUsdt.address, itfMiltonUsdc.address, itfMiltonDai.address],
+                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+                [itfJosephUsdt.address, itfJosephUsdc.address, itfJosephDai.address],
+                [ivTokenUsdt.address, ivTokenUsdc.address, ivTokenDai.address],
+            ],
+            {
+                deployer: deployer,
+                initializer: "initialize",
+                kind: "uups",
+            }
+        );
+    } else {
+        const miltonDevToolDataProvider = await deployProxy(
+            MiltonDevToolDataProvider,
+            [
+                warren.address,
+                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
+                [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
+                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+                [josephUsdt.address, josephUsdc.address, josephDai.address],
+                [ivTokenUsdt.address, ivTokenUsdc.address, ivTokenDai.address],
+            ],
+            {
+                deployer: deployer,
+                initializer: "initialize",
+                kind: "uups",
+            }
+        );
+    }
 
     const miltonFrontendDataProvider = await deployProxy(
         MiltonFrontendDataProvider,
         [
             warren.address,
-            mockedDai.address,
-            mockedUsdt.address,
-            mockedUsdc.address,
+            [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
+            [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
+            [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
         ],
         {
             deployer: deployer,

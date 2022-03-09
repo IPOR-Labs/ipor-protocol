@@ -78,7 +78,7 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
 
         require(balance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
 
-		uint256 wadBalance = IporMath.convertToWad(balance, _decimals);
+        uint256 wadBalance = IporMath.convertToWad(balance, _decimals);
 
         uint256 ratio = IporMath.division(miltonAssetBalance * Constants.D18, wadBalance);
 
