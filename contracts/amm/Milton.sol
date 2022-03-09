@@ -170,6 +170,14 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         _closeSwapReceiveFixed(swapId, block.timestamp);
     }
 
+    function closeSwapsPayFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+        _closeSwapsPayFixed(swapIds, block.timestamp);
+    }
+
+    function closeSwapsReceiveFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+        _closeSwapsReceiveFixed(swapIds, block.timestamp);
+    }
+
     function depositToStanley(uint256 assetValue) external onlyJoseph nonReentrant whenNotPaused {
         uint256 balance = _stanley.deposit(assetValue);
         _miltonStorage.updateStorageWhenDepositToStanley(assetValue, balance);
@@ -653,6 +661,22 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             transferedToBuyer,
             transferedToLiquidator
         );
+    }
+
+    function _closeSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
+        require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+
+        for (uint i=0; i<swapIds.length; i++) {
+            _closeSwapPayFixed(swapIds[i], closeTimestamp);
+        }
+    }
+
+    function _closeSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
+        require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+
+        for (uint i=0; i<swapIds.length; i++) {
+            _closeSwapReceiveFixed(swapIds[i], closeTimestamp);
+        }
     }
 
     function _transferTokensBasedOnPositionValue(
