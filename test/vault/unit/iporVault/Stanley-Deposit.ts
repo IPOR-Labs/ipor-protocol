@@ -142,6 +142,7 @@ describe("Stanley -> Deposit", () => {
             aaveIncentivesController.address,
             AAVE.address,
         ])) as AaveStrategy;
+        await aaveNewStartegyInstance.setTreasury(await userTwo.getAddress());
         //##############################################################
         //                        Compound Mock
         //##############################################################
@@ -166,6 +167,7 @@ describe("Stanley -> Deposit", () => {
             COMP.address,
         ])) as CompoundStrategy;
 
+        await compoundStartegyInstance.setTreasury(await userTwo.getAddress());
         //##############################################################
         //                        Stanley
         //##############################################################

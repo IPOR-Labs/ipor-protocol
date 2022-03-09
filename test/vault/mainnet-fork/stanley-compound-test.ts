@@ -146,6 +146,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             ComptrollerAddress,
             COMP,
         ])) as CompoundStrategy;
+        await compoundStrategyContract_Instance.setTreasury(await signer.getAddress());
 
         compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
 
@@ -337,14 +338,15 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         expect(compoundStrategyBalanceAfter, "aaveStrategyBalanceAfter").to.be.equal(zero);
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
-        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909606610778").to.be.equal(
-            BigNumber.from("334678735341909606610778")
+        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909549322025").to.be.equal(
+            BigNumber.from("334678735341909549322025")
         );
         const strategyCTokenContractAfter = await aTokenContract.balanceOf(
             aaveStrategyContract_Instance.address
         );
         expect(strategyCTokenContractAfter, "strategyATokenContractAfter = 0").to.be.equal(zero);
     });
+    // TODO:CLAIM
     it("Should Clame from COMPOUND", async () => {
         //given
         const userOneAddres = await accounts[1].getAddress();
@@ -360,10 +362,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(compoundBalanceBefore, "Cliamed Compound Balance Before = 0").to.be.equal(zero);
 
         // when
-        await stanley.compoundDoClaim(userOneAddres);
+        await compoundStrategyContract_Instance.doClaim();
 
         // then
-        const userOneBalance = await compContract.balanceOf(userOneAddres);
+        const userOneBalance = await compContract.balanceOf(await signer.getAddress());
         expect(
             userOneBalance.gt(BigNumber.from("1821261900")),
             "Cliamed compound Balance = 1821261900"
