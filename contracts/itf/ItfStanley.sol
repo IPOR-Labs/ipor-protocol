@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../vault/Stanley.sol";
 
-contract ItfStanley is Stanley {
+abstract contract ItfStanley is Stanley {
     function getMaxApyStrategy()
         external
         view

@@ -10,11 +10,7 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-contract MiltonConfiguration is
-    PausableUpgradeable,
-    IporOwnableUpgradeable,
-    IMiltonConfiguration
-{
+abstract contract MiltonConfiguration is PausableUpgradeable, IporOwnableUpgradeable, IMiltonConfiguration {
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
@@ -22,14 +18,14 @@ contract MiltonConfiguration is
 
     uint256 internal constant _MAX_LP_UTILIZATION_PERCENTAGE = 8 * 1e17;
 
-    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE =
-        48 * 1e16;
+    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE = 48 * 1e16;
 
     uint256 internal constant _INCOME_TAX_PERCENTAGE = 1e17;
 
     uint256 internal constant _OPENING_FEE_PERCENTAGE = 1e16;
 
-    //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance, below value define how big pie going to Treasury Balance
+    //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
+    //below value define how big pie going to Treasury Balance
     uint256 internal constant _OPENING_FEE_FOR_TREASURY_PERCENTAGE = 0;
 
     uint256 internal constant _IPOR_PUBLICATION_FEE_AMOUNT = 10 * 1e18;
@@ -40,7 +36,6 @@ contract MiltonConfiguration is
 
     uint256 internal constant _MIN_COLLATERALIZATION_FACTOR_VALUE = 10 * 1e18;
 
-    uint8 internal _decimals;
     address internal _asset;
     IIpToken internal _ipToken;
     address internal _joseph;
@@ -53,39 +48,19 @@ contract MiltonConfiguration is
         return address(_miltonSpreadModel);
     }
 
-    function getMaxSwapCollateralAmount()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getMaxSwapCollateralAmount() external pure override returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function getMaxSlippagePercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getMaxSlippagePercentage() external pure override returns (uint256) {
         return _MAX_SLIPPAGE_PERCENTAGE;
     }
 
-    function getMaxLpUtilizationPercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getMaxLpUtilizationPercentage() external pure override returns (uint256) {
         return _MAX_LP_UTILIZATION_PERCENTAGE;
     }
 
-    function getMaxLpUtilizationPerLegPercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getMaxLpUtilizationPerLegPercentage() external pure override returns (uint256) {
         return _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE;
     }
 
@@ -93,57 +68,27 @@ contract MiltonConfiguration is
         return _INCOME_TAX_PERCENTAGE;
     }
 
-    function getOpeningFeePercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getOpeningFeePercentage() external pure override returns (uint256) {
         return _OPENING_FEE_PERCENTAGE;
     }
 
-    function getOpeningFeeForTreasuryPercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getOpeningFeeForTreasuryPercentage() external pure override returns (uint256) {
         return _OPENING_FEE_FOR_TREASURY_PERCENTAGE;
     }
 
-    function getIporPublicationFeeAmount()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getIporPublicationFeeAmount() external pure override returns (uint256) {
         return _IPOR_PUBLICATION_FEE_AMOUNT;
     }
 
-    function getLiquidationDepositAmount()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getLiquidationDepositAmount() external pure override returns (uint256) {
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function getMaxCollateralizationFactorValue()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getMaxCollateralizationFactorValue() external pure override returns (uint256) {
         return _MAX_COLLATERALIZATION_FACTOR_VALUE;
     }
 
-    function getMinCollateralizationFactorValue()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getMinCollateralizationFactorValue() external pure override returns (uint256) {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 
@@ -151,49 +96,26 @@ contract MiltonConfiguration is
         return _joseph;
     }
 
-    function setJoseph(address joseph)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setJoseph(address joseph) external override onlyOwner whenNotPaused {
         _joseph = joseph;
         emit JosephUpdated(joseph);
     }
 
-    function _getMaxSwapCollateralAmount()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getDecimals() internal pure virtual returns (uint256);
+
+    function _getMaxSwapCollateralAmount() internal pure virtual returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function _getMaxSlippagePercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getMaxSlippagePercentage() internal pure virtual returns (uint256) {
         return _MAX_SLIPPAGE_PERCENTAGE;
     }
 
-    function _getMaxLpUtilizationPercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getMaxLpUtilizationPercentage() internal pure virtual returns (uint256) {
         return _MAX_LP_UTILIZATION_PERCENTAGE;
     }
 
-    function _getMaxLpUtilizationPerLegPercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getMaxLpUtilizationPerLegPercentage() internal pure virtual returns (uint256) {
         return _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE;
     }
 
@@ -201,57 +123,27 @@ contract MiltonConfiguration is
         return _INCOME_TAX_PERCENTAGE;
     }
 
-    function _getOpeningFeePercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getOpeningFeePercentage() internal pure virtual returns (uint256) {
         return _OPENING_FEE_PERCENTAGE;
     }
 
-    function _getOpeningFeeForTreasuryPercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getOpeningFeeForTreasuryPercentage() internal pure virtual returns (uint256) {
         return _OPENING_FEE_FOR_TREASURY_PERCENTAGE;
     }
 
-    function _getIporPublicationFeeAmount()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getIporPublicationFeeAmount() internal pure virtual returns (uint256) {
         return _IPOR_PUBLICATION_FEE_AMOUNT;
     }
 
-    function _getLiquidationDepositAmount()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getLiquidationDepositAmount() internal pure virtual returns (uint256) {
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxCollateralizationFactorValue()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getMaxCollateralizationFactorValue() internal pure virtual returns (uint256) {
         return _MAX_COLLATERALIZATION_FACTOR_VALUE;
     }
 
-    function _getMinCollateralizationFactorValue()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getMinCollateralizationFactorValue() internal pure virtual returns (uint256) {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
     }
 }

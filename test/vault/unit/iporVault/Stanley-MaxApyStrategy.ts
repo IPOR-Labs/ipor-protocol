@@ -4,19 +4,14 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import {
-    MockStrategy,
-    Stanley,
-    ItfStanley,
-    TestERC20,
-} from "../../../../types";
+import { MockStrategy, StanleyDai, TestERC20 } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
 
 describe("Stanley -> maxApyStrategy", () => {
     let admin: Signer;
-    let stanley: ItfStanley;
+    let stanley: StanleyDai;
     let DAI: TestERC20;
     let aaveStrategy: MockStrategy;
     let compoundStrategy: MockStrategy;
@@ -24,39 +19,31 @@ describe("Stanley -> maxApyStrategy", () => {
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
-        DAI = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
-        const StanleyFactory = await hre.ethers.getContractFactory("Stanley");
-        const tokenFactoryIvToken = await hre.ethers.getContractFactory(
-            "IvToken"
-        );
+        DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+
+        const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
         const ivToken = await tokenFactoryIvToken.deploy(
             "IvToken",
             "IVT",
             "0x6b175474e89094c44da98b954eedeac495271d0f"
         );
 
-        const AaveStrategy = await hre.ethers.getContractFactory(
-            "MockStrategy"
-        );
+        const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
         aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
-        const CompoundStrategy = await hre.ethers.getContractFactory(
-            "MockStrategy"
-        );
+        const CompoundStrategy = await hre.ethers.getContractFactory("MockStrategy");
         compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
 
-        const ItfStanley = await hre.ethers.getContractFactory("ItfStanley");
-        stanley = (await await upgrades.deployProxy(ItfStanley, [
+        const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
+        stanley = (await await upgrades.deployProxy(StanleyDai, [
             DAI.address,
             ivToken.address,
             aaveStrategy.address,
             compoundStrategy.address,
-        ])) as ItfStanley;
+        ])) as StanleyDai;
         await ivToken.setStanley(stanley.address);
     });
 

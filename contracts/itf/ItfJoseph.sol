@@ -10,13 +10,13 @@ import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "../tokenization/Joseph.sol";
 
-contract ItfJoseph is Joseph {
+abstract contract ItfJoseph is Joseph {
     
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
     function itfProvideLiquidity(uint256 liquidityAmount, uint256 timestamp)
         external
     {
-        _provideLiquidity(liquidityAmount, _decimals, timestamp);
+        _provideLiquidity(liquidityAmount, _getDecimals(), timestamp);
     }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken

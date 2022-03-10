@@ -14,7 +14,7 @@ import "../IporErrors.sol";
 import "../libraries/IporMath.sol";
 import "hardhat/console.sol";
 
-contract Stanley is
+abstract contract Stanley is
     UUPSUpgradeable,
     PausableUpgradeable,
     IporOwnableUpgradeable,
@@ -23,7 +23,6 @@ contract Stanley is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    uint8 internal _decimals;
     address internal _asset;
     IIvToken internal _ivToken;
 
@@ -49,7 +48,7 @@ contract Stanley is
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = asset;
-        _decimals = ERC20Upgradeable(_asset).decimals();
+        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
         _ivToken = IIvToken(ivToken);
 
         _setAaveStrategy(strategyAave);
@@ -60,6 +59,8 @@ contract Stanley is
         require(msg.sender == _milton, IporErrors.CALLER_NOT_MILTON);
         _;
     }
+
+	function _getDecimals() internal pure virtual returns (uint256);
 
     function totalBalance(address who) external view override returns (uint256) {
         return _totalBalance(who);
@@ -292,7 +293,7 @@ contract Stanley is
 
         if (balance != 0) {
             IERC20Upgradeable(_asset).safeTransfer(msg.sender, balance);
-            wadBalance = IporMath.convertToWad(balance, _decimals);
+            wadBalance = IporMath.convertToWad(balance, _getDecimals());
         }
 
         withdrawnValue = assetBalanceAave + assetBalanceCompound + wadBalance;
@@ -307,7 +308,7 @@ contract Stanley is
             IStrategy strategyCompound
         ) = _getMaxApyStrategy();
 
-        uint256 decimals = _decimals;
+        uint256 decimals = _getDecimals();
         address from;
 
         if (address(strategyMaxApy) == address(strategyAave)) {
@@ -493,7 +494,7 @@ contract Stanley is
      * @param wadAmount _amount is _asset token like DAI.
      */
     function _depositToStrategy(IStrategy strategyAddress, uint256 wadAmount) internal {
-        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, _decimals);
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, _getDecimals());
         _depositToStrategy(strategyAddress, wadAmount, amount);
     }
 

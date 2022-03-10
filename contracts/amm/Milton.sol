@@ -25,7 +25,12 @@ import "hardhat/console.sol";
  *
  * @author IPOR Labs
  */
-contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfiguration, IMilton {
+abstract contract Milton is
+    UUPSUpgradeable,
+    ReentrancyGuardUpgradeable,
+    MiltonConfiguration,
+    IMilton
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for uint128;
@@ -51,8 +56,8 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         require(address(warren) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonSpreadModel) != address(0), IporErrors.WRONG_ADDRESS);
+        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
-        _decimals = ERC20Upgradeable(asset).decimals();
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
         _warren = IWarren(warren);
@@ -330,7 +335,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             IporErrors.MILTON_ASSET_BALANCE_OF_TOO_LOW
         );
 
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _decimals);
+        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
 
         require(
             collateralizationFactor >= _getMinCollateralizationFactorValue(),
@@ -729,7 +734,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         uint256 liquidationDepositAmount,
         uint256 transferAmount
     ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
-        uint256 decimals = _decimals;
+        uint256 decimals = _getDecimals();
 
         if (msg.sender == buyer) {
             transferAmount = transferAmount + liquidationDepositAmount;
