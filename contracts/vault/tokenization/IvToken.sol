@@ -55,7 +55,6 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
     }
 
     function burn(address account, uint256 amount) external override onlyStanley {
-        console.log("IvToken -> burn -> amount: ", amount);
         require(amount != 0, IporErrors.STANLEY_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);

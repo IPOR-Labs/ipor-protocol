@@ -29,8 +29,9 @@ const { expect } = chai;
 
 describe("Stanley -> Withdraw", () => {
     // let wallet: Wallet
-    const one: any = BigNumber.from("1000000000000000000");
-    const oneRay: any = BigNumber.from("1000000000000000000000000000");
+    const one = BigNumber.from("1000000000000000000");
+    const oneRay = BigNumber.from("1000000000000000000000000000");
+    const zero = BigNumber.from("0");
 
     let admin: Signer, userOne: Signer, userTwo: Signer;
 
@@ -502,7 +503,7 @@ describe("Stanley -> Withdraw", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
 
-    it.skip("Should not withdraw when has less tokens", async () => {
+    it("Should not withdraw when has less tokens", async () => {
         //given
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
@@ -514,7 +515,10 @@ describe("Stanley -> Withdraw", () => {
         expect(aaveBalanceBefore).to.be.equal(TC_AMOUNT_10_USD_18DEC);
         expect(userIvTokenBefore).to.be.equal(TC_AMOUNT_10_USD_18DEC);
         //when
+        await stanley.withdraw(one.mul(20));
 
-        await expect(stanley.withdraw(one.mul(20))).to.be.revertedWith("IPOR_103");
+        //then
+        const userIvTokenAfter = await ivToken.balanceOf(adminAddress);
+        expect(userIvTokenAfter).to.be.equal(zero);
     });
 });

@@ -112,7 +112,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        console.log("AaveStrategy -> deposit -> amount: ", amount);
         IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
 
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
@@ -131,7 +130,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        console.log("AaveStrategy -> withdraw -> amount: ", amount);
         AaveLendingPoolV2(_provider.getLendingPool()).withdraw(asset, amount, msg.sender);
     }
 
@@ -141,7 +139,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
 
      */
     function beforeClaim() external override {
-        console.log("AaveStrategy -> doClaim -> DoClaim");
         require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
         address[] memory assets = new address[](1);
         assets[0] = _shareToken;
@@ -176,7 +173,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
             IERC20Upgradeable(aave).safeTransfer(_treasury, balance);
             address[] memory assets = new address[](1);
             assets[0] = _shareToken;
-            console.log("AaveStrategy -> doClaim -> DoClaim");
             emit DoClaim(address(this), assets, _treasury, balance);
         }
     }
@@ -187,7 +183,6 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     }
 
     function setTreasury(address treasury) external onlyOwner {
-        console.log("AaveStrategy -> setTreasury -> treasury: ", treasury);
         require(treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
         _treasury = treasury;
         emit SetTreasury(address(this), treasury);

@@ -72,9 +72,6 @@ contract Stanley is
      */
     //  TODO: ADD tests for amount = 0
     function deposit(uint256 amount) external override onlyMilton returns (uint256) {
-        console.log("Stanley -> deposit -> Start");
-        console.log("Stanley -> deposit -> amount: ", amount);
-
         require(amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
 
         (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
@@ -115,7 +112,6 @@ contract Stanley is
         onlyMilton
         returns (uint256 withdrawnValue, uint256 balance)
     {
-        console.log("Stanley -> withdraw -> amount: ", amount);
         require(amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
 
         IIvToken ivToken = _ivToken;
@@ -132,17 +128,10 @@ contract Stanley is
             uint256 assetBalanceCompound
         ) = _calcExchangeRate();
 
-        console.log("Stanley -> withdraw -> exchangeRate: ", exchangeRate);
-        console.log("Stanley -> withdraw -> assetBalanceAave: ", assetBalanceAave);
-        console.log("Stanley -> withdraw -> assetBalanceCompound: ", assetBalanceCompound);
-
         uint256 ivTokenValue = IporMath.division(amount * Constants.D18, exchangeRate);
         uint256 senderIvTokens = ivToken.balanceOf(msg.sender);
-        console.log("Stanley -> withdraw -> ivTokenValue: ", ivTokenValue);
-        console.log("Stanley -> withdraw -> ivToken -> balanceOf -> msg.sender: ", senderIvTokens);
 
         if (senderIvTokens < ivTokenValue) {
-            console.log("Stanley -> withdraw -> ivTokenValue change to ivToken.balnseOf(sender): ");
             amount = IporMath.divisionWithoutRound(senderIvTokens * exchangeRate, Constants.D18);
             ivTokenValue = senderIvTokens;
         }
@@ -168,9 +157,6 @@ contract Stanley is
             withdrawnValue = amount;
             balance = assetBalanceAave + assetBalanceCompound - withdrawnValue;
 
-            console.log("Stanley -> withdraw -> withdrawnValue: ", withdrawnValue);
-            console.log("Stanley -> withdraw -> balance: ", balance);
-
             return (withdrawnValue, balance);
         }
 
@@ -189,18 +175,11 @@ contract Stanley is
 
             return (withdrawnValue, balance);
         } else if (amount <= assetBalanceAave) {
-            console.log("Stanley -> withdraw -> amount <= assetBalanceAave: ");
             ivToken.burn(msg.sender, ivTokenValue);
             _withdrawFromStrategy(address(strategyAave), amount, ivTokenValue, exchangeRate, true);
 
             withdrawnValue = amount;
             balance = assetBalanceAave + assetBalanceCompound - withdrawnValue;
-
-            console.log(
-                "Stanley -> withdraw -> amount <= assetBalanceAave -> withdrawnValue: ",
-                withdrawnValue
-            );
-            console.log("Stanley -> withdraw -> amount <= assetBalanceAave -> balance: ", balance);
 
             return (withdrawnValue, balance);
         }
@@ -249,8 +228,6 @@ contract Stanley is
         onlyMilton
         returns (uint256 withdrawnValue, uint256 vaultBalance)
     {
-        console.log("Stanley -> withdrawAll -> Start");
-
         IStrategy strategyAave = IStrategy(_aaveStrategy);
 
         (uint256 exchangeRate, , ) = _calcExchangeRate();
@@ -444,11 +421,6 @@ contract Stanley is
         uint256 exchangeRate,
         bool transfer
     ) internal {
-        console.log("Stanley -> _withdrawFromStrategy -> amount: ", amount);
-        console.log("Stanley -> _withdrawFromStrategy -> ivTokenValue: ", ivTokenValue);
-        console.log("Stanley -> _withdrawFromStrategy -> exchangeRate: ", exchangeRate);
-        console.log("Stanley -> _withdrawFromStrategy -> transfer: ", transfer);
-
         if (amount != 0) {
             IStrategy(strategyAddress).withdraw(amount);
 
@@ -457,21 +429,8 @@ contract Stanley is
             uint256 balance = asset.balanceOf(address(this));
 
             if (transfer) {
-                console.log(
-                    "Stanley -> _withdrawFromStrategy -> safeTransfer -> balance: ",
-                    balance
-                );
-                console.log(
-                    "Stanley -> _withdrawFromStrategy -> safeTransfer -> balance -> msg.sender: ",
-                    asset.balanceOf(msg.sender)
-                );
-                console.log("Stanley -> _withdrawFromStrategy -> safeTransfer -> to: ", msg.sender);
                 asset.safeTransfer(msg.sender, balance);
             }
-            console.log(
-                "Stanley -> _withdrawFromStrategy -> safeTransfer -> balanceAfterWithdraw -> msg.sender: ",
-                asset.balanceOf(msg.sender)
-            );
             emit Withdraw(
                 block.timestamp,
                 strategyAddress,
