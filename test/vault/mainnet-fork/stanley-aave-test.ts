@@ -335,8 +335,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await stanley.withdraw(aaveStrategyBalanceBefore);
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-
-        expect(userIvTokenAfter.lte(BigNumber.from("14223579500")), "ivToken < 14223579500").to.be
+        expect(userIvTokenAfter.lte(BigNumber.from("14223579600")), "ivToken < 14223579600").to.be
             .true;
         const aaveStrategyBalanceAfter = await aaveStrategyContract_Instance.balanceOf();
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
@@ -349,8 +348,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const strategyATokenContractAfter = await aTokenContract.balanceOf(
             aaveStrategyContract_Instance.address
         );
+        console.log("#########################################");
+        console.log(strategyATokenContractAfter.toString());
         expect(
-            strategyATokenContractAfter.lt(BigNumber.from("14223579500")),
+            strategyATokenContractAfter.lt(BigNumber.from("14223579600")),
             "strategyATokenContractAfter"
         ).to.be.true;
     });
