@@ -394,7 +394,11 @@ describe("MiltonFrontendDataProvider", () => {
         );
 
         for (let i = 0; i < numberOfSwapsToCreate; i++) {
-            await openSwapPayFixed(testData, paramsDai);
+            if (i % 2 === 0) {
+                await openSwapPayFixed(testData, paramsDai);
+            } else {
+                await openSwapReceiveFixed(testData, paramsDai);
+            }
         }
 
         //when
@@ -406,7 +410,7 @@ describe("MiltonFrontendDataProvider", () => {
             const actualSwapsLength = items.length;
 
             //then
-            expect(expectedResponseSize).to.be.eq(actualSwapsLength);
+            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
         } else {
             await assertError(
                 miltonFrontendDataProvider

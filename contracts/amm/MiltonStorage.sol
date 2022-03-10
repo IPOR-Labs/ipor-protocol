@@ -378,14 +378,14 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     ) internal view returns (DataTypes.IporSwapMemory[] memory) { //TODO limit page size?
         require(pageSize != 0, IporErrors.PAGE_SIZE_EQUAL_ZERO);
 
-        uint256 swapsIdsLength = offset + pageSize > ids.length ? ids.length - offset : pageSize;
+        uint256 swapsIdsLength = _resolveResultSetSize(ids.length, offset, pageSize);
         DataTypes.IporSwapMemory[] memory derivatives = new DataTypes.IporSwapMemory[](
             swapsIdsLength
         );
-        uint256 i = offset;
 
+        uint256 i = 0;
         for (i; i != swapsIdsLength; i++) {
-            uint128 id = ids[i];
+            uint128 id = ids[i + offset];
             DataTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = DataTypes.IporSwapMemory(
                 uint256(swaps[id].state),
@@ -402,6 +402,24 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             );
         }
         return derivatives;
+    }
+
+    function _resolveResultSetSize(
+        uint256 totalSwapNumber,
+        uint256 offset,
+        uint256 pageSize
+    ) internal view returns (uint256)
+    {
+        uint256 resultSetSize;
+        if (offset > totalSwapNumber) {
+            resultSetSize = 0;
+        } else if (offset + pageSize < totalSwapNumber) {
+            resultSetSize = pageSize;
+        } else {
+            resultSetSize = totalSwapNumber - offset;
+        }
+
+        return resultSetSize;
     }
 
     function _calculateQuasiSoap(uint256 ibtPrice, uint256 calculateTimestamp)
