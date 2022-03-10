@@ -17,7 +17,7 @@ import {
     MockAaveLendingPoolV2,
     MockStakedAave,
     MockAaveIncentivesController,
-    Stanley,
+    StanleyDai,
     MockCDAI,
     MockWhitePaper,
     MockComptroller,
@@ -36,7 +36,7 @@ describe("Stanley -> Deposit", () => {
     );
     let admin: Signer, userOne: Signer, userTwo: Signer;
 
-    let stanley: Stanley;
+    let stanley: StanleyDai;
     let DAI: TestERC20;
     let tokenFactory: any;
 
@@ -171,13 +171,13 @@ describe("Stanley -> Deposit", () => {
         //##############################################################
         //                        Stanley
         //##############################################################
-        const Stanley = await hre.ethers.getContractFactory("Stanley");
-        stanley = (await await upgrades.deployProxy(Stanley, [
+        const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
+        stanley = (await await upgrades.deployProxy(StanleyDai, [
             DAI.address,
             ivToken.address,
             aaveNewStartegyInstance.address,
             compoundStartegyInstance.address,
-        ])) as Stanley;
+        ])) as StanleyDai;
         await stanley.setMilton(await admin.getAddress());
         await aaveNewStartegyInstance.setStanley(stanley.address);
         await compoundStartegyInstance.setStanley(stanley.address);

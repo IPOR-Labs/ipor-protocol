@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../amm/Milton.sol";
 
-contract ItfMilton is Milton {
+abstract contract ItfMilton is Milton {
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,

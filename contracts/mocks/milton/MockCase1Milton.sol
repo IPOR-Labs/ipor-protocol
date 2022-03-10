@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../../itf/ItfMilton.sol";
 
-contract MockCase1Milton is ItfMilton {
+abstract contract MockCase1Milton is ItfMilton {
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
         return 1e23;
     }

@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, Stanley, TestERC20, IvToken } from "../../../../types";
+import { MockStrategy, StanleyDai, TestERC20, IvToken } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -14,7 +14,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
     const TC_AMOUNT_10000_USD_18DEC = ONE_18DEC.mul(10000);
     const TC_AMOUNT_20000_USD_18DEC = ONE_18DEC.mul(20000);
     let admin: Signer;
-    let stanley: Stanley;
+    let stanley: StanleyDai;
     let DAI: TestERC20;
     let ivTokenDai: IvToken;
     let aaveStrategy: MockStrategy;
@@ -23,24 +23,16 @@ describe("Stanley -> totalStrategiesBalance", () => {
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
-        DAI = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
+        DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
 
-        const tokenFactoryIvToken = await hre.ethers.getContractFactory(
-            "IvToken"
-        );
+        const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
 
-        const AaveStrategy = await hre.ethers.getContractFactory(
-            "MockStrategy"
-        );
+        const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
         aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
 
-        const CompoundStrategy = await hre.ethers.getContractFactory(
-            "MockStrategy"
-        );
+        const CompoundStrategy = await hre.ethers.getContractFactory("MockStrategy");
         compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
@@ -51,13 +43,13 @@ describe("Stanley -> totalStrategiesBalance", () => {
             "0x6b175474e89094c44da98b954eedeac495271d0f"
         )) as IvToken;
 
-        const Stanley = await hre.ethers.getContractFactory("Stanley");
-        stanley = (await upgrades.deployProxy(Stanley, [
+        const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
+        stanley = (await upgrades.deployProxy(StanleyDai, [
             DAI.address,
             ivTokenDai.address,
             aaveStrategy.address,
             compoundStrategy.address,
-        ])) as Stanley;
+        ])) as StanleyDai;
 
         await ivTokenDai.setStanley(stanley.address);
         await stanley.setMilton(await admin.getAddress());
@@ -74,20 +66,12 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await stanley.deposit(expectedBalance);
 
         //when
-        const actualBalance = await stanley.totalBalance(
-            await admin.getAddress()
-        );
+        const actualBalance = await stanley.totalBalance(await admin.getAddress());
 
         //then
-        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(
-            await admin.getAddress()
-        );
-        const actualAssetBalanceAave = await DAI.balanceOf(
-            aaveStrategy.address
-        );
-        const actualAssetBalanceCompound = await DAI.balanceOf(
-            compoundStrategy.address
-        );
+        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
+        const actualAssetBalanceAave = await DAI.balanceOf(aaveStrategy.address);
+        const actualAssetBalanceCompound = await DAI.balanceOf(compoundStrategy.address);
 
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
         expect(actualBalance).to.be.equal(expectedBalance);
@@ -108,20 +92,12 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await stanley.deposit(expectedBalance);
 
         //when
-        const actualBalance = await stanley.totalBalance(
-            await admin.getAddress()
-        );
+        const actualBalance = await stanley.totalBalance(await admin.getAddress());
 
         //then
-        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(
-            await admin.getAddress()
-        );
-        const actualAssetBalanceAave = await DAI.balanceOf(
-            aaveStrategy.address
-        );
-        const actualAssetBalanceCompound = await DAI.balanceOf(
-            compoundStrategy.address
-        );
+        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
+        const actualAssetBalanceAave = await DAI.balanceOf(aaveStrategy.address);
+        const actualAssetBalanceCompound = await DAI.balanceOf(compoundStrategy.address);
 
         expect(actualBalance).to.be.equal(expectedBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
@@ -145,21 +121,13 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
         //when
-        const actualTotalBalance = await stanley.totalBalance(
-            await admin.getAddress()
-        );
+        const actualTotalBalance = await stanley.totalBalance(await admin.getAddress());
 
         //then
-        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(
-            await admin.getAddress()
-        );
+        const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
 
-        const actualAssetBalanceAave = await DAI.balanceOf(
-            aaveStrategy.address
-        );
-        const actualAssetBalanceCompound = await DAI.balanceOf(
-            compoundStrategy.address
-        );
+        const actualAssetBalanceAave = await DAI.balanceOf(aaveStrategy.address);
+        const actualAssetBalanceCompound = await DAI.balanceOf(compoundStrategy.address);
 
         expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedTotalBalance);

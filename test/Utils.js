@@ -225,12 +225,27 @@ module.exports.getMockStanleyCase = async (stanleyCaseNumber, assetAddress) => {
     const mockCaseStanley = await MockCaseStanley.deploy(assetAddress);
     return mockCaseStanley;
 };
-module.exports.getMockMiltonCase = async (miltonCaseNumber) => {
+module.exports.getMockMiltonUsdtCase = async (miltonCaseNumber) => {
     let MockCaseMilton = null;
-    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "Milton");
+    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "MiltonUsdt");
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
 };
+
+module.exports.getMockMiltonUsdcCase = async (miltonCaseNumber) => {
+    let MockCaseMilton = null;
+    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "MiltonUsdc");
+    const mockCaseMilton = await MockCaseMilton.deploy();
+    return mockCaseMilton;
+};
+
+module.exports.getMockMiltonDaiCase = async (miltonCaseNumber) => {
+    let MockCaseMilton = null;
+    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "MiltonDai");
+    const mockCaseMilton = await MockCaseMilton.deploy();
+    return mockCaseMilton;
+};
+
 module.exports.prepareWarren = async (accounts) => {
     const ItfWarren = await ethers.getContractFactory("ItfWarren");
     const warren = await ItfWarren.deploy();
@@ -306,7 +321,9 @@ module.exports.prepareTestData = async (
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
-    const ItfJoseph = await ethers.getContractFactory("ItfJoseph");
+    const ItfJosephUsdt = await ethers.getContractFactory("ItfJosephUsdt");
+    const ItfJosephUsdc = await ethers.getContractFactory("ItfJosephUsdc");
+    const ItfJosephDai = await ethers.getContractFactory("ItfJosephDai");
 
     const warren = await this.prepareWarren(accounts);
 
@@ -324,7 +341,7 @@ module.exports.prepareTestData = async (
             await miltonStorageUsdt.deployed();
             miltonStorageUsdt.initialize();
 
-            miltonUsdt = await this.getMockMiltonCase(miltonCaseNumber);
+            miltonUsdt = await this.getMockMiltonUsdtCase(miltonCaseNumber);
             await miltonUsdt.deployed();
             miltonUsdt.initialize(
                 tokenUsdt.address,
@@ -335,7 +352,7 @@ module.exports.prepareTestData = async (
                 stanleyUsdt.address
             );
 
-            josephUsdt = await ItfJoseph.deploy();
+            josephUsdt = await ItfJosephUsdt.deploy();
             await josephUsdt.deployed();
             await josephUsdt.initialize(
                 tokenUsdt.address,
@@ -368,7 +385,7 @@ module.exports.prepareTestData = async (
             await miltonStorageUsdc.deployed();
             miltonStorageUsdc.initialize();
 
-            miltonUsdc = await this.getMockMiltonCase(miltonCaseNumber);
+            miltonUsdc = await this.getMockMiltonUsdcCase(miltonCaseNumber);
             await miltonUsdc.deployed();
             miltonUsdc.initialize(
                 tokenUsdc.address,
@@ -379,7 +396,7 @@ module.exports.prepareTestData = async (
                 stanleyUsdc.address
             );
 
-            josephUsdc = await ItfJoseph.deploy();
+            josephUsdc = await ItfJosephUsdc.deploy();
             await josephUsdc.deployed();
             await josephUsdc.initialize(
                 tokenUsdc.address,
@@ -413,7 +430,7 @@ module.exports.prepareTestData = async (
             await miltonStorageDai.deployed();
             miltonStorageDai.initialize();
 
-            miltonDai = await this.getMockMiltonCase(miltonCaseNumber);
+            miltonDai = await this.getMockMiltonDaiCase(miltonCaseNumber);
             await miltonDai.deployed();
             miltonDai.initialize(
                 tokenDai.address,
@@ -424,7 +441,7 @@ module.exports.prepareTestData = async (
                 stanleyDai.address
             );
 
-            josephDai = await ItfJoseph.deploy();
+            josephDai = await ItfJosephDai.deploy();
             await josephDai.deployed();
             await josephDai.initialize(
                 tokenDai.address,

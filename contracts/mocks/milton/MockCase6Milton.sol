@@ -3,9 +3,13 @@ pragma solidity 0.8.9;
 
 import "../../itf/ItfMilton.sol";
 
-contract MockCase6Milton is ItfMilton {
+abstract contract MockCase6Milton is ItfMilton {
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
         return 1e23;
+    }
+
+    function _getMaxSlippagePercentage() internal pure virtual override returns (uint256) {
+        return 1e18;
     }
 
     function _getMaxLpUtilizationPercentage() internal pure virtual override returns (uint256) {

@@ -108,8 +108,8 @@ library IporErrors {
     //@notice Incorrect IPOR Configuration address
     string public constant MILTON_INCORRECT_CONFIGURATION_ADDRESS = "IPOR_32";
 
-    //@notice Incorrect IPOR Configuration address, address to global configuration
-    // string public constant INCORRECT_IPOR_CONFIGURATION_ADDRESS = "IPOR_33";
+    //@notice General problem. Wrong decimals
+    string public constant WRONG_DECIMALS = "IPOR_33";
 
     string public constant MILTON_COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_34";
 

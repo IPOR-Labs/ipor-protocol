@@ -17,7 +17,7 @@ import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "hardhat/console.sol";
 
-contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfiguration, IJoseph {
+abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfiguration, IJoseph {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -47,9 +47,12 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
         require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(stanley) != address(0), IporErrors.WRONG_ADDRESS);
+        require(
+            _getDecimals() == ERC20Upgradeable(assetAddress).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
 
         _asset = assetAddress;
-        _decimals = ERC20Upgradeable(assetAddress).decimals();
         _ipToken = IIpToken(ipToken);
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
@@ -62,7 +65,7 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
 
     //@param liquidityAmount underlying token amount represented in decimals specific for underlying asset
     function provideLiquidity(uint256 liquidityAmount) external override whenNotPaused {
-        _provideLiquidity(liquidityAmount, _decimals, block.timestamp);
+        _provideLiquidity(liquidityAmount, _getDecimals(), block.timestamp);
     }
 
     //@param ipTokenValue IpToken amount represented in 18 decimals
@@ -113,7 +116,10 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
 
         _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
 
-        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(assetValue, _decimals);
+        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(
+            assetValue,
+            _getDecimals()
+        );
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
@@ -134,7 +140,10 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
 
         _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
 
-        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(assetValue, _decimals);
+        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(
+            assetValue,
+            _getDecimals()
+        );
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
@@ -171,7 +180,7 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
 
         wadMiltonAssetBalance = IporMath.convertToWad(
             IERC20Upgradeable(_asset).balanceOf(miltonAddr),
-            _decimals
+            _getDecimals()
         );
 
         totalBalance = wadMiltonAssetBalance + _stanley.totalBalance(miltonAddr);
@@ -228,7 +237,7 @@ contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfigurat
             IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );
 
-        uint256 assetValue = IporMath.convertWadToAssetDecimals(wadAssetValue, _decimals);
+        uint256 assetValue = IporMath.convertWadToAssetDecimals(wadAssetValue, _getDecimals());
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
