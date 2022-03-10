@@ -419,7 +419,7 @@ describe("Stanley -> Deposit", () => {
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
 
         //when
-        await expect(stanley.connect(userOne).deposit(one.mul(10))).to.be.revertedWith("IPOR_505");
+        await expect(stanley.connect(userOne).deposit(one.mul(10))).to.be.revertedWith("IPOR_003");
     });
 
     it("Should not deposit when user try deposit 0", async () => {
@@ -431,7 +431,7 @@ describe("Stanley -> Deposit", () => {
 
         //when
         await expect(stanley.connect(userOne).deposit(BigNumber.from("0"))).to.be.revertedWith(
-            "IPOR_103"
+            "IPOR_008"
         );
     });
 });

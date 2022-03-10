@@ -40,7 +40,7 @@ abstract contract JosephConfiguration is
     {
         require(
             newCharlieTreasurer != address(0),
-            IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS
+            IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER
         );
         _charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);

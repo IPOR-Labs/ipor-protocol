@@ -73,7 +73,7 @@ describe("IpToken", () => {
         await assertError(
             testData.ipTokenDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_101"
+            "IPOR_006"
         );
     });
 
@@ -92,7 +92,7 @@ describe("IpToken", () => {
 
         await assertError(
             testData.ipTokenDai.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_101"
+            "IPOR_006"
         );
     });
 

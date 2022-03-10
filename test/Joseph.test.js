@@ -616,7 +616,7 @@ describe("Joseph", () => {
             //when
             testData.miltonDai.calculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_404"
+            "IPOR_301"
         );
 
         //then
@@ -678,7 +678,7 @@ describe("Joseph", () => {
             //when
             testData.miltonDai.calculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_404"
+            "IPOR_301"
         );
 
         //then

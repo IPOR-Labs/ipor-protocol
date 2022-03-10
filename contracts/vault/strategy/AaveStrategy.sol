@@ -63,7 +63,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     }
 
     modifier onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
         _;
     }
 

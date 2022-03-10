@@ -254,7 +254,7 @@ describe("Joseph Maintenance", () => {
         await assertError(
             testData.josephDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_101"
+            "IPOR_006"
         );
     });
 
@@ -273,7 +273,7 @@ describe("Joseph Maintenance", () => {
 
         await assertError(
             testData.josephDai.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_101"
+            "IPOR_006"
         );
     });
 

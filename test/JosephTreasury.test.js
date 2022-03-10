@@ -163,7 +163,7 @@ describe("Joseph Treasury", () => {
             //when
             testData.josephDai.connect(userThree).transferTreasury(BigInt("100")),
             //then
-            "IPOR_405"
+            "IPOR_400"
         );
     });
 

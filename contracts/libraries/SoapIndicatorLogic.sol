@@ -146,7 +146,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
-            IporErrors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_DERIVATIVE_OPEN_TIMESTAMP
+            IporErrors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP
         );
         return
             derivativeNotional *
@@ -211,7 +211,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             derivativeNotional <= totalNotional,
-            IporErrors.MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
+            IporErrors.MILTON_SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
         );
         if (derivativeNotional == totalNotional) {
             return 0;

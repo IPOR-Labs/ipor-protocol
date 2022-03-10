@@ -42,7 +42,7 @@ describe("IporOwnable", () => {
         await expect(
             iporOwnable.connect(userTwo).confirmTransferOwnership(),
             "Should revert when pass userTwo address"
-        ).revertedWith("IPOR_101");
+        ).revertedWith("IPOR_006");
     });
 
     it("Should be able to transfer ownership to userOne", async () => {

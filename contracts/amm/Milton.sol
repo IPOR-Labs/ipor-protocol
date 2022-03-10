@@ -112,7 +112,7 @@ abstract contract Milton is
 
         int256 balance = _getAccruedBalance().liquidityPool.toInt256() - soap;
 
-        require(balance >= 0, IporErrors.JOSEPH_SOAP_AND_MILTON_LP_BALANCE_SUM_IS_TOO_LOW);
+        require(balance >= 0, IporErrors.MILTON_SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
         uint256 ipTokenTotalSupply = _ipToken.totalSupply();
         if (ipTokenTotalSupply != 0) {
             return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
@@ -348,7 +348,7 @@ abstract contract Milton is
 
         require(
             IERC20Upgradeable(_asset).balanceOf(msg.sender) >= totalAmount,
-            IporErrors.MILTON_ASSET_BALANCE_OF_TOO_LOW
+            IporErrors.ASSET_BALANCE_OF_TOO_LOW
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
@@ -631,13 +631,13 @@ abstract contract Milton is
     }
 
     function _closeSwapPayFixed(uint256 swapId, uint256 closeTimestamp) internal {
-        require(swapId != 0, IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID);
+        require(swapId != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
 
         DataTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapPayFixed(swapId);
 
         require(
             iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),
-            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_DERIVATIVE_STATUS
         );
 
         uint256 incomeTaxPercentage = _getIncomeTaxPercentage();
@@ -673,13 +673,13 @@ abstract contract Milton is
     }
 
     function _closeSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp) internal {
-        require(swapId != 0, IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID);
+        require(swapId != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
 
         DataTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapReceiveFixed(swapId);
 
         require(
             iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),
-            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_DERIVATIVE_STATUS
         );
 
         int256 positionValue = _calculateSwapReceiveFixedValue(closeTimestamp, iporSwap);
@@ -713,7 +713,7 @@ abstract contract Milton is
     }
 
     function _closeSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
-        require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+        require(swapIds.length > 0, IporErrors.MILTON_SWAP_IDS_ARRAY_IS_EMPTY);
 
         for (uint256 i = 0; i < swapIds.length; i++) {
             _closeSwapPayFixed(swapIds[i], closeTimestamp);
@@ -721,7 +721,7 @@ abstract contract Milton is
     }
 
     function _closeSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
-        require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+        require(swapIds.length > 0, IporErrors.MILTON_SWAP_IDS_ARRAY_IS_EMPTY);
 
         for (uint256 i = 0; i < swapIds.length; i++) {
             _closeSwapReceiveFixed(swapIds[i], closeTimestamp);
@@ -741,8 +741,7 @@ abstract contract Milton is
             if (msg.sender != derivativeItem.buyer) {
                 require(
                     _calculationTimestamp >= derivativeItem.endingTimestamp,
-                    IporErrors
-                        .MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY
+                    IporErrors.MILTON_CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
         }

@@ -29,7 +29,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
     mapping(address => DataTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {
-        require(_updaters[msg.sender] == 1, IporErrors.WARREN_CALLER_NOT_WARREN_UPDATER);
+        require(_updaters[msg.sender] == 1, IporErrors.WARREN_CALLER_NOT_UPDATER);
         _;
     }
 
@@ -137,7 +137,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
+            IporErrors.WARREN_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
         _indexes[asset] = DataTypes.IPOR(0, 0, Constants.WAD_YEAR_IN_SECONDS.toUint128(), 0, 0);
         emit IporIndexAddAsset(asset);

@@ -51,7 +51,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     }
 
     modifier onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
         _;
     }
 
@@ -164,7 +164,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @param blocksPerYear amount to deposit in aave lending.
      */
     function setBlocksPerYear(uint256 blocksPerYear) external onlyOwner {
-        require(blocksPerYear != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+        require(blocksPerYear != 0, IporErrors.VALUE_SHOULD_BE_GRATER_THEN_ZERO );
         _blocksPerYear = blocksPerYear;
     }
 

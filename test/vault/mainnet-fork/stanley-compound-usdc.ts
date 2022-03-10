@@ -300,8 +300,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
         expect(
             compoundStrategyBalanceAfter,
-            "compoundStrategyBalanceAfter = 334842410142"
-        ).to.be.equal(BigNumber.from("334842410142"));
+            "compoundStrategyBalanceAfter = 334842407899"
+        ).to.be.equal(BigNumber.from("334842407899"));
         expect(
             userUsdcBalanceAfter.gt(userUsdcBalanceBefore),
             "userUsdcBalanceAfter > userUsdcBalanceBefore"

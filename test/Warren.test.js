@@ -230,7 +230,7 @@ describe("Warren", () => {
         await assertError(
             testData.warren.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_101"
+            "IPOR_006"
         );
     });
 
@@ -245,7 +245,7 @@ describe("Warren", () => {
 
         await assertError(
             testData.warren.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_101"
+            "IPOR_006"
         );
     });
 
@@ -620,7 +620,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_204"
+            "IPOR_202"
         );
     });
 
@@ -636,7 +636,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_18"
+            "IPOR_000"
         );
     });
 
