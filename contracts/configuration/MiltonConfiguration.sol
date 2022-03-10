@@ -10,7 +10,11 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-abstract contract MiltonConfiguration is PausableUpgradeable, IporOwnableUpgradeable, IMiltonConfiguration {
+abstract contract MiltonConfiguration is
+    PausableUpgradeable,
+    IporOwnableUpgradeable,
+    IMiltonConfiguration
+{
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 

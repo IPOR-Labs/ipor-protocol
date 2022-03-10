@@ -40,19 +40,18 @@ module.exports.getStandardDerivativeParamsDAI = (user, testData) => {
     return {
         asset: testData.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("900000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
         from: user,
     };
 };
-
 module.exports.getStandardDerivativeParamsUSDT = (user, testData) => {
     return {
         asset: testData.tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("900000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -530,7 +529,7 @@ module.exports.getPayFixedDerivativeParamsDAICase1 = (user, testData) => {
     return {
         asset: testData.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("60000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -542,7 +541,7 @@ module.exports.getPayFixedDerivativeParamsUSDTCase1 = (user, testData) => {
     return {
         asset: testData.tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("60000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),

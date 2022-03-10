@@ -21,7 +21,7 @@ library IporErrors {
     string public constant MILTON_TOTAL_AMOUNT_TOO_LOW = "IPOR_4";
 
     //@notice Maximum Slippage is too low
-    string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_5";
+    // string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_5";
 
     //@notice msg.sender is not an appointed owner, so cannot confirm his appointment to be an owner of a specific smart contract
     string public constant SENDER_NOT_APPOINTED_OWNER = "IPOR_6";
@@ -34,7 +34,7 @@ library IporErrors {
     string public constant CONFIG_LP_MAX_UTILIZATION_PER_LEG_PERCENTAGE_TOO_HIGH = "IPOR_8";
 
     //@notice Maximum Slippage is too high
-    string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_9";
+    string public constant TOLERATED_QUOTE_VALUE_EXCEEDED = "IPOR_9";
 
     //@notice Amount of collateral used to open swap exceeds limit
     string public constant MILTON_COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_10";

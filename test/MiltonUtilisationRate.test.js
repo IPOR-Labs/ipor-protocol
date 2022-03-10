@@ -60,12 +60,8 @@ describe("Milton - Utilization Rate", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     //TODO: clarify when spread equasion will be clarified
@@ -97,14 +93,13 @@ describe("Milton - Utilization Rate", () => {
     //         params.openTimestamp
     //     );
 
-    
     //     await assertError(
     //         //when
     //         data.milton.connect(userTwo).itfOpenSwap(
     //             params.openTimestamp,
     //             params.asset,
     //             params.totalAmount,
-    //             params.slippageValue,
+    //             params.toleratedQuoteValue,
     //             params.collateralizationFactor,
     //             params.direction
     //         ),
@@ -141,11 +136,7 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         //when
         await testData.miltonDai
@@ -153,7 +144,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -186,11 +177,7 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         //when
         await testData.miltonDai
@@ -198,7 +185,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -227,18 +214,11 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("100000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("100000000000000000000000"), params.openTimestamp);
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         //when
         await testData.miltonDai
@@ -246,7 +226,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -275,18 +255,11 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("100000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("100000000000000000000000"), params.openTimestamp);
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         //when
         await testData.miltonDai
@@ -294,7 +267,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -327,11 +300,7 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await assertError(
             //when
@@ -340,7 +309,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     USD_14_000_18DEC,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then
@@ -376,11 +345,7 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await assertError(
             //when
@@ -389,7 +354,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then
@@ -425,11 +390,7 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await assertError(
             //when
@@ -438,7 +399,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     USD_14_000_18DEC,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then
@@ -474,11 +435,7 @@ describe("Milton - Utilization Rate", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await assertError(
             //when
@@ -487,7 +444,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then

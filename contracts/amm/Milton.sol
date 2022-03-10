@@ -142,14 +142,14 @@ abstract contract Milton is
     //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function openSwapPayFixed(
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external override nonReentrant whenNotPaused returns (uint256) {
         return
             _openSwapPayFixed(
                 block.timestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }
@@ -157,14 +157,14 @@ abstract contract Milton is
     //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external override nonReentrant whenNotPaused returns (uint256) {
         return
             _openSwapReceiveFixed(
                 block.timestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }
@@ -177,11 +177,21 @@ abstract contract Milton is
         _closeSwapReceiveFixed(swapId, block.timestamp);
     }
 
-    function closeSwapsPayFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+    function closeSwapsPayFixed(uint256[] memory swapIds)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+    {
         _closeSwapsPayFixed(swapIds, block.timestamp);
     }
 
-    function closeSwapsReceiveFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+    function closeSwapsReceiveFixed(uint256[] memory swapIds)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+    {
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
 
@@ -332,10 +342,8 @@ abstract contract Milton is
     function _beforeOpenSwap(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
         uint256 collateralizationFactor
     ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {
-        require(maximumSlippage != 0, IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(totalAmount != 0, IporErrors.MILTON_TOTAL_AMOUNT_TOO_LOW);
 
         require(
@@ -357,11 +365,6 @@ abstract contract Milton is
         require(
             wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
-
-        require(
-            maximumSlippage <= _getMaxSlippagePercentage(),
-            IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFee) = _calculateDerivativeAmount(
@@ -399,13 +402,12 @@ abstract contract Milton is
     function _openSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
-            maximumSlippage,
             collateralizationFactor
         );
 
@@ -423,6 +425,13 @@ abstract contract Milton is
             _miltonStorage.calculateSoapPayFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
             bosStruct.accruedIpor,
             balance
+        );
+
+        console.log("quoteValue=", quoteValue);
+        console.log("toleratedQuoteValue=", toleratedQuoteValue);
+        require(
+            toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
+            IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
         DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
@@ -468,13 +477,12 @@ abstract contract Milton is
     function _openSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
-            maximumSlippage,
             collateralizationFactor
         );
 
@@ -493,6 +501,12 @@ abstract contract Milton is
             _miltonStorage.calculateSoapReceiveFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
             bosStruct.accruedIpor,
             balance
+        );
+        console.log("toleratedQuoteValue=", toleratedQuoteValue);
+        console.log("quoteValue=", quoteValue);
+        require(
+            toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
+            IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
         DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
@@ -701,7 +715,7 @@ abstract contract Milton is
     function _closeSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
         require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
 
-        for (uint i=0; i<swapIds.length; i++) {
+        for (uint256 i = 0; i < swapIds.length; i++) {
             _closeSwapPayFixed(swapIds[i], closeTimestamp);
         }
     }
@@ -709,7 +723,7 @@ abstract contract Milton is
     function _closeSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
         require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
 
-        for (uint i=0; i<swapIds.length; i++) {
+        for (uint256 i = 0; i < swapIds.length; i++) {
             _closeSwapReceiveFixed(swapIds[i], closeTimestamp);
         }
     }

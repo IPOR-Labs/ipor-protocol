@@ -287,111 +287,9 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     </td>
                 </tr>
-
                 <tr>
                     <td>
-                        <strong>Max Slippage Percentage</strong>
-                    </td>
-                    <td>
-                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfMiltonUsdt"
-                                method="getMaxSlippagePercentage"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                        ) : (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="MiltonUsdt"
-                                method="getMaxSlippagePercentage"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                        )}
-                    </td>
-                    <td>
-                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfMiltonUsdc"
-                                method="getMaxSlippagePercentage"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                        ) : (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="MiltonUsdc"
-                                method="getMaxSlippagePercentage"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                        )}
-                    </td>
-                    <td>
-                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfMiltonDai"
-                                method="getMaxSlippagePercentage"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                        ) : (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="MiltonDai"
-                                method="getMaxSlippagePercentage"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                        )}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>
-                            Max Liquidity Pool Utilization Percentage
-                        </strong>
+                        <strong>Max Liquidity Pool Utilization Percentage</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -490,9 +388,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>
-                            Max Liquidity Pool Utilization Per Leg Percentage
-                        </strong>
+                        <strong>Max Liquidity Pool Utilization Per Leg Percentage</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
