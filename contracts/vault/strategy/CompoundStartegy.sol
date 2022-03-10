@@ -117,8 +117,9 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-
-        _cToken.redeem(IporMath.division(amount * Constants.D18, _cToken.exchangeRateStored()));
+        _cToken.redeem(
+            IporMath.divisionWithoutRound(amount * Constants.D18, _cToken.exchangeRateStored())
+        );
 
         IERC20Upgradeable(address(asset)).safeTransfer(
             msg.sender,

@@ -2,11 +2,6 @@
   "manifestVersion": "3.2",
   "proxies": [
     {
-      "address": "0x01c1DeF3b91672704716159C9041Aeca392DdFfb",
-      "txHash": "0x73ab2feda15f87e1a79a0842ff4096b693b7428fa84c24b11ec7eebe1017bde3",
-      "kind": "uups"
-    },
-    {
       "address": "0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44",
       "txHash": "0x368a1adc4e3e8d2e016bbb88b458e9518999785516a321409bbfda609fe8a793",
       "kind": "uups"
@@ -24,6 +19,11 @@
     {
       "address": "0x5302E909d1e93e30F05B5D6Eea766363D14F9892",
       "txHash": "0x86b1d3d24c4cd3e5df1dbfa0cb8c08f9dff1fc34b3fbf108b3f9f0a3cfed42be",
+      "kind": "uups"
+    },
+    {
+      "address": "0x01c1DeF3b91672704716159C9041Aeca392DdFfb",
+      "txHash": "0x8361854ece887b0cbe4254c9a6f31b82802f6ab91ea3ad872939508148f7fbaf",
       "kind": "uups"
     }
   ],
@@ -138,130 +138,6 @@
         }
       }
     },
-    "cbb0127e15341c1fe31bca0a7066a2b02e5cc10df43e57fed0d294bf186336c8": {
-      "address": "0x32EEce76C2C2e8758584A83Ee2F522D4788feA0f",
-      "txHash": "0xc1817030e0118512e1922f1e0a0e3416eddaf1973b713848933799e6133f47de",
-      "layout": {
-        "storage": [
-          {
-            "contract": "Initializable",
-            "label": "_initialized",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
-          },
-          {
-            "contract": "Initializable",
-            "label": "_initializing",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
-          },
-          {
-            "contract": "ERC1967UpgradeUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
-          },
-          {
-            "contract": "UUPSUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
-          },
-          {
-            "contract": "ContextUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
-          },
-          {
-            "contract": "OwnableUpgradeable",
-            "label": "_owner",
-            "type": "t_address",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
-          },
-          {
-            "contract": "OwnableUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)49_storage",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
-          },
-          {
-            "contract": "IporOwnableUpgradeable",
-            "label": "_appointedOwner",
-            "type": "t_address",
-            "src": "contracts/security/IporOwnableUpgradeable.sol:8"
-          },
-          {
-            "contract": "AaveStrategy",
-            "label": "provider",
-            "type": "t_contract(AaveLendingPoolProviderV2)11400",
-            "src": "contracts/assetManagment/strategy/AaveStrategy.sol:20"
-          },
-          {
-            "contract": "AaveStrategy",
-            "label": "stakedAaveInterface",
-            "type": "t_contract(StakedAaveInterface)11573",
-            "src": "contracts/assetManagment/strategy/AaveStrategy.sol:21"
-          },
-          {
-            "contract": "AaveStrategy",
-            "label": "aaveIncentive",
-            "type": "t_contract(AaveIncentivesInterface)11365",
-            "src": "contracts/assetManagment/strategy/AaveStrategy.sol:22"
-          },
-          {
-            "contract": "AaveStrategy",
-            "label": "underlyingToken",
-            "type": "t_address",
-            "src": "contracts/assetManagment/strategy/AaveStrategy.sol:24"
-          },
-          {
-            "contract": "AaveStrategy",
-            "label": "aToken",
-            "type": "t_address",
-            "src": "contracts/assetManagment/strategy/AaveStrategy.sol:25"
-          },
-          {
-            "contract": "AaveStrategy",
-            "label": "aave",
-            "type": "t_address",
-            "src": "contracts/assetManagment/strategy/AaveStrategy.sol:27"
-          },
-          {
-            "contract": "AaveStrategy",
-            "label": "stkAave",
-            "type": "t_address",
-            "src": "contracts/assetManagment/strategy/AaveStrategy.sol:28"
-          }
-        ],
-        "types": {
-          "t_contract(AaveLendingPoolProviderV2)11400": {
-            "label": "contract AaveLendingPoolProviderV2"
-          },
-          "t_contract(StakedAaveInterface)11573": {
-            "label": "contract StakedAaveInterface"
-          },
-          "t_contract(AaveIncentivesInterface)11365": {
-            "label": "contract AaveIncentivesInterface"
-          },
-          "t_address": {
-            "label": "address"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]"
-          },
-          "t_uint256": {
-            "label": "uint256"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]"
-          },
-          "t_bool": {
-            "label": "bool"
-          }
-        }
-      }
-    },
     "fd6b7564cad04e0177eb99d14975d94116659c6e8011c81fd1d4eac20dbf06e6": {
       "address": "0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44",
       "txHash": "0xa35aa268573f897ab7f649e763e17a550a57d1efba85331dfa4039e1df0c553f",
@@ -361,6 +237,130 @@
           },
           "t_contract(CErc20)11619": {
             "label": "contract CErc20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "84527fbcf3917383eeb56f75b482cbd9330dd14e9acfe88afe937c31364bfc00": {
+      "address": "0x32EEce76C2C2e8758584A83Ee2F522D4788feA0f",
+      "txHash": "0x5dd87a653d604c35b27c11b632b6c8bcc2ce32cd344001a80b4ca829de92b36a",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "contract": "IporOwnableUpgradeable",
+            "label": "_appointedOwner",
+            "type": "t_address",
+            "src": "contracts/security/IporOwnableUpgradeable.sol:8"
+          },
+          {
+            "contract": "CompoundStrategy",
+            "label": "_asset",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/CompoundStartegy.sol:20"
+          },
+          {
+            "contract": "CompoundStrategy",
+            "label": "_cToken",
+            "type": "t_contract(CErc20)23735",
+            "src": "contracts/vault/strategy/CompoundStartegy.sol:21"
+          },
+          {
+            "contract": "CompoundStrategy",
+            "label": "_blocksPerYear",
+            "type": "t_uint256",
+            "src": "contracts/vault/strategy/CompoundStartegy.sol:22"
+          },
+          {
+            "contract": "CompoundStrategy",
+            "label": "_treasury",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/CompoundStartegy.sol:23"
+          },
+          {
+            "contract": "CompoundStrategy",
+            "label": "_comptroller",
+            "type": "t_contract(ComptrollerInterface)23824",
+            "src": "contracts/vault/strategy/CompoundStartegy.sol:25"
+          },
+          {
+            "contract": "CompoundStrategy",
+            "label": "_compToken",
+            "type": "t_contract(IERC20Upgradeable)1583",
+            "src": "contracts/vault/strategy/CompoundStartegy.sol:26"
+          },
+          {
+            "contract": "CompoundStrategy",
+            "label": "_stanley",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/CompoundStartegy.sol:28"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address"
+          },
+          "t_contract(CErc20)23735": {
+            "label": "contract CErc20"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(ComptrollerInterface)23824": {
+            "label": "contract ComptrollerInterface"
+          },
+          "t_contract(IERC20Upgradeable)1583": {
+            "label": "contract IERC20Upgradeable"
           },
           "t_array(t_uint256)49_storage": {
             "label": "uint256[49]"

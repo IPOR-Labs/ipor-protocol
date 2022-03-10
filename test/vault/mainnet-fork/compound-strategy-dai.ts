@@ -31,7 +31,7 @@ describe("compound deployed Contract on Mainnet fork", function () {
         return;
     }
 
-    describe("create functions", () => {
+    describe("Compound Strategy Dai", () => {
         before(async () => {
             maxValue =
                 "115792089237316195423570985008687907853269984665640564039457584007913129639935";
@@ -83,9 +83,9 @@ describe("compound deployed Contract on Mainnet fork", function () {
                 ComptrollerAddress,
                 COMP,
             ]);
-            await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             await strategyContract_Instance.setStanley(await signer.getAddress());
+            await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             compTrollerContract = new hre.ethers.Contract(
                 ComptrollerAddress,
@@ -94,18 +94,24 @@ describe("compound deployed Contract on Mainnet fork", function () {
             );
         });
 
-        it("hardhat_impersonateAccount and check transfered balance to our account", async function () {
-            let daiBalanceBefore = await daiContract.balanceOf(accounts[0].address);
-            console.log("Dai Balance Before", daiBalanceBefore.toString());
+        it("Should pass flow deposit, withdraw, claim for dai", async function () {
+            let usdcBalanceBefore = await daiContract.balanceOf(accounts[0].address);
+            console.log("DAI Balance Before", usdcBalanceBefore.toString());
+
+            const strategyBalanceBeforeDeposit = await strategyContract_Instance.balanceOf();
+            console.log(
+                "Strategy balanse befor deposit: ",
+                strategyBalanceBeforeDeposit.toString()
+            );
 
             await daiContract.approve(strategyContract_Instance.address, maxValue);
-
-            await strategyContract_Instance.connect(signer).deposit("10000000000000000000");
+            console.log("Deposite amound: 100000000000000000000");
+            await strategyContract_Instance.connect(signer).deposit("100000000000000000000");
             console.log("Deposite complete");
+            const strategyBalanceAfterDeposit = await strategyContract_Instance.balanceOf();
+            console.log("Strategy balanse after deposit: ", strategyBalanceAfterDeposit.toString());
 
             const timestamp = Math.floor(Date.now() / 1000) + 864000 * 4;
-            console.log("Timestamp: ", timestamp);
-
             await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
             await hre.network.provider.send("evm_mine");
 
@@ -115,16 +121,21 @@ describe("compound deployed Contract on Mainnet fork", function () {
             await cTokenContract
                 .connect(signer)
                 .approve(strategyContract_Instance.address, maxValue);
-            await strategyContract_Instance.withdraw(cTokenBal);
+            await strategyContract_Instance.withdraw(strategyBalanceAfterDeposit);
             console.log("Withdraw Complete");
+            const strategyBalAfterWithdraw = await strategyContract_Instance.balanceOf();
+            console.log("Strategy Balance after withdraw: ", strategyBalAfterWithdraw.toString());
+
+            let compGoveBalanceBeforeClaim = await compContract.balanceOf(accounts[0].address);
+            console.log("Comp Balance before claim", compGoveBalanceBeforeClaim.toString());
 
             await strategyContract_Instance.doClaim();
 
             let compGoveBalance = await compContract.balanceOf(accounts[0].address);
-            console.log("Claimed Comp Balance", compGoveBalance.toString());
+            console.log("Claimed Comp Balance after claim", compGoveBalance.toString());
 
-            let daiBalanceAfter = await daiContract.balanceOf(accounts[0].address);
-            console.log("Dai Balance After", daiBalanceAfter.toString());
+            let usdcBalanceAfter = await daiContract.balanceOf(accounts[0].address);
+            console.log("USDT Balance After", usdcBalanceAfter.toString());
         });
     });
 });
