@@ -3,61 +3,72 @@ pragma solidity 0.8.9;
 
 import "../../itf/ItfMilton.sol";
 
-contract MockCase2Milton is ItfMilton {
+abstract contract MockCase2Milton is ItfMilton {
+    function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
+        return 1e23;
+    }
 
-	function _getMaxSwapCollateralAmount() internal virtual override pure returns (uint256) {
-			return 1e23;
-	}
+    function _getMaxSlippagePercentage() internal pure virtual override returns (uint256) {
+        return 1e18;
+    }
 
-    function _getMaxSlippagePercentage() internal virtual override pure returns (uint256) {
-		return 1e18;
-	}
-
-    function _getMaxLpUtilizationPercentage() internal virtual override pure returns (uint256){
-		return 8 * 1e17;
-	}
+    function _getMaxLpUtilizationPercentage() internal pure virtual override returns (uint256) {
+        return 8 * 1e17;
+    }
 
     function _getMaxLpUtilizationPerLegPercentage()
-	internal virtual override
+        internal
         pure
-        returns (uint256){
-			return 48 * 1e18;
-		}
+        virtual
+        override
+        returns (uint256)
+    {
+        return 48 * 1e18;
+    }
 
-    function _getIncomeTaxPercentage() internal virtual override pure returns (uint256){
-		return 50000000000000000;
-	}
+    function _getIncomeTaxPercentage() internal pure virtual override returns (uint256) {
+        return 50000000000000000;
+    }
 
-    function _getOpeningFeePercentage() internal virtual override pure returns (uint256){
-		return 3e14;
-	}
+    function _getOpeningFeePercentage() internal pure virtual override returns (uint256) {
+        return 3e14;
+    }
 
     function _getOpeningFeeForTreasuryPercentage()
-	internal virtual override
+        internal
         pure
-        returns (uint256){
-			return 0;
-		}
+        virtual
+        override
+        returns (uint256)
+    {
+        return 0;
+    }
 
-    function _getIporPublicationFeeAmount() internal virtual override pure returns (uint256){
-		return 10 * 1e18;
-	}
+    function _getIporPublicationFeeAmount() internal pure virtual override returns (uint256) {
+        return 10 * 1e18;
+    }
 
-    function _getLiquidationDepositAmount() internal virtual override pure returns (uint256){
-		return 20 * 1e18;
-	}
+    function _getLiquidationDepositAmount() internal pure virtual override returns (uint256) {
+        return 20 * 1e18;
+    }
 
     function _getMaxCollateralizationFactorValue()
-	internal virtual override
+        internal
         pure
-        returns (uint256){
-			return 1000 * 1e18;
-		}
+        virtual
+        override
+        returns (uint256)
+    {
+        return 1000 * 1e18;
+    }
 
     function _getMinCollateralizationFactorValue()
-	internal virtual override
+        internal
         pure
-        returns (uint256){
-			return 10 * 1e18;
-		}
+        virtual
+        override
+        returns (uint256)
+    {
+        return 10 * 1e18;
+    }
 }

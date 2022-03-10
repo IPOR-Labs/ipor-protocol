@@ -4,14 +4,14 @@ import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, Stanley, TestERC20 } from "../../../../types";
+import { MockStrategy, StanleyDai, TestERC20 } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
 
 describe("Stanley -> SetStrategy", () => {
     let admin: Signer;
-    let stanley: Stanley;
+    let stanley: StanleyDai;
     let DAI: TestERC20;
     let USDt: TestERC20;
     let aaveStrategy: MockStrategy;
@@ -26,7 +26,7 @@ describe("Stanley -> SetStrategy", () => {
         USDt = (await tokenFactory.deploy(
             BigNumber.from(2).pow(255)
         )) as TestERC20;
-        const StanleyFactory = await hre.ethers.getContractFactory("Stanley");
+        
         const tokenFactoryIvToken = await hre.ethers.getContractFactory(
             "IvToken"
         );
@@ -49,13 +49,13 @@ describe("Stanley -> SetStrategy", () => {
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
 
-        const Stanley = await hre.ethers.getContractFactory("Stanley");
-        stanley = (await await upgrades.deployProxy(Stanley, [
+        const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
+        stanley = (await await upgrades.deployProxy(StanleyDai, [
             DAI.address,
             ivToken.address,
             aaveStrategy.address,
             compoundStrategy.address,
-        ])) as Stanley;
+        ])) as StanleyDai;
 
         await ivToken.setStanley(stanley.address);
     });

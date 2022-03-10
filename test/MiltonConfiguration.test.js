@@ -69,7 +69,7 @@ describe("MiltonConfiguration", () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         const MiltonConfiguration = await ethers.getContractFactory(
-            "MiltonConfiguration"
+            "MiltonDai"
         );
         miltonConfiguration = await MiltonConfiguration.deploy();
         await miltonConfiguration.deployed();

@@ -36,12 +36,8 @@ describe("Joseph Maintenance", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {
@@ -76,10 +72,7 @@ describe("Joseph Maintenance", () => {
         await testData.josephDai.connect(admin).pause();
 
         //then
-        await assertError(
-            testData.josephDai.connect(userOne).rebalance(),
-            "Pausable: paused"
-        );
+        await assertError(testData.josephDai.connect(userOne).rebalance(), "Pausable: paused");
 
         await assertError(
             testData.josephDai.connect(admin).depositToStanley(123),
@@ -96,10 +89,7 @@ describe("Joseph Maintenance", () => {
             "Pausable: paused"
         );
 
-        await assertError(
-            testData.josephDai.connect(userOne).redeem(123),
-            "Pausable: paused"
-        );
+        await assertError(testData.josephDai.connect(userOne).redeem(123), "Pausable: paused");
 
         await assertError(
             testData.josephDai.connect(userOne).transferTreasury(123),
@@ -112,27 +102,19 @@ describe("Joseph Maintenance", () => {
         );
 
         await assertError(
-            testData.josephDai
-                .connect(admin)
-                .setCharlieTreasurer(userTwo.address),
+            testData.josephDai.connect(admin).setCharlieTreasurer(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai
-                .connect(admin)
-                .setTreasureTreasurer(userTwo.address),
+            testData.josephDai.connect(admin).setTreasureTreasurer(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai
-                .connect(admin)
-                .setPublicationFeeTransferer(userTwo.address),
+            testData.josephDai.connect(admin).setPublicationFeeTransferer(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai
-                .connect(admin)
-                .setTreasureTransferer(userTwo.address),
+            testData.josephDai.connect(admin).setTreasureTransferer(userTwo.address),
             "Pausable: paused"
         );
     });
@@ -160,13 +142,8 @@ describe("Joseph Maintenance", () => {
         await testData.josephDai.connect(userOne).getTreasureTreasurer();
         await testData.josephDai.connect(userOne).getPublicationFeeTransferer();
         await testData.josephDai.connect(userOne).getTreasureTransferer();
-        await testData.josephDai
-            .connect(userOne)
-            .getRedeemLpMaxUtilizationPercentage();
-        await testData.josephDai
-            .connect(userOne)
-            .getMiltonStanleyBalancePercentage();
-        await testData.josephDai.connect(userOne).decimals();
+        await testData.josephDai.connect(userOne).getRedeemLpMaxUtilizationPercentage();
+        await testData.josephDai.connect(userOne).getMiltonStanleyBalancePercentage();
         await testData.josephDai.connect(userOne).asset();
     });
 
@@ -206,9 +183,7 @@ describe("Joseph Maintenance", () => {
         await testData.josephDai.connect(userOne).provideLiquidity(123);
 
         //then
-        const actualIpTokenBalance = BigInt(
-            await testData.ipTokenDai.balanceOf(userOne.address)
-        );
+        const actualIpTokenBalance = BigInt(await testData.ipTokenDai.balanceOf(userOne.address));
         expect(actualIpTokenBalance, "Incorrect IpToken balance.").to.be.eql(
             expectedIpTokenBalance
         );
@@ -240,18 +215,12 @@ describe("Joseph Maintenance", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.josephDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.josephDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.josephDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.josephDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //then
-        const actualNewOwner = await testData.josephDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.josephDai.connect(userOne).owner();
         expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
     });
 
@@ -265,9 +234,7 @@ describe("Joseph Maintenance", () => {
 
         //when
         await assertError(
-            testData.josephDai
-                .connect(userThree)
-                .transferOwnership(expectedNewOwner.address),
+            testData.josephDai.connect(userThree).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -282,9 +249,7 @@ describe("Joseph Maintenance", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.josephDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.josephDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await assertError(
             testData.josephDai.connect(userThree).confirmTransferOwnership(),
@@ -302,18 +267,12 @@ describe("Joseph Maintenance", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.josephDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.josephDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.josephDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.josephDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         await assertError(
-            testData.josephDai
-                .connect(expectedNewOwner)
-                .confirmTransferOwnership(),
+            testData.josephDai.connect(expectedNewOwner).confirmTransferOwnership(),
             "IPOR_6"
         );
     });
@@ -326,19 +285,13 @@ describe("Joseph Maintenance", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.josephDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.josephDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.josephDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.josephDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            testData.josephDai
-                .connect(admin)
-                .transferOwnership(expectedNewOwner.address),
+            testData.josephDai.connect(admin).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -352,19 +305,13 @@ describe("Joseph Maintenance", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.josephDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.josephDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //when
-        await testData.josephDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.josephDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //then
-        const actualNewOwner = await testData.josephDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.josephDai.connect(userOne).owner();
         expect(admin.address).to.be.eql(actualNewOwner);
     });
 });
