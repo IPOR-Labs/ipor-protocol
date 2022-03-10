@@ -17,7 +17,12 @@ import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "hardhat/console.sol";
 
-abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfiguration, IJoseph {
+abstract contract Joseph is
+    UUPSUpgradeable,
+    ReentrancyGuardUpgradeable,
+    JosephConfiguration,
+    IJoseph
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -228,21 +233,29 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        DataTypes.MiltonBalanceMemory memory balance = _milton.getAccruedBalance();
-
         uint256 wadAssetValue = IporMath.division(ipTokenValue * exchangeRate, Constants.D18);
 
+        //TODO: split based on redeem fee
+        uint256 wadRedeemFee = IporMath.division(
+            wadAssetValue * _getRedeemFeePercentage(),
+            Constants.D18
+        );
+
+        uint256 wadRedeemValue = wadAssetValue - wadRedeemFee;
+
+        DataTypes.MiltonBalanceMemory memory balance = _milton.getAccruedBalance();
+
         require(
-            balance.liquidityPool > wadAssetValue,
+            balance.liquidityPool > wadRedeemValue,
             IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
         );
 
-        uint256 assetValue = IporMath.convertWadToAssetDecimals(wadAssetValue, _getDecimals());
+        uint256 assetValue = IporMath.convertWadToAssetDecimals(wadRedeemValue, _getDecimals());
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
             balance.payFixedSwaps + balance.receiveFixedSwaps,
-            wadAssetValue
+            wadRedeemValue
         );
 
         require(
@@ -252,11 +265,20 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
 
         _ipToken.burn(msg.sender, ipTokenValue);
 
-        _miltonStorage.subtractLiquidity(wadAssetValue);
+        _miltonStorage.subtractLiquidity(wadRedeemValue);
 
         IERC20Upgradeable(_asset).safeTransferFrom(address(_milton), msg.sender, assetValue);
 
-        emit Redeem(timestamp, address(milton), msg.sender, exchangeRate, assetValue, ipTokenValue);
+        emit Redeem(
+            timestamp,
+            address(milton),
+            msg.sender,
+            exchangeRate,
+            assetValue,
+            ipTokenValue,
+            wadRedeemFee,
+            wadRedeemValue
+        );
     }
 
     function _calculateRedeemedUtilizationRate(
