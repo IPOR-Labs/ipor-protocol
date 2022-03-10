@@ -29,8 +29,9 @@ const { expect } = chai;
 
 describe("Stanley -> Withdraw", () => {
     // let wallet: Wallet
-    const one: any = BigNumber.from("1000000000000000000");
-    const oneRay: any = BigNumber.from("1000000000000000000000000000");
+    const one = BigNumber.from("1000000000000000000");
+    const oneRay = BigNumber.from("1000000000000000000000000000");
+    const zero = BigNumber.from("0");
 
     let admin: Signer, userOne: Signer, userTwo: Signer;
 
@@ -514,7 +515,10 @@ describe("Stanley -> Withdraw", () => {
         expect(aaveBalanceBefore).to.be.equal(TC_AMOUNT_10_USD_18DEC);
         expect(userIvTokenBefore).to.be.equal(TC_AMOUNT_10_USD_18DEC);
         //when
+        await stanley.withdraw(one.mul(20));
 
-        await expect(stanley.withdraw(one.mul(20))).to.be.revertedWith("IPOR_103");
+        //then
+        const userIvTokenAfter = await ivToken.balanceOf(adminAddress);
+        expect(userIvTokenAfter).to.be.equal(zero);
     });
 });

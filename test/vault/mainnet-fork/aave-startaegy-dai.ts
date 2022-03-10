@@ -1,5 +1,6 @@
 import { getEnabledCategories } from "node:trace_events";
 import hre, { upgrades } from "hardhat";
+import { BigNumber } from "ethers";
 import daiAbi from "../../../abis/daiAbi.json";
 import aaveIncentiveContractAbi from "../../../abis/aaveIncentiveContract.json";
 // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
@@ -84,7 +85,6 @@ describe("aave deployed Contract on Mainnet fork", function () {
             ]);
 
             await strategyContract_Instance.setStanley(await signer.getAddress());
-
             await strategyContract_Instance.setTreasury(await signer.getAddress());
 
             aaveIncentiveContract = new hre.ethers.Contract(
@@ -95,32 +95,54 @@ describe("aave deployed Contract on Mainnet fork", function () {
         });
 
         it("hardhat_impersonateAccount and check transfered balance to our account", async function () {
-            const daiBalanceBefore = await daiContract.balanceOf(accounts[0].address);
-            console.log("Dai Balance Before", daiBalanceBefore.toString());
+            const usdcBalanceBefore = await daiContract.balanceOf(accounts[0].address);
+            console.log("Dai Balance Before", usdcBalanceBefore.toString());
 
             await daiContract.approve(strategyContract_Instance.address, maxValue);
-            const aDaiBalanceBefore = await aTokenContract.balanceOf(
+            const aUsdcBalanceBeforeDeposit = await aTokenContract.balanceOf(
                 strategyContract_Instance.address
             );
-            console.log("abal1Before: ", aDaiBalanceBefore.toString());
+            console.log("aTokens balance before deposit: ", aUsdcBalanceBeforeDeposit.toString());
 
-            await strategyContract_Instance.deposit("1000000000000000000000");
+            await strategyContract_Instance.deposit(BigNumber.from("100000000000000"));
             console.log("Deposite complete");
+            const aUsdcBalanceAfterDeposit = await aTokenContract.balanceOf(
+                strategyContract_Instance.address
+            );
+            console.log("aTokens balance after deposit: ", aUsdcBalanceAfterDeposit.toString());
+
+            const strategyBalance = await strategyContract_Instance.balanceOf();
+            console.log("strategy balance after deposit: ", strategyBalance.toString());
 
             const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
-            console.log("Timestamp: ", timestamp);
+            // console.log("Timestamp: ", timestamp);
 
             await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
             await hre.network.provider.send("evm_mine");
 
-            const aDaiBalance = await aTokenContract.balanceOf(strategyContract_Instance.address);
-            console.log("abal1: ", aDaiBalance.toString());
+            const aUsdcBalanceAfterAddTime = await aTokenContract.balanceOf(
+                strategyContract_Instance.address
+            );
+            console.log(
+                "aTokens balanse after add extra time ",
+                aUsdcBalanceAfterAddTime.toString()
+            );
 
             await aTokenContract
                 .connect(signer)
                 .approve(strategyContract_Instance.address, maxValue);
-            await strategyContract_Instance.withdraw(aDaiBalance);
+            await strategyContract_Instance.withdraw(aUsdcBalanceAfterAddTime);
             console.log("Withdraw complete");
+            const strategyBalanceAfterWithdraw = await strategyContract_Instance.balanceOf();
+            console.log(
+                "strategy balance after withdraw: ",
+                strategyBalanceAfterWithdraw.toString()
+            );
+
+            const aUsdcBalanceAfterWithdraw = await aTokenContract.balanceOf(
+                strategyContract_Instance.address
+            );
+            console.log("aTokens balance after withdraw: ", aUsdcBalanceAfterWithdraw.toString());
 
             const claimable2 = await aaveIncentiveContract.getUserUnclaimedRewards(
                 strategyContract_Instance.address
@@ -141,7 +163,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             console.log("Cliamed Aave Balance", aaveBalance.toString()); // should be non-zero
 
             const daiBalanceAfter = await daiContract.balanceOf(accounts[0].address);
-            console.log("Dai Balance After", daiBalanceAfter.toString());
+            console.log("DAi Balance After", daiBalanceAfter.toString());
         });
     });
 });
