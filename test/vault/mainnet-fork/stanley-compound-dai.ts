@@ -304,11 +304,12 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         );
 
         expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
-        expect(compoundStrategyBalanceAfter, "compoundStrategyBalanceAfter = 0").to.be.equal(
-            BigNumber.from("218700613")
-        );
-        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909387910165").to.be.equal(
-            BigNumber.from("334678735341909387910165")
+        expect(
+            compoundStrategyBalanceAfter,
+            "compoundStrategyBalanceAfter = 218700615"
+        ).to.be.equal(BigNumber.from("218700615"));
+        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909330621413").to.be.equal(
+            BigNumber.from("334678735341909330621413")
         );
         expect(
             strategyCTokenContractAfterWithdraw,

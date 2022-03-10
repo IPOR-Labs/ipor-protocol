@@ -177,6 +177,14 @@ abstract contract Milton is
         _closeSwapReceiveFixed(swapId, block.timestamp);
     }
 
+    function closeSwapsPayFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+        _closeSwapsPayFixed(swapIds, block.timestamp);
+    }
+
+    function closeSwapsReceiveFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+        _closeSwapsReceiveFixed(swapIds, block.timestamp);
+    }
+
     //@param assetValue underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetValue) external onlyJoseph nonReentrant whenNotPaused {
         uint256 vaultBalance = _stanley.deposit(assetValue);
@@ -688,6 +696,22 @@ abstract contract Milton is
             transferedToBuyer,
             transferedToLiquidator
         );
+    }
+
+    function _closeSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
+        require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+
+        for (uint i=0; i<swapIds.length; i++) {
+            _closeSwapPayFixed(swapIds[i], closeTimestamp);
+        }
+    }
+
+    function _closeSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
+        require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+
+        for (uint i=0; i<swapIds.length; i++) {
+            _closeSwapReceiveFixed(swapIds[i], closeTimestamp);
+        }
     }
 
     function _transferTokensBasedOnPositionValue(

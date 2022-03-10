@@ -327,17 +327,13 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
-        expect(userIvTokenAfter.lte(BigNumber.from("14223579500")), "ivToken < 14223579500").to.be
+        expect(userIvTokenAfter.lte(BigNumber.from("14223579600")), "ivToken < 14223579600").to.be
             .true;
         expect(
             userDaiBalanceAfter.gt(
                 userDaiBalanceBefore.add(withdrawAmount).sub(aaveStrategyBalanceAfter)
             ),
             "userDaiBalanceAfter > userDaiBalanceBefore + withdrawAmount - aaveStrategyBalanceAfter"
-        ).to.be.true;
-        expect(
-            strategyATokenContractAfter.lt(BigNumber.from("14223579500")),
-            "strategyATokenContractAfter"
         ).to.be.true;
     });
     it("Should Claim from AAVE", async () => {
