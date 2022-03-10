@@ -146,7 +146,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         //  ********************************************************************************************
         //  **************                        Stanley                                 **************
         //  ********************************************************************************************
-        const IPORVaultFactory = await hre.ethers.getContractFactory("Stanley", signer);
+        const IPORVaultFactory = await hre.ethers.getContractFactory("StanleyDai", signer);
 
         stanley = (await await upgrades.deployProxy(IPORVaultFactory, [
             daiAddress,
@@ -168,7 +168,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
     it("Should accept deposit and transfer tokens into AAVE", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
@@ -178,7 +178,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 0").to.be.equal(zero);
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanley.connect(signer).deposit(depositAmount);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -188,36 +188,36 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
-        expect(userIvTokenAfter, "userIvTokenAfter = 10 * 10^18").to.be.equal(depositAmound);
+        expect(userIvTokenAfter, "userIvTokenAfter = 10 * 10^18").to.be.equal(depositAmount);
         expect(aaveStrategyBalanceAfter, "aaveStrategyBalanceAfter = 10 * 10^18").to.be.equal(
-            depositAmound
+            depositAmount
         );
         expect(
             userDaiBalanceAfter,
             "userDaiBalanceAfter = userDaiBalanceBefore - depositAmount"
-        ).to.be.equal(userDaiBalanceBefore.sub(depositAmound));
+        ).to.be.equal(userDaiBalanceBefore.sub(depositAmount));
         expect(
             strategyATokenContractAfter,
-            "strategyATokenContractAfter = depositAmound"
-        ).to.be.equal(depositAmound);
+            "strategyATokenContractAfter = depositAmount"
+        ).to.be.equal(depositAmount);
     });
 
     it("Should accept deposit twice and transfer tokens into AAVE", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
 
-        expect(userIvTokenBefore, "userIvTokenBefore").to.be.equal(depositAmound);
+        expect(userIvTokenBefore, "userIvTokenBefore").to.be.equal(depositAmount);
         expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 10 *10^18").to.be.equal(
-            depositAmound
+            depositAmount
         );
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanley.connect(signer).deposit(depositAmount);
+        await stanley.connect(signer).deposit(depositAmount);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -237,8 +237,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         ).to.be.true;
         expect(
             userDaiBalanceAfter,
-            "userDaiBalanceAfter = userDaiBalanceBefore - 2 * depositAmound"
-        ).to.be.equal(userDaiBalanceBefore.sub(depositAmound).sub(depositAmound));
+            "userDaiBalanceAfter = userDaiBalanceBefore - 2 * depositAmount"
+        ).to.be.equal(userDaiBalanceBefore.sub(depositAmount).sub(depositAmount));
         expect(
             strategyATokenContractAfter.gt(BigNumber.from("30000000000000000000")),
             "strategyATokenContractAfter > 30 * 10^18"
