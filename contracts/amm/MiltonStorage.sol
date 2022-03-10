@@ -136,22 +136,22 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             );
     }
 
-    function getSwapsPayFixed(address account)
+    function getSwapsPayFixed(address account, uint256 offset, uint256 pageSize)
         external
         view
         override
         returns (DataTypes.IporSwapMemory[] memory)
     {
-        return _getPositions(_swapsPayFixed.swaps, _swapsPayFixed.ids[account]);
+        return _getPositions(_swapsPayFixed.swaps, _swapsPayFixed.ids[account], offset, pageSize);
     }
 
-    function getSwapsReceiveFixed(address account)
+    function getSwapsReceiveFixed(address account, uint256 offset, uint256 pageSize)
         external
         view
         override
         returns (DataTypes.IporSwapMemory[] memory)
     {
-        return _getPositions(_swapsReceiveFixed.swaps, _swapsReceiveFixed.ids[account]);
+        return _getPositions(_swapsReceiveFixed.swaps, _swapsReceiveFixed.ids[account], offset, pageSize);
     }
 
     function getSwapPayFixedIds(address account) external view override returns (uint128[] memory) {
@@ -372,13 +372,15 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function _getPositions(
         mapping(uint128 => DataTypes.IporSwap) storage swaps,
-        uint128[] storage ids
-    ) internal view returns (DataTypes.IporSwapMemory[] memory) {
-        uint256 swapsIdsLength = ids.length;
+        uint128[] storage ids,
+        uint256 offset,
+        uint256 pageSize
+    ) internal view returns (DataTypes.IporSwapMemory[] memory) { //TODO limit page size?
+        uint256 swapsIdsLength = offset + pageSize > ids.length ? ids.length - offset : pageSize;
         DataTypes.IporSwapMemory[] memory derivatives = new DataTypes.IporSwapMemory[](
             swapsIdsLength
         );
-        uint256 i = 0;
+        uint256 i = offset;
 
         for (i; i != swapsIdsLength; i++) {
             uint128 id = ids[i];

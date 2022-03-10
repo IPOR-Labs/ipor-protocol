@@ -189,15 +189,15 @@ describe("MiltonFrontendDataProvider", () => {
 
         let itemsDai = await miltonFrontendDataProvider
             .connect(paramsDai.from)
-            .getMySwaps(paramsDai.asset);
+            .getMySwaps(paramsDai.asset, 0, 1000);
 
         let itemsUsdc = await miltonFrontendDataProvider
             .connect(paramsUsdc.from)
-            .getMySwaps(paramsUsdc.asset);
+            .getMySwaps(paramsUsdc.asset, 0, 1000);
 
         let itemsUsdt = await miltonFrontendDataProvider
             .connect(paramsUsdt.from)
-            .getMySwaps(paramsUsdt.asset);
+            .getMySwaps(paramsUsdt.asset, 0, 1000);
 
         const actualDaiSwapsLength = itemsDai.length;
         const actualUsdcSwapsLength = itemsUsdc.length;

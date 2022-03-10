@@ -78,7 +78,7 @@ contract MiltonDevToolDataProvider is
         return token.allowance(msg.sender, assetConfiguration.getJoseph());
     }
 
-    function getSwapsPayFixed(address asset, address account)
+    function getSwapsPayFixed(address asset, address account, uint256 offset, uint256 pageSize)
         external
         view
         override
@@ -89,10 +89,10 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsPayFixed(account);
+                .getSwapsPayFixed(account, offset, pageSize);
     }
 
-    function getSwapsReceiveFixed(address asset, address account)
+    function getSwapsReceiveFixed(address asset, address account, uint256 offset, uint256 pageSize)
         external
         view
         override
@@ -103,10 +103,10 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsReceiveFixed(account);
+                .getSwapsReceiveFixed(account, offset, pageSize);
     }
 
-    function getMySwapsPayFixed(address asset)
+    function getMySwapsPayFixed(address asset, uint256 offset, uint256 pageSize)
         external
         view
         override
@@ -117,10 +117,10 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsPayFixed(msg.sender);
+                .getSwapsPayFixed(msg.sender, offset, pageSize);
     }
 
-    function getMySwapsReceiveFixed(address asset)
+    function getMySwapsReceiveFixed(address asset, uint256 offset, uint256 pageSize)
         external
         view
         override
@@ -131,7 +131,7 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsReceiveFixed(msg.sender);
+                .getSwapsReceiveFixed(msg.sender, offset, pageSize);
     }
 
     function calculateSpread(address asset)

@@ -33,12 +33,12 @@ interface IMiltonStorage {
         view
         returns (DataTypes.IporSwapMemory memory);
 
-    function getSwapsPayFixed(address account)
+    function getSwapsPayFixed(address account, uint256 offset, uint256 pageSize)
         external
         view
         returns (DataTypes.IporSwapMemory[] memory);
 
-    function getSwapsReceiveFixed(address account)
+    function getSwapsReceiveFixed(address account, uint256 offset, uint256 pageSize)
         external
         view
         returns (DataTypes.IporSwapMemory[] memory);

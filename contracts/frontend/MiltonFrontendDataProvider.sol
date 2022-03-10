@@ -12,6 +12,7 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IWarren.sol";
 import "../amm/MiltonStorage.sol";
+import "../amm/Milton.sol";
 
 //TODO: change name to DarcyDataProvider
 contract MiltonFrontendDataProvider is
@@ -72,7 +73,7 @@ contract MiltonFrontendDataProvider is
             .getTotalOutstandingNotional();
     }
 
-    function getMySwaps(address asset)
+    function getMySwaps(address asset, uint256 offset, uint256 pageSize)
         external
         view
         override
@@ -85,68 +86,74 @@ contract MiltonFrontendDataProvider is
         IMiltonStorage miltonStorage = IMiltonStorage(
             assetConfiguration.getMiltonStorage()
         );
+
         uint128[] memory accountSwapPayFixedIds = miltonStorage
             .getSwapPayFixedIds(msg.sender);
 
         uint128[] memory accountSwapReceiveFixedIds = miltonStorage
             .getSwapReceiveFixedIds(msg.sender);
 
-        uint256 pfSwapsLength = accountSwapPayFixedIds.length;
-
-        uint256 swapsLength = pfSwapsLength + accountSwapReceiveFixedIds.length;
-        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](
-            swapsLength
+        SwapIdDirectionPair[] memory swapIds = new SwapIdDirectionPair[](
+            accountSwapPayFixedIds.length + accountSwapReceiveFixedIds.length
         );
-        IMilton milton = IMilton(assetConfiguration.getMilton());
         uint256 i = 0;
-
-        for (i; i != pfSwapsLength; i++) {
-            DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-                .getSwapPayFixed(accountSwapPayFixedIds[i]);
-            iporDerivatives[i] = IporSwapFront(
-                iporSwap.id,
-                asset,
-                iporSwap.collateral,
-                iporSwap.notionalAmount,
-                IporMath.division(
-                    iporSwap.notionalAmount * Constants.D18,
-                    iporSwap.collateral
-                ),
-                0,
-                iporSwap.fixedInterestRate,
-                milton.calculateSwapPayFixedValue(iporSwap),
-                iporSwap.startingTimestamp,
-                iporSwap.endingTimestamp,
-                iporSwap.liquidationDepositAmount
-            );
+        for (i = 0; i < accountSwapPayFixedIds.length; i++) {
+            swapIds[i] = SwapIdDirectionPair(accountSwapPayFixedIds[i], 0);
+        }
+        for (i = 0; i < accountSwapReceiveFixedIds.length; i++) {
+            swapIds[accountSwapReceiveFixedIds.length + i] = SwapIdDirectionPair(accountSwapReceiveFixedIds[i], 1);
         }
 
-        i = pfSwapsLength;
+        IMilton milton = IMilton(assetConfiguration.getMilton());
 
-        for (i; i != swapsLength; i++) {
-            DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-                .getSwapReceiveFixed(
-                    accountSwapReceiveFixedIds[i - pfSwapsLength]
+        uint256 resultSetSize = swapIds.length > offset + pageSize ? pageSize : swapIds.length - offset;
+        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](resultSetSize);
+        for (i = 0; i < resultSetSize; i++) {
+            SwapIdDirectionPair memory swapIdPair = swapIds[i + offset];
+            if (swapIdPair.direction == 0) {
+                DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapIdPair.swapId);
+                iporDerivatives[i] = _mapToIporSwapFront(
+                    asset,
+                    iporSwap,
+                    0,
+                    milton.calculateSwapPayFixedValue(iporSwap)
                 );
-            iporDerivatives[i] = IporSwapFront(
-                iporSwap.id,
-                asset,
-                iporSwap.collateral,
-                iporSwap.notionalAmount,
-                IporMath.division(
-                    iporSwap.notionalAmount * Constants.D18,
-                    iporSwap.collateral
-                ),
-                1,
-                iporSwap.fixedInterestRate,
-                milton.calculateSwapReceiveFixedValue(iporSwap),
-                iporSwap.startingTimestamp,
-                iporSwap.endingTimestamp,
-                iporSwap.liquidationDepositAmount
-            );
+            } else {
+                DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(swapIdPair.swapId);
+                iporDerivatives[i] = _mapToIporSwapFront(
+                    asset,
+                    iporSwap,
+                    1,
+                    milton.calculateSwapReceiveFixedValue(iporSwap));
+            }
         }
 
         return iporDerivatives;
+    }
+
+    function _mapToIporSwapFront(
+        address asset,
+        DataTypes.IporSwapMemory memory iporSwap,
+        uint8 direction,
+        int256 value
+    ) internal view returns (IporSwapFront memory)
+    {
+        return IporSwapFront(
+            iporSwap.id,
+            asset,
+            iporSwap.collateral,
+            iporSwap.notionalAmount,
+            IporMath.division(
+                iporSwap.notionalAmount * Constants.D18,
+                iporSwap.collateral
+            ),
+            direction,
+            iporSwap.fixedInterestRate,
+            value,
+            iporSwap.startingTimestamp,
+            iporSwap.endingTimestamp,
+            iporSwap.liquidationDepositAmount
+        );
     }
 
     function getConfiguration()
@@ -230,5 +237,10 @@ contract MiltonFrontendDataProvider is
             spreadPayFixedValue,
             spreadRecFixedValue
         );
+    }
+
+    struct SwapIdDirectionPair {
+        uint128 swapId;
+        uint8 direction;
     }
 }

@@ -2249,7 +2249,9 @@ describe("Milton", () => {
         //then
         let actualDerivatives =
             await testData.miltonStorageDai.getSwapsPayFixed(
-                derivativeParams25days.from.address
+                derivativeParams25days.from.address,
+                0,
+                100
             );
         let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
@@ -2322,7 +2324,9 @@ describe("Milton", () => {
         //then
         let actualDerivatives =
             await testData.miltonStorageDai.getSwapsPayFixed(
-                derivativeParams25days.from.address
+                derivativeParams25days.from.address,
+                0,
+                100
             );
         let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
@@ -4464,13 +4468,17 @@ describe("Milton", () => {
             if (direction == 0) {
                 actualDerivatives =
                     await testData.miltonStorageUsdt.getSwapsPayFixed(
-                        openerUser.address
+                        openerUser.address,
+                        0,
+                        100
                     );
             }
             if (direction == 1) {
                 actualDerivatives =
                     await testData.miltonStorageUsdt.getSwapsReceiveFixed(
-                        openerUser.address
+                        openerUser.address,
+                        0,
+                        100
                     );
             }
         }
@@ -4479,13 +4487,17 @@ describe("Milton", () => {
             if (direction == 0) {
                 actualDerivatives =
                     await testData.miltonStorageUsdc.getSwapsPayFixed(
-                        openerUser.address
+                        openerUser.address,
+                        0,
+                        100
                     );
             }
             if (direction == 1) {
                 actualDerivatives =
                     await testData.miltonStorageUsdc.getSwapsReceiveFixed(
-                        openerUser.address
+                        openerUser.address,
+                        0,
+                        100
                     );
             }
         }
@@ -4494,13 +4506,17 @@ describe("Milton", () => {
             if (direction == 0) {
                 actualDerivatives =
                     await testData.miltonStorageDai.getSwapsPayFixed(
-                        openerUser.address
+                        openerUser.address,
+                        0,
+                        100
                     );
             }
             if (direction == 1) {
                 actualDerivatives =
                     await testData.miltonStorageDai.getSwapsReceiveFixed(
-                        openerUser.address
+                        openerUser.address,
+                        0,
+                        100
                     );
             }
         }
