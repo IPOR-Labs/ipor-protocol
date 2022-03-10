@@ -47,6 +47,10 @@ interface IMilton {
 
     function closeSwapReceiveFixed(uint256 swapId) external;
 
+    function closeSwapsPayFixed(uint256[] memory swapIds) external;
+
+    function closeSwapsReceiveFixed(uint256[] memory swapIds) external;
+
     function depositToStanley(uint256 assetValue) external;
 
     function withdrawFromStanley(uint256 assetValue) external;
