@@ -13,7 +13,7 @@ const maxValue = BigNumber.from(
 
 import {
     AaveStrategy,
-    Stanley,
+    StanleyUsdt,
     IvToken,
     ERC20,
     IAaveIncentivesController,
@@ -46,7 +46,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let stakeAaveContract: ERC20;
     let compoundStrategyContract_Instance: MockStrategy;
     let ivToken: IvToken;
-    let stanley: Stanley;
+    let stanleyUsdt: StanleyUsdt;
 
     if (process.env.FORK_ENABLED != "true") {
         return;
@@ -141,24 +141,24 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         //  ********************************************************************************************
         //  **************                        Stanley                                 **************
         //  ********************************************************************************************
-        const IPORVaultFactory = await hre.ethers.getContractFactory("Stanley", signer);
+        const IPORVaultFactory = await hre.ethers.getContractFactory("StanleyUsdt", signer);
 
-        stanley = (await await upgrades.deployProxy(IPORVaultFactory, [
+        stanleyUsdt = (await await upgrades.deployProxy(IPORVaultFactory, [
             usdtAddress,
             ivToken.address,
             aaveStrategyContract_Instance.address,
             compoundStrategyContract_Instance.address,
-        ])) as Stanley;
+        ])) as StanleyUsdt;
 
-        await stanley.setMilton(await signer.getAddress());
-        await aaveStrategyContract_Instance.setStanley(stanley.address);
+        await stanleyUsdt.setMilton(await signer.getAddress());
+        await aaveStrategyContract_Instance.setStanley(stanleyUsdt.address);
         await aaveStrategyContract_Instance.setTreasury(await signer.getAddress());
-        await compoundStrategyContract_Instance.setStanley(stanley.address);
+        await compoundStrategyContract_Instance.setStanley(stanleyUsdt.address);
         await compoundStrategyContract_Instance.setTreasury(await signer.getAddress());
 
         await usdtContract.approve(await signer.getAddress(), maxValue);
-        await usdtContract.approve(stanley.address, maxValue);
-        await ivToken.setStanley(stanley.address);
+        await usdtContract.approve(stanleyUsdt.address, maxValue);
+        await ivToken.setStanley(stanleyUsdt.address);
     });
 
     it("Shoiuld compand APR < aave APR ", async () => {
@@ -181,7 +181,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 0").to.be.equal(zero);
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanleyUsdt.connect(signer).deposit(depositAmound);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -219,8 +219,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         ).to.be.equal(BigNumber.from("9999999000000000000"));
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanleyUsdt.connect(signer).deposit(depositAmound);
+        await stanleyUsdt.connect(signer).deposit(depositAmound);
+
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceAfter = await aaveStrategyContract_Instance.balanceOf();
@@ -258,7 +259,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         ).to.be.true;
 
         //when
-        await stanley.withdraw(withdrawAmount);
+        await stanleyUsdt.withdraw(withdrawAmount);
 
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -306,7 +307,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         ).to.be.true;
 
         //when
-        await stanley.withdraw(aaveStrategyBalanceBefore);
+        await stanleyUsdt.withdraw(aaveStrategyBalanceBefore);
 
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);

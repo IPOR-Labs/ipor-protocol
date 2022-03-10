@@ -812,7 +812,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("1000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -897,7 +897,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("1000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 

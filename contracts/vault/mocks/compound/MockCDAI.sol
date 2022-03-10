@@ -28,7 +28,7 @@ contract MockCDAI is ERC20, CErc20Mock {
         _mint(msg.sender, 10**13); // 100.000 cDAI
     }
 
-    function decimals() public view override returns (uint8) {
+    function decimals() public pure override returns (uint8) {
         return 16;
     }
 

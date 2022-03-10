@@ -839,7 +839,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -903,7 +903,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -969,7 +969,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1027,7 +1027,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1083,7 +1083,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1142,7 +1142,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("40000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1202,7 +1202,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("48000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1218,7 +1218,7 @@ describe("Joseph - redeem", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     BigInt("50000000000000000000"),
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             "IPOR_314"
@@ -1270,7 +1270,7 @@ describe("Joseph - redeem", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("48000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1286,7 +1286,7 @@ describe("Joseph - redeem", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     BigInt("50000000000000000000"),
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             "IPOR_314"

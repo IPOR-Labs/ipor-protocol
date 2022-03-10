@@ -338,7 +338,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("40000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -378,7 +378,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("26000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -427,7 +427,7 @@ describe("Joseph", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -481,7 +481,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -535,7 +535,7 @@ describe("Joseph", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -587,7 +587,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -649,7 +649,7 @@ describe("Joseph", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -710,7 +710,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -773,7 +773,7 @@ describe("Joseph", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -851,7 +851,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("40000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -956,7 +956,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1035,7 +1035,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1117,7 +1117,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 

@@ -16,7 +16,7 @@ describe("Stanley -> constructor", () => {
     let USDt: TestERC20;
     let aaveStrategy: MockStrategy;
     let compoundStrategy: MockStrategy;
-    let StanleyFactory: any;
+    let StanleyDaiFactory: any;
     let ivToken: IvToken;
 
     beforeEach(async () => {
@@ -24,7 +24,7 @@ describe("Stanley -> constructor", () => {
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         USDt = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
-        StanleyFactory = await hre.ethers.getContractFactory("Stanley");
+        StanleyDaiFactory = await hre.ethers.getContractFactory("StanleyDai");
         const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
         ivToken = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
 
@@ -43,7 +43,7 @@ describe("Stanley -> constructor", () => {
         // when
         await expect(
             //when
-            upgrades.deployProxy(StanleyFactory, [
+            upgrades.deployProxy(StanleyDaiFactory, [
                 constants.AddressZero,
                 ivToken.address,
                 aaveStrategy.address,
@@ -56,7 +56,7 @@ describe("Stanley -> constructor", () => {
     it("Shoud deploy new IporVault", async () => {
         // given
         // when
-        stanley = (await upgrades.deployProxy(StanleyFactory, [
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
             aaveStrategy.address,
@@ -72,7 +72,7 @@ describe("Stanley -> constructor", () => {
         // when
         await expect(
             //when
-            upgrades.deployProxy(StanleyFactory, [
+            upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 constants.AddressZero,
                 aaveStrategy.address,
@@ -87,7 +87,7 @@ describe("Stanley -> constructor", () => {
         // when
         await expect(
             //when
-            upgrades.deployProxy(StanleyFactory, [
+            upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 ivToken.address,
                 constants.AddressZero,
@@ -102,7 +102,7 @@ describe("Stanley -> constructor", () => {
         // when
         await expect(
             //when
-            upgrades.deployProxy(StanleyFactory, [
+            upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 ivToken.address,
                 aaveStrategy.address,
@@ -118,7 +118,7 @@ describe("Stanley -> constructor", () => {
         // when
         await expect(
             //when
-            upgrades.deployProxy(StanleyFactory, [
+            upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 ivToken.address,
                 aaveStrategy.address,
@@ -134,7 +134,7 @@ describe("Stanley -> constructor", () => {
         // when
         await expect(
             //when
-            upgrades.deployProxy(StanleyFactory, [
+            upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 ivToken.address,
                 aaveStrategy.address,

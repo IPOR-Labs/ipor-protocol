@@ -93,14 +93,13 @@ describe("Milton - Utilization Rate", () => {
     //         params.openTimestamp
     //     );
 
-    
     //     await assertError(
     //         //when
     //         data.milton.connect(userTwo).itfOpenSwap(
     //             params.openTimestamp,
     //             params.asset,
     //             params.totalAmount,
-    //             params.slippageValue,
+    //             params.toleratedQuoteValue,
     //             params.collateralizationFactor,
     //             params.direction
     //         ),
@@ -145,7 +144,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -186,7 +185,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -227,7 +226,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -268,7 +267,7 @@ describe("Milton - Utilization Rate", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
     });
@@ -310,7 +309,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     USD_14_000_18DEC,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then
@@ -355,7 +354,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then
@@ -400,7 +399,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     USD_14_000_18DEC,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then
@@ -445,7 +444,7 @@ describe("Milton - Utilization Rate", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             //then

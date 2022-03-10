@@ -2,21 +2,13 @@
 pragma solidity 0.8.9;
 
 interface IJosephConfiguration {
-    event CharlieTreasurerUpdated(
-        address indexed asset,
-        address indexed newCharlieTreasurer
-    );
+    event CharlieTreasurerUpdated(address indexed asset, address indexed newCharlieTreasurer);
 
-    event PublicationFeeTransfererUpdated(
-        address indexed newPublicationFeeTransferer
-    );
+    event PublicationFeeTransfererUpdated(address indexed newPublicationFeeTransferer);
 
     event TreasureTransfererUpdated(address indexed newTreasureTransferer);
 
-    event TreasureTreasurerUpdated(
-        address indexed asset,
-        address indexed newTreasureTreasurer
-    );
+    event TreasureTreasurerUpdated(address indexed asset, address indexed newTreasureTreasurer);
 
     function getCharlieTreasurer() external view returns (address);
 
@@ -28,24 +20,15 @@ interface IJosephConfiguration {
 
     function getPublicationFeeTransferer() external view returns (address);
 
-    function setPublicationFeeTransferer(address newPublicationFeeTransferer)
-        external;
+    function setPublicationFeeTransferer(address newPublicationFeeTransferer) external;
 
     function getTreasureTransferer() external view returns (address);
 
     function setTreasureTransferer(address treasureTransferer) external;
 
-    function getRedeemLpMaxUtilizationPercentage()
-        external
-        pure
-        returns (uint256);
+    function getRedeemLpMaxUtilizationPercentage() external pure returns (uint256);
 
-    function getMiltonStanleyBalancePercentage()
-        external
-        pure
-        returns (uint256);
-
-    function decimals() external view returns (uint8);
+    function getMiltonStanleyBalancePercentage() external pure returns (uint256);
 
     function asset() external view returns (address);
 }

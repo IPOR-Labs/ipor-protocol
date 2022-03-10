@@ -25,7 +25,12 @@ import "hardhat/console.sol";
  *
  * @author IPOR Labs
  */
-contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfiguration, IMilton {
+abstract contract Milton is
+    UUPSUpgradeable,
+    ReentrancyGuardUpgradeable,
+    MiltonConfiguration,
+    IMilton
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for uint128;
@@ -51,8 +56,8 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         require(address(warren) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonSpreadModel) != address(0), IporErrors.WRONG_ADDRESS);
+        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
-        _decimals = ERC20Upgradeable(asset).decimals();
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
         _warren = IWarren(warren);
@@ -137,14 +142,14 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
     //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function openSwapPayFixed(
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external override nonReentrant whenNotPaused returns (uint256) {
         return
             _openSwapPayFixed(
                 block.timestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }
@@ -152,14 +157,14 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
     //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external override nonReentrant whenNotPaused returns (uint256) {
         return
             _openSwapReceiveFixed(
                 block.timestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }
@@ -172,11 +177,21 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         _closeSwapReceiveFixed(swapId, block.timestamp);
     }
 
-    function closeSwapsPayFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+    function closeSwapsPayFixed(uint256[] memory swapIds)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+    {
         _closeSwapsPayFixed(swapIds, block.timestamp);
     }
 
-    function closeSwapsReceiveFixed(uint256[] memory swapIds) external override nonReentrant whenNotPaused {
+    function closeSwapsReceiveFixed(uint256[] memory swapIds)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+    {
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
 
@@ -327,10 +342,8 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
     function _beforeOpenSwap(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
         uint256 collateralizationFactor
     ) internal view returns (DataTypes.BeforeOpenSwapStruct memory bosStruct) {
-        require(maximumSlippage != 0, IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_LOW);
         require(totalAmount != 0, IporErrors.MILTON_TOTAL_AMOUNT_TOO_LOW);
 
         require(
@@ -338,7 +351,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             IporErrors.MILTON_ASSET_BALANCE_OF_TOO_LOW
         );
 
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _decimals);
+        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
 
         require(
             collateralizationFactor >= _getMinCollateralizationFactorValue(),
@@ -352,11 +365,6 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         require(
             wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
-
-        require(
-            maximumSlippage <= _getMaxSlippagePercentage(),
-            IporErrors.MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFee) = _calculateDerivativeAmount(
@@ -394,13 +402,12 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
     function _openSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
-            maximumSlippage,
             collateralizationFactor
         );
 
@@ -418,6 +425,13 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             _miltonStorage.calculateSoapPayFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
             bosStruct.accruedIpor,
             balance
+        );
+
+        console.log("quoteValue=", quoteValue);
+        console.log("toleratedQuoteValue=", toleratedQuoteValue);
+        require(
+            toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
+            IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
         DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
@@ -463,13 +477,12 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
     function _openSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) internal returns (uint256) {
         DataTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
-            maximumSlippage,
             collateralizationFactor
         );
 
@@ -488,6 +501,12 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
             _miltonStorage.calculateSoapReceiveFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
             bosStruct.accruedIpor,
             balance
+        );
+        console.log("toleratedQuoteValue=", toleratedQuoteValue);
+        console.log("quoteValue=", quoteValue);
+        require(
+            toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
+            IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
         DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
@@ -696,7 +715,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
     function _closeSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
         require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
 
-        for (uint i=0; i<swapIds.length; i++) {
+        for (uint256 i = 0; i < swapIds.length; i++) {
             _closeSwapPayFixed(swapIds[i], closeTimestamp);
         }
     }
@@ -704,7 +723,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
     function _closeSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) internal {
         require(swapIds.length > 0, IporErrors.SWAP_IDS_ARRAY_IS_EMPTY);
 
-        for (uint i=0; i<swapIds.length; i++) {
+        for (uint256 i = 0; i < swapIds.length; i++) {
             _closeSwapReceiveFixed(swapIds[i], closeTimestamp);
         }
     }
@@ -753,7 +772,7 @@ contract Milton is UUPSUpgradeable, ReentrancyGuardUpgradeable, MiltonConfigurat
         uint256 liquidationDepositAmount,
         uint256 transferAmount
     ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
-        uint256 decimals = _decimals;
+        uint256 decimals = _getDecimals();
 
         if (msg.sender == buyer) {
             transferAmount = transferAmount + liquidationDepositAmount;

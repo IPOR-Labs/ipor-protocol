@@ -74,7 +74,10 @@ library IporErrors {
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_LOW = "IPOR_304";
 
     //@notice Maximum Slippage is too high
+
     string public constant MILTON_MAXIMUM_SLIPPAGE_TOO_HIGH = "IPOR_305";
+
+    string public constant TOLERATED_QUOTE_VALUE_EXCEEDED = "IPOR_9";
 
     //@notice Amount of collateral used to open swap exceeds limit
     string public constant MILTON_COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_306";
@@ -128,6 +131,9 @@ library IporErrors {
         "IPOR_323";
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant MILTON_DEPOSIT_AMOUNT_TOO_LOW = "IPOR_324";
+
+    //@notice General problem. Wrong decimals
+    string public constant WRONG_DECIMALS = "IPOR_33";
 
     //@notcie Swap cannot be closed because liquidation deposit balance is to low to pay sender for liquidation
     string public constant MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW =
@@ -201,6 +207,11 @@ library IporErrors {
 
     // @notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_506";
+
+    string public constant SWAP_IDS_ARRAY_IS_EMPTY = "IPOR_62";
+
+    //@notice Input arrays which should have the same length - mismatch
+    string public constant INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
 }
 
 //@notice Liquidity Pool for given asset symbol not exists

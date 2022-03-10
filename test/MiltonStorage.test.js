@@ -252,7 +252,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            slippageValue: 3,
+            toleratedQuoteValue: BigInt("900000000000000000"),
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -317,7 +317,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            slippageValue: 3,
+            toleratedQuoteValue: BigInt("900000000000000000"),
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -378,7 +378,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            slippageValue: 3,
+            toleratedQuoteValue: BigInt("900000000000000000"),
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -423,7 +423,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -434,7 +434,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -445,7 +445,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -458,7 +458,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -469,7 +469,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -480,7 +480,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }

@@ -69,7 +69,7 @@ describe("MiltonConfiguration", () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] =
             await ethers.getSigners();
         const MiltonConfiguration = await ethers.getContractFactory(
-            "MiltonConfiguration"
+            "MiltonDai"
         );
         miltonConfiguration = await MiltonConfiguration.deploy();
         await miltonConfiguration.deployed();
@@ -81,13 +81,6 @@ describe("MiltonConfiguration", () => {
             await miltonConfiguration.getMaxSwapCollateralAmount();
         //then
         expect(actualValue).to.be.eq(BigInt("100000000000000000000000"));
-    });
-
-    it("should setup init value for Max Slippage Percentage", async () => {
-        //when
-        let actualValue = await miltonConfiguration.getMaxSlippagePercentage();
-        //then
-        expect(actualValue).to.be.eq(BigInt("1000000000000000000"));
     });
 
     it("should setup init value for Max Lp Utilization Percentage", async () => {

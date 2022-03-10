@@ -94,7 +94,7 @@ describe("Milton Maintenance", () => {
                 .connect(userOne)
                 .openSwapPayFixed(
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             "Pausable: paused"
@@ -130,7 +130,7 @@ describe("Milton Maintenance", () => {
                 .connect(userOne)
                 .openSwapPayFixed(
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             "Pausable: paused"
@@ -141,7 +141,7 @@ describe("Milton Maintenance", () => {
                 .connect(userOne)
                 .openSwapReceiveFixed(
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             "Pausable: paused"
@@ -210,7 +210,7 @@ describe("Milton Maintenance", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
         const swapPayFixed = await testData.miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
@@ -220,7 +220,7 @@ describe("Milton Maintenance", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -241,7 +241,6 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(userOne).calculateSwapReceiveFixedValue(swapReceiveFixed);
         await testData.miltonDai.connect(userOne).getMiltonSpreadModel();
         await testData.miltonDai.connect(userOne).getMaxSwapCollateralAmount();
-        await testData.miltonDai.connect(userOne).getMaxSlippagePercentage();
         await testData.miltonDai.connect(userOne).getMaxLpUtilizationPercentage();
         await testData.miltonDai.connect(userOne).getMaxLpUtilizationPerLegPercentage();
         await testData.miltonDai.connect(userOne).getIncomeTaxPercentage();
@@ -293,7 +292,7 @@ describe("Milton Maintenance", () => {
                 .connect(userTwo)
                 .openSwapPayFixed(
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
             "Pausable: paused"
@@ -307,7 +306,7 @@ describe("Milton Maintenance", () => {
             .connect(userTwo)
             .openSwapPayFixed(
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 

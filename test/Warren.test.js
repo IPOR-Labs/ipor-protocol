@@ -636,7 +636,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_202"
+            "IPOR_18"
         );
     });
 

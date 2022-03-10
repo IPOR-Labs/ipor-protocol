@@ -14,7 +14,7 @@ const maxValue = BigNumber.from(
 import {
     AaveStrategy,
     CompoundStrategy,
-    Stanley,
+    StanleyUsdc,
     IvToken,
     ERC20,
     IAaveIncentivesController,
@@ -46,7 +46,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let stakeAaveContract: ERC20;
     let compoundStrategyContract_Instance: CompoundStrategy;
     let ivToken: IvToken;
-    let stanley: Stanley;
+    let stanleyUsdc: StanleyUsdc;
 
     if (process.env.FORK_ENABLED != "true") {
         return;
@@ -145,24 +145,24 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         //  ********************************************************************************************
         //  **************                        Stanley                                 **************
         //  ********************************************************************************************
-        const IPORVaultFactory = await hre.ethers.getContractFactory("Stanley", signer);
+        const IPORVaultFactory = await hre.ethers.getContractFactory("StanleyUsdc", signer);
 
-        stanley = (await await upgrades.deployProxy(IPORVaultFactory, [
+        stanleyUsdc = (await await upgrades.deployProxy(IPORVaultFactory, [
             usdcAddress,
             ivToken.address,
             aaveStrategyContract_Instance.address,
             compoundStrategyContract_Instance.address,
-        ])) as Stanley;
+        ])) as StanleyUsdc;
 
-        await stanley.setMilton(await signer.getAddress());
-        await aaveStrategyContract_Instance.setStanley(stanley.address);
+        await stanleyUsdc.setMilton(await signer.getAddress());
+        await aaveStrategyContract_Instance.setStanley(stanleyUsdc.address);
         await aaveStrategyContract_Instance.setTreasury(await signer.getAddress());
-        await compoundStrategyContract_Instance.setStanley(stanley.address);
+        await compoundStrategyContract_Instance.setStanley(stanleyUsdc.address);
         await compoundStrategyContract_Instance.setTreasury(await signer.getAddress());
 
         await usdcContract.approve(await signer.getAddress(), maxValue);
-        await usdcContract.approve(stanley.address, maxValue);
-        await ivToken.setStanley(stanley.address);
+        await usdcContract.approve(stanleyUsdc.address, maxValue);
+        await ivToken.setStanley(stanleyUsdc.address);
     });
 
     it("Should accept deposit and transfer tokens into AAVE", async () => {
@@ -176,7 +176,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 0").to.be.equal(zero);
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanleyUsdc.connect(signer).deposit(depositAmound);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -212,8 +212,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         );
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanleyUsdc.connect(signer).deposit(depositAmound);
+        await stanleyUsdc.connect(signer).deposit(depositAmound);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -254,7 +254,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         );
 
         //when
-        await stanley.withdraw(withdrawAmount);
+        await stanleyUsdc.withdraw(withdrawAmount);
 
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -299,7 +299,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             BigNumber.from("20000000000000000000")
         );
         //when
-        await stanley.withdraw(aaveStrategyBalanceBefore);
+        await stanleyUsdc.withdraw(aaveStrategyBalanceBefore);
 
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
