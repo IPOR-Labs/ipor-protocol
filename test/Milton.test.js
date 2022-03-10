@@ -3821,7 +3821,7 @@ describe("Milton", () => {
         ).to.be.eq(actualPositionValue);
     });
 
-    it("should fail to close positions using multicall function when list of swaps is empty, DAI", async () => {
+    it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3961,6 +3961,160 @@ describe("Milton", () => {
                 testData.tokenDai.address,
                 USD_10_18DEC,
                 0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                2,
+                [1, 300],
+                0
+            ),
+            'IPOR_23'
+        );
+    });
+
+    it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesMultiplePositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                0,
+                [],
+                0
+            ),
+            'IPOR_62'
+        );
+    });
+
+    it("should close single receive fixed position using multicall function, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesMultiplePositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            1,
+            [1],
+            0
+        );
+    });
+
+    it("should close two receive fixed position using multicall function, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesMultiplePositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            2,
+            [1, 2],
+            0
+        );
+    });
+
+    it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesMultiplePositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
                 userTwo,
                 userTwo,
                 PERCENTAGE_5_18DEC,
