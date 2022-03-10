@@ -79,6 +79,8 @@ contract MiltonFrontendDataProvider is
         override
         returns (IporSwapFront[] memory items)
     {
+        require(pageSize != 0, IporErrors.PAGE_SIZE_EQUAL_ZERO);
+
         IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
             _iporConfiguration.getIporAssetConfiguration(asset)
         );
@@ -106,9 +108,9 @@ contract MiltonFrontendDataProvider is
 
         IMilton milton = IMilton(assetConfiguration.getMilton());
 
-        uint256 resultSetSize = swapIds.length > offset + pageSize ? pageSize : swapIds.length - offset;
+        uint256 resultSetSize = _resolveResultSetSize(swapIds.length, offset, pageSize);
         IporSwapFront[] memory iporDerivatives = new IporSwapFront[](resultSetSize);
-        for (i = 0; i < resultSetSize; i++) {
+        for (i = 0; i != resultSetSize; i++) {
             SwapIdDirectionPair memory swapIdPair = swapIds[i + offset];
             if (swapIdPair.direction == 0) {
                 DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapIdPair.swapId);
@@ -129,6 +131,24 @@ contract MiltonFrontendDataProvider is
         }
 
         return iporDerivatives;
+    }
+
+    function _resolveResultSetSize(
+        uint256 totalSwapNumber,
+        uint256 offset,
+        uint256 pageSize
+    ) internal view returns (uint256)
+    {
+        uint256 resultSetSize;
+        if (offset > totalSwapNumber) {
+            resultSetSize = 0;
+        } else if (offset + pageSize < totalSwapNumber) {
+            resultSetSize = pageSize;
+        } else {
+            resultSetSize = totalSwapNumber - offset;
+        }
+
+        return resultSetSize;
     }
 
     function _mapToIporSwapFront(

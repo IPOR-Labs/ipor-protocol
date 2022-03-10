@@ -11,12 +11,14 @@ const {
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
+    TC_TOTAL_AMOUNT_100_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_14_000_18DEC,
     USD_14_000_6DEC,
     USD_28_000_18DEC,
     USD_28_000_6DEC,
+    USD_50_000_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
@@ -26,8 +28,9 @@ const {
     prepareData,
     prepareTestData,
     setupTokenDaiInitialValuesForUsers,
-    setupTokenUsdcInitialValuesForUsers,
+    setupTokenUsdcInitialValuesForUsers, assertError,
 } = require("./Utils");
+const {TC_TOTAL_AMOUNT_10_18DEC} = require("./Const");
 
 describe("MiltonFrontendDataProvider", () => {
     let data = null;
@@ -211,6 +214,34 @@ describe("MiltonFrontendDataProvider", () => {
         expect(expectedSwapsLength).to.be.eq(actualSwapsLength);
     });
 
+    it("should fail when page size is equal 0", async () => {
+        await testCasePagination(0, 0, 0, 0, 'IPOR_63');
+    });
+
+    it("should receive empty list of swaps", async () => {
+        await testCasePagination(0, 0, 10, 0, null);
+    });
+
+    it("should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCasePagination(0, 10, 10, 0, null);
+    });
+
+    it("should receive limited swap array", async () => {
+        await testCasePagination(11, 0, 10, 10, null);
+    });
+
+    it("should receive limited swap array with offset", async () => {
+        await testCasePagination(22, 10, 10, 10, null);
+    });
+
+    it("should receive rest of swaps only", async () => {
+        await testCasePagination(22, 20, 10, 2, null);
+    });
+
+    it("should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCasePagination(20, 20, 10, 0, null);
+    });
+
     const openSwapPayFixed = async (testData, params) => {
         if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
             await testData.miltonUsdt
@@ -298,4 +329,91 @@ describe("MiltonFrontendDataProvider", () => {
             fixedInterestRate: 234,
         };
     };
+
+    const testCasePagination = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
+        //given
+        let testData = await prepareTestData(
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["DAI", "USDC", "USDT"],
+            data,
+            0,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const paramsDai = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_100_18DEC,
+            slippageValue: 3,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                paramsDai.asset,
+                PERCENTAGE_5_18DEC,
+                paramsDai.openTimestamp
+            );
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_18DEC, paramsDai.openTimestamp);
+
+        const MiltonFrontendDataProvider = await ethers.getContractFactory(
+            "MiltonFrontendDataProvider"
+        );
+        const miltonFrontendDataProvider =
+            await MiltonFrontendDataProvider.deploy();
+        await miltonFrontendDataProvider.deployed();
+        await miltonFrontendDataProvider.initialize(
+            data.iporConfiguration.address,
+            testData.warren.address,
+            testData.miltonDai.address,
+            testData.miltonUsdt.address,
+            testData.miltonUsdc.address
+        );
+
+        for (let i = 0; i < numberOfSwapsToCreate; i++) {
+            await openSwapPayFixed(testData, paramsDai);
+        }
+
+        //when
+        if (expectedError == null) {
+            let items = await miltonFrontendDataProvider
+                .connect(paramsDai.from)
+                .getMySwaps(paramsDai.asset, offset, pageSize);
+
+            const actualSwapsLength = items.length;
+
+            //then
+            expect(expectedResponseSize).to.be.eq(actualSwapsLength);
+        } else {
+            await assertError(
+                miltonFrontendDataProvider
+                    .connect(paramsDai.from)
+                    .getMySwaps(paramsDai.asset, offset, pageSize),
+                expectedError
+            );
+        }
+    }
 });

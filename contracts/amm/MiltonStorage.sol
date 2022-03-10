@@ -376,6 +376,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 offset,
         uint256 pageSize
     ) internal view returns (DataTypes.IporSwapMemory[] memory) { //TODO limit page size?
+        require(pageSize != 0, IporErrors.PAGE_SIZE_EQUAL_ZERO);
+
         uint256 swapsIdsLength = offset + pageSize > ids.length ? ids.length - offset : pageSize;
         DataTypes.IporSwapMemory[] memory derivatives = new DataTypes.IporSwapMemory[](
             swapsIdsLength
