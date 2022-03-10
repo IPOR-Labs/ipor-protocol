@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 import "../configuration/JosephConfiguration.sol";
-import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IJoseph.sol";
 import {IporErrors} from "../IporErrors.sol";
 import {IporMath} from "../libraries/IporMath.sol";

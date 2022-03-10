@@ -4,10 +4,8 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IMiltonFrontendDataProvider.sol";
-import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonConfiguration.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IWarren.sol";
@@ -19,39 +17,34 @@ contract MiltonFrontendDataProvider is
     UUPSUpgradeable,
     IMiltonFrontendDataProvider
 {
-    IIporConfiguration internal _iporConfiguration;
     address internal _warren;
-    address internal _assetDai;
-    address internal _assetUsdc;
-    address internal _assetUsdt;
+    address[] internal _assets;
+    mapping(address => AssetConfig) internal _assetConfig;
 
     function initialize(
-        IIporConfiguration iporConfiguration,
         address warren,
-        address assetDai,
-        address assetUsdt,
-        address assetUsdc
+        address[] memory assets,
+        address[] memory miltons,
+        address[] memory miltonStorages
     ) public initializer {
+        require(
+            assets.length == miltons.length && assets.length == miltonStorages.length,
+            IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
+        );
+
         __Ownable_init();
-        _iporConfiguration = iporConfiguration;
         _warren = warren;
-        _assetDai = assetDai;
-        _assetUsdc = assetUsdc;
-        _assetUsdt = assetUsdt;
+
+        uint256 i = 0;
+        for (i; i != assets.length; i++) {
+            _assetConfig[assets[i]] = AssetConfig(miltons[i], miltonStorages[i]);
+        }
+        _assets = assets;
     }
 
-    function _authorizeUpgrade(address) internal override onlyOwner {}
-
-    function getIpTokenExchangeRate(address asset)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        IMilton milton = IMilton(assetConfiguration.getMilton());
+    function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
+        AssetConfig memory config = _assetConfig[asset];
+        IMilton milton = IMilton(config.milton);
         uint256 result = milton.calculateExchangeRate(block.timestamp);
         return result;
     }
@@ -62,12 +55,8 @@ contract MiltonFrontendDataProvider is
         override
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional)
     {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            assetConfiguration.getMiltonStorage()
-        );
+        AssetConfig memory config = _assetConfig[asset];
+        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         (payFixedTotalNotional, recFixedTotalNotional) = miltonStorage
             .getTotalOutstandingNotional();
     }
@@ -78,40 +67,31 @@ contract MiltonFrontendDataProvider is
         override
         returns (IporSwapFront[] memory items)
     {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
+        AssetConfig memory config = _assetConfig[asset];
+        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
 
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            assetConfiguration.getMiltonStorage()
+        uint128[] memory accountSwapPayFixedIds = miltonStorage.getSwapPayFixedIds(msg.sender);
+        uint128[] memory accountSwapReceiveFixedIds = miltonStorage.getSwapReceiveFixedIds(
+            msg.sender
         );
-        uint128[] memory accountSwapPayFixedIds = miltonStorage
-            .getSwapPayFixedIds(msg.sender);
-
-        uint128[] memory accountSwapReceiveFixedIds = miltonStorage
-            .getSwapReceiveFixedIds(msg.sender);
 
         uint256 pfSwapsLength = accountSwapPayFixedIds.length;
 
         uint256 swapsLength = pfSwapsLength + accountSwapReceiveFixedIds.length;
-        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](
-            swapsLength
-        );
-        IMilton milton = IMilton(assetConfiguration.getMilton());
+        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](swapsLength);
+        IMilton milton = IMilton(config.milton);
         uint256 i = 0;
 
         for (i; i != pfSwapsLength; i++) {
-            DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-                .getSwapPayFixed(accountSwapPayFixedIds[i]);
+            DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(
+                accountSwapPayFixedIds[i]
+            );
             iporDerivatives[i] = IporSwapFront(
                 iporSwap.id,
                 asset,
                 iporSwap.collateral,
                 iporSwap.notionalAmount,
-                IporMath.division(
-                    iporSwap.notionalAmount * Constants.D18,
-                    iporSwap.collateral
-                ),
+                IporMath.division(iporSwap.notionalAmount * Constants.D18, iporSwap.collateral),
                 0,
                 iporSwap.fixedInterestRate,
                 milton.calculateSwapPayFixedValue(iporSwap),
@@ -124,19 +104,15 @@ contract MiltonFrontendDataProvider is
         i = pfSwapsLength;
 
         for (i; i != swapsLength; i++) {
-            DataTypes.IporSwapMemory memory iporSwap = miltonStorage
-                .getSwapReceiveFixed(
-                    accountSwapReceiveFixedIds[i - pfSwapsLength]
-                );
+            DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
+                accountSwapReceiveFixedIds[i - pfSwapsLength]
+            );
             iporDerivatives[i] = IporSwapFront(
                 iporSwap.id,
                 asset,
                 iporSwap.collateral,
                 iporSwap.notionalAmount,
-                IporMath.division(
-                    iporSwap.notionalAmount * Constants.D18,
-                    iporSwap.collateral
-                ),
+                IporMath.division(iporSwap.notionalAmount * Constants.D18, iporSwap.collateral),
                 1,
                 iporSwap.fixedInterestRate,
                 milton.calculateSwapReceiveFixedValue(iporSwap),
@@ -156,25 +132,16 @@ contract MiltonFrontendDataProvider is
         returns (IporAssetConfigurationFront[] memory)
     {
         uint256 timestamp = block.timestamp;
+        uint256 assetsLength = _assets.length;
+        IporAssetConfigurationFront[] memory configFront = new IporAssetConfigurationFront[](
+            assetsLength
+        );
 
-        IporAssetConfigurationFront[]
-            memory iporAssetConfigurationsFront = new IporAssetConfigurationFront[](
-                3
-            );
-
-        iporAssetConfigurationsFront[0] = _createIporAssetConfFront(
-            _assetDai,
-            timestamp
-        );
-        iporAssetConfigurationsFront[1] = _createIporAssetConfFront(
-            _assetUsdt,
-            timestamp
-        );
-        iporAssetConfigurationsFront[2] = _createIporAssetConfFront(
-            _assetUsdc,
-            timestamp
-        );
-        return iporAssetConfigurationsFront;
+        uint256 i = 0;
+        for (i; i != assetsLength; i++) {
+            configFront[0] = _createIporAssetConfFront(_assets[i], timestamp);
+        }
+        return configFront;
     }
 
     function _createIporAssetConfFront(address asset, uint256 timestamp)
@@ -182,39 +149,28 @@ contract MiltonFrontendDataProvider is
         view
         returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
     {
-        IIporAssetConfiguration iporAssetConfiguration = IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            );
-        IMiltonStorage miltonStorage = IMiltonStorage(
-            iporAssetConfiguration.getMiltonStorage()
-        );
-        address miltonAddr = iporAssetConfiguration.getMilton();
+        AssetConfig memory config = _assetConfig[asset];
+
+        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
+        address miltonAddr = config.milton;
+
         IMiltonConfiguration milton = IMiltonConfiguration(miltonAddr);
-
-        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(
-            milton.getMiltonSpreadModel()
+        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
+        DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
+            timestamp,
+            asset
         );
 
-        DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren)
-            .getAccruedIndex(timestamp, asset);
-
-        DataTypes.MiltonBalanceMemory memory balance = IMilton(miltonAddr)
-            .getAccruedBalance();
+        DataTypes.MiltonBalanceMemory memory balance = IMilton(miltonAddr).getAccruedBalance();
 
         uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
-            miltonStorage.calculateSoapPayFixed(
-                accruedIpor.ibtPrice,
-                timestamp
-            ),
+            miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, timestamp),
             accruedIpor,
             balance
         );
 
         uint256 spreadRecFixedValue = spreadModel.calculateSpreadRecFixed(
-            miltonStorage.calculateSoapReceiveFixed(
-                accruedIpor.ibtPrice,
-                timestamp
-            ),
+            miltonStorage.calculateSoapReceiveFixed(accruedIpor.ibtPrice, timestamp),
             accruedIpor,
             balance
         );
@@ -231,4 +187,6 @@ contract MiltonFrontendDataProvider is
             spreadRecFixedValue
         );
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

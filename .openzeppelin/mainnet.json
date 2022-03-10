@@ -3,34 +3,34 @@
   "proxies": [
     {
       "address": "0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44",
-      "txHash": "0x368a1adc4e3e8d2e016bbb88b458e9518999785516a321409bbfda609fe8a793",
+      "txHash": "0x44130c18d116371b85d4c7f841d84595c161c58cf662c5a8f1ed0452e1785730",
       "kind": "uups"
     },
     {
       "address": "0xa6e99A4ED7498b3cdDCBB61a6A607a4925Faa1B7",
-      "txHash": "0xdfdd9ca6267a48d3fa9eaed81c8f3266abb5205fdfe3e8782dba8fa3425c2670",
-      "kind": "uups"
-    },
-    {
-      "address": "0x6C2d83262fF84cBaDb3e416D527403135D757892",
-      "txHash": "0x04ecef3929a3a15c2b594e3aac448f90b3b0ccad6e24eb3a202f0a6513e1592f",
-      "kind": "uups"
-    },
-    {
-      "address": "0x5302E909d1e93e30F05B5D6Eea766363D14F9892",
-      "txHash": "0x86b1d3d24c4cd3e5df1dbfa0cb8c08f9dff1fc34b3fbf108b3f9f0a3cfed42be",
+      "txHash": "0x7da4e5791b8907ff0aade65d3c190da120a1128b8330f51a85d546817f65c5bb",
       "kind": "uups"
     },
     {
       "address": "0x01c1DeF3b91672704716159C9041Aeca392DdFfb",
-      "txHash": "0x8361854ece887b0cbe4254c9a6f31b82802f6ab91ea3ad872939508148f7fbaf",
+      "txHash": "0x60b6faa5e23f7a6b7865340354ea81f4274bf47066004ae942f399969f2b2ae8",
+      "kind": "uups"
+    },
+    {
+      "address": "0x6C2d83262fF84cBaDb3e416D527403135D757892",
+      "txHash": "0x3e3ec58e8d76d87ba1941d4daef03c4aa0f21f6afccfebd194b6cf1e2cb011c3",
+      "kind": "uups"
+    },
+    {
+      "address": "0x5302E909d1e93e30F05B5D6Eea766363D14F9892",
+      "txHash": "0xa8ff89414bd774f8479d3097375e16654248c91e6ae5d560d8fbf369f16fa611",
       "kind": "uups"
     }
   ],
   "impls": {
-    "5875e9d0261c4c3e78cb6400ac8ee8d8d016e9e26c76c10afcfa4edc4547bb7f": {
+    "f3f241721cf4b60fc3042cdb835ef24c6924cfeddc6b1a53cc933c58ea591a35": {
       "address": "0xa6e99A4ED7498b3cdDCBB61a6A607a4925Faa1B7",
-      "txHash": "0xee597ce612efcabe5ffd8480be4b4761d62f1a6ea35ae1ad288c054c0ba8e28e",
+      "txHash": "0x59dc5c0ad6efbc4492c80297fdf8bcfd7fb509f68769ca77421ae75707dfcea6",
       "layout": {
         "storage": [
           {
@@ -58,89 +58,118 @@
             "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
           },
           {
-            "contract": "AccessControl",
-            "label": "_roles",
-            "type": "t_mapping(t_bytes32,t_struct(RoleData)2197_storage)",
-            "src": "@openzeppelin/contracts/access/AccessControl.sol:55"
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "_paused",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:102"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "contract": "IporOwnableUpgradeable",
+            "label": "_appointedOwner",
+            "type": "t_address",
+            "src": "contracts/security/IporOwnableUpgradeable.sol:8"
+          },
+          {
+            "contract": "Stanley",
+            "label": "_decimals",
+            "type": "t_uint8",
+            "src": "contracts/vault/Stanley.sol:26"
+          },
+          {
+            "contract": "Stanley",
+            "label": "_asset",
+            "type": "t_address",
+            "src": "contracts/vault/Stanley.sol:27"
+          },
+          {
+            "contract": "Stanley",
+            "label": "_ivToken",
+            "type": "t_contract(IIvToken)22905",
+            "src": "contracts/vault/Stanley.sol:28"
+          },
+          {
+            "contract": "Stanley",
+            "label": "_milton",
+            "type": "t_address",
+            "src": "contracts/vault/Stanley.sol:30"
           },
           {
             "contract": "Stanley",
             "label": "_aaveStrategy",
             "type": "t_address",
-            "src": "contracts/assetManagment/stanley/Stanley.sol:20"
+            "src": "contracts/vault/Stanley.sol:31"
           },
           {
             "contract": "Stanley",
-            "label": "_aaveShareTokens",
+            "label": "_aaveShareToken",
             "type": "t_address",
-            "src": "contracts/assetManagment/stanley/Stanley.sol:21"
+            "src": "contracts/vault/Stanley.sol:32"
           },
           {
             "contract": "Stanley",
             "label": "_compoundStrategy",
             "type": "t_address",
-            "src": "contracts/assetManagment/stanley/Stanley.sol:22"
+            "src": "contracts/vault/Stanley.sol:33"
           },
           {
             "contract": "Stanley",
-            "label": "_compoundShareTokens",
+            "label": "_compoundShareToken",
             "type": "t_address",
-            "src": "contracts/assetManagment/stanley/Stanley.sol:23"
-          },
-          {
-            "contract": "Stanley",
-            "label": "underlyingToken",
-            "type": "t_address",
-            "src": "contracts/assetManagment/stanley/Stanley.sol:24"
-          },
-          {
-            "contract": "Stanley",
-            "label": "ivToken",
-            "type": "t_address",
-            "src": "contracts/assetManagment/stanley/Stanley.sol:25"
+            "src": "contracts/vault/Stanley.sol:34"
           }
         ],
         "types": {
+          "t_uint8": {
+            "label": "uint8"
+          },
           "t_address": {
             "label": "address"
           },
-          "t_mapping(t_bytes32,t_struct(RoleData)2197_storage)": {
-            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          "t_contract(IIvToken)22905": {
+            "label": "contract IIvToken"
           },
-          "t_bytes32": {
-            "label": "bytes32"
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
           },
-          "t_struct(RoleData)2197_storage": {
-            "label": "struct AccessControl.RoleData",
-            "members": [
-              {
-                "label": "members",
-                "type": "t_mapping(t_address,t_bool)"
-              },
-              {
-                "label": "adminRole",
-                "type": "t_bytes32"
-              }
-            ]
-          },
-          "t_mapping(t_address,t_bool)": {
-            "label": "mapping(address => bool)"
+          "t_uint256": {
+            "label": "uint256"
           },
           "t_bool": {
             "label": "bool"
           },
           "t_array(t_uint256)50_storage": {
             "label": "uint256[50]"
-          },
-          "t_uint256": {
-            "label": "uint256"
           }
         }
       }
     },
-    "fd6b7564cad04e0177eb99d14975d94116659c6e8011c81fd1d4eac20dbf06e6": {
-      "address": "0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44",
-      "txHash": "0xa35aa268573f897ab7f649e763e17a550a57d1efba85331dfa4039e1df0c553f",
+    "ed6899b083b91a635a152236d13350e03409feea042954a207c35dca80b24350": {
+      "address": "0x32EEce76C2C2e8758584A83Ee2F522D4788feA0f",
+      "txHash": "0x20a6a612ded9398d0f7f7118133f0c0da46d4fb4b5e51b2ab6110becdf6e17be",
       "layout": {
         "storage": [
           {
@@ -192,54 +221,78 @@
             "src": "contracts/security/IporOwnableUpgradeable.sol:8"
           },
           {
-            "contract": "CompoundStrategy",
-            "label": "blocksPerYear",
-            "type": "t_uint256",
-            "src": "contracts/assetManagment/strategy/CompoundStartegy.sol:26"
-          },
-          {
-            "contract": "CompoundStrategy",
-            "label": "underlyingToken",
+            "contract": "AaveStrategy",
+            "label": "_asset",
             "type": "t_address",
-            "src": "contracts/assetManagment/strategy/CompoundStartegy.sol:27"
+            "src": "contracts/vault/strategy/AaveStrategy.sol:27"
           },
           {
-            "contract": "CompoundStrategy",
-            "label": "comptroller",
-            "type": "t_contract(ComptrollerInterface)11760",
-            "src": "contracts/assetManagment/strategy/CompoundStartegy.sol:29"
+            "contract": "AaveStrategy",
+            "label": "_shareToken",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:28"
           },
           {
-            "contract": "CompoundStrategy",
-            "label": "compToken",
-            "type": "t_contract(IERC20Upgradeable)1583",
-            "src": "contracts/assetManagment/strategy/CompoundStartegy.sol:30"
+            "contract": "AaveStrategy",
+            "label": "_aave",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:29"
           },
           {
-            "contract": "CompoundStrategy",
-            "label": "cToken",
-            "type": "t_contract(CErc20)11619",
-            "src": "contracts/assetManagment/strategy/CompoundStartegy.sol:31"
+            "contract": "AaveStrategy",
+            "label": "_stkAave",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:30"
+          },
+          {
+            "contract": "AaveStrategy",
+            "label": "_stanley",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:31"
+          },
+          {
+            "contract": "AaveStrategy",
+            "label": "_treasury",
+            "type": "t_address",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:32"
+          },
+          {
+            "contract": "AaveStrategy",
+            "label": "_provider",
+            "type": "t_contract(AaveLendingPoolProviderV2)23058",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:34"
+          },
+          {
+            "contract": "AaveStrategy",
+            "label": "_stakedAaveInterface",
+            "type": "t_contract(StakedAaveInterface)23184",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:35"
+          },
+          {
+            "contract": "AaveStrategy",
+            "label": "_aaveIncentive",
+            "type": "t_contract(AaveIncentivesInterface)23024",
+            "src": "contracts/vault/strategy/AaveStrategy.sol:36"
           }
         ],
         "types": {
-          "t_uint256": {
-            "label": "uint256"
-          },
           "t_address": {
             "label": "address"
           },
-          "t_contract(ComptrollerInterface)11760": {
-            "label": "contract ComptrollerInterface"
+          "t_contract(AaveLendingPoolProviderV2)23058": {
+            "label": "contract AaveLendingPoolProviderV2"
           },
-          "t_contract(IERC20Upgradeable)1583": {
-            "label": "contract IERC20Upgradeable"
+          "t_contract(StakedAaveInterface)23184": {
+            "label": "contract StakedAaveInterface"
           },
-          "t_contract(CErc20)11619": {
-            "label": "contract CErc20"
+          "t_contract(AaveIncentivesInterface)23024": {
+            "label": "contract AaveIncentivesInterface"
           },
           "t_array(t_uint256)49_storage": {
             "label": "uint256[49]"
+          },
+          "t_uint256": {
+            "label": "uint256"
           },
           "t_array(t_uint256)50_storage": {
             "label": "uint256[50]"
@@ -250,9 +303,9 @@
         }
       }
     },
-    "84527fbcf3917383eeb56f75b482cbd9330dd14e9acfe88afe937c31364bfc00": {
-      "address": "0x32EEce76C2C2e8758584A83Ee2F522D4788feA0f",
-      "txHash": "0x5dd87a653d604c35b27c11b632b6c8bcc2ce32cd344001a80b4ca829de92b36a",
+    "7a55a10b788681759616e1650d246dd0802fc602ba14793e7ccef655d802561f": {
+      "address": "0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44",
+      "txHash": "0x055187417f44cc80e6866f8f2b4b8be3368d92a316a87e0ef1e66817abf2a837",
       "layout": {
         "storage": [
           {
@@ -312,7 +365,7 @@
           {
             "contract": "CompoundStrategy",
             "label": "_cToken",
-            "type": "t_contract(CErc20)23735",
+            "type": "t_contract(CErc20)23228",
             "src": "contracts/vault/strategy/CompoundStartegy.sol:21"
           },
           {
@@ -330,7 +383,7 @@
           {
             "contract": "CompoundStrategy",
             "label": "_comptroller",
-            "type": "t_contract(ComptrollerInterface)23824",
+            "type": "t_contract(ComptrollerInterface)23317",
             "src": "contracts/vault/strategy/CompoundStartegy.sol:25"
           },
           {
@@ -350,13 +403,13 @@
           "t_address": {
             "label": "address"
           },
-          "t_contract(CErc20)23735": {
+          "t_contract(CErc20)23228": {
             "label": "contract CErc20"
           },
           "t_uint256": {
             "label": "uint256"
           },
-          "t_contract(ComptrollerInterface)23824": {
+          "t_contract(ComptrollerInterface)23317": {
             "label": "contract ComptrollerInterface"
           },
           "t_contract(IERC20Upgradeable)1583": {

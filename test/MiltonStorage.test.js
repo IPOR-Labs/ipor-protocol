@@ -399,7 +399,6 @@ describe("MiltonStorage", () => {
         await openSwapPayFixed(testData, derivativeParams);
         let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
         let closeSwapTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.iporAssetConfigurationDai.setMilton(miltonStorageAddress.address);
 
         //when
         await assertError(

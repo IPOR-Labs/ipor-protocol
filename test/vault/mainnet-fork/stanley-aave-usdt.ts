@@ -195,13 +195,13 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             BigNumber.from("10000000000000000000")
         );
         expect(aaveStrategyBalanceAfter, "aaveStrategyBalanceAfter = 10 * 10^18").to.be.equal(
-            BigNumber.from("10000001000000000000")
+            BigNumber.from("9999999000000000000")
         );
         expect(userUsdtBalanceAfter, "userUsdtBalanceAfter = 227357362977886").to.be.equal(
             BigNumber.from("64435243342735")
         );
-        expect(strategyATokenContractAfter, "strategyATokenContractAfter = 10000001").to.be.equal(
-            BigNumber.from("10000001")
+        expect(strategyATokenContractAfter, "strategyATokenContractAfter = 9999999").to.be.equal(
+            BigNumber.from("9999999")
         );
     });
 
@@ -215,8 +215,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(userIvTokenBefore, "userIvTokenBefore").to.be.equal(depositAmound);
         expect(
             aaveStrategyBalanceBefore,
-            "aaveStrategyBalanceBefore = 10000001000000000000"
-        ).to.be.equal(BigNumber.from("10000001000000000000"));
+            "aaveStrategyBalanceBefore = 9999999000000000000"
+        ).to.be.equal(BigNumber.from("9999999000000000000"));
 
         //When
         await stanley.connect(signer).deposit(depositAmound);
@@ -237,8 +237,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             BigNumber.from("64435223342735")
         );
         expect(
-            strategyATokenContractAfter.gte(BigNumber.from("30000000")),
-            "strategyATokenContractAfter > 30 * 10^6"
+            strategyATokenContractAfter.gte(BigNumber.from("29999999")),
+            "strategyATokenContractAfter >= 29999999"
         ).to.be.true;
     });
 
@@ -268,10 +268,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
-        expect(userIvTokenAfter.gt(BigNumber.from("19999999")), "ivToken > 19999999").to.be.true;
+        expect(userIvTokenAfter.gte(BigNumber.from("19999999")), "ivToken > 19999999").to.be.true;
         expect(
-            aaveStrategyBalanceAfter.gte(BigNumber.from("20000000000000000000")),
-            "aaveStrategyBalanceAfter >= 20 * 10^18"
+            aaveStrategyBalanceAfter.gte(BigNumber.from("19999999000000000000")),
+            "aaveStrategyBalanceAfter >= 19999999000000000000"
         ).to.be.true;
         expect(
             aaveStrategyBalanceAfter.lt(BigNumber.from("30000000000000000000")),
@@ -282,8 +282,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             "userUsdtBalanceAfter > userUsdtBalanceBefore"
         ).to.be.true;
         expect(
-            strategyATokenContractAfter.gte(BigNumber.from("20000000")),
-            "strategyATokenContractAfter > 20 * 10^6"
+            strategyATokenContractAfter.gte(BigNumber.from("19999999")),
+            "strategyATokenContractAfter > 19999999"
         ).to.be.true;
         expect(
             strategyATokenContractAfter.lt(BigNumber.from("30000000")),
@@ -318,8 +318,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(userIvTokenAfter.lte(BigNumber.from("14223579500")), "ivToken < 14223579500").to.be
             .true;
         expect(
-            userUsdtBalanceAfter.gte(BigNumber.from("64435253342736")),
-            "userUsdtBalanceAfter >= 64435253342736"
+            userUsdtBalanceAfter.gte(BigNumber.from("64435253342734")),
+            "userUsdtBalanceAfter >= 64435253342734"
         ).to.be.true;
         expect(
             strategyATokenContractAfter.lt(BigNumber.from("14223579500")),
@@ -339,7 +339,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         );
         const aaveBalanceBefore = await aaveContract.balanceOf(userOneAddres);
 
-        expect(claimable, "Aave Claimable Amount").to.be.equal(BigNumber.from("59469528"));
+        expect(claimable, "Aave Claimable Amount").to.be.equal(BigNumber.from("59469521"));
         expect(aaveBalanceBefore, "Cliamed Aave Balance Before").to.be.equal(zero);
 
         // when

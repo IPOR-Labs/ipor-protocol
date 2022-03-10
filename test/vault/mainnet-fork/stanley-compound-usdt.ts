@@ -292,8 +292,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
         expect(
             compoundStrategyBalanceAfter,
-            "compoundStrategyBalanceAfter = 476225272888"
-        ).to.be.equal(BigNumber.from("476225272888"));
+            "compoundStrategyBalanceAfter = 476225277426"
+        ).to.be.equal(BigNumber.from("476225277426"));
         expect(
             userUsdtBalanceAfter.gt(userUsdtBalanceBefore),
             "userUsdtBalanceAfter > userUsdtBalanceBefore"
@@ -319,8 +319,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         // then
         const userOneBalance = await compContract.balanceOf(treasurAddres);
         expect(
-            userOneBalance.gte(BigNumber.from("1009550872")),
-            "Cliamed compound Balance = 1009550872"
+            userOneBalance.gte(BigNumber.from("1009550863")),
+            "Cliamed compound Balance = 1009550863"
         ).to.be.true;
     });
 });

@@ -47,7 +47,6 @@ library IporErrors {
     //@notice The caller must be the Warren updater
     string public constant WARREN_CALLER_NOT_WARREN_UPDATER = "IPOR_201";
 
-    //@notice Input arrays which should have the same length - mismatch
     string public constant WARREN_INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_202";
 
     //@notice Actual IPOR Index timestamp is higher than accrue timestamp
@@ -202,8 +201,6 @@ library IporErrors {
 
     // @notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
     string public constant IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_506";
-
-    // Asset managment
 }
 
 //@notice Liquidity Pool for given asset symbol not exists

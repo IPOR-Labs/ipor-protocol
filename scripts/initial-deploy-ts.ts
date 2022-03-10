@@ -6,7 +6,6 @@ async function main() {
     console.log("Deploying Issue...");
 	const Issue = await ethers.getContractFactory("Issue");
     const issue = await upgrades.deployProxy(Issue);
-    //IporConfiguration
 }
 
 main()
