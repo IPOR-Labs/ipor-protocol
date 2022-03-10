@@ -48,21 +48,14 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         emit StanleyChanged(msg.sender, newStanley);
     }
 
-    function mint(address account, uint256 amount)
-        external
-        override
-        onlyStanley
-    {
+    function mint(address account, uint256 amount) external override onlyStanley {
         require(amount != 0, IporErrors.STANLEY_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
-    function burn(address account, uint256 amount)
-        external
-        override
-        onlyStanley
-    {
+    function burn(address account, uint256 amount) external override onlyStanley {
+        console.log("IvToken -> burn -> amount: ", amount);
         require(amount != 0, IporErrors.STANLEY_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);

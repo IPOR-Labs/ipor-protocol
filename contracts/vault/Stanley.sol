@@ -137,17 +137,15 @@ contract Stanley is
         console.log("Stanley -> withdraw -> assetBalanceCompound: ", assetBalanceCompound);
 
         uint256 ivTokenValue = IporMath.division(amount * Constants.D18, exchangeRate);
-
+        uint256 senderIvTokens = ivToken.balanceOf(msg.sender);
         console.log("Stanley -> withdraw -> ivTokenValue: ", ivTokenValue);
-        console.log(
-            "Stanley -> withdraw -> ivToken -> balanceOf -> msg.sender: ",
-            ivToken.balanceOf(msg.sender)
-        );
+        console.log("Stanley -> withdraw -> ivToken -> balanceOf -> msg.sender: ", senderIvTokens);
 
-        require(
-            ivToken.balanceOf(msg.sender) >= ivTokenValue,
-            IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO
-        );
+        if (senderIvTokens < ivTokenValue) {
+            console.log("Stanley -> withdraw -> ivTokenValue change to ivToken.balnseOf(sender): ");
+            amount = IporMath.divisionWithoutRound(senderIvTokens * exchangeRate, Constants.D18);
+            ivTokenValue = senderIvTokens;
+        }
 
         if (address(strategyMaxApy) == _compoundStrategy && amount <= assetBalanceAave) {
             ivToken.burn(msg.sender, ivTokenValue);
