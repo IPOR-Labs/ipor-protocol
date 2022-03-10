@@ -83,13 +83,6 @@ describe("MiltonConfiguration", () => {
         expect(actualValue).to.be.eq(BigInt("100000000000000000000000"));
     });
 
-    it("should setup init value for Max Slippage Percentage", async () => {
-        //when
-        let actualValue = await miltonConfiguration.getMaxSlippagePercentage();
-        //then
-        expect(actualValue).to.be.eq(BigInt("1000000000000000000"));
-    });
-
     it("should setup init value for Max Lp Utilization Percentage", async () => {
         //when
         let actualValue =

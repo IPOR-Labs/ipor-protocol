@@ -40,19 +40,18 @@ module.exports.getStandardDerivativeParamsDAI = (user, testData) => {
     return {
         asset: testData.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("900000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
         from: user,
     };
 };
-
 module.exports.getStandardDerivativeParamsUSDT = (user, testData) => {
     return {
         asset: testData.tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("900000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -92,7 +91,6 @@ module.exports.prepareApproveForUsers = async (users, asset, data, testData) => 
 };
 
 module.exports.prepareData = async (accounts, spreadmiltonCaseNumber) => {
-    
     let MockCase1MiltonSpreadModel = null;
 
     if (spreadmiltonCaseNumber == 0) {
@@ -302,7 +300,7 @@ module.exports.prepareTestData = async (
     let stanleyUsdt = null;
     let stanleyUsdc = null;
     let stanleyDai = null;
-    
+
     const IpToken = await ethers.getContractFactory("IpToken");
     const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
@@ -321,7 +319,7 @@ module.exports.prepareTestData = async (
 
             ipTokenUsdt = await IpToken.deploy(tokenUsdt.address, "IP USDT", "ipUSDT");
             await ipTokenUsdt.deployed();
-            
+
             miltonStorageUsdt = await MiltonStorage.deploy();
             await miltonStorageUsdt.deployed();
             miltonStorageUsdt.initialize();
@@ -365,7 +363,7 @@ module.exports.prepareTestData = async (
 
             ipTokenUsdc = await IpToken.deploy(tokenUsdc.address, "IP USDC", "ipUSDC");
             ipTokenUsdc.deployed();
-            
+
             miltonStorageUsdc = await MiltonStorage.deploy();
             await miltonStorageUsdc.deployed();
             miltonStorageUsdc.initialize();
@@ -379,7 +377,7 @@ module.exports.prepareTestData = async (
                 miltonStorageUsdc.address,
                 data.miltonSpread.address,
                 stanleyUsdc.address
-            );            
+            );
 
             josephUsdc = await ItfJoseph.deploy();
             await josephUsdc.deployed();
@@ -395,7 +393,7 @@ module.exports.prepareTestData = async (
             await miltonStorageUsdc.setMilton(miltonUsdc.address);
 
             await ipTokenUsdc.setJoseph(josephUsdc.address);
-            
+
             await miltonUsdc.setJoseph(josephUsdc.address);
             await miltonUsdc.setupMaxAllowance(josephUsdc.address);
             await miltonUsdc.setupMaxAllowance(stanleyUsdc.address);
@@ -410,7 +408,7 @@ module.exports.prepareTestData = async (
 
             ipTokenDai = await IpToken.deploy(tokenDai.address, "IP DAI", "ipDAI");
             await ipTokenDai.deployed();
-            
+
             miltonStorageDai = await MiltonStorage.deploy();
             await miltonStorageDai.deployed();
             miltonStorageDai.initialize();
@@ -426,7 +424,6 @@ module.exports.prepareTestData = async (
                 stanleyDai.address
             );
 
-
             josephDai = await ItfJoseph.deploy();
             await josephDai.deployed();
             await josephDai.initialize(
@@ -440,7 +437,7 @@ module.exports.prepareTestData = async (
             await miltonStorageDai.setJoseph(josephDai.address);
             await miltonStorageDai.setMilton(miltonDai.address);
 
-            await ipTokenDai.setJoseph(josephDai.address);            
+            await ipTokenDai.setJoseph(josephDai.address);
 
             await miltonDai.setJoseph(josephDai.address);
             await miltonDai.setupMaxAllowance(josephDai.address);
@@ -480,10 +477,10 @@ module.exports.setupIpTokenDaiInitialValues = async (
     liquidityProvider,
     initialAmount
 ) => {
-    if (initialAmount > 0) {        
+    if (initialAmount > 0) {
         await testData.ipTokenDai
             .connect(liquidityProvider)
-            .mint(liquidityProvider.address, initialAmount);        
+            .mint(liquidityProvider.address, initialAmount);
     }
 };
 
@@ -515,7 +512,7 @@ module.exports.getPayFixedDerivativeParamsDAICase1 = (user, testData) => {
     return {
         asset: testData.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("60000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -527,7 +524,7 @@ module.exports.getPayFixedDerivativeParamsUSDTCase1 = (user, testData) => {
     return {
         asset: testData.tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        slippageValue: 3,
+        toleratedQuoteValue: BigInt("60000000000000000"),
         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),

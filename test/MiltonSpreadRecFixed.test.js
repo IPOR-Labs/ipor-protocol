@@ -43,12 +43,8 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            0
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 0);
     });
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premium < Spread Premium Max Value, refLeg < spreadPremiums", async () => {
@@ -82,11 +78,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         let actualQuotedValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .callStatic.calculateQuoteReceiveFixed(
-                    soap,
-                    accruedIpor,
-                    accruedBalance
-                )
+                .callStatic.calculateQuoteReceiveFixed(soap, accruedIpor, accruedBalance)
         );
 
         //then
@@ -223,9 +215,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         );
 
         //then
-        expect(expectedAdjustedUtilizationRate).to.be.eq(
-            actualAdjustedUtilizationRate
-        );
+        expect(expectedAdjustedUtilizationRate).to.be.eq(actualAdjustedUtilizationRate);
         expect(
             actualSpreadValue,
             `Incorrect Rec Fixed Spread Value, actual: ${actualSpreadValue}, expected: ${expectedSpreadValue}`
@@ -340,8 +330,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
@@ -387,8 +376,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
@@ -433,8 +421,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
@@ -479,8 +466,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
@@ -770,12 +756,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const expectedSpreadReceiveFixed = BigInt("360000000000000");
         const timestamp = Math.floor(Date.now() / 1000);
 
-        await prepareApproveForUsers(
-            [liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
+        await prepareApproveForUsers([liquidityProvider], "DAI", data, testData);
 
         await setupTokenDaiInitialValuesForUsers([liquidityProvider], testData);
         await testData.josephDai
@@ -807,11 +788,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         let balanceLiquidityPool = BigInt("10000000000");
 
@@ -835,7 +812,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("1000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -848,9 +825,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .callStatic.itfCalculateSpread(params.openTimestamp + 1);
 
         //then
-        expect(parseInt(await actualSpreadValue.spreadRecFixedValue)).to.be.gt(
-            0
-        );
+        expect(parseInt(await actualSpreadValue.spreadRecFixedValue)).to.be.gt(0);
     });
 
     it("should calculate Spread Receive Fixed - simple case 1 - initial state with Liquidity Pool", async () => {
@@ -866,12 +841,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
         const expectedSpreadReceiveFixed = BigInt("360000000000000");
         const timestamp = Math.floor(Date.now() / 1000);
 
-        await prepareApproveForUsers(
-            [liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
+        await prepareApproveForUsers([liquidityProvider], "DAI", data, testData);
 
         await setupTokenDaiInitialValuesForUsers([liquidityProvider], testData);
         await testData.josephDai
@@ -903,11 +873,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         let balanceLiquidityPool = BigInt("10000000000");
 
@@ -931,7 +897,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("1000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -944,8 +910,6 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             .callStatic.itfCalculateSpread(params.openTimestamp + 1);
 
         //then
-        expect(parseInt(await actualSpreadValue.spreadRecFixedValue)).to.be.gt(
-            0
-        );
+        expect(parseInt(await actualSpreadValue.spreadRecFixedValue)).to.be.gt(0);
     });
 });

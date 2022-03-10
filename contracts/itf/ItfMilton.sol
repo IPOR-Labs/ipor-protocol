@@ -7,14 +7,14 @@ contract ItfMilton is Milton {
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external returns (uint256) {
         return
             _openSwapPayFixed(
                 openTimestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }
@@ -22,14 +22,14 @@ contract ItfMilton is Milton {
     function itfOpenSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external returns (uint256) {
         return
             _openSwapReceiveFixed(
                 openTimestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }

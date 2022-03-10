@@ -4,9 +4,7 @@ pragma solidity 0.8.9;
 interface IMiltonConfiguration {
     event JosephUpdated(address indexed newJoseph);
 
-    function getMaxSwapCollateralAmount() external pure returns (uint256);
-
-    function getMaxSlippagePercentage() external pure returns (uint256);
+    function getMaxSwapCollateralAmount() external pure returns (uint256);    
 
     function getMaxLpUtilizationPercentage() external pure returns (uint256);
 

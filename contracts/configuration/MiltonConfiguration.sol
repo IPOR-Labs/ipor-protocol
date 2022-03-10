@@ -16,9 +16,7 @@ contract MiltonConfiguration is
     IMiltonConfiguration
 {
     //@notice max total amount used when opening position
-    uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
-
-    uint256 internal constant _MAX_SLIPPAGE_PERCENTAGE = 1e18;
+    uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;    
 
     uint256 internal constant _MAX_LP_UTILIZATION_PERCENTAGE = 8 * 1e17;
 
@@ -61,16 +59,7 @@ contract MiltonConfiguration is
     {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
-
-    function getMaxSlippagePercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
-        return _MAX_SLIPPAGE_PERCENTAGE;
-    }
-
+    
     function getMaxLpUtilizationPercentage()
         external
         pure
@@ -169,16 +158,7 @@ contract MiltonConfiguration is
     {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
-
-    function _getMaxSlippagePercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
-        return _MAX_SLIPPAGE_PERCENTAGE;
-    }
-
+    
     function _getMaxLpUtilizationPercentage()
         internal
         pure
