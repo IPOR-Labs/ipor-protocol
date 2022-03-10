@@ -142,29 +142,30 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const depositAmound = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
         const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
+
+        expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
         expect(compoundStrategyBalanceBefore, "compoundStrategyBalanceBefore = 0").to.be.equal(
             zero
         );
-        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
 
         //When
         await stanley.connect(signer).deposit(depositAmound);
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        expect(userIvTokenAfter, "userIvTokenAfter = depositAmound").to.be.equal(depositAmound);
         const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
+        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
+        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
+            compoundStrategyContract_Instance.address
+        );
+
+        expect(userIvTokenAfter, "userIvTokenAfter = depositAmound").to.be.equal(depositAmound);
         expect(
             compoundStrategyBalanceAfter.gt(BigNumber.from("9999999999000000000")),
             "compoundStrategyBalanceAfter > 9999999999000000000"
         ).to.be.true;
-        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
         expect(userUsdtBalanceAfter, "userUsdtBalanceAfter = 64435243342735").to.be.equal(
             BigNumber.from("64435243342735")
-        );
-        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-            compoundStrategyContract_Instance.address
         );
         expect(
             strategyCTokenContractAfter.gt(BigNumber.from("44438800000")),
@@ -177,36 +178,37 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const depositAmound = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        expect(userIvTokenBefore, "userIvTokenBefore = depositAmound").to.be.equal(depositAmound);
         const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
+
+        expect(userIvTokenBefore, "userIvTokenBefore = depositAmound").to.be.equal(depositAmound);
         expect(
             compoundStrategyBalanceBefore.gt(BigNumber.from("9999999999000000000")),
             "compoundStrategyBalanceBefore = 9999999999000000000"
         ).to.be.true;
-        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
 
         //When
         await stanley.connect(signer).deposit(depositAmound);
         await stanley.connect(signer).deposit(depositAmound);
+
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
+        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
+        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
+            compoundStrategyContract_Instance.address
+        );
+
         expect(
             userIvTokenAfter.gt(BigNumber.from("29999999950000000000")),
             "ivToken > 29999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
         expect(
             compoundStrategyBalanceAfter.gt(BigNumber.from("30000000000000000000")),
             "aaveStrategyBalanceAfter > 30 * 10^18"
         ).to.be.true;
-        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
         expect(userUsdtBalanceAfter, "userUsdtBalanceAfter = 64435223342735").to.be.equal(
             BigNumber.from("64435223342735")
         );
-        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-            compoundStrategyContract_Instance.address
-        );
-        console.log(strategyCTokenContractAfter.toString());
         expect(
             strategyCTokenContractAfter.gte(BigNumber.from("133316000000")),
             "strategyCTokenContractAfter > 133316000000"
@@ -218,26 +220,32 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const withdrawAmmond = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
+        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
+
         expect(
             userIvTokenBefore.gt(BigNumber.from("29999999950000000000")),
             "userIvTokenBefore = 29999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         expect(
             compoundStrategyBalanceBefore.gt(BigNumber.from("30000000000000000000")),
             "compoundStrategyBalanceBefore > 30 * 10^18"
         ).to.be.true;
-        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
 
         //when
         await stanley.withdraw(withdrawAmmond);
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
+        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
+        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
+            compoundStrategyContract_Instance.address
+        );
+
         expect(
             userIvTokenAfter.gt(BigNumber.from("19999999950000000000")),
             "ivToken = 19999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
         expect(
             compoundStrategyBalanceAfter.gt(BigNumber.from("20000000000000000000")),
             "compoundStrategyBalanceAfter > 20 * 10 ^18"
@@ -246,17 +254,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             compoundStrategyBalanceAfter.lt(BigNumber.from("30000000000000000000")),
             "compoundStrategyBalanceAfter < 30 * 10 ^18"
         ).to.be.true;
-        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
-
         expect(
             userUsdtBalanceAfter.gt(userUsdtBalanceBefore),
             "userUsdtBalanceAfter > userUsdtBalanceBefore"
         ).to.be.true;
-        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-            compoundStrategyContract_Instance.address
-        );
-        console.log("##########################################");
-        console.log(strategyCTokenContractAfter.toString());
         expect(
             strategyCTokenContractAfter.gt(BigNumber.from("88877600000")),
             "strategyCTokenContractAfter >  88877600000"
@@ -267,35 +268,36 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         //given
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
+        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
+
         expect(
             userIvTokenBefore.gt(BigNumber.from("19999999950000000000")),
             "userIvTokenBefore > 19999999950000000000"
         ).to.be.true;
-        const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         expect(
             compoundStrategyBalanceBefore.gt(BigNumber.from("20000000000000000000")),
             "compomudStrategyBalanceBefore > 20000000000000000000"
         ).to.be.true;
-        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
         //when
         await stanley.withdraw(compoundStrategyBalanceBefore);
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
         const compoundStrategyBalanceAfter = await compoundStrategyContract_Instance.balanceOf();
+        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
+        const strategyCTokenContractAfterWithdraw = await cTokenContract.balanceOf(
+            aaveStrategyContract_Instance.address
+        );
+
+        expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
         expect(
             compoundStrategyBalanceAfter,
             "compoundStrategyBalanceAfter = 476225272888"
         ).to.be.equal(BigNumber.from("476225272888"));
-
-        const userUsdtBalanceAfter = await usdtContract.balanceOf(userAddress);
         expect(
             userUsdtBalanceAfter.gt(userUsdtBalanceBefore),
             "userUsdtBalanceAfter > userUsdtBalanceBefore"
         ).to.be.true;
-        const strategyCTokenContractAfterWithdraw = await cTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
-        );
         expect(
             strategyCTokenContractAfterWithdraw,
             "strategyCTokenContractAfterWithdraw = 0"
@@ -308,10 +310,6 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
         await hre.network.provider.send("evm_mine");
 
-        const cUsdtBalance = await cTokenContract.balanceOf(
-            compoundStrategyContract_Instance.address
-        );
-        console.log("cUsdtBalance: ", cUsdtBalance.toString());
         const compoundBalanceBefore = await compContract.balanceOf(treasurAddres);
         expect(compoundBalanceBefore, "Cliamed Compound Balance Before = 0").to.be.equal(zero);
 

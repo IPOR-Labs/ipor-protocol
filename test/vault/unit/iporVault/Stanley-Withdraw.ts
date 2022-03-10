@@ -502,7 +502,7 @@ describe("Stanley -> Withdraw", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
 
-    it("Should not withdraw when has less tokens", async () => {
+    it.skip("Should not withdraw when has less tokens", async () => {
         //given
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
