@@ -135,6 +135,7 @@ contract Warren is
         onlyOwner
         whenNotPaused
     {
+		require(updater != address(0), IporErrors.WRONG_ADDRESS);
         _updaters[updater] = 1;
         emit IporIndexAddUpdater(updater);
     }
@@ -145,6 +146,7 @@ contract Warren is
         onlyOwner
         whenNotPaused
     {
+		require(updater != address(0), IporErrors.WRONG_ADDRESS);
         _updaters[updater] = 0;
         emit IporIndexRemoveUpdater(updater);
     }
