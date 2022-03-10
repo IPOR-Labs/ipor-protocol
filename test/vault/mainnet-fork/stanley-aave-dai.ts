@@ -14,7 +14,7 @@ const maxValue = BigNumber.from(
 import {
     AaveStrategy,
     CompoundStrategy,
-    Stanley,
+    StanleyDai,
     IvToken,
     ERC20,
     IAaveIncentivesController,
@@ -46,7 +46,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let stakeAaveContract: ERC20;
     let compoundStrategyContract_Instance: CompoundStrategy;
     let ivToken: IvToken;
-    let stanley: Stanley;
+    let stanley: StanleyDai;
 
     if (process.env.FORK_ENABLED != "true") {
         return;
@@ -153,7 +153,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             ivToken.address,
             aaveStrategyContract_Instance.address,
             compoundStrategyContract_Instance.address,
-        ])) as Stanley;
+        ])) as StanleyDai;
 
         await stanley.setMilton(await signer.getAddress());
         await aaveStrategyContract_Instance.setStanley(stanley.address);

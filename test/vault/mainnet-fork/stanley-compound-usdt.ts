@@ -11,7 +11,7 @@ const maxValue = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 );
 
-import { CompoundStrategy, Stanley, IvToken, ERC20, MockStrategy } from "../../../types";
+import { CompoundStrategy, StanleyUsdt, IvToken, ERC20, MockStrategy } from "../../../types";
 
 // // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222087,
@@ -30,7 +30,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let compTrollerContract: any;
     let compoundStrategyContract_Instance: CompoundStrategy;
     let ivToken: IvToken;
-    let stanley: Stanley;
+    let stanley: StanleyUsdt;
 
     if (process.env.FORK_ENABLED != "true") {
         return;
@@ -111,14 +111,14 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         //  ********************************************************************************************
         //  **************                       Stanley                                **************
         //  ********************************************************************************************
-        const StanleyFactory = await hre.ethers.getContractFactory("Stanley", signer);
+        const StanleyFactory = await hre.ethers.getContractFactory("StanleyUsdt", signer);
 
         stanley = (await await upgrades.deployProxy(StanleyFactory, [
             usdtAddress,
             ivToken.address,
             aaveStrategyContract_Instance.address,
             compoundStrategyContract_Instance.address,
-        ])) as Stanley;
+        ])) as StanleyUsdt;
 
         await stanley.setMilton(await signer.getAddress());
         await compoundStrategyContract_Instance.setStanley(stanley.address);
