@@ -24,12 +24,8 @@ describe("Joseph Treasury", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
@@ -42,11 +38,9 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferPublicationFee(BigInt("100")),
+            testData.josephDai.connect(userThree).transferPublicationFee(BigInt("100")),
             //then
-            "IPOR_31"
+            "IPOR_403"
         );
     });
 
@@ -57,18 +51,14 @@ describe("Joseph Treasury", () => {
             data
         );
 
-        await testData.josephDai
-            .connect(admin)
-            .setPublicationFeeTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setPublicationFeeTransferer(userThree.address);
 
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferPublicationFee(BigInt("100")),
+            testData.josephDai.connect(userThree).transferPublicationFee(BigInt("100")),
             //then
-            "IPOR_29"
+            "IPOR_402"
         );
     });
 
@@ -83,11 +73,7 @@ describe("Joseph Treasury", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -102,26 +88,19 @@ describe("Joseph Treasury", () => {
                 params.collateralizationFactor
             );
 
-        await testData.josephDai
-            .connect(admin)
-            .setPublicationFeeTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setPublicationFeeTransferer(userThree.address);
 
-        await testData.josephDai
-            .connect(admin)
-            .setCharlieTreasurer(userOne.address);
+        await testData.josephDai.connect(admin).setCharlieTreasurer(userOne.address);
 
         const transferedValue = BigInt("100");
 
         //when
-        await testData.josephDai
-            .connect(userThree)
-            .transferPublicationFee(transferedValue);
+        await testData.josephDai.connect(userThree).transferPublicationFee(transferedValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceCharlieTreasurer =
-            USER_SUPPLY_10MLN_18DEC + transferedValue;
+        let expectedErc20BalanceCharlieTreasurer = USER_SUPPLY_10MLN_18DEC + transferedValue;
         let actualErc20BalanceCharlieTreasurer = BigInt(
             await testData.tokenDai.balanceOf(userOne.address)
         );
@@ -132,11 +111,8 @@ describe("Joseph Treasury", () => {
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
 
-        let expectedPublicationFeeBalanceMilton =
-            USD_10_18DEC - transferedValue;
-        const actualPublicationFeeBalanceMilton = BigInt(
-            balance.iporPublicationFee
-        );
+        let expectedPublicationFeeBalanceMilton = USD_10_18DEC - transferedValue;
+        const actualPublicationFeeBalanceMilton = BigInt(balance.iporPublicationFee);
 
         expect(
             expectedErc20BalanceCharlieTreasurer,
@@ -167,11 +143,9 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferTreasury(BigInt("100")),
+            testData.josephDai.connect(userThree).transferTreasury(BigInt("100")),
             //then
-            "IPOR_11"
+            "IPOR_401"
         );
     });
 
@@ -182,18 +156,14 @@ describe("Joseph Treasury", () => {
             data
         );
 
-        await testData.josephDai
-            .connect(admin)
-            .setTreasureTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasureTransferer(userThree.address);
 
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferTreasury(BigInt("100")),
+            testData.josephDai.connect(userThree).transferTreasury(BigInt("100")),
             //then
-            "IPOR_51"
+            "IPOR_405"
         );
     });
 
@@ -208,11 +178,7 @@ describe("Joseph Treasury", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -227,26 +193,19 @@ describe("Joseph Treasury", () => {
                 params.collateralizationFactor
             );
 
-        await testData.josephDai
-            .connect(admin)
-            .setTreasureTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasureTransferer(userThree.address);
 
-        await testData.josephDai
-            .connect(admin)
-            .setTreasureTreasurer(userOne.address);
+        await testData.josephDai.connect(admin).setTreasureTreasurer(userOne.address);
 
         const transferedValue = BigInt("100");
 
         //when
-        await testData.josephDai
-            .connect(userThree)
-            .transferTreasury(transferedValue);
+        await testData.josephDai.connect(userThree).transferTreasury(transferedValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceTreasureTreasurer =
-            USER_SUPPLY_10MLN_18DEC + transferedValue;
+        let expectedErc20BalanceTreasureTreasurer = USER_SUPPLY_10MLN_18DEC + transferedValue;
         let actualErc20BalanceTreasureTreasurer = BigInt(
             await testData.tokenDai.balanceOf(userOne.address)
         );
@@ -265,14 +224,12 @@ describe("Joseph Treasury", () => {
             `Incorrect ERC20 Treasury Treasurer balance`
         ).to.be.eq(actualErc20BalanceTreasureTreasurer);
 
-        expect(
-            expectedErc20BalanceMilton,
-            `Incorrect ERC20 Milton balance`
-        ).to.be.eq(actualErc20BalanceMilton);
+        expect(expectedErc20BalanceMilton, `Incorrect ERC20 Milton balance`).to.be.eq(
+            actualErc20BalanceMilton
+        );
 
-        expect(
-            expectedTreasuryBalanceMilton,
-            `Incorrect Treasury Balance in Milton`
-        ).to.be.eq(actualTreasuryBalanceMilton);
+        expect(expectedTreasuryBalanceMilton, `Incorrect Treasury Balance in Milton`).to.be.eq(
+            actualTreasuryBalanceMilton
+        );
     });
 });

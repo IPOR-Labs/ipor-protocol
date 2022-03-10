@@ -32,26 +32,12 @@ const {
 
 describe("MiltonStorage", () => {
     let data = null;
-    let admin,
-        userOne,
-        userTwo,
-        userThree,
-        liquidityProvider,
-        miltonStorageAddress;
+    let admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress;
 
     before(async () => {
-        [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-            miltonStorageAddress,
-        ] = await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
+            await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should transfer ownership - simple case 1", async () => {
@@ -66,18 +52,12 @@ describe("MiltonStorage", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.miltonStorageDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonStorageDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.miltonStorageDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //then
-        const actualNewOwner = await testData.miltonStorageDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.miltonStorageDai.connect(userOne).owner();
         expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
     });
 
@@ -114,16 +94,12 @@ describe("MiltonStorage", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.miltonStorageDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonStorageDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await assertError(
-            testData.miltonStorageDai
-                .connect(userThree)
-                .confirmTransferOwnership(),
+            testData.miltonStorageDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_6"
+            "IPOR_101"
         );
     });
 
@@ -139,19 +115,13 @@ describe("MiltonStorage", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.miltonStorageDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonStorageDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.miltonStorageDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         await assertError(
-            testData.miltonStorageDai
-                .connect(expectedNewOwner)
-                .confirmTransferOwnership(),
-            "IPOR_6"
+            testData.miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership(),
+            "IPOR_101"
         );
     });
 
@@ -166,19 +136,13 @@ describe("MiltonStorage", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.miltonStorageDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonStorageDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.miltonStorageDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            testData.miltonStorageDai
-                .connect(admin)
-                .transferOwnership(expectedNewOwner.address),
+            testData.miltonStorageDai.connect(admin).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -195,33 +159,20 @@ describe("MiltonStorage", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.miltonStorageDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonStorageDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //when
-        await testData.miltonStorageDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonStorageDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //then
-        const actualNewOwner = await testData.miltonStorageDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.miltonStorageDai.connect(userOne).owner();
         expect(admin.address).to.be.eql(actualNewOwner);
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {
         //given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI"],
             data,
             0,
@@ -233,10 +184,7 @@ describe("MiltonStorage", () => {
             data,
             testData
         );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, liquidityProvider],
-            testData
-        );
+        await setupTokenDaiInitialValuesForUsers([admin, userOne, liquidityProvider], testData);
 
         await testData.miltonStorageDai.setMilton(miltonStorageAddress.address);
 
@@ -257,21 +205,13 @@ describe("MiltonStorage", () => {
     it("should NOT update Milton Storage when open position, caller dont have rights to update", async () => {
         //given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI"],
             data,
             0,
             1
         );
-        const derivativeStruct =
-            await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
+        const derivativeStruct = await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
         await assertError(
             //when
             testData.miltonStorageDai
@@ -284,21 +224,14 @@ describe("MiltonStorage", () => {
                     await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
                 ),
             //then
-            "IPOR_1"
+            "IPOR_301"
         );
     });
 
     it("should update Milton Storage when close position, caller has rights to update, DAI 18 decimals", async () => {
         //given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI"],
             data,
             0,
@@ -335,15 +268,11 @@ describe("MiltonStorage", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                USD_28_000_18DEC,
-                derivativeParams.openTimestamp
-            );
+            .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
 
         await openSwapPayFixed(testData, derivativeParams);
         let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
-        let closeSwapTimestamp =
-            derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        let closeSwapTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         await testData.miltonStorageDai.setMilton(miltonStorageAddress.address);
 
@@ -367,14 +296,7 @@ describe("MiltonStorage", () => {
     it("should update Milton Storage when close position, caller has rights to update, USDT 6 decimals", async () => {
         //given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["USDT"],
             data,
             0,
@@ -411,21 +333,13 @@ describe("MiltonStorage", () => {
 
         await testData.josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                USD_28_000_6DEC,
-                derivativeParams.openTimestamp
-            );
+            .itfProvideLiquidity(USD_28_000_6DEC, derivativeParams.openTimestamp);
 
         await openSwapPayFixed(testData, derivativeParams);
-        let derivativeItem = await testData.miltonStorageUsdt.getSwapPayFixed(
-            1
-        );
-        let closeSwapTimestamp =
-            derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        let derivativeItem = await testData.miltonStorageUsdt.getSwapPayFixed(1);
+        let closeSwapTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        await testData.miltonStorageUsdt.setMilton(
-            miltonStorageAddress.address
-        );
+        await testData.miltonStorageUsdt.setMilton(miltonStorageAddress.address);
 
         //when
         await testData.miltonStorageUsdt
@@ -444,14 +358,7 @@ describe("MiltonStorage", () => {
     it("should NOT update Milton Storage when close position, caller don't have rights to update", async () => {
         // given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI"],
             data,
             0,
@@ -487,18 +394,12 @@ describe("MiltonStorage", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                USD_28_000_18DEC,
-                derivativeParams.openTimestamp
-            );
+            .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
 
         await openSwapPayFixed(testData, derivativeParams);
         let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
-        let closeSwapTimestamp =
-            derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.iporAssetConfigurationDai.setMilton(
-            miltonStorageAddress.address
-        );
+        let closeSwapTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.iporAssetConfigurationDai.setMilton(miltonStorageAddress.address);
 
         //when
         await assertError(
@@ -512,7 +413,7 @@ describe("MiltonStorage", () => {
                     await testData.miltonDai.getIncomeTaxPercentage()
                 ),
             //then
-            "IPOR_1"
+            "IPOR_301"
         );
     });
 

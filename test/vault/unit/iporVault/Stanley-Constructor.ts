@@ -22,31 +22,17 @@ describe("Stanley -> constructor", () => {
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
-        DAI = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
-        USDt = (await tokenFactory.deploy(
-            BigNumber.from(2).pow(255)
-        )) as TestERC20;
+        DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        USDt = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         StanleyFactory = await hre.ethers.getContractFactory("Stanley");
-        const tokenFactoryIvToken = await hre.ethers.getContractFactory(
-            "IvToken"
-        );
-        ivToken = (await tokenFactoryIvToken.deploy(
-            "IvToken",
-            "IVT",
-            DAI.address
-        )) as IvToken;
+        const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
+        ivToken = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
 
-        const AaveStrategy = await hre.ethers.getContractFactory(
-            "MockStrategy"
-        );
+        const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
         aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
-        const CompoundStrategy = await hre.ethers.getContractFactory(
-            "MockStrategy"
-        );
+        const CompoundStrategy = await hre.ethers.getContractFactory("MockStrategy");
         compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
@@ -64,7 +50,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_37");
+        ).to.be.revertedWith("IPOR_001");
     });
 
     it("Shoud deploy new IporVault", async () => {
@@ -93,7 +79,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_37");
+        ).to.be.revertedWith("IPOR_001");
     });
 
     it("Shoud throw error when aaveStrategy address is 0", async () => {
@@ -108,7 +94,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_37");
+        ).to.be.revertedWith("IPOR_001");
     });
 
     it("Shoud throw error when compoundStrategy address is 0", async () => {
@@ -123,7 +109,7 @@ describe("Stanley -> constructor", () => {
                 constants.AddressZero,
             ])
             //then
-        ).to.be.revertedWith("IPOR_37");
+        ).to.be.revertedWith("IPOR_001");
     });
 
     it("Shoud throw error when aaveStrategy asset != from IporVault asset", async () => {
@@ -139,7 +125,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_102");
+        ).to.be.revertedWith("IPOR_503");
     });
 
     it("Shoud throw error when compoundStrategy asset != from IporVault asset", async () => {
@@ -155,6 +141,6 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_102");
+        ).to.be.revertedWith("IPOR_503");
     });
 });

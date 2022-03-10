@@ -39,12 +39,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            0
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 0);
     });
 
     it("should transfer ownership - simple case 1", async () => {
@@ -59,9 +55,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await miltonSpread
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await miltonSpread.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
 
@@ -82,9 +76,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //when
         await assertError(
-            miltonSpread
-                .connect(userThree)
-                .transferOwnership(expectedNewOwner.address),
+            miltonSpread.connect(userThree).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -101,14 +93,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await miltonSpread
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await miltonSpread.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await assertError(
             miltonSpread.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_6"
+            "IPOR_101"
         );
     });
 
@@ -123,15 +113,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await miltonSpread
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await miltonSpread.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
 
         await assertError(
             miltonSpread.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_6"
+            "IPOR_101"
         );
     });
 
@@ -145,17 +133,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
-        await miltonSpread
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await miltonSpread.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            miltonSpread
-                .connect(admin)
-                .transferOwnership(expectedNewOwner.address),
+            miltonSpread.connect(admin).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -172,14 +156,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const expectedNewOwner = userTwo;
 
-        await miltonSpread
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await miltonSpread.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //when
-        await miltonSpread
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await miltonSpread.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //then
         const actualNewOwner = await miltonSpread.connect(userOne).owner();
@@ -498,8 +478,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
@@ -544,8 +523,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
@@ -590,8 +568,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("1000000000000000000"),
         };
 
@@ -636,8 +613,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const accruedIpor = {
             indexValue: iporIndexValue,
             ibtPrice: BigInt("1000000000000000000"),
-            exponentialMovingAverage:
-                BigInt("1000000000000000000") + iporIndexValue,
+            exponentialMovingAverage: BigInt("1000000000000000000") + iporIndexValue,
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
 
@@ -912,7 +888,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     receiveFixedSwapsBalance
                 ),
             //then
-            "IPOR_49"
+            "IPOR_318"
         );
     });
 
@@ -929,12 +905,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const expectedSpreadPayFixed = BigInt("360000000000000");
         const timestamp = Math.floor(Date.now() / 1000);
 
-        await prepareApproveForUsers(
-            [liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
+        await prepareApproveForUsers([liquidityProvider], "DAI", data, testData);
 
         await setupTokenDaiInitialValuesForUsers([liquidityProvider], testData);
         await testData.josephDai
@@ -966,11 +937,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         let balanceLiquidityPool = BigInt("10000000000");
 
@@ -1007,9 +974,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .callStatic.itfCalculateSpread(params.openTimestamp + 1);
 
         //then
-        expect(parseInt(await actualSpreadValue.spreadPayFixedValue)).to.be.gt(
-            0
-        );
+        expect(parseInt(await actualSpreadValue.spreadPayFixedValue)).to.be.gt(0);
     });
 
     it("should calculate Spread Pay Fixed - initial state with Liquidity Pool", async () => {
@@ -1025,12 +990,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const expectedSpreadPayFixed = BigInt("360000000000000");
         const timestamp = Math.floor(Date.now() / 1000);
 
-        await prepareApproveForUsers(
-            [liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
+        await prepareApproveForUsers([liquidityProvider], "DAI", data, testData);
 
         await setupTokenDaiInitialValuesForUsers([liquidityProvider], testData);
         await testData.josephDai
@@ -1062,11 +1022,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         let balanceLiquidityPool = BigInt("10000000000");
 
@@ -1103,8 +1059,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .callStatic.itfCalculateSpread(params.openTimestamp + 1);
 
         //then
-        expect(parseInt(await actualSpreadValue.spreadPayFixedValue)).to.be.gt(
-            0
-        );
+        expect(parseInt(await actualSpreadValue.spreadPayFixedValue)).to.be.gt(0);
     });
 });

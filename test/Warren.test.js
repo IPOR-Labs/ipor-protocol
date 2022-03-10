@@ -1,11 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const {
-    assertError,
-    prepareData,
-    prepareTestData,
-} = require("./Utils");
+const { assertError, prepareData, prepareTestData } = require("./Utils");
 
 const {
     TC_IBT_PRICE_DAI_18DEC,
@@ -31,12 +27,8 @@ describe("Warren", () => {
     let testData;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     beforeEach(async () => {
@@ -50,11 +42,8 @@ describe("Warren", () => {
     });
 
     it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue =
-            await testData.warren.itfGetDecayFactorValue();
-        expect(parseInt(decayFactorValue)).to.be.lte(
-            parseInt(PERCENTAGE_100_18DEC)
-        );
+        const decayFactorValue = await testData.warren.itfGetDecayFactorValue();
+        expect(parseInt(decayFactorValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {
@@ -64,9 +53,7 @@ describe("Warren", () => {
 
         //then
         await assertError(
-            testData.warren
-                .connect(userOne)
-                .updateIndex(testData.tokenUsdt.address, 123),
+            testData.warren.connect(userOne).updateIndex(testData.tokenUsdt.address, 123),
             "Pausable: paused"
         );
     });
@@ -89,9 +76,7 @@ describe("Warren", () => {
 
         //when
         await assertError(
-            testData.warren
-                .connect(userOne)
-                .updateIndex(testData.tokenUsdt.address, 123),
+            testData.warren.connect(userOne).updateIndex(testData.tokenUsdt.address, 123),
             "Pausable: paused"
         );
 
@@ -139,9 +124,7 @@ describe("Warren", () => {
         await testData.warren.connect(admin).pause();
 
         //when
-        await testData.warren
-            .connect(userOne)
-            .getIndex(testData.tokenUsdt.address);
+        await testData.warren.connect(userOne).getIndex(testData.tokenUsdt.address);
 
         await testData.warren
             .connect(userOne)
@@ -188,9 +171,7 @@ describe("Warren", () => {
 
         //when
         await testData.warren.connect(admin).unpause();
-        await testData.warren
-            .connect(userOne)
-            .updateIndexes(assets, indexValues);
+        await testData.warren.connect(userOne).updateIndexes(assets, indexValues);
 
         //then
         const iporIndex = await testData.warren
@@ -218,13 +199,9 @@ describe("Warren", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.warren
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.warren.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.warren
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.warren.connect(expectedNewOwner).confirmTransferOwnership();
 
         //then
         const actualNewOwner = await testData.warren.connect(userOne).owner();
@@ -237,9 +214,7 @@ describe("Warren", () => {
 
         //when
         await assertError(
-            testData.warren
-                .connect(userThree)
-                .transferOwnership(expectedNewOwner.address),
+            testData.warren.connect(userThree).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -250,14 +225,12 @@ describe("Warren", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.warren
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.warren.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await assertError(
             testData.warren.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_6"
+            "IPOR_101"
         );
     });
 
@@ -266,19 +239,13 @@ describe("Warren", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.warren
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.warren.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.warren
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.warren.connect(expectedNewOwner).confirmTransferOwnership();
 
         await assertError(
-            testData.warren
-                .connect(expectedNewOwner)
-                .confirmTransferOwnership(),
-            "IPOR_6"
+            testData.warren.connect(expectedNewOwner).confirmTransferOwnership(),
+            "IPOR_101"
         );
     });
 
@@ -286,19 +253,13 @@ describe("Warren", () => {
         //given
         const expectedNewOwner = userTwo;
 
-        await testData.warren
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.warren.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.warren
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.warren.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            testData.warren
-                .connect(admin)
-                .transferOwnership(expectedNewOwner.address),
+            testData.warren.connect(admin).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -308,14 +269,10 @@ describe("Warren", () => {
         //given
         const expectedNewOwner = userTwo;
 
-        await testData.warren
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.warren.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //when
-        await testData.warren
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.warren.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //then
         const actualNewOwner = await testData.warren.connect(userOne).owner();
@@ -324,17 +281,13 @@ describe("Warren", () => {
 
     it("should Decay Factor be lower than 100%", async () => {
         const decayFactorValue = await testData.warren.itfGetDecayFactorValue();
-        expect(parseInt(decayFactorValue)).to.be.lte(
-            parseInt(PERCENTAGE_100_18DEC)
-        );
+        expect(parseInt(decayFactorValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
     });
 
     it("should NOT update IPOR Index, because sender is not an updater", async () => {
         await assertError(
-            testData.warren
-                .connect(userThree)
-                .updateIndex(testData.tokenUsdt.address, 123),
-            "IPOR_2"
+            testData.warren.connect(userThree).updateIndex(testData.tokenUsdt.address, 123),
+            "IPOR_201"
         );
     });
 
@@ -344,11 +297,9 @@ describe("Warren", () => {
 
         await assertError(
             //when
-            testData.warren
-                .connect(userTwo)
-                .updateIndex(testData.tokenUsdt.address, 123),
+            testData.warren.connect(userTwo).updateIndex(testData.tokenUsdt.address, 123),
             //then
-            "IPOR_2"
+            "IPOR_201"
         );
     });
 
@@ -359,9 +310,7 @@ describe("Warren", () => {
         await testData.warren.addUpdater(userOne.address);
 
         //when
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(asset, expectedIndexValue);
+        await testData.warren.connect(userOne).updateIndex(asset, expectedIndexValue);
 
         //then
         const iporIndex = await testData.warren.getIndex(asset);
@@ -395,9 +344,7 @@ describe("Warren", () => {
         ];
 
         //when
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndexes(assets, indexValues, updateDate);
+        await testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
         const iporIndex = await testData.warren
@@ -421,11 +368,9 @@ describe("Warren", () => {
 
         await assertError(
             //when
-            testData.warren
-                .connect(userOne)
-                .updateIndex(testData.tokenUsdt.address, 123),
+            testData.warren.connect(userOne).updateIndex(testData.tokenUsdt.address, 123),
             //then
-            "IPOR_2"
+            "IPOR_201"
         );
     });
 
@@ -444,12 +389,8 @@ describe("Warren", () => {
         await testData.warren.addUpdater(userOne.address);
 
         //when
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(asset, expectedIndexValueOne);
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(asset, expectedIndexValueTwo);
+        await testData.warren.connect(userOne).updateIndex(asset, expectedIndexValueOne);
+        await testData.warren.connect(userOne).updateIndex(asset, expectedIndexValueTwo);
 
         //then
         const iporIndex = await testData.warren.getIndex(asset);
@@ -468,9 +409,7 @@ describe("Warren", () => {
         const iporIndexValue = BigInt("500000000000000000000");
 
         //when
-        await testData.warren
-            .connect(userOne)
-            .updateIndex(asset, iporIndexValue);
+        await testData.warren.connect(userOne).updateIndex(asset, iporIndexValue);
 
         //then
         const iporIndex = await testData.warren.getIndex(asset);
@@ -679,11 +618,9 @@ describe("Warren", () => {
 
         await assertError(
             //when
-            testData.warren
-                .connect(userOne)
-                .itfUpdateIndexes(assets, indexValues, updateDate),
+            testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_39"
+            "IPOR_204"
         );
     });
 
@@ -697,11 +634,9 @@ describe("Warren", () => {
 
         await assertError(
             //when
-            testData.warren
-                .connect(userOne)
-                .itfUpdateIndexes(assets, indexValues, updateDate),
+            testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_18"
+            "IPOR_202"
         );
     });
 
@@ -710,24 +645,17 @@ describe("Warren", () => {
         const updateDate = Math.floor(Date.now() / 1000);
         await testData.warren.addUpdater(userOne.address);
         const assets = [testData.tokenUsdc.address, testData.tokenDai.address];
-        const indexValues = [
-            BigInt("50000000000000000"),
-            BigInt("50000000000000000"),
-        ];
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndexes(assets, indexValues, updateDate);
+        const indexValues = [BigInt("50000000000000000"), BigInt("50000000000000000")];
+        await testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         const wrongUpdateDate = updateDate - 1;
 
         //when
         await assertError(
             //when
-            testData.warren
-                .connect(userOne)
-                .itfUpdateIndexes(assets, indexValues, wrongUpdateDate),
+            testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, wrongUpdateDate),
             //then
-            "IPOR_27"
+            "IPOR_203"
         );
     });
 
@@ -741,16 +669,10 @@ describe("Warren", () => {
             testData.tokenDai.address,
             testData.tokenUsdt.address,
         ];
-        const indexValues = [
-            PERCENTAGE_8_18DEC,
-            PERCENTAGE_7_18DEC,
-            PERCENTAGE_5_18DEC,
-        ];
+        const indexValues = [PERCENTAGE_8_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_5_18DEC];
 
         //when
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndexes(assets, indexValues, updateDate);
+        await testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
         for (let i = 0; i < assets.length; i++) {
@@ -772,22 +694,14 @@ describe("Warren", () => {
             testData.tokenUsdc.address,
             testData.tokenUsdt.address,
         ];
-        const indexValues = [
-            PERCENTAGE_7_18DEC,
-            PERCENTAGE_7_18DEC,
-            PERCENTAGE_7_18DEC,
-        ];
+        const indexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
         const expectedExpoMovingAverage = PERCENTAGE_7_18DEC;
         //when
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndexes(assets, indexValues, updateDate);
+        await testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
         const iporIndex = await testData.warren.getIndex(assets[0]);
-        const actualExponentialMovingAverage = BigInt(
-            await iporIndex.exponentialMovingAverage
-        );
+        const actualExponentialMovingAverage = BigInt(await iporIndex.exponentialMovingAverage);
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
@@ -803,16 +717,8 @@ describe("Warren", () => {
             testData.tokenUsdt.address,
             testData.tokenUsdc.address,
         ];
-        const firstIndexValues = [
-            PERCENTAGE_7_18DEC,
-            PERCENTAGE_7_18DEC,
-            PERCENTAGE_7_18DEC,
-        ];
-        const secondIndexValues = [
-            PERCENTAGE_50_18DEC,
-            PERCENTAGE_50_18DEC,
-            PERCENTAGE_50_18DEC,
-        ];
+        const firstIndexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
+        const secondIndexValues = [PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC];
         const expectedExpoMovingAverage = BigInt("285000000000000000");
 
         //when
@@ -825,9 +731,7 @@ describe("Warren", () => {
 
         //then
         const iporIndex = await testData.warren.getIndex(assets[0]);
-        const actualExponentialMovingAverage = BigInt(
-            await iporIndex.exponentialMovingAverage
-        );
+        const actualExponentialMovingAverage = BigInt(await iporIndex.exponentialMovingAverage);
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
@@ -843,16 +747,8 @@ describe("Warren", () => {
             testData.tokenDai.address,
             testData.tokenUsdt.address,
         ];
-        const firstIndexValues = [
-            PERCENTAGE_7_6DEC,
-            PERCENTAGE_7_6DEC,
-            PERCENTAGE_7_6DEC,
-        ];
-        const secondIndexValues = [
-            PERCENTAGE_50_6DEC,
-            PERCENTAGE_50_6DEC,
-            PERCENTAGE_50_6DEC,
-        ];
+        const firstIndexValues = [PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC];
+        const secondIndexValues = [PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC];
         const expectedExpoMovingAverage = BigInt("285000");
 
         //when
@@ -865,9 +761,7 @@ describe("Warren", () => {
 
         //then
         const iporIndex = await testData.warren.getIndex(assets[0]);
-        let actualExponentialMovingAverage = BigInt(
-            await iporIndex.exponentialMovingAverage
-        );
+        let actualExponentialMovingAverage = BigInt(await iporIndex.exponentialMovingAverage);
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`

@@ -18,8 +18,7 @@ describe("IporOwnableUpgradeable", () => {
         const IporOwnableUpgradeable = await hre.ethers.getContractFactory(
             "MockIporOwnableUpgradeable"
         );
-        iporOwnable =
-            (await IporOwnableUpgradeable.deploy()) as IporOwnableUpgradeable;
+        iporOwnable = (await IporOwnableUpgradeable.deploy()) as IporOwnableUpgradeable;
     });
 
     it("Should 0x00 address be owner when deployed without initialize", async () => {
@@ -27,9 +26,7 @@ describe("IporOwnableUpgradeable", () => {
         // when
         // then
         const owner = await iporOwnable.owner();
-        expect(owner, "should be 0x00 address").to.be.equal(
-            constants.AddressZero
-        );
+        expect(owner, "should be 0x00 address").to.be.equal(constants.AddressZero);
     });
 
     it("Should deployer be owner of contract", async () => {
@@ -39,9 +36,7 @@ describe("IporOwnableUpgradeable", () => {
         // when
         // then
         const owner = await iporOwnable.owner();
-        expect(owner, "Admin should be owner").to.be.equal(
-            await admin.getAddress()
-        );
+        expect(owner, "Admin should be owner").to.be.equal(await admin.getAddress());
     });
 
     it("Should not be posible to transfer 0x00 address", async () => {
@@ -52,7 +47,7 @@ describe("IporOwnableUpgradeable", () => {
         await expect(
             iporOwnable.transferOwnership(constants.AddressZero),
             "Should revert when 0x00 addres pass"
-        ).revertedWith("IPOR_37");
+        ).revertedWith("IPOR_001");
     });
 
     it("should not be possible to confirm the transfer ownership for different address", async () => {
@@ -63,7 +58,7 @@ describe("IporOwnableUpgradeable", () => {
         await expect(
             iporOwnable.connect(userTwo).confirmTransferOwnership(),
             "Should revert when pass userTwo address"
-        ).revertedWith("IPOR_6");
+        ).revertedWith("IPOR_101");
     });
 
     it("Should be able to transfer ownership to userOne", async () => {
@@ -75,8 +70,6 @@ describe("IporOwnableUpgradeable", () => {
         // then
         const owner = await iporOwnable.owner();
 
-        expect(owner, "userOne should be owner").to.be.equal(
-            await userOne.getAddress()
-        );
+        expect(owner, "userOne should be owner").to.be.equal(await userOne.getAddress());
     });
 });

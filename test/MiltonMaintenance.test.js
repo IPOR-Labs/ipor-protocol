@@ -64,12 +64,8 @@ describe("Milton Maintenance", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {
@@ -83,11 +79,7 @@ describe("Milton Maintenance", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -120,11 +112,7 @@ describe("Milton Maintenance", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -180,9 +168,7 @@ describe("Milton Maintenance", () => {
         );
 
         await assertError(
-            testData.miltonDai
-                .connect(admin)
-                .setupMaxAllowance(userThree.address),
+            testData.miltonDai.connect(admin).setupMaxAllowance(userThree.address),
             "Pausable: paused"
         );
 
@@ -203,11 +189,7 @@ describe("Milton Maintenance", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -221,9 +203,7 @@ describe("Milton Maintenance", () => {
                 params.slippageValue,
                 params.collateralizationFactor
             );
-        const swapPayFixed = await testData.miltonStorageDai
-            .connect(userTwo)
-            .getSwapPayFixed(1);
+        const swapPayFixed = await testData.miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
 
         await testData.miltonDai
             .connect(userTwo)
@@ -246,37 +226,21 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(userOne).getAccruedBalance();
         await testData.miltonDai.connect(userOne).calculateSpread();
         await testData.miltonDai.connect(userOne).calculateSoap();
-        await testData.miltonDai
-            .connect(userOne)
-            .calculateExchangeRate(params.openTimestamp);
-        await testData.miltonDai
-            .connect(userOne)
-            .calculateSwapPayFixedValue(swapPayFixed);
-        await testData.miltonDai
-            .connect(userOne)
-            .calculateSwapReceiveFixedValue(swapReceiveFixed);
+        await testData.miltonDai.connect(userOne).calculateExchangeRate(params.openTimestamp);
+        await testData.miltonDai.connect(userOne).calculateSwapPayFixedValue(swapPayFixed);
+        await testData.miltonDai.connect(userOne).calculateSwapReceiveFixedValue(swapReceiveFixed);
         await testData.miltonDai.connect(userOne).getMiltonSpreadModel();
         await testData.miltonDai.connect(userOne).getMaxSwapCollateralAmount();
         await testData.miltonDai.connect(userOne).getMaxSlippagePercentage();
-        await testData.miltonDai
-            .connect(userOne)
-            .getMaxLpUtilizationPercentage();
-        await testData.miltonDai
-            .connect(userOne)
-            .getMaxLpUtilizationPerLegPercentage();
+        await testData.miltonDai.connect(userOne).getMaxLpUtilizationPercentage();
+        await testData.miltonDai.connect(userOne).getMaxLpUtilizationPerLegPercentage();
         await testData.miltonDai.connect(userOne).getIncomeTaxPercentage();
         await testData.miltonDai.connect(userOne).getOpeningFeePercentage();
-        await testData.miltonDai
-            .connect(userOne)
-            .getOpeningFeeForTreasuryPercentage();
+        await testData.miltonDai.connect(userOne).getOpeningFeeForTreasuryPercentage();
         await testData.miltonDai.connect(userOne).getIporPublicationFeeAmount();
         await testData.miltonDai.connect(userOne).getLiquidationDepositAmount();
-        await testData.miltonDai
-            .connect(userOne)
-            .getMaxCollateralizationFactorValue();
-        await testData.miltonDai
-            .connect(userOne)
-            .getMinCollateralizationFactorValue();
+        await testData.miltonDai.connect(userOne).getMaxCollateralizationFactorValue();
+        await testData.miltonDai.connect(userOne).getMinCollateralizationFactorValue();
         await testData.miltonDai.connect(userOne).getJoseph();
     });
 
@@ -338,14 +302,10 @@ describe("Milton Maintenance", () => {
             );
 
         //then
-        const swapPayFixed = await testData.miltonStorageDai
-            .connect(userTwo)
-            .getSwapPayFixed(1);
+        const swapPayFixed = await testData.miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
         const actualCollateral = BigInt(swapPayFixed.collateral);
 
-        expect(actualCollateral, "Incorrect collateral").to.be.eql(
-            expectedCollateral
-        );
+        expect(actualCollateral, "Incorrect collateral").to.be.eql(expectedCollateral);
     });
 
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
@@ -374,18 +334,12 @@ describe("Milton Maintenance", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.miltonDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.miltonDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //then
-        const actualNewOwner = await testData.miltonDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.miltonDai.connect(userOne).owner();
         expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
     });
 
@@ -399,9 +353,7 @@ describe("Milton Maintenance", () => {
 
         //when
         await assertError(
-            testData.miltonDai
-                .connect(userThree)
-                .transferOwnership(expectedNewOwner.address),
+            testData.miltonDai.connect(userThree).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -416,14 +368,12 @@ describe("Milton Maintenance", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await assertError(
             testData.miltonDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_6"
+            "IPOR_101"
         );
     });
 
@@ -436,19 +386,13 @@ describe("Milton Maintenance", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.miltonDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.miltonDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         await assertError(
-            testData.miltonDai
-                .connect(expectedNewOwner)
-                .confirmTransferOwnership(),
-            "IPOR_6"
+            testData.miltonDai.connect(expectedNewOwner).confirmTransferOwnership(),
+            "IPOR_101"
         );
     });
 
@@ -460,19 +404,13 @@ describe("Milton Maintenance", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.miltonDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.miltonDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            testData.miltonDai
-                .connect(admin)
-                .transferOwnership(expectedNewOwner.address),
+            testData.miltonDai.connect(admin).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -486,19 +424,13 @@ describe("Milton Maintenance", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //when
-        await testData.miltonDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.miltonDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //then
-        const actualNewOwner = await testData.miltonDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.miltonDai.connect(userOne).owner();
         expect(admin.address).to.be.eql(actualNewOwner);
     });
 });

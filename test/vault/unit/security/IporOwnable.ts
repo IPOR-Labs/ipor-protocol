@@ -7,7 +7,6 @@ const { expect } = chai;
 
 import { IporOwnable } from "../../../../types";
 
-
 describe("IporOwnable", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
     let iporOwnable: IporOwnable;
@@ -24,9 +23,7 @@ describe("IporOwnable", () => {
         // when
         // then
         const owner = await iporOwnable.owner();
-        expect(owner, "Admin should be owner").to.be.equal(
-            await admin.getAddress()
-        );
+        expect(owner, "Admin should be owner").to.be.equal(await admin.getAddress());
     });
 
     it("Should not be posible to transfer 0x00 address", async () => {
@@ -35,7 +32,7 @@ describe("IporOwnable", () => {
         await expect(
             iporOwnable.transferOwnership(constants.AddressZero),
             "Should revert when 0x00 addres pass"
-        ).revertedWith("IPOR_37");
+        ).revertedWith("IPOR_001");
     });
 
     it("should not be possible to confirm the transfer ownership for different address", async () => {
@@ -45,7 +42,7 @@ describe("IporOwnable", () => {
         await expect(
             iporOwnable.connect(userTwo).confirmTransferOwnership(),
             "Should revert when pass userTwo address"
-        ).revertedWith("IPOR_6");
+        ).revertedWith("IPOR_101");
     });
 
     it("Should be able to transfer ownership to userOne", async () => {
@@ -55,8 +52,6 @@ describe("IporOwnable", () => {
         // then
         const owner = await iporOwnable.owner();
 
-        expect(owner, "userOne should be owner").to.be.equal(
-            await userOne.getAddress()
-        );
+        expect(owner, "userOne should be owner").to.be.equal(await userOne.getAddress());
     });
 });

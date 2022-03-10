@@ -1,12 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const {
-    assertError,
-    prepareData,
-    prepareTestData,
-    prepareTestDataDaiCase1,
-} = require("./Utils");
+const { assertError, prepareData, prepareTestData, prepareTestDataDaiCase1 } = require("./Utils");
 
 const { TC_TOTAL_AMOUNT_10_000_18DEC } = require("./Const.js");
 
@@ -16,12 +11,8 @@ describe("IpToken", () => {
     let testData;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     beforeEach(async () => {
@@ -43,18 +34,12 @@ describe("IpToken", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.ipTokenDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.ipTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.ipTokenDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.ipTokenDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //then
-        const actualNewOwner = await testData.ipTokenDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.ipTokenDai.connect(userOne).owner();
         expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
     });
 
@@ -68,9 +53,7 @@ describe("IpToken", () => {
 
         //when
         await assertError(
-            testData.ipTokenDai
-                .connect(userThree)
-                .transferOwnership(expectedNewOwner.address),
+            testData.ipTokenDai.connect(userThree).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -85,14 +68,12 @@ describe("IpToken", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.ipTokenDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.ipTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         await assertError(
             testData.ipTokenDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_6"
+            "IPOR_101"
         );
     });
 
@@ -105,19 +86,13 @@ describe("IpToken", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await testData.ipTokenDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.ipTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.ipTokenDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.ipTokenDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         await assertError(
-            testData.ipTokenDai
-                .connect(expectedNewOwner)
-                .confirmTransferOwnership(),
-            "IPOR_6"
+            testData.ipTokenDai.connect(expectedNewOwner).confirmTransferOwnership(),
+            "IPOR_101"
         );
     });
 
@@ -132,19 +107,13 @@ describe("IpToken", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.ipTokenDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.ipTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
-        await testData.ipTokenDai
-            .connect(expectedNewOwner)
-            .confirmTransferOwnership();
+        await testData.ipTokenDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            testData.ipTokenDai
-                .connect(admin)
-                .transferOwnership(expectedNewOwner.address),
+            testData.ipTokenDai.connect(admin).transferOwnership(expectedNewOwner.address),
             //then
             "Ownable: caller is not the owner"
         );
@@ -161,19 +130,13 @@ describe("IpToken", () => {
         );
         const expectedNewOwner = userTwo;
 
-        await testData.ipTokenDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.ipTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //when
-        await testData.ipTokenDai
-            .connect(admin)
-            .transferOwnership(expectedNewOwner.address);
+        await testData.ipTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
 
         //then
-        const actualNewOwner = await testData.ipTokenDai
-            .connect(userOne)
-            .owner();
+        const actualNewOwner = await testData.ipTokenDai.connect(userOne).owner();
         expect(admin.address).to.be.eql(actualNewOwner);
     });
 
@@ -185,7 +148,7 @@ describe("IpToken", () => {
                 .connect(userTwo)
                 .mint(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_46"
+            "IPOR_317"
         );
     });
 
@@ -197,7 +160,7 @@ describe("IpToken", () => {
                 .connect(userTwo)
                 .burn(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_46"
+            "IPOR_317"
         );
     });
 
@@ -205,12 +168,7 @@ describe("IpToken", () => {
         //given
         await testData.ipTokenDai.setJoseph(admin.address);
 
-        await expect(
-            testData.ipTokenDai.mint(
-                userOne.address,
-                TC_TOTAL_AMOUNT_10_000_18DEC
-            )
-        )
+        await expect(testData.ipTokenDai.mint(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC))
             .to.emit(testData.ipTokenDai, "Mint")
             .withArgs(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC);
 
