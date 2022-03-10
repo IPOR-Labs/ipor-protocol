@@ -335,10 +335,6 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             ),
             "userDaiBalanceAfter > userDaiBalanceBefore + withdrawAmount - aaveStrategyBalanceAfter"
         ).to.be.true;
-        expect(
-            strategyATokenContractAfter.lt(BigNumber.from("14223579600")),
-            "strategyATokenContractAfter"
-        ).to.be.true;
     });
     it("Should Claim from AAVE", async () => {
         //given
