@@ -221,12 +221,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.liquidityPool = _balances.liquidityPool - liquidityAmount.toUint128();
     }
 
-    // TODO: Removed after Internal and Investor tests liquidityAmount in WAND
-    function addLiquidityAssetManagmentMock(uint256 liquidityAmount) public onlyOwner {
-        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
-        _balances.liquidityPool = _balances.liquidityPool + liquidityAmount.toUint128();
-    }
-
     function updateStorageWhenOpenSwapPayFixed(
         DataTypes.NewSwap memory newSwap,
         uint256 openingAmount,

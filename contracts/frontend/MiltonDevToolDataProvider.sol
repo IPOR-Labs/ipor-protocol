@@ -2,13 +2,11 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "../interfaces/IIporConfiguration.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
-import "../interfaces/IIporAssetConfiguration.sol";
 
 //TODO: change name to CockpitDataProvider
 contract MiltonDevToolDataProvider is
@@ -16,66 +14,56 @@ contract MiltonDevToolDataProvider is
     UUPSUpgradeable,
     IMiltonDevToolDataProvider
 {
-    IIporConfiguration private _iporConfiguration;
+    address internal _warren;
+    mapping(address => AssetConfig) internal _assetConfig;
 
-    function initialize(IIporConfiguration iporConfiguration)
-        public
-        initializer
-    {
+    function initialize(
+        address warren,
+        address[] memory assets,
+        address[] memory miltons,
+        address[] memory miltonStorages,
+        address[] memory josephs,
+        address[] memory ipTokens
+    ) public initializer {
+        require(
+            assets.length == miltons.length && assets.length == miltonStorages.length,
+            IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
+        );
+
         __Ownable_init();
-        _iporConfiguration = iporConfiguration;
+        _warren = warren;
+
+        uint256 i = 0;
+        for (i; i != assets.length; i++) {
+            _assetConfig[assets[i]] = AssetConfig(
+                miltons[i],
+                miltonStorages[i],
+                josephs[i],
+                ipTokens[i]
+            );
+        }
     }
 
-    function _authorizeUpgrade(address) internal override onlyOwner {}
-
-    function getMyIpTokenBalance(address asset)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        IERC20Upgradeable token = IERC20Upgradeable(
-            IIporAssetConfiguration(
-                _iporConfiguration.getIporAssetConfiguration(asset)
-            ).getIpToken()
-        );
+    function getMyIpTokenBalance(address asset) external view override returns (uint256) {
+        IERC20 token = IERC20(_assetConfig[asset].ipToken);
         return token.balanceOf(msg.sender);
     }
 
-    function getMyTotalSupply(address asset)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        IERC20Upgradeable token = IERC20Upgradeable(asset);
+    function getMyTotalSupply(address asset) external view override returns (uint256) {
+        IERC20 token = IERC20(asset);
         return token.balanceOf(msg.sender);
     }
 
-    function getMyAllowanceInMilton(address asset)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        IERC20Upgradeable token = IERC20Upgradeable(asset);
-        return token.allowance(msg.sender, assetConfiguration.getMilton());
+    function getMyAllowanceInMilton(address asset) external view override returns (uint256) {
+        AssetConfig memory config = _assetConfig[asset];
+        IERC20 token = IERC20(asset);
+        return token.allowance(msg.sender, config.milton);
     }
 
-    function getMyAllowanceInJoseph(address asset)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        IERC20Upgradeable token = IERC20Upgradeable(asset);
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        return token.allowance(msg.sender, assetConfiguration.getJoseph());
+    function getMyAllowanceInJoseph(address asset) external view override returns (uint256) {
+        AssetConfig memory config = _assetConfig[asset];
+        IERC20 token = IERC20(asset);
+        return token.allowance(msg.sender, config.joseph);
     }
 
     function getSwapsPayFixed(address asset, address account)
@@ -84,12 +72,8 @@ contract MiltonDevToolDataProvider is
         override
         returns (DataTypes.IporSwapMemory[] memory)
     {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        return
-            IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsPayFixed(account);
+        AssetConfig memory config = _assetConfig[asset];
+        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(account);
     }
 
     function getSwapsReceiveFixed(address asset, address account)
@@ -98,12 +82,8 @@ contract MiltonDevToolDataProvider is
         override
         returns (DataTypes.IporSwapMemory[] memory)
     {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        return
-            IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsReceiveFixed(account);
+        AssetConfig memory config = _assetConfig[asset];
+        return IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(account);
     }
 
     function getMySwapsPayFixed(address asset)
@@ -112,12 +92,8 @@ contract MiltonDevToolDataProvider is
         override
         returns (DataTypes.IporSwapMemory[] memory items)
     {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        return
-            IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsPayFixed(msg.sender);
+        AssetConfig memory config = _assetConfig[asset];
+        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(msg.sender);
     }
 
     function getMySwapsReceiveFixed(address asset)
@@ -126,23 +102,18 @@ contract MiltonDevToolDataProvider is
         override
         returns (DataTypes.IporSwapMemory[] memory items)
     {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-        return
-            IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsReceiveFixed(msg.sender);
+        AssetConfig memory config = _assetConfig[asset];
+        return IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(msg.sender);
     }
 
     function calculateSpread(address asset)
-        external view override
+        external
+        view
+        override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
-        IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
-            _iporConfiguration.getIporAssetConfiguration(asset)
-        );
-
-        IMilton milton = IMilton(assetConfiguration.getMilton());
+        AssetConfig memory config = _assetConfig[asset];
+        IMilton milton = IMilton(config.milton);
 
         try milton.calculateSpread() returns (
             uint256 _spreadPayFixedValue,
@@ -155,4 +126,6 @@ contract MiltonDevToolDataProvider is
             spreadRecFixedValue = 999999999999999999999;
         }
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

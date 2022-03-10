@@ -62,7 +62,7 @@ library IporErrors {
     string public constant MILTON_LP_UTILIZATION_EXCEEDED = "IPOR_17";
 
     //@notice Input arrays which should have the same length - mismatch
-    string public constant WARREN_INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
+    string public constant INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_18";
 
     //@notice Swap Notional Amount is higher than Total Notional
     string public constant MILTON_DERIVATIVE_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = "IPOR_19";
@@ -102,7 +102,7 @@ library IporErrors {
     //@notice Amount is too low to transfer
     string public constant NOT_ENOUGH_AMOUNT_TO_TRANSFER = "IPOR_30";
 
-    //@notice Sender is not a publication fee transferer, not match address defined in IporConfiguration in key MILTON_PUBLICATION_FEE_TRANSFERER
+    //@notice Sender is not a publication fee transferer
     string public constant CALLER_NOT_PUBLICATION_FEE_TRANSFERER = "IPOR_31";
 
     //@notice Incorrect IPOR Configuration address
