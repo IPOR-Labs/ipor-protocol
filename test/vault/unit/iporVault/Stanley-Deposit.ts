@@ -36,7 +36,7 @@ describe("Stanley -> Deposit", () => {
     );
     let admin: Signer, userOne: Signer, userTwo: Signer;
 
-    let stanley: Stanley;
+    let stanley: StanleyDai;
     let DAI: TestERC20;
     let tokenFactory: any;
 

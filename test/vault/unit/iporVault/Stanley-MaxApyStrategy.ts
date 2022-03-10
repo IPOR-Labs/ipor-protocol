@@ -4,14 +4,14 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, StanleyDai, TestERC20 } from "../../../../types";
+import { MockStrategy, ItfStanleyDai, TestERC20 } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
 
 describe("Stanley -> maxApyStrategy", () => {
     let admin: Signer;
-    let stanley: StanleyDai;
+    let stanley: ItfStanleyDai;
     let DAI: TestERC20;
     let aaveStrategy: MockStrategy;
     let compoundStrategy: MockStrategy;
@@ -37,13 +37,13 @@ describe("Stanley -> maxApyStrategy", () => {
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
 
-        const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
-        stanley = (await await upgrades.deployProxy(StanleyDai, [
+        const ItfStanleyDai = await hre.ethers.getContractFactory("ItfStanleyDai");
+        stanley = (await await upgrades.deployProxy(ItfStanleyDai, [
             DAI.address,
             ivToken.address,
             aaveStrategy.address,
             compoundStrategy.address,
-        ])) as StanleyDai;
+        ])) as ItfStanleyDai;
         await ivToken.setStanley(stanley.address);
     });
 
