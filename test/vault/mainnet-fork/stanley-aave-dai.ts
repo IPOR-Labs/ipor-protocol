@@ -209,10 +209,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-
-        expect(userIvTokenBefore, "userIvTokenBefore").to.be.equal(depositAmount);
-        expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 10 *10^18").to.be.equal(
-            depositAmount
+        const strategyATokenContractBefore = await aTokenContract.balanceOf(
+            aaveStrategyContract_Instance.address
         );
 
         //When
@@ -227,21 +225,19 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
         const aaveStrategyBalanceAfter = await aaveStrategyContract_Instance.balanceOf();
 
+        expect(userIvTokenAfter.gte(userIvTokenBefore), "userIvTokenAfter > userIvTokenBefore").to
+            .be.true;
         expect(
-            userIvTokenAfter.gte(BigNumber.from("29999999000000000000")),
-            "ivToken = 29999999978664630715"
+            aaveStrategyBalanceAfter.gt(aaveStrategyBalanceBefore),
+            "aaveStrategyBalanceAfter > aaveStrategyBalanceBefore"
         ).to.be.true;
         expect(
-            aaveStrategyBalanceAfter.gt(BigNumber.from("30000000000000000000")),
-            "aaveStrategyBalanceAfter"
+            userDaiBalanceAfter.lt(userDaiBalanceBefore),
+            "userDaiBalanceAfter < userDaiBalanceBefore "
         ).to.be.true;
         expect(
-            userDaiBalanceAfter,
-            "userDaiBalanceAfter = userDaiBalanceBefore - 2 * depositAmount"
-        ).to.be.equal(userDaiBalanceBefore.sub(depositAmount).sub(depositAmount));
-        expect(
-            strategyATokenContractAfter.gt(BigNumber.from("30000000000000000000")),
-            "strategyATokenContractAfter > 30 * 10^18"
+            strategyATokenContractAfter.gt(strategyATokenContractBefore),
+            "strategyATokenContractAfter > strategyATokenContractBefore"
         ).to.be.true;
     });
 
@@ -252,15 +248,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-
-        expect(
-            userIvTokenBefore.gt(BigNumber.from("29999999000000000000")),
-            "userIvTokenBefore > 29999999000000000000"
-        ).to.be.true;
-        expect(
-            aaveStrategyBalanceBefore.gt(BigNumber.from("30000000000000000000")),
-            "aaveStrategyBalanceBefore > 30 * 10^18"
-        ).to.be.true;
+        const strategyATokenContractBefore = await aTokenContract.balanceOf(
+            aaveStrategyContract_Instance.address
+        );
 
         //when
         await stanley.withdraw(withdrawAmount);
@@ -273,29 +263,19 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
+        expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
+            .true;
         expect(
-            userIvTokenAfter.gt(BigNumber.from("19999999000000000000")),
-            "ivToken > 19999999000000000000"
+            aaveStrategyBalanceAfter.lt(aaveStrategyBalanceBefore),
+            "aaveStrategyBalanceAfter < aaveStrategyBalanceBefore"
         ).to.be.true;
         expect(
-            aaveStrategyBalanceAfter.gt(BigNumber.from("20000000000000000000")),
-            "aaveStrategyBalanceAfter > 20 * 10^18"
+            userDaiBalanceAfter.gte(userDaiBalanceAfter),
+            "userDaiBalanceAfter > userDaiBalanceAfter"
         ).to.be.true;
         expect(
-            aaveStrategyBalanceAfter.lt(BigNumber.from("30000000000000000000")),
-            "aaveStrategyBalanceAfter < 30 * 10^18"
-        ).to.be.true;
-        expect(
-            userDaiBalanceAfter.gte(userDaiBalanceBefore.add(withdrawAmount)),
-            "userDaiBalanceAfter > userDaiBalanceAfter + withdrawAmount"
-        ).to.be.true;
-        expect(
-            strategyATokenContractAfter.gt(BigNumber.from("20000000000000000000")),
-            "strategyATokenContractAfter > 20 * 10^18"
-        ).to.be.true;
-        expect(
-            strategyATokenContractAfter.lt(BigNumber.from("30000000000000000000")),
-            "strategyATokenContractAfter < 30 * 10^18"
+            strategyATokenContractAfter.lt(strategyATokenContractBefore),
+            "strategyATokenContractAfter < strategyATokenContractBefore"
         ).to.be.true;
     });
 
@@ -306,15 +286,6 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-
-        expect(
-            userIvTokenBefore.gt(BigNumber.from("19999999000000000000")),
-            "userIvTokenBefore = 19999999978664630715"
-        ).to.be.true;
-        expect(
-            aaveStrategyBalanceBefore.gt(BigNumber.from("20000000000000000000")),
-            "aaveStrategyBalanceBefore > 20 * 10^18"
-        ).to.be.true;
 
         //when
         await stanley.withdraw(aaveStrategyBalanceBefore);
@@ -327,13 +298,11 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
-        expect(userIvTokenAfter.lte(BigNumber.from("14223579600")), "ivToken < 14223579600").to.be
+        expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
             .true;
         expect(
-            userDaiBalanceAfter.gt(
-                userDaiBalanceBefore.add(withdrawAmount).sub(aaveStrategyBalanceAfter)
-            ),
-            "userDaiBalanceAfter > userDaiBalanceBefore + withdrawAmount - aaveStrategyBalanceAfter"
+            userDaiBalanceAfter.gt(userDaiBalanceBefore),
+            "userDaiBalanceAfter > userDaiBalanceBefore"
         ).to.be.true;
     });
     it("Should Claim from AAVE", async () => {
