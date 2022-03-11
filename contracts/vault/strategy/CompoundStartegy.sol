@@ -8,13 +8,20 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+
 import "../../security/IporOwnableUpgradeable.sol";
 
 import "hardhat/console.sol";
 import "../../IporErrors.sol";
 import "../../libraries/IporMath.sol";
 
-contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
+contract CompoundStrategy is
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    PausableUpgradeable,
+    IStrategy
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address private _asset;
@@ -53,6 +60,14 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     modifier onlyStanley() {
         require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
         _;
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     /**
@@ -95,7 +110,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @notice deposit can only done by Stanley .
      * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
-    function deposit(uint256 wadAmount) external override onlyStanley {
+    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley {
         address asset = _asset;
         uint256 amount = IporMath.convertWadToAssetDecimals(
             wadAmount,
@@ -110,7 +125,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @notice withdraw can only done by owner.
      * @param wadAmount amount to withdraw from compound lending, amount represented in 18 decimals
      */
-    function withdraw(uint256 wadAmount) external override onlyStanley {
+    function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley {
         address asset = _asset;
 
         uint256 amount = IporMath.convertWadToAssetDecimals(
@@ -130,7 +145,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
     /**
      * @dev beforeClaim is not needed to implement
      */
-    function beforeClaim() external {
+    function beforeClaim() external whenNotPaused {
         // No implementation
     }
 
@@ -138,7 +153,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @dev Claim extra reward of Governace token(COMP).
      * @notice claim can only done by owner.
      */
-    function doClaim() external override {
+    function doClaim() external override whenNotPaused {
         require(_treasury != address(0), IporErrors.WRONG_ADDRESS);
         address[] memory assets = new address[](1);
         assets[0] = address(_cToken);
@@ -148,12 +163,12 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
         emit DoClaim(address(this), assets, _treasury, compBal);
     }
 
-    function setStanley(address stanley) external onlyOwner {
+    function setStanley(address stanley) external whenNotPaused onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
     }
 
-    function setTreasury(address treasury) external onlyOwner {
+    function setTreasury(address treasury) external whenNotPaused onlyOwner {
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);
         _treasury = treasury;
         emit SetTreasury(address(this), treasury);
@@ -163,7 +178,7 @@ contract CompoundStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy 
      * @dev set blocks per year.
      * @param blocksPerYear amount to deposit in aave lending.
      */
-    function setBlocksPerYear(uint256 blocksPerYear) external onlyOwner {
+    function setBlocksPerYear(uint256 blocksPerYear) external whenNotPaused onlyOwner {
         require(blocksPerYear != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
         _blocksPerYear = blocksPerYear;
     }
