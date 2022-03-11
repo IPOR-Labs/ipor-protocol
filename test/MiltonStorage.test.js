@@ -1,5 +1,5 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const {expect} = require("chai");
+const {ethers} = require("hardhat");
 
 const keccak256 = require("keccak256");
 
@@ -518,93 +518,153 @@ describe("MiltonStorage", () => {
         );
     });
 
-    it("should fail when page size is equal 0", async () => {
+    it("get swaps - pay fixed, should fail when page size is equal 0", async () => {
         await testCasePaginationPayFixed(0, 0, 0, 0, 'IPOR_63');
+    });
+
+    it("get swaps - pay fixed, should return empty list of swaps", async () => {
+        await testCasePaginationPayFixed(0, 0, 10, 0, null);
+    });
+
+    it("get swaps - pay fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCasePaginationPayFixed(0, 10, 10, 0, null);
+    });
+
+    it("get swaps - pay fixed, should receive limited swap array", async () => {
+        await testCasePaginationPayFixed(11, 0, 10, 10, null);
+    });
+
+    it("get swaps - pay fixed, should receive limited swap array with offset", async () => {
+        await testCasePaginationPayFixed(22, 10, 10, 10, null);
+    });
+
+    it("get swaps - pay fixed, should receive rest of swaps only", async () => {
+        await testCasePaginationPayFixed(22, 20, 10, 2, null);
+    });
+
+    it("get swaps - pay fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCasePaginationPayFixed(20, 20, 10, 0, null);
+    });
+
+    it("get swaps - receive fixed, should fail when page size is equal 0", async () => {
         await testCasePaginationReceiveFixed(0, 0, 0, 0, 'IPOR_63');
     });
 
-    it("should return empty list of swaps", async () => {
-        await testCasePaginationPayFixed(0, 0, 10, 0, null);
+    it("get swaps - receive fixed, should return empty list of swaps", async () => {
         await testCasePaginationReceiveFixed(0, 0, 10, 0, null);
     });
 
-    it("should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
-        await testCasePaginationPayFixed(0, 10, 10, 0, null);
+    it("get swaps - receive fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
         await testCasePaginationReceiveFixed(0, 10, 10, 0, null);
     });
 
-    it("should receive limited swap array", async () => {
-        await testCasePaginationPayFixed(11, 0, 10, 10, null);
+    it("get swaps - receive fixed, should receive limited swap array", async () => {
         await testCasePaginationReceiveFixed(11, 0, 10, 10, null);
     });
 
-    it("should receive limited swap array with offset", async () => {
-        await testCasePaginationPayFixed(22, 10, 10, 10, null);
+    it("get swaps - receive fixed, should receive limited swap array with offset", async () => {
         await testCasePaginationReceiveFixed(22, 10, 10, 10, null);
     });
 
-    it("should receive rest of swaps only", async () => {
-        await testCasePaginationPayFixed(22, 20, 10, 2, null);
+    it("get swaps - receive fixed, should receive rest of swaps only", async () => {
         await testCasePaginationReceiveFixed(22, 20, 10, 2, null);
     });
 
-    it("should receive empty list of swaps when offset is equal to number of swaps", async () => {
-        await testCasePaginationPayFixed(20, 20, 10, 0, null);
+    it("get swaps - receive fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
         await testCasePaginationReceiveFixed(20, 20, 10, 0, null);
+    });
+
+    it("get swap ids - pay fixed, should fail when page size is equal 0", async () => {
+        await testCaseIdsPaginationPayFixed(0, 0, 0, 0, 'IPOR_63');
+    });
+
+    it("get swap ids - pay fixed, should return empty list of swaps", async () => {
+        await testCaseIdsPaginationPayFixed(0, 0, 10, 0, null);
+    });
+
+    it("get swap ids - pay fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCaseIdsPaginationPayFixed(0, 10, 10, 0, null);
+    });
+
+    it("get swap ids - pay fixed, should receive limited swap array", async () => {
+        await testCaseIdsPaginationPayFixed(11, 0, 10, 10, null);
+    });
+
+    it("get swap ids - pay fixed, should receive limited swap array with offset", async () => {
+        await testCaseIdsPaginationPayFixed(22, 10, 10, 10, null);
+    });
+
+    it("get swap ids - pay fixed, should receive rest of swaps only", async () => {
+        await testCaseIdsPaginationPayFixed(22, 20, 10, 2, null);
+    });
+
+    it("get swap ids - pay fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCaseIdsPaginationPayFixed(20, 20, 10, 0, null);
+    });
+
+    it("get swap ids - receive fixed, should fail when page size is equal 0", async () => {
+        await testCaseIdsPaginationReceiveFixed(0, 0, 0, 0, 'IPOR_63');
+    });
+
+    it("get swap ids - receive fixed, should return empty list of swaps", async () => {
+        await testCaseIdsPaginationReceiveFixed(0, 0, 10, 0, null);
+    });
+
+    it("get swap ids - receive fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCaseIdsPaginationReceiveFixed(0, 10, 10, 0, null);
+    });
+
+    it("get swap ids - receive fixed, should receive limited swap array", async () => {
+        await testCaseIdsPaginationReceiveFixed(11, 0, 10, 10, null);
+    });
+
+    it("get swap ids - receive fixed, should receive limited swap array with offset", async () => {
+        await testCaseIdsPaginationReceiveFixed(22, 10, 10, 10, null);
+    });
+
+    it("get swap ids - receive fixed, should receive rest of swaps only", async () => {
+        await testCaseIdsPaginationReceiveFixed(22, 20, 10, 2, null);
+    });
+
+    it("get swap ids - receive fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCaseIdsPaginationReceiveFixed(20, 20, 10, 0, null);
+    });
+
+    it("get swap ids - all, should fail when page size is equal 0", async () => {
+        await testCaseIdsPagination(0, 0, 0, 0, 0, 'IPOR_63');
+    });
+
+    it("get swap ids - all, should receive empty list of swap ids", async () => {
+        await testCaseIdsPagination(0, 0, 0, 10, 0, null);
+    });
+
+    it("get swap ids - all, should receive empty list of swap ids when user passes non zero offset and doesn't have any swap", async () => {
+        await testCaseIdsPagination(0, 0, 10, 10, 0, null);
+    });
+
+    it("get swap ids - all, should return pay fixed swaps if user doesn't have receive fixed swaps", async () => {
+        await testCaseIdsPagination(5, 0, 0, 10, 5, null);
+    });
+
+    it("get swap ids - all, should return receive fixed swaps if user doesn't have pay fixed swaps", async () => {
+        await testCaseIdsPagination(0, 5, 0, 10, 5, null);
+    });
+
+    it("get swap ids - all, should return all swaps", async () => {
+        await testCaseIdsPagination(3, 3, 0, 10, 6, null);
+    });
+
+    it("get swap ids - all, should return limited swap id array if user has more swaps than page size", async () => {
+        await testCaseIdsPagination(9, 12, 0, 10, 10, null);
+    });
+
+    it("get swap ids - all, should return empty array when offset is higher than total number of user swaps", async () => {
+        await testCaseIdsPagination(9, 12, 80, 10, 0, null);
     });
 
     const testCasePaginationPayFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
         // given
-        let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
-            ["USDT"],
-            data,
-            0,
-            1
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "USDT",
-            data,
-            testData
-        );
-        await setupTokenUsdtInitialValuesForUsers(
-            [admin, userOne, userTwo, liquidityProvider],
-            testData
-        );
-
-        const paramsUsdt = {
-            asset: testData.tokenUsdt.address,
-            totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-            slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdt.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdt.openTimestamp
-            );
-
-        await testData.josephUsdt
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_50_000_6DEC, paramsUsdt.openTimestamp);
-
-        for (let i = 0; i < numberOfSwapsToCreate; i++) {
-            await openSwapPayFixed(testData, paramsUsdt);
-        }
+        let testData = await preparePayFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
@@ -626,56 +686,7 @@ describe("MiltonStorage", () => {
 
     const testCasePaginationReceiveFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
         // given
-        let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
-            ["USDT", "USDC", "DAI"],
-            data,
-            0,
-            1
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "USDT",
-            data,
-            testData
-        );
-        await setupTokenUsdtInitialValuesForUsers(
-            [admin, userOne, userTwo, liquidityProvider],
-            testData
-        );
-
-        const paramsUsdt = {
-            asset: testData.tokenUsdt.address,
-            totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-            slippageValue: 3,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdt.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdt.openTimestamp
-            );
-
-        await testData.josephUsdt
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_50_000_6DEC, paramsUsdt.openTimestamp);
-
-        for (let i = 0; i < numberOfSwapsToCreate; i++) {
-             await openSwapReceiveFixed(testData, paramsUsdt);
-        }
+        let testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
@@ -687,6 +698,73 @@ describe("MiltonStorage", () => {
             //then
             expect(actualSwapsLength).to.be.eq(expectedResponseSize);
             expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
+        } else {
+            await assertError(
+                testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize),
+                expectedError
+            );
+        }
+    };
+
+    const testCaseIdsPaginationPayFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
+        // given
+        let testData = await preparePayFixedState(numberOfSwapsToCreate);
+
+        //when
+        if (expectedError == null) {
+            let response = await testData.miltonStorageUsdt.getSwapPayFixedIds(userTwo.address, offset, pageSize);
+
+            const actualSwapsLength = response.ids.length;
+            const totalSwapCount = response.totalCount
+
+            //then
+            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
+        } else {
+            await assertError(
+                testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize),
+                expectedError
+            );
+        }
+    };
+
+    const testCaseIdsPaginationReceiveFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
+        // given
+        let testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
+
+        //when
+        if (expectedError == null) {
+            let response = await testData.miltonStorageUsdt.getSwapReceiveFixedIds(userTwo.address, offset, pageSize);
+
+            const actualSwapsLength = response.ids.length;
+            const totalSwapCount = response.totalCount
+
+            //then
+            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
+        } else {
+            await assertError(
+                testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize),
+                expectedError
+            );
+        }
+    };
+
+    const testCaseIdsPagination = async (numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate,
+                                         offset, pageSize, expectedResponseSize, expectedError) => {
+        // given
+        let testData = await prepareState(numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate);
+
+        //when
+        if (expectedError == null) {
+            let response = await testData.miltonStorageUsdt.getSwapIds(userTwo.address, offset, pageSize);
+
+            const actualSwapsLength = response.ids.length;
+            const totalSwapCount = response.totalCount;
+
+            //then
+            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(numberOfPayFixedSwapsToCreate + numberOfReceiveFixedSwapsToCreate);
         } else {
             await assertError(
                 testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize),
@@ -782,4 +860,172 @@ describe("MiltonStorage", () => {
             fixedInterestRate: 234,
         };
     };
+
+    const preparePayFixedState = async (numberOfSwapsToCreate) => {
+        let testData = await prepareTestData(
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["USDT"],
+            data,
+            0,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const paramsUsdt = {
+            asset: testData.tokenUsdt.address,
+            totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
+            slippageValue: 3,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                paramsUsdt.asset,
+                PERCENTAGE_5_18DEC,
+                paramsUsdt.openTimestamp
+            );
+
+        await testData.josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_6DEC, paramsUsdt.openTimestamp);
+
+        for (let i = 0; i < numberOfSwapsToCreate; i++) {
+            await openSwapPayFixed(testData, paramsUsdt);
+        }
+
+        return testData;
+    }
+
+    const prepareReceiveFixedState = async (numberOfSwapsToCreate) => {
+        let testData = await prepareTestData(
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["USDT", "USDC", "DAI"],
+            data,
+            0,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const paramsUsdt = {
+            asset: testData.tokenUsdt.address,
+            totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
+            slippageValue: 3,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                paramsUsdt.asset,
+                PERCENTAGE_5_18DEC,
+                paramsUsdt.openTimestamp
+            );
+
+        await testData.josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_6DEC, paramsUsdt.openTimestamp);
+
+        for (let i = 0; i < numberOfSwapsToCreate; i++) {
+            await openSwapReceiveFixed(testData, paramsUsdt);
+        }
+
+        return testData;
+    }
+
+    const prepareState = async (numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate) => {
+        let testData = await prepareTestData(
+            [
+                admin,
+                userOne,
+                userTwo,
+                userThree,
+                liquidityProvider,
+                miltonStorageAddress,
+            ],
+            ["USDT", "USDC", "DAI"],
+            data,
+            0,
+            1
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const paramsUsdt = {
+            asset: testData.tokenUsdt.address,
+            totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
+            slippageValue: 3,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                paramsUsdt.asset,
+                PERCENTAGE_5_18DEC,
+                paramsUsdt.openTimestamp
+            );
+
+        await testData.josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_6DEC, paramsUsdt.openTimestamp);
+
+        for (let i = 0; i < numberOfPayFixedSwapsToCreate; i++) {
+            await openSwapPayFixed(testData, paramsUsdt);
+        }
+        for (let i = 0; i < numberOfReceiveFixedSwapsToCreate; i++) {
+            await openSwapReceiveFixed(testData, paramsUsdt);
+        }
+
+        return testData;
+    }
 });
