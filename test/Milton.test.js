@@ -6,28 +6,12 @@ const keccak256 = require("keccak256");
 const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
     PERCENTAGE_3_18DEC,
-    PERCENTAGE_4_18DEC,
-    PERCENTAGE_5_18DEC,
-    PERCENTAGE_6_18DEC,
-    PERCENTAGE_50_18DEC,
-    PERCENTAGE_119_18DEC,
-    PERCENTAGE_120_18DEC,
-    PERCENTAGE_121_18DEC,
-    PERCENTAGE_159_18DEC,
-    PERCENTAGE_160_18DEC,
-    PERCENTAGE_161_18DEC,
-    PERCENTAGE_364_18DEC,
-    PERCENTAGE_365_18DEC,
-    PERCENTAGE_366_18DEC,
     USD_10_18DEC,
-    USD_20_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_28_000_18DEC,
     USD_28_000_6DEC,
-    TC_COLLATERAL_18DEC,
     USD_10_000_000_6DEC,
 
     USD_10_000_000_18DEC,
@@ -40,27 +24,14 @@ const {
     TC_IPOR_PUBLICATION_AMOUNT_6DEC,
     TC_IPOR_PUBLICATION_AMOUNT_18DEC,
     ZERO,
-    SPECIFIC_INTEREST_AMOUNT_CASE_1,
-    SPECIFIC_INCOME_TAX_CASE_1,
-    PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS,
-    PERIOD_50_DAYS_IN_SECONDS,
-    TC_INCOME_TAX_18DEC,
-    TC_COLLATERAL_6DEC,
 } = require("./Const.js");
 
 const {
     assertError,
-    getStandardDerivativeParamsDAI,
-    getStandardDerivativeParamsUSDT,
-    getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    prepareTestDataDaiCase1,
     prepareComplexTestDataDaiCase00,
-    setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
 
@@ -79,7 +50,6 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-
         const totalAmount = 0;
         const toleratedQuoteValue = 3;
         const collateralizationFactor = USD_10_18DEC;
@@ -93,7 +63,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_4"
+            "IPOR_307"
         );
     });
 
@@ -126,7 +96,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -159,7 +129,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -206,7 +176,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -253,7 +223,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -3699,7 +3669,7 @@ describe("Milton", () => {
     //             [],
     //             0
     //         ),
-    //         "IPOR_62"
+    //         "IPOR_314"
     //     );
     // });
 
@@ -3853,7 +3823,7 @@ describe("Milton", () => {
     //             [],
     //             0
     //         ),
-    //         "IPOR_62"
+    //         "IPOR_314"
     //     );
     // });
 

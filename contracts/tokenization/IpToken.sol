@@ -44,22 +44,14 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         emit JosephChanged(msg.sender, newJoseph);
     }
 
-    function mint(address account, uint256 amount)
-        external
-        override
-        onlyJoseph
-    {
-        require(amount != 0, IporErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
+    function mint(address account, uint256 amount) external override onlyJoseph {
+        require(amount != 0, IporErrors.JOSEPH_IP_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
-    function burn(address account, uint256 amount)
-        external
-        override
-        onlyJoseph
-    {
-        require(amount != 0, IporErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
+    function burn(address account, uint256 amount) external override onlyJoseph {
+        require(amount != 0, IporErrors.JOSEPH_IP_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
     }

@@ -17,7 +17,12 @@ import {IporMath} from "../libraries/IporMath.sol";
 import "../libraries/Constants.sol";
 import "hardhat/console.sol";
 
-abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephConfiguration, IJoseph {
+abstract contract Joseph is
+    UUPSUpgradeable,
+    ReentrancyGuardUpgradeable,
+    JosephConfiguration,
+    IJoseph
+{
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
@@ -25,13 +30,16 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
     modifier onlyPublicationFeeTransferer() {
         require(
             msg.sender == _publicationFeeTransferer,
-            IporErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
+            IporErrors.JOSEPH_CALLER_NOT_PUBLICATION_FEE_TRANSFERER
         );
         _;
     }
 
     modifier onlyTreasureTransferer() {
-        require(msg.sender == _treasureTransferer, IporErrors.CALLER_NOT_TREASURE_TRANSFERER);
+        require(
+            msg.sender == _treasureTransferer,
+            IporErrors.JOSEPH_CALLER_NOT_TREASURE_TRANSFERER
+        );
         _;
     }
 
@@ -76,7 +84,7 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
     function rebalance() external override whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
-        require(totalBalance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
+        require(totalBalance != 0, IporErrors.JOSEPH_STANLEY_BALANCE_IS_EMPTY);
 
         uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
 
@@ -112,7 +120,7 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
         whenNotPaused
         onlyTreasureTransferer
     {
-        require(address(0) != _treasureTreasurer, IporErrors.INCORRECT_TREASURE_TREASURER_ADDRESS);
+        require(address(0) != _treasureTreasurer, IporErrors.JOSEPH_INCORRECT_TREASURE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
 
@@ -136,7 +144,7 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
         whenNotPaused
         onlyPublicationFeeTransferer
     {
-        require(address(0) != _charlieTreasurer, IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS);
+        require(address(0) != _charlieTreasurer, IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
 
@@ -167,7 +175,7 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
-        require(totalBalance != 0, IporErrors.MILTON_STANLEY_BALANCE_IS_EMPTY);
+        require(totalBalance != 0, IporErrors.JOSEPH_STANLEY_BALANCE_IS_EMPTY);
         return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 
@@ -220,7 +228,7 @@ abstract contract Joseph is UUPSUpgradeable, ReentrancyGuardUpgradeable, JosephC
     function _redeem(uint256 ipTokenValue, uint256 timestamp) internal {
         require(
             ipTokenValue != 0 && ipTokenValue <= _ipToken.balanceOf(msg.sender),
-            IporErrors.MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
+            IporErrors.JOSEPH_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
         IMilton milton = _milton;
 

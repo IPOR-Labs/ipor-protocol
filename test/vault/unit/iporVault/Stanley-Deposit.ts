@@ -199,7 +199,6 @@ describe("Stanley -> Deposit", () => {
             const apyAfter = await aaveNewStartegyInstance.getApr();
             expect(apyBefore).to.be.equal(BigNumber.from("20000000000000000"));
             expect(apyAfter).to.be.equal(BigNumber.from("50000000000000000"));
-			
         });
 
         it("Should change Compound APY", async () => {
@@ -420,7 +419,7 @@ describe("Stanley -> Deposit", () => {
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
 
         //when
-        await expect(stanley.connect(userOne).deposit(one.mul(10))).to.be.revertedWith("IPOR_105");
+        await expect(stanley.connect(userOne).deposit(one.mul(10))).to.be.revertedWith("IPOR_008");
     });
 
     it("Should not deposit when user try deposit 0", async () => {
@@ -432,7 +431,7 @@ describe("Stanley -> Deposit", () => {
 
         //when
         await expect(stanley.connect(userOne).deposit(BigNumber.from("0"))).to.be.revertedWith(
-            "IPOR_103"
+            "IPOR_004"
         );
     });
 });

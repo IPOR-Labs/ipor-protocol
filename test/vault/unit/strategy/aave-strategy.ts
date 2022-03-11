@@ -97,6 +97,6 @@ describe("AAVE strategy", () => {
     });
 
     it("Should not be able to create aave strategy", async () => {
-        await expect(aaveStrategyInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_500");
+        await expect(aaveStrategyInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_502");
     });
 });

@@ -64,7 +64,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
     }
 
     modifier onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
         _;
     }
 
@@ -148,7 +148,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
 
      */
     function beforeClaim() external override whenNotPaused {
-        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+        require(_treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
         address[] memory assets = new address[](1);
         assets[0] = _shareToken;
         _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
@@ -164,7 +164,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
         when window is open you can call this function to claim _aave
      */
     function doClaim() external override whenNotPaused {
-        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+        require(_treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
@@ -192,7 +192,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
     }
 
     function setTreasury(address treasury) external whenNotPaused onlyOwner {
-        require(treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+        require(treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
         _treasury = treasury;
         emit SetTreasury(address(this), treasury);
     }
