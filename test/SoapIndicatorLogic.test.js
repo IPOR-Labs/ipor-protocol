@@ -82,7 +82,7 @@ describe("SoapIndicatorLogic", () => {
                 swapFixedInterestRate
             ),
             //then
-            "IPOR_310"
+            "IPOR_312"
         );
     });
 

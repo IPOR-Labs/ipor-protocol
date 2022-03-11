@@ -40,7 +40,7 @@ describe("Joseph Treasury", () => {
             //when
             testData.josephDai.connect(userThree).transferPublicationFee(BigInt("100")),
             //then
-            "IPOR_403"
+            "IPOR_406"
         );
     });
 
@@ -58,7 +58,7 @@ describe("Joseph Treasury", () => {
             //when
             testData.josephDai.connect(userThree).transferPublicationFee(BigInt("100")),
             //then
-            "IPOR_402"
+            "IPOR_407"
         );
     });
 
@@ -145,7 +145,7 @@ describe("Joseph Treasury", () => {
             //when
             testData.josephDai.connect(userThree).transferTreasury(BigInt("100")),
             //then
-            "IPOR_401"
+            "IPOR_404"
         );
     });
 
@@ -163,7 +163,7 @@ describe("Joseph Treasury", () => {
             //when
             testData.josephDai.connect(userThree).transferTreasury(BigInt("100")),
             //then
-            "IPOR_400"
+            "IPOR_405"
         );
     });
 

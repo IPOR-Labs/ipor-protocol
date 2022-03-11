@@ -99,7 +99,7 @@ describe("MiltonStorage", () => {
         await assertError(
             testData.miltonStorageDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 
@@ -121,7 +121,7 @@ describe("MiltonStorage", () => {
 
         await assertError(
             testData.miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 
@@ -224,7 +224,7 @@ describe("MiltonStorage", () => {
                     await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
                 ),
             //then
-            "IPOR_003"
+            "IPOR_008"
         );
     });
 
@@ -412,7 +412,7 @@ describe("MiltonStorage", () => {
                     await testData.miltonDai.getIncomeTaxPercentage()
                 ),
             //then
-            "IPOR_003"
+            "IPOR_008"
         );
     });
 

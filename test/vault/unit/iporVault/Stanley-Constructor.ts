@@ -52,7 +52,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_001");
+        ).to.be.revertedWith("IPOR_000");
     });
 
     it("Shoud deploy new IporVault", async () => {
@@ -81,7 +81,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_001");
+        ).to.be.revertedWith("IPOR_000");
     });
 
     it("Shoud throw error when aaveStrategy address is 0", async () => {
@@ -96,7 +96,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_001");
+        ).to.be.revertedWith("IPOR_000");
     });
 
     it("Shoud throw error when compoundStrategy address is 0", async () => {
@@ -111,10 +111,10 @@ describe("Stanley -> constructor", () => {
                 constants.AddressZero,
             ])
             //then
-        ).to.be.revertedWith("IPOR_001");
+        ).to.be.revertedWith("IPOR_000");
     });
 
-    it("Shoud throw error when aaveStrategy asset != from IporVault asset", async () => {
+    it("Should throw error when aaveStrategy asset != from IporVault asset", async () => {
         // given
         await aaveStrategy.setAsset(USDt.address);
         // when
@@ -127,7 +127,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_503");
+        ).to.be.revertedWith("IPOR_500");
     });
 
     it("Shoud throw error when compoundStrategy asset != from IporVault asset", async () => {
@@ -143,7 +143,7 @@ describe("Stanley -> constructor", () => {
                 compoundStrategy.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_503");
+        ).to.be.revertedWith("IPOR_500");
     });
 
     it("Should be able to pause contract when sender is owner", async () => {

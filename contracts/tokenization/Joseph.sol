@@ -84,7 +84,7 @@ abstract contract Joseph is
     function rebalance() external override whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
-        require(totalBalance != 0, IporErrors.STANLEY_BALANCE_IS_EMPTY);
+        require(totalBalance != 0, IporErrors.JOSEPH_STANLEY_BALANCE_IS_EMPTY);
 
         uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
 
@@ -175,7 +175,7 @@ abstract contract Joseph is
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
-        require(totalBalance != 0, IporErrors.STANLEY_BALANCE_IS_EMPTY);
+        require(totalBalance != 0, IporErrors.JOSEPH_STANLEY_BALANCE_IS_EMPTY);
         return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 

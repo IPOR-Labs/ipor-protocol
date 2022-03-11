@@ -348,7 +348,7 @@ abstract contract Milton is
 
         require(
             IERC20Upgradeable(_asset).balanceOf(msg.sender) >= totalAmount,
-            IporErrors.ASSET_BALANCE_OF_TOO_LOW
+            IporErrors.ASSET_BALANCE_TOO_LOW
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
@@ -637,7 +637,7 @@ abstract contract Milton is
 
         require(
             iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),
-            IporErrors.MILTON_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_SWAP_STATUS
         );
 
         uint256 incomeTaxPercentage = _getIncomeTaxPercentage();
@@ -679,7 +679,7 @@ abstract contract Milton is
 
         require(
             iporSwap.state == uint256(DataTypes.SwapState.ACTIVE),
-            IporErrors.MILTON_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_SWAP_STATUS
         );
 
         int256 positionValue = _calculateSwapReceiveFixedValue(closeTimestamp, iporSwap);

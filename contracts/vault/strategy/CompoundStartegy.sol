@@ -179,7 +179,7 @@ contract CompoundStrategy is
      * @param blocksPerYear amount to deposit in aave lending.
      */
     function setBlocksPerYear(uint256 blocksPerYear) external whenNotPaused onlyOwner {
-        require(blocksPerYear != 0, IporErrors.VALUE_SHOULD_BE_GRATER_THEN_ZERO );
+        require(blocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         _blocksPerYear = blocksPerYear;
     }
 

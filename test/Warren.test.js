@@ -230,7 +230,7 @@ describe("Warren", () => {
         await assertError(
             testData.warren.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 
@@ -245,7 +245,7 @@ describe("Warren", () => {
 
         await assertError(
             testData.warren.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 
@@ -287,7 +287,7 @@ describe("Warren", () => {
     it("should NOT update IPOR Index, because sender is not an updater", async () => {
         await assertError(
             testData.warren.connect(userThree).updateIndex(testData.tokenUsdt.address, 123),
-            "IPOR_201"
+            "IPOR_202"
         );
     });
 
@@ -299,7 +299,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userTwo).updateIndex(testData.tokenUsdt.address, 123),
             //then
-            "IPOR_201"
+            "IPOR_202"
         );
     });
 
@@ -370,7 +370,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).updateIndex(testData.tokenUsdt.address, 123),
             //then
-            "IPOR_201"
+            "IPOR_202"
         );
     });
 
@@ -620,7 +620,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_202"
+            "IPOR_200"
         );
     });
 
@@ -636,7 +636,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_000"
+            "IPOR_005"
         );
     });
 

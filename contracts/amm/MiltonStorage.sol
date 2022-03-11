@@ -677,7 +677,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         require(iporSwap.id != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
         require(
             iporSwap.state != uint256(DataTypes.SwapState.INACTIVE),
-            IporErrors.MILTON_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_SWAP_STATUS
         );
 
         uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();
@@ -699,7 +699,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         require(iporSwap.id != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
         require(
             iporSwap.state != uint256(DataTypes.SwapState.INACTIVE),
-            IporErrors.MILTON_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_SWAP_STATUS
         );
 
         uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();

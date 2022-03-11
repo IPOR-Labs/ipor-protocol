@@ -739,7 +739,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                     receiveFixedSwapsBalance + swapCollateral
                 ),
             //then
-            "IPOR_318"
+            "IPOR_321"
         );
     });
 

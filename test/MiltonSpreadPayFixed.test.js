@@ -98,7 +98,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         await assertError(
             miltonSpread.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 
@@ -119,7 +119,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         await assertError(
             miltonSpread.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 
@@ -888,7 +888,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     receiveFixedSwapsBalance
                 ),
             //then
-            "IPOR_318"
+            "IPOR_321"
         );
     });
 

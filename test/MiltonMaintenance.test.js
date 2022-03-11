@@ -382,7 +382,7 @@ describe("Milton Maintenance", () => {
         await assertError(
             testData.miltonDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 
@@ -401,7 +401,7 @@ describe("Milton Maintenance", () => {
 
         await assertError(
             testData.miltonDai.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_006"
+            "IPOR_007"
         );
     });
 

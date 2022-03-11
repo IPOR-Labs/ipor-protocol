@@ -104,7 +104,7 @@ describe("Milton - Utilization Rate", () => {
     //             params.direction
     //         ),
     //         //then
-    //         "IPOR_314"
+    //         "IPOR_302"
     //     );
     // });
 
@@ -313,7 +313,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_314"
+            "IPOR_302"
         );
     });
 
@@ -358,7 +358,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_314"
+            "IPOR_302"
         );
     });
 
@@ -403,7 +403,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_314"
+            "IPOR_302"
         );
     });
 
@@ -448,7 +448,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_314"
+            "IPOR_302"
         );
     });
 });
