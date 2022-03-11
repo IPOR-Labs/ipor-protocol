@@ -282,6 +282,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
+        const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
 
         expect(
             userIvTokenBefore.gt(BigNumber.from("19999999950000000000")),
@@ -305,12 +306,13 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
         expect(
-            compoundStrategyBalanceAfter,
-            "compoundStrategyBalanceAfter = 218700615"
-        ).to.be.equal(BigNumber.from("218700615"));
-        expect(userDaiBalanceAfter, "userDaiBalanceAfter = 334678735341909330621413").to.be.equal(
-            BigNumber.from("334678735341909330621413")
-        );
+            compoundStrategyBalanceAfter.lt(compoundStrategyBalanceBefore),
+            "compoundStrategyBalanceAfter <= compoundStrategyBalanceBefore"
+        ).to.be.true;
+        expect(
+            userDaiBalanceAfter.gt(userDaiBalanceBefore),
+            "userDaiBalanceAfter = userDaiBalanceBefore"
+        ).to.be.true;
         expect(
             strategyCTokenContractAfterWithdraw,
             "strategyCTokenContractAfterWithdraw = 0"
@@ -332,11 +334,11 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await compoundStrategyContract_Instance.doClaim();
 
         // then
-        const userOneBalance = await compContract.balanceOf(treasurAddres);
+        const userOneBalanceAfter = await compContract.balanceOf(treasurAddres);
 
         expect(
-            userOneBalance.gt(BigNumber.from("1821261900")),
-            "Cliamed compound Balance = 1821261900"
+            userOneBalanceAfter.gt(compoundBalanceBefore),
+            "userOneBalanceAfter >= compoundBalanceBefore"
         ).to.be.true;
     });
 });

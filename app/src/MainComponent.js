@@ -65,7 +65,7 @@ export default ({ drizzle, drizzleState }) => {
                 </table>
             </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-                <Tab eventKey="iporIndex" title="Warren">
+                {/* <Tab eventKey="iporIndex" title="Warren">
                     <WarrenComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="miltonOverview" title="Milton">
@@ -73,11 +73,11 @@ export default ({ drizzle, drizzleState }) => {
                 </Tab>
                 <Tab eventKey="joseph" title="Joseph">
                     <JosephComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab>
+                </Tab> */}
                 <Tab eventKey="stanley" title="Stanley">
                     <StanleyComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
-                <Tab eventKey="globalConfig" title="Global Config">
+                {/* <Tab eventKey="globalConfig" title="Global Config">
                     <GlobalConfigurationComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="josephConfig" title="Joseph Config">
@@ -100,7 +100,7 @@ export default ({ drizzle, drizzleState }) => {
                 </Tab>
                 <Tab eventKey="frontend" title="Frontend Data Provider">
                     <FrontendComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab>
+                </Tab> */}
             </Tabs>
         </div>
     );

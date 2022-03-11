@@ -299,9 +299,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
         expect(
-            compoundStrategyBalanceAfter,
-            "compoundStrategyBalanceAfter = 334842410142"
-        ).to.be.equal(BigNumber.from("334842410142"));
+            compoundStrategyBalanceAfter.lt(compoundStrategyBalanceBefore),
+            "compoundStrategyBalanceAfter < compoundStrategyBalanceBefore>"
+        ).to.be.true;
         expect(
             userUsdcBalanceAfter.gt(userUsdcBalanceBefore),
             "userUsdcBalanceAfter > userUsdcBalanceBefore"
@@ -314,6 +314,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     it("Should Clame from COMPOUND", async () => {
         //given
         const treasurAddres = await accounts[0].getAddress();
+        const userBalanceBefore = await compContract.balanceOf(treasurAddres);
         const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
         await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
         await hre.network.provider.send("evm_mine");
@@ -325,10 +326,8 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await compoundStrategyContract_Instance.doClaim();
 
         // then
-        const userOneBalance = await compContract.balanceOf(treasurAddres);
-        expect(
-            userOneBalance.gt(BigNumber.from("1821261900")),
-            "Cliamed compound Balance = 1821261900"
-        ).to.be.true;
+        const userBalanceafter = await compContract.balanceOf(treasurAddres);
+        expect(userBalanceafter.gt(userBalanceBefore), "Cliamed compound Balance after > befor").to
+            .be.true;
     });
 });
