@@ -34,39 +34,18 @@ const {TC_TOTAL_AMOUNT_10_18DEC} = require("./Const");
 
 describe("MiltonFrontendDataProvider", () => {
     let data = null;
-    let admin,
-        userOne,
-        userTwo,
-        userThree,
-        liquidityProvider,
-        miltonStorageAddress;
+    let admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress;
 
     before(async () => {
-        [
-            admin,
-            userOne,
-            userTwo,
-            userThree,
-            liquidityProvider,
-            miltonStorageAddress,
-        ] = await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
+            await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should list correct number DAI, USDC, USDT items", async () => {
         //given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI", "USDC", "USDT"],
             data,
             0,
@@ -109,7 +88,7 @@ describe("MiltonFrontendDataProvider", () => {
         const paramsDai = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            slippageValue: 3,
+            toleratedQuoteValue: BigInt("900000000000000000"),
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -118,7 +97,7 @@ describe("MiltonFrontendDataProvider", () => {
         const paramsUsdt = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            slippageValue: 3,
+            toleratedQuoteValue: BigInt("900000000000000000"),
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -127,7 +106,7 @@ describe("MiltonFrontendDataProvider", () => {
         const paramsUsdc = {
             asset: testData.tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
-            slippageValue: 3,
+            toleratedQuoteValue: BigInt("900000000000000000"),
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -135,27 +114,15 @@ describe("MiltonFrontendDataProvider", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsDai.asset,
-                PERCENTAGE_5_18DEC,
-                paramsDai.openTimestamp
-            );
+            .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdc.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdc.openTimestamp
-            );
+            .itfUpdateIndex(paramsUsdc.asset, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdt.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdt.openTimestamp
-            );
+            .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -174,15 +141,18 @@ describe("MiltonFrontendDataProvider", () => {
         const MiltonFrontendDataProvider = await ethers.getContractFactory(
             "MiltonFrontendDataProvider"
         );
-        const miltonFrontendDataProvider =
-            await MiltonFrontendDataProvider.deploy();
+        const miltonFrontendDataProvider = await MiltonFrontendDataProvider.deploy();
         await miltonFrontendDataProvider.deployed();
+
         await miltonFrontendDataProvider.initialize(
-            data.iporConfiguration.address,
             testData.warren.address,
-            testData.miltonDai.address,
-            testData.miltonUsdt.address,
-            testData.miltonUsdc.address
+            [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
+            [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
+            [
+                testData.miltonStorageDai.address,
+                testData.miltonStorageUsdt.address,
+                testData.miltonStorageUsdc.address,
+            ]
         );
 
         //when
@@ -209,16 +179,14 @@ describe("MiltonFrontendDataProvider", () => {
         const actualUsdcSwapsLength = itemsUsdc.length;
         const actualUsdtSwapsLength = itemsUsdt.length;
         const actualSwapsLength =
-            actualDaiSwapsLength +
-            actualUsdcSwapsLength +
-            actualUsdtSwapsLength;
+            actualDaiSwapsLength + actualUsdcSwapsLength + actualUsdtSwapsLength;
 
         //then
         expect(expectedSwapsLength).to.be.eq(actualSwapsLength);
     });
 
     it("should fail when page size is equal 0", async () => {
-        await testCasePagination(0, 0, 0, 0, 'IPOR_63');
+        await testCasePagination(0, 0, 0, 0, 'IPOR_009');
     });
 
     it("should receive empty list of swaps", async () => {
@@ -252,7 +220,7 @@ describe("MiltonFrontendDataProvider", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -263,7 +231,7 @@ describe("MiltonFrontendDataProvider", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -274,7 +242,7 @@ describe("MiltonFrontendDataProvider", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -287,7 +255,7 @@ describe("MiltonFrontendDataProvider", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -298,7 +266,7 @@ describe("MiltonFrontendDataProvider", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -309,7 +277,7 @@ describe("MiltonFrontendDataProvider", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 );
         }
@@ -364,7 +332,7 @@ describe("MiltonFrontendDataProvider", () => {
         const paramsDai = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_100_18DEC,
-            slippageValue: 3,
+            toleratedQuoteValue: BigInt("900000000000000000"),
             collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -389,11 +357,14 @@ describe("MiltonFrontendDataProvider", () => {
             await MiltonFrontendDataProvider.deploy();
         await miltonFrontendDataProvider.deployed();
         await miltonFrontendDataProvider.initialize(
-            data.iporConfiguration.address,
             testData.warren.address,
-            testData.miltonDai.address,
-            testData.miltonUsdt.address,
-            testData.miltonUsdc.address
+            [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
+            [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
+            [
+                testData.miltonStorageDai.address,
+                testData.miltonStorageUsdt.address,
+                testData.miltonStorageUsdc.address,
+            ]
         );
 
         for (let i = 0; i < numberOfSwapsToCreate; i++) {
@@ -411,7 +382,7 @@ describe("MiltonFrontendDataProvider", () => {
                 .getMySwaps(paramsDai.asset, offset, pageSize);
 
             const actualSwapsLength = response.swaps.length;
-            const totalSwapCount = response.totalCount
+            const totalSwapCount = response.totalCount;
 
             //then
             expect(actualSwapsLength).to.be.eq(expectedResponseSize);

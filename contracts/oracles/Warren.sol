@@ -18,12 +18,7 @@ import {IporMath} from "../libraries/IporMath.sol";
  *
  * @author IPOR Labs
  */
-contract Warren is
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    PausableUpgradeable,
-    IWarren
-{
+contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable, IWarren {
     using SafeCast for uint256;
     using IporLogic for DataTypes.IPOR;
 
@@ -34,10 +29,7 @@ contract Warren is
     mapping(address => DataTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {
-        require(
-            _updaters[msg.sender] == 1,
-            IporErrors.WARREN_CALLER_NOT_WARREN_UPDATER
-        );
+        require(_updaters[msg.sender] == 1, IporErrors.WARREN_CALLER_NOT_UPDATER);
         _;
     }
 
@@ -68,13 +60,9 @@ contract Warren is
         );
         return (
             indexValue = ipor.indexValue,
-            ibtPrice = IporMath.division(
-                ipor.quasiIbtPrice,
-                Constants.YEAR_IN_SECONDS
-            ),
+            ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
             exponentialMovingAverage = ipor.exponentialMovingAverage,
-            exponentialWeightedMovingVariance = ipor
-                .exponentialWeightedMovingVariance,
+            exponentialWeightedMovingVariance = ipor.exponentialWeightedMovingVariance,
             blockTimestamp = ipor.blockTimestamp
         );
     }
@@ -122,39 +110,26 @@ contract Warren is
         _updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateIndexes(
-        address[] memory assets,
-        uint256[] memory indexValues
-    ) external override onlyUpdater whenNotPaused {
+    function updateIndexes(address[] memory assets, uint256[] memory indexValues)
+        external
+        override
+        onlyUpdater
+        whenNotPaused
+    {
         _updateIndexes(assets, indexValues, block.timestamp);
     }
 
-    function addUpdater(address updater)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function addUpdater(address updater) external override onlyOwner whenNotPaused {
         _updaters[updater] = 1;
         emit IporIndexAddUpdater(updater);
     }
 
-    function removeUpdater(address updater)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function removeUpdater(address updater) external override onlyOwner whenNotPaused {
         _updaters[updater] = 0;
         emit IporIndexRemoveUpdater(updater);
     }
 
-    function isUpdater(address updater)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function isUpdater(address updater) external view override returns (uint256) {
         return _updaters[updater];
     }
 
@@ -162,24 +137,13 @@ contract Warren is
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
+            IporErrors.WARREN_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
-        _indexes[asset] = DataTypes.IPOR(
-            0,
-            0,
-            Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-            0,
-            0
-        );
+        _indexes[asset] = DataTypes.IPOR(0, 0, Constants.WAD_YEAR_IN_SECONDS.toUint128(), 0, 0);
         emit IporIndexAddAsset(asset);
     }
 
-    function removeAsset(address asset)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function removeAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
@@ -202,10 +166,7 @@ contract Warren is
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) internal onlyUpdater {
-        require(
-            assets.length == indexValues.length,
-            IporErrors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
-        );
+        require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
         uint256 i = 0;
         for (i; i != assets.length; i++) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
@@ -218,10 +179,7 @@ contract Warren is
         uint256 updateTimestamp
     ) internal {
         DataTypes.IPOR memory ipor = _indexes[asset];
-        require(
-            ipor.quasiIbtPrice != 0,
-            IporErrors.WARREN_ASSET_NOT_SUPPORTED
-        );
+        require(ipor.quasiIbtPrice != 0, IporErrors.WARREN_ASSET_NOT_SUPPORTED);
 
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
@@ -232,12 +190,11 @@ contract Warren is
             newExponentialMovingAverage = indexValue;
         } else {
             newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
-            newExponentialMovingAverage = IporLogic
-                .calculateExponentialMovingAverage(
-                    ipor.exponentialMovingAverage,
-                    indexValue,
-                    _DECAY_FACTOR_VALUE
-                );
+            newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
+                ipor.exponentialMovingAverage,
+                indexValue,
+                _DECAY_FACTOR_VALUE
+            );
             newExponentialWeightedMovingVariance = IporLogic
                 .calculateExponentialWeightedMovingVariance(
                     ipor.exponentialWeightedMovingVariance,
@@ -265,10 +222,11 @@ contract Warren is
         );
     }
 
-    function _calculateAccruedIbtPrice(
-        uint256 calculateTimestamp,
-        address asset
-    ) internal view returns (uint256) {
+    function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)
+        internal
+        view
+        returns (uint256)
+    {
         return
             IporMath.division(
                 _indexes[asset].accrueQuasiIbtPrice(calculateTimestamp),

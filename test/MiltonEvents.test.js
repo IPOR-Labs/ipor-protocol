@@ -51,7 +51,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 )
         )
@@ -102,7 +102,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 )
         )
@@ -153,7 +153,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 )
         )
@@ -204,7 +204,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.slippageValue,
+                    params.toleratedQuoteValue,
                     params.collateralizationFactor
                 )
         )
@@ -255,7 +255,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -301,7 +301,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -347,7 +347,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 

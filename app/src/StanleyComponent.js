@@ -6,98 +6,7 @@ const { ContractData, ContractForm } = newContextComponents;
 export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
-            <table className="table" align="center">
-                <tr>
-                    <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                        <br />
-                        {drizzle.contracts.UsdtMockedToken.address}
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        USDC
-                        <br />
-                        {drizzle.contracts.UsdcMockedToken.address}
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        DAI
-                        <br />
-                        {drizzle.contracts.DaiMockedToken.address}
-                        <br />
-                        <br />
-                    </th>
-                </tr>
 
-                <tr>
-                    <td>
-                        <strong>Pause</strong>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyUsdt"
-                                method="pause"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyUsdc"
-                                method="pause"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyDai"
-                                method="pause"
-                            />
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Unpause</strong>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyUsdt"
-                                method="unpause"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyUsdc"
-                                method="unpause"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyDai"
-                                method="unpause"
-                            />
-                        </div>
-                    </td>
-                </tr>
-            </table>
             <h2>Strategies claim</h2>
             <table className="table" align="center">
                 <tr>
@@ -399,6 +308,261 @@ export default ({ drizzle, drizzleState }) => (
                     <td>
                         <div>
                         {drizzle.contracts.StrategyCompoundDai.balanceOf}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h2>Pause/Unpause Stanley</h2>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">
+                        USDT
+                        <br />
+                        {drizzle.contracts.UsdtMockedToken.address}
+                        <br />
+                        <br />
+                    </th>
+                    <th scope="col">
+                        USDC
+                        <br />
+                        {drizzle.contracts.UsdcMockedToken.address}
+                        <br />
+                        <br />
+                    </th>
+                    <th scope="col">
+                        DAI
+                        <br />
+                        {drizzle.contracts.DaiMockedToken.address}
+                        <br />
+                        <br />
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pause</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StanleyUsdt"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StanleyUsdc"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StanleyDai"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Unpause</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StanleyUsdt"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StanleyUsdc"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StanleyDai"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h2>Pause/Unpause Aave Strategy</h2>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">
+                        USDT
+                    </th>
+                    <th scope="col">
+                        USDC
+                    </th>
+                    <th scope="col">
+                        DAI
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pause</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveUsdt"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveUsdc"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveDai"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Unpause</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveUsdt"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveUsdc"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveDai"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h2>Pause/Unpause Compound Strategy</h2>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">
+                        USDT
+                    </th>
+                    <th scope="col">
+                        USDC
+                    </th>
+                    <th scope="col">
+                        DAI
+                    </th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pause</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundUsdt"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundUsdc"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundDai"
+                                method="pause"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Unpause</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundUsdt"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundUsdc"
+                                method="unpause"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundDai"
+                                method="unpause"
+                            />
                         </div>
                     </td>
                 </tr>

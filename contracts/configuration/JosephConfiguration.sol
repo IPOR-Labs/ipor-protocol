@@ -9,7 +9,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IStanley.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-contract JosephConfiguration is
+abstract contract JosephConfiguration is
     PausableUpgradeable,
     IporOwnableUpgradeable,
     IJosephConfiguration
@@ -17,7 +17,6 @@ contract JosephConfiguration is
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
     uint256 internal constant _MILTON_STANLEY_BALANCE_PERCENTAGE = 85e15;
 
-    uint8 internal _decimals;
     address internal _asset;
     IIpToken internal _ipToken;
     IMilton internal _milton;
@@ -41,7 +40,7 @@ contract JosephConfiguration is
     {
         require(
             newCharlieTreasurer != address(0),
-            IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS
+            IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER
         );
         _charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
@@ -118,9 +117,7 @@ contract JosephConfiguration is
         return _getMiltonStanleyBalancePercentage();
     }
 
-    function decimals() external view override returns (uint8) {
-        return _decimals;
-    }
+    function _getDecimals() internal pure virtual returns (uint256);
 
     function asset() external view override returns (address) {
         return _asset;

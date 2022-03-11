@@ -29,7 +29,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     DataTypes.IporSwapContainer internal _swapsReceiveFixed;
 
     modifier onlyMilton() {
-        require(msg.sender == _milton, IporErrors.MILTON_CALLER_NOT_MILTON);
+        require(msg.sender == _milton, IporErrors.CALLER_NOT_MILTON);
         _;
     }
 
@@ -280,12 +280,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.liquidityPool = _balances.liquidityPool - liquidityAmount.toUint128();
     }
 
-    // TODO: Removed after Internal and Investor tests liquidityAmount in WAND
-    function addLiquidityAssetManagmentMock(uint256 liquidityAmount) public onlyOwner {
-        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
-        _balances.liquidityPool = _balances.liquidityPool + liquidityAmount.toUint128();
-    }
-
     function updateStorageWhenOpenSwapPayFixed(
         DataTypes.NewSwap memory newSwap,
         uint256 openingAmount,
@@ -371,6 +365,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
     }
+
     function updateStorageWhenDepositToStanley(uint256 depositValue, uint256 vaultBalance)
         external
         override
@@ -379,7 +374,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 currentVaultBalance = _balances.vault;
         require(
             currentVaultBalance <= (vaultBalance - depositValue),
-            IporErrors.IPOR_VAULT_BALANCE_TOO_LOW
+            IporErrors.MILTON_IPOR_VAULT_BALANCE_TOO_LOW
         );
         uint256 interest = currentVaultBalance != 0
             ? (vaultBalance - currentVaultBalance - depositValue)
@@ -398,7 +393,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         uint256 balance = _balances.iporPublicationFee;
 
-        require(transferedValue <= balance, IporErrors.IPOR_PUBLICATION_FEE_BALANCE_TOO_LOW);
+        require(transferedValue <= balance, IporErrors.MILTON_PUBLICATION_FEE_BALANCE_TOO_LOW);
 
         balance = balance - transferedValue;
 
@@ -414,7 +409,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         uint256 balance = _balances.treasury;
 
-        require(transferedValue <= balance, IporErrors.TREASURE_BALANCE_TOO_LOW);
+        require(transferedValue <= balance, IporErrors.MILTON_TREASURE_BALANCE_TOO_LOW);
 
         balance = balance - transferedValue;
 
@@ -596,7 +591,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         //decrease from balances the liquidation deposit
         require(
             _balances.liquidationDeposit >= swap.liquidationDepositAmount,
-            IporErrors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
+            IporErrors.MILTON_CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
         );
         _balances.liquidationDeposit =
             _balances.liquidationDeposit -
@@ -609,8 +604,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             if (account != swap.buyer) {
                 require(
                     closingTimestamp >= swap.endingTimestamp,
-                    IporErrors
-                        .MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY
+                    IporErrors.MILTON_CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
         }
@@ -625,7 +619,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         if (positionValue > 0) {
             require(
                 _balances.liquidityPool >= absPositionValue,
-                IporErrors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW
+                IporErrors.MILTON_CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
             _balances.liquidityPool = _balances.liquidityPool - absPositionValue.toUint128();
@@ -648,7 +642,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         //decrease from balances the liquidation deposit
         require(
             _balances.liquidationDeposit >= swap.liquidationDepositAmount,
-            IporErrors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
+            IporErrors.MILTON_CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
         );
         _balances.liquidationDeposit =
             _balances.liquidationDeposit -
@@ -663,8 +657,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             if (account != swap.buyer) {
                 require(
                     closingTimestamp >= swap.endingTimestamp,
-                    IporErrors
-                        .MILTON_CANNOT_CLOSE_DERIVATE_SENDER_IS_NOT_BUYER_AND_NO_DERIVATIVE_MATURITY
+                    IporErrors.MILTON_CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
         }
@@ -679,7 +672,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         if (positionValue > 0) {
             require(
                 _balances.liquidityPool >= absPositionValue,
-                IporErrors.MILTON_CANNOT_CLOSE_DERIVATE_LIQUIDITY_POOL_IS_TOO_LOW
+                IporErrors.MILTON_CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
             _balances.liquidityPool = _balances.liquidityPool - absPositionValue.toUint128();
@@ -745,10 +738,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _updateSwapsWhenClosePayFixed(DataTypes.IporSwapMemory memory iporSwap) internal {
-        require(iporSwap.id != 0, IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID);
+        require(iporSwap.id != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
         require(
             iporSwap.state != uint256(DataTypes.SwapState.INACTIVE),
-            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_SWAP_STATUS
         );
 
         uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();
@@ -767,10 +760,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _updateSwapsWhenCloseReceiveFixed(DataTypes.IporSwapMemory memory iporSwap) internal {
-        require(iporSwap.id != 0, IporErrors.MILTON_CLOSE_POSITION_INCORRECT_SWAP_ID);
+        require(iporSwap.id != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
         require(
             iporSwap.state != uint256(DataTypes.SwapState.INACTIVE),
-            IporErrors.MILTON_CLOSE_POSITION_INCORRECT_DERIVATIVE_STATUS
+            IporErrors.MILTON_INCORRECT_SWAP_STATUS
         );
 
         uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();

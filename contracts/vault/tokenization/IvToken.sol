@@ -21,7 +21,7 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
     address private _stanley;
 
     modifier onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
         _;
     }
 
@@ -49,13 +49,13 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
     }
 
     function mint(address account, uint256 amount) external override onlyStanley {
-        require(amount != 0, IporErrors.STANLEY_TOKEN_MINT_AMOUNT_TOO_LOW);
+        require(amount != 0, IporErrors.STANLEY_IV_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
     function burn(address account, uint256 amount) external override onlyStanley {
-        require(amount != 0, IporErrors.STANLEY_TOKEN_BURN_AMOUNT_TOO_LOW);
+        require(amount != 0, IporErrors.STANLEY_IV_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
     }

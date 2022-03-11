@@ -2,6 +2,12 @@
 pragma solidity 0.8.9;
 
 interface IMiltonFrontendDataProvider {
+
+	struct AssetConfig {
+		address milton;
+		address miltonStorage;
+
+	}
     struct IporAssetConfigurationFront {
         address asset;
         uint256 minCollateralizationFactorValue;

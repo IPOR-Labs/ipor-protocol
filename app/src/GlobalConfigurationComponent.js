@@ -25,16 +25,7 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">USDT</th>
                 <th scope="col">USDC</th>
                 <th scope="col">DAI</th>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Ipor Asset Configuration</strong>
-                </td>
-                <td>{drizzle.contracts.IporAssetConfigurationUsdt.address}</td>
-                <td>{drizzle.contracts.IporAssetConfigurationUsdc.address}</td>
-                <td>{drizzle.contracts.IporAssetConfigurationDai.address}</td>
-            </tr>
-
+            </tr>            
             <tr>
                 <td>
                     <strong>Milton</strong>

@@ -147,12 +147,7 @@
                         <argument>${contracts.sources}/amm/Milton.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonSpreadModelCore.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>
-                        <argument>${contracts.sources}/configuration/AccessControlAssetConfiguration.sol</argument>
-                        <argument>${contracts.sources}/configuration/AccessControlConfiguration.sol</argument>
-                        <argument>${contracts.sources}/configuration/AccessControlRevoke.sol</argument>
-                        <argument>${contracts.sources}/configuration/IporAssetConfiguration.sol</argument>
-                        <argument>${contracts.sources}/configuration/IporConfiguration.sol</argument>
+                        <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                               
                         <argument>${contracts.sources}/configuration/MiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/configuration/MiltonSpreadConfiguration.sol</argument>
                         <argument>${contracts.sources}/devtool/DevToolSmartContracts.sol</argument>
@@ -160,8 +155,6 @@
                         <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenDevToolDataProvider.sol</argument>
                         <argument>${contracts.sources}/frontend/WarrenFrontendDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IIporAssetConfiguration.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IIporConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>

@@ -36,12 +36,8 @@ describe("Joseph", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should setup init value for Redeem LP Max Utilization Percentage", async () => {
@@ -55,12 +51,9 @@ describe("Joseph", () => {
         );
 
         //when
-        let actualValueUsdt =
-            await testData.josephUsdt.getRedeemLpMaxUtilizationPercentage();
-        let actualValueUsdc =
-            await testData.josephUsdc.getRedeemLpMaxUtilizationPercentage();
-        let actualValueDai =
-            await testData.josephDai.getRedeemLpMaxUtilizationPercentage();
+        let actualValueUsdt = await testData.josephUsdt.getRedeemLpMaxUtilizationPercentage();
+        let actualValueUsdc = await testData.josephUsdc.getRedeemLpMaxUtilizationPercentage();
+        let actualValueDai = await testData.josephDai.getRedeemLpMaxUtilizationPercentage();
 
         //then
         expect(actualValueUsdt).to.be.eq(BigInt("1000000000000000000"));
@@ -79,9 +72,7 @@ describe("Joseph", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, testData);
         const liquidityAmount = USD_14_000_18DEC;
 
-        const expectedLiquidityProviderStableBalance = BigInt(
-            "9986000000000000000000000"
-        );
+        const expectedLiquidityProviderStableBalance = BigInt("9986000000000000000000000");
         const expectedLiquidityPoolBalanceMilton = USD_14_000_18DEC;
 
         //when
@@ -205,9 +196,7 @@ describe("Joseph", () => {
 
         //when
         const actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(
-                Math.floor(Date.now() / 1000)
-            )
+            await testData.miltonDai.calculateExchangeRate(Math.floor(Date.now() / 1000))
         );
 
         //then
@@ -277,9 +266,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(
-                params.openTimestamp
-            )
+            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -304,10 +291,7 @@ describe("Joseph", () => {
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                TC_TOTAL_AMOUNT_10_000_18DEC,
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC, params.openTimestamp);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
 
@@ -343,17 +327,10 @@ describe("Joseph", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("40000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("40000000000000000000"), params.openTimestamp);
 
         //open position to have something in Liquidity Pool
         await testData.miltonDai
@@ -361,7 +338,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("40000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -390,33 +367,23 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("26000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("1003093533812002519");
@@ -449,41 +416,27 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_2_5_18DEC,
-                params.openTimestamp
-            );
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+            .itfUpdateIndex(params.asset, PERCENTAGE_2_5_18DEC, params.openTimestamp);
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("1001673731442211174");
@@ -517,42 +470,28 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_8_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_8_18DEC, params.openTimestamp);
 
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("987823434476506361");
@@ -585,41 +524,27 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_8_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_8_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
 
         const expectedExchangeRate = BigInt("987823434476506362");
@@ -651,54 +576,38 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
         await testData.miltonStorageDai.setJoseph(admin.address);
-        await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("55000000000000000000000")
-        );
+        await testData.miltonStorageDai.subtractLiquidity(BigInt("55000000000000000000000"));
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_50_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         // Notice! |SOAP| > Liquidity Pool Balance
         const expectedSoap = BigInt("8494848805632282803369");
         const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -707,16 +616,14 @@ describe("Joseph", () => {
             //when
             testData.miltonDai.calculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_47"
+            "IPOR_313"
         );
 
         //then
         expect(soap.soap).to.be.gte(0);
         expect(actualSoap).to.be.gte(balance.liquidityPool);
         expect(actualSoap).to.be.eql(expectedSoap);
-        expect(actualLiquidityPoolBalance).to.be.eql(
-            expectedLiquidityPoolBalance
-        );
+        expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
@@ -731,54 +638,38 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_50_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
         await testData.miltonStorageDai.setJoseph(admin.address);
-        await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("55000000000000000000000")
-        );
+        await testData.miltonStorageDai.subtractLiquidity(BigInt("55000000000000000000000"));
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         //Notice! |SOAP| > Liquidity Pool Balance
         const expectedSoap = BigInt("8494848805632282973266");
         const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -787,15 +678,13 @@ describe("Joseph", () => {
             //when
             testData.miltonDai.calculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_47"
+            "IPOR_313"
         );
 
         //then
 
         expect(actualSoap).to.be.eql(expectedSoap);
-        expect(actualLiquidityPoolBalance).to.be.eql(
-            expectedLiquidityPoolBalance
-        );
+        expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
@@ -810,46 +699,32 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_50_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
         await testData.miltonStorageDai.setJoseph(admin.address);
-        await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("55000000000000000000000")
-        );
+        await testData.miltonStorageDai.subtractLiquidity(BigInt("55000000000000000000000"));
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
@@ -859,9 +734,7 @@ describe("Joseph", () => {
         const expectedSoap = BigInt("-8864190058051077882737");
         const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -874,9 +747,7 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
 
         expect(actualSoap).to.be.eql(expectedSoap);
-        expect(actualLiquidityPoolBalance).to.be.eql(
-            expectedLiquidityPoolBalance
-        );
+        expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
@@ -891,46 +762,32 @@ describe("Joseph", () => {
         //required to have IBT Price higher than 0
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(
-                BigInt("60000000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
 
         await testData.miltonDai
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
         await testData.miltonStorageDai.setJoseph(admin.address);
-        await testData.miltonStorageDai.subtractLiquidity(
-            BigInt("55000000000000000000000")
-        );
+        await testData.miltonStorageDai.subtractLiquidity(BigInt("55000000000000000000000"));
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
         //END HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_50_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 
-        const calculateTimestamp =
-            params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         let actualExchangeRate = BigInt(
             await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
@@ -941,9 +798,7 @@ describe("Joseph", () => {
         const expectedSoap = BigInt("-8864190058051077712840");
         const expectedLiquidityPoolBalance = BigInt("5008088573427971608517");
 
-        const soap = await testData.miltonDai.itfCalculateSoap(
-            calculateTimestamp
-        );
+        const soap = await testData.miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await testData.miltonDai.getAccruedBalance();
         const actualSoap = BigInt(soap.soap);
         const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
@@ -956,9 +811,7 @@ describe("Joseph", () => {
         ).to.be.eql(actualExchangeRate);
 
         expect(actualSoap).to.be.eql(expectedSoap);
-        expect(actualLiquidityPoolBalance).to.be.eql(
-            expectedLiquidityPoolBalance
-        );
+        expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals", async () => {
@@ -987,11 +840,7 @@ describe("Joseph", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await testData.josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(BigInt("40000000"), params.openTimestamp);
@@ -1002,15 +851,13 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigInt("40000000"),
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(
-                params.openTimestamp
-            )
+            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -1035,17 +882,11 @@ describe("Joseph", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         //BEGIN HACK - provide liquidity without mint ipToken
         await testData.miltonStorageDai.setJoseph(admin.address);
-        await testData.miltonStorageDai.addLiquidity(
-            BigInt("2000000000000000000000")
-        );
+        await testData.miltonStorageDai.addLiquidity(BigInt("2000000000000000000000"));
         await testData.tokenDai.transfer(
             testData.miltonDai.address,
             BigInt("2000000000000000000000")
@@ -1104,11 +945,7 @@ describe("Joseph", () => {
         const amount = BigInt("180000000000000000000");
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(amount, params.openTimestamp);
@@ -1119,7 +956,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1127,17 +964,12 @@ describe("Joseph", () => {
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
-        const expectedIpTokenBalanceForUserThree = BigInt(
-            "1142857142857142857143"
-        );
+        const expectedIpTokenBalanceForUserThree = BigInt("1142857142857142857143");
 
         //when
         await testData.josephDai
             .connect(userThree)
-            .itfProvideLiquidity(
-                BigInt("1500000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("1500000000000000000000"), params.openTimestamp);
 
         const actualIpTokenBalanceForUserThree = BigInt(
             await testData.ipTokenDai.balanceOf(userThree.address)
@@ -1192,11 +1024,7 @@ describe("Joseph", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(amount, params.openTimestamp);
@@ -1207,7 +1035,7 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
@@ -1215,17 +1043,12 @@ describe("Joseph", () => {
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
-        const expectedIpTokenBalanceForUserThree = BigInt(
-            "267857142857142857289"
-        );
+        const expectedIpTokenBalanceForUserThree = BigInt("267857142857142857289");
 
         //when
         await testData.josephDai
             .connect(userThree)
-            .itfProvideLiquidity(
-                BigInt("1500000000000000000000"),
-                params.openTimestamp
-            );
+            .itfProvideLiquidity(BigInt("1500000000000000000000"), params.openTimestamp);
         await testData.josephDai
             .connect(userThree)
             .itfRedeem(BigInt("874999999999999999854"), params.openTimestamp);
@@ -1283,11 +1106,7 @@ describe("Joseph", () => {
         const amount = BigInt("180000000");
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await testData.josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(amount, params.openTimestamp);
@@ -1298,19 +1117,15 @@ describe("Joseph", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.slippageValue,
+                params.toleratedQuoteValue,
                 params.collateralizationFactor
             );
 
         const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(
-                params.openTimestamp
-            )
+            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
         );
-        const expectedIpTokenBalanceForUserThree = BigInt(
-            "267857142857142857289"
-        );
+        const expectedIpTokenBalanceForUserThree = BigInt("267857142857142857289");
 
         //when
         await testData.josephUsdt
@@ -1324,9 +1139,7 @@ describe("Joseph", () => {
             await testData.ipTokenUsdt.balanceOf(userThree.address)
         );
         let actualExchangeRate = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(
-                params.openTimestamp
-            )
+            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -1374,9 +1187,7 @@ describe("Joseph", () => {
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         await testData.miltonStorageDai.setJoseph(userOne.address);
-        await testData.miltonStorageDai
-            .connect(userOne)
-            .subtractLiquidity(params.totalAmount);
+        await testData.miltonStorageDai.connect(userOne).subtractLiquidity(params.totalAmount);
         await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
 
         //when
@@ -1386,7 +1197,7 @@ describe("Joseph", () => {
                 .connect(liquidityProvider)
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_45"
+            "IPOR_300"
         );
     });
 });

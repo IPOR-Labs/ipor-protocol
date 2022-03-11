@@ -10,6 +10,10 @@ interface IStanleyAdministration {
 
     function setMilton(address milton) external;
 
+    function pause() external;
+
+    function unpause() external;
+
     event MigrateAsset(address currentStrategy, address newStrategy, uint256 amount);
 
     event SetStrategy(address strategy, address shareToken);

@@ -3,18 +3,18 @@ pragma solidity 0.8.9;
 
 import "../amm/Milton.sol";
 
-contract ItfMilton is Milton {
+abstract contract ItfMilton is Milton {
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external returns (uint256) {
         return
             _openSwapPayFixed(
                 openTimestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }
@@ -22,14 +22,14 @@ contract ItfMilton is Milton {
     function itfOpenSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maximumSlippage,
+        uint256 toleratedQuoteValue,
         uint256 collateralizationFactor
     ) external returns (uint256) {
         return
             _openSwapReceiveFixed(
                 openTimestamp,
                 totalAmount,
-                maximumSlippage,
+                toleratedQuoteValue,
                 collateralizationFactor
             );
     }
@@ -44,6 +44,18 @@ contract ItfMilton is Milton {
         external
     {
         _closeSwapReceiveFixed(swapId, closeTimestamp);
+    }
+
+    function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp)
+        external
+    {
+        _closeSwapsPayFixed(swapIds, closeTimestamp);
+    }
+
+    function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp)
+        external
+    {
+        _closeSwapsReceiveFixed(swapIds, closeTimestamp);
     }
 
     function itfCalculateSoap(uint256 calculateTimestamp)

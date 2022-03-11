@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
@@ -20,7 +21,7 @@ import "hardhat/console.sol";
 
 import "hardhat/console.sol";
 
-contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
+contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgradeable, IStrategy {
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -63,8 +64,16 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
     }
 
     modifier onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
         _;
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     /**
@@ -105,7 +114,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice deposit can only done by owner.
      * @param wadAmount amount to deposit in _aave lending.
      */
-    function deposit(uint256 wadAmount) external override onlyStanley {
+    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley {
         address asset = _asset;
 
         uint256 amount = IporMath.convertWadToAssetDecimals(
@@ -124,7 +133,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice withdraw can only done by owner.
      * @param wadAmount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 wadAmount) external override onlyStanley {
+    function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley {
         address asset = _asset;
         uint256 amount = IporMath.convertWadToAssetDecimals(
             wadAmount,
@@ -138,8 +147,8 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice Internal method.
 
      */
-    function beforeClaim() external override {
-        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+    function beforeClaim() external override whenNotPaused {
+        require(_treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
         address[] memory assets = new address[](1);
         assets[0] = _shareToken;
         _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
@@ -154,8 +163,8 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         so you have to claim beforeClaim function. 
         when window is open you can call this function to claim _aave
      */
-    function doClaim() external override {
-        require(_treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+    function doClaim() external override whenNotPaused {
+        require(_treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
@@ -177,13 +186,13 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
         }
     }
 
-    function setStanley(address stanley) external override onlyOwner {
+    function setStanley(address stanley) external override whenNotPaused onlyOwner {
         _stanley = stanley;
         emit SetStanley(msg.sender, stanley, address(this));
     }
 
-    function setTreasury(address treasury) external onlyOwner {
-        require(treasury != address(0), IporErrors.TREASURY_COULD_NOT_BE_ZERO);
+    function setTreasury(address treasury) external whenNotPaused onlyOwner {
+        require(treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
         _treasury = treasury;
         emit SetTreasury(address(this), treasury);
     }
@@ -193,7 +202,7 @@ contract AaveStrategy is UUPSUpgradeable, IporOwnableUpgradeable, IStrategy {
      * @notice Change can only done by current governance.
      * @param stkAave stakedAAVE token
      */
-    function setStkAave(address stkAave) external onlyOwner {
+    function setStkAave(address stkAave) external whenNotPaused onlyOwner {
         _stkAave = stkAave;
     }
 

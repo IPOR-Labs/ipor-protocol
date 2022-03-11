@@ -11,16 +11,12 @@ import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
 import MiltonStorageUsdc from "./contracts/MiltonStorageUsdc.json";
 import MiltonStorageDai from "./contracts/MiltonStorageDai.json";
 import MiltonFaucet from "./contracts/MiltonFaucet.json";
-import IporAssetConfigurationUsdt from "./contracts/IporAssetConfigurationUsdt.json";
-import IporAssetConfigurationUsdc from "./contracts/IporAssetConfigurationUsdc.json";
-import IporAssetConfigurationDai from "./contracts/IporAssetConfigurationDai.json";
 import DaiMockedToken from "./contracts/DaiMockedToken.json";
 import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
 import UsdtMockedToken from "./contracts/UsdtMockedToken.json";
 import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider.json";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider.json";
-import IporConfiguration from "./contracts/IporConfiguration.json";
 import JosephUsdt from "./contracts/JosephUsdt.json";
 import JosephUsdc from "./contracts/JosephUsdc.json";
 import JosephDai from "./contracts/JosephDai.json";
@@ -47,7 +43,6 @@ const options = {
     contracts: [
         MiltonDevToolDataProvider,
         MiltonFrontendDataProvider,
-        IporConfiguration,
         Warren,
         ItfWarren,
         WarrenDevToolDataProvider,
@@ -72,10 +67,7 @@ const options = {
         StanleyUsdt,
         StanleyUsdc,
         StanleyDai,
-        MiltonFaucet,
-        IporAssetConfigurationDai,
-        IporAssetConfigurationUsdt,
-        IporAssetConfigurationUsdc,
+        MiltonFaucet,        
         MiltonSpreadModel,
         StrategyAaveUsdt,
         StrategyAaveUsdc,
