@@ -151,6 +151,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractBefore = await cTokenContract.balanceOf(
+            compoundStrategyContract_Instance.address
+        );
 
         expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
         expect(compoundStrategyBalanceBefore, "compoundStrategyBalanceBefore = 0").to.be.equal(
@@ -170,16 +173,16 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         expect(userIvTokenAfter, "userIvTokenAfter = depositAmound").to.be.equal(depositAmound);
         expect(
-            compoundStrategyBalanceAfter.gt(BigNumber.from("9999999999000000000")),
-            "compoundStrategyBalanceAfter > 9999999999000000000"
+            compoundStrategyBalanceAfter.gt(compoundStrategyBalanceBefore),
+            "compoundStrategyBalanceAfter > compoundStrategyBalanceBefore"
         ).to.be.true;
         expect(
-            userDaiBalanceAfter,
-            "userDaiBalanceAfter = userDaiBalanceBefore - depositAmound"
-        ).to.be.equal(userDaiBalanceBefore.sub(depositAmound));
+            userDaiBalanceAfter.lt(userDaiBalanceBefore),
+            "userDaiBalanceAfter < userDaiBalanceAfter>"
+        ).to.be.true;
         expect(
-            strategyCTokenContractAfter.gt(BigNumber.from("45724600000")),
-            "strategyATokenContractAfter = 45724600000"
+            strategyCTokenContractAfter.gt(strategyCTokenContractBefore),
+            "strategyATokenContractAfter > strategyCTokenContractBefore"
         ).to.be.true;
     });
 
@@ -190,12 +193,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-
-        expect(userIvTokenBefore, "userIvTokenBefore = depositAmound").to.be.equal(depositAmound);
-        expect(
-            compoundStrategyBalanceBefore.gt(BigNumber.from("9999999999000000000")),
-            "compoundStrategyBalanceBefore = 9999999999000000000"
-        ).to.be.true;
+        const strategyCTokenContractBefore = await cTokenContract.balanceOf(
+            compoundStrategyContract_Instance.address
+        );
 
         //When
         await stanley.connect(signer).deposit(depositAmound);
@@ -209,21 +209,19 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             compoundStrategyContract_Instance.address
         );
 
+        expect(userIvTokenAfter.gt(userIvTokenBefore), "userIvTokenAfter > userIvTokenBefore").to.be
+            .true;
         expect(
-            userIvTokenAfter.gt(BigNumber.from("29999999950000000000")),
-            "ivToken > 29999999950000000000"
+            compoundStrategyBalanceAfter.gt(compoundStrategyBalanceBefore),
+            "aaveStrategyBalanceAfter > compoundStrategyBalanceBefore"
         ).to.be.true;
         expect(
-            compoundStrategyBalanceAfter.gt(BigNumber.from("30000000000000000000")),
-            "aaveStrategyBalanceAfter > 30 * 10^18"
+            userDaiBalanceAfter.lt(userDaiBalanceBefore),
+            "userDaiBalanceAfter < userDaiBalanceBefore>"
         ).to.be.true;
         expect(
-            userDaiBalanceAfter,
-            "userDaiBalanceAfter = userDaiBalanceBefore - 2 * depositAmound"
-        ).to.be.equal(userDaiBalanceBefore.sub(depositAmound).sub(depositAmound));
-        expect(
-            strategyCTokenContractAfter.gte(BigNumber.from("137173800000")),
-            "strategyATokenContractAfter = 137173800000"
+            strategyCTokenContractAfter.gte(strategyCTokenContractBefore),
+            "strategyATokenContractAfter > strategyCTokenContractBefore"
         ).to.be.true;
     });
 
@@ -234,15 +232,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-
-        expect(
-            userIvTokenBefore.gt(BigNumber.from("29999999950000000000")),
-            "userIvTokenBefore = 29999999950000000000"
-        ).to.be.true;
-        expect(
-            compoundStrategyBalanceBefore.gt(BigNumber.from("30000000000000000000")),
-            "compoundStrategyBalanceBefore > 30 * 10^18"
-        ).to.be.true;
+        const strategyCTokenContractBefore = await cTokenContract.balanceOf(
+            compoundStrategyContract_Instance.address
+        );
 
         //when
         await stanley.withdraw(withdrawAmmond);
@@ -255,25 +247,19 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             compoundStrategyContract_Instance.address
         );
 
+        expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenAfter").to.be
+            .true;
         expect(
-            userIvTokenAfter.gt(BigNumber.from("19999999950000000000")),
-            "ivToken = 19999999950000000000"
+            compoundStrategyBalanceAfter.lt(compoundStrategyBalanceBefore),
+            "compoundStrategyBalanceAfter < compoundStrategyBalanceBefore"
         ).to.be.true;
         expect(
-            compoundStrategyBalanceAfter.gt(BigNumber.from("20000000000000000000")),
-            "compoundStrategyBalanceAfter > 20 * 10 ^18"
+            userDaiBalanceAfter.gt(userDaiBalanceBefore),
+            "userDaiBalanceAfter > userDaiBalanceBefore "
         ).to.be.true;
         expect(
-            compoundStrategyBalanceAfter.lt(BigNumber.from("30000000000000000000")),
-            "compoundStrategyBalanceAfter < 30 * 10 ^18"
-        ).to.be.true;
-        expect(
-            userDaiBalanceAfter.gt(userDaiBalanceBefore.add(withdrawAmmond)),
-            "userDaiBalanceAfter > userDaiBalanceBefore + withdrawAmmond"
-        ).to.be.true;
-        expect(
-            strategyCTokenContractAfter.gt(BigNumber.from("91449200000")),
-            "strategyCTokenContractAfter =  91449220605"
+            strategyCTokenContractAfter.lt(strategyCTokenContractBefore),
+            "strategyCTokenContractAfter < strategyCTokenContractBefore"
         ).to.be.true;
     });
 
@@ -283,15 +269,6 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const compoundStrategyBalanceBefore = await compoundStrategyContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-
-        expect(
-            userIvTokenBefore.gt(BigNumber.from("19999999950000000000")),
-            "userIvTokenBefore > 19999999950000000000"
-        ).to.be.true;
-        expect(
-            compoundStrategyBalanceBefore.gt(BigNumber.from("20000000000000000000")),
-            "compomudStrategyBalanceBefore > 20000000000000000000"
-        ).to.be.true;
 
         //when
         await stanley.withdraw(compoundStrategyBalanceBefore);
@@ -304,20 +281,22 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
-        expect(userIvTokenAfter.lt(BigNumber.from("1000")), "ivToken < 1000").to.be.true;
+        expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
+            .true;
         expect(
             compoundStrategyBalanceAfter.lt(compoundStrategyBalanceBefore),
             "compoundStrategyBalanceAfter <= compoundStrategyBalanceBefore"
         ).to.be.true;
         expect(
             userDaiBalanceAfter.gt(userDaiBalanceBefore),
-            "userDaiBalanceAfter = userDaiBalanceBefore"
+            "userDaiBalanceAfter < userDaiBalanceBefore"
         ).to.be.true;
         expect(
             strategyCTokenContractAfterWithdraw,
             "strategyCTokenContractAfterWithdraw = 0"
         ).to.be.equal(zero);
     });
+
     it("Should Clame from COMPOUND", async () => {
         //given
         const treasurAddres = await accounts[0].getAddress();
