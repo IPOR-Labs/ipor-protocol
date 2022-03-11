@@ -176,6 +176,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
+        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
+        const strategyATokenContractBefor = await aTokenContract.balanceOf(
+            aaveStrategyContract_Instance.address
+        );
 
         expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
         expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 0").to.be.equal(zero);
@@ -191,18 +195,20 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
-        expect(userIvTokenAfter, "userIvTokenAfter = 10 * 10^18").to.be.equal(
-            BigNumber.from("10000000000000000000")
-        );
-        expect(aaveStrategyBalanceAfter, "aaveStrategyBalanceAfter = 10 * 10^18").to.be.equal(
-            BigNumber.from("9999999000000000000")
-        );
-        expect(userUsdtBalanceAfter, "userUsdtBalanceAfter = 227357362977886").to.be.equal(
-            BigNumber.from("64435243342735")
-        );
-        expect(strategyATokenContractAfter, "strategyATokenContractAfter = 9999999").to.be.equal(
-            BigNumber.from("9999999")
-        );
+        expect(userIvTokenAfter.gte(userIvTokenBefore), "userIvTokenAfter >= userIvTokenBefore").to
+            .be.true;
+        expect(
+            aaveStrategyBalanceAfter.gte(aaveStrategyBalanceBefore),
+            "aaveStrategyBalanceAfter >= aaveStrategyBalanceBefore"
+        ).to.be.true;
+        expect(
+            userUsdtBalanceAfter.lte(userUsdtBalanceBefore),
+            "userUsdtBalanceAfter <= userUsdtBalanceBefore"
+        ).to.be.true;
+        expect(
+            strategyATokenContractAfter.gte(strategyATokenContractBefor),
+            "strategyATokenContractAfter >= strategyATokenContractBefor"
+        ).to.be.true;
     });
 
     it("Should accept deposit twice and transfer tokens into AAVE", async () => {
@@ -211,12 +217,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
-
-        expect(userIvTokenBefore, "userIvTokenBefore").to.be.equal(depositAmound);
-        expect(
-            aaveStrategyBalanceBefore,
-            "aaveStrategyBalanceBefore = 9999999000000000000"
-        ).to.be.equal(BigNumber.from("9999999000000000000"));
+        const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
+        const strategyATokenContractBefore = await aTokenContract.balanceOf(
+            aaveStrategyContract_Instance.address
+        );
 
         //When
         await stanleyUsdt.connect(signer).deposit(depositAmound);
@@ -230,16 +234,19 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveStrategyContract_Instance.address
         );
 
-        expect(userIvTokenAfter.gte(BigNumber.from("29999999")), "ivToken = 29999999978664630715")
-            .to.be.true;
-        expect(aaveStrategyBalanceAfter.gt(BigNumber.from("30000000")), "aaveStrategyBalanceAfter")
-            .to.be.true;
-        expect(userUsdtBalanceAfter, "userUsdtBalanceAfter = 64435223342735").to.be.equal(
-            BigNumber.from("64435223342735")
-        );
+        expect(userIvTokenAfter.gte(userIvTokenBefore), "userIvTokenAfter >= userIvTokenBefore").to
+            .be.true;
         expect(
-            strategyATokenContractAfter.gte(BigNumber.from("29999999")),
-            "strategyATokenContractAfter >= 29999999"
+            aaveStrategyBalanceAfter.gt(aaveStrategyBalanceBefore),
+            "aaveStrategyBalanceAfter >= aaveStrategyBalanceBefore"
+        ).to.be.true;
+        expect(
+            userUsdtBalanceAfter.lte(userUsdtBalanceBefore),
+            "userUsdtBalanceAfter <= userUsdtBalanceBefore"
+        ).to.be.true;
+        expect(
+            strategyATokenContractAfter.gte(strategyATokenContractBefore),
+            "strategyATokenContractAfter >= strategyATokenContractBefore"
         ).to.be.true;
     });
 
