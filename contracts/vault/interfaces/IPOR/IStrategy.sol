@@ -23,6 +23,10 @@ interface IStrategy {
 
     function setTreasury(address treasury) external;
 
+    function pause() external;
+
+    function unpause() external;
+
     event SetStanley(address sender, address newStanley, address strategy);
     // TODO: ADD test for events into fork test
     event DoClaim(address strategy, address[] assets, address claimAddress, uint256 amount);

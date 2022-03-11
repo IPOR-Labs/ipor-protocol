@@ -8,9 +8,11 @@ import { MockStrategy, Stanley, TestERC20, IvToken } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
+const { assertError } = require("../../../Utils");
+const one = BigNumber.from("1000000000000000000");
 
 describe("Stanley -> constructor", () => {
-    let admin: Signer;
+    let admin: Signer, userOne: Signer;
     let stanley: Stanley;
     let DAI: TestERC20;
     let USDt: TestERC20;
@@ -20,7 +22,7 @@ describe("Stanley -> constructor", () => {
     let ivToken: IvToken;
 
     beforeEach(async () => {
-        [admin] = await hre.ethers.getSigners();
+        [admin, userOne] = await hre.ethers.getSigners();
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         USDt = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
@@ -38,7 +40,7 @@ describe("Stanley -> constructor", () => {
         await compoundStrategy.setAsset(DAI.address);
     });
 
-    it("Shoud throw error when underlyingToken address is 0", async () => {
+    it("Shoudl throw error when underlyingToken address is 0", async () => {
         // given
         // when
         await expect(
@@ -142,5 +144,105 @@ describe("Stanley -> constructor", () => {
             ])
             //then
         ).to.be.revertedWith("IPOR_503");
+    });
+
+    it("Should be able to pause contract when sender is owner", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            aaveStrategy.address,
+            compoundStrategy.address,
+        ])) as Stanley;
+        //when
+        await stanley.pause();
+        //then
+        expect(await stanley.paused()).to.be.true;
+    });
+
+    it("Should be able to unpause contract when sender is owner", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            aaveStrategy.address,
+            compoundStrategy.address,
+        ])) as Stanley;
+        await stanley.pause();
+        expect(await stanley.paused()).to.be.true;
+        //when
+        await stanley.unpause();
+        //then
+        expect(await stanley.paused()).to.be.false;
+    });
+
+    it("Should not be able to unpause contract when sender is not owner", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            aaveStrategy.address,
+            compoundStrategy.address,
+        ])) as Stanley;
+        await stanley.pause();
+        expect(await stanley.paused()).to.be.true;
+        //when
+        await assertError(
+            stanley.connect(userOne).unpause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("Should not be able to unpause contract when sender is not owner", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            aaveStrategy.address,
+            compoundStrategy.address,
+        ])) as Stanley;
+        //when
+
+        await assertError(
+            stanley.connect(userOne).pause(),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT pause Smart Contract specific methods when paused", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            aaveStrategy.address,
+            compoundStrategy.address,
+        ])) as Stanley;
+        //when
+        await stanley.pause();
+        //then
+        await stanley.totalBalance(await userOne.getAddress());
+    });
+
+    it("should pause Smart Contract specific methods", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            aaveStrategy.address,
+            compoundStrategy.address,
+        ])) as Stanley;
+        // stanley.setMilton(await userOne.getAddress());
+        //when
+        await stanley.pause();
+        //then
+        await assertError(stanley.deposit(one), "Pausable: paused");
+        await assertError(stanley.withdraw(one), "Pausable: paused");
+        await assertError(stanley.withdrawAll(), "Pausable: paused");
+        await assertError(stanley.migrateAssetToStrategyWithMaxApy(), "Pausable: paused");
+        await assertError(stanley.setAaveStrategy(aaveStrategy.address), "Pausable: paused");
+        await assertError(stanley.setAaveStrategy(compoundStrategy.address), "Pausable: paused");
+        await assertError(stanley.setMilton(await userOne.getAddress()), "Pausable: paused");
     });
 });

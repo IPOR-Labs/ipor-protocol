@@ -62,6 +62,14 @@ abstract contract Stanley is
 
     function _getDecimals() internal pure virtual returns (uint256);
 
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
+
     function totalBalance(address who) external view override returns (uint256) {
         return _totalBalance(who);
     }
@@ -72,7 +80,7 @@ abstract contract Stanley is
      * @param amount underlying token amount represented in 18 decimals
      */
     //  TODO: ADD tests for amount = 0
-    function deposit(uint256 amount) external override onlyMilton returns (uint256) {
+    function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
         require(amount != 0, IporErrors.VALUE_SHOULD_BE_GRATER_THEN_ZERO);
 
         (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
@@ -110,6 +118,7 @@ abstract contract Stanley is
     function withdraw(uint256 amount)
         external
         override
+        whenNotPaused
         onlyMilton
         returns (uint256 withdrawnValue, uint256 balance)
     {
@@ -226,6 +235,7 @@ abstract contract Stanley is
     function withdrawAll()
         external
         override
+        whenNotPaused
         onlyMilton
         returns (uint256 withdrawnValue, uint256 vaultBalance)
     {
@@ -276,7 +286,7 @@ abstract contract Stanley is
     }
 
     //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
-    function migrateAssetToStrategyWithMaxApy() external onlyOwner {
+    function migrateAssetToStrategyWithMaxApy() external whenNotPaused onlyOwner {
         (
             IStrategy strategyMaxApy,
             IStrategy strategyAave,
@@ -305,15 +315,15 @@ abstract contract Stanley is
         emit MigrateAsset(from, address(strategyMaxApy), wadAmount);
     }
 
-    function setAaveStrategy(address strategyAddress) external override onlyOwner {
+    function setAaveStrategy(address strategyAddress) external override whenNotPaused onlyOwner {
         _setAaveStrategy(strategyAddress);
     }
 
-    function setCompoundStrategy(address strategy) external override onlyOwner {
+    function setCompoundStrategy(address strategy) external override whenNotPaused onlyOwner {
         _setCompoundStrategy(strategy);
     }
 
-    function setMilton(address milton) external override onlyOwner {
+    function setMilton(address milton) external override whenNotPaused onlyOwner {
         _milton = milton;
     }
 
