@@ -74,7 +74,7 @@ describe("IpToken", () => {
         await assertError(
             testData.ipTokenDai.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_6"
+            "IPOR_007"
         );
     });
 
@@ -93,7 +93,7 @@ describe("IpToken", () => {
 
         await assertError(
             testData.ipTokenDai.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_6"
+            "IPOR_007"
         );
     });
 
@@ -143,7 +143,7 @@ describe("IpToken", () => {
         expect(admin.address).to.be.eql(actualNewOwner);
     });
 
-    it("should NOT mint ipToken if not a Liquidity Pool", async () => {
+    it("should NOT mint ipToken if not a Joseph", async () => {
         //when
         await assertError(
             //when
@@ -151,11 +151,11 @@ describe("IpToken", () => {
                 .connect(userTwo)
                 .mint(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_46"
+            "IPOR_325"
         );
     });
 
-    it("should NOT burn ipToken if not a Liquidity Pool", async () => {
+    it("should NOT burn ipToken if not a Joseph", async () => {
         //when
         await assertError(
             //when
@@ -163,7 +163,7 @@ describe("IpToken", () => {
                 .connect(userTwo)
                 .burn(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_46"
+            "IPOR_325"
         );
     });
 

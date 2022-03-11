@@ -21,6 +21,10 @@ contract MockStrategy is IStrategy {
         return _asset;
     }
 
+    function pause() external override {}
+
+    function unpause() external override {}
+
     function setAsset(address asset) external {
         _asset = asset;
     }

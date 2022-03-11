@@ -618,7 +618,7 @@ describe("Joseph", () => {
             //when
             testData.miltonDai.calculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_47"
+            "IPOR_313"
         );
 
         //then
@@ -680,7 +680,7 @@ describe("Joseph", () => {
             //when
             testData.miltonDai.calculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_47"
+            "IPOR_313"
         );
 
         //then
@@ -1207,7 +1207,7 @@ describe("Joseph", () => {
                 .connect(liquidityProvider)
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_45"
+            "IPOR_300"
         );
     });
 });

@@ -60,7 +60,15 @@ abstract contract Stanley is
         _;
     }
 
-	function _getDecimals() internal pure virtual returns (uint256);
+    function _getDecimals() internal pure virtual returns (uint256);
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
+    }
 
     function totalBalance(address who) external view override returns (uint256) {
         return _totalBalance(who);
@@ -72,8 +80,8 @@ abstract contract Stanley is
      * @param amount underlying token amount represented in 18 decimals
      */
     //  TODO: ADD tests for amount = 0
-    function deposit(uint256 amount) external override onlyMilton returns (uint256) {
-        require(amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+    function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
+        require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
 
@@ -110,10 +118,11 @@ abstract contract Stanley is
     function withdraw(uint256 amount)
         external
         override
+        whenNotPaused
         onlyMilton
         returns (uint256 withdrawnValue, uint256 balance)
     {
-        require(amount != 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+        require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         IIvToken ivToken = _ivToken;
 
@@ -226,6 +235,7 @@ abstract contract Stanley is
     function withdrawAll()
         external
         override
+        whenNotPaused
         onlyMilton
         returns (uint256 withdrawnValue, uint256 vaultBalance)
     {
@@ -276,7 +286,7 @@ abstract contract Stanley is
     }
 
     //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
-    function migrateAssetToStrategyWithMaxApy() external onlyOwner {
+    function migrateAssetToStrategyWithMaxApy() external whenNotPaused onlyOwner {
         (
             IStrategy strategyMaxApy,
             IStrategy strategyAave,
@@ -289,12 +299,12 @@ abstract contract Stanley is
         if (address(strategyMaxApy) == address(strategyAave)) {
             from = address(strategyCompound);
             uint256 shares = IERC20Upgradeable(_compoundShareToken).balanceOf(from);
-            require(shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+            require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
             strategyCompound.withdraw(IporMath.convertToWad(shares, decimals));
         } else {
             from = address(strategyAave);
             uint256 shares = IERC20Upgradeable(_aaveShareToken).balanceOf(from);
-            require(shares > 0, IporErrors.UINT_SHOULD_BE_GRATER_THEN_ZERO);
+            require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
             strategyAave.withdraw(IporMath.convertToWad(shares, decimals));
         }
 
@@ -305,15 +315,15 @@ abstract contract Stanley is
         emit MigrateAsset(from, address(strategyMaxApy), wadAmount);
     }
 
-    function setAaveStrategy(address strategyAddress) external override onlyOwner {
+    function setAaveStrategy(address strategyAddress) external override whenNotPaused onlyOwner {
         _setAaveStrategy(strategyAddress);
     }
 
-    function setCompoundStrategy(address strategy) external override onlyOwner {
+    function setCompoundStrategy(address strategy) external override whenNotPaused onlyOwner {
         _setCompoundStrategy(strategy);
     }
 
-    function setMilton(address milton) external override onlyOwner {
+    function setMilton(address milton) external override whenNotPaused onlyOwner {
         _milton = milton;
     }
 
@@ -354,10 +364,7 @@ abstract contract Stanley is
         IStrategy strategy = IStrategy(newStrategy);
         IERC20Upgradeable shareToken = IERC20Upgradeable(_compoundShareToken);
 
-        require(
-            strategy.getAsset() == address(asset),
-            IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
-        );
+        require(strategy.getAsset() == address(asset), IporErrors.STANLEY_ASSET_MISMATCH);
 
         if (_compoundStrategy != address(0)) {
             asset.safeApprove(_compoundStrategy, 0);
@@ -385,10 +392,7 @@ abstract contract Stanley is
 
         IStrategy strategy = IStrategy(newStrategy);
 
-        require(
-            strategy.getAsset() == address(asset),
-            IporErrors.UNDERLYINGTOKEN_IS_NOT_COMPATIBLE
-        );
+        require(strategy.getAsset() == address(asset), IporErrors.STANLEY_ASSET_MISMATCH);
 
         if (_aaveStrategy != address(0)) {
             asset.safeApprove(_aaveStrategy, 0);

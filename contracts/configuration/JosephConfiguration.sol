@@ -39,7 +39,7 @@ abstract contract JosephConfiguration is
         onlyOwner
         whenNotPaused
     {
-        require(newCharlieTreasurer != address(0), IporErrors.INCORRECT_CHARLIE_TREASURER_ADDRESS);
+        require(newCharlieTreasurer != address(0), IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER);
         _charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }

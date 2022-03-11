@@ -86,18 +86,16 @@ describe("IporLogic", () => {
         const expectedExponentialMovingAverage = "30200000000000000";
 
         //when
-        const actualExponentialMovingAverage =
-            await iporLogic.calculateExponentialMovingAverage(
-                exponentialMovingAverage,
-                indexValue,
-                alfa
-            );
+        const actualExponentialMovingAverage = await iporLogic.calculateExponentialMovingAverage(
+            exponentialMovingAverage,
+            indexValue,
+            alfa
+        );
 
         //then
-        expect(
-            actualExponentialMovingAverage,
-            "Incorrect Exponential Moving Average"
-        ).to.be.equal(expectedExponentialMovingAverage);
+        expect(actualExponentialMovingAverage, "Incorrect Exponential Moving Average").to.be.equal(
+            expectedExponentialMovingAverage
+        );
     });
 
     it("Should calculate Exponential Weighted Moving Variance - simple case 1 - Decimals 18", async () => {
@@ -117,8 +115,7 @@ describe("IporLogic", () => {
             );
 
         //then
-        const expectedExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const expectedExponentialWeightedMovingVariance = BigInt("13479210000000000");
 
         expect(
             actualExponentialWeightedMovingVariance,
@@ -130,8 +127,7 @@ describe("IporLogic", () => {
         //given
         const alfa = BigInt("100000000000000000");
 
-        const firstLastExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const firstLastExponentialWeightedMovingVariance = BigInt("13479210000000000");
         const firstExponentialMovingAverage = BigInt("5000000000000000");
         const firstIndexValue = BigInt("50000000000000000");
 
@@ -162,8 +158,7 @@ describe("IporLogic", () => {
             );
 
         //then
-        const expectedExponentialWeightedMovingVariance =
-            BigInt("373539600000000");
+        const expectedExponentialWeightedMovingVariance = BigInt("373539600000000");
 
         expect(
             actualSecondExponentialWeightedMovingVariance,
@@ -175,8 +170,7 @@ describe("IporLogic", () => {
         //given
         const alfa = BigInt("100000000000000000");
 
-        const firstLastExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const firstLastExponentialWeightedMovingVariance = BigInt("13479210000000000");
         const firstExponentialMovingAverage = BigInt("5000000000000000");
         const firstIndexValue = BigInt("50000000000000000");
 
@@ -207,8 +201,7 @@ describe("IporLogic", () => {
             );
 
         //then
-        const expectedExponentialWeightedMovingVariance =
-            BigInt("373539600000000");
+        const expectedExponentialWeightedMovingVariance = BigInt("373539600000000");
 
         expect(
             actualSecondExponentialWeightedMovingVariance,
@@ -220,8 +213,7 @@ describe("IporLogic", () => {
         //given
         const alfa = BigInt("100000000000000000");
 
-        const lastExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const lastExponentialWeightedMovingVariance = BigInt("13479210000000000");
         const exponentialMovingAverage = BigInt("5000000000000000");
         const indexValue = BigInt("4000000000000000");
 
@@ -235,8 +227,7 @@ describe("IporLogic", () => {
             );
 
         //then
-        const expectedExponentialWeightedMovingVariance =
-            BigInt("1348011000000000");
+        const expectedExponentialWeightedMovingVariance = BigInt("1348011000000000");
 
         expect(
             actualExponentialWeightedMovingVariance,
@@ -248,8 +239,7 @@ describe("IporLogic", () => {
         //given
         const alfa = BigInt("100000000000000000");
 
-        const lastExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const lastExponentialWeightedMovingVariance = BigInt("13479210000000000");
         const exponentialMovingAverage = BigInt("5000000000000000");
         const indexValue = BigInt("5000000000000000");
 
@@ -263,8 +253,7 @@ describe("IporLogic", () => {
             );
 
         //then
-        const expectedExponentialWeightedMovingVariance =
-            BigInt("1347921000000000");
+        const expectedExponentialWeightedMovingVariance = BigInt("1347921000000000");
 
         expect(
             actualExponentialWeightedMovingVariance,
@@ -276,8 +265,7 @@ describe("IporLogic", () => {
         //given
         const alfa = ZERO;
 
-        const lastExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const lastExponentialWeightedMovingVariance = BigInt("13479210000000000");
         const exponentialMovingAverage = BigInt("5000000000000000");
         const indexValue = BigInt("6000000000000000");
 
@@ -303,8 +291,7 @@ describe("IporLogic", () => {
         //given
         const alfa = BigInt("1000000000000000000");
 
-        const lastExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const lastExponentialWeightedMovingVariance = BigInt("13479210000000000");
         const exponentialMovingAverage = BigInt("5000000000000000");
         const indexValue = BigInt("6000000000000000");
 
@@ -318,8 +305,7 @@ describe("IporLogic", () => {
             );
 
         //then
-        const expectedExponentialWeightedMovingVariance =
-            BigInt("13479210000000000");
+        const expectedExponentialWeightedMovingVariance = BigInt("13479210000000000");
 
         expect(
             actualExponentialWeightedMovingVariance,
@@ -331,9 +317,7 @@ describe("IporLogic", () => {
         //given
         const alfa = BigInt("250000000000000000");
 
-        const lastExponentialWeightedMovingVariance = BigInt(
-            "1000000000000000000"
-        );
+        const lastExponentialWeightedMovingVariance = BigInt("1000000000000000000");
         const exponentialMovingAverage = BigInt("1000000000000000000");
         const indexValue = BigInt("4000000000000000000");
 
@@ -347,7 +331,7 @@ describe("IporLogic", () => {
                 alfa
             ),
             //then
-            "IPOR_54"
+            "IPOR_322"
         );
     });
 
@@ -369,7 +353,7 @@ describe("IporLogic", () => {
                 alfa
             ),
             //then
-            "IPOR_55"
+            "IPOR_323"
         );
     });
 });

@@ -6,7 +6,6 @@ const keccak256 = require("keccak256");
 const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_4_18DEC,
     PERCENTAGE_5_18DEC,
@@ -15,24 +14,30 @@ const {
     PERCENTAGE_119_18DEC,
     PERCENTAGE_120_18DEC,
     PERCENTAGE_121_18DEC,
-    PERCENTAGE_159_18DEC,
     PERCENTAGE_160_18DEC,
     PERCENTAGE_161_18DEC,
-    PERCENTAGE_364_18DEC,
+
     PERCENTAGE_365_18DEC,
     PERCENTAGE_366_18DEC,
+    PERIOD_14_DAYS_IN_SECONDS,
+    PERIOD_25_DAYS_IN_SECONDS,
+    PERIOD_50_DAYS_IN_SECONDS,
     USD_10_18DEC,
     USD_20_18DEC,
-    TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     USD_28_000_18DEC,
     USD_28_000_6DEC,
-    TC_COLLATERAL_18DEC,
     USD_10_000_000_6DEC,
-
     USD_10_000_000_18DEC,
+    COLLATERALIZATION_FACTOR_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
+    TC_COLLATERAL_18DEC,
     TC_OPENING_FEE_6DEC,
     TC_OPENING_FEE_18DEC,
+    TC_INCOME_TAX_18DEC,
+    SPECIFIC_INCOME_TAX_CASE_1,
+    SPECIFIC_INTEREST_AMOUNT_CASE_1,
+    TC_COLLATERAL_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
@@ -40,24 +45,16 @@ const {
     TC_IPOR_PUBLICATION_AMOUNT_6DEC,
     TC_IPOR_PUBLICATION_AMOUNT_18DEC,
     ZERO,
-    SPECIFIC_INTEREST_AMOUNT_CASE_1,
-    SPECIFIC_INCOME_TAX_CASE_1,
-    PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS,
-    PERIOD_50_DAYS_IN_SECONDS,
-    TC_INCOME_TAX_18DEC,
-    TC_COLLATERAL_6DEC,
 } = require("./Const.js");
 
 const {
     assertError,
-    getStandardDerivativeParamsDAI,
-    getStandardDerivativeParamsUSDT,
-    getPayFixedDerivativeParamsDAICase1,
-    getPayFixedDerivativeParamsUSDTCase1,
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
+    getPayFixedDerivativeParamsDAICase1,
+    getPayFixedDerivativeParamsUSDTCase1,
+    prepareComplexTestDataDaiCase00,
     prepareTestDataDaiCase000,
     prepareComplexTestDataDaiCase000,
     setupTokenDaiInitialValuesForUsers,
@@ -79,7 +76,6 @@ describe("Milton", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
-
         const totalAmount = 0;
         const toleratedQuoteValue = 3;
         const collateralizationFactor = USD_10_18DEC;
@@ -93,7 +89,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_4"
+            "IPOR_307"
         );
     });
 
@@ -126,7 +122,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -159,7 +155,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -207,7 +203,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -255,7 +251,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_9"
+            "IPOR_311"
         );
     });
 
@@ -280,7 +276,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_10"
+            "IPOR_309"
         );
     });
 
@@ -305,7 +301,7 @@ describe("Milton", () => {
                 collateralizationFactor
             ),
             //then
-            "IPOR_10"
+            "IPOR_309"
         );
     });
 
@@ -655,7 +651,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, closeSwapTimestamp),
             //then
-            "IPOR_14"
+            "IPOR_318"
         );
     });
 
@@ -1162,7 +1158,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_16"
+            "IPOR_319"
         );
     });
 
@@ -1306,7 +1302,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_16"
+            "IPOR_319"
         );
     });
 
@@ -1791,7 +1787,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_16"
+            "IPOR_319"
         );
     });
 
@@ -1865,7 +1861,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_16"
+            "IPOR_319"
         );
     });
 
@@ -2084,7 +2080,7 @@ describe("Milton", () => {
                 .connect(closerUser)
                 .itfCloseSwapPayFixed(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
             //then
-            "IPOR_22"
+            "IPOR_303"
         );
     });
 
@@ -2141,7 +2137,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_23"
+            "IPOR_304"
         );
     });
 
@@ -2198,7 +2194,7 @@ describe("Milton", () => {
             //when
             testData.miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_23"
+            "IPOR_304"
         );
     });
 
@@ -2217,7 +2213,7 @@ describe("Milton", () => {
                 .connect(closerUser)
                 .itfCloseSwapPayFixed(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
             //then
-            "IPOR_22"
+            "IPOR_303"
         );
     });
 
@@ -3526,7 +3522,7 @@ describe("Milton", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_12"
+            "IPOR_305"
         );
     });
 
@@ -3561,7 +3557,7 @@ describe("Milton", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_34"
+            "IPOR_306"
         );
     });
 
@@ -3718,7 +3714,7 @@ describe("Milton", () => {
                 [],
                 0
             ),
-            "IPOR_62"
+            "IPOR_314"
         );
     });
 
@@ -3835,7 +3831,7 @@ describe("Milton", () => {
                 [1, 300],
                 0
             ),
-            "IPOR_23"
+            "IPOR_304"
         );
     });
 
@@ -3876,7 +3872,7 @@ describe("Milton", () => {
                 [],
                 0
             ),
-            "IPOR_62"
+            "IPOR_314"
         );
     });
 
@@ -3993,7 +3989,7 @@ describe("Milton", () => {
                 [1, 300],
                 0
             ),
-            "IPOR_23"
+            "IPOR_304"
         );
     });
 

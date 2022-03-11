@@ -89,7 +89,7 @@ library IporSwapLogic {
         require(
             closingTimestamp >= swap.startingTimestamp,
             IporErrors
-                .MILTON_CLOSING_TIMESTAMP_LOWER_THAN_DERIVATIVE_OPEN_TIMESTAMP
+                .MILTON_CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
 
         uint256 calculatedPeriodInSeconds = 0;

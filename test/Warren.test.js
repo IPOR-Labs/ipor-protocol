@@ -231,7 +231,7 @@ describe("Warren", () => {
         await assertError(
             testData.warren.connect(userThree).confirmTransferOwnership(),
             //then
-            "IPOR_6"
+            "IPOR_007"
         );
     });
 
@@ -246,7 +246,7 @@ describe("Warren", () => {
 
         await assertError(
             testData.warren.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_6"
+            "IPOR_007"
         );
     });
 
@@ -288,7 +288,7 @@ describe("Warren", () => {
     it("should NOT update IPOR Index, because sender is not an updater", async () => {
         await assertError(
             testData.warren.connect(userThree).updateIndex(testData.tokenUsdt.address, 123),
-            "IPOR_2"
+            "IPOR_202"
         );
     });
 
@@ -300,7 +300,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userTwo).updateIndex(testData.tokenUsdt.address, 123),
             //then
-            "IPOR_2"
+            "IPOR_202"
         );
     });
 
@@ -371,7 +371,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).updateIndex(testData.tokenUsdt.address, 123),
             //then
-            "IPOR_2"
+            "IPOR_202"
         );
     });
 
@@ -621,7 +621,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_39"
+            "IPOR_200"
         );
     });
 
@@ -637,7 +637,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
-            "IPOR_18"
+            "IPOR_005"
         );
     });
 
@@ -656,7 +656,7 @@ describe("Warren", () => {
             //when
             testData.warren.connect(userOne).itfUpdateIndexes(assets, indexValues, wrongUpdateDate),
             //then
-            "IPOR_27"
+            "IPOR_203"
         );
     });
 

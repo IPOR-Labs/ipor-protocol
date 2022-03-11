@@ -232,7 +232,7 @@ describe("Joseph - redeem", () => {
                 .connect(liquidityProvider)
                 .itfRedeem(BigInt("1000000000000000000000"), params.openTimestamp),
             //then
-            "IPOR_45"
+            "IPOR_300"
         );
     });
 
@@ -266,7 +266,7 @@ describe("Joseph - redeem", () => {
                 .connect(liquidityProvider)
                 .itfRedeem(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_58"
+            "IPOR_402"
         );
     });
 
@@ -849,7 +849,7 @@ describe("Joseph - redeem", () => {
                 .connect(liquidityProvider)
                 .itfRedeem(ipTokenAmount, params.openTimestamp),
             //then
-            "IPOR_58"
+            "IPOR_402"
         );
 
         //then
@@ -914,7 +914,7 @@ describe("Joseph - redeem", () => {
                 .connect(liquidityProvider)
                 .itfRedeem(ipTokenAmount, params.openTimestamp),
             //then
-            "IPOR_58"
+            "IPOR_402"
         );
 
         //then
@@ -974,7 +974,7 @@ describe("Joseph - redeem", () => {
                 .connect(liquidityProvider)
                 .itfRedeem(ipTokenAmount, params.openTimestamp),
             //then
-            "IPOR_58"
+            "IPOR_402"
         );
         assert(
             actualCollateral < actualLiquidityPoolBalance,
@@ -1032,7 +1032,7 @@ describe("Joseph - redeem", () => {
                 .connect(liquidityProvider)
                 .itfRedeem(ipTokenAmount, params.openTimestamp),
             //then
-            "IPOR_58"
+            "IPOR_402"
         );
         assert(
             actualCollateral < actualLiquidityPoolBalance,
@@ -1158,7 +1158,7 @@ describe("Joseph - redeem", () => {
         expect(actualIpTokenBalanceSender).to.be.eq(BigInt("49000000000000000000000"));
     });
 
-    it("should redeem - Liquidity Pool Utilization exceedeed, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
+    it("should redeem - Liquidity Pool Utilization exceeded, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1211,7 +1211,7 @@ describe("Joseph - redeem", () => {
                     params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
-            "IPOR_35"
+            "IPOR_302"
         );
 
         //when
@@ -1226,7 +1226,7 @@ describe("Joseph - redeem", () => {
         );
         expect(actualIpTokenBalanceSender).to.be.eq(BigInt("79700000000000000000000"));
     });
-    it("should redeem - Liquidity Pool Utilization exceedeed, Redeem Liquidity Pool Utilization not exceeded, Receive Fixed", async () => {
+    it("should redeem - Liquidity Pool Utilization exceeded, Redeem Liquidity Pool Utilization not exceeded, Receive Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1279,7 +1279,7 @@ describe("Joseph - redeem", () => {
                     params.toleratedQuoteValue,
                     params.collateralizationFactor
                 ),
-            "IPOR_35"
+            "IPOR_302"
         );
 
         //when

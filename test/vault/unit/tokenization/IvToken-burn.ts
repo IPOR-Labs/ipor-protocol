@@ -22,13 +22,13 @@ describe("#IvToken burn function tests", () => {
         );
     });
 
-    it("should not to be able burn when sender is not iporVault", async () => {
+    it("should not to be able burn when sender is not Stanley", async () => {
         //given
         await expect(
             //when
             ivToken.burn(await userOne.getAddress(), BigNumber.from("10"))
             //then
-        ).to.be.revertedWith("IPOR_104");
+        ).to.be.revertedWith("IPOR_501");
     });
 
     it("should not be able to burn when amount is 0", async () => {
@@ -40,7 +40,7 @@ describe("#IvToken burn function tests", () => {
             //when
             ivToken.connect(userOne).burn(await userOne.getAddress(), amount)
             //then
-        ).to.be.revertedWith("IPOR_101");
+        ).to.be.revertedWith("IPOR_504");
     });
 
     it("should not be able to burn when pass zero address", async () => {
@@ -50,9 +50,7 @@ describe("#IvToken burn function tests", () => {
         const amount = BigNumber.from("0");
         await expect(
             //when
-            ivToken
-                .connect(userOne)
-                .burn(constants.AddressZero, BigNumber.from(1))
+            ivToken.connect(userOne).burn(constants.AddressZero, BigNumber.from(1))
             //then
         ).to.be.revertedWith("ERC20: burn from the zero address");
     });
