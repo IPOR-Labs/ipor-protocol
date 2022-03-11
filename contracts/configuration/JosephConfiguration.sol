@@ -14,6 +14,7 @@ abstract contract JosephConfiguration is
     IporOwnableUpgradeable,
     IJosephConfiguration
 {
+    uint256 internal constant _REDEEM_FEE_PERCENTAGE = 5e15;
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
     uint256 internal constant _MILTON_STANLEY_BALANCE_PERCENTAGE = 85e15;
 
@@ -38,10 +39,7 @@ abstract contract JosephConfiguration is
         onlyOwner
         whenNotPaused
     {
-        require(
-            newCharlieTreasurer != address(0),
-            IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER
-        );
+        require(newCharlieTreasurer != address(0), IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER);
         _charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }
@@ -61,12 +59,7 @@ abstract contract JosephConfiguration is
         emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
     }
 
-    function getPublicationFeeTransferer()
-        external
-        view
-        override
-        returns (address)
-    {
+    function getPublicationFeeTransferer() external view override returns (address) {
         return _publicationFeeTransferer;
     }
 
@@ -76,10 +69,7 @@ abstract contract JosephConfiguration is
         onlyOwner
         whenNotPaused
     {
-        require(
-            address(0) != publicationFeeTransferer,
-            IporErrors.WRONG_ADDRESS
-        );
+        require(address(0) != publicationFeeTransferer, IporErrors.WRONG_ADDRESS);
         _publicationFeeTransferer = publicationFeeTransferer;
         emit PublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
@@ -99,21 +89,15 @@ abstract contract JosephConfiguration is
         emit TreasureTransfererUpdated(treasureTransferer);
     }
 
-    function getRedeemLpMaxUtilizationPercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getRedeemFeePercentage() external pure override returns (uint256) {
+        return _getRedeemFeePercentage();
+    }
+
+    function getRedeemLpMaxUtilizationPercentage() external pure override returns (uint256) {
         return _getRedeemLpMaxUtilizationPercentage();
     }
 
-    function getMiltonStanleyBalancePercentage()
-        external
-        pure
-        override
-        returns (uint256)
-    {
+    function getMiltonStanleyBalancePercentage() external pure override returns (uint256) {
         return _getMiltonStanleyBalancePercentage();
     }
 
@@ -123,21 +107,15 @@ abstract contract JosephConfiguration is
         return _asset;
     }
 
-    function _getRedeemLpMaxUtilizationPercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getRedeemFeePercentage() internal pure virtual returns (uint256) {
+        return _REDEEM_FEE_PERCENTAGE;
+    }
+
+    function _getRedeemLpMaxUtilizationPercentage() internal pure virtual returns (uint256) {
         return _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE;
     }
 
-    function _getMiltonStanleyBalancePercentage()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getMiltonStanleyBalancePercentage() internal pure virtual returns (uint256) {
         return _MILTON_STANLEY_BALANCE_PERCENTAGE;
     }
 }

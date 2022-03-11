@@ -14,8 +14,8 @@ const {
 const {
     assertError,
     prepareData,
-    prepareComplexTestDataDaiCase00,
-    prepareComplexTestDataDaiCase40,
+    prepareComplexTestDataDaiCase000,
+    prepareComplexTestDataDaiCase400,
     getPayFixedDerivativeParamsDAICase1,
 } = require("./Utils");
 
@@ -30,7 +30,7 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -46,7 +46,7 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - Charlie Treasury address incorrect", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -64,7 +64,7 @@ describe("Joseph Treasury", () => {
 
     it("should transfer Publication Fee to Charlie Treasury - simple case 1", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -135,7 +135,7 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Treasure Treasury - caller not treasure transferer", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -151,7 +151,7 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - Treasure Treasury address incorrect", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -169,7 +169,7 @@ describe("Joseph Treasury", () => {
 
     it("should transfer Treasury to Treasure Treasurer - simple case 1", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase40(
+        const testData = await prepareComplexTestDataDaiCase400(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );

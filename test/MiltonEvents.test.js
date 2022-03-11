@@ -16,8 +16,8 @@ const {
     getPayFixedDerivativeParamsDAICase1,
     getPayFixedDerivativeParamsUSDTCase1,
     prepareData,
-    prepareComplexTestDataDaiCase00,
-    prepareComplexTestDataUsdtCase00,
+    prepareComplexTestDataDaiCase000,
+    prepareComplexTestDataUsdtCase000,
 } = require("./Utils");
 
 describe("Milton Events", () => {
@@ -31,7 +31,7 @@ describe("Milton Events", () => {
 
     it("should emit event when open Pay Fixed Swap - 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -82,7 +82,7 @@ describe("Milton Events", () => {
 
     it("should emit event when open Receive Fixed Swap - 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -133,7 +133,7 @@ describe("Milton Events", () => {
 
     it("should emit event when open Pay Fixed Swap - 6 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataUsdtCase00(
+        const testData = await prepareComplexTestDataUsdtCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -184,7 +184,7 @@ describe("Milton Events", () => {
 
     it("should emit event when open Receive Fixed Swap - 6 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataUsdtCase00(
+        const testData = await prepareComplexTestDataUsdtCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -235,7 +235,7 @@ describe("Milton Events", () => {
 
     it("should emit event when close Pay Fixed Swap - 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -281,7 +281,7 @@ describe("Milton Events", () => {
 
     it("should emit event when close Pay Fixed Swap - 6 decimals - taker closed swap", async () => {
         //given
-        const testData = await prepareComplexTestDataUsdtCase00(
+        const testData = await prepareComplexTestDataUsdtCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -327,7 +327,7 @@ describe("Milton Events", () => {
 
     it("should emit event when close Pay Fixed Swap - 6 decimals - NOT taker closed swap", async () => {
         //given
-        const testData = await prepareComplexTestDataUsdtCase00(
+        const testData = await prepareComplexTestDataUsdtCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );

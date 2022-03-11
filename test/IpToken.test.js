@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-const { assertError, prepareData, prepareTestData, prepareTestDataDaiCase1 } = require("./Utils");
+const { assertError, prepareData, prepareTestData, prepareTestDataDaiCase000 } = require("./Utils");
 
 const { TC_TOTAL_AMOUNT_10_000_18DEC } = require("./Const.js");
 
@@ -21,13 +21,14 @@ describe("IpToken", () => {
             ["DAI"],
             data,
             0,
-            1
+            1,
+            0
         );
     });
 
     it("should transfer ownership - simple case 1", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -45,7 +46,7 @@ describe("IpToken", () => {
 
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -61,7 +62,7 @@ describe("IpToken", () => {
 
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -79,7 +80,7 @@ describe("IpToken", () => {
 
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -103,7 +104,8 @@ describe("IpToken", () => {
             ["DAI"],
             data,
             1,
-            1
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 
@@ -126,7 +128,8 @@ describe("IpToken", () => {
             ["DAI"],
             data,
             1,
-            1
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 

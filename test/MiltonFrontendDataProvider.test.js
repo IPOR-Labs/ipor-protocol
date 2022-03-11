@@ -46,7 +46,7 @@ describe("MiltonFrontendDataProvider", () => {
             ["DAI", "USDC", "USDT"],
             data,
             0,
-            1
+            1,0
         );
 
         await prepareApproveForUsers(

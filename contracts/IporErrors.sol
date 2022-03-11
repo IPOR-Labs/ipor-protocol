@@ -80,7 +80,7 @@ library IporErrors {
     string public constant MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE = "IPOR_308";
 
     //@notice Amount of collateral used to open swap exceeds limit
-    string public constant MILTON_COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_319";
+    string public constant MILTON_COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_309";
 
     //@notice ibtPrice has to be higher than 0
     string public constant MILTON_IBT_PRICE_CANNOT_BE_ZERO = "IPOR_310";
