@@ -36,22 +36,27 @@ interface IMiltonStorage {
     function getSwapsPayFixed(address account, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (DataTypes.IporSwapMemory[] memory);
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps);
 
     function getSwapsReceiveFixed(address account, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (DataTypes.IporSwapMemory[] memory);
+        returns (uint256 totalCount ,DataTypes.IporSwapMemory[] memory swaps);
 
-    function getSwapPayFixedIds(address account)
+    function getSwapPayFixedIds(address account, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (uint128[] memory);
+        returns (uint256 totalCount, uint128[] memory ids);
 
-    function getSwapReceiveFixedIds(address account)
+    function getSwapReceiveFixedIds(address account, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (uint128[] memory);
+        returns (uint256 totalCount, uint128[] memory ids);
+
+    function getSwapIds(address account, uint256 offset, uint256 chunkSize)
+        external
+        view
+        returns (uint256 totalCount, IporSwapId[] memory ids);
 
     function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
         external
@@ -127,4 +132,9 @@ interface IMiltonStorage {
     function setMilton(address milton) external;
 
     function setJoseph(address joseph) external;
+
+    struct IporSwapId {
+        uint256 id;
+        uint8 direction;
+    }
 }

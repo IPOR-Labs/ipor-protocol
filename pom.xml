@@ -181,6 +181,7 @@
                         <argument>${contracts.sources}/libraries/IporLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/IporMath.sol</argument>
                         <argument>${contracts.sources}/libraries/IporSwapLogic.sol</argument>
+                        <argument>${contracts.sources}/libraries/PaginationUtils.sol</argument>
                         <argument>${contracts.sources}/libraries/SoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
                         <argument>${contracts.sources}/mocks/MiltonFaucet.sol</argument>

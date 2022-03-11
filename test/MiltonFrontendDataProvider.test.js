@@ -190,17 +190,20 @@ describe("MiltonFrontendDataProvider", () => {
         await openSwapPayFixed(testData, paramsUsdc);
         await openSwapPayFixed(testData, paramsUsdt);
 
-        let itemsDai = await miltonFrontendDataProvider
+        let responseDai = await miltonFrontendDataProvider
             .connect(paramsDai.from)
             .getMySwaps(paramsDai.asset, 0, 50);
+        let itemsDai = responseDai.swaps;
 
-        let itemsUsdc = await miltonFrontendDataProvider
+        let responseUsdc = await miltonFrontendDataProvider
             .connect(paramsUsdc.from)
             .getMySwaps(paramsUsdc.asset, 0, 50);
+        let itemsUsdc = responseUsdc.swaps;
 
-        let itemsUsdt = await miltonFrontendDataProvider
+        let responseUsdt = await miltonFrontendDataProvider
             .connect(paramsUsdt.from)
             .getMySwaps(paramsUsdt.asset, 0, 50);
+        let itemsUsdt = responseUsdt.swaps;
 
         const actualDaiSwapsLength = itemsDai.length;
         const actualUsdcSwapsLength = itemsUsdc.length;
@@ -403,14 +406,16 @@ describe("MiltonFrontendDataProvider", () => {
 
         //when
         if (expectedError == null) {
-            let items = await miltonFrontendDataProvider
+            let response = await miltonFrontendDataProvider
                 .connect(paramsDai.from)
                 .getMySwaps(paramsDai.asset, offset, pageSize);
 
-            const actualSwapsLength = items.length;
+            const actualSwapsLength = response.swaps.length;
+            const totalSwapCount = response.totalCount
 
             //then
             expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
         } else {
             await assertError(
                 miltonFrontendDataProvider

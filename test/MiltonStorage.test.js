@@ -608,12 +608,14 @@ describe("MiltonStorage", () => {
 
         //when
         if (expectedError == null) {
-            let items = await testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize);
+            let response = await testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize);
 
-            const actualSwapsLength = items.length;
+            const actualSwapsLength = response.swaps.length;
+            const totalSwapCount = response.totalCount
 
             //then
             expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
         } else {
             await assertError(
                 testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize),
@@ -677,12 +679,14 @@ describe("MiltonStorage", () => {
 
         //when
         if (expectedError == null) {
-            let items = await testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize);
+            let response = await testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize);
 
-            const actualSwapsLength = items.length;
+            const actualSwapsLength = response.swaps.length;
+            const totalSwapCount = response.totalCount
 
             //then
-            expect(expectedResponseSize).to.be.eq(actualSwapsLength);
+            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
         } else {
             await assertError(
                 testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize),
