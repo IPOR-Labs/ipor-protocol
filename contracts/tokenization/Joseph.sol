@@ -235,7 +235,6 @@ abstract contract Joseph is
 
         uint256 wadAssetValue = IporMath.division(ipTokenValue * exchangeRate, Constants.D18);
 
-        //TODO: split based on redeem fee
         uint256 wadRedeemFee = IporMath.division(
             wadAssetValue * _getRedeemFeePercentage(),
             Constants.D18
@@ -244,11 +243,6 @@ abstract contract Joseph is
         uint256 wadRedeemValue = wadAssetValue - wadRedeemFee;
 
         DataTypes.MiltonBalanceMemory memory balance = _milton.getAccruedBalance();
-
-        require(
-            balance.liquidityPool > wadRedeemValue,
-            IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
-        );
 
         uint256 assetValue = IporMath.convertWadToAssetDecimals(wadRedeemValue, _getDecimals());
 
@@ -281,16 +275,23 @@ abstract contract Joseph is
         );
     }
 
+    function _calculateRedeemValue(uint256 timestamp) internal view returns (uint256) {}
+
     function _calculateRedeemedUtilizationRate(
         uint256 totalLiquidityPoolBalance,
         uint256 totalCollateralBalance,
         uint256 redeemedAmount
     ) internal pure returns (uint256) {
-        return
-            IporMath.division(
-                totalCollateralBalance * Constants.D18,
-                totalLiquidityPoolBalance - redeemedAmount
-            );
+        uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
+        if (denominator != 0) {
+            return
+                IporMath.division(
+                    totalCollateralBalance * Constants.D18,
+                    totalLiquidityPoolBalance - redeemedAmount
+                );
+        } else {
+            return Constants.MAX_VALUE;
+        }
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}

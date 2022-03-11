@@ -139,9 +139,6 @@ library IporErrors {
     //@notice User cannot redeem underlying tokens because ipToken on his balance is too low
     string public constant MILTON_CANNOT_REDEEM_IP_TOKEN_TOO_LOW = "IPOR_42";
 
-    //@notice Liquidity provider cannot withdraw because liquidity pool is too low
-    string public constant MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = "IPOR_43";
-
     //@notice Amount which should be burned is too low
     string public constant IP_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_44";
 

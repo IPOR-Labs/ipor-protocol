@@ -427,8 +427,6 @@ abstract contract Milton is
             balance
         );
 
-        console.log("quoteValue=", quoteValue);
-        console.log("toleratedQuoteValue=", toleratedQuoteValue);
         require(
             toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
             IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
@@ -502,8 +500,7 @@ abstract contract Milton is
             bosStruct.accruedIpor,
             balance
         );
-        console.log("toleratedQuoteValue=", toleratedQuoteValue);
-        console.log("quoteValue=", quoteValue);
+
         require(
             toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
             IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED

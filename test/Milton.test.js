@@ -58,8 +58,8 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    prepareTestDataDaiCase1,
-    prepareComplexTestDataDaiCase00,
+    prepareTestDataDaiCase000,
+    prepareComplexTestDataDaiCase000,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
@@ -75,7 +75,7 @@ describe("Milton", () => {
 
     it("should NOT open position because totalAmount amount too low", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -99,7 +99,7 @@ describe("Milton", () => {
 
     it("should NOT open position because tolerated quote value exceeded - pay fixed 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -132,7 +132,7 @@ describe("Milton", () => {
 
     it("should NOT open position because tolerated quote value exceeded - receive fixed 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -170,7 +170,8 @@ describe("Milton", () => {
             ["USDT"],
             data,
             0,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -217,7 +218,8 @@ describe("Milton", () => {
             ["USDT"],
             data,
             0,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -257,3719 +259,3743 @@ describe("Milton", () => {
         );
     });
 
-    // it("should NOT open position because totalAmount amount too high", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const totalAmount = BigInt("1000000000000000000000001");
-    //     const toleratedQuoteValue = 3;
-    //     const collateralizationFactor = BigInt(10000000000000000000);
-    //     const timestamp = Math.floor(Date.now() / 1000);
-
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.itfOpenSwapPayFixed(
-    //             timestamp,
-    //             totalAmount,
-    //             toleratedQuoteValue,
-    //             collateralizationFactor
-    //         ),
-    //         //then
-    //         "IPOR_10"
-    //     );
-    // });
-
-    // it("should NOT open position because totalAmount amount too high - case 2", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const totalAmount = BigInt("100688870576704582165765");
-    //     const toleratedQuoteValue = 3;
-    //     const collateralizationFactor = BigInt(10000000000000000000);
-    //     const timestamp = Math.floor(Date.now() / 1000);
-
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.itfOpenSwapPayFixed(
-    //             timestamp,
-    //             totalAmount,
-    //             toleratedQuoteValue,
-    //             collateralizationFactor
-    //         ),
-    //         //then
-    //         "IPOR_10"
-    //     );
-    // });
-
-    // it("should open pay fixed position - simple case DAI - 18 decimals", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-    //     let collateralWad = TC_COLLATERAL_18DEC;
-    //     let openingFee = TC_OPENING_FEE_18DEC;
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-    //     let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
-
-    //     let expectedMiltonUnderlyingTokenBalance =
-    //         miltonBalanceBeforePayoutWad + params.totalAmount;
-    //     let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad + openingFee;
-    //     let expectedDerivativesTotalBalanceWad = collateralWad;
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userTwo)
-    //         .itfOpenSwapPayFixed(
-    //             params.openTimestamp,
-    //             params.totalAmount,
-    //             params.toleratedQuoteValue,
-    //             params.collateralizationFactor
-    //         );
-
-    //     //then
-    //     await assertExpectedValues(
-    //         testData,
-    //         params.asset,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         miltonBalanceBeforePayoutWad,
-    //         expectedMiltonUnderlyingTokenBalance,
-    //         BigInt("9990000000000000000000000"),
-    //         BigInt("9990000000000000000000000"),
-    //         expectedLiquidityPoolTotalBalanceWad,
-    //         1,
-    //         TC_COLLATERAL_18DEC,
-    //         USD_20_18DEC,
-    //         BigInt("0")
-    //     );
-
-    //     const actualPayFixDerivativesBalanceWad = BigInt(
-    //         await (
-    //             await testData.miltonDai.getAccruedBalance()
-    //         ).payFixedSwaps
-    //     );
-    //     const actualRecFixDerivativesBalanceWad = BigInt(
-    //         await (
-    //             await testData.miltonDai.getAccruedBalance()
-    //         ).receiveFixedSwaps
-    //     );
-    //     const actualDerivativesTotalBalanceWad =
-    //         actualPayFixDerivativesBalanceWad + actualRecFixDerivativesBalanceWad;
-
-    //     expect(
-    //         expectedDerivativesTotalBalanceWad,
-    //         `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalanceWad}, expected ${expectedDerivativesTotalBalanceWad}Wad`
-    //     ).to.be.eq(actualDerivativesTotalBalanceWad);
-    // });
-
-    // it("should open pay fixed position - simple case USDT - 6 decimals", async () => {
-    //     //given
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["USDT"],
-    //         data,
-    //         0,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "USDT",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenUsdtInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-    //     const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);
-
-    //     let collateralWad = TC_COLLATERAL_18DEC;
-    //     let openingFee = TC_OPENING_FEE_18DEC;
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-    //     let miltonBalanceBeforePayout = USD_28_000_6DEC;
-    //     let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-
-    //     await testData.josephUsdt
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(miltonBalanceBeforePayout, params.openTimestamp);
-
-    //     let expectedMiltonUnderlyingTokenBalance = miltonBalanceBeforePayout + params.totalAmount;
-    //     let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad + openingFee;
-    //     let expectedDerivativesTotalBalanceWad = collateralWad;
-
-    //     //when
-    //     await testData.miltonUsdt
-    //         .connect(userTwo)
-    //         .itfOpenSwapPayFixed(
-    //             params.openTimestamp,
-    //             params.totalAmount,
-    //             params.toleratedQuoteValue,
-    //             params.collateralizationFactor
-    //         );
-
-    //     //then
-    //     await assertExpectedValues(
-    //         testData,
-    //         params.asset,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         miltonBalanceBeforePayout,
-    //         expectedMiltonUnderlyingTokenBalance,
-    //         BigInt("9990000000000"),
-    //         BigInt("9990000000000"),
-    //         expectedLiquidityPoolTotalBalanceWad,
-    //         1,
-    //         TC_COLLATERAL_18DEC,
-    //         USD_20_18DEC,
-    //         BigInt("0")
-    //     );
-    //     const actualPayFixDerivativesBalanceWad = BigInt(
-    //         await (
-    //             await testData.miltonUsdt.getAccruedBalance()
-    //         ).payFixedSwaps
-    //     );
-
-    //     const actualRecFixDerivativesBalanceWad = BigInt(
-    //         await (
-    //             await testData.miltonUsdt.getAccruedBalance()
-    //         ).receiveFixedSwaps
-    //     );
-
-    //     const actualDerivativesTotalBalanceWad =
-    //         actualPayFixDerivativesBalanceWad + actualRecFixDerivativesBalanceWad;
-
-    //     expect(
-    //         expectedDerivativesTotalBalanceWad,
-    //         `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalanceWad}, expected ${expectedDerivativesTotalBalanceWad}Wad`
-    //     ).to.be.eq(actualDerivativesTotalBalanceWad);
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-    //     let liquidationDepositAmount = USD_20_18DEC;
-
-    //     let expectedIncomeTaxValue = BigInt("0");
-    //     let expectedIncomeTaxValueWad = BigInt("0");
-
-    //     let totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
-    //     let collateral = TC_COLLATERAL_18DEC;
-    //     let openingFee = TC_OPENING_FEE_18DEC;
-
-    //     let diffAfterClose = totalAmount - collateral - liquidationDepositAmount;
-
-    //     let expectedOpenerUserUnderlyingTokenBalanceAfterPayOut =
-    //         USER_SUPPLY_10MLN_18DEC - diffAfterClose;
-    //     let expectedCloserUserUnderlyingTokenBalanceAfterPayOut =
-    //         USER_SUPPLY_10MLN_18DEC - diffAfterClose;
-
-    //     let expectedMiltonUnderlyingTokenBalance = miltonBalanceBeforePayoutWad + diffAfterClose;
-    //     let expectedLiquidityPoolTotalBalanceWad =
-    //         miltonBalanceBeforePayoutWad + openingFee - expectedIncomeTaxValue;
-
-    //     let expectedPositionValue = BigInt("0");
-
-    //     await exetuceCloseSwapTestCase(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_3_18DEC,
-    //         PERCENTAGE_3_18DEC,
-    //         PERCENTAGE_4_18DEC,
-    //         0,
-    //         miltonBalanceBeforePayoutWad,
-    //         expectedMiltonUnderlyingTokenBalance,
-    //         expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
-    //         expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
-    //         expectedLiquidityPoolTotalBalanceWad,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValue,
-    //         ZERO,
-    //         null,
-    //         expectedPositionValue,
-    //         expectedIncomeTaxValue
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, DAI 18 decimals", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
-    //     let expectedPositionValue = BigInt("-68267191075554046114");
-    //     let expectedPositionValueWad = BigInt("-68267191075554046114");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_365_18DEC,
-    //         PERCENTAGE_365_18DEC,
-    //         PERCENTAGE_366_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, USDT, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, USDT 6 decimals", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["USDT"],
-    //         data,
-    //         0,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "USDT",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenUsdtInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
-    //     let expectedPositionValue = BigInt("-68267191");
-    //     let expectedPositionValueWad = BigInt("-68267191075554046114");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenUsdt.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_365_18DEC,
-    //         PERCENTAGE_365_18DEC,
-    //         PERCENTAGE_366_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should NOT open position because Liquidity Pool balance is to low", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: BigInt("10000000000000000000000"), //10 000 USD
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-    //     let closeSwapTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, BigInt("10000000000000000"), params.openTimestamp);
-
-    //     await openSwapPayFixed(testData, params);
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp);
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, BigInt("50000000000000000"), closeSwapTimestamp);
-
-    //     await testData.miltonStorageDai.setJoseph(userOne.address);
-
-    //     await testData.miltonStorageDai
-    //         .connect(userOne)
-    //         .subtractLiquidity(BigInt("20000000000000000000000"));
-
-    //     await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
-
-    //     //when
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, closeSwapTimestamp),
-    //         //then
-    //         "IPOR_14"
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_161_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, USDT, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, USDT 6 decimals", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["USDT"],
-    //         data,
-    //         0,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "USDT",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenUsdtInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_6DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenUsdt.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_161_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, DAI 18 decimals", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValueWad = BigInt("791899416476426938347");
-    //     let expectedPositionValue = BigInt("-7918994164764269383465");
-    //     let expectedPositionValueWad = BigInt("-7918994164764269383465");
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_121_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, USDT, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, USDT 6 decimals", async () => {
-    //     //given
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["USDT"],
-    //         data,
-    //         0,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "USDT",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenUsdtInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValueWad = BigInt("791899416476426938347");
-    //     let expectedPositionValue = BigInt("-7918994165");
-    //     let expectedPositionValueWad = BigInt("-7918994164764269383465");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenUsdt.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_121_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValueWad = BigInt("856889782380354383694");
-    //     let expectedPositionValue = BigInt("-8568897823803543836942");
-    //     let expectedPositionValueWad = BigInt("-8568897823803543836942");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_121_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, DAI 18 decimals", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, USDT 6 decimals", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["USDT"],
-    //         data,
-    //         0,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "USDT",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenUsdtInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("996700990");
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_6DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenUsdt.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, DAI 18 decimals", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("778245978261316123526");
-    //     let expectedIncomeTaxValueWad = BigInt("778245978261316123526");
-
-    //     let expectedPositionValue = BigInt("7782459782613161235257");
-    //     let expectedPositionValueWad = BigInt("7782459782613161235257");
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, USDT 6 decimals", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["USDT"],
-    //         data,
-    //         0,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "USDT",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenUsdtInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("778245978");
-    //     let expectedIncomeTaxValueWad = BigInt("778245978261316123526");
-    //     let expectedPositionValue = BigInt("7782459782");
-    //     let expectedPositionValueWad = BigInt("7782459782613161235257");
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenUsdt.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = SPECIFIC_INCOME_TAX_CASE_1;
-    //     let expectedIncomeTaxValueWad = SPECIFIC_INCOME_TAX_CASE_1;
-    //     let expectedPositionValue = SPECIFIC_INTEREST_AMOUNT_CASE_1;
-    //     let expectedPositionValueWad = SPECIFIC_INTEREST_AMOUNT_CASE_1;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_50_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-    //     await openSwapPayFixed(testData, params);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-    //     //when
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
-    //         //then
-    //         "IPOR_16"
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("636796358352768143662");
-    //     let expectedIncomeTaxValueWad = BigInt("636796358352768143662");
-    //     let expectedPositionValue = BigInt("6367963583527681436620");
-    //     let expectedPositionValueWad = BigInt("6367963583527681436620");
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_50_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_161_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, before maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: PERCENTAGE_121_18DEC,
-    //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-    //     await openSwapPayFixed(testData, params);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-    //     //when
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
-    //         //then
-    //         "IPOR_16"
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("856889782380354383694");
-    //     let expectedIncomeTaxValueWad = BigInt("856889782380354383694");
-    //     let expectedPositionValue = BigInt("-8568897823803543836942");
-    //     let expectedPositionValueWad = BigInt("-8568897823803543836942");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_121_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_161_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price not changed, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("6826719107555402563");
-    //     let expectedIncomeTaxValueWad = BigInt("6826719107555402563");
-    //     let expectedPositionValue = BigInt("-68267191075554025634");
-    //     let expectedPositionValueWad = BigInt("-68267191075554025634");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_3_18DEC,
-    //         PERCENTAGE_3_18DEC,
-    //         PERCENTAGE_3_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price changed 25%, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
-    //     let expectedPositionValue = BigInt("-68267191075554046114");
-    //     let expectedPositionValueWad = BigInt("-68267191075554046114");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_365_18DEC,
-    //         PERCENTAGE_365_18DEC,
-    //         PERCENTAGE_365_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("279895483409771589481");
-    //     let expectedIncomeTaxValueWad = BigInt("279895483409771589481");
-    //     let expectedPositionValue = BigInt("-2798954834097715894807");
-    //     let expectedPositionValueWad = BigInt("-2798954834097715894807");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("791899416476426932749");
-    //     let expectedIncomeTaxValueWad = BigInt("791899416476426932749");
-    //     let expectedPositionValue = BigInt("-7918994164764269327486");
-    //     let expectedPositionValueWad = BigInt("-7918994164764269327486");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("841597931579430277365");
-    //     let expectedIncomeTaxValueWad = BigInt("841597931579430277365");
-    //     let expectedPositionValue = BigInt("8415979315794302773646");
-    //     let expectedPositionValueWad = BigInt("8415979315794302773646");
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("652088209153692249992");
-    //     let expectedIncomeTaxValueWad = BigInt("652088209153692249992");
-    //     let expectedPositionValue = BigInt("-6520882091536922499916");
-    //     let expectedPositionValueWad = BigInt("-6520882091536922499916");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_50_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("11900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-    //     await openSwapReceiveFixed(testData, params);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-    //     //when
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
-    //         //then
-    //         "IPOR_16"
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-    //     await openSwapReceiveFixed(testData, params);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-    //     let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-    //     //when
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
-    //         //then
-    //         "IPOR_16"
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("841597931579430277365");
-    //     let expectedIncomeTaxValueWad = BigInt("841597931579430277365");
-    //     let expectedPositionValue = BigInt("8415979315794302773646");
-    //     let expectedPositionValueWad = BigInt("8415979315794302773646");
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("652088209153692249992");
-    //     let expectedIncomeTaxValueWad = BigInt("652088209153692249992");
-    //     let expectedPositionValue = BigInt("-6520882091536922499916");
-    //     let expectedPositionValueWad = BigInt("-6520882091536922499916");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_50_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_161_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should NOT close position, because incorrect swap Id", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let openerUser = userTwo;
-    //     let closerUser = userTwo;
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParamsFirst = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: openerUser,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParamsFirst.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(USD_28_000_18DEC, derivativeParamsFirst.openTimestamp);
-    //     await openSwapPayFixed(testData, derivativeParamsFirst);
-
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai
-    //             .connect(closerUser)
-    //             .itfCloseSwapPayFixed(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
-    //         //then
-    //         "IPOR_22"
-    //     );
-    // });
-
-    // it("should NOT close position, because swap has incorrect status - pay fixed", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const openerUser = userTwo;
-    //     const closerUser = userTwo;
-    //     const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     const openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParamsFirst = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: openerUser,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParamsFirst.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(
-    //             USD_28_000_18DEC + USD_28_000_18DEC,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await openSwapPayFixed(testData, derivativeParamsFirst);
-
-    //     const derivativeParams25days = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-    //         openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-    //         from: openerUser,
-    //     };
-    //     await openSwapPayFixed(testData, derivativeParams25days);
-
-    //     const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
-
-    //     await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
-
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp),
-    //         //then
-    //         "IPOR_23"
-    //     );
-    // });
-
-    // it("should NOT close position, because swap has incorrect status - receive fixed", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const openerUser = userTwo;
-    //     const closerUser = userTwo;
-    //     const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     const openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParamsFirst = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: openerUser,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParamsFirst.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(
-    //             USD_28_000_18DEC + USD_28_000_18DEC,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await openSwapReceiveFixed(testData, derivativeParamsFirst);
-
-    //     const derivativeParams25days = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
-    //         openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-    //         from: openerUser,
-    //     };
-    //     await openSwapReceiveFixed(testData, derivativeParams25days);
-
-    //     const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
-
-    //     await testData.miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
-
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp),
-    //         //then
-    //         "IPOR_23"
-    //     );
-    // });
-
-    // it("should NOT close position, because swap not exists", async () => {
-    //     //given
-    //     const testData = await prepareTestDataDaiCase1(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-    //     let closerUser = userTwo;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai
-    //             .connect(closerUser)
-    //             .itfCloseSwapPayFixed(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
-    //         //then
-    //         "IPOR_22"
-    //     );
-    // });
-
-    // it("should close only one position - close first position", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let openerUser = userTwo;
-    //     let closerUser = userTwo;
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParamsFirst = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: openerUser,
-    //     };
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(
-    //             USD_28_000_18DEC + USD_28_000_18DEC,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParamsFirst.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await openSwapPayFixed(testData, derivativeParamsFirst);
-
-    //     const derivativeParams25days = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-    //         from: openerUser,
-    //     };
-    //     await openSwapPayFixed(testData, derivativeParams25days);
-    //     let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
-    //     let expectedOpenedPositionsVol = 1;
-    //     let expectedDerivativeId = BigInt(2);
-
-    //     //when
-    //     await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
-
-    //     //then
-    //     let actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
-    //         derivativeParams25days.from.address
-    //     );
-    //     let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
-
-    //     expect(
-    //         expectedOpenedPositionsVol,
-    //         `Incorrect number of opened positions actual: ${actualOpenedPositionsVol}, expected: ${expectedOpenedPositionsVol}`
-    //     ).to.be.eq(actualOpenedPositionsVol);
-
-    //     let oneDerivative = actualDerivatives[0];
-
-    //     expect(
-    //         expectedDerivativeId,
-    //         `Incorrect swap id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
-    //     ).to.be.eq(BigInt(oneDerivative.id));
-    // });
-
-    // it("should close only one position - close last position", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let openerUser = userTwo;
-    //     let closerUser = userTwo;
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParamsFirst = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: openerUser,
-    //     };
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(
-    //             USD_28_000_18DEC + USD_28_000_18DEC,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParamsFirst.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParamsFirst.openTimestamp
-    //         );
-    //     await openSwapPayFixed(testData, derivativeParamsFirst);
-
-    //     const derivativeParams25days = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-    //         from: openerUser,
-    //     };
-    //     await openSwapPayFixed(testData, derivativeParams25days);
-    //     let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
-    //     let expectedOpenedPositionsVol = 1;
-    //     let expectedDerivativeId = BigInt(1);
-
-    //     //when
-    //     await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(2, endTimestamp);
-
-    //     //then
-    //     let actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
-    //         derivativeParams25days.from.address
-    //     );
-    //     let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
-
-    //     expect(
-    //         expectedOpenedPositionsVol,
-    //         `Incorrect number of opened positions actual: ${actualOpenedPositionsVol}, expected: ${expectedOpenedPositionsVol}`
-    //     ).to.be.eq(actualOpenedPositionsVol);
-
-    //     let oneDerivative = actualDerivatives[0];
-
-    //     expect(
-    //         expectedDerivativeId,
-    //         `Incorrect swap id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
-    //     ).to.be.eq(BigInt(oneDerivative.id));
-    // });
-
-    // it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity, IPOR index calculated before close", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("636796358352768143662");
-    //     let expectedPositionValue = BigInt("6367963583527681436620");
-    //     let collateralizationFactor = USD_10_18DEC;
-    //     let openerUser = userTwo;
-    //     let closerUser = userTwo;
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_5_18DEC;
-    //     let iporValueAfterOpenSwap = PERCENTAGE_50_18DEC;
-    //     let periodOfTimeElapsedInSeconds = PERIOD_50_DAYS_IN_SECONDS;
-    //     let expectedOpenedPositions = 0;
-    //     let expectedDerivativesTotalBalanceWad = ZERO;
-    //     let expectedLiquidationDepositTotalBalanceWad = ZERO;
-    //     let expectedTreasuryTotalBalanceWad = expectedIncomeTaxValue;
-    //     let expectedSoap = ZERO;
-    //     let openTimestamp = null;
-
-    //     let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
-
-    //     let closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
-    //     let openerUserLost =
-    //         TC_OPENING_FEE_18DEC +
-    //         TC_IPOR_PUBLICATION_AMOUNT_18DEC +
-    //         TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC -
-    //         expectedPositionValue +
-    //         expectedIncomeTaxValue;
-
-    //     let closerUserLost = null;
-    //     let openerUserEarned = null;
-
-    //     if (openerUser.address === closerUser.address) {
-    //         closerUserLost = openerUserLost;
-    //         openerUserEarned = closerUserEarned;
-    //     } else {
-    //         closerUserLost = ZERO;
-    //         openerUserEarned = ZERO;
-    //     }
-
-    //     let expectedMiltonUnderlyingTokenBalance =
-    //         miltonBalanceBeforePayoutWad +
-    //         TC_OPENING_FEE_18DEC +
-    //         TC_IPOR_PUBLICATION_AMOUNT_18DEC -
-    //         expectedPositionValue +
-    //         expectedIncomeTaxValue;
-
-    //     let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
-    //         USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
-    //     let expectedCloserUserUnderlyingTokenBalanceAfterClose =
-    //         USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
-
-    //     let expectedLiquidityPoolTotalBalanceWad =
-    //         miltonBalanceBeforePayoutWad - expectedPositionValue + TC_OPENING_FEE_18DEC;
-
-    //     //given
-    //     let localOpenTimestamp = null;
-    //     if (openTimestamp != null) {
-    //         localOpenTimestamp = openTimestamp;
-    //     } else {
-    //         localOpenTimestamp = Math.floor(Date.now() / 1000);
-    //     }
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: collateralizationFactor,
-    //         openTimestamp: localOpenTimestamp,
-    //         from: openerUser,
-    //     };
-
-    //     if (miltonBalanceBeforePayoutWad != null) {
-    //         //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
-    //         await testData.josephDai
-    //             .connect(liquidityProvider)
-    //             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
-    //     }
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
-    //     await openSwapPayFixed(testData, params);
-    //     let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
-
-    //     //Important difference in opposite to other standard test cases - ipor is calculated right before closing position.
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, endTimestamp - 1);
-
-    //     //additional check for position value and for incomeTax value
-    //     const actualPositionValue = await testData.miltonDai
-    //         .connect(params.from)
-    //         .itfCalculateSwapPayFixedValue(endTimestamp, 1);
-
-    //     const actualIncomeTaxValue = await testData.miltonDai
-    //         .connect(params.from)
-    //         .itfCalculateIncomeTaxValue(actualPositionValue);
-
-    //     expect(actualPositionValue, "Incorrect position value").to.be.eq(expectedPositionValue);
-    //     expect(actualIncomeTaxValue, "Incorrect income tax value").to.be.eq(expectedIncomeTaxValue);
-
-    //     //when
-    //     await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
-
-    //     //then
-    //     await assertExpectedValues(
-    //         testData,
-    //         params.asset,
-    //         0,
-    //         openerUser,
-    //         closerUser,
-    //         miltonBalanceBeforePayoutWad,
-    //         expectedMiltonUnderlyingTokenBalance,
-    //         expectedOpenerUserUnderlyingTokenBalanceAfterClose,
-    //         expectedCloserUserUnderlyingTokenBalanceAfterClose,
-    //         expectedLiquidityPoolTotalBalanceWad,
-    //         expectedOpenedPositions,
-    //         expectedDerivativesTotalBalanceWad,
-    //         expectedLiquidationDepositTotalBalanceWad,
-    //         expectedTreasuryTotalBalanceWad
-    //     );
-
-    //     const soapParams = {
-    //         asset: params.asset,
-    //         calculateTimestamp: endTimestamp,
-    //         expectedSoap: expectedSoap,
-    //         from: openerUser,
-    //     };
-    //     await assertSoap(testData, soapParams);
-    // });
-
-    // it("should open many positions and arrays with ids have correct state, one user", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let openerUser = userTwo;
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParams = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: openerUser,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParams.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParams.openTimestamp
-    //         );
-
-    //     let expectedUserDerivativeIdsLength = 3;
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
-
-    //     //when
-    //     await openSwapPayFixed(testData, derivativeParams);
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await openSwapPayFixed(testData, derivativeParams);
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //then
-    //     let actualUserDerivativeIds = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         openerUser.address
-    //     );
-
-    //     expect(
-    //         expectedUserDerivativeIdsLength,
-    //         `Incorrect user swap ids length actual: ${actualUserDerivativeIds.length}, expected: ${expectedUserDerivativeIdsLength}`
-    //     ).to.be.eq(actualUserDerivativeIds.length);
-
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 2, 0, 1, 1);
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 3, 0, 2, 2);
-    // });
-
-    // it("should open many positions and arrays with ids have correct state, two users", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParams = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: userTwo,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParams.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParams.openTimestamp
-    //         );
-
-    //     let expectedUserDerivativeIdsLengthFirst = 2;
-    //     let expectedUserDerivativeIdsLengthSecond = 1;
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
-
-    //     //when
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     derivativeParams.from = userThree;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     derivativeParams.from = userTwo;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //then
-    //     let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-    //     let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userThree.address
-    //     );
-
-    //     expect(
-    //         expectedUserDerivativeIdsLengthFirst,
-    //         `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
-    //     ).to.be.eq(actualUserDerivativeIdsFirst.length);
-    //     expect(
-    //         expectedUserDerivativeIdsLengthSecond,
-    //         `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
-    //     ).to.be.eq(actualUserDerivativeIdsSecond.length);
-
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 2, 0, 1, 0);
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 3, 0, 2, 1);
-    // });
-
-    // it("should open many positions and close one position and arrays with ids have correct state, two users", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParams = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: userTwo,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParams.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParams.openTimestamp
-    //         );
-
-    //     let expectedUserDerivativeIdsLengthFirst = 2;
-    //     let expectedUserDerivativeIdsLengthSecond = 0;
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
-
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     derivativeParams.from = userThree;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     derivativeParams.from = userTwo;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
-
-    //     //then
-    //     let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-    //     let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userThree.address
-    //     );
-
-    //     expect(
-    //         expectedUserDerivativeIdsLengthFirst,
-    //         `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
-    //     ).to.be.eq(actualUserDerivativeIdsFirst.length);
-    //     expect(
-    //         expectedUserDerivativeIdsLengthSecond,
-    //         `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
-    //     ).to.be.eq(actualUserDerivativeIdsSecond.length);
-
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 3, 0, 1, 1);
-    // });
-
-    // it("should open many positions and close two positions and arrays with ids have correct state, two users", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParams = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: userTwo,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParams.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParams.openTimestamp
-    //         );
-
-    //     let expectedUserDerivativeIdsLengthFirst = 1;
-    //     let expectedUserDerivativeIdsLengthSecond = 0;
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
-
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     derivativeParams.from = userThree;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     derivativeParams.from = userTwo;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
-    //     await testData.miltonDai
-    //         .connect(userTwo)
-    //         .itfCloseSwapPayFixed(3, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
-
-    //     //then
-    //     let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-    //     let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userThree.address
-    //     );
-
-    //     expect(
-    //         expectedUserDerivativeIdsLengthFirst,
-    //         `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
-    //     ).to.be.eq(actualUserDerivativeIdsFirst.length);
-    //     expect(
-    //         expectedUserDerivativeIdsLengthSecond,
-    //         `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
-    //     ).to.be.eq(actualUserDerivativeIdsSecond.length);
-
-    //     await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
-    // });
-
-    // it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParams = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: userThree,
-    //     };
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, derivativeParams.openTimestamp);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParams.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParams.openTimestamp
-    //         );
-
-    //     let expectedUserDerivativeIdsLengthFirst = 0;
-    //     let expectedUserDerivativeIdsLengthSecond = 0;
-
-    //     //position 1, user first
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //position 2, user second
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
-
-    //     //then
-    //     let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-    //     let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-
-    //     expect(
-    //         expectedUserDerivativeIdsLengthFirst,
-    //         `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
-    //     ).to.be.eq(actualUserDerivativeIdsFirst.length);
-    //     expect(
-    //         expectedUserDerivativeIdsLengthSecond,
-    //         `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
-    //     ).to.be.eq(actualUserDerivativeIdsSecond.length);
-    // });
-
-    // it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1 with minus 3", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParams = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: userThree,
-    //     };
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, derivativeParams.openTimestamp);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParams.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParams.openTimestamp
-    //         );
-
-    //     let expectedUserDerivativeIdsLengthFirst = 0;
-    //     let expectedUserDerivativeIdsLengthSecond = 0;
-
-    //     //position 1, user first
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //position 2, user second
-    //     derivativeParams.openTimestamp =
-    //         derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS - 3;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
-
-    //     //then
-    //     let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-    //     let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-
-    //     expect(
-    //         expectedUserDerivativeIdsLengthFirst,
-    //         `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
-    //     ).to.be.eq(actualUserDerivativeIdsFirst.length);
-    //     expect(
-    //         expectedUserDerivativeIdsLengthSecond,
-    //         `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
-    //     ).to.be.eq(actualUserDerivativeIdsSecond.length);
-    // });
-
-    // it("should open two positions and close one position - Arithmetic overflow - last byte difference - case 1", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
-    //     let openTimestamp = Math.floor(Date.now() / 1000);
-
-    //     const derivativeParams = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: USD_10_18DEC,
-    //         openTimestamp: openTimestamp,
-    //         from: userThree,
-    //     };
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, derivativeParams.openTimestamp);
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(
-    //             derivativeParams.asset,
-    //             iporValueBeforeOpenSwap,
-    //             derivativeParams.openTimestamp
-    //         );
-
-    //     let expectedUserDerivativeIdsLengthFirst = 0;
-    //     let expectedUserDerivativeIdsLengthSecond = 0;
-
-    //     //position 1, user first
-    //     derivativeParams.from = userThree;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     //position 2, user second
-    //     derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-    //     derivativeParams.from = userThree;
-    //     await openSwapPayFixed(testData, derivativeParams);
-
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userThree)
-    //         .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
-
-    //     //then
-    //     let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-    //     let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
-    //         userTwo.address
-    //     );
-
-    //     expect(
-    //         expectedUserDerivativeIdsLengthFirst,
-    //         `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
-    //     ).to.be.eq(actualUserDerivativeIdsFirst.length);
-    //     expect(
-    //         expectedUserDerivativeIdsLengthSecond,
-    //         `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
-    //     ).to.be.eq(actualUserDerivativeIdsSecond.length);
-    // });
-
-    // it("should calculate income tax, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         2,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("420798965789715138682");
-    //     let expectedIncomeTaxValueWad = BigInt("420798965789715138682");
-    //     let expectedPositionValue = BigInt("8415979315794302773646");
-    //     let expectedPositionValueWad = BigInt("8415979315794302773646");
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_120_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate income tax, 5%, Milton loses, user earns, |I| > D", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         2,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("498350494851544536639");
-    //     let expectedIncomeTaxValueWad = BigInt("498350494851544536639");
-
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate income tax, 5%, Milton earns, user loses, |I| < D", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         2,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("395949708238213469173");
-    //     let expectedIncomeTaxValueWad = BigInt("395949708238213469173");
-    //     let expectedPositionValue = BigInt("-7918994164764269383465");
-    //     let expectedPositionValueWad = BigInt("-7918994164764269383465");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_121_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate income tax, 5%, Milton earns, user loses, |I| > D", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         2,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("498350494851544536639");
-    //     let expectedIncomeTaxValueWad = BigInt("498350494851544536639");
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate income tax, 100%, Milton loses, user earns, |I| < D", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("8415979315794302773646");
-    //     let expectedIncomeTaxValueWad = BigInt("8415979315794302773646");
-    //     let expectedPositionValue = BigInt("8415979315794302773646");
-    //     let expectedPositionValueWad = BigInt("8415979315794302773646");
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_119_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate income tax, 100%, Milton loses, user earns, |I| > D", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_COLLATERAL_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValue = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonLostAndUserEarn(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_6_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValue,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = BigInt("7918994164764269383465");
-    //     let expectedIncomeTaxValueWad = BigInt("7918994164764269383465");
-    //     let expectedPositionValue = BigInt("-7918994164764269383465");
-    //     let expectedPositionValueWad = BigInt("-7918994164764269383465");
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_120_18DEC,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_121_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     let expectedIncomeTaxValue = TC_COLLATERAL_18DEC;
-    //     let expectedIncomeTaxValueWad = TC_COLLATERAL_18DEC;
-    //     let expectedPositionValue = -TC_COLLATERAL_18DEC;
-    //     let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userThree,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_50_DAYS_IN_SECONDS,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         null,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should open pay fixed position, DAI, custom Opening Fee for Treasury 50%", async () => {
-    //     //given
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         4,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-    //     const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-    //     let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
-    //     let expectedTreasuryTotalBalanceWad = BigInt("149505148455463361");
-
-    //     let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-    //     let expectedLiquidityPoolTotalBalanceWad = BigInt("28002840597820653803859");
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userTwo)
-    //         .itfOpenSwapPayFixed(
-    //             params.openTimestamp,
-    //             params.totalAmount,
-    //             params.toleratedQuoteValue,
-    //             params.collateralizationFactor
-    //         );
-
-    //     //then
-    //     let balance = await testData.miltonStorageDai.getExtendedBalance();
-
-    //     const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
-    //     const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
-    //     const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
-
-    //     expect(
-    //         expectedOpeningFeeTotalBalanceWad,
-    //         `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
-    //         expected: ${expectedOpeningFeeTotalBalanceWad}`
-    //     ).to.be.eq(actualOpeningFeeTotalBalance);
-    //     expect(
-    //         expectedLiquidityPoolTotalBalanceWad,
-    //         `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
-    //         expected: ${expectedLiquidityPoolTotalBalanceWad}`
-    //     ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
-    //     expect(
-    //         expectedTreasuryTotalBalanceWad,
-    //         `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
-    //         expected: ${expectedTreasuryTotalBalanceWad}`
-    //     ).to.be.eq(actualTreasuryTotalBalanceWad);
-    // });
-
-    // it("should open pay fixed position, DAI, custom Opening Fee for Treasury 25%", async () => {
-    //     //given
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         5,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-    //     const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-    //     let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
-    //     let expectedTreasuryTotalBalanceWad = BigInt("74752574227731681");
-
-    //     let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-    //     let expectedLiquidityPoolTotalBalanceWad = BigInt("28002915350394881535539");
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userTwo)
-    //         .itfOpenSwapPayFixed(
-    //             params.openTimestamp,
-    //             params.totalAmount,
-    //             params.toleratedQuoteValue,
-    //             params.collateralizationFactor
-    //         );
-
-    //     //then
-    //     let balance = await testData.miltonStorageDai.getExtendedBalance();
-
-    //     const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
-    //     const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
-    //     const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
-
-    //     expect(
-    //         expectedOpeningFeeTotalBalanceWad,
-    //         `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
-    //         expected: ${expectedOpeningFeeTotalBalanceWad}`
-    //     ).to.be.eq(actualOpeningFeeTotalBalance);
-    //     expect(
-    //         expectedLiquidityPoolTotalBalanceWad,
-    //         `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
-    //         expected: ${expectedLiquidityPoolTotalBalanceWad}`
-    //     ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
-    //     expect(
-    //         expectedTreasuryTotalBalanceWad,
-    //         `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
-    //         expected: ${expectedTreasuryTotalBalanceWad}`
-    //     ).to.be.eq(actualTreasuryTotalBalanceWad);
-    // });
-
-    // it("should NOT open pay fixed position, DAI, collateralization factor too low", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: BigInt(500),
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-    //     //when
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai
-    //             .connect(userTwo)
-    //             .itfOpenSwapPayFixed(
-    //                 params.openTimestamp,
-    //                 params.totalAmount,
-    //                 params.toleratedQuoteValue,
-    //                 params.collateralizationFactor
-    //             ),
-    //         //then
-    //         "IPOR_12"
-    //     );
-    // });
-
-    // it("should NOT open pay fixed position, DAI, collateralization factor too high", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: BigInt("1000000000000000000001"),
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-    //     //when
-    //     await assertError(
-    //         //when
-    //         testData.miltonDai
-    //             .connect(userTwo)
-    //             .itfOpenSwapPayFixed(
-    //                 params.openTimestamp,
-    //                 params.totalAmount,
-    //                 params.toleratedQuoteValue,
-    //                 params.collateralizationFactor
-    //             ),
-    //         //then
-    //         "IPOR_34"
-    //     );
-    // });
-
-    // it("should open pay fixed position, DAI, custom collateralization factor - simple case 1", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     const params = {
-    //         asset: testData.tokenDai.address,
-    //         totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-    //         toleratedQuoteValue: BigInt("900000000000000000"),
-    //         collateralizationFactor: BigInt("15125000000000000000"),
-    //         openTimestamp: Math.floor(Date.now() / 1000),
-    //         from: userTwo,
-    //     };
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-
-    //     //when
-    //     await testData.miltonDai
-    //         .connect(userTwo)
-    //         .itfOpenSwapPayFixed(
-    //             params.openTimestamp,
-    //             params.totalAmount,
-    //             params.toleratedQuoteValue,
-    //             params.collateralizationFactor
-    //         );
-
-    //     //then
-    //     let actualDerivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
-    //     let actualNotionalAmount = BigInt(actualDerivativeItem.notionalAmount);
-    //     let expectedNotionalAmount = BigInt("150751024692592222333298");
-
-    //     expect(
-    //         expectedNotionalAmount,
-    //         `Incorrect notional amount for ${params.asset}, actual:  ${actualNotionalAmount},
-    //         expected: ${expectedNotionalAmount}`
-    //     ).to.be.eq(actualNotionalAmount);
-    // });
-
-    // it("should open pay fixed position - when open timestamp is long time ago", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-
-    //     let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
-    //     let expectedIncomeTaxValue = ZERO;
-    //     let expectedIncomeTaxValueWad = ZERO;
-    //     let expectedPositionValue = ZERO;
-    //     let expectedPositionValueWad = ZERO;
-
-    //     await testCaseWhenMiltonEarnAndUserLost(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_3_18DEC,
-    //         PERCENTAGE_3_18DEC,
-    //         PERCENTAGE_4_18DEC,
-    //         0,
-    //         0,
-    //         ZERO,
-    //         ZERO,
-    //         expectedIncomeTaxValueWad,
-    //         ZERO,
-    //         veryLongTimeAgoTimestamp,
-    //         expectedIncomeTaxValueWad,
-    //         expectedPositionValue,
-    //         expectedPositionValueWad
-    //     );
-    // });
-
-    // it("should calculate Pay Fixed Position Value - simple case 1", async () => {
-    //     //given
-    //     const testData = await prepareComplexTestDataDaiCase00(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         data
-    //     );
-    //     const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-    //     await testData.warren
-    //         .connect(userOne)
-    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-    //     let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-    //     await testData.josephDai
-    //         .connect(liquidityProvider)
-    //         .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
-    //     await openSwapPayFixed(testData, params);
-    //     let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
-
-    //     let expectedPositionValue = BigInt("-38229627002310297226");
-
-    //     //when
-    //     let actualPositionValue = BigInt(
-    //         await testData.miltonDai.itfCalculateSwapPayFixedValue(
-    //             params.openTimestamp + PERIOD_14_DAYS_IN_SECONDS,
-    //             derivativeItem.id
-    //         )
-    //     );
-
-    //     //then
-    //     expect(
-    //         expectedPositionValue,
-    //         `Incorrect position value, actual: ${actualPositionValue}, expected: ${expectedPositionValue}`
-    //     ).to.be.eq(actualPositionValue);
-    // });
-
-    // it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await assertError(
-    //         testCaseWhenUserClosesMultiplePositions(
-    //             testData,
-    //             testData.tokenDai.address,
-    //             USD_10_18DEC,
-    //             0,
-    //             userTwo,
-    //             userTwo,
-    //             PERCENTAGE_5_18DEC,
-    //             PERCENTAGE_160_18DEC,
-    //             PERIOD_25_DAYS_IN_SECONDS,
-    //             USD_10_000_000_18DEC,
-    //             0,
-    //             [],
-    //             0
-    //         ),
-    //         "IPOR_62"
-    //     );
-    // });
-
-    // it("should close single pay fixed position using multicall function, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await testCaseWhenUserClosesMultiplePositions(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         USD_10_000_000_18DEC,
-    //         1,
-    //         [1],
-    //         0
-    //     );
-    // });
-
-    // it("should close two pay fixed position using multicall function, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await testCaseWhenUserClosesMultiplePositions(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         0,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         USD_10_000_000_18DEC,
-    //         2,
-    //         [1, 2],
-    //         0
-    //     );
-    // });
-
-    // it("should NOT close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await assertError(
-    //         testCaseWhenUserClosesMultiplePositions(
-    //             testData,
-    //             testData.tokenDai.address,
-    //             USD_10_18DEC,
-    //             0,
-    //             userTwo,
-    //             userTwo,
-    //             PERCENTAGE_5_18DEC,
-    //             PERCENTAGE_160_18DEC,
-    //             PERIOD_25_DAYS_IN_SECONDS,
-    //             USD_10_000_000_18DEC,
-    //             2,
-    //             [1, 300],
-    //             0
-    //         ),
-    //         "IPOR_23"
-    //     );
-    // });
-
-    // it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await assertError(
-    //         testCaseWhenUserClosesMultiplePositions(
-    //             testData,
-    //             testData.tokenDai.address,
-    //             USD_10_18DEC,
-    //             1,
-    //             userTwo,
-    //             userTwo,
-    //             PERCENTAGE_5_18DEC,
-    //             PERCENTAGE_160_18DEC,
-    //             PERIOD_25_DAYS_IN_SECONDS,
-    //             USD_10_000_000_18DEC,
-    //             0,
-    //             [],
-    //             0
-    //         ),
-    //         "IPOR_62"
-    //     );
-    // });
-
-    // it("should close single receive fixed position using multicall function, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await testCaseWhenUserClosesMultiplePositions(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         USD_10_000_000_18DEC,
-    //         1,
-    //         [1],
-    //         0
-    //     );
-    // });
-
-    // it("should close two receive fixed position using multicall function, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await testCaseWhenUserClosesMultiplePositions(
-    //         testData,
-    //         testData.tokenDai.address,
-    //         USD_10_18DEC,
-    //         1,
-    //         userTwo,
-    //         userTwo,
-    //         PERCENTAGE_5_18DEC,
-    //         PERCENTAGE_160_18DEC,
-    //         PERIOD_25_DAYS_IN_SECONDS,
-    //         USD_10_000_000_18DEC,
-    //         2,
-    //         [1, 2],
-    //         0
-    //     );
-    // });
-
-    // it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
-    //     const testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data,
-    //         3,
-    //         1
-    //     );
-
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-
-    //     await assertError(
-    //         testCaseWhenUserClosesMultiplePositions(
-    //             testData,
-    //             testData.tokenDai.address,
-    //             USD_10_18DEC,
-    //             1,
-    //             userTwo,
-    //             userTwo,
-    //             PERCENTAGE_5_18DEC,
-    //             PERCENTAGE_160_18DEC,
-    //             PERIOD_25_DAYS_IN_SECONDS,
-    //             USD_10_000_000_18DEC,
-    //             2,
-    //             [1, 300],
-    //             0
-    //         ),
-    //         "IPOR_23"
-    //     );
-    // });
+    it("should NOT open position because totalAmount amount too high", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const totalAmount = BigInt("1000000000000000000000001");
+        const toleratedQuoteValue = 3;
+        const collateralizationFactor = BigInt(10000000000000000000);
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await assertError(
+            //when
+            testData.miltonDai.itfOpenSwapPayFixed(
+                timestamp,
+                totalAmount,
+                toleratedQuoteValue,
+                collateralizationFactor
+            ),
+            //then
+            "IPOR_10"
+        );
+    });
+
+    it("should NOT open position because totalAmount amount too high - case 2", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const totalAmount = BigInt("100688870576704582165765");
+        const toleratedQuoteValue = 3;
+        const collateralizationFactor = BigInt(10000000000000000000);
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await assertError(
+            //when
+            testData.miltonDai.itfOpenSwapPayFixed(
+                timestamp,
+                totalAmount,
+                toleratedQuoteValue,
+                collateralizationFactor
+            ),
+            //then
+            "IPOR_10"
+        );
+    });
+
+    it("should open pay fixed position - simple case DAI - 18 decimals", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        let collateralWad = TC_COLLATERAL_18DEC;
+        let openingFee = TC_OPENING_FEE_18DEC;
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+
+        let expectedMiltonUnderlyingTokenBalance =
+            miltonBalanceBeforePayoutWad + params.totalAmount;
+        let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad + openingFee;
+        let expectedDerivativesTotalBalanceWad = collateralWad;
+
+        //when
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.collateralizationFactor
+            );
+
+        //then
+        await assertExpectedValues(
+            testData,
+            params.asset,
+            0,
+            userTwo,
+            userTwo,
+            miltonBalanceBeforePayoutWad,
+            expectedMiltonUnderlyingTokenBalance,
+            BigInt("9990000000000000000000000"),
+            BigInt("9990000000000000000000000"),
+            expectedLiquidityPoolTotalBalanceWad,
+            1,
+            TC_COLLATERAL_18DEC,
+            USD_20_18DEC,
+            BigInt("0")
+        );
+
+        const actualPayFixDerivativesBalanceWad = BigInt(
+            await (
+                await testData.miltonDai.getAccruedBalance()
+            ).payFixedSwaps
+        );
+        const actualRecFixDerivativesBalanceWad = BigInt(
+            await (
+                await testData.miltonDai.getAccruedBalance()
+            ).receiveFixedSwaps
+        );
+        const actualDerivativesTotalBalanceWad =
+            actualPayFixDerivativesBalanceWad + actualRecFixDerivativesBalanceWad;
+
+        expect(
+            expectedDerivativesTotalBalanceWad,
+            `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalanceWad}, expected ${expectedDerivativesTotalBalanceWad}Wad`
+        ).to.be.eq(actualDerivativesTotalBalanceWad);
+    });
+
+    it("should open pay fixed position - simple case USDT - 6 decimals", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            data,
+            0,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);
+
+        let collateralWad = TC_COLLATERAL_18DEC;
+        let openingFee = TC_OPENING_FEE_18DEC;
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        let miltonBalanceBeforePayout = USD_28_000_6DEC;
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+
+        await testData.josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayout, params.openTimestamp);
+
+        let expectedMiltonUnderlyingTokenBalance = miltonBalanceBeforePayout + params.totalAmount;
+        let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad + openingFee;
+        let expectedDerivativesTotalBalanceWad = collateralWad;
+
+        //when
+        await testData.miltonUsdt
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.collateralizationFactor
+            );
+
+        //then
+        await assertExpectedValues(
+            testData,
+            params.asset,
+            0,
+            userTwo,
+            userTwo,
+            miltonBalanceBeforePayout,
+            expectedMiltonUnderlyingTokenBalance,
+            BigInt("9990000000000"),
+            BigInt("9990000000000"),
+            expectedLiquidityPoolTotalBalanceWad,
+            1,
+            TC_COLLATERAL_18DEC,
+            USD_20_18DEC,
+            BigInt("0")
+        );
+        const actualPayFixDerivativesBalanceWad = BigInt(
+            await (
+                await testData.miltonUsdt.getAccruedBalance()
+            ).payFixedSwaps
+        );
+
+        const actualRecFixDerivativesBalanceWad = BigInt(
+            await (
+                await testData.miltonUsdt.getAccruedBalance()
+            ).receiveFixedSwaps
+        );
+
+        const actualDerivativesTotalBalanceWad =
+            actualPayFixDerivativesBalanceWad + actualRecFixDerivativesBalanceWad;
+
+        expect(
+            expectedDerivativesTotalBalanceWad,
+            `Incorrect derivatives total balance for ${params.asset} actual ${actualDerivativesTotalBalanceWad}, expected ${expectedDerivativesTotalBalanceWad}Wad`
+        ).to.be.eq(actualDerivativesTotalBalanceWad);
+    });
+
+    it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+        let liquidationDepositAmount = USD_20_18DEC;
+
+        let expectedIncomeTaxValue = BigInt("0");
+        let expectedIncomeTaxValueWad = BigInt("0");
+
+        let totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
+        let collateral = TC_COLLATERAL_18DEC;
+        let openingFee = TC_OPENING_FEE_18DEC;
+
+        let diffAfterClose = totalAmount - collateral - liquidationDepositAmount;
+
+        let expectedOpenerUserUnderlyingTokenBalanceAfterPayOut =
+            USER_SUPPLY_10MLN_18DEC - diffAfterClose;
+        let expectedCloserUserUnderlyingTokenBalanceAfterPayOut =
+            USER_SUPPLY_10MLN_18DEC - diffAfterClose;
+
+        let expectedMiltonUnderlyingTokenBalance = miltonBalanceBeforePayoutWad + diffAfterClose;
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad + openingFee - expectedIncomeTaxValue;
+
+        let expectedPositionValue = BigInt("0");
+
+        await exetuceCloseSwapTestCase(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_4_18DEC,
+            0,
+            miltonBalanceBeforePayoutWad,
+            expectedMiltonUnderlyingTokenBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+            expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
+            expectedLiquidityPoolTotalBalanceWad,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValue,
+            ZERO,
+            null,
+            expectedPositionValue,
+            expectedIncomeTaxValue
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, DAI 18 decimals", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
+        let expectedPositionValue = BigInt("-68267191075554046114");
+        let expectedPositionValueWad = BigInt("-68267191075554046114");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_365_18DEC,
+            PERCENTAGE_365_18DEC,
+            PERCENTAGE_366_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, USDT, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, USDT 6 decimals", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            data,
+            0,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
+        let expectedPositionValue = BigInt("-68267191");
+        let expectedPositionValueWad = BigInt("-68267191075554046114");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenUsdt.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_365_18DEC,
+            PERCENTAGE_365_18DEC,
+            PERCENTAGE_366_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should NOT open position because Liquidity Pool balance is to low", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: BigInt("10000000000000000000000"), //10 000 USD
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        let closeSwapTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, BigInt("10000000000000000"), params.openTimestamp);
+
+        await openSwapPayFixed(testData, params);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, BigInt("50000000000000000"), closeSwapTimestamp);
+
+        await testData.miltonStorageDai.setJoseph(userOne.address);
+
+        await testData.miltonStorageDai
+            .connect(userOne)
+            .subtractLiquidity(BigInt("20000000000000000000000"));
+
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, closeSwapTimestamp),
+            //then
+            "IPOR_14"
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_161_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, USDT, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, USDT 6 decimals", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            data,
+            0,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_6DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenUsdt.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_161_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, DAI 18 decimals", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValueWad = BigInt("791899416476426938347");
+        let expectedPositionValue = BigInt("-7918994164764269383465");
+        let expectedPositionValueWad = BigInt("-7918994164764269383465");
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_121_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, USDT, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, USDT 6 decimals", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            data,
+            0,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValueWad = BigInt("791899416476426938347");
+        let expectedPositionValue = BigInt("-7918994165");
+        let expectedPositionValueWad = BigInt("-7918994164764269383465");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenUsdt.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_121_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValueWad = BigInt("856889782380354383694");
+        let expectedPositionValue = BigInt("-8568897823803543836942");
+        let expectedPositionValueWad = BigInt("-8568897823803543836942");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_121_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, DAI 18 decimals", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, USDT 6 decimals", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            data,
+            0,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("996700990");
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_6DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenUsdt.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, DAI 18 decimals", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("778245978261316123526");
+        let expectedIncomeTaxValueWad = BigInt("778245978261316123526");
+
+        let expectedPositionValue = BigInt("7782459782613161235257");
+        let expectedPositionValueWad = BigInt("7782459782613161235257");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, USDT 6 decimals", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            data,
+            0,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("778245978");
+        let expectedIncomeTaxValueWad = BigInt("778245978261316123526");
+        let expectedPositionValue = BigInt("7782459782");
+        let expectedPositionValueWad = BigInt("7782459782613161235257");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenUsdt.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = SPECIFIC_INCOME_TAX_CASE_1;
+        let expectedIncomeTaxValueWad = SPECIFIC_INCOME_TAX_CASE_1;
+        let expectedPositionValue = SPECIFIC_INTEREST_AMOUNT_CASE_1;
+        let expectedPositionValueWad = SPECIFIC_INTEREST_AMOUNT_CASE_1;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_50_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "IPOR_16"
+        );
+    });
+
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("636796358352768143662");
+        let expectedIncomeTaxValueWad = BigInt("636796358352768143662");
+        let expectedPositionValue = BigInt("6367963583527681436620");
+        let expectedPositionValueWad = BigInt("6367963583527681436620");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_50_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_161_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: PERCENTAGE_121_18DEC,
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "IPOR_16"
+        );
+    });
+
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("856889782380354383694");
+        let expectedIncomeTaxValueWad = BigInt("856889782380354383694");
+        let expectedPositionValue = BigInt("-8568897823803543836942");
+        let expectedPositionValueWad = BigInt("-8568897823803543836942");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_121_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_161_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price not changed, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("6826719107555402563");
+        let expectedIncomeTaxValueWad = BigInt("6826719107555402563");
+        let expectedPositionValue = BigInt("-68267191075554025634");
+        let expectedPositionValueWad = BigInt("-68267191075554025634");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_3_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price changed 25%, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
+        let expectedPositionValue = BigInt("-68267191075554046114");
+        let expectedPositionValueWad = BigInt("-68267191075554046114");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_365_18DEC,
+            PERCENTAGE_365_18DEC,
+            PERCENTAGE_365_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("279895483409771589481");
+        let expectedIncomeTaxValueWad = BigInt("279895483409771589481");
+        let expectedPositionValue = BigInt("-2798954834097715894807");
+        let expectedPositionValueWad = BigInt("-2798954834097715894807");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("791899416476426932749");
+        let expectedIncomeTaxValueWad = BigInt("791899416476426932749");
+        let expectedPositionValue = BigInt("-7918994164764269327486");
+        let expectedPositionValueWad = BigInt("-7918994164764269327486");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("841597931579430277365");
+        let expectedIncomeTaxValueWad = BigInt("841597931579430277365");
+        let expectedPositionValue = BigInt("8415979315794302773646");
+        let expectedPositionValueWad = BigInt("8415979315794302773646");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("652088209153692249992");
+        let expectedIncomeTaxValueWad = BigInt("652088209153692249992");
+        let expectedPositionValue = BigInt("-6520882091536922499916");
+        let expectedPositionValueWad = BigInt("-6520882091536922499916");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_50_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("11900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        await openSwapReceiveFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
+            //then
+            "IPOR_16"
+        );
+    });
+
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapReceiveFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
+            //then
+            "IPOR_16"
+        );
+    });
+
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("841597931579430277365");
+        let expectedIncomeTaxValueWad = BigInt("841597931579430277365");
+        let expectedPositionValue = BigInt("8415979315794302773646");
+        let expectedPositionValueWad = BigInt("8415979315794302773646");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("652088209153692249992");
+        let expectedIncomeTaxValueWad = BigInt("652088209153692249992");
+        let expectedPositionValue = BigInt("-6520882091536922499916");
+        let expectedPositionValueWad = BigInt("-6520882091536922499916");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_50_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_161_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should NOT close position, because incorrect swap Id", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let openerUser = userTwo;
+        let closerUser = userTwo;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParamsFirst = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, derivativeParamsFirst.openTimestamp);
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        await assertError(
+            //when
+            testData.miltonDai
+                .connect(closerUser)
+                .itfCloseSwapPayFixed(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
+            //then
+            "IPOR_22"
+        );
+    });
+
+    it("should NOT close position, because swap has incorrect status - pay fixed", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const openerUser = userTwo;
+        const closerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParamsFirst = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                USD_28_000_18DEC + USD_28_000_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        const derivativeParams25days = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            from: openerUser,
+        };
+        await openSwapPayFixed(testData, derivativeParams25days);
+
+        const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+
+        await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+
+        await assertError(
+            //when
+            testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "IPOR_23"
+        );
+    });
+
+    it("should NOT close position, because swap has incorrect status - receive fixed", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const openerUser = userTwo;
+        const closerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParamsFirst = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                USD_28_000_18DEC + USD_28_000_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapReceiveFixed(testData, derivativeParamsFirst);
+
+        const derivativeParams25days = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            from: openerUser,
+        };
+        await openSwapReceiveFixed(testData, derivativeParams25days);
+
+        const endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+
+        await testData.miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
+
+        await assertError(
+            //when
+            testData.miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp),
+            //then
+            "IPOR_23"
+        );
+    });
+
+    it("should NOT close position, because swap not exists", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        let closerUser = userTwo;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        await assertError(
+            //when
+            testData.miltonDai
+                .connect(closerUser)
+                .itfCloseSwapPayFixed(0, openTimestamp + PERIOD_25_DAYS_IN_SECONDS),
+            //then
+            "IPOR_22"
+        );
+    });
+
+    it("should close only one position - close first position", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let openerUser = userTwo;
+        let closerUser = userTwo;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParamsFirst = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                USD_28_000_18DEC + USD_28_000_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        const derivativeParams25days = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            from: openerUser,
+        };
+        await openSwapPayFixed(testData, derivativeParams25days);
+        let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+        let expectedOpenedPositionsVol = 1;
+        let expectedDerivativeId = BigInt(2);
+
+        //when
+        await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+
+        //then
+        let actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
+            derivativeParams25days.from.address
+        );
+        let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
+
+        expect(
+            expectedOpenedPositionsVol,
+            `Incorrect number of opened positions actual: ${actualOpenedPositionsVol}, expected: ${expectedOpenedPositionsVol}`
+        ).to.be.eq(actualOpenedPositionsVol);
+
+        let oneDerivative = actualDerivatives[0];
+
+        expect(
+            expectedDerivativeId,
+            `Incorrect swap id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
+        ).to.be.eq(BigInt(oneDerivative.id));
+    });
+
+    it("should close only one position - close last position", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let openerUser = userTwo;
+        let closerUser = userTwo;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParamsFirst = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                USD_28_000_18DEC + USD_28_000_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        const derivativeParams25days = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            from: openerUser,
+        };
+        await openSwapPayFixed(testData, derivativeParams25days);
+        let endTimestamp = openTimestamp + PERIOD_50_DAYS_IN_SECONDS;
+        let expectedOpenedPositionsVol = 1;
+        let expectedDerivativeId = BigInt(1);
+
+        //when
+        await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(2, endTimestamp);
+
+        //then
+        let actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
+            derivativeParams25days.from.address
+        );
+        let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
+
+        expect(
+            expectedOpenedPositionsVol,
+            `Incorrect number of opened positions actual: ${actualOpenedPositionsVol}, expected: ${expectedOpenedPositionsVol}`
+        ).to.be.eq(actualOpenedPositionsVol);
+
+        let oneDerivative = actualDerivatives[0];
+
+        expect(
+            expectedDerivativeId,
+            `Incorrect swap id actual: ${oneDerivative.id}, expected: ${expectedDerivativeId}`
+        ).to.be.eq(BigInt(oneDerivative.id));
+    });
+
+    it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity, IPOR index calculated before close", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("636796358352768143662");
+        let expectedPositionValue = BigInt("6367963583527681436620");
+        let collateralizationFactor = USD_10_18DEC;
+        let openerUser = userTwo;
+        let closerUser = userTwo;
+        let iporValueBeforeOpenSwap = PERCENTAGE_5_18DEC;
+        let iporValueAfterOpenSwap = PERCENTAGE_50_18DEC;
+        let periodOfTimeElapsedInSeconds = PERIOD_50_DAYS_IN_SECONDS;
+        let expectedOpenedPositions = 0;
+        let expectedDerivativesTotalBalanceWad = ZERO;
+        let expectedLiquidationDepositTotalBalanceWad = ZERO;
+        let expectedTreasuryTotalBalanceWad = expectedIncomeTaxValue;
+        let expectedSoap = ZERO;
+        let openTimestamp = null;
+
+        let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
+
+        let closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+        let openerUserLost =
+            TC_OPENING_FEE_18DEC +
+            TC_IPOR_PUBLICATION_AMOUNT_18DEC +
+            TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC -
+            expectedPositionValue +
+            expectedIncomeTaxValue;
+
+        let closerUserLost = null;
+        let openerUserEarned = null;
+
+        if (openerUser.address === closerUser.address) {
+            closerUserLost = openerUserLost;
+            openerUserEarned = closerUserEarned;
+        } else {
+            closerUserLost = ZERO;
+            openerUserEarned = ZERO;
+        }
+
+        let expectedMiltonUnderlyingTokenBalance =
+            miltonBalanceBeforePayoutWad +
+            TC_OPENING_FEE_18DEC +
+            TC_IPOR_PUBLICATION_AMOUNT_18DEC -
+            expectedPositionValue +
+            expectedIncomeTaxValue;
+
+        let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
+        let expectedCloserUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_10MLN_18DEC + closerUserEarned - closerUserLost;
+
+        let expectedLiquidityPoolTotalBalanceWad =
+            miltonBalanceBeforePayoutWad - expectedPositionValue + TC_OPENING_FEE_18DEC;
+
+        //given
+        let localOpenTimestamp = null;
+        if (openTimestamp != null) {
+            localOpenTimestamp = openTimestamp;
+        } else {
+            localOpenTimestamp = Math.floor(Date.now() / 1000);
+        }
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: collateralizationFactor,
+            openTimestamp: localOpenTimestamp,
+            from: openerUser,
+        };
+
+        if (miltonBalanceBeforePayoutWad != null) {
+            //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
+            await testData.josephDai
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+        }
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
+
+        //Important difference in opposite to other standard test cases - ipor is calculated right before closing position.
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, endTimestamp - 1);
+
+        //additional check for position value and for incomeTax value
+        const actualPositionValue = await testData.miltonDai
+            .connect(params.from)
+            .itfCalculateSwapPayFixedValue(endTimestamp, 1);
+
+        const actualIncomeTaxValue = await testData.miltonDai
+            .connect(params.from)
+            .itfCalculateIncomeTaxValue(actualPositionValue);
+
+        expect(actualPositionValue, "Incorrect position value").to.be.eq(expectedPositionValue);
+        expect(actualIncomeTaxValue, "Incorrect income tax value").to.be.eq(expectedIncomeTaxValue);
+
+        //when
+        await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+
+        //then
+        await assertExpectedValues(
+            testData,
+            params.asset,
+            0,
+            openerUser,
+            closerUser,
+            miltonBalanceBeforePayoutWad,
+            expectedMiltonUnderlyingTokenBalance,
+            expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+            expectedCloserUserUnderlyingTokenBalanceAfterClose,
+            expectedLiquidityPoolTotalBalanceWad,
+            expectedOpenedPositions,
+            expectedDerivativesTotalBalanceWad,
+            expectedLiquidationDepositTotalBalanceWad,
+            expectedTreasuryTotalBalanceWad
+        );
+
+        const soapParams = {
+            asset: params.asset,
+            calculateTimestamp: endTimestamp,
+            expectedSoap: expectedSoap,
+            from: openerUser,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("should open many positions and arrays with ids have correct state, one user", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let openerUser = userTwo;
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams.openTimestamp
+            );
+
+        let expectedUserDerivativeIdsLength = 3;
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        //when
+        await openSwapPayFixed(testData, derivativeParams);
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await openSwapPayFixed(testData, derivativeParams);
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //then
+        let actualUserDerivativeIds = await testData.miltonStorageDai.getSwapPayFixedIds(
+            openerUser.address
+        );
+
+        expect(
+            expectedUserDerivativeIdsLength,
+            `Incorrect user swap ids length actual: ${actualUserDerivativeIds.length}, expected: ${expectedUserDerivativeIdsLength}`
+        ).to.be.eq(actualUserDerivativeIds.length);
+
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 2, 0, 1, 1);
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 3, 0, 2, 2);
+    });
+
+    it("should open many positions and arrays with ids have correct state, two users", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: userTwo,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams.openTimestamp
+            );
+
+        let expectedUserDerivativeIdsLengthFirst = 2;
+        let expectedUserDerivativeIdsLengthSecond = 1;
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        //when
+        await openSwapPayFixed(testData, derivativeParams);
+
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userThree;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userTwo;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //then
+        let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+        let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userThree.address
+        );
+
+        expect(
+            expectedUserDerivativeIdsLengthFirst,
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+        ).to.be.eq(actualUserDerivativeIdsFirst.length);
+        expect(
+            expectedUserDerivativeIdsLengthSecond,
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+        ).to.be.eq(actualUserDerivativeIdsSecond.length);
+
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 2, 0, 1, 0);
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 3, 0, 2, 1);
+    });
+
+    it("should open many positions and close one position and arrays with ids have correct state, two users", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: userTwo,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams.openTimestamp
+            );
+
+        let expectedUserDerivativeIdsLengthFirst = 2;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        await openSwapPayFixed(testData, derivativeParams);
+
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userThree;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userTwo;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //when
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
+
+        //then
+        let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+        let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userThree.address
+        );
+
+        expect(
+            expectedUserDerivativeIdsLengthFirst,
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+        ).to.be.eq(actualUserDerivativeIdsFirst.length);
+        expect(
+            expectedUserDerivativeIdsLengthSecond,
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+        ).to.be.eq(actualUserDerivativeIdsSecond.length);
+
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 3, 0, 1, 1);
+    });
+
+    it("should open many positions and close two positions and arrays with ids have correct state, two users", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: userTwo,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams.openTimestamp
+            );
+
+        let expectedUserDerivativeIdsLengthFirst = 1;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt(3) * USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        await openSwapPayFixed(testData, derivativeParams);
+
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userThree;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userTwo;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //when
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfCloseSwapPayFixed(3, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
+
+        //then
+        let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+        let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userThree.address
+        );
+
+        expect(
+            expectedUserDerivativeIdsLengthFirst,
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+        ).to.be.eq(actualUserDerivativeIdsFirst.length);
+        expect(
+            expectedUserDerivativeIdsLengthSecond,
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+        ).to.be.eq(actualUserDerivativeIdsSecond.length);
+
+        await assertMiltonDerivativeItem(testData, derivativeParams.asset, 1, 0, 0, 0);
+    });
+
+    it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: userThree,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, derivativeParams.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams.openTimestamp
+            );
+
+        let expectedUserDerivativeIdsLengthFirst = 0;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+
+        //position 1, user first
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //position 2, user second
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //when
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
+
+        //then
+        let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+        let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+
+        expect(
+            expectedUserDerivativeIdsLengthFirst,
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+        ).to.be.eq(actualUserDerivativeIdsFirst.length);
+        expect(
+            expectedUserDerivativeIdsLengthSecond,
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+        ).to.be.eq(actualUserDerivativeIdsSecond.length);
+    });
+
+    it("should open two positions and close two positions - Arithmetic overflow - fix last byte difference - case 1 with minus 3", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: userThree,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, derivativeParams.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams.openTimestamp
+            );
+
+        let expectedUserDerivativeIdsLengthFirst = 0;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+
+        //position 1, user first
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //position 2, user second
+        derivativeParams.openTimestamp =
+            derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS - 3;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //when
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
+
+        //then
+        let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+        let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+
+        expect(
+            expectedUserDerivativeIdsLengthFirst,
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+        ).to.be.eq(actualUserDerivativeIdsFirst.length);
+        expect(
+            expectedUserDerivativeIdsLengthSecond,
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+        ).to.be.eq(actualUserDerivativeIdsSecond.length);
+    });
+
+    it("should open two positions and close one position - Arithmetic overflow - last byte difference - case 1", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = Math.floor(Date.now() / 1000);
+
+        const derivativeParams = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: userThree,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt(2) * USD_28_000_18DEC, derivativeParams.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams.openTimestamp
+            );
+
+        let expectedUserDerivativeIdsLengthFirst = 0;
+        let expectedUserDerivativeIdsLengthSecond = 0;
+
+        //position 1, user first
+        derivativeParams.from = userThree;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        //position 2, user second
+        derivativeParams.openTimestamp = derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        derivativeParams.from = userThree;
+        await openSwapPayFixed(testData, derivativeParams);
+
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(1, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
+
+        //when
+        await testData.miltonDai
+            .connect(userThree)
+            .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
+
+        //then
+        let actualUserDerivativeIdsFirst = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+        let actualUserDerivativeIdsSecond = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address
+        );
+
+        expect(
+            expectedUserDerivativeIdsLengthFirst,
+            `Incorrect first user swap ids length actual: ${actualUserDerivativeIdsFirst.length}, expected: ${expectedUserDerivativeIdsLengthFirst}`
+        ).to.be.eq(actualUserDerivativeIdsFirst.length);
+        expect(
+            expectedUserDerivativeIdsLengthSecond,
+            `Incorrect second user swap ids length actual: ${actualUserDerivativeIdsSecond.length}, expected: ${expectedUserDerivativeIdsLengthSecond}`
+        ).to.be.eq(actualUserDerivativeIdsSecond.length);
+    });
+
+    it("should calculate income tax, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            2,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("420798965789715138682");
+        let expectedIncomeTaxValueWad = BigInt("420798965789715138682");
+        let expectedPositionValue = BigInt("8415979315794302773646");
+        let expectedPositionValueWad = BigInt("8415979315794302773646");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_120_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate income tax, 5%, Milton loses, user earns, |I| > D", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            2,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("498350494851544536639");
+        let expectedIncomeTaxValueWad = BigInt("498350494851544536639");
+
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate income tax, 5%, Milton earns, user loses, |I| < D", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            2,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("395949708238213469173");
+        let expectedIncomeTaxValueWad = BigInt("395949708238213469173");
+        let expectedPositionValue = BigInt("-7918994164764269383465");
+        let expectedPositionValueWad = BigInt("-7918994164764269383465");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_121_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate income tax, 5%, Milton earns, user loses, |I| > D", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            2,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("498350494851544536639");
+        let expectedIncomeTaxValueWad = BigInt("498350494851544536639");
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate income tax, 100%, Milton loses, user earns, |I| < D", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("8415979315794302773646");
+        let expectedIncomeTaxValueWad = BigInt("8415979315794302773646");
+        let expectedPositionValue = BigInt("8415979315794302773646");
+        let expectedPositionValueWad = BigInt("8415979315794302773646");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_119_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate income tax, 100%, Milton loses, user earns, |I| > D", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = TC_COLLATERAL_18DEC;
+        let expectedIncomeTaxValueWad = TC_COLLATERAL_18DEC;
+        let expectedPositionValue = TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = BigInt("7918994164764269383465");
+        let expectedIncomeTaxValueWad = BigInt("7918994164764269383465");
+        let expectedPositionValue = BigInt("-7918994164764269383465");
+        let expectedPositionValueWad = BigInt("-7918994164764269383465");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_120_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_121_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        let expectedIncomeTaxValue = TC_COLLATERAL_18DEC;
+        let expectedIncomeTaxValueWad = TC_COLLATERAL_18DEC;
+        let expectedPositionValue = -TC_COLLATERAL_18DEC;
+        let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_50_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should open pay fixed position, DAI, custom Opening Fee for Treasury 50%", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            4,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
+        let expectedTreasuryTotalBalanceWad = BigInt("149505148455463361");
+
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+        let expectedLiquidityPoolTotalBalanceWad = BigInt("28002840597820653803859");
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+
+        //when
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.collateralizationFactor
+            );
+
+        //then
+        let balance = await testData.miltonStorageDai.getExtendedBalance();
+
+        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
+        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
+
+        expect(
+            expectedOpeningFeeTotalBalanceWad,
+            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
+            expected: ${expectedOpeningFeeTotalBalanceWad}`
+        ).to.be.eq(actualOpeningFeeTotalBalance);
+        expect(
+            expectedLiquidityPoolTotalBalanceWad,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
+            expected: ${expectedLiquidityPoolTotalBalanceWad}`
+        ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
+        expect(
+            expectedTreasuryTotalBalanceWad,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
+            expected: ${expectedTreasuryTotalBalanceWad}`
+        ).to.be.eq(actualTreasuryTotalBalanceWad);
+    });
+
+    it("should open pay fixed position, DAI, custom Opening Fee for Treasury 25%", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            5,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
+        let expectedTreasuryTotalBalanceWad = BigInt("74752574227731681");
+
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+        let expectedLiquidityPoolTotalBalanceWad = BigInt("28002915350394881535539");
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+
+        //when
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.collateralizationFactor
+            );
+
+        //then
+        let balance = await testData.miltonStorageDai.getExtendedBalance();
+
+        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
+        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
+
+        expect(
+            expectedOpeningFeeTotalBalanceWad,
+            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
+            expected: ${expectedOpeningFeeTotalBalanceWad}`
+        ).to.be.eq(actualOpeningFeeTotalBalance);
+        expect(
+            expectedLiquidityPoolTotalBalanceWad,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
+            expected: ${expectedLiquidityPoolTotalBalanceWad}`
+        ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
+        expect(
+            expectedTreasuryTotalBalanceWad,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
+            expected: ${expectedTreasuryTotalBalanceWad}`
+        ).to.be.eq(actualTreasuryTotalBalanceWad);
+    });
+
+    it("should NOT open pay fixed position, DAI, collateralization factor too low", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: BigInt(500),
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai
+                .connect(userTwo)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.toleratedQuoteValue,
+                    params.collateralizationFactor
+                ),
+            //then
+            "IPOR_12"
+        );
+    });
+
+    it("should NOT open pay fixed position, DAI, collateralization factor too high", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: BigInt("1000000000000000000001"),
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai
+                .connect(userTwo)
+                .itfOpenSwapPayFixed(
+                    params.openTimestamp,
+                    params.totalAmount,
+                    params.toleratedQuoteValue,
+                    params.collateralizationFactor
+                ),
+            //then
+            "IPOR_34"
+        );
+    });
+
+    it("should open pay fixed position, DAI, custom collateralization factor - simple case 1", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            collateralizationFactor: BigInt("15125000000000000000"),
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
+        //when
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.collateralizationFactor
+            );
+
+        //then
+        let actualDerivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
+        let actualNotionalAmount = BigInt(actualDerivativeItem.notionalAmount);
+        let expectedNotionalAmount = BigInt("150751024692592222333298");
+
+        expect(
+            expectedNotionalAmount,
+            `Incorrect notional amount for ${params.asset}, actual:  ${actualNotionalAmount},
+            expected: ${expectedNotionalAmount}`
+        ).to.be.eq(actualNotionalAmount);
+    });
+
+    it("should open pay fixed position - when open timestamp is long time ago", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
+        let expectedIncomeTaxValue = ZERO;
+        let expectedIncomeTaxValueWad = ZERO;
+        let expectedPositionValue = ZERO;
+        let expectedPositionValueWad = ZERO;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_4_18DEC,
+            0,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            veryLongTimeAgoTimestamp,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should calculate Pay Fixed Position Value - simple case 1", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        let derivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
+
+        let expectedPositionValue = BigInt("-38229627002310297226");
+
+        //when
+        let actualPositionValue = BigInt(
+            await testData.miltonDai.itfCalculateSwapPayFixedValue(
+                params.openTimestamp + PERIOD_14_DAYS_IN_SECONDS,
+                derivativeItem.id
+            )
+        );
+
+        //then
+        expect(
+            expectedPositionValue,
+            `Incorrect position value, actual: ${actualPositionValue}, expected: ${expectedPositionValue}`
+        ).to.be.eq(actualPositionValue);
+    });
+
+    it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesMultiplePositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                0,
+                [],
+                0
+            ),
+            "IPOR_62"
+        );
+    });
+
+    it("should close single pay fixed position using multicall function, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesMultiplePositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            1,
+            [1],
+            0
+        );
+    });
+
+    it("should close two pay fixed position using multicall function, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesMultiplePositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            2,
+            [1, 2],
+            0
+        );
+    });
+
+    it("should NOT close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesMultiplePositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                2,
+                [1, 300],
+                0
+            ),
+            "IPOR_23"
+        );
+    });
+
+    it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesMultiplePositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                0,
+                [],
+                0
+            ),
+            "IPOR_62"
+        );
+    });
+
+    it("should close single receive fixed position using multicall function, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesMultiplePositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            1,
+            [1],
+            0
+        );
+    });
+
+    it("should close two receive fixed position using multicall function, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesMultiplePositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            2,
+            [1, 2],
+            0
+        );
+    });
+
+    it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesMultiplePositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                2,
+                [1, 300],
+                0
+            ),
+            "IPOR_23"
+        );
+    });
 
     const calculateSoap = async (testData, params) => {
         if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
