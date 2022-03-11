@@ -15,8 +15,8 @@ library IporErrors {
     //@notice General problem, address is wrong
     string public constant WRONG_ADDRESS = "IPOR_001";
 
-    //@notice ADMIN_ROLE can be revoked only by different account with ADMIN_ROLE
-    string public constant CONFIG_REVOKE_ADMIN_ROLE_NOT_ALLOWED = "IPOR_002";
+    //@notice General problem. Wrong decimals
+    string public constant WRONG_DECIMALS = "IPOR_002";
 
     //only milton can have access to function
     string public constant CALLER_NOT_MILTON = "IPOR_003";
@@ -36,9 +36,6 @@ library IporErrors {
 
     //TODO: better name for this error..
     string public constant VALUE_SHOULD_BE_GRATER_THEN_ZERO = "IPOR_008";
-
-    //@notice General problem. Wrong decimals
-    string public constant WRONG_DECIMALS = "IPOR_009";
 
     // 200-299- warren
     //@notice Cannot add new asset to asset list, because already exists
