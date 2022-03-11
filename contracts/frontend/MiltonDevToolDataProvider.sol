@@ -9,6 +9,7 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
 import "../interfaces/IIporAssetConfiguration.sol";
+import "../libraries/Constants.sol";
 
 //TODO: change name to CockpitDataProvider
 contract MiltonDevToolDataProvider is
@@ -78,7 +79,7 @@ contract MiltonDevToolDataProvider is
         return token.allowance(msg.sender, assetConfiguration.getJoseph());
     }
 
-    function getSwapsPayFixed(address asset, address account, uint256 offset, uint256 pageSize)
+    function getSwapsPayFixed(address asset, address account, uint256 offset, uint256 chunkSize)
         external
         view
         override
@@ -89,10 +90,10 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsPayFixed(account, offset, pageSize);
+                .getSwapsPayFixed(account, offset, chunkSize);
     }
 
-    function getSwapsReceiveFixed(address asset, address account, uint256 offset, uint256 pageSize)
+    function getSwapsReceiveFixed(address asset, address account, uint256 offset, uint256 chunkSize)
         external
         view
         override
@@ -103,10 +104,10 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsReceiveFixed(account, offset, pageSize);
+                .getSwapsReceiveFixed(account, offset, chunkSize);
     }
 
-    function getMySwapsPayFixed(address asset, uint256 offset, uint256 pageSize)
+    function getMySwapsPayFixed(address asset, uint256 offset, uint256 chunkSize)
         external
         view
         override
@@ -117,10 +118,10 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsPayFixed(msg.sender, offset, pageSize);
+                .getSwapsPayFixed(msg.sender, offset, chunkSize);
     }
 
-    function getMySwapsReceiveFixed(address asset, uint256 offset, uint256 pageSize)
+    function getMySwapsReceiveFixed(address asset, uint256 offset, uint256 chunkSize)
         external
         view
         override
@@ -131,7 +132,7 @@ contract MiltonDevToolDataProvider is
         );
         return
             IMiltonStorage(assetConfiguration.getMiltonStorage())
-                .getSwapsReceiveFixed(msg.sender, offset, pageSize);
+                .getSwapsReceiveFixed(msg.sender, offset, chunkSize);
     }
 
     function calculateSpread(address asset)

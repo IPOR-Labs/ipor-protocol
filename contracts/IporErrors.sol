@@ -195,7 +195,8 @@ library IporErrors {
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_60";
     string public constant MILTON_STANLEY_BALANCE_IS_EMPTY = "IPOR_61";
 
-    string public constant PAGE_SIZE_EQUAL_ZERO = "IPOR_63";
+    string public constant CHUNK_SIZE_EQUAL_ZERO = "IPOR_63";
+    string public constant CHUNK_SIZE_TOO_BIG = "IPOR_64";
 
     // Asset managment
     //@notice amount should be > 0

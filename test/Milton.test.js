@@ -1,5 +1,5 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const {expect} = require("chai");
+const {ethers} = require("hardhat");
 
 const keccak256 = require("keccak256");
 
@@ -2248,11 +2248,7 @@ describe("Milton", () => {
 
         //then
         let actualDerivatives =
-            await testData.miltonStorageDai.getSwapsPayFixed(
-                derivativeParams25days.from.address,
-                0,
-                100
-            );
+            await testData.miltonStorageDai.getSwapsPayFixed(derivativeParams25days.from.address, 0, 50);
         let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
         expect(
@@ -2324,9 +2320,8 @@ describe("Milton", () => {
         //then
         let actualDerivatives =
             await testData.miltonStorageDai.getSwapsPayFixed(
-                derivativeParams25days.from.address,
-                0,
-                100
+                derivativeParams25days.from.address, 0,
+                50
             );
         let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
@@ -4467,18 +4462,14 @@ describe("Milton", () => {
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
             if (direction == 0) {
                 actualDerivatives =
-                    await testData.miltonStorageUsdt.getSwapsPayFixed(
-                        openerUser.address,
-                        0,
-                        100
-                    );
+                    await testData.miltonStorageUsdt.getSwapsPayFixed(openerUser.address, 0, 50);
             }
             if (direction == 1) {
                 actualDerivatives =
                     await testData.miltonStorageUsdt.getSwapsReceiveFixed(
                         openerUser.address,
                         0,
-                        100
+                        50
                     );
             }
         }
@@ -4486,18 +4477,14 @@ describe("Milton", () => {
         if (testData.tokenUsdc && asset === testData.tokenUsdc.address) {
             if (direction == 0) {
                 actualDerivatives =
-                    await testData.miltonStorageUsdc.getSwapsPayFixed(
-                        openerUser.address,
-                        0,
-                        100
-                    );
+                    await testData.miltonStorageUsdc.getSwapsPayFixed(openerUser.address, 0, 50);
             }
             if (direction == 1) {
                 actualDerivatives =
                     await testData.miltonStorageUsdc.getSwapsReceiveFixed(
                         openerUser.address,
                         0,
-                        100
+                        50
                     );
             }
         }
@@ -4505,18 +4492,14 @@ describe("Milton", () => {
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             if (direction == 0) {
                 actualDerivatives =
-                    await testData.miltonStorageDai.getSwapsPayFixed(
-                        openerUser.address,
-                        0,
-                        100
-                    );
+                    await testData.miltonStorageDai.getSwapsPayFixed(openerUser.address, 0, 50);
             }
             if (direction == 1) {
                 actualDerivatives =
                     await testData.miltonStorageDai.getSwapsReceiveFixed(
                         openerUser.address,
                         0,
-                        100
+                        50
                     );
             }
         }

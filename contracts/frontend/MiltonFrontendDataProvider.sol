@@ -73,13 +73,22 @@ contract MiltonFrontendDataProvider is
             .getTotalOutstandingNotional();
     }
 
-    function getMySwaps(address asset, uint256 offset, uint256 pageSize)
+    function getMySwaps(address asset, uint256 offset, uint256 chunkSize)
         external
         view
         override
         returns (IporSwapFront[] memory items)
     {
-        require(pageSize != 0, IporErrors.PAGE_SIZE_EQUAL_ZERO);
+        return _getMySwaps(asset, offset, chunkSize);
+    }
+
+    function _getMySwaps(address asset, uint256 offset, uint256 chunkSize)
+        internal
+        view
+        returns (IporSwapFront[] memory items)
+    {
+        require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
         IIporAssetConfiguration assetConfiguration = IIporAssetConfiguration(
             _iporConfiguration.getIporAssetConfiguration(asset)
@@ -108,7 +117,7 @@ contract MiltonFrontendDataProvider is
 
         IMilton milton = IMilton(assetConfiguration.getMilton());
 
-        uint256 resultSetSize = _resolveResultSetSize(swapIds.length, offset, pageSize);
+        uint256 resultSetSize = _resolveResultSetSize(swapIds.length, offset, chunkSize);
         IporSwapFront[] memory iporDerivatives = new IporSwapFront[](resultSetSize);
         for (i = 0; i != resultSetSize; i++) {
             SwapIdDirectionPair memory swapIdPair = swapIds[i + offset];
@@ -136,14 +145,14 @@ contract MiltonFrontendDataProvider is
     function _resolveResultSetSize(
         uint256 totalSwapNumber,
         uint256 offset,
-        uint256 pageSize
+        uint256 chunkSize
     ) internal view returns (uint256)
     {
         uint256 resultSetSize;
         if (offset > totalSwapNumber) {
             resultSetSize = 0;
-        } else if (offset + pageSize < totalSwapNumber) {
-            resultSetSize = pageSize;
+        } else if (offset + chunkSize < totalSwapNumber) {
+            resultSetSize = chunkSize;
         } else {
             resultSetSize = totalSwapNumber - offset;
         }
