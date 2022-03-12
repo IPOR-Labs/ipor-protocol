@@ -6,29 +6,235 @@ const { ContractData, ContractForm } = newContextComponents;
 export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Stanley Balance</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
 
-            <h2>Strategies claim</h2>
+                <tr>
+                    <td></td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfStanleyUsdt"
+                                method="totalBalance"
+                                methodArgs={[drizzle.contracts.ItfStanleyUsdt.address]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="StanleyUsdt"
+                                method="totalBalance"
+                                methodArgs={[drizzle.contracts.StanleyUsdt.address]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfStanleyUsdc"
+                                method="totalBalance"
+                                methodArgs={[drizzle.contracts.ItfStanleyUsdc.address]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="StanleyUsdc"
+                                method="totalBalance"
+                                methodArgs={[drizzle.contracts.StanleyUsdc.address]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfStanleyDai"
+                                method="totalBalance"
+                                methodArgs={[drizzle.contracts.ItfStanleyDai.address]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="StanleyDai"
+                                method="totalBalance"
+                                methodArgs={[drizzle.contracts.StanleyDai.address]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        )}
+                    </td>
+                </tr>
+            </table>
+            <h4>Strategies balance</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Strategy balance</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Aave Strategy</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="StrategyAaveUsdt"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="StrategyAaveUsdc"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="StrategyAaveDai"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Compound Strategy</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="StrategyCompoundUsdt"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="StrategyCompoundUsdc"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="StrategyCompoundDai"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+            </table>
+            <h4>Strategies claim</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        USDC
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        DAI
-                        <br />
-                        <br />
-                        <br />
-                    </th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
                 </tr>
 
                 <tr>
@@ -46,7 +252,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyAaveUsdc"
                                 method="doClaim"
@@ -55,7 +261,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyAaveDai"
                                 method="doClaim"
@@ -79,7 +285,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyCompoundUsdc"
                                 method="doClaim"
@@ -88,7 +294,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyCompoundDai"
                                 method="doClaim"
@@ -97,28 +303,13 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
-            <h2>Strategies beforeClaim</h2>
+            <h4>Strategies beforeClaim</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        USDC
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        DAI
-                        <br />
-                        <br />
-                        <br />
-                    </th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
                 </tr>
 
                 <tr>
@@ -136,7 +327,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyAaveUsdc"
                                 method="beforeClaim"
@@ -145,7 +336,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyAaveDai"
                                 method="beforeClaim"
@@ -154,28 +345,13 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
-            <h2>Strategies setTreasury</h2>
+            <h4>Strategies setTreasury</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        USDC
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        DAI
-                        <br />
-                        <br />
-                        <br />
-                    </th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
                 </tr>
 
                 <tr>
@@ -183,7 +359,7 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>Aave</strong>
                     </td>
                     <td>
-                        <div>                            
+                        <div>
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyAaveUsdt"
@@ -202,7 +378,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyAaveDai"
                                 method="setTreasury"
@@ -217,7 +393,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyCompoundUsdt"
                                 method="setTreasury"
@@ -226,17 +402,16 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyCompoundUsdc"
                                 method="setTreasury"
                             />
-
                         </div>
                     </td>
                     <td>
                         <div>
-                        <ContractForm
+                            <ContractForm
                                 drizzle={drizzle}
                                 contract="StrategyCompoundDai"
                                 method="setTreasury"
@@ -245,74 +420,8 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
-            <h2>Strategies balance</h2>
-            <table className="table" align="center">
-                <tr>
-                    <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        USDC
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                    <th scope="col">
-                        DAI
-                        <br />
-                        <br />
-                        <br />
-                    </th>
-                </tr>
 
-                <tr>
-                    <td>
-                        <strong>Aave</strong>
-                    </td>
-                    <td>
-                        <div>
-                            {drizzle.contracts.StrategyAaveUsdt.balanceOf}
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            {drizzle.contracts.StrategyAaveUsdc.balanceOf}
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                        {drizzle.contracts.StrategyAaveDai.balanceOf}
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Compound</strong>
-                    </td>
-                    <td>
-                        <div>
-                            {drizzle.contracts.StrategyCompoundUsdt.balanceOf}
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                        {drizzle.contracts.StrategyCompoundUsdc.balanceOf}
-
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                        {drizzle.contracts.StrategyCompoundDai.balanceOf}
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <h2>Pause/Unpause Stanley</h2>
+            <h4>Pause/Unpause Stanley</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Parameter</th>
@@ -320,22 +429,16 @@ export default ({ drizzle, drizzleState }) => (
                         USDT
                         <br />
                         {drizzle.contracts.UsdtMockedToken.address}
-                        <br />
-                        <br />
                     </th>
                     <th scope="col">
                         USDC
                         <br />
                         {drizzle.contracts.UsdcMockedToken.address}
-                        <br />
-                        <br />
                     </th>
                     <th scope="col">
                         DAI
                         <br />
                         {drizzle.contracts.DaiMockedToken.address}
-                        <br />
-                        <br />
                     </th>
                 </tr>
 
@@ -345,29 +448,17 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyUsdt"
-                                method="pause"
-                            />
+                            <ContractForm drizzle={drizzle} contract="StanleyUsdt" method="pause" />
                         </div>
                     </td>
                     <td>
                         <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyUsdc"
-                                method="pause"
-                            />
+                            <ContractForm drizzle={drizzle} contract="StanleyUsdc" method="pause" />
                         </div>
                     </td>
                     <td>
                         <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="StanleyDai"
-                                method="pause"
-                            />
+                            <ContractForm drizzle={drizzle} contract="StanleyDai" method="pause" />
                         </div>
                     </td>
                 </tr>
@@ -405,19 +496,13 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
-            <h2>Pause/Unpause Aave Strategy</h2>
+            <h4>Pause/Unpause Aave Strategy</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                    </th>
-                    <th scope="col">
-                        USDC
-                    </th>
-                    <th scope="col">
-                        DAI
-                    </th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
                 </tr>
 
                 <tr>
@@ -486,19 +571,13 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
-            <h2>Pause/Unpause Compound Strategy</h2>
+            <h4>Pause/Unpause Compound Strategy</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Parameter</th>
-                    <th scope="col">
-                        USDT
-                    </th>
-                    <th scope="col">
-                        USDC
-                    </th>
-                    <th scope="col">
-                        DAI
-                    </th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
                 </tr>
 
                 <tr>
