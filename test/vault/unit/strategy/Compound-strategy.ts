@@ -156,7 +156,7 @@ describe("Compound strategy", () => {
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
-    it("Should be able to setup Stanley and interacti with DAI", async () => {
+    it("Should be able to setup Stanley and interact with DAI", async () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(compoundStrategyInstanceDAI.setStanley(stanleyAddress))
@@ -177,7 +177,7 @@ describe("Compound strategy", () => {
             "754533916231843181332"
         );
 
-        await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_9_999_USD_18DEC);
+        await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_10_000_USD_18DEC);
 
         expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_18DEC);
         expect(await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).to.be.equal(ZERO);
