@@ -70,7 +70,7 @@ export default ({ drizzle, drizzleState }) => {
                 </Tab>
                 <Tab eventKey="miltonOverview" title="Milton">
                     <MiltonComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab>
+                </Tab> 
                 <Tab eventKey="joseph" title="Joseph">
                     <JosephComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>

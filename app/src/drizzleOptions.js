@@ -14,6 +14,9 @@ import MiltonFaucet from "./contracts/MiltonFaucet.json";
 import DaiMockedToken from "./contracts/DaiMockedToken.json";
 import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
 import UsdtMockedToken from "./contracts/UsdtMockedToken.json";
+import IpTokenUsdt from "./contracts/IpTokenUsdt.json";
+import IpTokenUsdc from "./contracts/IpTokenUsdc.json";
+import IpTokenDai from "./contracts/IpTokenDai.json";
 import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider.json";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider.json";
@@ -58,6 +61,9 @@ const options = {
         DaiMockedToken,
         UsdtMockedToken,
         UsdcMockedToken,
+        IpTokenUsdt,
+        IpTokenUsdc,
+        IpTokenDai,
         JosephUsdt,
         JosephUsdc,
         JosephDai,
@@ -67,14 +73,14 @@ const options = {
         StanleyUsdt,
         StanleyUsdc,
         StanleyDai,
-        MiltonFaucet,        
+        MiltonFaucet,
         MiltonSpreadModel,
         StrategyAaveUsdt,
         StrategyAaveUsdc,
         StrategyAaveDai,
         StrategyCompoundUsdt,
         StrategyCompoundUsdc,
-        StrategyCompoundDai
+        StrategyCompoundDai,
     ],
     // events: {
     // },
