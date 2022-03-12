@@ -246,47 +246,22 @@ abstract contract Milton is
         view
         returns (int256)
     {
-        int256 swapValue = swap.calculateSwapPayFixedValue(
-            timestamp,
-            _warren.calculateAccruedIbtPrice(_asset, timestamp)
-        );
-        if (swapValue > 0) {
-            if (swapValue < swap.collateral.toInt256()) {
-                return swapValue;
-            } else {
-                return swap.collateral.toInt256();
-            }
-        } else {
-            if (swapValue < -swap.collateral.toInt256()) {
-                return -swap.collateral.toInt256();
-            } else {
-                return swapValue;
-            }
-        }
+        return
+            swap.calculateSwapPayFixedValue(
+                timestamp,
+                _warren.calculateAccruedIbtPrice(_asset, timestamp)
+            );
     }
 
     function _calculateSwapReceiveFixedValue(
         uint256 timestamp,
         DataTypes.IporSwapMemory memory swap
     ) internal view returns (int256) {
-        int256 swapValue = swap.calculateSwapReceiveFixedValue(
-            timestamp,
-            _warren.calculateAccruedIbtPrice(_asset, timestamp)
-        );
-
-        if (swapValue > 0) {
-            if (swapValue < swap.collateral.toInt256()) {
-                return swapValue;
-            } else {
-                return swap.collateral.toInt256();
-            }
-        } else {
-            if (swapValue < -swap.collateral.toInt256()) {
-                return -swap.collateral.toInt256();
-            } else {
-                return swapValue;
-            }
-        }
+        return
+            swap.calculateSwapReceiveFixedValue(
+                timestamp,
+                _warren.calculateAccruedIbtPrice(_asset, timestamp)
+            );
     }
 
     function _calculateIncomeTaxValue(int256 positionValue) internal pure returns (uint256) {
@@ -432,7 +407,7 @@ abstract contract Milton is
             IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
-        DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
+        DataTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -506,7 +481,7 @@ abstract contract Milton is
             IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
-        DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
+        DataTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -607,7 +582,7 @@ abstract contract Milton is
         );
     }
 
-    function _calculateDerivativeIndicators(
+    function _calculateSwapdicators(
         uint256 calculateTimestamp,
         uint256 notionalAmount,
         uint256 quoteValue

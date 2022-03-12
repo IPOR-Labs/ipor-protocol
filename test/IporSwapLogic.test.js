@@ -8,6 +8,7 @@ const YEAR_IN_SECONDS = BigInt("31536000");
 const PERIOD_25_DAYS_IN_SECONDS = BigInt(60 * 60 * 24 * 25);
 
 const ONE_18DEC = BigInt("1000000000000000000");
+const TC_50_000_18DEC = BigInt("50000000000000000000000");
 
 const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
@@ -27,13 +28,12 @@ const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
         id: BigInt("0"),
         idsIndex: BigInt("0"),
         idsIndex: BigInt("0"),
-        collateral: BigInt("0"),
+        collateral: TC_50_000_18DEC,
         liquidationDepositAmount: BigInt("20") * ONE_18DEC,
         notionalAmount,
         ibtQuantity: BigInt("987030000000000000000"), //ibtQuantity
         fixedInterestRate: fixedInterestRate,
     };
-
     return swap;
 };
 
@@ -181,7 +181,7 @@ describe("IporSwapLogic", () => {
         );
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            BigInt("-98018839479452054794520")
+            BigInt("-50000000000000000000000")
         );
     });
 

@@ -29,6 +29,8 @@ const ZERO = BigNumber.from("0");
 const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
 const TC_9_000_USD_18DEC = BigNumber.from("9000000000000000000000");
 const TC_10_000_USD_18DEC = BigNumber.from("10000000000000000000000");
+const TC_9_999_USD_18DEC = BigNumber.from("9999999999999999999999");
+
 const TC_9_000_USD_6DEC = BigNumber.from("9000000000");
 const TC_10_000_USD_6DEC = BigNumber.from("10000000000");
 
@@ -172,10 +174,10 @@ describe("Compound strategy", () => {
 
         expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_9_000_USD_18DEC);
         expect((await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).toString()).to.be.equal(
-            "50000000000000"
+            "754533916231843181332"
         );
 
-        await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
+        await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_9_999_USD_18DEC);
 
         expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_18DEC);
         expect(await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).to.be.equal(ZERO);
@@ -201,7 +203,7 @@ describe("Compound strategy", () => {
 
         expect(
             (await cUSDT.balanceOf(compoundStrategyInstanceUSDT.address)).toString()
-        ).to.be.equal("50");
+        ).to.be.equal("754533916");
 
         await compoundStrategyInstanceUSDT.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
@@ -228,7 +230,7 @@ describe("Compound strategy", () => {
         expect(await USDC.balanceOf(stanleyAddress)).to.be.equal(TC_9_000_USD_6DEC);
         expect(
             (await cUSDC.balanceOf(compoundStrategyInstanceUSDC.address)).toString()
-        ).to.be.equal("50");
+        ).to.be.equal("754533916");
 
         await compoundStrategyInstanceUSDC.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 

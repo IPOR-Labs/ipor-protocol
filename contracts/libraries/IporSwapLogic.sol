@@ -11,7 +11,7 @@ import "hardhat/console.sol";
 library IporSwapLogic {
     using SafeCast for uint256;
 
-	function calculateSwapAmount(
+    function calculateSwapAmount(
         uint256 totalAmount,
         uint256 collateralizationFactor,
         uint256 liquidationDepositAmount,
@@ -69,9 +69,12 @@ library IporSwapLogic {
             mdIbtPrice
         );
 
-        swapValue = IporMath.divisionInt(
-            quasiIFloating.toInt256() - quasiIFixed.toInt256(),
-            Constants.WAD_YEAR_IN_SECONDS_INT
+        swapValue = _normalizeSwapValue(
+            swap.collateral,
+            IporMath.divisionInt(
+                quasiIFloating.toInt256() - quasiIFixed.toInt256(),
+                Constants.WAD_YEAR_IN_SECONDS_INT
+            )
         );
     }
 
@@ -86,10 +89,35 @@ library IporSwapLogic {
             mdIbtPrice
         );
 
-        swapValue = IporMath.divisionInt(
-            quasiIFixed.toInt256() - quasiIFloating.toInt256(),
-            Constants.WAD_YEAR_IN_SECONDS_INT
+        swapValue = _normalizeSwapValue(
+            swap.collateral,
+            IporMath.divisionInt(
+                quasiIFixed.toInt256() - quasiIFloating.toInt256(),
+                Constants.WAD_YEAR_IN_SECONDS_INT
+            )
         );
+    }
+
+    function _normalizeSwapValue(uint256 collateral, int256 swapValue)
+        private
+        pure
+        returns (int256)
+    {
+        int256 intCollateral = collateral.toInt256();
+
+        if (swapValue > 0) {
+            if (swapValue < intCollateral) {
+                return swapValue;
+            } else {
+                return intCollateral;
+            }
+        } else {
+            if (swapValue < -intCollateral) {
+                return -intCollateral;
+            } else {
+                return swapValue;
+            }
+        }
     }
 
     function calculateQuasiInterest(

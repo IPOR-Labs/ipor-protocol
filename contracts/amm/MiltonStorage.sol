@@ -13,7 +13,6 @@ import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
-    //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using SafeCast for uint256;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
@@ -167,7 +166,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         return _swapsReceiveFixed.ids[account];
     }
 
-    //TODO: separate soap to MiltonSoapModel smart contract
     function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
         external
         view
