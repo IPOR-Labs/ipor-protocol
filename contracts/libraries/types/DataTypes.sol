@@ -119,13 +119,6 @@ library DataTypes {
         uint256 iporPublicationFeeAmount;
         DataTypes.AccruedIpor accruedIpor;
     }
-
-    struct IporSwapInterest {
-        //TODO: reduce to one field the last one;
-        uint256 quasiInterestFixed;
-        uint256 quasiInterestFloating;
-        int256 positionValue;
-    }
     struct IporSwapIndicator {
         //@notice IPOR Index value indicator
         uint256 iporIndexValue;

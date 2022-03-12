@@ -1,6 +1,5 @@
 pragma solidity 0.8.9;
 
-//TODO: remove folder IPOR, not needed.
 interface IStrategy {
     function getAsset() external view returns (address);
 

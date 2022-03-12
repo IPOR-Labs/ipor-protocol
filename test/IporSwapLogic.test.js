@@ -11,10 +11,7 @@ const ONE_18DEC = BigInt("1000000000000000000");
 
 const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
-    const daiMockedToken = await DaiMockedToken.deploy(
-        BigInt("1000000000000000000"),
-        18
-    );
+    const daiMockedToken = await DaiMockedToken.deploy(BigInt("1000000000000000000"), 18);
     await daiMockedToken.deployed();
     const collateral = BigInt("9870300000000000000000");
     const collateralizationFactor = BigInt("10");
@@ -45,13 +42,10 @@ describe("IporSwapLogic", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        const MockIporSwapLogic = await ethers.getContractFactory(
-            "MockIporSwapLogic"
-        );
+        const MockIporSwapLogic = await ethers.getContractFactory("MockIporSwapLogic");
         iporSwapLogic = await MockIporSwapLogic.deploy();
         iporSwapLogic.deployed();
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
     });
 
     it("Calculate Interest Fixed Case 1", async () => {
@@ -172,9 +166,7 @@ describe("IporSwapLogic", () => {
             ibtCurrentPrice
         );
         //then
-        expect(result, "Wrong interest floating").to.be.equal(
-            "4669046712000000000000000"
-        );
+        expect(result, "Wrong interest floating").to.be.equal("4669046712000000000000000");
     });
 
     it("Calculate Interest Case 1", async () => {
@@ -182,27 +174,34 @@ describe("IporSwapLogic", () => {
         const fixedInterestRate = BigInt("40000000000000000");
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         //when
-        const derivativeInterest =
-            await iporSwapLogic.calculateInterestForSwapPayFixed(
-                swap,
-                BigInt(Date.now() + 60 * 60 * 24 * 28),
-                ONE_18DEC
-            );
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            BigInt(Date.now() + 60 * 60 * 24 * 28),
+            ONE_18DEC
+        );
         //then
-        expect(
-            derivativeInterest.quasiInterestFixed,
-            "Wrong interest fixed"
-        ).to.be.equal("3122249099904000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.quasiInterestFloating,
-            "Wrong interest floating"
-        ).to.be.equal(
+        expect(swapValue, "Wrong interest difference amount").to.be.equal(
+            BigInt("-98018839479452054794520")
+        );
+    });
+
+    it("Calculate Quasi Interest Case 1", async () => {
+        //given
+        const fixedInterestRate = BigInt("40000000000000000");
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        //when
+        const quastiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            BigInt(Date.now() + 60 * 60 * 24 * 28),
+            ONE_18DEC
+        );
+        //then
+        expect(quastiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3122249099904000000000000000000000000000000000000"
+        );
+        expect(quastiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
             BigInt("31126978080000000000000000000000000000000000000")
         );
-        expect(
-            derivativeInterest.positionValue,
-            "Wrong interest difference amount"
-        ).to.be.equal(BigInt("-98018839479452054794520"));
     });
 
     it("Calculate Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
@@ -212,27 +211,38 @@ describe("IporSwapLogic", () => {
 
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
         //when
-        const derivativeInterest =
-            await iporSwapLogic.calculateInterestForSwapPayFixed(
-                swap,
-                swap.startingTimestamp,
-                ibtPriceSecond
-            );
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            swap.startingTimestamp,
+            ibtPriceSecond
+        );
 
         //then
-        expect(
-            derivativeInterest.quasiInterestFixed,
+        expect(swapValue, "Wrong interest difference amount").to.be.equal(
+            "24675750000000000000000"
+        );
+    });
 
-            "Wrong interest fixed"
-        ).to.be.equal("3112697808000000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.quasiInterestFloating,
-            "Wrong interest floating"
-        ).to.be.equal("3890872260000000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.positionValue,
-            "Wrong interest difference amount"
-        ).to.be.equal("24675750000000000000000");
+    it("Calculate Quasi Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
+        //given
+        const fixedInterestRate = BigInt("40000000000000000");
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+
+        const ibtPriceSecond = BigInt(125) * ONE_18DEC;
+        //when
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.startingTimestamp,
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3112697808000000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
+            "3890872260000000000000000000000000000000000000000"
+        );
     });
 
     it("Calculate Interest Case 25 days Later IBT Price Not Changed Decimal18", async () => {
@@ -244,26 +254,38 @@ describe("IporSwapLogic", () => {
 
         //when
 
-        const derivativeInterest =
-            await iporSwapLogic.calculateInterestForSwapPayFixed(
-                swap,
-                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-                ibtPriceSecond
-            );
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
 
         //then
-        expect(
-            derivativeInterest.quasiInterestFixed,
-            "Wrong interest fixed"
-        ).to.be.equal("3121225747200000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.quasiInterestFloating,
-            "Wrong interest floating"
-        ).to.be.equal("3112697808000000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.positionValue,
-            "Wrong interest difference amount"
-        ).to.be.equal("-270419178082191780821");
+        expect(swapValue, "Wrong interest difference amount").to.be.equal("-270419178082191780821");
+    });
+
+    it("Calculate Quasi Interest Case 25 days Later IBT Price Not Changed Decimal18", async () => {
+        //given
+
+        const fixedInterestRate = BigInt("40000000000000000");
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigInt(100) * ONE_18DEC;
+
+        //when
+
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3121225747200000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
+            "3112697808000000000000000000000000000000000000000"
+        );
     });
 
     it("Calculate Interest Case 25 days Later IBT Price Changed Decimals 18", async () => {
@@ -273,26 +295,38 @@ describe("IporSwapLogic", () => {
 
         //when
 
-        const derivativeInterest =
-            await iporSwapLogic.calculateInterestForSwapPayFixed(
-                swap,
-                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-                ibtPriceSecond
-            );
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
 
         //then
-        expect(
-            derivativeInterest.quasiInterestFixed,
-            "Wrong interest fixed"
-        ).to.be.equal("3121225747200000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.quasiInterestFloating,
-            "Wrong interest floating"
-        ).to.be.equal("3890872260000000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.positionValue,
-            "Wrong interest difference amount"
-        ).to.be.equal("24405330821917808219178");
+        expect(swapValue, "Wrong interest difference amount").to.be.equal(
+            "24405330821917808219178"
+        );
+    });
+
+    it("Calculate Quasi Interest Case 25 days Later IBT Price Changed Decimals 18", async () => {
+        const fixedInterestRate = BigInt("40000000000000000");
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigInt(125) * ONE_18DEC;
+
+        //when
+
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3121225747200000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
+            "3890872260000000000000000000000000000000000000000"
+        );
     });
 
     it("Calculate Interest Case Huge Ipor 25 days Later IBT Price Changed User Loses Decimals 18", async () => {
@@ -305,28 +339,43 @@ describe("IporSwapLogic", () => {
         const ibtPriceSecond = BigInt(125) * ONE_18DEC;
 
         //when
-        const derivativeInterest =
-            await iporSwapLogic.calculateInterestForSwapPayFixed(
-                swap,
-                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
-                ibtPriceSecond
-            );
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
+
+        //then
+        expect(swapValue, "Wrong interest difference amount").to.be.equal("-67604794520547945204");
+    });
+
+    it("Calculate Quasi Interest Case Huge Ipor 25 days Later IBT Price Changed User Loses Decimals 18", async () => {
+        const iporIndex = BigInt(3650000000000000000);
+        const spread = BigInt(10000000000000000);
+        const fixedInterestRate = iporIndex + spread;
+
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+
+        const ibtPriceSecond = BigInt(125) * ONE_18DEC;
+
+        //when
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            ibtPriceSecond
+        );
 
         //then
         expect(
-            derivativeInterest.quasiInterestFixed,
+            quasiInterest.quasiIFixed,
 
             "Wrong interest fixed"
         ).to.be.equal("3893004244800000000000000000000000000000000000000");
         expect(
-            derivativeInterest.quasiInterestFloating,
+            quasiInterest.quasiIFloating,
 
             "Wrong interest floating"
         ).to.be.equal("3890872260000000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.positionValue,
-            "Wrong interest difference amount"
-        ).to.be.equal("-67604794520547945204");
     });
 
     it("Calculate Interest Case 100 days Later IBT Price Not Changed Decimals 18", async () => {
@@ -338,26 +387,39 @@ describe("IporSwapLogic", () => {
 
         //when
 
-        const derivativeInterest =
-            await iporSwapLogic.calculateInterestForSwapPayFixed(
-                swap,
-                swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
-                ibtPriceSecond
-            );
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
+            ibtPriceSecond
+        );
 
         //then
-        expect(
-            derivativeInterest.quasiInterestFixed,
-            "Wrong interest fixed"
-        ).to.be.equal("3122249099904000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.quasiInterestFloating,
+        expect(swapValue, "Wrong interest difference amount").to.be.equal(
+            "19437730520547945205479"
+        );
+    });
 
-            "Wrong interest floating"
-        ).to.be.equal("3735237369600000000000000000000000000000000000000");
-        expect(
-            derivativeInterest.positionValue,
-            "Wrong interest difference amount"
-        ).to.be.equal("19437730520547945205479");
+    it("Calculate Quasi Interest Case 100 days Later IBT Price Not Changed Decimals 18", async () => {
+        //given
+
+        const fixedInterestRate = BigInt("40000000000000000");
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigInt(120) * ONE_18DEC;
+
+        //when
+
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong quasi interest fixed").to.be.equal(
+            "3122249099904000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong interest floating").to.be.equal(
+            "3735237369600000000000000000000000000000000000000"
+        );
     });
 });

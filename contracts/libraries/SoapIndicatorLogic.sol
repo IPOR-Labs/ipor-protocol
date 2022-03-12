@@ -65,7 +65,6 @@ library SoapIndicatorLogic {
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
     ) internal pure returns (DataTypes.SoapIndicatorMemory memory) {
-        //TODO: here potential re-entrancy
         uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -116,7 +115,7 @@ library SoapIndicatorLogic {
             derivativeNotional,
             swapFixedInterestRate
         );
-        //TODO: here potential re-entrancy
+
         si.rebalanceTimestamp = rebalanceTimestamp.toUint32();
         si.totalNotional = si.totalNotional - derivativeNotional.toUint128();
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;

@@ -15,15 +15,13 @@ library IporErrors {
 
     //@notice General problem. Wrong decimals
     string public constant WRONG_DECIMALS = "IPOR_001";
-
-    //TODO: add test for this
+    
     //@notice Asset has too low decimals
     string public constant ASSET_DECIMALS_TOO_LOW = "IPOR_002";
 
     //@notice Trader doesnt have enought tokens to execute transaction
     string public constant ASSET_BALANCE_TOO_LOW = "IPOR_003";
 
-    //TODO: better name for this error..
     string public constant VALUE_NOT_GREATER_THAN_ZERO = "IPOR_004";
 
     string public constant INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_005";
@@ -120,8 +118,7 @@ library IporErrors {
 
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
     string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_323";
-
-    //TODO: try to add test for this
+    
     //@notice Spread value cannot be higher than Ipor Index Value for particular asset
     string public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX = "IPOR_324";
 
@@ -155,8 +152,7 @@ library IporErrors {
     string public constant JOSEPH_CANNOT_REDEEM_IP_TOKEN_TOO_LOW = "IPOR_403";
 
     string public constant JOSEPH_CALLER_NOT_TREASURE_TRANSFERER = "IPOR_404";
-
-    //TODO: add test for this code
+    
     //@notice Incorrect Treasure Treasurer Address
     string public constant JOSEPH_INCORRECT_TREASURE_TREASURER = "IPOR_405";
 

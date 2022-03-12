@@ -1,5 +1,5 @@
 pragma solidity 0.8.9;
-import "../interfaces/IPOR/IStrategy.sol";
+import "../interfaces/IStrategy.sol";
 
 // simple mock for total _balance tests
 contract MockStrategy is IStrategy {

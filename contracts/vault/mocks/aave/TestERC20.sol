@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.9;
 
-import "../../interfaces/IERC20Minimal.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract TestERC20 is IERC20Minimal {
+contract TestERC20 is IERC20 {
+    uint256 private _totalSupply;
     mapping(address => uint256) private _balance;
     mapping(address => mapping(address => uint256)) public override allowance;
 
@@ -12,36 +13,30 @@ contract TestERC20 is IERC20Minimal {
     }
 
     function mint(address to, uint256 amount) public {
+        _totalSupply += amount;
         uint256 balanceNext = _balance[to] + amount;
         require(balanceNext >= amount, "overflow balance");
         _balance[to] = balanceNext;
     }
 
-    function transfer(address recipient, uint256 amount)
-        external
-        override
-        returns (bool)
-    {
+    function totalSupply() external view returns (uint256) {
+        return _totalSupply;
+    }
+
+    function transfer(address recipient, uint256 amount) external override returns (bool) {
         uint256 balanceBefore = _balance[msg.sender];
         require(balanceBefore >= amount, "insufficient balance");
         _balance[msg.sender] = balanceBefore - amount;
 
         uint256 balanceRecipient = _balance[recipient];
-        require(
-            balanceRecipient + amount >= balanceRecipient,
-            "recipient balance overflow"
-        );
+        require(balanceRecipient + amount >= balanceRecipient, "recipient balance overflow");
         _balance[recipient] = balanceRecipient + amount;
 
         emit Transfer(msg.sender, recipient, amount);
         return true;
     }
 
-    function approve(address spender, uint256 amount)
-        external
-        override
-        returns (bool)
-    {
+    function approve(address spender, uint256 amount) external override returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
@@ -58,10 +53,7 @@ contract TestERC20 is IERC20Minimal {
         allowance[sender][msg.sender] = allowanceBefore - amount;
 
         uint256 balanceRecipient = _balance[recipient];
-        require(
-            balanceRecipient + amount >= balanceRecipient,
-            "overflow balance recipient"
-        );
+        require(balanceRecipient + amount >= balanceRecipient, "overflow balance recipient");
         _balance[recipient] = balanceRecipient + amount;
         uint256 balanceSender = _balance[sender];
         require(balanceSender >= amount, "underflow balance sender");

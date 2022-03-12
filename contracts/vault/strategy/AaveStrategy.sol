@@ -12,7 +12,7 @@ import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
-import "../interfaces/IPOR/IStrategy.sol";
+import "../interfaces/IStrategy.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../IporErrors.sol";
 import "../../security/IporOwnableUpgradeable.sol";
