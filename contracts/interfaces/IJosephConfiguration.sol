@@ -26,6 +26,8 @@ interface IJosephConfiguration {
 
     function setTreasureTransferer(address treasureTransferer) external;
 
+    function getRedeemFeePercentage() external pure returns (uint256);
+
     function getRedeemLpMaxUtilizationPercentage() external pure returns (uint256);
 
     function getMiltonStanleyBalancePercentage() external pure returns (uint256);

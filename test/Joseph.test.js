@@ -22,9 +22,9 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    prepareComplexTestDataDaiCase00,
-    prepareTestDataUsdtCase1,
-    prepareTestDataDaiCase1,
+    prepareComplexTestDataDaiCase000,
+    prepareTestDataUsdtCase000,
+    prepareTestDataDaiCase000,
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
@@ -47,7 +47,8 @@ describe("Joseph", () => {
             ["DAI", "USDT", "USDC"],
             data,
             0,
-            1
+            1,
+            0
         );
 
         //when
@@ -63,7 +64,7 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -119,7 +120,7 @@ describe("Joseph", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - USDT 6 decimals", async () => {
         //given
-        const testData = await prepareTestDataUsdtCase1(
+        const testData = await prepareTestDataUsdtCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -185,7 +186,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance and ipToken Total Supply is zero", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -209,7 +210,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, DAI 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -242,6 +243,7 @@ describe("Joseph", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             data,
+            0,
             0,
             0
         );
@@ -279,7 +281,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is zero and ipToken Total Supply is NOT zero", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -316,7 +318,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -357,7 +359,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -406,7 +408,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -460,7 +462,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -514,7 +516,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -566,7 +568,7 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -628,7 +630,7 @@ describe("Joseph", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -689,7 +691,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -752,7 +754,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -821,6 +823,7 @@ describe("Joseph", () => {
             ["USDT"],
             data,
             0,
+            0,
             0
         );
         await prepareApproveForUsers(
@@ -870,7 +873,7 @@ describe("Joseph", () => {
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -926,6 +929,7 @@ describe("Joseph", () => {
             ["DAI"],
             data,
             1,
+            0,
             0
         );
 
@@ -1005,6 +1009,7 @@ describe("Joseph", () => {
             ["DAI"],
             data,
             1,
+            0,
             0
         );
         await prepareApproveForUsers(
@@ -1025,6 +1030,7 @@ describe("Joseph", () => {
         await testData.warren
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(amount, params.openTimestamp);
@@ -1039,7 +1045,8 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        const expectedExchangeRate = BigInt("1312500000000000000");
+        const expectedExchangeRateBeforeRedeem = BigInt("1312500000000000000");
+        const expectedExchangeRateAfterRedeem = BigInt("1325321471291866029");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
         );
@@ -1049,6 +1056,7 @@ describe("Joseph", () => {
         await testData.josephDai
             .connect(userThree)
             .itfProvideLiquidity(BigInt("1500000000000000000000"), params.openTimestamp);
+
         await testData.josephDai
             .connect(userThree)
             .itfRedeem(BigInt("874999999999999999854"), params.openTimestamp);
@@ -1068,15 +1076,15 @@ describe("Joseph", () => {
         ).to.be.eql(actualIpTokenBalanceForUserThree);
 
         expect(
-            expectedExchangeRate,
+            expectedExchangeRateBeforeRedeem,
             `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
-            expected: ${expectedExchangeRate}`
+            expected: ${expectedExchangeRateBeforeRedeem}`
         ).to.be.eql(exchangeRateBeforeProvideLiquidity);
 
         expect(
-            expectedExchangeRate,
+            expectedExchangeRateAfterRedeem,
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
-            expected: ${expectedExchangeRate}`
+            expected: ${expectedExchangeRateAfterRedeem}`
         ).to.be.eql(actualExchangeRate);
     });
 
@@ -1087,6 +1095,7 @@ describe("Joseph", () => {
             ["USDT"],
             data,
             1,
+            0,
             0
         );
 
@@ -1121,7 +1130,8 @@ describe("Joseph", () => {
                 params.collateralizationFactor
             );
 
-        const expectedExchangeRate = BigInt("1312500000000000000");
+        const expectedExchangeRateBeforeRedeem = BigInt("1312500000000000000");
+        const expectedExchangeRateAfterRedeem = BigInt("1325321471291866029");
         const exchangeRateBeforeProvideLiquidity = BigInt(
             await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
         );
@@ -1150,21 +1160,21 @@ describe("Joseph", () => {
         ).to.be.eql(actualIpTokenBalanceForUserThree);
 
         expect(
-            expectedExchangeRate,
+            expectedExchangeRateBeforeRedeem,
             `Incorrect exchange rate before providing liquidity for USDT, actual:  ${exchangeRateBeforeProvideLiquidity},
-            expected: ${expectedExchangeRate}`
+            expected: ${expectedExchangeRateBeforeRedeem}`
         ).to.be.eql(exchangeRateBeforeProvideLiquidity);
 
         expect(
-            expectedExchangeRate,
+            expectedExchangeRateAfterRedeem,
             `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
-            expected: ${expectedExchangeRate}`
+            expected: ${expectedExchangeRateAfterRedeem}`
         ).to.be.eql(actualExchangeRate);
     });
 
     it("should NOT provide liquidity because of empty Liquidity Pool", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );

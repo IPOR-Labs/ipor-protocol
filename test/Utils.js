@@ -219,31 +219,58 @@ module.exports.prepareMiltonSpreadCase11 = async () => {
     return miltonSpread;
 };
 module.exports.getMockStanleyCase = async (stanleyCaseNumber, assetAddress) => {
-    let MockCaseStanley = null;
-
-    MockCaseStanley = await ethers.getContractFactory("MockCase" + stanleyCaseNumber + "Stanley");
+    let MockCaseStanley = await ethers.getContractFactory(
+        "MockCase" + stanleyCaseNumber + "Stanley"
+    );
     const mockCaseStanley = await MockCaseStanley.deploy(assetAddress);
     return mockCaseStanley;
 };
 module.exports.getMockMiltonUsdtCase = async (miltonCaseNumber) => {
-    let MockCaseMilton = null;
-    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "MiltonUsdt");
+    let MockCaseMilton = await ethers.getContractFactory(
+        "MockCase" + miltonCaseNumber + "MiltonUsdt"
+    );
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
 };
 
 module.exports.getMockMiltonUsdcCase = async (miltonCaseNumber) => {
-    let MockCaseMilton = null;
-    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "MiltonUsdc");
+    let MockCaseMilton = await ethers.getContractFactory(
+        "MockCase" + miltonCaseNumber + "MiltonUsdc"
+    );
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
 };
 
 module.exports.getMockMiltonDaiCase = async (miltonCaseNumber) => {
-    let MockCaseMilton = null;
-    MockCaseMilton = await ethers.getContractFactory("MockCase" + miltonCaseNumber + "MiltonDai");
+    let MockCaseMilton = await ethers.getContractFactory(
+        "MockCase" + miltonCaseNumber + "MiltonDai"
+    );
     const mockCaseMilton = await MockCaseMilton.deploy();
     return mockCaseMilton;
+};
+
+module.exports.getMockJosephUsdtCase = async (josephCaseNumber) => {
+    let MockCaseJoseph = await ethers.getContractFactory(
+        "MockCase" + josephCaseNumber + "JosephUsdt"
+    );
+    const mockCaseJoseph = await MockCaseJoseph.deploy();
+    return mockCaseJoseph;
+};
+
+module.exports.getMockJosephUsdcCase = async (josephCaseNumber) => {
+    let MockCaseJoseph = await ethers.getContractFactory(
+        "MockCase" + josephCaseNumber + "JosephUsdc"
+    );
+    const mockCaseJoseph = await MockCaseJoseph.deploy();
+    return mockCaseJoseph;
+};
+
+module.exports.getMockJosephDaiCase = async (josephCaseNumber) => {
+    let MockCaseJoseph = await ethers.getContractFactory(
+        "MockCase" + josephCaseNumber + "JosephDai"
+    );
+    const mockCaseJoseph = await MockCaseJoseph.deploy();
+    return mockCaseJoseph;
 };
 
 module.exports.prepareWarren = async (accounts) => {
@@ -255,39 +282,42 @@ module.exports.prepareWarren = async (accounts) => {
     return warren;
 };
 
-module.exports.prepareComplexTestDataDaiCase40 = async (accounts, data) => {
-    const testData = await this.prepareTestData(accounts, ["DAI"], data, 4, 0);
+module.exports.prepareComplexTestDataDaiCase400 = async (accounts, data) => {
+    const testData = await this.prepareTestData(accounts, ["DAI"], data, 4, 0, 0);
     await this.prepareApproveForUsers(accounts, "DAI", data, testData);
     await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
     return testData;
 };
 
-module.exports.prepareComplexTestDataDaiCase00 = async (accounts, data) => {
-    const testData = await this.prepareTestDataDaiCase1(accounts, data);
+module.exports.prepareComplexTestDataDaiCase000 = async (accounts, data) => {
+    const testData = await this.prepareTestDataDaiCase000(accounts, data);
     await this.prepareApproveForUsers(accounts, "DAI", data, testData);
     await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
     return testData;
 };
 
-module.exports.prepareComplexTestDataUsdtCase00 = async (accounts, data) => {
-    const testData = await this.prepareTestDataUsdtCase1(accounts, data);
+module.exports.prepareComplexTestDataUsdtCase000 = async (accounts, data) => {
+    const testData = await this.prepareTestDataUsdtCase000(accounts, data);
     await this.prepareApproveForUsers(accounts, "USDT", data, testData);
     await this.setupTokenUsdtInitialValuesForUsers(accounts, testData);
     return testData;
 };
 
-module.exports.prepareComplexTestDataDaiCase01 = async (accounts, data) => {
-    const testData = await this.prepareTestData(accounts, ["DAI"], data, 0, 1);
+module.exports.prepareComplexTestDataDaiCase010 = async (accounts, data) => {
+    const testData = await this.prepareTestData(accounts, ["DAI"], data, 0, 1, 0);
     await this.prepareApproveForUsers(accounts, "DAI", data, testData);
     await this.setupTokenDaiInitialValuesForUsers(accounts, testData);
     return testData;
 };
 
-module.exports.prepareTestDataDaiCase1 = async (accounts, data) => {
-    return await this.prepareTestData(accounts, ["DAI"], data, 0, 0);
+module.exports.prepareTestDataDaiCase000 = async (accounts, data) => {
+    return await this.prepareTestData(accounts, ["DAI"], data, 0, 0, 0);
 };
-module.exports.prepareTestDataUsdtCase1 = async (accounts, data) => {
-    return await this.prepareTestData(accounts, ["USDT"], data, 0, 0);
+module.exports.prepareTestDataDaiCase001 = async (accounts, data) => {
+    return await this.prepareTestData(accounts, ["DAI"], data, 0, 0, 1);
+};
+module.exports.prepareTestDataUsdtCase000 = async (accounts, data) => {
+    return await this.prepareTestData(accounts, ["USDT"], data, 0, 0, 0);
 };
 
 module.exports.prepareTestData = async (
@@ -295,7 +325,8 @@ module.exports.prepareTestData = async (
     assets,
     data,
     miltonCaseNumber,
-    stanleyCaseNumber
+    stanleyCaseNumber,
+    josephCaseNumber
 ) => {
     let tokenDai = null;
     let tokenUsdt = null;
@@ -320,10 +351,7 @@ module.exports.prepareTestData = async (
     const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
-    const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
-    const ItfJosephUsdt = await ethers.getContractFactory("ItfJosephUsdt");
-    const ItfJosephUsdc = await ethers.getContractFactory("ItfJosephUsdc");
-    const ItfJosephDai = await ethers.getContractFactory("ItfJosephDai");
+    const MiltonStorage = await ethers.getContractFactory("MiltonStorage");    
 
     const warren = await this.prepareWarren(accounts);
 
@@ -352,7 +380,7 @@ module.exports.prepareTestData = async (
                 stanleyUsdt.address
             );
 
-            josephUsdt = await ItfJosephUsdt.deploy();
+            josephUsdt = await this.getMockJosephUsdtCase(josephCaseNumber);
             await josephUsdt.deployed();
             await josephUsdt.initialize(
                 tokenUsdt.address,
@@ -396,7 +424,7 @@ module.exports.prepareTestData = async (
                 stanleyUsdc.address
             );
 
-            josephUsdc = await ItfJosephUsdc.deploy();
+            josephUsdc = await this.getMockJosephUsdcCase(josephCaseNumber);
             await josephUsdc.deployed();
             await josephUsdc.initialize(
                 tokenUsdc.address,
@@ -441,7 +469,7 @@ module.exports.prepareTestData = async (
                 stanleyDai.address
             );
 
-            josephDai = await ItfJosephDai.deploy();
+            josephDai = await this.getMockJosephDaiCase(josephCaseNumber);
             await josephDai.deployed();
             await josephDai.initialize(
                 tokenDai.address,

@@ -40,6 +40,8 @@ interface IJoseph {
         address to,
         uint256 exchangeRate,
         uint256 assetValue,
-        uint256 ipTokenValue
+        uint256 ipTokenValue,
+        uint256 redeemFee,
+        uint256 redeemValue
     );
 }

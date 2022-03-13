@@ -42,7 +42,7 @@ describe("AssetManagementIntegration", () => {
             ["DAI"],
             data,
             0,
-            1
+            1, 0
         );
 
         await testData.tokenDai
@@ -121,7 +121,7 @@ describe("AssetManagementIntegration", () => {
             ["DAI"],
             data,
             0,
-            1
+            1,0
         );
 
         await testData.tokenDai
@@ -202,7 +202,7 @@ describe("AssetManagementIntegration", () => {
             ["DAI"],
             data,
             0,
-            2
+            2,0
         );
 
         await testData.tokenDai

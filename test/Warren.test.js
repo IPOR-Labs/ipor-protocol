@@ -37,7 +37,8 @@ describe("Warren", () => {
             ["USDC", "USDT", "DAI"],
             data,
             0,
-            1
+            1,
+            0
         );
     });
 

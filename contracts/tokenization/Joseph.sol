@@ -236,21 +236,23 @@ abstract contract Joseph is
 
         require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
 
-        DataTypes.MiltonBalanceMemory memory balance = _milton.getAccruedBalance();
-
         uint256 wadAssetValue = IporMath.division(ipTokenValue * exchangeRate, Constants.D18);
 
-        require(
-            balance.liquidityPool > wadAssetValue,
-            IporErrors.MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW
+        uint256 wadRedeemFee = IporMath.division(
+            wadAssetValue * _getRedeemFeePercentage(),
+            Constants.D18
         );
 
-        uint256 assetValue = IporMath.convertWadToAssetDecimals(wadAssetValue, _getDecimals());
+        uint256 wadRedeemValue = wadAssetValue - wadRedeemFee;
+
+        DataTypes.MiltonBalanceMemory memory balance = _milton.getAccruedBalance();
+
+        uint256 assetValue = IporMath.convertWadToAssetDecimals(wadRedeemValue, _getDecimals());
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
             balance.payFixedSwaps + balance.receiveFixedSwaps,
-            wadAssetValue
+            wadRedeemValue
         );
 
         require(
@@ -260,23 +262,39 @@ abstract contract Joseph is
 
         _ipToken.burn(msg.sender, ipTokenValue);
 
-        _miltonStorage.subtractLiquidity(wadAssetValue);
+        _miltonStorage.subtractLiquidity(wadRedeemValue);
 
         IERC20Upgradeable(_asset).safeTransferFrom(address(_milton), msg.sender, assetValue);
 
-        emit Redeem(timestamp, address(milton), msg.sender, exchangeRate, assetValue, ipTokenValue);
+        emit Redeem(
+            timestamp,
+            address(milton),
+            msg.sender,
+            exchangeRate,
+            assetValue,
+            ipTokenValue,
+            wadRedeemFee,
+            wadRedeemValue
+        );
     }
+
+    function _calculateRedeemValue(uint256 timestamp) internal view returns (uint256) {}
 
     function _calculateRedeemedUtilizationRate(
         uint256 totalLiquidityPoolBalance,
         uint256 totalCollateralBalance,
         uint256 redeemedAmount
     ) internal pure returns (uint256) {
-        return
-            IporMath.division(
-                totalCollateralBalance * Constants.D18,
-                totalLiquidityPoolBalance - redeemedAmount
-            );
+        uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
+        if (denominator != 0) {
+            return
+                IporMath.division(
+                    totalCollateralBalance * Constants.D18,
+                    totalLiquidityPoolBalance - redeemedAmount
+                );
+        } else {
+            return Constants.MAX_VALUE;
+        }
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}

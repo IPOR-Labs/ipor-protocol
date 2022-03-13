@@ -22,9 +22,9 @@ const {
     prepareApproveForUsers,
     prepareData,
     prepareTestData,
-    prepareComplexTestDataDaiCase00,
+    prepareComplexTestDataDaiCase000,
     prepareTestDataUsdtCase1,
-    prepareTestDataDaiCase1,
+    prepareTestDataDaiCase000,
     setupIpTokenDaiInitialValues,
     setupIpTokenUsdtInitialValues,
     setupTokenDaiInitialValuesForUsers,
@@ -47,7 +47,7 @@ describe("Joseph Maintenance", () => {
             ["DAI"],
             data,
             1,
-            1
+            1,0
         );
         await testData.josephDai.connect(admin).pause();
 
@@ -65,7 +65,7 @@ describe("Joseph Maintenance", () => {
             ["DAI"],
             data,
             1,
-            1
+            1,0
         );
 
         //when
@@ -121,7 +121,7 @@ describe("Joseph Maintenance", () => {
 
     it("should NOT pause Smart Contract specific methods when paused", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -149,7 +149,7 @@ describe("Joseph Maintenance", () => {
 
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -164,7 +164,7 @@ describe("Joseph Maintenance", () => {
 
     it("should unpause Smart Contract, sender is an admin", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -191,7 +191,7 @@ describe("Joseph Maintenance", () => {
 
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -208,7 +208,7 @@ describe("Joseph Maintenance", () => {
 
     it("should transfer ownership - simple case 1", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -226,7 +226,7 @@ describe("Joseph Maintenance", () => {
 
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -242,7 +242,7 @@ describe("Joseph Maintenance", () => {
 
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -260,7 +260,7 @@ describe("Joseph Maintenance", () => {
 
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -279,7 +279,7 @@ describe("Joseph Maintenance", () => {
 
     it("should NOT transfer ownership - sender already lost ownership", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -299,7 +299,7 @@ describe("Joseph Maintenance", () => {
 
     it("should have rights to transfer ownership - sender still have rights", async () => {
         //given
-        const testData = await prepareTestDataDaiCase1(
+        const testData = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
