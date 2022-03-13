@@ -11,11 +11,6 @@ contract MockLendingPoolAave {
     using SafeERC20 for IERC20;
     using SafeCast for uint256;
 
-    // struct MockReserveData {
-    //     //the current supply rate. Expressed in ray
-    //     uint128 currentLiquidityRate;
-    // }
-
     // asset(dai/usdt/usdc) => adai/ausdt/ausdc
     mapping(address => address) _aTokens;
 
@@ -40,7 +35,6 @@ contract MockLendingPoolAave {
         _liquidityRates[dai].currentLiquidityRate = liquidityRatesDai.toUint128();
         _liquidityRates[usdc].currentLiquidityRate = liquidityRatesUsdc.toUint128();
         _liquidityRates[usdt].currentLiquidityRate = liquidityRatesUsdt.toUint128();
-
     }
 
     function deposit(
@@ -64,7 +58,11 @@ contract MockLendingPoolAave {
         aToken.burn(msg.sender, amount);
     }
 
-    function getReserveData(address asset) public view returns (DataTypesContract.ReserveData memory) {
+    function getReserveData(address asset)
+        public
+        view
+        returns (DataTypesContract.ReserveData memory)
+    {
         return _liquidityRates[asset];
     }
 }
