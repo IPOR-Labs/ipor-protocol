@@ -80,7 +80,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>Stanley IvToken Balance</strong>
+                        <strong>Milton IvToken Balance</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -89,7 +89,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="IvTokenUsdt"
                                 method="balanceOf"
-                                methodArgs={[drizzle.contracts.ItfStanleyUsdt.address]}
+                                methodArgs={[drizzle.contracts.ItfMiltonUsdt.address]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -104,7 +104,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="IvTokenUsdt"
                                 method="balanceOf"
-                                methodArgs={[drizzle.contracts.StanleyUsdt.address]}
+                                methodArgs={[drizzle.contracts.MiltonUsdt.address]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -122,7 +122,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="IvTokenUsdc"
                                 method="balanceOf"
-                                methodArgs={[drizzle.contracts.ItfStanleyUsdc.address]}
+                                methodArgs={[drizzle.contracts.ItfMiltonUsdc.address]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -137,7 +137,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="IvTokenUsdc"
                                 method="balanceOf"
-                                methodArgs={[drizzle.contracts.StanleyUsdc.address]}
+                                methodArgs={[drizzle.contracts.MiltonUsdc.address]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -155,7 +155,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="IvTokenDai"
                                 method="balanceOf"
-                                methodArgs={[drizzle.contracts.ItfStanleyDai.address]}
+                                methodArgs={[drizzle.contracts.ItfMiltonDai.address]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -170,7 +170,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="IvTokenDai"
                                 method="balanceOf"
-                                methodArgs={[drizzle.contracts.StanleyDai.address]}
+                                methodArgs={[drizzle.contracts.MiltonDai.address]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

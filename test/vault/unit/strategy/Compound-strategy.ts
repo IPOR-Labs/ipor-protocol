@@ -26,6 +26,7 @@ const stableTotalSupply18Decimals = "1000000000000000000000000000000";
 const totalSupply6Decimals = "100000000000000000000";
 
 const ZERO = BigNumber.from("0");
+const ONE = BigNumber.from("1");
 const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
 const TC_9_000_USD_18DEC = BigNumber.from("9000000000000000000000");
 const TC_10_000_USD_18DEC = BigNumber.from("10000000000000000000000");
@@ -177,10 +178,11 @@ describe("Compound strategy", () => {
             "754533916231843181332"
         );
 
-        await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_10_000_USD_18DEC);
+        await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
-        expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_18DEC);
-        expect(await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).to.be.equal(ZERO);
+        expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_9_999_USD_18DEC);
+        console.log("BALANCE=", await cDAI.balanceOf(compoundStrategyInstanceDAI.address));
+        expect(await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).to.be.equal(ONE);
     });
 
     it("Should be able to setup Stanley and interact with USDT", async () => {
