@@ -189,6 +189,10 @@ describe("MiltonFrontendDataProvider", () => {
         await testCasePagination(0, 0, 0, 0, 'IPOR_009');
     });
 
+    it("should fail when page size is greater than 50", async () => {
+        await testCasePagination(0, 0, 51, 0, 'IPOR_010');
+    });
+
     it("should receive empty list of swaps", async () => {
         await testCasePagination(0, 0, 10, 0, null);
     });
@@ -315,7 +319,8 @@ describe("MiltonFrontendDataProvider", () => {
             ["DAI", "USDC", "USDT"],
             data,
             0,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(

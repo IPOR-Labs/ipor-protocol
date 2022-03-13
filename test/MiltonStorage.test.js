@@ -775,7 +775,8 @@ describe("MiltonStorage", () => {
             ["USDT"],
             data,
             0,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -830,7 +831,8 @@ describe("MiltonStorage", () => {
             ["USDT", "USDC", "DAI"],
             data,
             0,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -885,7 +887,8 @@ describe("MiltonStorage", () => {
             ["USDT", "USDC", "DAI"],
             data,
             0,
-            1
+            1,
+            0
         );
 
         await prepareApproveForUsers(
