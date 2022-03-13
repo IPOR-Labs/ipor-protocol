@@ -202,7 +202,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="MiltonFrontendDataProvider"
             method="getMySwaps"
-            methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 10000]}
+            methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
             render={FrontendPositions}
         />
         <h5>My Positions - USDC</h5>
@@ -211,7 +211,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="MiltonFrontendDataProvider"
             method="getMySwaps"
-            methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 10000]}
+            methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
             render={FrontendPositions}
         />
         <h5>My Positions - DAI</h5>
@@ -220,7 +220,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="MiltonFrontendDataProvider"
             method="getMySwaps"
-            methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 10000]}
+            methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
             render={FrontendPositions}
         />
     </div>
