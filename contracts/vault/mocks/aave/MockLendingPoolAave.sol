@@ -41,15 +41,6 @@ contract MockLendingPoolAave {
         _liquidityRates[usdc].currentLiquidityRate = liquidityRatesUsdc.toUint128();
         _liquidityRates[usdt].currentLiquidityRate = liquidityRatesUsdt.toUint128();
 
-        // _liquidityRates[dai] = MockReserveData({
-        //     currentLiquidityRate: liquidityRatesDai.toUint128()
-        // });
-        // _liquidityRates[usdc] = MockReserveData({
-        //     currentLiquidityRate: liquidityRatesUsdc.toUint128()
-        // });
-        // _liquidityRates[usdt] = MockReserveData({
-        //     currentLiquidityRate: liquidityRatesUsdt.toUint128()
-        // });
     }
 
     function deposit(
