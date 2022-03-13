@@ -310,10 +310,16 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         override
         onlyMilton
     {
+        require(
+            vaultBalance >= depositValue,
+            IporErrors.MILTON_VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE
+        );
+
         uint256 currentVaultBalance = _balances.vault;
+
         require(
             currentVaultBalance <= (vaultBalance - depositValue),
-            IporErrors.MILTON_IPOR_VAULT_BALANCE_TOO_LOW
+            IporErrors.MILTON_VAULT_BALANCE_TOO_LOW
         );
         uint256 interest = currentVaultBalance != 0
             ? (vaultBalance - currentVaultBalance - depositValue)

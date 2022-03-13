@@ -80,8 +80,8 @@ contract MiltonFrontendDataProvider is
         uint256 swapsLength = pfSwapsLength + accountSwapReceiveFixedIds.length;
         IporSwapFront[] memory iporDerivatives = new IporSwapFront[](swapsLength);
         IMilton milton = IMilton(config.milton);
-        uint256 i = 0;
 
+        uint256 i = 0;
         for (i; i != pfSwapsLength; i++) {
             DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(
                 accountSwapPayFixedIds[i]
@@ -102,7 +102,6 @@ contract MiltonFrontendDataProvider is
         }
 
         i = pfSwapsLength;
-
         for (i; i != swapsLength; i++) {
             DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
                 accountSwapReceiveFixedIds[i - pfSwapsLength]

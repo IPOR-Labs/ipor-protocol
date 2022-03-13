@@ -9,12 +9,15 @@ interface IMiltonDevToolDataProvider {
 		address miltonStorage;
 		address joseph;
 		address ipToken;
+		address ivToken;
 		
 	}
 
     function getMyTotalSupply(address asset) external view returns (uint256);
 
     function getMyIpTokenBalance(address asset) external view returns (uint256);
+
+	function getMyIvTokenBalance(address asset) external view returns (uint256);
 
     function getMyAllowanceInMilton(address asset)
         external

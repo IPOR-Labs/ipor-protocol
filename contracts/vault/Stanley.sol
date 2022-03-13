@@ -339,6 +339,7 @@ abstract contract Stanley is
     {
         strategyAave = IStrategy(_aaveStrategy);
         strategyCompound = IStrategy(_compoundStrategy);
+        strategyMaxApy = strategyAave;
 
         if (strategyAave.getApr() < strategyCompound.getApr()) {
             strategyMaxApy = strategyCompound;

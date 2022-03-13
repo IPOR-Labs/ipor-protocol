@@ -199,7 +199,7 @@ abstract contract Milton is
 
     //@param assetValue underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetValue) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 vaultBalance = _stanley.deposit(assetValue);
+        uint256 vaultBalance = _stanley.deposit(assetValue);		
         _miltonStorage.updateStorageWhenDepositToStanley(assetValue, vaultBalance);
     }
 

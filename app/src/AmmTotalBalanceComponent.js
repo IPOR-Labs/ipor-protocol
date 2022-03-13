@@ -294,79 +294,6 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
         </table>
-        <table className="table" align="center">
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">
-                    ipUSDT
-                    <br />
-                    {drizzle.contracts.IpTokenUsdt.address}
-                </th>
-                <th scope="col">
-                    ipUSDC
-                    <br />
-                    {drizzle.contracts.IpTokenUsdc.address}
-                </th>
-                <th scope="col">
-                    ipDAI
-                    <br />
-                    {drizzle.contracts.IpTokenDai.address}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <strong>My ipToken Balance</strong>
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getMyIpTokenBalance"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
-                        render={(value) => (
-                            <div>
-                                {value / 1000000}
-                                <br />
-                                <small>{value}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getMyIpTokenBalance"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
-                        render={(value) => (
-                            <div>
-                                {value / 1000000}
-                                <br />
-                                <small>{value}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getMyIpTokenBalance"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
-                        render={(value) => (
-                            <div>
-                                {value / 1000000000000000000}
-                                <br />
-                                <small>{value}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-            </tr>
-        </table>
         <hr />
         <table className="table" align="center">
             <tr>
@@ -381,7 +308,7 @@ export default ({ drizzle, drizzleState }) => (
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? "ITF Milton" : "Milton"}
                     </strong>
                     <br />
-                    <small>For opening and closing swap</small>
+                    For opening and closing swap
                 </td>
                 <td>
                     <ContractData
@@ -421,63 +348,6 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonDevToolDataProvider"
                         method="getMyAllowanceInMilton"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
-                        render={(value) => (
-                            <div>
-                                {value / 1000000000000000000}
-                                <br />
-                                <small>{value}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>
-                        {process.env.REACT_APP_ITF_ENABLED === "true" ? "ITF Joseph" : "Joseph"}
-                    </strong>
-                    <br />
-                    <small>For provide liquidity</small>
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getMyAllowanceInJoseph"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
-                        render={(value) => (
-                            <div>
-                                {value / 1000000}
-                                <br />
-                                <small>{value}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getMyAllowanceInJoseph"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
-                        render={(value) => (
-                            <div>
-                                {value / 1000000}
-                                <br />
-                                <small>{value}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
-                        method="getMyAllowanceInJoseph"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -492,30 +362,27 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td></td>
                 <td>
+                    <strong>Milton</strong>{" "}
                     {process.env.REACT_APP_ITF_ENABLED === "true"
                         ? drizzle.contracts.ItfMiltonUsdt.address
                         : drizzle.contracts.MiltonUsdt.address}
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdt.address
-                        : drizzle.contracts.JosephUsdt.address}
+                    <br />
                     <ContractForm drizzle={drizzle} contract="UsdtMockedToken" method="approve" />
                 </td>
                 <td>
+                    <strong>Milton</strong>{" "}
                     {process.env.REACT_APP_ITF_ENABLED === "true"
                         ? drizzle.contracts.ItfMiltonUsdc.address
                         : drizzle.contracts.MiltonUsdc.address}
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdc.address
-                        : drizzle.contracts.JosephUsdc.address}
+                    <br />
                     <ContractForm drizzle={drizzle} contract="UsdcMockedToken" method="approve" />
                 </td>
                 <td>
+                    <strong>Milton</strong>{" "}
                     {process.env.REACT_APP_ITF_ENABLED === "true"
                         ? drizzle.contracts.ItfMiltonDai.address
                         : drizzle.contracts.MiltonDai.address}
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephDai.address
-                        : drizzle.contracts.JosephDai.address}
+                    <br />
                     <ContractForm drizzle={drizzle} contract="DaiMockedToken" method="approve" />
                 </td>
             </tr>

@@ -14,11 +14,7 @@ library IporMath {
         z = (x + (y / 2)) / y;
     }
 
-    function divisionWithoutRound(uint256 x, uint256 y)
-        internal
-        pure
-        returns (uint256 z)
-    {
+    function divisionWithoutRound(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = x / y;
     }
 
@@ -36,17 +32,17 @@ library IporMath {
         }
     }
 
-    function convertToWad(uint256 value, uint256 assetDecimals)
-        internal
-        pure
-        returns (uint256)
-    {
-        if (assetDecimals == 18) {
-            return value;
-        } else if (assetDecimals > 18) {
-            return division(value, 10**(assetDecimals - 18));
+    function convertToWad(uint256 value, uint256 assetDecimals) internal pure returns (uint256) {
+        if (value != 0) {
+            if (assetDecimals == 18) {
+                return value;
+            } else if (assetDecimals > 18) {
+                return division(value, 10**(assetDecimals - 18));
+            } else {
+                return value * 10**(18 - assetDecimals);
+            }
         } else {
-            return value * 10**(18 - assetDecimals);
+            return value;
         }
     }
 

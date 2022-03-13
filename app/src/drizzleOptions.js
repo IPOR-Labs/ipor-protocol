@@ -17,6 +17,16 @@ import UsdtMockedToken from "./contracts/UsdtMockedToken.json";
 import IpTokenUsdt from "./contracts/IpTokenUsdt.json";
 import IpTokenUsdc from "./contracts/IpTokenUsdc.json";
 import IpTokenDai from "./contracts/IpTokenDai.json";
+import IvTokenUsdt from "./contracts/IvTokenUsdt.json";
+import IvTokenUsdc from "./contracts/IvTokenUsdc.json";
+import IvTokenDai from "./contracts/IvTokenDai.json";
+import MockAUsdt from "./contracts/MockAUsdt.json";
+import MockAUsdc from "./contracts/MockAUsdc.json";
+import MockADai from "./contracts/MockADai.json";
+import MockCUSDC from "./contracts/MockCUSDC.json";
+import MockCUSDT from "./contracts/MockCUSDT.json";
+import MockCDai from "./contracts/MockCDai.json";
+
 import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider.json";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider.json";
@@ -67,6 +77,15 @@ const options = {
         IpTokenUsdt,
         IpTokenUsdc,
         IpTokenDai,
+        IvTokenUsdt,
+        IvTokenUsdc,
+        IvTokenDai,
+        MockAUsdt,
+        MockAUsdc,
+        MockADai,
+        MockCUSDC,
+        MockCUSDT,
+        MockCDai,
         JosephUsdt,
         JosephUsdc,
         JosephDai,
@@ -76,6 +95,9 @@ const options = {
         StanleyUsdt,
         StanleyUsdc,
         StanleyDai,
+        ItfStanleyUsdt,
+        ItfStanleyUsdc,
+        ItfStanleyDai,
         MiltonFaucet,
         MiltonSpreadModel,
         StrategyAaveUsdt,
