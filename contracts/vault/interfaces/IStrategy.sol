@@ -22,6 +22,8 @@ interface IStrategy {
 
     function setTreasury(address treasury) external;
 
+    function setTreasuryManager(address manager) external;
+
     function pause() external;
 
     function unpause() external;

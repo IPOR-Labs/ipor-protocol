@@ -166,6 +166,7 @@ describe("AAVE strategy pauseable", () => {
         await assertError(strategy.beforeClaim(), "Pausable: paused");
         await assertError(strategy.doClaim(), "Pausable: paused");
         await assertError(strategy.setStanley(mockAddress), "Pausable: paused");
+        await assertError(strategy.setTreasuryManager(mockAddress), "Pausable: paused");
         await assertError(strategy.setTreasury(mockAddress), "Pausable: paused");
         await assertError(strategy.setStkAave(mockAddress), "Pausable: paused");
     });

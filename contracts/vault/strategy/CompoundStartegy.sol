@@ -26,6 +26,7 @@ contract CompoundStrategy is
     CErc20 private _cToken;
     uint256 private _blocksPerYear;
     address private _treasury;
+    address private _treasuryManager;
 
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
@@ -53,10 +54,16 @@ contract CompoundStrategy is
         _compToken = IERC20Upgradeable(compToken);
         IERC20Upgradeable(_asset).safeApprove(cErc20Contract, type(uint256).max);
         _blocksPerYear = 2102400;
+        _treasuryManager = msg.sender;
     }
 
     modifier onlyStanley() {
         require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
+        _;
+    }
+
+    modifier onlyTreasuryManager() {
+        require(msg.sender == _treasuryManager, IporErrors.STRATEGY_CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 
@@ -166,7 +173,11 @@ contract CompoundStrategy is
         emit SetStanley(msg.sender, stanley, address(this));
     }
 
-    function setTreasury(address treasury) external whenNotPaused onlyOwner {
+    function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
+        _treasuryManager = manager;
+    }
+
+    function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);
         _treasury = treasury;
         emit SetTreasury(address(this), treasury);

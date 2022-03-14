@@ -906,6 +906,81 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
+            <h4>Strategies setTreasuryManager</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Strategy</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Aave</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveUsdt"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveUsdc"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyAaveDai"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Compound</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundUsdt"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundUsdc"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="StrategyCompoundDai"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
             <h4>Strategies setTreasury</h4>
             <table className="table" align="center">
                 <tr>

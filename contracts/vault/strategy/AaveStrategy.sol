@@ -31,6 +31,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
     address private _stkAave;
     address private _stanley;
     address private _treasury;
+    address private _treasuryManager;
 
     AaveLendingPoolProviderV2 private _provider;
     StakedAaveInterface private _stakedAaveInterface;
@@ -61,10 +62,16 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
         _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
         _stkAave = stkAave;
         _aave = aaveToken;
+        _treasuryManager = msg.sender;
     }
 
     modifier onlyStanley() {
         require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
+        _;
+    }
+
+    modifier onlyTreasuryManager() {
+        require(msg.sender == _treasuryManager, IporErrors.STRATEGY_CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 
@@ -191,7 +198,11 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
         emit SetStanley(msg.sender, stanley, address(this));
     }
 
-    function setTreasury(address treasury) external whenNotPaused onlyOwner {
+    function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
+        _treasuryManager = manager;
+    }
+
+    function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
         require(treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
         _treasury = treasury;
         emit SetTreasury(address(this), treasury);

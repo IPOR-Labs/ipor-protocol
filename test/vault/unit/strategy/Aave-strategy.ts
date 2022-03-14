@@ -1,9 +1,8 @@
 const hre = require("hardhat");
 import chai from "chai";
-const keccak256 = require("keccak256");
-import { constants, BigNumber, Signer } from "ethers";
+import { constants, Signer } from "ethers";
 
-const { MaxUint256, AddressZero } = constants;
+const { AddressZero } = constants;
 import { solidity } from "ethereum-waffle";
 import {
     AaveStrategy,
@@ -94,7 +93,19 @@ describe("AAVE strategy", () => {
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
-    it("Should not be able to create aave strategy", async () => {
+    it("Should not be able to setup Treasury aave strategy", async () => {
         await expect(aaveStrategyInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_502");
+    });
+
+    it("Should not be able to setup Treasury aave strategy when sender is not Treasury Manager", async () => {
+        await expect(
+            aaveStrategyInstance.connect(userOne).setTreasury(AddressZero)
+        ).to.be.revertedWith("IPOR_505");
+    });
+
+    it("Should not be able to setup Treasury Manager aave strategy", async () => {
+        await expect(
+            aaveStrategyInstance.connect(userOne).setTreasuryManager(AddressZero)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 });

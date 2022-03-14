@@ -1,7 +1,6 @@
 const hre = require("hardhat");
 import chai from "chai";
-import { BigNumber, Signer } from "ethers";
-
+import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 import {
     AaveStrategy,
@@ -117,6 +116,7 @@ describe("Compound strategy", () => {
             comptrollerDAI.address,
             COMP.address,
         ]);
+        await compoundStrategyInstanceDAI.setTreasuryManager(await admin.getAddress());
         await compoundStrategyInstanceDAI.setTreasury(await admin.getAddress());
         compoundStrategyInstanceUSDT = await upgrades.deployProxy(compoundNewStartegy, [
             USDT.address,
@@ -124,6 +124,7 @@ describe("Compound strategy", () => {
             comptrollerUSDT.address,
             COMP.address,
         ]);
+        await compoundStrategyInstanceUSDT.setTreasuryManager(await admin.getAddress());
         await compoundStrategyInstanceUSDT.setTreasury(await admin.getAddress());
         compoundStrategyInstanceUSDC = await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
@@ -131,6 +132,7 @@ describe("Compound strategy", () => {
             comptrollerUSDT.address,
             COMP.address,
         ]);
+        await compoundStrategyInstanceUSDC.setTreasuryManager(await admin.getAddress());
         await compoundStrategyInstanceUSDC.setTreasury(await admin.getAddress());
     });
 
@@ -176,7 +178,6 @@ describe("Compound strategy", () => {
         await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
         expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_9_999_USD_18DEC);
-        console.log("BALANCE=", await cDAI.balanceOf(compoundStrategyInstanceDAI.address));
         expect(await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).to.be.equal(ONE);
     });
 
@@ -233,5 +234,17 @@ describe("Compound strategy", () => {
 
         expect(await USDC.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
         expect(await cUSDC.balanceOf(compoundStrategyInstanceUSDC.address)).to.be.equal(ZERO);
+    });
+
+    it("Should not be able to setup Treasury aave strategy when sender is not Treasury Manager", async () => {
+        await expect(
+            compoundStrategyInstanceUSDC.connect(userOne).setTreasury(constants.AddressZero)
+        ).to.be.revertedWith("IPOR_505");
+    });
+
+    it("Should not be able to setup Treasury Manager aave strategy", async () => {
+        await expect(
+            compoundStrategyInstanceUSDC.connect(userOne).setTreasuryManager(constants.AddressZero)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 });
