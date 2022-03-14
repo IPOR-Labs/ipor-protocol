@@ -3697,7 +3697,7 @@ describe("Milton", () => {
         );
 
         await assertError(
-            testCaseWhenUserClosesMultiplePositions(
+            testCaseWhenUserClosesPositions(
                 testData,
                 testData.tokenDai.address,
                 USD_10_18DEC,
@@ -3709,8 +3709,11 @@ describe("Milton", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 0,
-                [],
-                0
+                (contract) => {
+                    return contract.closeSwapsPayFixed([]);
+                },
+                0,
+                false
             ),
             "IPOR_314"
         );
@@ -3737,7 +3740,7 @@ describe("Milton", () => {
             testData
         );
 
-        await testCaseWhenUserClosesMultiplePositions(
+        await testCaseWhenUserClosesPositions(
             testData,
             testData.tokenDai.address,
             USD_10_18DEC,
@@ -3749,8 +3752,11 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             1,
-            [1],
-            0
+            (contract) => {
+                return contract.closeSwapsPayFixed([1]);
+            },
+            0,
+            false
         );
     });
 
@@ -3775,7 +3781,7 @@ describe("Milton", () => {
             testData
         );
 
-        await testCaseWhenUserClosesMultiplePositions(
+        await testCaseWhenUserClosesPositions(
             testData,
             testData.tokenDai.address,
             USD_10_18DEC,
@@ -3787,8 +3793,11 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             2,
-            [1, 2],
-            0
+            (contract) => {
+                return contract.closeSwapsPayFixed([1, 2]);
+            },
+            0,
+            false
         );
     });
 
@@ -3814,7 +3823,7 @@ describe("Milton", () => {
         );
 
         await assertError(
-            testCaseWhenUserClosesMultiplePositions(
+            testCaseWhenUserClosesPositions(
                 testData,
                 testData.tokenDai.address,
                 USD_10_18DEC,
@@ -3826,8 +3835,11 @@ describe("Milton", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 2,
-                [1, 300],
-                0
+                (contract) => {
+                    return contract.closeSwapsPayFixed([1, 300]);
+                },
+                0,
+                false
             ),
             "IPOR_304"
         );
@@ -3855,7 +3867,7 @@ describe("Milton", () => {
         );
 
         await assertError(
-            testCaseWhenUserClosesMultiplePositions(
+            testCaseWhenUserClosesPositions(
                 testData,
                 testData.tokenDai.address,
                 USD_10_18DEC,
@@ -3867,8 +3879,11 @@ describe("Milton", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 0,
-                [],
-                0
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([]);
+                },
+                0,
+                false
             ),
             "IPOR_314"
         );
@@ -3895,7 +3910,7 @@ describe("Milton", () => {
             testData
         );
 
-        await testCaseWhenUserClosesMultiplePositions(
+        await testCaseWhenUserClosesPositions(
             testData,
             testData.tokenDai.address,
             USD_10_18DEC,
@@ -3907,8 +3922,11 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             1,
-            [1],
-            0
+            (contract) => {
+                return contract.closeSwapsReceiveFixed([1]);
+            },
+            0,
+            false
         );
     });
 
@@ -3933,7 +3951,7 @@ describe("Milton", () => {
             testData
         );
 
-        await testCaseWhenUserClosesMultiplePositions(
+        await testCaseWhenUserClosesPositions(
             testData,
             testData.tokenDai.address,
             USD_10_18DEC,
@@ -3945,8 +3963,11 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             2,
-            [1, 2],
-            0
+            (contract) => {
+                return contract.closeSwapsReceiveFixed([1, 2]);
+            },
+            0,
+            false
         );
     });
 
@@ -3972,7 +3993,7 @@ describe("Milton", () => {
         );
 
         await assertError(
-            testCaseWhenUserClosesMultiplePositions(
+            testCaseWhenUserClosesPositions(
                 testData,
                 testData.tokenDai.address,
                 USD_10_18DEC,
@@ -3984,10 +4005,705 @@ describe("Milton", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 2,
-                [1, 300],
-                0
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([1, 300]);
+                },
+                0,
+                false
             ),
             "IPOR_304"
+        );
+    });
+
+    it("should NOT close position, pay fixed, single id function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapPayFixed(1);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, pay fixed, multiple ids function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapsPayFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, receive fixed, single id function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapReceiveFixed(1);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, receive fixed, multiple ids function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, pay fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsPayFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position, pay fixed, single id emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapPayFixed(1);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsReceiveFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapReceiveFixed(1);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsPayFixed([1]);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close position by owner, pay fixed, single id emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapPayFixed(1);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsReceiveFixed([1]);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close position by owner, receive fixed, single id emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapReceiveFixed(1);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesPositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            admin,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            1,
+            (contract) => {
+                return contract.emergencyCloseSwapsPayFixed([1]);
+            },
+            0,
+            true
+        );
+    });
+
+    it("should close position by owner, pay fixed, single id emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesPositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            admin,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            1,
+            (contract) => {
+                return contract.emergencyCloseSwapPayFixed(1);
+            },
+            0,
+            true
+        );
+    });
+
+    it("should close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesPositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            admin,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            1,
+            (contract) => {
+                return contract.emergencyCloseSwapsReceiveFixed([1]);
+            },
+            0,
+            true
+        );
+    });
+
+    it("should close position by owner, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await testCaseWhenUserClosesPositions(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            admin,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            1,
+            (contract) => {
+                return contract.emergencyCloseSwapReceiveFixed(1);
+            },
+            0,
+            true
         );
     });
 
@@ -4388,7 +5104,7 @@ describe("Milton", () => {
         );
     };
 
-    const testCaseWhenUserClosesMultiplePositions = async function (
+    const testCaseWhenUserClosesPositions = async function (
         testData,
         asset,
         collateralizationFactor,
@@ -4400,8 +5116,9 @@ describe("Milton", () => {
         periodOfTimeElapsedInSeconds,
         providedLiquidityAmount,
         numberOfSwapsToBeCreated,
-        swapIdsToBeClosed,
-        openTimestamp
+        closeCallback,
+        openTimestamp,
+        pauseMilton
     ) {
         await executeCloseSwapsTestCase(
             testData,
@@ -4415,8 +5132,9 @@ describe("Milton", () => {
             periodOfTimeElapsedInSeconds,
             providedLiquidityAmount,
             numberOfSwapsToBeCreated,
-            swapIdsToBeClosed,
-            openTimestamp
+            closeCallback,
+            openTimestamp,
+            pauseMilton
         );
     };
 
@@ -4614,8 +5332,9 @@ describe("Milton", () => {
         periodOfTimeElapsedInSeconds,
         providedLiquidityAmount,
         swapsToCreate,
-        swapIdsToClose,
-        openTimestamp
+        closeCallback,
+        openTimestamp,
+        pauseMilton
     ) {
         //given
         let localOpenTimestamp = null;
@@ -4680,43 +5399,26 @@ describe("Milton", () => {
             .connect(userOne)
             .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 
-        let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
-
         //when
         if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
-            if (params.direction === 0) {
-                await testData.miltonUsdt
-                    .connect(closerUser)
-                    .itfCloseSwapsPayFixed(swapIdsToClose, endTimestamp);
-            } else if (params.direction === 1) {
-                await testData.miltonUsdt
-                    .connect(closerUser)
-                    .itfCloseSwapsReceiveFixed(swapIdsToClose, endTimestamp);
+            if (pauseMilton) {
+                await testData.miltonUsdt.connect(admin).pause();
             }
+            await closeCallback(testData.miltonUsdt.connect(closerUser));
         }
 
         if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
-            if (params.direction === 0) {
-                await testData.miltonUsdc
-                    .connect(closerUser)
-                    .itfCloseSwapsPayFixed(swapIdsToClose, endTimestamp);
-            } else if (params.direction === 1) {
-                await testData.miltonUsdc
-                    .connect(closerUser)
-                    .itfCloseSwapsReceiveFixed(swapIdsToClose, endTimestamp);
+            if (pauseMilton) {
+                await testData.miltonUsdc.connect(admin).pause();
             }
+            await closeCallback(testData.miltonUsdc.connect(closerUser));
         }
 
         if (testData.tokenDai && params.asset === testData.tokenDai.address) {
-            if (params.direction === 0) {
-                await testData.miltonDai
-                    .connect(closerUser)
-                    .itfCloseSwapsPayFixed(swapIdsToClose, endTimestamp);
-            } else if (params.direction === 1) {
-                await testData.miltonDai
-                    .connect(closerUser)
-                    .itfCloseSwapsReceiveFixed(swapIdsToClose, endTimestamp);
+            if (pauseMilton) {
+                await testData.miltonDai.connect(admin).pause();
             }
+            await closeCallback(testData.miltonDai.connect(closerUser));
         }
     };
 
