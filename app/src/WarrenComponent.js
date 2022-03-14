@@ -68,7 +68,7 @@ export default ({ drizzle, drizzleState }) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="WarrenDevToolDataProvider"
+                    contract="CockpitDataProvider"
                     method="getIndexes"
                     render={IporIndexList}
                 />

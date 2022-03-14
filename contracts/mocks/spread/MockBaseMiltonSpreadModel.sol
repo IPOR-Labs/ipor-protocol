@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../../amm/MiltonSpreadModel.sol";
+import "../../amm/spread/MiltonSpreadModel.sol";
 
 contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
     function testCalculateSpreadPremiumsPayFixed(

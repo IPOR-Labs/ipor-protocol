@@ -180,7 +180,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 0").to.be.equal(zero);
 
         //When
-        await stanleyUsdc.connect(signer).deposit(depositAmound);
+        const balance = await stanleyUsdc.connect(signer).deposit(depositAmound);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);

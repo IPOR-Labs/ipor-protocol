@@ -150,22 +150,20 @@
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                               
                         <argument>${contracts.sources}/configuration/MiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/configuration/MiltonSpreadConfiguration.sol</argument>
-                        <argument>${contracts.sources}/devtool/DevToolSmartContracts.sol</argument>
-                        <argument>${contracts.sources}/frontend/MiltonDevToolDataProvider.sol</argument>
-                        <argument>${contracts.sources}/frontend/MiltonFrontendDataProvider.sol</argument>
-                        <argument>${contracts.sources}/frontend/WarrenDevToolDataProvider.sol</argument>
-                        <argument>${contracts.sources}/frontend/WarrenFrontendDataProvider.sol</argument>
+                        <argument>${contracts.sources}/cockpit/CockpitSmartContracts.sol</argument>
+                        <argument>${contracts.sources}/frontend/CockpitDataProvider.sol</argument>
+                        <argument>${contracts.sources}/frontend/MiltonDarcyDataProvider.sol</argument>                        
+                        <argument>${contracts.sources}/frontend/WarrenDarcyDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonDevToolDataProvider.sol</argument>                        
-                        <argument>${contracts.sources}/interfaces/IMiltonFrontendDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/ICockpitDataProvider.sol</argument>                        
+                        <argument>${contracts.sources}/interfaces/IMiltonDarcyDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonSpreadConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IWarrenDevToolDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IWarrenFrontendDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>                        
+                        <argument>${contracts.sources}/interfaces/IWarrenDarcyDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
                         <argument>${contracts.sources}/itf/ItfJoseph.sol</argument>
                         <argument>${contracts.sources}/itf/ItfMilton.sol</argument>
@@ -237,13 +235,12 @@
                         <includes>
                             <include>DataTypes.abi</include>
                             <include>Milton.abi</include>
-                            <include>MiltonDevToolDataProvider.abi</include>
-                            <include>WarrenDevToolDataProvider.abi</include>
+                            <include>CockpitDataProvider.abi</include>                            
                             <include>MiltonEvents.abi</include>
                             <include>ItfMilton.abi</include>
                             <include>ItfWarren.abi</include>
                             <include>Warren.abi</include>
-                            <include>MiltonFrontendDataProvider.abi</include>
+                            <include>MiltonDarcyDataProvider.abi</include>
                         </includes>
                     </abiSourceFiles>
                     <outputDirectory>

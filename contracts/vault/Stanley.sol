@@ -5,13 +5,14 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "../libraries/IporMath.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./interfaces/IStrategy.sol";
+import "../interfaces/IStrategy.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IStanleyAdministration.sol";
-import "./interfaces/IIvToken.sol";
+import "../interfaces/IIvToken.sol";
 import "../IporErrors.sol";
-import "../libraries/IporMath.sol";
+
 import "hardhat/console.sol";
 
 abstract contract Stanley is

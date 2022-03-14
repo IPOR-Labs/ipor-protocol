@@ -1,23 +1,21 @@
+// SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import {IporMath} from "../../libraries/IporMath.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
-import "../interfaces/IStrategy.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "../../interfaces/IStrategy.sol";
 import "../../IporErrors.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import {IporMath} from "../../libraries/IporMath.sol";
-import "hardhat/console.sol";
 
 import "hardhat/console.sol";
 

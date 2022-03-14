@@ -24,7 +24,7 @@ contract MockCaseBaseStanley is IStanley {
         return _balance[who];
     }
 
-    function calculateExchangeRate() external view override returns (uint256) {
+    function calculateExchangeRate() external pure override returns (uint256) {
         return 0;
     }
 
