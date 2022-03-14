@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20Metadat
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import "../../libraries/Constants.sol";
+import "../../utils/Constants.sol";
 import "../../interfaces/IWarren.sol";
 import "../../interfaces/IMilton.sol";
 import "../../interfaces/IMiltonStorage.sol";
@@ -88,7 +88,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
+    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
         AssetConfig memory config = _assetConfig[asset];
         return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(account, offset, chunkSize);
     }
@@ -98,7 +98,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
+    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
         AssetConfig memory config = _assetConfig[asset];
         return
             IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(account, offset, chunkSize);
@@ -108,7 +108,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address asset,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
+    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
         AssetConfig memory config = _assetConfig[asset];
         return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(msg.sender, offset, chunkSize);
     }
@@ -117,7 +117,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address asset,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
+    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
         AssetConfig memory config = _assetConfig[asset];
         return
             IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(

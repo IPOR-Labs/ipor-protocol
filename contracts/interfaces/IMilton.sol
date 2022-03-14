@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
+import "../types/IporTypes.sol";
+import "../types/MiltonTypes.sol";
 
 interface IMilton {
     function getVersion() external pure returns (uint256);
 
-    function getAccruedBalance() external view returns (DataTypes.MiltonBalanceMemory memory);
+    function getAccruedBalance() external view returns (IporTypes.MiltonBalancesMemory memory);
 
     function calculateSpread() external view returns (uint256 spreadPf, uint256 spreadRf);
 
@@ -21,12 +22,12 @@ interface IMilton {
 
     function calculateExchangeRate(uint256 calculateTimestamp) external view returns (uint256);
 
-    function calculateSwapPayFixedValue(DataTypes.IporSwapMemory memory swap)
+    function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)
         external
         view
         returns (int256);
 
-    function calculateSwapReceiveFixedValue(DataTypes.IporSwapMemory memory swap)
+    function calculateSwapReceiveFixedValue(IporTypes.IporSwapMemory memory swap)
         external
         view
         returns (int256);
@@ -66,11 +67,11 @@ interface IMilton {
         uint256 indexed swapId,
         address indexed buyer,
         address asset,
-        DataTypes.SwapDirection direction,
-        DataTypes.OpenSwapMoney money,
+        MiltonTypes.SwapDirection direction,
+        MiltonTypes.OpenSwapMoney money,
         uint256 startingTimestamp,
         uint256 endingTimestamp,
-        DataTypes.IporSwapIndicator indicator
+        MiltonTypes.IporSwapIndicator indicator
     );
 
     // @notice Close swap position
@@ -81,5 +82,5 @@ interface IMilton {
         address liquidator,
         uint256 transferedToBuyer,
         uint256 transferedToLiquidator
-    );
+    );    
 }

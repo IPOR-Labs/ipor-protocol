@@ -4,10 +4,9 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import {IporErrors} from "../../IporErrors.sol";
-import "../../libraries/Constants.sol";
-import "../../libraries/IporMath.sol";
-import "../../libraries/types/DataTypes.sol";
-import {IporMath} from "../../libraries/IporMath.sol";
+import "../../utils/Constants.sol";
+import "../../utils/math/IporMath.sol";
+import "../../types/IporTypes.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadModelCore.sol";
 import "../configuration/MiltonSpreadConfiguration.sol";
@@ -28,8 +27,8 @@ contract MiltonSpreadModel is
     //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
     function calculateQuotePayFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external pure override returns (uint256 quoteValue) {
         (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
@@ -42,8 +41,8 @@ contract MiltonSpreadModel is
     //@dev Quote = RefLeg - SpreadPremiums, RefLeg = min(IPOR, EMAi), Spread = IPOR - RefLeg + SpreadPremiums
     function calculateQuoteReceiveFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external pure override returns (uint256 quoteValue) {
         (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
@@ -59,8 +58,8 @@ contract MiltonSpreadModel is
     //@dev Spread = SpreadPremiums + RefLeg - IPOR
     function calculateSpreadPayFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external pure override returns (uint256 spreadValue) {
         (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
@@ -74,8 +73,8 @@ contract MiltonSpreadModel is
     //@dev Spread = SpreadPremiums + IPOR - RefLeg
     function calculateSpreadRecFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external pure override returns (uint256 spreadValue) {
         (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
@@ -88,8 +87,8 @@ contract MiltonSpreadModel is
 
     function _calculateQuoteChunksPayFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsPayFixed(soap, accruedIpor, accruedBalance);
 
@@ -101,8 +100,8 @@ contract MiltonSpreadModel is
 
     function _calculateQuoteChunksReceiveFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsRecFixed(soap, accruedIpor, accruedBalance);
 
@@ -114,8 +113,8 @@ contract MiltonSpreadModel is
 
     function _calculateSpreadPremiumsPayFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) internal pure returns (uint256 spreadPremiumsValue) {
         require(
             accruedBalance.liquidityPool != 0,
@@ -138,8 +137,8 @@ contract MiltonSpreadModel is
 
     function _calculateSpreadPremiumsRecFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
-        DataTypes.MiltonBalanceMemory memory accruedBalance
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
     ) internal pure returns (uint256 spreadValue) {
         require(
             accruedBalance.liquidityPool != 0,

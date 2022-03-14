@@ -25,12 +25,7 @@ contract MockAaveLendingPoolCore is AaveLendingPoolCore {
         _reserve = reserve;
     }
 
-    function getReserveAvailableLiquidity(address)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getReserveAvailableLiquidity(address) external view override returns (uint256) {
         return _liquidity;
     }
 
@@ -38,12 +33,7 @@ contract MockAaveLendingPoolCore is AaveLendingPoolCore {
         _liquidity = newVal;
     }
 
-    function getReserveTotalBorrowsStable(address)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getReserveTotalBorrowsStable(address) external view override returns (uint256) {
         return _borrowsStable;
     }
 
@@ -51,12 +41,7 @@ contract MockAaveLendingPoolCore is AaveLendingPoolCore {
         _borrowsStable = newVal;
     }
 
-    function getReserveTotalBorrowsVariable(address)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getReserveTotalBorrowsVariable(address) external view override returns (uint256) {
         return _borrowsVariable;
     }
 

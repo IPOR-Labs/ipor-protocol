@@ -3,9 +3,9 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {IporErrors} from "../../IporErrors.sol";
-import "../../libraries/Constants.sol";
-import "../../libraries/IporMath.sol";
-import "../../libraries/types/DataTypes.sol";
+import "../../utils/Constants.sol";
+import "../../utils/math/IporMath.sol";
+import "../../types/IporTypes.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 

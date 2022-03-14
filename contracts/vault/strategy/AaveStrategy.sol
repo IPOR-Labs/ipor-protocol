@@ -8,13 +8,13 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {IporMath} from "../../libraries/IporMath.sol";
+import "../../IporErrors.sol";
+import {IporMath} from "../../utils/math/IporMath.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
 import "../../interfaces/IStrategy.sol";
-import "../../IporErrors.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 import "hardhat/console.sol";

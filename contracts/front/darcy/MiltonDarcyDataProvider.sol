@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "../../types/MiltonStorageTypes.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../../interfaces/IMiltonDarcyDataProvider.sol";
 import "../../interfaces/IMiltonStorage.sol";
@@ -71,19 +72,16 @@ contract MiltonDarcyDataProvider is
         AssetConfig memory config = _assetConfig[asset];
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
 
-        (uint256 totalCount, IMiltonStorage.IporSwapId[] memory swapIds) = miltonStorage.getSwapIds(
-            msg.sender,
-            offset,
-            chunkSize
-        );
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage
+            .getSwapIds(msg.sender, offset, chunkSize);
 
         IMilton milton = IMilton(config.milton);
 
         IporSwapFront[] memory iporDerivatives = new IporSwapFront[](swapIds.length);
         for (uint256 i = 0; i != swapIds.length; i++) {
-            IMiltonStorage.IporSwapId memory swapId = swapIds[i];
+            MiltonStorageTypes.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
-                DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);
+                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);
                 iporDerivatives[i] = _mapToIporSwapFront(
                     asset,
                     iporSwap,
@@ -91,7 +89,7 @@ contract MiltonDarcyDataProvider is
                     milton.calculateSwapPayFixedValue(iporSwap)
                 );
             } else {
-                DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
+                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
                     swapId.id
                 );
                 iporDerivatives[i] = _mapToIporSwapFront(
@@ -108,7 +106,7 @@ contract MiltonDarcyDataProvider is
 
     function _mapToIporSwapFront(
         address asset,
-        DataTypes.IporSwapMemory memory iporSwap,
+        IporTypes.IporSwapMemory memory iporSwap,
         uint8 direction,
         int256 value
     ) internal pure returns (IporSwapFront memory) {
@@ -159,12 +157,12 @@ contract MiltonDarcyDataProvider is
 
         IMiltonConfiguration milton = IMiltonConfiguration(miltonAddr);
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
-        DataTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
             timestamp,
             asset
         );
 
-        DataTypes.MiltonBalanceMemory memory balance = IMilton(miltonAddr).getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = IMilton(miltonAddr).getAccruedBalance();
 
         uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
             miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, timestamp),

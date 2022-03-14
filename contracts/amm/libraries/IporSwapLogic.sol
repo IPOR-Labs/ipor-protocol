@@ -2,10 +2,10 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "./types/DataTypes.sol";
-import "./IporMath.sol";
-import "./Constants.sol";
-import {IporErrors} from "../IporErrors.sol";
+import "../../types/IporTypes.sol";
+import "../../utils/math/IporMath.sol";
+import "../../utils/Constants.sol";
+import "../../IporErrors.sol";
 import "hardhat/console.sol";
 
 library IporSwapLogic {
@@ -34,32 +34,8 @@ library IporSwapLogic {
         openingFee = IporMath.division(collateral * openingFeePercentage, Constants.D18);
     }
 
-    //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
-    function calculateQuasiInterestFixed(
-        uint256 notionalAmount,
-        uint256 swapFixedInterestRate,
-        uint256 swapPeriodInSeconds
-    ) internal pure returns (uint256) {
-        return
-            notionalAmount *
-            Constants.WAD_YEAR_IN_SECONDS +
-            notionalAmount *
-            swapFixedInterestRate *
-            swapPeriodInSeconds;
-    }
-
-    //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS
-    function calculateQuasiInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
-        internal
-        pure
-        returns (uint256)
-    {
-        //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when swap is closed)
-        return ibtQuantity * ibtCurrentPrice * Constants.YEAR_IN_SECONDS;
-    }
-
     function calculateSwapPayFixedValue(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 swapValue) {
@@ -79,7 +55,7 @@ library IporSwapLogic {
     }
 
     function calculateSwapReceiveFixedValue(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (int256 swapValue) {
@@ -98,30 +74,8 @@ library IporSwapLogic {
         );
     }
 
-    function _normalizeSwapValue(uint256 collateral, int256 swapValue)
-        private
-        pure
-        returns (int256)
-    {
-        int256 intCollateral = collateral.toInt256();
-
-        if (swapValue > 0) {
-            if (swapValue < intCollateral) {
-                return swapValue;
-            } else {
-                return intCollateral;
-            }
-        } else {
-            if (swapValue < -intCollateral) {
-                return -intCollateral;
-            } else {
-                return swapValue;
-            }
-        }
-    }
-
     function calculateQuasiInterest(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (uint256 quasiIFixed, uint256 quasiIFloating) {
@@ -147,5 +101,51 @@ library IporSwapLogic {
         );
 
         quasiIFloating = calculateQuasiInterestFloating(swap.ibtQuantity, mdIbtPrice);
+    }
+
+    //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
+    function calculateQuasiInterestFixed(
+        uint256 notionalAmount,
+        uint256 swapFixedInterestRate,
+        uint256 swapPeriodInSeconds
+    ) internal pure returns (uint256) {
+        return
+            notionalAmount *
+            Constants.WAD_YEAR_IN_SECONDS +
+            notionalAmount *
+            swapFixedInterestRate *
+            swapPeriodInSeconds;
+    }
+
+    //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS
+    function calculateQuasiInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
+        internal
+        pure
+        returns (uint256)
+    {
+        //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when swap is closed)
+        return ibtQuantity * ibtCurrentPrice * Constants.YEAR_IN_SECONDS;
+    }
+
+    function _normalizeSwapValue(uint256 collateral, int256 swapValue)
+        private
+        pure
+        returns (int256)
+    {
+        int256 intCollateral = collateral.toInt256();
+
+        if (swapValue > 0) {
+            if (swapValue < intCollateral) {
+                return swapValue;
+            } else {
+                return intCollateral;
+            }
+        } else {
+            if (swapValue < -intCollateral) {
+                return -intCollateral;
+            } else {
+                return swapValue;
+            }
+        }
     }
 }

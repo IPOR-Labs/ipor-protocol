@@ -4,10 +4,9 @@ pragma solidity 0.8.9;
 import "../oracles/Warren.sol";
 
 contract ItfWarren is Warren {
-
-	function itfGetDecayFactorValue() external pure returns(uint256) {
-		return _DECAY_FACTOR_VALUE;
-	}
+    function itfGetDecayFactorValue() external pure returns (uint256) {
+        return _DECAY_FACTOR_VALUE;
+    }
 
     function itfUpdateIndex(
         address asset,
@@ -18,11 +17,7 @@ contract ItfWarren is Warren {
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        _updateIndexes(
-            assets,
-            indexes,
-            updateTimestamp
-        );
+        _updateIndexes(assets, indexes, updateTimestamp);
     }
 
     function itfUpdateIndexes(
@@ -30,11 +25,6 @@ contract ItfWarren is Warren {
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) external onlyUpdater {
-        _updateIndexes(
-            assets,
-            indexValues,
-            updateTimestamp
-        );
+        _updateIndexes(assets, indexValues, updateTimestamp);
     }
-
 }

@@ -3,11 +3,11 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "../../security/IporOwnableUpgradeable.sol";
+import {Constants} from "../../utils/Constants.sol";
+import {IporMath} from "../../utils/math/IporMath.sol";
 import "../../interfaces/IWarrenDarcyDataProvider.sol";
-import {Constants} from "../../libraries/Constants.sol";
-import {IporMath} from "../../libraries/IporMath.sol";
 import "../../interfaces/IWarren.sol";
+import "../../security/IporOwnableUpgradeable.sol";
 
 contract WarrenDarcyDataProvider is
     IporOwnableUpgradeable,

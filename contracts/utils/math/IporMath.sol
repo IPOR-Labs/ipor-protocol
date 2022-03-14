@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "./types/DataTypes.sol";
-import "./Constants.sol";
+import "../Constants.sol";
 
 library IporMath {
+    //TODO: Milton, MiltonStorage, SoapIndicatorLogic, Joseph, MiltonSpreadModel, Darcy
     //@notice Division with rounding up on last position, x, and y is with MD
     function division(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = (x + (y / 2)) / y;
     }
 
+    //TODO: MiltonStorage, IporSwapLogic
     function divisionInt(int256 x, int256 y) internal pure returns (int256 z) {
         z = (x + (y / 2)) / y;
     }

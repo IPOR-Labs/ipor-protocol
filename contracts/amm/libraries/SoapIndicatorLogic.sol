@@ -1,40 +1,16 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import {DataTypes} from "../libraries/types/DataTypes.sol";
-import {IporMath} from "../libraries/IporMath.sol";
-import {IporErrors} from "../IporErrors.sol";
-import {Constants} from "../libraries/Constants.sol";
+import "../../types/MiltonStorageTypes.sol";
+import {IporMath} from "../../utils/math/IporMath.sol";
+import {IporErrors} from "../../IporErrors.sol";
+import {Constants} from "../../utils/Constants.sol";
 
 library SoapIndicatorLogic {
     using SafeCast for uint256;
 
-    function calculateSoapPayFixed(
-        DataTypes.SoapIndicatorMemory memory si,
-        uint256 calculateTimestamp,
-        uint256 ibtPrice
-    ) internal pure returns (int256) {
-        return
-            IporMath.divisionInt(
-                calculateQuasiSoapPayFixed(si, calculateTimestamp, ibtPrice),
-                Constants.WAD_P2_YEAR_IN_SECONDS_INT
-            );
-    }
-
-    function calculateSoapReceiveFixed(
-        DataTypes.SoapIndicatorMemory memory si,
-        uint256 calculateTimestamp,
-        uint256 ibtPrice
-    ) internal pure returns (int256) {
-        return
-            IporMath.divisionInt(
-                calculateQuasiSoapReceiveFixed(si, calculateTimestamp, ibtPrice),
-                Constants.WAD_P2_YEAR_IN_SECONDS_INT
-            );
-    }
-
     function calculateQuasiSoapPayFixed(
-        DataTypes.SoapIndicatorMemory memory si,
+        MiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -47,7 +23,7 @@ library SoapIndicatorLogic {
 
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapReceiveFixed(
-        DataTypes.SoapIndicatorMemory memory si,
+        MiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -59,12 +35,12 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenOpenSwap(
-        DataTypes.SoapIndicatorMemory memory si,
+        MiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (DataTypes.SoapIndicatorMemory memory) {
+    ) internal pure returns (MiltonStorageTypes.SoapIndicatorsMemory memory) {
         uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -85,13 +61,13 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenCloseSwap(
-        DataTypes.SoapIndicatorMemory memory si,
+        MiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (DataTypes.SoapIndicatorMemory memory) {
+    ) internal pure returns (MiltonStorageTypes.SoapIndicatorsMemory memory) {
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
             si,
             rebalanceTimestamp
@@ -141,7 +117,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateQuasiHyphoteticalInterestTotal(
-        DataTypes.SoapIndicatorMemory memory si,
+        MiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return

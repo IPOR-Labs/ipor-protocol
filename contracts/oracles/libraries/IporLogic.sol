@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import {DataTypes} from "../libraries/types/DataTypes.sol";
-import {IporErrors} from "../IporErrors.sol";
-import {Constants} from "../libraries/Constants.sol";
-import {IporMath} from "../libraries/IporMath.sol";
+import "../../types/WarrenTypes.sol";
+import {Constants} from "../../utils/Constants.sol";
+import {IporMath} from "../../utils/math/IporMath.sol";
+import {IporErrors} from "../../IporErrors.sol";
 
 library IporLogic {
-    function accrueQuasiIbtPrice(
-        DataTypes.IPOR memory ipor,
-        uint256 accrueTimestamp
-    ) internal pure returns (uint256) {
+    function accrueQuasiIbtPrice(WarrenTypes.IPOR memory ipor, uint256 accrueTimestamp)
+        internal
+        pure
+        returns (uint256)
+    {
         return
             accrueQuasiIbtPrice(
                 ipor.indexValue,
@@ -33,8 +34,7 @@ library IporLogic {
             accrueTimestamp >= indexTimestamp,
             IporErrors.WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
-        return
-            quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
+        return quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
     }
 
     //@notice ExpMovAv(n) = ExpMovAv(n-1) * (1 - d) + IPOR * d
@@ -46,10 +46,7 @@ library IporLogic {
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                lastExponentialMovingAverage *
-                    (Constants.D18 - alpha) +
-                    indexValue *
-                    alpha,
+                lastExponentialMovingAverage * (Constants.D18 - alpha) + indexValue * alpha,
                 Constants.D18
             );
     }
@@ -60,10 +57,7 @@ library IporLogic {
         uint256 indexValue,
         uint256 alpha
     ) internal pure returns (uint256 result) {
-        require(
-            alpha <= Constants.D18,
-            IporErrors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE
-        );
+        require(alpha <= Constants.D18, IporErrors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
 
         if (indexValue > exponentialMovingAverage) {
             result = IporMath.division(
@@ -87,9 +81,6 @@ library IporLogic {
             );
         }
 
-        require(
-            result <= Constants.D18,
-            IporErrors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE
-        );
+        require(result <= Constants.D18, IporErrors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE);
     }
 }

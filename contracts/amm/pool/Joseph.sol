@@ -9,12 +9,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-
-import "../configuration/JosephConfiguration.sol";
-import "../../interfaces/IJoseph.sol";
 import {IporErrors} from "../../IporErrors.sol";
-import {IporMath} from "../../libraries/IporMath.sol";
-import "../../libraries/Constants.sol";
+import {IporMath} from "../../utils/math/IporMath.sol";
+import "../../utils/Constants.sol";
+import "../../interfaces/IJoseph.sol";
+import "../configuration/JosephConfiguration.sol";
 import "hardhat/console.sol";
 
 abstract contract Joseph is
@@ -245,7 +244,7 @@ abstract contract Joseph is
 
         uint256 wadRedeemValue = wadAssetValue - wadRedeemFee;
 
-        DataTypes.MiltonBalanceMemory memory balance = _milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = _milton.getAccruedBalance();
 
         uint256 assetValue = IporMath.convertWadToAssetDecimals(wadRedeemValue, _getDecimals());
 

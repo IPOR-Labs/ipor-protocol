@@ -170,7 +170,7 @@
                         <argument>${contracts.sources}/itf/ItfWarren.sol</argument>
                         <argument>${contracts.sources}/libraries/Constants.sol</argument>
                         <argument>${contracts.sources}/libraries/IporLogic.sol</argument>
-                        <argument>${contracts.sources}/libraries/IporMath.sol</argument>
+                        <argument>${contracts.sources}/utls/math/IporMath.sol</argument>
                         <argument>${contracts.sources}/libraries/IporSwapLogic.sol</argument>
                         <argument>${contracts.sources}/libraries/PaginationUtils.sol</argument>
                         <argument>${contracts.sources}/libraries/SoapIndicatorLogic.sol</argument>

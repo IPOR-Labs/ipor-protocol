@@ -5,13 +5,14 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../security/IporOwnableUpgradeable.sol";
 import {IporErrors} from "../IporErrors.sol";
+import {IporTypes} from "../types/IporTypes.sol";
+import {WarrenTypes} from "../types/WarrenTypes.sol";
+import {Constants} from "../utils/Constants.sol";
+import {IporMath} from "../utils/math/IporMath.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IWarren.sol";
-import {DataTypes} from "../libraries/types/DataTypes.sol";
-import {Constants} from "../libraries/Constants.sol";
-import "../libraries/IporLogic.sol";
-import {IporMath} from "../libraries/IporMath.sol";
+import "./libraries/IporLogic.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -20,13 +21,13 @@ import {IporMath} from "../libraries/IporMath.sol";
  */
 contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable, IWarren {
     using SafeCast for uint256;
-    using IporLogic for DataTypes.IPOR;
+    using IporLogic for WarrenTypes.IPOR;
 
     uint256 internal constant _DECAY_FACTOR_VALUE = 5e17;
 
     mapping(address => uint256) internal _updaters;
 
-    mapping(address => DataTypes.IPOR) internal _indexes;
+    mapping(address => WarrenTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {
         require(_updaters[msg.sender] == 1, IporErrors.WARREN_CALLER_NOT_UPDATER);
@@ -53,7 +54,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
             uint256 blockTimestamp
         )
     {
-        DataTypes.IPOR memory ipor = _indexes[asset];
+        WarrenTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
             IporErrors.WARREN_ASSET_NOT_SUPPORTED
@@ -71,15 +72,15 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         external
         view
         override
-        returns (DataTypes.AccruedIpor memory accruedIpor)
+        returns (IporTypes.AccruedIpor memory accruedIpor)
     {
-        DataTypes.IPOR memory ipor = _indexes[asset];
+        WarrenTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
             IporErrors.WARREN_ASSET_NOT_SUPPORTED
         );
 
-        accruedIpor = DataTypes.AccruedIpor(
+        accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
             _calculateAccruedIbtPrice(calculateTimestamp, asset),
             ipor.exponentialMovingAverage,
@@ -139,7 +140,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
             IporErrors.WARREN_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
-        _indexes[asset] = DataTypes.IPOR(0, 0, Constants.WAD_YEAR_IN_SECONDS.toUint128(), 0, 0);
+        _indexes[asset] = WarrenTypes.IPOR(0, 0, Constants.WAD_YEAR_IN_SECONDS.toUint128(), 0, 0);
         emit IporIndexAddAsset(asset);
     }
 
@@ -167,8 +168,8 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         uint256 updateTimestamp
     ) internal onlyUpdater {
         require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
-        
-		uint256 i = 0;
+
+        uint256 i = 0;
         for (i; i != assets.length; i++) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
         }
@@ -179,7 +180,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         uint256 indexValue,
         uint256 updateTimestamp
     ) internal {
-        DataTypes.IPOR memory ipor = _indexes[asset];
+        WarrenTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice != 0, IporErrors.WARREN_ASSET_NOT_SUPPORTED);
 
         uint256 newQuasiIbtPrice;
@@ -205,7 +206,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
                 );
         }
 
-        _indexes[asset] = DataTypes.IPOR(
+        _indexes[asset] = WarrenTypes.IPOR(
             updateTimestamp.toUint32(),
             indexValue.toUint128(),
             newQuasiIbtPrice.toUint128(),
