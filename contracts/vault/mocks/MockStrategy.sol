@@ -10,6 +10,7 @@ contract MockStrategy is IStrategy {
     address private _asset;
     address private _owner;
     address private _treasury;
+    address private _treasuryManager;
 
     function deposit(uint256 amount) external {}
 
@@ -49,6 +50,10 @@ contract MockStrategy is IStrategy {
 
     function setShareToken(address shareToken) external {
         _shareTokens = shareToken;
+    }
+
+    function setTreasuryManager(address manager) external {
+        _treasuryManager = manager;
     }
 
     function setTreasury(address treasury) external {

@@ -68,6 +68,7 @@ describe("COMPOUND strategy pauseable", () => {
             comptrollerUSDC.address,
             COMP.address,
         ]);
+        await strategy.setTreasuryManager(await admin.getAddress());
         await strategy.setTreasury(await admin.getAddress());
     });
 
@@ -128,5 +129,6 @@ describe("COMPOUND strategy pauseable", () => {
         await assertError(strategy.doClaim(), "Pausable: paused");
         await assertError(strategy.setStanley(mockAddress), "Pausable: paused");
         await assertError(strategy.setTreasury(mockAddress), "Pausable: paused");
+        await assertError(strategy.setTreasuryManager(mockAddress), "Pausable: paused");
     });
 });

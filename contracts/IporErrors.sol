@@ -182,4 +182,7 @@ library IporErrors {
 
     //@notice amount should be > 0
     string public constant STANLEY_IV_TOKEN_BURN_AMOUNT_TOO_LOW = "IPOR_504";
+
+    // only Treasury Manager can have access to function
+    string public constant STRATEGY_CALLER_NOT_TREASURY_MANAGER = "IPOR_505";
 }
