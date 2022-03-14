@@ -2269,16 +2269,16 @@ describe("Milton", () => {
         await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
-        let actualDerivatives =
+        const actualDerivatives =
             await testData.miltonStorageDai.getSwapsPayFixed(derivativeParams25days.from.address, 0, 50);
-        let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
+        const actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
         expect(
             expectedOpenedPositionsVol,
             `Incorrect number of opened positions actual: ${actualOpenedPositionsVol}, expected: ${expectedOpenedPositionsVol}`
         ).to.be.eq(actualOpenedPositionsVol);
 
-        let oneDerivative = actualDerivatives.swaps[0];
+        const oneDerivative = actualDerivatives.swaps[0];
 
         expect(
             expectedDerivativeId,
@@ -2338,16 +2338,16 @@ describe("Milton", () => {
         await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(2, endTimestamp);
 
         //then
-        let actualDerivatives =
+        const actualDerivatives =
             await testData.miltonStorageDai.getSwapsPayFixed(derivativeParams25days.from.address, 0, 50);
-        let actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
+        const actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
         expect(
             expectedOpenedPositionsVol,
             `Incorrect number of opened positions actual: ${actualOpenedPositionsVol}, expected: ${expectedOpenedPositionsVol}`
         ).to.be.eq(actualOpenedPositionsVol);
 
-        let oneDerivative = actualDerivatives.swaps[0];
+        const oneDerivative = actualDerivatives.swaps[0];
 
         expect(
             expectedDerivativeId,
@@ -2533,9 +2533,9 @@ describe("Milton", () => {
         await openSwapPayFixed(testData, derivativeParams);
 
         //then
-        let actualUserDerivativeResponse =
+        const actualUserDerivativeResponse =
             await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
-        let actualUserDerivativeIds = actualUserDerivativeResponse.ids;
+        const actualUserDerivativeIds = actualUserDerivativeResponse.ids;
 
         expect(
             expectedUserDerivativeIdsLength,
@@ -2592,12 +2592,12 @@ describe("Milton", () => {
         await openSwapPayFixed(testData, derivativeParams);
 
         //then
-        let actualUserDerivativeResponseFirst =
+        const actualUserDerivativeResponseFirst =
             await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
-        let actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
-        let actualUserDerivativeResponseSecond =
+        const actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
+        const actualUserDerivativeResponseSecond =
             await testData.miltonStorageDai.getSwapPayFixedIds(userThree.address, 0, 10);
-        let actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
+        const actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -2662,12 +2662,12 @@ describe("Milton", () => {
             .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
 
         //then
-        let actualUserDerivativeResponseFirst =
+        const actualUserDerivativeResponseFirst =
             await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
-        let actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
-        let actualUserDerivativeResponseSecond =
+        const actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
+        const actualUserDerivativeResponseSecond =
             await testData.miltonStorageDai.getSwapPayFixedIds(userThree.address, 0, 10);
-        let actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
+        const actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -2734,12 +2734,12 @@ describe("Milton", () => {
             .itfCloseSwapPayFixed(3, derivativeParams.openTimestamp + PERIOD_25_DAYS_IN_SECONDS);
 
         //then
-        let actualUserDerivativeResponseFirst =
+        const actualUserDerivativeResponseFirst =
             await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
-        let actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
-        let actualUserDerivativeResponseSecond =
+        const actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
+        const actualUserDerivativeResponseSecond =
             await testData.miltonStorageDai.getSwapPayFixedIds(userThree.address, 0, 10);
-        let actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
+        const actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -2801,12 +2801,12 @@ describe("Milton", () => {
             .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
 
         //then
-        let actualUserDerivativeResponseFirst =
+        const actualUserDerivativeResponseFirst =
             await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
-        let actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
-        let actualUserDerivativeResponseSecond =
+        const actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
+        const actualUserDerivativeResponseSecond =
             await testData.miltonStorageDai.getSwapPayFixedIds(userThree.address, 0, 10);
-        let actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
+        const actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -2867,12 +2867,12 @@ describe("Milton", () => {
             .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
 
         //then
-        let actualUserDerivativeResponseFirst =
+        const actualUserDerivativeResponseFirst =
             await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
-        let actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
-        let actualUserDerivativeResponseSecond =
+        const actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
+        const actualUserDerivativeResponseSecond =
             await testData.miltonStorageDai.getSwapPayFixedIds(userThree.address, 0, 10);
-        let actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
+        const actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
 
         expect(
             expectedUserDerivativeIdsLengthFirst,
@@ -2935,12 +2935,12 @@ describe("Milton", () => {
             .itfCloseSwapPayFixed(2, derivativeParams.openTimestamp + PERIOD_50_DAYS_IN_SECONDS);
 
         //then
-        let actualUserDerivativeResponseFirst =
+        const actualUserDerivativeResponseFirst =
             await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
-        let actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
-        let actualUserDerivativeResponseSecond =
+        const actualUserDerivativeIdsFirst = actualUserDerivativeResponseFirst.ids;
+        const actualUserDerivativeResponseSecond =
             await testData.miltonStorageDai.getSwapPayFixedIds(userThree.address, 0, 10);
-        let actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
+        const actualUserDerivativeIdsSecond = actualUserDerivativeResponseSecond.ids;
 
         expect(
             expectedUserDerivativeIdsLengthFirst,

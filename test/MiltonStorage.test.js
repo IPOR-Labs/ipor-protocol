@@ -1,5 +1,5 @@
-const {expect} = require("chai");
-const {ethers} = require("hardhat");
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
 const keccak256 = require("keccak256");
 
@@ -31,7 +31,6 @@ const {
     setupTokenDaiInitialValuesForUsers,
     setupDefaultSpreadConstants,
 } = require("./Utils");
-const {TC_TOTAL_AMOUNT_100_18DEC} = require("./Const");
 
 describe("MiltonStorage", () => {
     let data = null;
@@ -565,11 +564,11 @@ describe("MiltonStorage", () => {
 
     const testCasePaginationPayFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
         // given
-        let testData = await preparePayFixedState(numberOfSwapsToCreate);
+        const testData = await preparePayFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            let response = await testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize);
+            const response = await testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize);
 
             const actualSwapsLength = response.swaps.length;
             const totalSwapCount = response.totalCount
@@ -587,11 +586,11 @@ describe("MiltonStorage", () => {
 
     const testCasePaginationReceiveFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
         // given
-        let testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
+        const testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            let response = await testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize);
+            const response = await testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize);
 
             const actualSwapsLength = response.swaps.length;
             const totalSwapCount = response.totalCount
@@ -609,11 +608,11 @@ describe("MiltonStorage", () => {
 
     const testCaseIdsPaginationPayFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
         // given
-        let testData = await preparePayFixedState(numberOfSwapsToCreate);
+        const testData = await preparePayFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            let response = await testData.miltonStorageUsdt.getSwapPayFixedIds(userTwo.address, offset, pageSize);
+            const response = await testData.miltonStorageUsdt.getSwapPayFixedIds(userTwo.address, offset, pageSize);
 
             const actualSwapsLength = response.ids.length;
             const totalSwapCount = response.totalCount
@@ -631,11 +630,11 @@ describe("MiltonStorage", () => {
 
     const testCaseIdsPaginationReceiveFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
         // given
-        let testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
+        const testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            let response = await testData.miltonStorageUsdt.getSwapReceiveFixedIds(userTwo.address, offset, pageSize);
+            const response = await testData.miltonStorageUsdt.getSwapReceiveFixedIds(userTwo.address, offset, pageSize);
 
             const actualSwapsLength = response.ids.length;
             const totalSwapCount = response.totalCount
@@ -654,11 +653,11 @@ describe("MiltonStorage", () => {
     const testCaseIdsPagination = async (numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate,
                                          offset, pageSize, expectedResponseSize, expectedError) => {
         // given
-        let testData = await prepareState(numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate);
+        const testData = await prepareState(numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            let response = await testData.miltonStorageUsdt.getSwapIds(userTwo.address, offset, pageSize);
+            const response = await testData.miltonStorageUsdt.getSwapIds(userTwo.address, offset, pageSize);
 
             const actualSwapsLength = response.ids.length;
             const totalSwapCount = response.totalCount;
@@ -763,7 +762,7 @@ describe("MiltonStorage", () => {
     };
 
     const preparePayFixedState = async (numberOfSwapsToCreate) => {
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             [
                 admin,
                 userOne,
@@ -819,7 +818,7 @@ describe("MiltonStorage", () => {
     }
 
     const prepareReceiveFixedState = async (numberOfSwapsToCreate) => {
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             [
                 admin,
                 userOne,
@@ -875,7 +874,7 @@ describe("MiltonStorage", () => {
     }
 
     const prepareState = async (numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate) => {
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             [
                 admin,
                 userOne,

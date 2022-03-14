@@ -169,8 +169,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint128[] storage idsRef = _swapsPayFixed.ids[account];
         uint256 resultSetSize = PaginationUtils.resolveResultSetSize(idsRef.length, offset, chunkSize);
         uint128[] memory ids = new uint128[](resultSetSize);
-        uint256 i = 0;
-        for (i; i != resultSetSize; i++) {
+        for (uint256 i = 0; i != resultSetSize; i++) {
             ids[i] = idsRef[offset + i];
         }
         return (idsRef.length, ids);
@@ -188,8 +187,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint128[] storage idsRef = _swapsReceiveFixed.ids[account];
         uint256 resultSetSize = PaginationUtils.resolveResultSetSize(idsRef.length, offset, chunkSize);
         uint128[] memory ids = new uint128[](resultSetSize);
-        uint256 i = 0;
-        for (i; i != resultSetSize; i++) {
+        for (uint256 i = 0; i != resultSetSize; i++) {
             ids[i] = idsRef[offset + i];
         }
         return (idsRef.length, ids);
@@ -215,8 +213,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         );
 
         IMiltonStorage.IporSwapId[] memory ids = new IMiltonStorage.IporSwapId[](resultSetSize);
-        uint256 i = 0;
-        for (i; i != resultSetSize; i++) {
+        for (uint256 i = 0; i != resultSetSize; i++) {
             if (offset + i < payFixedLength) {
                 ids[i] = IporSwapId(payFixedIdsRef[offset + i], 0);
             } else {
@@ -438,8 +435,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             swapsIdsLength
         );
 
-        uint256 i = 0;
-        for (i; i != swapsIdsLength; i++) {
+        for (uint256 i = 0; i != swapsIdsLength; i++) {
             uint128 id = ids[i + offset];
             DataTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = DataTypes.IporSwapMemory(

@@ -160,20 +160,20 @@ describe("MiltonFrontendDataProvider", () => {
         await openSwapPayFixed(testData, paramsUsdc);
         await openSwapPayFixed(testData, paramsUsdt);
 
-        let responseDai = await miltonFrontendDataProvider
+        const responseDai = await miltonFrontendDataProvider
             .connect(paramsDai.from)
             .getMySwaps(paramsDai.asset, 0, 50);
-        let itemsDai = responseDai.swaps;
+        const itemsDai = responseDai.swaps;
 
-        let responseUsdc = await miltonFrontendDataProvider
+        const responseUsdc = await miltonFrontendDataProvider
             .connect(paramsUsdc.from)
             .getMySwaps(paramsUsdc.asset, 0, 50);
-        let itemsUsdc = responseUsdc.swaps;
+        const itemsUsdc = responseUsdc.swaps;
 
-        let responseUsdt = await miltonFrontendDataProvider
+        const responseUsdt = await miltonFrontendDataProvider
             .connect(paramsUsdt.from)
             .getMySwaps(paramsUsdt.asset, 0, 50);
-        let itemsUsdt = responseUsdt.swaps;
+        const itemsUsdt = responseUsdt.swaps;
 
         const actualDaiSwapsLength = itemsDai.length;
         const actualUsdcSwapsLength = itemsUsdc.length;
@@ -382,7 +382,7 @@ describe("MiltonFrontendDataProvider", () => {
 
         //when
         if (expectedError == null) {
-            let response = await miltonFrontendDataProvider
+            const response = await miltonFrontendDataProvider
                 .connect(paramsDai.from)
                 .getMySwaps(paramsDai.asset, offset, pageSize);
 
