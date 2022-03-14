@@ -14,7 +14,6 @@ import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
-    //TODO: if possible move out libraries from MiltonStorage to Milton, use storage as clean storage smart contract
     using SafeCast for uint256;
     using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
 
@@ -223,7 +222,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         return (payFixedLength + receiveFixedLength, ids);
     }
 
-    //TODO: separate soap to MiltonSoapModel smart contract
     function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
         external
         view
@@ -368,10 +366,16 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         override
         onlyMilton
     {
+        require(
+            vaultBalance >= depositValue,
+            IporErrors.MILTON_VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE
+        );
+
         uint256 currentVaultBalance = _balances.vault;
+
         require(
             currentVaultBalance <= (vaultBalance - depositValue),
-            IporErrors.MILTON_IPOR_VAULT_BALANCE_TOO_LOW
+            IporErrors.MILTON_VAULT_BALANCE_TOO_LOW
         );
         uint256 interest = currentVaultBalance != 0
             ? (vaultBalance - currentVaultBalance - depositValue)
@@ -582,48 +586,15 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 closingTimestamp,
         uint256 cfgIncomeTaxPercentage
     ) internal {
-        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
-
-        //decrease from balances the liquidation deposit
-        require(
-            _balances.liquidationDeposit >= swap.liquidationDepositAmount,
-            IporErrors.MILTON_CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
+        _updateBalancesWhenCloseSwap(
+            account,
+            swap,
+            positionValue,
+            closingTimestamp,
+            cfgIncomeTaxPercentage
         );
-        _balances.liquidationDeposit =
-            _balances.liquidationDeposit -
-            swap.liquidationDepositAmount.toUint128();
 
         _balances.payFixedSwaps = _balances.payFixedSwaps - swap.collateral.toUint128();
-        //TODO: remove duplication
-        if (absPositionValue < swap.collateral) {
-            //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
-            if (account != swap.buyer) {
-                require(
-                    closingTimestamp >= swap.endingTimestamp,
-                    IporErrors.MILTON_CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
-                );
-            }
-        }
-
-        uint256 incomeTax = IporMath.division(
-            absPositionValue * cfgIncomeTaxPercentage,
-            Constants.D18
-        );
-
-        _balances.treasury = _balances.treasury + incomeTax.toUint128();
-
-        if (positionValue > 0) {
-            require(
-                _balances.liquidityPool >= absPositionValue,
-                IporErrors.MILTON_CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
-            );
-
-            _balances.liquidityPool = _balances.liquidityPool - absPositionValue.toUint128();
-        } else {
-            _balances.liquidityPool =
-                _balances.liquidityPool +
-                (absPositionValue - incomeTax).toUint128();
-        }
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -633,23 +604,35 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 closingTimestamp,
         uint256 cfgIncomeTaxPercentage
     ) internal {
-        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
+        _updateBalancesWhenCloseSwap(
+            account,
+            swap,
+            positionValue,
+            closingTimestamp,
+            cfgIncomeTaxPercentage
+        );
 
+        _balances.receiveFixedSwaps = _balances.receiveFixedSwaps - swap.collateral.toUint128();
+    }
+
+    function _updateBalancesWhenCloseSwap(
+        address account,
+        DataTypes.IporSwapMemory memory swap,
+        int256 positionValue,
+        uint256 closingTimestamp,
+        uint256 cfgIncomeTaxPercentage
+    ) internal {
         //decrease from balances the liquidation deposit
         require(
             _balances.liquidationDeposit >= swap.liquidationDepositAmount,
             IporErrors.MILTON_CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
         );
-        _balances.liquidationDeposit =
-            _balances.liquidationDeposit -
-            swap.liquidationDepositAmount.toUint128();
 
-        _balances.receiveFixedSwaps = _balances.receiveFixedSwaps - swap.collateral.toUint128();
-
-        //TODO: remove duplication
+        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
 
         if (absPositionValue < swap.collateral) {
-            //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
+            //verify if sender is an owner of swap if not then check if maturity - if not then reject,
+            //if yes then close even if not an owner
             if (account != swap.buyer) {
                 require(
                     closingTimestamp >= swap.endingTimestamp,
@@ -662,6 +645,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             absPositionValue * cfgIncomeTaxPercentage,
             Constants.D18
         );
+
+        _balances.liquidationDeposit =
+            _balances.liquidationDeposit -
+            swap.liquidationDepositAmount.toUint128();
 
         _balances.treasury = _balances.treasury + incomeTax.toUint128();
 

@@ -1,5 +1,5 @@
 pragma solidity 0.8.9;
-import "../interfaces/IPOR/IStrategy.sol";
+import "../interfaces/IStrategy.sol";
 
 // simple mock for total _balance tests
 contract MockStrategy is IStrategy {
@@ -10,8 +10,6 @@ contract MockStrategy is IStrategy {
     address private _asset;
     address private _owner;
     address private _treasury;
-
-    //TODO: use constructor
 
     function deposit(uint256 amount) external {}
 

@@ -16,14 +16,12 @@ library IporErrors {
     //@notice General problem. Wrong decimals
     string public constant WRONG_DECIMALS = "IPOR_001";
 
-    //TODO: add test for this
     //@notice Asset has too low decimals
     string public constant ASSET_DECIMALS_TOO_LOW = "IPOR_002";
 
     //@notice Trader doesnt have enought tokens to execute transaction
     string public constant ASSET_BALANCE_TOO_LOW = "IPOR_003";
 
-    //TODO: better name for this error..
     string public constant VALUE_NOT_GREATER_THAN_ZERO = "IPOR_004";
 
     string public constant INPUT_ARRAYS_LENGTH_MISMATCH = "IPOR_005";
@@ -124,7 +122,6 @@ library IporErrors {
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
     string public constant MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_323";
 
-    //TODO: try to add test for this
     //@notice Spread value cannot be higher than Ipor Index Value for particular asset
     string public constant MILTON_SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX = "IPOR_324";
 
@@ -138,9 +135,11 @@ library IporErrors {
     string public constant MILTON_CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = "IPOR_327";
 
     // @notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
-    string public constant MILTON_IPOR_VAULT_BALANCE_TOO_LOW = "IPOR_328";
+    string public constant MILTON_VAULT_BALANCE_TOO_LOW = "IPOR_328";
 
     string public constant MILTON_TREASURE_BALANCE_TOO_LOW = "IPOR_329";
+
+    string public constant MILTON_VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_330";
 
     //@notice Opening Fee Balance is too low
     string public constant MILTON_PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_330";
@@ -159,7 +158,6 @@ library IporErrors {
 
     string public constant JOSEPH_CALLER_NOT_TREASURE_TRANSFERER = "IPOR_404";
 
-    //TODO: add test for this code
     //@notice Incorrect Treasure Treasurer Address
     string public constant JOSEPH_INCORRECT_TREASURE_TREASURER = "IPOR_405";
 

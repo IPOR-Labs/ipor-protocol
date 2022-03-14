@@ -28,6 +28,9 @@ const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
 const StanleyUsdt = artifacts.require("StanleyUsdt");
 const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
+const ItfStanleyUsdt = artifacts.require("ItfStanleyUsdt");
+const ItfStanleyUsdc = artifacts.require("ItfStanleyUsdc");
+const ItfStanleyDai = artifacts.require("ItfStanleyDai");
 
 const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
@@ -96,13 +99,13 @@ module.exports = async function (deployer, _network) {
     const AAVE = await AAVEMockedToken.deployed();
 
     await deployer.deploy(IpTokenUsdt, mockedUsdt.address, "IP USDT", "ipUSDT");
-    const ipUsdtToken = await IpTokenUsdt.deployed();
+    const ipTokenUsdt = await IpTokenUsdt.deployed();
 
     await deployer.deploy(IpTokenUsdc, mockedUsdc.address, "IP USDC", "ipUSDC");
-    const ipUsdcToken = await IpTokenUsdc.deployed();
+    const ipTokenUsdc = await IpTokenUsdc.deployed();
 
     await deployer.deploy(IpTokenDai, mockedDai.address, "IP DAI", "ipDAI");
-    const ipDaiToken = await IpTokenDai.deployed();
+    const ipTokenDai = await IpTokenDai.deployed();
 
     await deployer.deploy(IvTokenUsdt, "IV USDT", "ivUSDT", mockedUsdt.address);
     const ivTokenUsdt = await IvTokenUsdt.deployed();
@@ -117,13 +120,13 @@ module.exports = async function (deployer, _network) {
         MockLendingPoolAave,
         mockedDai.address,
         mockedADai.address,
-        BigInt("100000"),
+        BigInt("1000000000000000000"),
         mockedUsdc.address,
         mockedAUsdc.address,
-        BigInt("200000"),
+        BigInt("2000000"),
         mockedUsdt.address,
         mockedAUsdt.address,
-        BigInt("200000")
+        BigInt("2000000")
     );
     const lendingPool = await MockLendingPoolAave.deployed();
 
@@ -300,6 +303,51 @@ module.exports = async function (deployer, _network) {
         }
     );
 
+    const itfStanleyUsdt = await deployProxy(
+        ItfStanleyUsdt,
+        [
+            mockedUsdt.address,
+            ivTokenUsdt.address,
+            strategyAaveUsdt.address,
+            strategyCompoundUsdt.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const itfStanleyUsdc = await deployProxy(
+        ItfStanleyUsdc,
+        [
+            mockedUsdc.address,
+            ivTokenUsdc.address,
+            strategyAaveUsdc.address,
+            strategyCompoundUsdc.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const itfStanleyDai = await deployProxy(
+        ItfStanleyDai,
+        [
+            mockedDai.address,
+            ivTokenDai.address,
+            strategyAaveDai.address,
+            strategyCompoundDai.address,
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
     const miltonStorageUsdt = await deployProxy(MiltonStorageUsdt, {
         deployer: deployer,
         initializer: "initialize",
@@ -340,7 +388,7 @@ module.exports = async function (deployer, _network) {
         MiltonUsdt,
         [
             mockedUsdt.address,
-            ipUsdtToken.address,
+            ipTokenUsdt.address,
             warren.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
@@ -357,11 +405,11 @@ module.exports = async function (deployer, _network) {
         ItfMiltonUsdt,
         [
             mockedUsdt.address,
-            ipUsdtToken.address,
+            ipTokenUsdt.address,
             itfWarren.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
-            stanleyUsdt.address,
+            itfStanleyUsdt.address,
         ],
         {
             deployer: deployer,
@@ -374,7 +422,7 @@ module.exports = async function (deployer, _network) {
         MiltonUsdc,
         [
             mockedUsdc.address,
-            ipUsdcToken.address,
+            ipTokenUsdc.address,
             warren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
@@ -391,11 +439,11 @@ module.exports = async function (deployer, _network) {
         ItfMiltonUsdc,
         [
             mockedUsdc.address,
-            ipUsdcToken.address,
+            ipTokenUsdc.address,
             itfWarren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
-            stanleyUsdc.address,
+            itfStanleyUsdc.address,
         ],
         {
             deployer: deployer,
@@ -408,7 +456,7 @@ module.exports = async function (deployer, _network) {
         MiltonDai,
         [
             mockedDai.address,
-            ipDaiToken.address,
+            ipTokenDai.address,
             warren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
@@ -425,11 +473,11 @@ module.exports = async function (deployer, _network) {
         ItfMiltonDai,
         [
             mockedDai.address,
-            ipDaiToken.address,
+            ipTokenDai.address,
             itfWarren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
-            stanleyDai.address,
+            itfStanleyDai.address,
         ],
         {
             deployer: deployer,
@@ -442,7 +490,7 @@ module.exports = async function (deployer, _network) {
         JosephUsdt,
         [
             mockedUsdt.address,
-            ipUsdtToken.address,
+            ipTokenUsdt.address,
             miltonUsdt.address,
             miltonStorageUsdt.address,
             stanleyUsdt.address,
@@ -458,10 +506,10 @@ module.exports = async function (deployer, _network) {
         ItfJosephUsdt,
         [
             mockedUsdt.address,
-            ipUsdtToken.address,
+            ipTokenUsdt.address,
             itfMiltonUsdt.address,
             miltonStorageUsdt.address,
-            stanleyUsdt.address,
+            itfStanleyUsdt.address,
         ],
         {
             deployer: deployer,
@@ -474,7 +522,7 @@ module.exports = async function (deployer, _network) {
         JosephUsdc,
         [
             mockedUsdc.address,
-            ipUsdcToken.address,
+            ipTokenUsdc.address,
             miltonUsdc.address,
             miltonStorageUsdc.address,
             stanleyUsdc.address,
@@ -490,10 +538,10 @@ module.exports = async function (deployer, _network) {
         ItfJosephUsdc,
         [
             mockedUsdc.address,
-            ipUsdcToken.address,
+            ipTokenUsdc.address,
             itfMiltonUsdc.address,
             miltonStorageUsdc.address,
-            stanleyUsdc.address,
+            itfStanleyUsdc.address,
         ],
         {
             deployer: deployer,
@@ -506,7 +554,7 @@ module.exports = async function (deployer, _network) {
         JosephDai,
         [
             mockedDai.address,
-            ipDaiToken.address,
+            ipTokenDai.address,
             miltonDai.address,
             miltonStorageDai.address,
             stanleyDai.address,
@@ -522,10 +570,10 @@ module.exports = async function (deployer, _network) {
         ItfJosephDai,
         [
             mockedDai.address,
-            ipDaiToken.address,
+            ipTokenDai.address,
             itfMiltonDai.address,
             miltonStorageDai.address,
-            stanleyDai.address,
+            itfStanleyDai.address,
         ],
         {
             deployer: deployer,
@@ -562,6 +610,7 @@ module.exports = async function (deployer, _network) {
                 [itfMiltonUsdt.address, itfMiltonUsdc.address, itfMiltonDai.address],
                 [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
                 [itfJosephUsdt.address, itfJosephUsdc.address, itfJosephDai.address],
+                [ipTokenUsdt.address, ipTokenUsdc.address, ipTokenDai.address],
                 [ivTokenUsdt.address, ivTokenUsdc.address, ivTokenDai.address],
             ],
             {
@@ -579,6 +628,7 @@ module.exports = async function (deployer, _network) {
                 [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
                 [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
                 [josephUsdt.address, josephUsdc.address, josephDai.address],
+                [ipTokenUsdt.address, ipTokenUsdc.address, ipTokenDai.address],
                 [ivTokenUsdt.address, ivTokenUsdc.address, ivTokenDai.address],
             ],
             {

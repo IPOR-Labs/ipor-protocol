@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./interfaces/IPOR/IStrategy.sol";
+import "./interfaces/IStrategy.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IStanleyAdministration.sol";
 import "./interfaces/IIvToken.sol";
@@ -339,6 +339,7 @@ abstract contract Stanley is
     {
         strategyAave = IStrategy(_aaveStrategy);
         strategyCompound = IStrategy(_compoundStrategy);
+        strategyMaxApy = strategyAave;
 
         if (strategyAave.getApr() < strategyCompound.getApr()) {
             strategyMaxApy = strategyCompound;

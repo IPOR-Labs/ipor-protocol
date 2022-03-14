@@ -82,8 +82,7 @@ contract MiltonFrontendDataProvider is
         IMilton milton = IMilton(config.milton);
 
         IporSwapFront[] memory iporDerivatives = new IporSwapFront[](swapIds.length);
-        uint256 i = 0;
-        for (i; i != swapIds.length; i++) {
+        for (uint256 i = 0; i != swapIds.length; i++) {
             IMiltonStorage.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
                 DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);

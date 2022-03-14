@@ -6,9 +6,33 @@ import "./types/DataTypes.sol";
 import "./IporMath.sol";
 import "./Constants.sol";
 import {IporErrors} from "../IporErrors.sol";
+import "hardhat/console.sol";
 
 library IporSwapLogic {
     using SafeCast for uint256;
+
+    function calculateSwapAmount(
+        uint256 totalAmount,
+        uint256 collateralizationFactor,
+        uint256 liquidationDepositAmount,
+        uint256 iporPublicationFeeAmount,
+        uint256 openingFeePercentage
+    )
+        internal
+        pure
+        returns (
+            uint256 collateral,
+            uint256 notional,
+            uint256 openingFee
+        )
+    {
+        collateral = IporMath.division(
+            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * Constants.D18,
+            Constants.D18 + openingFeePercentage
+        );
+        notional = IporMath.division(collateralizationFactor * collateral, Constants.D18);
+        openingFee = IporMath.division(collateral * openingFeePercentage, Constants.D18);
+    }
 
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
@@ -25,59 +49,75 @@ library IporSwapLogic {
     }
 
     //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS
-    function calculateQuasiInterestFloating(
-        uint256 ibtQuantity,
-        uint256 ibtCurrentPrice
-    ) internal pure returns (uint256) {
+    function calculateQuasiInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
+        internal
+        pure
+        returns (uint256)
+    {
         //IBTQ * IBTPtc (IBTPtc - interest bearing token price in time when swap is closed)
         return ibtQuantity * ibtCurrentPrice * Constants.YEAR_IN_SECONDS;
     }
 
-    function calculateInterestForSwapPayFixed(
+    function calculateSwapPayFixedValue(
         DataTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) internal pure returns (DataTypes.IporSwapInterest memory) {
+    ) internal pure returns (int256 swapValue) {
         (uint256 quasiIFixed, uint256 quasiIFloating) = calculateQuasiInterest(
             swap,
             closingTimestamp,
             mdIbtPrice
         );
 
-        int256 positionValue = IporMath.divisionInt(
-            quasiIFloating.toInt256() - quasiIFixed.toInt256(),
-            Constants.WAD_YEAR_IN_SECONDS_INT
+        swapValue = _normalizeSwapValue(
+            swap.collateral,
+            IporMath.divisionInt(
+                quasiIFloating.toInt256() - quasiIFixed.toInt256(),
+                Constants.WAD_YEAR_IN_SECONDS_INT
+            )
         );
-
-        return
-            DataTypes.IporSwapInterest(
-                quasiIFixed,
-                quasiIFloating,
-                positionValue
-            );
     }
 
-    function calculateInterestForSwapReceiveFixed(
+    function calculateSwapReceiveFixedValue(
         DataTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
-    ) internal pure returns (DataTypes.IporSwapInterest memory) {
+    ) internal pure returns (int256 swapValue) {
         (uint256 quasiIFixed, uint256 quasiIFloating) = calculateQuasiInterest(
             swap,
             closingTimestamp,
             mdIbtPrice
         );
-        int256 positionValue = IporMath.divisionInt(
-            quasiIFixed.toInt256() - quasiIFloating.toInt256(),
-            Constants.WAD_YEAR_IN_SECONDS_INT
-        );
 
-        return
-            DataTypes.IporSwapInterest(
-                quasiIFixed,
-                quasiIFloating,
-                positionValue
-            );
+        swapValue = _normalizeSwapValue(
+            swap.collateral,
+            IporMath.divisionInt(
+                quasiIFixed.toInt256() - quasiIFloating.toInt256(),
+                Constants.WAD_YEAR_IN_SECONDS_INT
+            )
+        );
+    }
+
+    function _normalizeSwapValue(uint256 collateral, int256 swapValue)
+        private
+        pure
+        returns (int256)
+    {
+        int256 intCollateral = collateral.toInt256();
+
+        if (swapValue > 0) {
+            if (swapValue < intCollateral) {
+                return swapValue;
+            } else {
+                return intCollateral;
+            }
+        } else {
+            if (swapValue < -intCollateral) {
+                return -intCollateral;
+            } else {
+                return swapValue;
+            }
+        }
     }
 
     function calculateQuasiInterest(
@@ -88,21 +128,16 @@ library IporSwapLogic {
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
             closingTimestamp >= swap.startingTimestamp,
-            IporErrors
-                .MILTON_CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
+            IporErrors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
 
         uint256 calculatedPeriodInSeconds = 0;
 
         //calculated period cannot be longer than whole swap period
         if (closingTimestamp > swap.endingTimestamp) {
-            calculatedPeriodInSeconds =
-                swap.endingTimestamp -
-                swap.startingTimestamp;
+            calculatedPeriodInSeconds = swap.endingTimestamp - swap.startingTimestamp;
         } else {
-            calculatedPeriodInSeconds =
-                closingTimestamp -
-                swap.startingTimestamp;
+            calculatedPeriodInSeconds = closingTimestamp - swap.startingTimestamp;
         }
 
         quasiIFixed = calculateQuasiInterestFixed(
@@ -111,9 +146,6 @@ library IporSwapLogic {
             calculatedPeriodInSeconds
         );
 
-        quasiIFloating = calculateQuasiInterestFloating(
-            swap.ibtQuantity,
-            mdIbtPrice
-        );
+        quasiIFloating = calculateQuasiInterestFloating(swap.ibtQuantity, mdIbtPrice);
     }
 }

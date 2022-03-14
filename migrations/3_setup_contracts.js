@@ -12,6 +12,9 @@ const DaiMockedToken = artifacts.require("DaiMockedToken");
 const IpTokenUsdt = artifacts.require("IpTokenUsdt");
 const IpTokenUsdc = artifacts.require("IpTokenUsdc");
 const IpTokenDai = artifacts.require("IpTokenDai");
+const IvTokenUsdt = artifacts.require("IvTokenUsdt");
+const IvTokenUsdc = artifacts.require("IvTokenUsdc");
+const IvTokenDai = artifacts.require("IvTokenDai");
 
 const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
@@ -23,9 +26,14 @@ const StrategyAaveDai = artifacts.require("StrategyAaveDai");
 const StrategyCompoundUsdt = artifacts.require("StrategyCompoundUsdt");
 const StrategyCompoundUsdc = artifacts.require("StrategyCompoundUsdc");
 const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
+
 const StanleyUsdt = artifacts.require("StanleyUsdt");
 const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
+
+const ItfStanleyUsdt = artifacts.require("ItfStanleyUsdt");
+const ItfStanleyUsdc = artifacts.require("ItfStanleyUsdc");
+const ItfStanleyDai = artifacts.require("ItfStanleyDai");
 
 const Warren = artifacts.require("Warren");
 
@@ -56,7 +64,7 @@ module.exports = async function (deployer, _network, addresses) {
 
     const faucetSupply6Decimals = "10000000000000000";
     const faucetSupply18Decimals = "10000000000000000000000000000";
-    
+
     //#####################################################################
     // CONFIG STABLE - BEGIN
     //#####################################################################
@@ -65,7 +73,7 @@ module.exports = async function (deployer, _network, addresses) {
     const mockedUsdt = await UsdtMockedToken.deployed();
     const mockedUsdc = await UsdcMockedToken.deployed();
     const mockedDai = await DaiMockedToken.deployed();
-    
+
     const miltonStorageUsdtProxy = await MiltonStorageUsdt.deployed();
     const miltonStorageUsdcProxy = await MiltonStorageUsdc.deployed();
     const miltonStorageDaiProxy = await MiltonStorageDai.deployed();
@@ -77,6 +85,10 @@ module.exports = async function (deployer, _network, addresses) {
     const ipUsdtToken = await IpTokenUsdt.deployed();
     const ipUsdcToken = await IpTokenUsdc.deployed();
     const ipDaiToken = await IpTokenDai.deployed();
+
+    const ivUsdtToken = await IvTokenUsdt.deployed();
+    const ivUsdcToken = await IvTokenUsdc.deployed();
+    const ivDaiToken = await IvTokenDai.deployed();
 
     const josephUsdtProxy = await JosephUsdt.deployed();
     const josephUsdcProxy = await JosephUsdc.deployed();
@@ -98,6 +110,10 @@ module.exports = async function (deployer, _network, addresses) {
     const stanleyUsdcProxy = await StanleyUsdc.deployed();
     const stanleyDaiProxy = await StanleyDai.deployed();
 
+    const itfStanleyUsdtProxy = await ItfStanleyUsdt.deployed();
+    const itfStanleyUsdcProxy = await ItfStanleyUsdc.deployed();
+    const itfStanleyDaiProxy = await ItfStanleyDai.deployed();
+
     const strategyAaveUsdtProxy = await StrategyAaveUsdt.deployed();
     const strategyAaveUsdcProxy = await StrategyAaveUsdc.deployed();
     const strategyAaveDaiProxy = await StrategyAaveDai.deployed();
@@ -115,6 +131,10 @@ module.exports = async function (deployer, _network, addresses) {
         await itfMiltonUsdtProxy.setupMaxAllowance(itfJosephUsdtProxy.address);
         await itfMiltonUsdcProxy.setupMaxAllowance(itfJosephUsdcProxy.address);
         await itfMiltonDaiProxy.setupMaxAllowance(itfJosephDaiProxy.address);
+
+        await itfMiltonUsdtProxy.setupMaxAllowance(itfStanleyUsdtProxy.address);
+        await itfMiltonUsdcProxy.setupMaxAllowance(itfStanleyUsdcProxy.address);
+        await itfMiltonDaiProxy.setupMaxAllowance(itfStanleyDaiProxy.address);
 
         const itfWarrenProxy = await ItfWarren.deployed();
 
@@ -136,17 +156,21 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonStorageUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
         await miltonStorageDaiProxy.setMilton(itfMiltonDaiProxy.address);
 
-        await stanleyUsdtProxy.setMilton(itfMiltonUsdtProxy.address);
-        await stanleyUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
-        await stanleyDaiProxy.setMilton(itfMiltonDaiProxy.address);
+        await itfStanleyUsdtProxy.setMilton(itfMiltonUsdtProxy.address);
+        await itfStanleyUsdcProxy.setMilton(itfMiltonUsdcProxy.address);
+        await itfStanleyDaiProxy.setMilton(itfMiltonDaiProxy.address);
 
-        await strategyAaveUsdtProxy.setStanley(stanleyUsdtProxy.address);
-        await strategyAaveUsdcProxy.setStanley(stanleyUsdcProxy.address);
-        await strategyAaveDaiProxy.setStanley(stanleyDaiProxy.address);
+        await ivUsdtToken.setStanley(itfStanleyUsdtProxy.address);
+        await ivUsdcToken.setStanley(itfStanleyUsdcProxy.address);
+        await ivDaiToken.setStanley(itfStanleyDaiProxy.address);
 
-        await strategyCompoundUsdtProxy.setStanley(stanleyUsdtProxy.address);
-        await strategyCompoundUsdcProxy.setStanley(stanleyUsdcProxy.address);
-        await strategyCompoundDaiProxy.setStanley(stanleyDaiProxy.address);
+        await strategyAaveUsdtProxy.setStanley(itfStanleyUsdtProxy.address);
+        await strategyAaveUsdcProxy.setStanley(itfStanleyUsdcProxy.address);
+        await strategyAaveDaiProxy.setStanley(itfStanleyDaiProxy.address);
+
+        await strategyCompoundUsdtProxy.setStanley(itfStanleyUsdtProxy.address);
+        await strategyCompoundUsdcProxy.setStanley(itfStanleyUsdcProxy.address);
+        await strategyCompoundDaiProxy.setStanley(itfStanleyDaiProxy.address);
 
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Setup initial IPOR values...");
@@ -171,6 +195,10 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonUsdcProxy.setupMaxAllowance(josephUsdcProxy.address);
         await miltonDaiProxy.setupMaxAllowance(josephDaiProxy.address);
 
+        await miltonUsdtProxy.setupMaxAllowance(stanleyUsdtProxy.address);
+        await miltonUsdcProxy.setupMaxAllowance(stanleyUsdcProxy.address);
+        await miltonDaiProxy.setupMaxAllowance(stanleyDaiProxy.address);
+
         const warrenProxy = await Warren.deployed();
         await warrenProxy.addUpdater(admin);
         await warrenProxy.addUpdater(iporIndexAdmin);
@@ -193,6 +221,10 @@ module.exports = async function (deployer, _network, addresses) {
         await stanleyUsdtProxy.setMilton(miltonUsdtProxy.address);
         await stanleyUsdcProxy.setMilton(miltonUsdcProxy.address);
         await stanleyDaiProxy.setMilton(miltonDaiProxy.address);
+
+        await ivUsdtToken.setStanley(stanleyUsdtProxy.address);
+        await ivUsdcToken.setStanley(stanleyUsdcProxy.address);
+        await ivDaiToken.setStanley(stanleyDaiProxy.address);
 
         await strategyAaveUsdtProxy.setStanley(stanleyUsdtProxy.address);
         await strategyAaveUsdcProxy.setStanley(stanleyUsdcProxy.address);

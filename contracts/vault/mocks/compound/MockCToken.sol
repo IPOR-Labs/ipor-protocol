@@ -30,8 +30,7 @@ contract MockCToken is ERC20, CErc20Mock {
         _asset = asset;
         _interestRateModel = interestRateModel;
         _detiomal = decimal;
-		//TODO: more realistic
-        _exchangeRate = 20000000000000000000000000;
+        _exchangeRate = 1325321471291866029;
         _supplyRate = 32847953230;
         _mint(address(this), 10**14); // 1.000.000 cToken
         _mint(msg.sender, 10**13); // 100.000 cToken
@@ -58,7 +57,10 @@ contract MockCToken is ERC20, CErc20Mock {
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
-            IERC20(_asset).transfer(msg.sender, IporMath.division(amount * _exchangeRate, Constants.D18)),
+            IERC20(_asset).transfer(
+                msg.sender,
+                IporMath.division(amount * _exchangeRate, Constants.D18)
+            ),
             "Error during transfer"
         );
         return 0;
