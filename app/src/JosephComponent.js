@@ -27,6 +27,110 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
+                        <strong>Exchange Rate</strong>
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfMiltonUsdt"
+                                method="calculateExchangeRate"
+                                methodArgs={[Math.floor(Date.now() / 1000)]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="MiltonUsdt"
+                                method="calculateExchangeRate"
+                                methodArgs={[Math.floor(Date.now() / 1000)]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfMiltonUsdc"
+                                method="calculateExchangeRate"
+                                methodArgs={[Math.floor(Date.now() / 1000)]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="MiltonUsdc"
+                                method="calculateExchangeRate"
+                                methodArgs={[Math.floor(Date.now() / 1000)]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        )}
+                    </td>
+                    <td>
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="ItfMiltonDai"
+                                method="calculateExchangeRate"
+                                methodArgs={[Math.floor(Date.now() / 1000)]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="MiltonDai"
+                                method="calculateExchangeRate"
+                                methodArgs={[Math.floor(Date.now() / 1000)]}
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
+                            />
+                        )}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <strong>My IpToken Balance</strong>
                     </td>
                     <td>

@@ -5,6 +5,8 @@ interface IStanley {
     //@notice return amount of assset token always in 18 decimals
     function totalBalance(address who) external view returns (uint256);
 
+    function calculateExchangeRate() external view returns (uint256);
+
     //@notice in return balance before deposit
     //@dev input and output values are represented in 18 decimals
     //@param amount - deposited amount

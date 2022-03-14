@@ -24,6 +24,10 @@ contract MockCaseBaseStanley is IStanley {
         return _balance[who];
     }
 
+    function calculateExchangeRate() external view override returns (uint256) {
+        return 0;
+    }
+
     //@dev for test purposes, simulation that IporVault earn some money for recipient
     function testDeposit(address recipient, uint256 assetValue) external returns (uint256 balance) {
         balance = _balance[recipient] + assetValue;

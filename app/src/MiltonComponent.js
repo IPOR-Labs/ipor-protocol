@@ -1,9 +1,7 @@
 import React from "react";
 import { newContextComponents } from "@drizzle/react-components";
-import DerivativeList from "./DerivativeList";
 import AmmBalanceComponent from "./AmmBalanceComponent";
 import AmmTotalBalanceComponent from "./AmmTotalBalanceComponent";
-import LiquidityPoolComponent from "./LiquidityPoolComponent";
 
 const { ContractData, ContractForm } = newContextComponents;
 
@@ -11,18 +9,8 @@ export default ({ drizzle, drizzleState }) => (
     <div>
         <div>
             <br />
-            <AmmTotalBalanceComponent
-                drizzle={drizzle}
-                drizzleState={drizzleState}
-            />
-            <AmmBalanceComponent
-                drizzle={drizzle}
-                drizzleState={drizzleState}
-            />
-            <LiquidityPoolComponent
-                drizzle={drizzle}
-                drizzleState={drizzleState}
-            />
+            <AmmTotalBalanceComponent drizzle={drizzle} drizzleState={drizzleState} />
+            <AmmBalanceComponent drizzle={drizzle} drizzleState={drizzleState} />
         </div>
         <hr />
         <table className="table" align="center">
@@ -247,47 +235,23 @@ export default ({ drizzle, drizzleState }) => (
                 <td>Pause</td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdt"
-                            method="pause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdt" method="pause" />
                     ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdt"
-                            method="pause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="MiltonUsdt" method="pause" />
                     )}
                 </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdc"
-                            method="pause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdc" method="pause" />
                     ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdc"
-                            method="pause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="MiltonUsdc" method="pause" />
                     )}
                 </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonDai"
-                            method="pause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="ItfMiltonDai" method="pause" />
                     ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonDai"
-                            method="pause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="MiltonDai" method="pause" />
                     )}
                 </td>
             </tr>
@@ -296,52 +260,28 @@ export default ({ drizzle, drizzleState }) => (
                 <td>Unpause</td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdt"
-                            method="unpause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdt" method="unpause" />
                     ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdt"
-                            method="unpause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="MiltonUsdt" method="unpause" />
                     )}
                 </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdc"
-                            method="unpause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdc" method="unpause" />
                     ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdc"
-                            method="unpause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="MiltonUsdc" method="unpause" />
                     )}
                 </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonDai"
-                            method="unpause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="ItfMiltonDai" method="unpause" />
                     ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonDai"
-                            method="unpause"
-                        />
+                        <ContractForm drizzle={drizzle} contract="MiltonDai" method="unpause" />
                     )}
                 </td>
             </tr>
 
-			<tr>
+            <tr>
                 <td>Transfer Ownership</td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -390,7 +330,7 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
 
-			<tr>
+            <tr>
                 <td>Confirm Transfer Ownership</td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
