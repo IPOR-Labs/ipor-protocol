@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract TestERC20 is IERC20 {
     uint256 private _totalSupply;
     mapping(address => uint256) private _balance;
-    mapping(address => mapping(address => uint256)) public override allowance;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     constructor(uint256 amountToMint) {
         mint(msg.sender, amountToMint);
@@ -46,7 +46,7 @@ contract TestERC20 is IERC20 {
         address sender,
         address recipient,
         uint256 amount
-    ) external override returns (bool) {
+    ) public override returns (bool) {
         uint256 allowanceBefore = allowance[sender][msg.sender];
         require(allowanceBefore >= amount, "allowance insufficient");
 
@@ -62,11 +62,11 @@ contract TestERC20 is IERC20 {
         return true;
     }
 
-    function balanceOf(address account) external view returns (uint256) {
+    function balanceOf(address account) public view override returns (uint256) {
         return _balance[account];
     }
 
-    function decimals() external view returns (uint256) {
+    function decimals() public pure returns (uint8) {
         return 18;
     }
 }

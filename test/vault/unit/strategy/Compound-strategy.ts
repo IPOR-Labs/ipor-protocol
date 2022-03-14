@@ -1,17 +1,12 @@
 const hre = require("hardhat");
 import chai from "chai";
-const keccak256 = require("keccak256");
-import { constants, BigNumber, Signer } from "ethers";
+import { BigNumber, Signer } from "ethers";
 
-const { MaxUint256 } = constants;
 import { solidity } from "ethereum-waffle";
-import daiAbi from "../../../../artifacts/contracts/vault/mocks/aave/MockDAI.sol/MockDAI.json";
-// import daiAbi from "../../../../"
 import {
     AaveStrategy,
     ERC20,
     MockWhitePaper,
-    MockCDAI,
     MockComptroller,
     UsdcMockedToken,
     UsdtMockedToken,
