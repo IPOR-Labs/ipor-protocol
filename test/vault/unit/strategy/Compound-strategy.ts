@@ -116,7 +116,6 @@ describe("Compound strategy", () => {
             comptrollerDAI.address,
             COMP.address,
         ]);
-        await compoundStrategyInstanceDAI.setTreasuryManager(await admin.getAddress());
         await compoundStrategyInstanceDAI.setTreasury(await admin.getAddress());
         compoundStrategyInstanceUSDT = await upgrades.deployProxy(compoundNewStartegy, [
             USDT.address,
@@ -124,7 +123,6 @@ describe("Compound strategy", () => {
             comptrollerUSDT.address,
             COMP.address,
         ]);
-        await compoundStrategyInstanceUSDT.setTreasuryManager(await admin.getAddress());
         await compoundStrategyInstanceUSDT.setTreasury(await admin.getAddress());
         compoundStrategyInstanceUSDC = await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
@@ -132,7 +130,6 @@ describe("Compound strategy", () => {
             comptrollerUSDT.address,
             COMP.address,
         ]);
-        await compoundStrategyInstanceUSDC.setTreasuryManager(await admin.getAddress());
         await compoundStrategyInstanceUSDC.setTreasury(await admin.getAddress());
     });
 
