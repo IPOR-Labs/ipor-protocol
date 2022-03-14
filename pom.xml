@@ -178,7 +178,7 @@
                         <argument>${contracts.sources}/libraries/types/DataTypes.sol</argument>
                         <argument>${contracts.sources}/mocks/MiltonFaucet.sol</argument>
                         <argument>${contracts.sources}/mocks/MockAmmMath.sol</argument>
-                        <argument>${contracts.sources}/mocks/MockDerivativeLogic.sol</argument>
+                        <argument>${contracts.sources}/mocks/MockIporSwapLogic.sol</argument>
                         <argument>${contracts.sources}/mocks/MockIporLogic.sol</argument>
                         <argument>${contracts.sources}/mocks/MockSoapIndicatorLogic.sol</argument>
                         <argument>${contracts.sources}/mocks/MockTimelockController.sol</argument>

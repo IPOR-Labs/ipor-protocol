@@ -14,6 +14,19 @@ import MiltonFaucet from "./contracts/MiltonFaucet.json";
 import DaiMockedToken from "./contracts/DaiMockedToken.json";
 import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
 import UsdtMockedToken from "./contracts/UsdtMockedToken.json";
+import IpTokenUsdt from "./contracts/IpTokenUsdt.json";
+import IpTokenUsdc from "./contracts/IpTokenUsdc.json";
+import IpTokenDai from "./contracts/IpTokenDai.json";
+import IvTokenUsdt from "./contracts/IvTokenUsdt.json";
+import IvTokenUsdc from "./contracts/IvTokenUsdc.json";
+import IvTokenDai from "./contracts/IvTokenDai.json";
+import MockAUsdt from "./contracts/MockAUsdt.json";
+import MockAUsdc from "./contracts/MockAUsdc.json";
+import MockADai from "./contracts/MockADai.json";
+import MockCUSDC from "./contracts/MockCUSDC.json";
+import MockCUSDT from "./contracts/MockCUSDT.json";
+import MockCDai from "./contracts/MockCDai.json";
+
 import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
 import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider.json";
 import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider.json";
@@ -23,6 +36,9 @@ import JosephDai from "./contracts/JosephDai.json";
 import ItfJosephUsdt from "./contracts/ItfJosephUsdt.json";
 import ItfJosephUsdc from "./contracts/ItfJosephUsdc.json";
 import ItfJosephDai from "./contracts/ItfJosephDai.json";
+import ItfStanleyUsdt from "./contracts/ItfStanleyUsdt.json";
+import ItfStanleyUsdc from "./contracts/ItfStanleyUsdc.json";
+import ItfStanleyDai from "./contracts/ItfStanleyDai.json";
 import StanleyUsdt from "./contracts/StanleyUsdt.json";
 import StanleyUsdc from "./contracts/StanleyUsdc.json";
 import StanleyDai from "./contracts/StanleyDai.json";
@@ -58,6 +74,18 @@ const options = {
         DaiMockedToken,
         UsdtMockedToken,
         UsdcMockedToken,
+        IpTokenUsdt,
+        IpTokenUsdc,
+        IpTokenDai,
+        IvTokenUsdt,
+        IvTokenUsdc,
+        IvTokenDai,
+        MockAUsdt,
+        MockAUsdc,
+        MockADai,
+        MockCUSDC,
+        MockCUSDT,
+        MockCDai,
         JosephUsdt,
         JosephUsdc,
         JosephDai,
@@ -67,14 +95,17 @@ const options = {
         StanleyUsdt,
         StanleyUsdc,
         StanleyDai,
-        MiltonFaucet,        
+        ItfStanleyUsdt,
+        ItfStanleyUsdc,
+        ItfStanleyDai,
+        MiltonFaucet,
         MiltonSpreadModel,
         StrategyAaveUsdt,
         StrategyAaveUsdc,
         StrategyAaveDai,
         StrategyCompoundUsdt,
         StrategyCompoundUsdc,
-        StrategyCompoundDai
+        StrategyCompoundDai,
     ],
     // events: {
     // },

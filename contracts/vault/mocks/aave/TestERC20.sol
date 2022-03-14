@@ -1,27 +1,29 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract TestERC20 is ERC20 {
+contract TestERC20 is IERC20 {
+    uint256 private _totalSupply;
     mapping(address => uint256) private _balance;
-    mapping(address => mapping(address => uint256)) private _allowance;
+    mapping(address => mapping(address => uint256)) public allowance;
 
-    constructor(uint256 amountToMint) ERC20("TestERC20", "test") {
+    constructor(uint256 amountToMint) {
         mint(msg.sender, amountToMint);
     }
 
     function mint(address to, uint256 amount) public {
+        _totalSupply += amount;
         uint256 balanceNext = _balance[to] + amount;
         require(balanceNext >= amount, "overflow balance");
         _balance[to] = balanceNext;
     }
 
-    function allowance(address owner, address spender) public view override returns (uint256) {
-        return _allowance[owner][spender];
+    function totalSupply() external view returns (uint256) {
+        return _totalSupply;
     }
 
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
+    function transfer(address recipient, uint256 amount) external override returns (bool) {
         uint256 balanceBefore = _balance[msg.sender];
         require(balanceBefore >= amount, "insufficient balance");
         _balance[msg.sender] = balanceBefore - amount;
@@ -34,8 +36,8 @@ contract TestERC20 is ERC20 {
         return true;
     }
 
-    function approve(address spender, uint256 amount) public override returns (bool) {
-        _allowance[msg.sender][spender] = amount;
+    function approve(address spender, uint256 amount) external override returns (bool) {
+        allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
     }
@@ -45,10 +47,10 @@ contract TestERC20 is ERC20 {
         address recipient,
         uint256 amount
     ) public override returns (bool) {
-        uint256 allowanceBefore = _allowance[sender][msg.sender];
+        uint256 allowanceBefore = allowance[sender][msg.sender];
         require(allowanceBefore >= amount, "allowance insufficient");
 
-        _allowance[sender][msg.sender] = allowanceBefore - amount;
+        allowance[sender][msg.sender] = allowanceBefore - amount;
 
         uint256 balanceRecipient = _balance[recipient];
         require(balanceRecipient + amount >= balanceRecipient, "overflow balance recipient");
@@ -64,7 +66,7 @@ contract TestERC20 is ERC20 {
         return _balance[account];
     }
 
-    function decimals() public pure override returns (uint8) {
+    function decimals() public pure returns (uint8) {
         return 18;
     }
 }

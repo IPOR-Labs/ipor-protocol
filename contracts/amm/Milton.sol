@@ -113,7 +113,9 @@ abstract contract Milton is
         int256 balance = _getAccruedBalance().liquidityPool.toInt256() - soap;
 
         require(balance >= 0, IporErrors.MILTON_SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+
         uint256 ipTokenTotalSupply = _ipToken.totalSupply();
+
         if (ipTokenTotalSupply != 0) {
             return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
         } else {
@@ -197,7 +199,7 @@ abstract contract Milton is
 
     //@param assetValue underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetValue) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 vaultBalance = _stanley.deposit(assetValue);
+        uint256 vaultBalance = _stanley.deposit(assetValue);		
         _miltonStorage.updateStorageWhenDepositToStanley(assetValue, vaultBalance);
     }
 
@@ -244,50 +246,22 @@ abstract contract Milton is
         view
         returns (int256)
     {
-        DataTypes.IporSwapInterest memory derivativeInterest = swap
-            .calculateInterestForSwapPayFixed(
+        return
+            swap.calculateSwapPayFixedValue(
                 timestamp,
                 _warren.calculateAccruedIbtPrice(_asset, timestamp)
             );
-        //TODO: remove dublicates
-        if (derivativeInterest.positionValue > 0) {
-            if (derivativeInterest.positionValue < swap.collateral.toInt256()) {
-                return derivativeInterest.positionValue;
-            } else {
-                return swap.collateral.toInt256();
-            }
-        } else {
-            if (derivativeInterest.positionValue < -swap.collateral.toInt256()) {
-                return -swap.collateral.toInt256();
-            } else {
-                return derivativeInterest.positionValue;
-            }
-        }
     }
 
     function _calculateSwapReceiveFixedValue(
         uint256 timestamp,
         DataTypes.IporSwapMemory memory swap
     ) internal view returns (int256) {
-        DataTypes.IporSwapInterest memory derivativeInterest = swap
-            .calculateInterestForSwapReceiveFixed(
+        return
+            swap.calculateSwapReceiveFixedValue(
                 timestamp,
                 _warren.calculateAccruedIbtPrice(_asset, timestamp)
             );
-
-        if (derivativeInterest.positionValue > 0) {
-            if (derivativeInterest.positionValue < swap.collateral.toInt256()) {
-                return derivativeInterest.positionValue;
-            } else {
-                return swap.collateral.toInt256();
-            }
-        } else {
-            if (derivativeInterest.positionValue < -swap.collateral.toInt256()) {
-                return -swap.collateral.toInt256();
-            } else {
-                return derivativeInterest.positionValue;
-            }
-        }
     }
 
     function _calculateIncomeTaxValue(int256 positionValue) internal pure returns (uint256) {
@@ -367,13 +341,14 @@ abstract contract Milton is
             IporErrors.MILTON_TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
-        (uint256 collateral, uint256 notional, uint256 openingFee) = _calculateDerivativeAmount(
-            wadTotalAmount,
-            collateralizationFactor,
-            _getLiquidationDepositAmount(),
-            _getIporPublicationFeeAmount(),
-            _getOpeningFeePercentage()
-        );
+        (uint256 collateral, uint256 notional, uint256 openingFee) = IporSwapLogic
+            .calculateSwapAmount(
+                wadTotalAmount,
+                collateralizationFactor,
+                _getLiquidationDepositAmount(),
+                _getIporPublicationFeeAmount(),
+                _getOpeningFeePercentage()
+            );
 
         require(
             collateral <= _getMaxSwapCollateralAmount(),
@@ -432,7 +407,7 @@ abstract contract Milton is
             IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
-        DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
+        DataTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -506,7 +481,7 @@ abstract contract Milton is
             IporErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
-        DataTypes.IporSwapIndicator memory indicator = _calculateDerivativeIndicators(
+        DataTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -607,7 +582,7 @@ abstract contract Milton is
         );
     }
 
-    function _calculateDerivativeIndicators(
+    function _calculateSwapdicators(
         uint256 calculateTimestamp,
         uint256 notionalAmount,
         uint256 quoteValue
@@ -792,29 +767,6 @@ abstract contract Milton is
 
             transferedToBuyer = IporMath.convertToWad(transferAmmountAssetDecimals, decimals);
         }
-    }
-
-    function _calculateDerivativeAmount(
-        uint256 totalAmount,
-        uint256 collateralizationFactor,
-        uint256 liquidationDepositAmount,
-        uint256 iporPublicationFeeAmount,
-        uint256 openingFeePercentage
-    )
-        internal
-        pure
-        returns (
-            uint256 collateral,
-            uint256 notional,
-            uint256 openingFee
-        )
-    {
-        collateral = IporMath.division(
-            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * Constants.D18,
-            Constants.D18 + openingFeePercentage
-        );
-        notional = IporMath.division(collateralizationFactor * collateral, Constants.D18);
-        openingFee = IporMath.division(collateral * openingFeePercentage, Constants.D18);
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}

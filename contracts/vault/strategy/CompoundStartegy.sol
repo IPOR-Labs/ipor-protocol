@@ -1,20 +1,18 @@
 pragma solidity 0.8.9;
 
-import "../interfaces/compound/CErc20.sol";
-import "../interfaces/IPOR/IStrategy.sol";
-import "../interfaces/compound/ComptrollerInterface.sol";
-import "../interfaces/IPOR/IStrategy.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-
+import "../interfaces/compound/CErc20.sol";
+import "../interfaces/compound/ComptrollerInterface.sol";
+import "../interfaces/IStrategy.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-
-import "hardhat/console.sol";
 import "../../IporErrors.sol";
 import "../../libraries/IporMath.sol";
+
+import "hardhat/console.sol";
 
 contract CompoundStrategy is
     UUPSUpgradeable,

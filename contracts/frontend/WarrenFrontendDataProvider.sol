@@ -20,16 +20,6 @@ contract WarrenFrontendDataProvider is
     function initialize(address[] memory assets, address warren) public initializer {
         __Ownable_init();
         _warren = warren;
-
-        // address[] assetsMem = address[assets.length];
-
-        // uint256 i = 0;
-        // for (i; i != assets.length; i++) {
-        //     _config[assets[i]] = IporConfig(miltons[i], miltonStorages[i]);
-        //     assetsMem[i] = assets[i];
-        // }
-        // _assets = assetsMem;
-
         _assets = assets;
     }
 

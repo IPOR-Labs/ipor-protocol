@@ -23,7 +23,8 @@ contract MiltonDevToolDataProvider is
         address[] memory miltons,
         address[] memory miltonStorages,
         address[] memory josephs,
-        address[] memory ipTokens
+        address[] memory ipTokens,
+        address[] memory ivTokens
     ) public initializer {
         require(
             assets.length == miltons.length && assets.length == miltonStorages.length,
@@ -39,13 +40,19 @@ contract MiltonDevToolDataProvider is
                 miltons[i],
                 miltonStorages[i],
                 josephs[i],
-                ipTokens[i]
+                ipTokens[i],
+                ivTokens[i]
             );
         }
     }
 
     function getMyIpTokenBalance(address asset) external view override returns (uint256) {
         IERC20 token = IERC20(_assetConfig[asset].ipToken);
+        return token.balanceOf(msg.sender);
+    }
+
+    function getMyIvTokenBalance(address asset) external view override returns (uint256) {
+        IERC20 token = IERC20(_assetConfig[asset].ivToken);
         return token.balanceOf(msg.sender);
     }
 

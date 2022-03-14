@@ -34,9 +34,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>
-                            Redeem Liquidity Pool Max Utilization Percentage
-                        </strong>
+                        <strong>Redeem Liquidity Pool Max Utilization Percentage</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -235,7 +233,7 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Charlie Treasurer</strong>
-						<small></small>
+                        <small></small>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
