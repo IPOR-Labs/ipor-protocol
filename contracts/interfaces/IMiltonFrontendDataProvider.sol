@@ -41,10 +41,10 @@ interface IMiltonFrontendDataProvider {
         view
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
 
-    function getMySwaps(address asset)
+    function getMySwaps(address asset, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (IporSwapFront[] memory items);
+        returns (uint256 totalCount, IporSwapFront[] memory swaps);
 
     function getConfiguration()
         external

@@ -35,6 +35,9 @@ library IporErrors {
     //only milton can have access to function
     string public constant CALLER_NOT_MILTON = "IPOR_008";
 
+    string public constant CHUNK_SIZE_EQUAL_ZERO = "IPOR_009";
+    string public constant CHUNK_SIZE_TOO_BIG = "IPOR_010";
+
     // 200-299- warren
     //@notice Asset address not supported
     //@dev Address is not supported when quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS.

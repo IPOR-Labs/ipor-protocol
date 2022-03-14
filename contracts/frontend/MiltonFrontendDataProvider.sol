@@ -61,67 +61,70 @@ contract MiltonFrontendDataProvider is
             .getTotalOutstandingNotional();
     }
 
-    function getMySwaps(address asset)
+    function getMySwaps(address asset, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (IporSwapFront[] memory items)
+        returns (uint256 totalCount, IporSwapFront[] memory swaps)
     {
+        require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
+
         AssetConfig memory config = _assetConfig[asset];
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
 
-        uint128[] memory accountSwapPayFixedIds = miltonStorage.getSwapPayFixedIds(msg.sender);
-        uint128[] memory accountSwapReceiveFixedIds = miltonStorage.getSwapReceiveFixedIds(
-            msg.sender
+        (uint256 totalCount, IMiltonStorage.IporSwapId[] memory swapIds) = miltonStorage.getSwapIds(
+            msg.sender,
+            offset,
+            chunkSize
         );
 
-        uint256 pfSwapsLength = accountSwapPayFixedIds.length;
-
-        uint256 swapsLength = pfSwapsLength + accountSwapReceiveFixedIds.length;
-        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](swapsLength);
         IMilton milton = IMilton(config.milton);
 
-        uint256 i = 0;
-        for (i; i != pfSwapsLength; i++) {
-            DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(
-                accountSwapPayFixedIds[i]
-            );
-            iporDerivatives[i] = IporSwapFront(
-                iporSwap.id,
-                asset,
-                iporSwap.collateral,
-                iporSwap.notionalAmount,
-                IporMath.division(iporSwap.notionalAmount * Constants.D18, iporSwap.collateral),
-                0,
-                iporSwap.fixedInterestRate,
-                milton.calculateSwapPayFixedValue(iporSwap),
-                iporSwap.startingTimestamp,
-                iporSwap.endingTimestamp,
-                iporSwap.liquidationDepositAmount
-            );
+        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](swapIds.length);
+        for (uint256 i = 0; i != swapIds.length; i++) {
+            IMiltonStorage.IporSwapId memory swapId = swapIds[i];
+            if (swapId.direction == 0) {
+                DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);
+                iporDerivatives[i] = _mapToIporSwapFront(
+                    asset,
+                    iporSwap,
+                    0,
+                    milton.calculateSwapPayFixedValue(iporSwap)
+                );
+            } else {
+                DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(swapId.id);
+                iporDerivatives[i] = _mapToIporSwapFront(
+                    asset,
+                    iporSwap,
+                    1,
+                    milton.calculateSwapReceiveFixedValue(iporSwap));
+            }
         }
 
-        i = pfSwapsLength;
-        for (i; i != swapsLength; i++) {
-            DataTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
-                accountSwapReceiveFixedIds[i - pfSwapsLength]
-            );
-            iporDerivatives[i] = IporSwapFront(
-                iporSwap.id,
-                asset,
-                iporSwap.collateral,
-                iporSwap.notionalAmount,
-                IporMath.division(iporSwap.notionalAmount * Constants.D18, iporSwap.collateral),
-                1,
-                iporSwap.fixedInterestRate,
-                milton.calculateSwapReceiveFixedValue(iporSwap),
-                iporSwap.startingTimestamp,
-                iporSwap.endingTimestamp,
-                iporSwap.liquidationDepositAmount
-            );
-        }
+        return (totalCount, iporDerivatives);
+    }
 
-        return iporDerivatives;
+    function _mapToIporSwapFront(
+        address asset,
+        DataTypes.IporSwapMemory memory iporSwap,
+        uint8 direction,
+        int256 value
+    ) internal view returns (IporSwapFront memory)
+    {
+        return IporSwapFront(
+            iporSwap.id,
+            asset,
+            iporSwap.collateral,
+            iporSwap.notionalAmount,
+            IporMath.division(iporSwap.notionalAmount * Constants.D18, iporSwap.collateral),
+            1,
+            iporSwap.fixedInterestRate,
+            value,
+            iporSwap.startingTimestamp,
+            iporSwap.endingTimestamp,
+            iporSwap.liquidationDepositAmount
+        );
     }
 
     function getConfiguration()

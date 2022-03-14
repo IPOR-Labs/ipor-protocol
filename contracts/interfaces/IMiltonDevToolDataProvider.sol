@@ -29,25 +29,25 @@ interface IMiltonDevToolDataProvider {
         view
         returns (uint256);
 
-    function getSwapsPayFixed(address, address account)
+    function getSwapsPayFixed(address, address account, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (DataTypes.IporSwapMemory[] memory);
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps);
 
-    function getSwapsReceiveFixed(address asset, address account)
+    function getSwapsReceiveFixed(address asset, address account, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (DataTypes.IporSwapMemory[] memory);
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps);
 
-    function getMySwapsPayFixed(address asset)
+    function getMySwapsPayFixed(address asset, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (DataTypes.IporSwapMemory[] memory items);
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps);
 
-    function getMySwapsReceiveFixed(address asset)
+    function getMySwapsReceiveFixed(address asset, uint256 offset, uint256 chunkSize)
         external
         view
-        returns (DataTypes.IporSwapMemory[] memory items);
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps);
 
     function calculateSpread(address asset)
         external

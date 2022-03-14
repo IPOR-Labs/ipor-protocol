@@ -9,6 +9,7 @@ import "../libraries/IporSwapLogic.sol";
 import "../libraries/SoapIndicatorLogic.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../libraries/Constants.sol";
+import "../libraries/PaginationUtils.sol";
 import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
@@ -135,35 +136,90 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             );
     }
 
-    function getSwapsPayFixed(address account)
+    function getSwapsPayFixed(address account, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (DataTypes.IporSwapMemory[] memory)
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
     {
-        return _getPositions(_swapsPayFixed.swaps, _swapsPayFixed.ids[account]);
+        uint128[] storage ids = _swapsPayFixed.ids[account];
+        return (ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize));
     }
 
-    function getSwapsReceiveFixed(address account)
+    function getSwapsReceiveFixed(address account, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (DataTypes.IporSwapMemory[] memory)
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
     {
-        return _getPositions(_swapsReceiveFixed.swaps, _swapsReceiveFixed.ids[account]);
+        uint128[] storage ids = _swapsReceiveFixed.ids[account];
+        return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
     }
 
-    function getSwapPayFixedIds(address account) external view override returns (uint128[] memory) {
-        return _swapsPayFixed.ids[account];
-    }
-
-    function getSwapReceiveFixedIds(address account)
+    function getSwapPayFixedIds(address account, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (uint128[] memory)
+        returns (uint256 totalCount, uint128[] memory ids)
     {
-        return _swapsReceiveFixed.ids[account];
+        require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
+
+        uint128[] storage idsRef = _swapsPayFixed.ids[account];
+        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(idsRef.length, offset, chunkSize);
+        uint128[] memory ids = new uint128[](resultSetSize);
+        for (uint256 i = 0; i != resultSetSize; i++) {
+            ids[i] = idsRef[offset + i];
+        }
+        return (idsRef.length, ids);
+    }
+
+    function getSwapReceiveFixedIds(address account, uint256 offset, uint256 chunkSize)
+        external
+        view
+        override
+        returns (uint256 totalCount, uint128[] memory ids)
+    {
+        require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
+
+        uint128[] storage idsRef = _swapsReceiveFixed.ids[account];
+        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(idsRef.length, offset, chunkSize);
+        uint128[] memory ids = new uint128[](resultSetSize);
+        for (uint256 i = 0; i != resultSetSize; i++) {
+            ids[i] = idsRef[offset + i];
+        }
+        return (idsRef.length, ids);
+    }
+
+    function getSwapIds(address account, uint256 offset, uint256 chunkSize)
+        external
+        view
+        override
+        returns (uint256 totalCount, IMiltonStorage.IporSwapId[] memory ids)
+    {
+        require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
+
+        uint128[] storage payFixedIdsRef = _swapsPayFixed.ids[account];
+        uint256 payFixedLength = payFixedIdsRef.length;
+        uint128[] storage receiveFixedIdsRef = _swapsReceiveFixed.ids[account];
+        uint256 receiveFixedLength = receiveFixedIdsRef.length;
+        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(
+            payFixedLength + receiveFixedLength,
+            offset,
+            chunkSize
+        );
+
+        IMiltonStorage.IporSwapId[] memory ids = new IMiltonStorage.IporSwapId[](resultSetSize);
+        for (uint256 i = 0; i != resultSetSize; i++) {
+            if (offset + i < payFixedLength) {
+                ids[i] = IporSwapId(payFixedIdsRef[offset + i], 0);
+            } else {
+                ids[i] = IporSwapId(receiveFixedIdsRef[offset + i - payFixedLength], 1);
+            }
+        }
+        return (payFixedLength + receiveFixedLength, ids);
     }
 
     function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
@@ -371,16 +427,20 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function _getPositions(
         mapping(uint128 => DataTypes.IporSwap) storage swaps,
-        uint128[] storage ids
+        uint128[] storage ids,
+        uint256 offset,
+        uint256 chunkSize
     ) internal view returns (DataTypes.IporSwapMemory[] memory) {
-        uint256 swapsIdsLength = ids.length;
+        require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
+
+        uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(ids.length, offset, chunkSize);
         DataTypes.IporSwapMemory[] memory derivatives = new DataTypes.IporSwapMemory[](
             swapsIdsLength
         );
-        uint256 i = 0;
 
-        for (i; i != swapsIdsLength; i++) {
-            uint128 id = ids[i];
+        for (uint256 i = 0; i != swapsIdsLength; i++) {
+            uint128 id = ids[i + offset];
             DataTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = DataTypes.IporSwapMemory(
                 uint256(swaps[id].state),

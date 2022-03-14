@@ -7,6 +7,7 @@ import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonDevToolDataProvider.sol";
+import "../libraries/Constants.sol";
 
 //TODO: change name to CockpitDataProvider
 contract MiltonDevToolDataProvider is
@@ -73,44 +74,44 @@ contract MiltonDevToolDataProvider is
         return token.allowance(msg.sender, config.joseph);
     }
 
-    function getSwapsPayFixed(address asset, address account)
+    function getSwapsPayFixed(address asset, address account, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (DataTypes.IporSwapMemory[] memory)
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
     {
         AssetConfig memory config = _assetConfig[asset];
-        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(account);
+        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(account, offset, chunkSize);
     }
 
-    function getSwapsReceiveFixed(address asset, address account)
+    function getSwapsReceiveFixed(address asset, address account, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (DataTypes.IporSwapMemory[] memory)
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
     {
         AssetConfig memory config = _assetConfig[asset];
-        return IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(account);
+        return IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(account, offset, chunkSize);
     }
 
-    function getMySwapsPayFixed(address asset)
+    function getMySwapsPayFixed(address asset, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (DataTypes.IporSwapMemory[] memory items)
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
     {
         AssetConfig memory config = _assetConfig[asset];
-        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(msg.sender);
+        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(msg.sender, offset, chunkSize);
     }
 
-    function getMySwapsReceiveFixed(address asset)
+    function getMySwapsReceiveFixed(address asset, uint256 offset, uint256 chunkSize)
         external
         view
         override
-        returns (DataTypes.IporSwapMemory[] memory items)
+        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
     {
         AssetConfig memory config = _assetConfig[asset];
-        return IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(msg.sender);
+        return IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(msg.sender, offset, chunkSize);
     }
 
     function calculateSpread(address asset)

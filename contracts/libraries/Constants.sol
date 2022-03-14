@@ -24,6 +24,8 @@ library Constants {
     int256 public constant WAD_P2_YEAR_IN_SECONDS_INT =
         int256(WAD_P2_YEAR_IN_SECONDS);
 
+    uint256 public constant MAX_CHUNK_SIZE = 50;
+
     //@notice By default every swap takes 28 days, this variable show this value in seconds
     uint256 public constant SWAP_DEFAULT_PERIOD_IN_SECONDS =
         60 * 60 * 24 * 28;
