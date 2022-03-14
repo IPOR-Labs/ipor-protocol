@@ -198,6 +198,43 @@ abstract contract Milton is
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
 
+
+    function emergencyCloseSwapPayFixed(uint256 swapId)
+        external
+        override
+        onlyOwner
+        whenPaused
+    {
+        _closeSwapPayFixed(swapId, block.timestamp);
+    }
+
+    function emergencyCloseSwapReceiveFixed(uint256 swapId)
+        external
+        override
+        onlyOwner
+        whenPaused
+    {
+        _closeSwapReceiveFixed(swapId, block.timestamp);
+    }
+
+    function emergencyCloseSwapsPayFixed(uint256[] memory swapIds)
+        external
+        override
+        onlyOwner
+        whenPaused
+    {
+        _closeSwapsPayFixed(swapIds, block.timestamp);
+    }
+
+    function emergencyCloseSwapsReceiveFixed(uint256[] memory swapIds)
+        external
+        override
+        onlyOwner
+        whenPaused
+    {
+        _closeSwapsReceiveFixed(swapIds, block.timestamp);
+    }
+
     //@param assetValue underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetValue) external onlyJoseph nonReentrant whenNotPaused {
         uint256 vaultBalance = _stanley.deposit(assetValue);
