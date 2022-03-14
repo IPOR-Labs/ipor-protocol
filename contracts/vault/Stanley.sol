@@ -62,16 +62,12 @@ abstract contract Stanley is
 
     function _getDecimals() internal pure virtual returns (uint256);
 
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
     function totalBalance(address who) external view override returns (uint256) {
         return _totalBalance(who);
+    }
+
+    function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
+        (exchangeRate, , ) = _calcExchangeRate();
     }
 
     /**
@@ -325,6 +321,14 @@ abstract contract Stanley is
 
     function setMilton(address milton) external override whenNotPaused onlyOwner {
         _milton = milton;
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     // Find highest apy strategy to deposit underlying asset
