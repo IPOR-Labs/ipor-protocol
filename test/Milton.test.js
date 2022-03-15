@@ -476,8 +476,8 @@ describe("Milton", () => {
         let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
         let liquidationDepositAmount = USD_20_18DEC;
 
-        let expectedIncomeTaxValue = BigInt("0");
-        let expectedIncomeTaxValueWad = BigInt("0");
+        let expectedIncomeFeeValue = BigInt("0");
+        let expectedIncomeFeeValueWad = BigInt("0");
 
         let totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
         let collateral = TC_COLLATERAL_18DEC;
@@ -492,7 +492,7 @@ describe("Milton", () => {
 
         let expectedMiltonUnderlyingTokenBalance = miltonBalanceBeforePayoutWad + diffAfterClose;
         let expectedLiquidityPoolTotalBalanceWad =
-            miltonBalanceBeforePayoutWad + openingFee - expectedIncomeTaxValue;
+            miltonBalanceBeforePayoutWad + openingFee - expectedIncomeFeeValue;
 
         let expectedPositionValue = BigInt("0");
 
@@ -515,11 +515,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValue,
+            expectedIncomeFeeValue,
             ZERO,
             null,
             expectedPositionValue,
-            expectedIncomeTaxValue
+            expectedIncomeFeeValue
         );
     });
 
@@ -529,7 +529,7 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
+        let expectedIncomeFeeValueWad = BigInt("6826719107555404611");
         let expectedPositionValue = BigInt("-68267191075554046114");
         let expectedPositionValueWad = BigInt("-68267191075554046114");
 
@@ -547,10 +547,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -576,7 +576,7 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
+        let expectedIncomeFeeValueWad = BigInt("6826719107555404611");
         let expectedPositionValue = BigInt("-68267191");
         let expectedPositionValueWad = BigInt("-68267191075554046114");
 
@@ -594,10 +594,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -661,7 +661,7 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -679,10 +679,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -708,7 +708,7 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_6DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -726,10 +726,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -741,7 +741,7 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValueWad = BigInt("791899416476426938347");
+        let expectedIncomeFeeValueWad = BigInt("791899416476426938347");
         let expectedPositionValue = BigInt("-7918994164764269383465");
         let expectedPositionValueWad = BigInt("-7918994164764269383465");
         await testCaseWhenMiltonEarnAndUserLost(
@@ -758,10 +758,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -788,7 +788,7 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValueWad = BigInt("791899416476426938347");
+        let expectedIncomeFeeValueWad = BigInt("791899416476426938347");
         let expectedPositionValue = BigInt("-7918994165");
         let expectedPositionValueWad = BigInt("-7918994164764269383465");
 
@@ -806,10 +806,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -821,7 +821,7 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValueWad = BigInt("856889782380354383694");
+        let expectedIncomeFeeValueWad = BigInt("856889782380354383694");
         let expectedPositionValue = BigInt("-8568897823803543836942");
         let expectedPositionValueWad = BigInt("-8568897823803543836942");
 
@@ -839,10 +839,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -854,8 +854,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -873,11 +873,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -903,8 +903,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("996700990");
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = BigInt("996700990");
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_6DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -922,11 +922,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -938,8 +938,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("778245978261316123526");
-        let expectedIncomeTaxValueWad = BigInt("778245978261316123526");
+        let expectedIncomeFeeValue = BigInt("778245978261316123526");
+        let expectedIncomeFeeValueWad = BigInt("778245978261316123526");
 
         let expectedPositionValue = BigInt("7782459782613161235257");
         let expectedPositionValueWad = BigInt("7782459782613161235257");
@@ -958,11 +958,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -988,8 +988,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("778245978");
-        let expectedIncomeTaxValueWad = BigInt("778245978261316123526");
+        let expectedIncomeFeeValue = BigInt("778245978");
+        let expectedIncomeFeeValueWad = BigInt("778245978261316123526");
         let expectedPositionValue = BigInt("7782459782");
         let expectedPositionValueWad = BigInt("7782459782613161235257");
 
@@ -1007,11 +1007,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1023,8 +1023,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -1042,11 +1042,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1058,8 +1058,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = SPECIFIC_INCOME_TAX_CASE_1;
-        let expectedIncomeTaxValueWad = SPECIFIC_INCOME_TAX_CASE_1;
+        let expectedIncomeFeeValue = SPECIFIC_INCOME_TAX_CASE_1;
+        let expectedIncomeFeeValueWad = SPECIFIC_INCOME_TAX_CASE_1;
         let expectedPositionValue = SPECIFIC_INTEREST_AMOUNT_CASE_1;
         let expectedPositionValueWad = SPECIFIC_INTEREST_AMOUNT_CASE_1;
 
@@ -1077,11 +1077,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1094,8 +1094,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -1113,11 +1113,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1168,8 +1168,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -1187,11 +1187,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1203,8 +1203,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("636796358352768143662");
-        let expectedIncomeTaxValueWad = BigInt("636796358352768143662");
+        let expectedIncomeFeeValue = BigInt("636796358352768143662");
+        let expectedIncomeFeeValueWad = BigInt("636796358352768143662");
         let expectedPositionValue = BigInt("6367963583527681436620");
         let expectedPositionValueWad = BigInt("6367963583527681436620");
 
@@ -1222,11 +1222,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1238,8 +1238,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -1257,10 +1257,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1312,8 +1312,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("856889782380354383694");
-        let expectedIncomeTaxValueWad = BigInt("856889782380354383694");
+        let expectedIncomeFeeValue = BigInt("856889782380354383694");
+        let expectedIncomeFeeValueWad = BigInt("856889782380354383694");
         let expectedPositionValue = BigInt("-8568897823803543836942");
         let expectedPositionValueWad = BigInt("-8568897823803543836942");
 
@@ -1331,10 +1331,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1346,8 +1346,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -1365,10 +1365,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1380,8 +1380,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("6826719107555402563");
-        let expectedIncomeTaxValueWad = BigInt("6826719107555402563");
+        let expectedIncomeFeeValue = BigInt("6826719107555402563");
+        let expectedIncomeFeeValueWad = BigInt("6826719107555402563");
         let expectedPositionValue = BigInt("-68267191075554025634");
         let expectedPositionValueWad = BigInt("-68267191075554025634");
 
@@ -1399,10 +1399,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1414,7 +1414,7 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValueWad = BigInt("6826719107555404611");
+        let expectedIncomeFeeValueWad = BigInt("6826719107555404611");
         let expectedPositionValue = BigInt("-68267191075554046114");
         let expectedPositionValueWad = BigInt("-68267191075554046114");
 
@@ -1432,10 +1432,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1447,8 +1447,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -1466,11 +1466,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1482,8 +1482,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("279895483409771589481");
-        let expectedIncomeTaxValueWad = BigInt("279895483409771589481");
+        let expectedIncomeFeeValue = BigInt("279895483409771589481");
+        let expectedIncomeFeeValueWad = BigInt("279895483409771589481");
         let expectedPositionValue = BigInt("-2798954834097715894807");
         let expectedPositionValueWad = BigInt("-2798954834097715894807");
 
@@ -1501,10 +1501,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1516,8 +1516,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -1535,10 +1535,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1550,8 +1550,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("791899416476426932749");
-        let expectedIncomeTaxValueWad = BigInt("791899416476426932749");
+        let expectedIncomeFeeValue = BigInt("791899416476426932749");
+        let expectedIncomeFeeValueWad = BigInt("791899416476426932749");
         let expectedPositionValue = BigInt("-7918994164764269327486");
         let expectedPositionValueWad = BigInt("-7918994164764269327486");
 
@@ -1569,10 +1569,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1584,8 +1584,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -1603,11 +1603,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1619,8 +1619,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("841597931579430277365");
-        let expectedIncomeTaxValueWad = BigInt("841597931579430277365");
+        let expectedIncomeFeeValue = BigInt("841597931579430277365");
+        let expectedIncomeFeeValueWad = BigInt("841597931579430277365");
         let expectedPositionValue = BigInt("8415979315794302773646");
         let expectedPositionValueWad = BigInt("8415979315794302773646");
 
@@ -1638,11 +1638,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1654,8 +1654,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -1673,10 +1673,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1688,8 +1688,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("652088209153692249992");
-        let expectedIncomeTaxValueWad = BigInt("652088209153692249992");
+        let expectedIncomeFeeValue = BigInt("652088209153692249992");
+        let expectedIncomeFeeValueWad = BigInt("652088209153692249992");
         let expectedPositionValue = BigInt("-6520882091536922499916");
         let expectedPositionValueWad = BigInt("-6520882091536922499916");
 
@@ -1707,10 +1707,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1722,8 +1722,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -1741,11 +1741,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1798,8 +1798,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -1817,10 +1817,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1872,8 +1872,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -1891,11 +1891,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1908,8 +1908,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("841597931579430277365");
-        let expectedIncomeTaxValueWad = BigInt("841597931579430277365");
+        let expectedIncomeFeeValue = BigInt("841597931579430277365");
+        let expectedIncomeFeeValueWad = BigInt("841597931579430277365");
         let expectedPositionValue = BigInt("8415979315794302773646");
         let expectedPositionValueWad = BigInt("8415979315794302773646");
 
@@ -1927,11 +1927,11 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1944,8 +1944,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -1963,10 +1963,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -1979,8 +1979,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("652088209153692249992");
-        let expectedIncomeTaxValueWad = BigInt("652088209153692249992");
+        let expectedIncomeFeeValue = BigInt("652088209153692249992");
+        let expectedIncomeFeeValueWad = BigInt("652088209153692249992");
         let expectedPositionValue = BigInt("-6520882091536922499916");
         let expectedPositionValueWad = BigInt("-6520882091536922499916");
 
@@ -1998,10 +1998,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -2014,8 +2014,8 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = TC_INCOME_TAX_18DEC;
-        let expectedIncomeTaxValueWad = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
+        let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -2033,10 +2033,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -2269,8 +2269,11 @@ describe("Milton", () => {
         await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
-        const actualDerivatives =
-            await testData.miltonStorageDai.getSwapsPayFixed(derivativeParams25days.from.address, 0, 50);
+        const actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
+            derivativeParams25days.from.address,
+            0,
+            50
+        );
         const actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
         expect(
@@ -2338,8 +2341,11 @@ describe("Milton", () => {
         await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(2, endTimestamp);
 
         //then
-        const actualDerivatives =
-            await testData.miltonStorageDai.getSwapsPayFixed(derivativeParams25days.from.address, 0, 50);
+        const actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
+            derivativeParams25days.from.address,
+            0,
+            50
+        );
         const actualOpenedPositionsVol = countOpenSwaps(actualDerivatives);
 
         expect(
@@ -2362,7 +2368,7 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeTaxValue = BigInt("636796358352768143662");
+        let expectedIncomeFeeValue = BigInt("636796358352768143662");
         let expectedPositionValue = BigInt("6367963583527681436620");
         let collateralizationFactor = USD_10_18DEC;
         let openerUser = userTwo;
@@ -2373,7 +2379,7 @@ describe("Milton", () => {
         let expectedOpenedPositions = 0;
         let expectedDerivativesTotalBalanceWad = ZERO;
         let expectedLiquidationDepositTotalBalanceWad = ZERO;
-        let expectedTreasuryTotalBalanceWad = expectedIncomeTaxValue;
+        let expectedTreasuryTotalBalanceWad = expectedIncomeFeeValue;
         let expectedSoap = ZERO;
         let openTimestamp = null;
 
@@ -2385,7 +2391,7 @@ describe("Milton", () => {
             TC_IPOR_PUBLICATION_AMOUNT_18DEC +
             TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC -
             expectedPositionValue +
-            expectedIncomeTaxValue;
+            expectedIncomeFeeValue;
 
         let closerUserLost = null;
         let openerUserEarned = null;
@@ -2403,7 +2409,7 @@ describe("Milton", () => {
             TC_OPENING_FEE_18DEC +
             TC_IPOR_PUBLICATION_AMOUNT_18DEC -
             expectedPositionValue +
-            expectedIncomeTaxValue;
+            expectedIncomeFeeValue;
 
         let expectedOpenerUserUnderlyingTokenBalanceAfterClose =
             USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
@@ -2450,17 +2456,17 @@ describe("Milton", () => {
             .connect(userOne)
             .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, endTimestamp - 1);
 
-        //additional check for position value and for incomeTax value
+        //additional check for position value and for incomeFee value
         const actualPositionValue = await testData.miltonDai
             .connect(params.from)
             .itfCalculateSwapPayFixedValue(endTimestamp, 1);
 
-        const actualIncomeTaxValue = await testData.miltonDai
+        const actualIncomeFeeValue = await testData.miltonDai
             .connect(params.from)
-            .itfCalculateIncomeTaxValue(actualPositionValue);
+            .itfCalculateIncomeFeeValue(actualPositionValue);
 
         expect(actualPositionValue, "Incorrect position value").to.be.eq(expectedPositionValue);
-        expect(actualIncomeTaxValue, "Incorrect income tax value").to.be.eq(expectedIncomeTaxValue);
+        expect(actualIncomeFeeValue, "Incorrect income fee value").to.be.eq(expectedIncomeFeeValue);
 
         //when
         await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
@@ -2533,8 +2539,11 @@ describe("Milton", () => {
         await openSwapPayFixed(testData, derivativeParams);
 
         //then
-        const actualUserDerivativeResponse =
-            await testData.miltonStorageDai.getSwapPayFixedIds(userTwo.address, 0, 10);
+        const actualUserDerivativeResponse = await testData.miltonStorageDai.getSwapPayFixedIds(
+            userTwo.address,
+            0,
+            10
+        );
         const actualUserDerivativeIds = actualUserDerivativeResponse.ids;
 
         expect(
@@ -2952,7 +2961,7 @@ describe("Milton", () => {
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
     });
 
-    it("should calculate income tax, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
+    it("should calculate income fee, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -2973,8 +2982,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("420798965789715138682");
-        let expectedIncomeTaxValueWad = BigInt("420798965789715138682");
+        let expectedIncomeFeeValue = BigInt("420798965789715138682");
+        let expectedIncomeFeeValueWad = BigInt("420798965789715138682");
         let expectedPositionValue = BigInt("8415979315794302773646");
         let expectedPositionValueWad = BigInt("8415979315794302773646");
 
@@ -2992,17 +3001,17 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
     });
 
-    it("should calculate income tax, 5%, Milton loses, user earns, |I| > D", async () => {
+    it("should calculate income fee, 5%, Milton loses, user earns, |I| > D", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3023,8 +3032,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("498350494851544536639");
-        let expectedIncomeTaxValueWad = BigInt("498350494851544536639");
+        let expectedIncomeFeeValue = BigInt("498350494851544536639");
+        let expectedIncomeFeeValueWad = BigInt("498350494851544536639");
 
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
@@ -3043,17 +3052,17 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
     });
 
-    it("should calculate income tax, 5%, Milton earns, user loses, |I| < D", async () => {
+    it("should calculate income fee, 5%, Milton earns, user loses, |I| < D", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3074,8 +3083,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("395949708238213469173");
-        let expectedIncomeTaxValueWad = BigInt("395949708238213469173");
+        let expectedIncomeFeeValue = BigInt("395949708238213469173");
+        let expectedIncomeFeeValueWad = BigInt("395949708238213469173");
         let expectedPositionValue = BigInt("-7918994164764269383465");
         let expectedPositionValueWad = BigInt("-7918994164764269383465");
 
@@ -3093,16 +3102,16 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
     });
 
-    it("should calculate income tax, 5%, Milton earns, user loses, |I| > D", async () => {
+    it("should calculate income fee, 5%, Milton earns, user loses, |I| > D", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3123,8 +3132,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("498350494851544536639");
-        let expectedIncomeTaxValueWad = BigInt("498350494851544536639");
+        let expectedIncomeFeeValue = BigInt("498350494851544536639");
+        let expectedIncomeFeeValueWad = BigInt("498350494851544536639");
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -3142,16 +3151,16 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
     });
 
-    it("should calculate income tax, 100%, Milton loses, user earns, |I| < D", async () => {
+    it("should calculate income fee, 100%, Milton loses, user earns, |I| < D", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3171,8 +3180,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("8415979315794302773646");
-        let expectedIncomeTaxValueWad = BigInt("8415979315794302773646");
+        let expectedIncomeFeeValue = BigInt("8415979315794302773646");
+        let expectedIncomeFeeValueWad = BigInt("8415979315794302773646");
         let expectedPositionValue = BigInt("8415979315794302773646");
         let expectedPositionValueWad = BigInt("8415979315794302773646");
 
@@ -3190,17 +3199,17 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
     });
 
-    it("should calculate income tax, 100%, Milton loses, user earns, |I| > D", async () => {
+    it("should calculate income fee, 100%, Milton loses, user earns, |I| > D", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3221,8 +3230,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = TC_COLLATERAL_18DEC;
-        let expectedIncomeTaxValueWad = TC_COLLATERAL_18DEC;
+        let expectedIncomeFeeValue = TC_COLLATERAL_18DEC;
+        let expectedIncomeFeeValueWad = TC_COLLATERAL_18DEC;
         let expectedPositionValue = TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = TC_COLLATERAL_18DEC;
 
@@ -3240,17 +3249,17 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValue,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValue,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
     });
 
-    it("should calculate income tax, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
+    it("should calculate income fee, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3271,8 +3280,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = BigInt("7918994164764269383465");
-        let expectedIncomeTaxValueWad = BigInt("7918994164764269383465");
+        let expectedIncomeFeeValue = BigInt("7918994164764269383465");
+        let expectedIncomeFeeValueWad = BigInt("7918994164764269383465");
         let expectedPositionValue = BigInt("-7918994164764269383465");
         let expectedPositionValueWad = BigInt("-7918994164764269383465");
 
@@ -3290,16 +3299,16 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
     });
 
-    it("should calculate income tax, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
+    it("should calculate income fee, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -3320,8 +3329,8 @@ describe("Milton", () => {
             testData
         );
 
-        let expectedIncomeTaxValue = TC_COLLATERAL_18DEC;
-        let expectedIncomeTaxValueWad = TC_COLLATERAL_18DEC;
+        let expectedIncomeFeeValue = TC_COLLATERAL_18DEC;
+        let expectedIncomeFeeValueWad = TC_COLLATERAL_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
 
@@ -3339,10 +3348,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             null,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -3612,8 +3621,8 @@ describe("Milton", () => {
         );
 
         let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
-        let expectedIncomeTaxValue = ZERO;
-        let expectedIncomeTaxValueWad = ZERO;
+        let expectedIncomeFeeValue = ZERO;
+        let expectedIncomeFeeValueWad = ZERO;
         let expectedPositionValue = ZERO;
         let expectedPositionValueWad = ZERO;
 
@@ -3631,10 +3640,10 @@ describe("Milton", () => {
             0,
             ZERO,
             ZERO,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             ZERO,
             veryLongTimeAgoTimestamp,
-            expectedIncomeTaxValueWad,
+            expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
         );
@@ -4864,7 +4873,7 @@ describe("Milton", () => {
         expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
-        expectedIncomeTaxValueWad,
+        expectedIncomeFeeValueWad,
         expectedPositionValue,
         expectedPositionValueWad
     ) {
@@ -4889,7 +4898,7 @@ describe("Milton", () => {
             miltonBalanceBeforePayoutWad +
             TC_OPENING_FEE_18DEC +
             expectedPositionValueWadAbs -
-            expectedIncomeTaxValueWad;
+            expectedIncomeFeeValueWad;
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
@@ -4970,7 +4979,7 @@ describe("Milton", () => {
             expectedSoap,
             openTimestamp,
             expectedPositionValueWad,
-            expectedIncomeTaxValueWad
+            expectedIncomeFeeValueWad
         );
     };
 
@@ -4991,8 +5000,8 @@ describe("Milton", () => {
         expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
-        expectedIncomeTaxValue,
-        expectedIncomeTaxValueWad,
+        expectedIncomeFeeValue,
+        expectedIncomeFeeValueWad,
         expectedPositionValue,
         expectedPositionValueWad
     ) {
@@ -5025,7 +5034,7 @@ describe("Milton", () => {
                 TC_IPOR_PUBLICATION_AMOUNT_18DEC +
                 TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC -
                 expectedPositionValueAbs +
-                expectedIncomeTaxValue;
+                expectedIncomeFeeValue;
 
             if (openerUser.address === closerUser.address) {
                 closerUserLost = openerUserLost;
@@ -5040,7 +5049,7 @@ describe("Milton", () => {
                 TC_OPENING_FEE_18DEC +
                 TC_IPOR_PUBLICATION_AMOUNT_18DEC -
                 expectedPositionValueAbs +
-                expectedIncomeTaxValue;
+                expectedIncomeFeeValue;
             expectedOpenerUserUnderlyingTokenBalanceAfterClose =
                 USER_SUPPLY_10MLN_18DEC + openerUserEarned - openerUserLost;
             expectedCloserUserUnderlyingTokenBalanceAfterClose =
@@ -5055,7 +5064,7 @@ describe("Milton", () => {
                 TC_IPOR_PUBLICATION_AMOUNT_6DEC +
                 TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC -
                 expectedPositionValueAbs +
-                expectedIncomeTaxValue;
+                expectedIncomeFeeValue;
 
             if (openerUser.address === closerUser.address) {
                 closerUserLost = openerUserLost;
@@ -5070,7 +5079,7 @@ describe("Milton", () => {
                 TC_OPENING_FEE_6DEC +
                 TC_IPOR_PUBLICATION_AMOUNT_6DEC -
                 expectedPositionValueAbs +
-                expectedIncomeTaxValue;
+                expectedIncomeFeeValue;
             expectedOpenerUserUnderlyingTokenBalanceAfterClose =
                 USER_SUPPLY_6_DECIMALS + openerUserEarned - openerUserLost;
             expectedCloserUserUnderlyingTokenBalanceAfterClose =
@@ -5100,7 +5109,7 @@ describe("Milton", () => {
             expectedSoap,
             openTimestamp,
             expectedPositionValueWad,
-            expectedIncomeTaxValueWad
+            expectedIncomeFeeValueWad
         );
     };
 
@@ -5161,7 +5170,7 @@ describe("Milton", () => {
         expectedSoap,
         openTimestamp,
         expectedPositionValue,
-        expectedIncomeTaxValue
+        expectedIncomeFeeValue
     ) {
         //given
         let localOpenTimestamp = null;
@@ -5226,7 +5235,7 @@ describe("Milton", () => {
         let endTimestamp = params.openTimestamp + periodOfTimeElapsedInSeconds;
 
         let actualPositionValue = null;
-        let actualIncomeTaxValue = null;
+        let actualIncomeFeeValue = null;
 
         //when
         if (testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
@@ -5244,9 +5253,9 @@ describe("Milton", () => {
                     .connect(closerUser)
                     .itfCloseSwapReceiveFixed(1, endTimestamp);
             }
-            actualIncomeTaxValue = await testData.miltonUsdt
+            actualIncomeFeeValue = await testData.miltonUsdt
                 .connect(params.from)
-                .itfCalculateIncomeTaxValue(actualPositionValue);
+                .itfCalculateIncomeFeeValue(actualPositionValue);
         }
 
         if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
@@ -5264,9 +5273,9 @@ describe("Milton", () => {
                     .connect(closerUser)
                     .itfCloseSwapReceiveFixed(1, endTimestamp);
             }
-            actualIncomeTaxValue = await testData.miltonUsdc
+            actualIncomeFeeValue = await testData.miltonUsdc
                 .connect(params.from)
-                .itfCalculateIncomeTaxValue(actualPositionValue);
+                .itfCalculateIncomeFeeValue(actualPositionValue);
         }
 
         if (testData.tokenDai && params.asset === testData.tokenDai.address) {
@@ -5285,13 +5294,13 @@ describe("Milton", () => {
                     .connect(closerUser)
                     .itfCloseSwapReceiveFixed(1, endTimestamp);
             }
-            actualIncomeTaxValue = await testData.miltonDai
+            actualIncomeFeeValue = await testData.miltonDai
                 .connect(params.from)
-                .itfCalculateIncomeTaxValue(actualPositionValue);
+                .itfCalculateIncomeFeeValue(actualPositionValue);
         }
 
         expect(actualPositionValue, "Incorrect position value").to.be.eq(expectedPositionValue);
-        expect(actualIncomeTaxValue, "Incorrect income tax value").to.be.eq(expectedIncomeTaxValue);
+        expect(actualIncomeFeeValue, "Incorrect income fee value").to.be.eq(expectedIncomeFeeValue);
 
         //then
         await assertExpectedValues(
@@ -5441,34 +5450,52 @@ describe("Milton", () => {
         let actualDerivatives = null;
         if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
             if (direction == 0) {
-                actualDerivatives =
-                    await testData.miltonStorageUsdt.getSwapsPayFixed(openerUser.address, 0, 50);
+                actualDerivatives = await testData.miltonStorageUsdt.getSwapsPayFixed(
+                    openerUser.address,
+                    0,
+                    50
+                );
             }
             if (direction == 1) {
-                actualDerivatives =
-                    await testData.miltonStorageUsdt.getSwapsReceiveFixed(openerUser.address, 0, 50);
+                actualDerivatives = await testData.miltonStorageUsdt.getSwapsReceiveFixed(
+                    openerUser.address,
+                    0,
+                    50
+                );
             }
         }
 
         if (testData.tokenUsdc && asset === testData.tokenUsdc.address) {
             if (direction == 0) {
-                actualDerivatives =
-                    await testData.miltonStorageUsdc.getSwapsPayFixed(openerUser.address, 0, 50);
+                actualDerivatives = await testData.miltonStorageUsdc.getSwapsPayFixed(
+                    openerUser.address,
+                    0,
+                    50
+                );
             }
             if (direction == 1) {
-                actualDerivatives =
-                    await testData.miltonStorageUsdc.getSwapsReceiveFixed(openerUser.address, 0, 50);
+                actualDerivatives = await testData.miltonStorageUsdc.getSwapsReceiveFixed(
+                    openerUser.address,
+                    0,
+                    50
+                );
             }
         }
 
         if (testData.tokenDai && asset === testData.tokenDai.address) {
             if (direction == 0) {
-                actualDerivatives =
-                    await testData.miltonStorageDai.getSwapsPayFixed(openerUser.address, 0, 50);
+                actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
+                    openerUser.address,
+                    0,
+                    50
+                );
             }
             if (direction == 1) {
-                actualDerivatives =
-                    await testData.miltonStorageDai.getSwapsReceiveFixed(openerUser.address, 0, 50);
+                actualDerivatives = await testData.miltonStorageDai.getSwapsReceiveFixed(
+                    openerUser.address,
+                    0,
+                    50
+                );
             }
         }
 

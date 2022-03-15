@@ -487,7 +487,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Income Tax Percentage</strong>
+                        <strong>Income Fee Percentage</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -495,7 +495,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getIncomeTaxPercentage"
+                                method="getIncomeFeePercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -509,7 +509,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getIncomeTaxPercentage"
+                                method="getIncomeFeePercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -526,7 +526,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getIncomeTaxPercentage"
+                                method="getIncomeFeePercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -540,7 +540,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getIncomeTaxPercentage"
+                                method="getIncomeFeePercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -557,7 +557,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getIncomeTaxPercentage"
+                                method="getIncomeFeePercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -571,7 +571,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getIncomeTaxPercentage"
+                                method="getIncomeFeePercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

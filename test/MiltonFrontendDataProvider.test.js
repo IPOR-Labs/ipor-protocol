@@ -28,11 +28,12 @@ const {
     prepareData,
     prepareTestData,
     setupTokenDaiInitialValuesForUsers,
-    setupTokenUsdcInitialValuesForUsers, assertError,
+    setupTokenUsdcInitialValuesForUsers,
+    assertError,
 } = require("./Utils");
-const {TC_TOTAL_AMOUNT_10_18DEC} = require("./Const");
+const { TC_TOTAL_AMOUNT_10_18DEC } = require("./Const");
 
-describe("MiltonFrontendDataProvider", () => {
+describe("MiltonDarcyDataProvider", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress;
 
@@ -49,7 +50,8 @@ describe("MiltonFrontendDataProvider", () => {
             ["DAI", "USDC", "USDT"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -138,13 +140,11 @@ describe("MiltonFrontendDataProvider", () => {
 
         const expectedSwapsLength = 3;
 
-        const MiltonFrontendDataProvider = await ethers.getContractFactory(
-            "MiltonFrontendDataProvider"
-        );
-        const miltonFrontendDataProvider = await MiltonFrontendDataProvider.deploy();
-        await miltonFrontendDataProvider.deployed();
+        const MiltonDarcyDataProvider = await ethers.getContractFactory("MiltonDarcyDataProvider");
+        const miltonDarcyDataProvider = await MiltonDarcyDataProvider.deploy();
+        await miltonDarcyDataProvider.deployed();
 
-        await miltonFrontendDataProvider.initialize(
+        await miltonDarcyDataProvider.initialize(
             testData.warren.address,
             [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
             [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
@@ -160,17 +160,17 @@ describe("MiltonFrontendDataProvider", () => {
         await openSwapPayFixed(testData, paramsUsdc);
         await openSwapPayFixed(testData, paramsUsdt);
 
-        const responseDai = await miltonFrontendDataProvider
+        const responseDai = await miltonDarcyDataProvider
             .connect(paramsDai.from)
             .getMySwaps(paramsDai.asset, 0, 50);
         const itemsDai = responseDai.swaps;
 
-        const responseUsdc = await miltonFrontendDataProvider
+        const responseUsdc = await miltonDarcyDataProvider
             .connect(paramsUsdc.from)
             .getMySwaps(paramsUsdc.asset, 0, 50);
         const itemsUsdc = responseUsdc.swaps;
 
-        const responseUsdt = await miltonFrontendDataProvider
+        const responseUsdt = await miltonDarcyDataProvider
             .connect(paramsUsdt.from)
             .getMySwaps(paramsUsdt.asset, 0, 50);
         const itemsUsdt = responseUsdt.swaps;
@@ -186,11 +186,11 @@ describe("MiltonFrontendDataProvider", () => {
     });
 
     it("should fail when page size is equal 0", async () => {
-        await testCasePagination(0, 0, 0, 0, 'IPOR_009');
+        await testCasePagination(0, 0, 0, 0, "IPOR_009");
     });
 
     it("should fail when page size is greater than 50", async () => {
-        await testCasePagination(0, 0, 51, 0, 'IPOR_010');
+        await testCasePagination(0, 0, 51, 0, "IPOR_010");
     });
 
     it("should receive empty list of swaps", async () => {
@@ -305,17 +305,16 @@ describe("MiltonFrontendDataProvider", () => {
         };
     };
 
-    const testCasePagination = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
+    const testCasePagination = async (
+        numberOfSwapsToCreate,
+        offset,
+        pageSize,
+        expectedResponseSize,
+        expectedError
+    ) => {
         //given
         let testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI", "USDC", "USDT"],
             data,
             0,
@@ -345,23 +344,16 @@ describe("MiltonFrontendDataProvider", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsDai.asset,
-                PERCENTAGE_5_18DEC,
-                paramsDai.openTimestamp
-            );
+            .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_50_000_18DEC, paramsDai.openTimestamp);
 
-        const MiltonFrontendDataProvider = await ethers.getContractFactory(
-            "MiltonFrontendDataProvider"
-        );
-        const miltonFrontendDataProvider =
-            await MiltonFrontendDataProvider.deploy();
-        await miltonFrontendDataProvider.deployed();
-        await miltonFrontendDataProvider.initialize(
+        const MiltonDarcyDataProvider = await ethers.getContractFactory("MiltonDarcyDataProvider");
+        const miltonDarcyDataProvider = await MiltonDarcyDataProvider.deploy();
+        await miltonDarcyDataProvider.deployed();
+        await miltonDarcyDataProvider.initialize(
             testData.warren.address,
             [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
             [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
@@ -382,7 +374,7 @@ describe("MiltonFrontendDataProvider", () => {
 
         //when
         if (expectedError == null) {
-            const response = await miltonFrontendDataProvider
+            const response = await miltonDarcyDataProvider
                 .connect(paramsDai.from)
                 .getMySwaps(paramsDai.asset, offset, pageSize);
 
@@ -394,11 +386,11 @@ describe("MiltonFrontendDataProvider", () => {
             expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
         } else {
             await assertError(
-                miltonFrontendDataProvider
+                miltonDarcyDataProvider
                     .connect(paramsDai.from)
                     .getMySwaps(paramsDai.asset, offset, pageSize),
                 expectedError
             );
         }
-    }
+    };
 });

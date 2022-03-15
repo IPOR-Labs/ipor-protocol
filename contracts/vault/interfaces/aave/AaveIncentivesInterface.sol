@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
 interface AaveIncentivesInterface {
@@ -18,8 +19,5 @@ interface AaveIncentivesInterface {
      * @param user the address of the user
      * @return the unclaimed user rewards
      */
-    function getUserUnclaimedRewards(address user)
-        external
-        view
-        returns (uint256);
+    function getUserUnclaimedRewards(address user) external view returns (uint256);
 }

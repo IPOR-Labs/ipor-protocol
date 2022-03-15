@@ -1,40 +1,38 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../../amm/MiltonSpreadModel.sol";
+import "../../amm/spread/MiltonSpreadModel.sol";
 
 contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
     function testCalculateSpreadPremiumsPayFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
+        IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance
     ) public pure returns (uint256 spreadValue) {
-        DataTypes.MiltonBalanceMemory memory balance = DataTypes
-            .MiltonBalanceMemory(
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
-                liquidityPoolBalance,
-                0
-            );
+        IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
+            payFixedSwapsBalance,
+            receiveFixedSwapsBalance,
+            liquidityPoolBalance,
+            0
+        );
         return _calculateSpreadPremiumsPayFixed(soap, accruedIpor, balance);
     }
 
     function testCalculateSpreadPremiumsRecFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
+        IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
         uint256 payFixedSwapsBalance,
         uint256 receiveFixedSwapsBalance
     ) public pure returns (uint256 spreadValue) {
-        DataTypes.MiltonBalanceMemory memory balance = DataTypes
-            .MiltonBalanceMemory(
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
-                liquidityPoolBalance,
-                0
-            );
+        IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
+            payFixedSwapsBalance,
+            receiveFixedSwapsBalance,
+            liquidityPoolBalance,
+            0
+        );
         return _calculateSpreadPremiumsRecFixed(soap, accruedIpor, balance);
     }
 

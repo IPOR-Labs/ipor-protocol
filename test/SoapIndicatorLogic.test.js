@@ -417,44 +417,6 @@ describe("SoapIndicatorLogic", () => {
         );
     });
 
-    it("should calculate Pay Fixed Soap - simple case 1 - 18 decimals", async () => {
-        //given
-        const soapIndicator = await prepareSoapIndicatorPayFixedCaseD18();
-        const ibtPrice = BigInt(145) * ONE_18DEC;
-        const calculationTimestamp =
-            soapIndicator.rebalanceTimestamp + BigInt(PERIOD_25_DAYS_IN_SECONDS);
-
-        //when
-        const actualSoapPf = await mockSoapIndicatorLogic.calculateSoapPayFixed(
-            soapIndicator,
-            calculationTimestamp,
-            ibtPrice
-        );
-
-        //then
-        const expectedSoapPf = BigInt("-6109589041095890410958");
-        expect(expectedSoapPf, "Incorrect SOAP for Pay Fixed Derivatives").to.be.eq(actualSoapPf);
-    });
-
-    it("should calculate Rec Fixed Soap - simple case 1 - 18 decimals", async () => {
-        //given
-        const soapIndicator = await prepareSoapIndicatorRecFixedCaseD18();
-        const ibtPrice = BigInt(145) * ONE_18DEC;
-        const calculationTimestamp =
-            soapIndicator.rebalanceTimestamp + BigInt(PERIOD_25_DAYS_IN_SECONDS);
-
-        //when
-        const actualSoapRf = await mockSoapIndicatorLogic.calculateSoapReceiveFixed(
-            soapIndicator,
-            calculationTimestamp,
-            ibtPrice
-        );
-
-        //then
-        const expectedSoapRf = BigInt("6109589041095890410959");
-        expect(expectedSoapRf, "Incorrect SOAP for Rec Fixed Derivatives").to.be.eq(actualSoapRf);
-    });
-
     const assertSoapIndicator = async (
         actualSoapIndicator,
         expectedRebalanceTimestamp,

@@ -18,7 +18,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="calculateSpread"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(item) => (
@@ -34,7 +34,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="calculateSpread"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(item) => (
@@ -50,7 +50,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="calculateSpread"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(item) => (
@@ -69,9 +69,9 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="calculateSpread"
-						methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadRecFixedValue / 1000000000000000000}
@@ -85,9 +85,9 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="calculateSpread"
-						methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadRecFixedValue / 1000000000000000000}
@@ -101,9 +101,9 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="calculateSpread"
-						methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadRecFixedValue / 1000000000000000000}
