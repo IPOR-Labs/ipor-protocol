@@ -21,7 +21,7 @@ export const warrenSetup = async (warren: Warren) => {
     await warren.addAsset(daiAddress);
 };
 
-export const initIporValuse = async (warren: Warren) => {
+export const initIporValues = async (warren: Warren) => {
     await warren.updateIndexes(
         [daiAddress, usdtAddress, usdcAddress],
         [
