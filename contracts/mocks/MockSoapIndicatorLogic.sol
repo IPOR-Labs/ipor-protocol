@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "../amm/libraries/types/AmmMiltonStorageTypes.sol";
 import "../amm/libraries/SoapIndicatorLogic.sol";
-import "../types/MiltonStorageTypes.sol";
 
 contract MockSoapIndicatorLogic {
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapPayFixed(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) public pure returns (int256) {
@@ -15,7 +15,7 @@ contract MockSoapIndicatorLogic {
     }
 
     function calculateQuasiSoapReceiveFixed(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) public pure returns (int256) {
@@ -23,12 +23,12 @@ contract MockSoapIndicatorLogic {
     }
 
     function rebalanceWhenOpenSwap(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) public pure returns (MiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) public pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         return
             SoapIndicatorLogic.rebalanceWhenOpenSwap(
                 si,
@@ -40,13 +40,13 @@ contract MockSoapIndicatorLogic {
     }
 
     function rebalanceWhenCloseSwap(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) external pure returns (MiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) external pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         return
             SoapIndicatorLogic.rebalanceWhenCloseSwap(
                 si,
@@ -74,7 +74,7 @@ contract MockSoapIndicatorLogic {
     }
 
     function calculateQuasiHyphoteticalInterestTotal(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp
     ) public pure returns (uint256) {
         return SoapIndicatorLogic.calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp);

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../../types/WarrenTypes.sol";
-import {Constants} from "../../utils/Constants.sol";
-import {IporMath} from "../../utils/math/IporMath.sol";
-import {IporErrors} from "../../IporErrors.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/WarrenErrors.sol";
+import "../../libraries/errors/MiltonErrors.sol";
+import "../../interfaces/types/WarrenTypes.sol";
 
 library IporLogic {
     function accrueQuasiIbtPrice(WarrenTypes.IPOR memory ipor, uint256 accrueTimestamp)
@@ -32,7 +33,7 @@ library IporLogic {
     ) internal pure returns (uint256) {
         require(
             accrueTimestamp >= indexTimestamp,
-            IporErrors.WARREN_INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
+            WarrenErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
         return quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
     }
@@ -57,7 +58,7 @@ library IporLogic {
         uint256 indexValue,
         uint256 alpha
     ) internal pure returns (uint256 result) {
-        require(alpha <= Constants.D18, IporErrors.MILTON_SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
+        require(alpha <= Constants.D18, MiltonErrors.SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE);
 
         if (indexValue > exponentialMovingAverage) {
             result = IporMath.division(
@@ -81,6 +82,6 @@ library IporLogic {
             );
         }
 
-        require(result <= Constants.D18, IporErrors.MILTON_SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE);
+        require(result <= Constants.D18, MiltonErrors.SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE);
     }
 }

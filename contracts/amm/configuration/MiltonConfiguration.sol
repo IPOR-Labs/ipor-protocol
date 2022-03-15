@@ -2,9 +2,9 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../../interfaces/IMiltonConfiguration.sol";
 import "../../interfaces/IIpToken.sol";
 import "../../interfaces/IWarren.sol";
+import "../../interfaces/IMiltonConfiguration.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 import "../../interfaces/IStanley.sol";

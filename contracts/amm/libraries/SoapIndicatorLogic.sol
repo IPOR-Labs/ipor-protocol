@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../../types/MiltonStorageTypes.sol";
-import {IporMath} from "../../utils/math/IporMath.sol";
-import {IporErrors} from "../../IporErrors.sol";
-import {Constants} from "../../utils/Constants.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/MiltonErrors.sol";
+import "./types/AmmMiltonStorageTypes.sol";
 
 library SoapIndicatorLogic {
     using SafeCast for uint256;
 
     function calculateQuasiSoapPayFixed(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -23,7 +23,7 @@ library SoapIndicatorLogic {
 
     //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapReceiveFixed(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -35,12 +35,12 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenOpenSwap(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (MiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -61,13 +61,13 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenCloseSwap(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (MiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
             si,
             rebalanceTimestamp
@@ -107,7 +107,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
-            IporErrors.MILTON_CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP
+            MiltonErrors.CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP
         );
         return
             derivativeNotional *
@@ -117,7 +117,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateQuasiHyphoteticalInterestTotal(
-        MiltonStorageTypes.SoapIndicatorsMemory memory si,
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return
@@ -139,7 +139,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= lastRebalanceTimestamp,
-            IporErrors.MILTON_CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP
+            MiltonErrors.CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP
         );
         return
             totalNotional *
@@ -168,7 +168,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             derivativeNotional <= totalNotional,
-            IporErrors.MILTON_SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
+            MiltonErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
         );
         if (derivativeNotional == totalNotional) {
             return 0;

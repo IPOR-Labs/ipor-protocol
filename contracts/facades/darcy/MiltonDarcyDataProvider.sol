@@ -2,14 +2,15 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../../types/MiltonStorageTypes.sol";
-import "../../security/IporOwnableUpgradeable.sol";
-import "../../interfaces/IMiltonDarcyDataProvider.sol";
-import "../../interfaces/IMiltonStorage.sol";
-import "../../interfaces/IMiltonConfiguration.sol";
-import "../../interfaces/IMiltonSpreadModel.sol";
-import "../../interfaces/IMilton.sol";
+import "../../interfaces/types/MiltonStorageTypes.sol";
+import "../../interfaces/types/DataProviderTypes.sol";
 import "../../interfaces/IWarren.sol";
+import "../../interfaces/IMiltonConfiguration.sol";
+import "../../interfaces/IMilton.sol";
+import "../../interfaces/IMiltonStorage.sol";
+import "../../interfaces/IMiltonSpreadModel.sol";
+import "../../interfaces/IMiltonDarcyDataProvider.sol";
+import "../../security/IporOwnableUpgradeable.sol";
 import "../../amm/MiltonStorage.sol";
 
 contract MiltonDarcyDataProvider is
@@ -19,7 +20,7 @@ contract MiltonDarcyDataProvider is
 {
     address internal _warren;
     address[] internal _assets;
-    mapping(address => AssetConfig) internal _assetConfig;
+    mapping(address => DataProviderTypes.AssetConfig) internal _assetConfig;
 
     function initialize(
         address warren,
@@ -35,15 +36,18 @@ contract MiltonDarcyDataProvider is
         __Ownable_init();
         _warren = warren;
 
-        uint256 i = 0;
-        for (i; i != assets.length; i++) {
-            _assetConfig[assets[i]] = AssetConfig(miltons[i], miltonStorages[i]);
+        uint256 assetsLength = assets.length;
+        for (uint256 i = 0; i != assetsLength; i++) {
+            _assetConfig[assets[i]] = DataProviderTypes.DarcyAssetConfig(
+                miltons[i],
+                miltonStorages[i]
+            );
         }
         _assets = assets;
     }
 
     function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
         uint256 result = milton.calculateExchangeRate(block.timestamp);
         return result;
@@ -55,7 +59,7 @@ contract MiltonDarcyDataProvider is
         override
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional)
     {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         (payFixedTotalNotional, recFixedTotalNotional) = miltonStorage
             .getTotalOutstandingNotional();
@@ -69,7 +73,7 @@ contract MiltonDarcyDataProvider is
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
 
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage
@@ -138,8 +142,7 @@ contract MiltonDarcyDataProvider is
             assetsLength
         );
 
-        uint256 i = 0;
-        for (i; i != assetsLength; i++) {
+        for (uint256 i = 0; i != assetsLength; i++) {
             configFront[0] = _createIporAssetConfFront(_assets[i], timestamp);
         }
         return configFront;
@@ -150,7 +153,7 @@ contract MiltonDarcyDataProvider is
         view
         returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
     {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
 
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         address miltonAddr = config.milton;

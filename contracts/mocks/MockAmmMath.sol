@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../utils/math/IporMath.sol";
+import "../libraries/math/IporMath.sol";
 
 contract MockIporMath {
     //@notice Division with rounding up on last position, x, and y is with MD

@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import {IporErrors} from "../IporErrors.sol";
+import "../libraries/errors/IporErrors.sol";
 
 contract IporOwnable is Ownable {
     address private _appointedOwner;

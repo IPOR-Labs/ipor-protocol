@@ -9,9 +9,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import {IporErrors} from "../../IporErrors.sol";
-import {IporMath} from "../../utils/math/IporMath.sol";
-import "../../utils/Constants.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/errors/MiltonErrors.sol";
+import "../../libraries/errors/JosephErrors.sol";
 import "../../interfaces/IJoseph.sol";
 import "../configuration/JosephConfiguration.sol";
 import "hardhat/console.sol";
@@ -29,16 +31,13 @@ abstract contract Joseph is
     modifier onlyPublicationFeeTransferer() {
         require(
             msg.sender == _publicationFeeTransferer,
-            IporErrors.JOSEPH_CALLER_NOT_PUBLICATION_FEE_TRANSFERER
+            JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
         );
         _;
     }
 
     modifier onlyTreasureTransferer() {
-        require(
-            msg.sender == _treasureTransferer,
-            IporErrors.JOSEPH_CALLER_NOT_TREASURE_TRANSFERER
-        );
+        require(msg.sender == _treasureTransferer, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
         _;
     }
 
@@ -83,7 +82,7 @@ abstract contract Joseph is
     function rebalance() external override whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
-        require(totalBalance != 0, IporErrors.JOSEPH_STANLEY_BALANCE_IS_EMPTY);
+        require(totalBalance != 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
 
         uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
 
@@ -119,7 +118,7 @@ abstract contract Joseph is
         whenNotPaused
         onlyTreasureTransferer
     {
-        require(address(0) != _treasureTreasurer, IporErrors.JOSEPH_INCORRECT_TREASURE_TREASURER);
+        require(address(0) != _treasureTreasurer, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
 
@@ -143,7 +142,7 @@ abstract contract Joseph is
         whenNotPaused
         onlyPublicationFeeTransferer
     {
-        require(address(0) != _charlieTreasurer, IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER);
+        require(address(0) != _charlieTreasurer, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
 
@@ -174,7 +173,7 @@ abstract contract Joseph is
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
-        require(totalBalance != 0, IporErrors.JOSEPH_STANLEY_BALANCE_IS_EMPTY);
+        require(totalBalance != 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
         return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 
@@ -203,7 +202,7 @@ abstract contract Joseph is
 
         uint256 exchangeRate = milton.calculateExchangeRate(timestamp);
 
-        require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetValue = IporMath.convertToWad(assetValue, assetDecimals);
 
@@ -227,13 +226,13 @@ abstract contract Joseph is
     function _redeem(uint256 ipTokenValue, uint256 timestamp) internal {
         require(
             ipTokenValue != 0 && ipTokenValue <= _ipToken.balanceOf(msg.sender),
-            IporErrors.JOSEPH_CANNOT_REDEEM_IP_TOKEN_TOO_LOW
+            JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
         IMilton milton = _milton;
 
         uint256 exchangeRate = milton.calculateExchangeRate(timestamp);
 
-        require(exchangeRate != 0, IporErrors.MILTON_LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetValue = IporMath.division(ipTokenValue * exchangeRate, Constants.D18);
 
@@ -256,7 +255,7 @@ abstract contract Joseph is
 
         require(
             utilizationRate <= _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE,
-            IporErrors.JOSEPH_REDEEM_LP_UTILIZATION_EXCEEDED
+            JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
         _ipToken.burn(msg.sender, ipTokenValue);

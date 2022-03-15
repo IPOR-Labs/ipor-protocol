@@ -6,12 +6,14 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../../IporErrors.sol";
-import "../../utils/math/IporMath.sol";
-import "../interfaces/compound/CErc20.sol";
-import "../interfaces/compound/ComptrollerInterface.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/errors/StanleyErrors.sol";
 import "../../interfaces/IStrategy.sol";
 import "../../security/IporOwnableUpgradeable.sol";
+import "../interfaces/compound/CErc20.sol";
+import "../interfaces/compound/ComptrollerInterface.sol";
 import "hardhat/console.sol";
 
 contract CompoundStrategy is
@@ -58,12 +60,12 @@ contract CompoundStrategy is
     }
 
     modifier onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
         _;
     }
 
     modifier onlyTreasuryManager() {
-        require(msg.sender == _treasuryManager, IporErrors.STRATEGY_CALLER_NOT_TREASURY_MANAGER);
+        require(msg.sender == _treasuryManager, StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 

@@ -5,14 +5,15 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../utils/math/IporMath.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "../interfaces/IStrategy.sol";
-import "../interfaces/IStanley.sol";
-import "../interfaces/IStanleyAdministration.sol";
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/StanleyErrors.sol";
 import "../interfaces/IIvToken.sol";
-import "../IporErrors.sol";
-
+import "../interfaces/IStanleyAdministration.sol";
+import "../interfaces/IStanley.sol";
+import "../interfaces/IStrategy.sol";
+import "../security/IporOwnableUpgradeable.sol";
 import "hardhat/console.sol";
 
 abstract contract Stanley is
@@ -370,7 +371,7 @@ abstract contract Stanley is
         IStrategy strategy = IStrategy(newStrategy);
         IERC20Upgradeable shareToken = IERC20Upgradeable(_compoundShareToken);
 
-        require(strategy.getAsset() == address(asset), IporErrors.STANLEY_ASSET_MISMATCH);
+        require(strategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
 
         if (_compoundStrategy != address(0)) {
             asset.safeApprove(_compoundStrategy, 0);
@@ -398,7 +399,7 @@ abstract contract Stanley is
 
         IStrategy strategy = IStrategy(newStrategy);
 
-        require(strategy.getAsset() == address(asset), IporErrors.STANLEY_ASSET_MISMATCH);
+        require(strategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
 
         if (_aaveStrategy != address(0)) {
             asset.safeApprove(_aaveStrategy, 0);

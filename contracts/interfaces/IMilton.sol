@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../types/IporTypes.sol";
-import "../types/MiltonTypes.sol";
+import "./types/IporTypes.sol";
+import "./types/AmmTypes.sol";
+import "./types/MiltonTypes.sol";
 
 interface IMilton {
     function getVersion() external pure returns (uint256);
@@ -76,7 +77,7 @@ interface IMilton {
         address indexed buyer,
         address asset,
         MiltonTypes.SwapDirection direction,
-        MiltonTypes.OpenSwapMoney money,
+        AmmTypes.OpenSwapMoney money,
         uint256 startingTimestamp,
         uint256 endingTimestamp,
         MiltonTypes.IporSwapIndicator indicator
@@ -90,5 +91,5 @@ interface IMilton {
         address liquidator,
         uint256 transferedToBuyer,
         uint256 transferedToLiquidator
-    );    
+    );
 }

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../types/IporTypes.sol";
-import "../types/IporAmmTypes.sol";
-import "../types/MiltonStorageTypes.sol";
+import "./types/IporTypes.sol";
+import "./types/AmmTypes.sol";
+import "./types/MiltonStorageTypes.sol";
 
 interface IMiltonStorage {
     function getVersion() external pure returns (uint256);
@@ -86,7 +86,7 @@ interface IMiltonStorage {
     function subtractLiquidity(uint256 liquidityAmount) external;
 
     function updateStorageWhenOpenSwapPayFixed(
-        IporAmmTypes.NewSwap memory newSwap,
+        AmmTypes.NewSwap memory newSwap,
         uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
@@ -94,7 +94,7 @@ interface IMiltonStorage {
     ) external returns (uint256);
 
     function updateStorageWhenOpenSwapReceiveFixed(
-        IporAmmTypes.NewSwap memory newSwap,
+        AmmTypes.NewSwap memory newSwap,
         uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,

@@ -150,11 +150,12 @@
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                               
                         <argument>${contracts.sources}/amm/configuration/MiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/amm/configuration/MiltonSpreadConfiguration.sol</argument>
-                        <argument>${contracts.sources}/front/cockpit/CockpitSmartContracts.sol</argument>
-                        <argument>${contracts.sources}/front/cockpit/CockpitDataProvider.sol</argument>
-                        <argument>${contracts.sources}/front/darcy/MiltonDarcyDataProvider.sol</argument>                        
-                        <argument>${contracts.sources}/front/darcy/WarrenDarcyDataProvider.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
+                        <argument>${contracts.sources}/facades/cockpit/CockpitSmartContracts.sol</argument>
+                        <argument>${contracts.sources}/facades/cockpit/CockpitDataProvider.sol</argument>
+                        <argument>${contracts.sources}/facades/darcy/MiltonDarcyDataProvider.sol</argument>                        
+                        <argument>${contracts.sources}/facades/darcy/WarrenDarcyDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/types/IporTypes.sol</argument>
+						<argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/ICockpitDataProvider.sol</argument>                        
@@ -168,13 +169,12 @@
                         <argument>${contracts.sources}/itf/ItfJoseph.sol</argument>
                         <argument>${contracts.sources}/itf/ItfMilton.sol</argument>
                         <argument>${contracts.sources}/itf/ItfWarren.sol</argument>
-                        <argument>${contracts.sources}/utils/Constants.sol</argument>
+                        <argument>${contracts.sources}/libraries/Constants.sol</argument>
                         <argument>${contracts.sources}/oracles/libraries/IporLogic.sol</argument>
-                        <argument>${contracts.sources}/utils/math/IporMath.sol</argument>
+                        <argument>${contracts.sources}/libraries/math/IporMath.sol</argument>
                         <argument>${contracts.sources}/amm/libraries/IporSwapLogic.sol</argument>
-                        <argument>${contracts.sources}/utils/PaginationUtils.sol</argument>
-                        <argument>${contracts.sources}/amm/libraries/SoapIndicatorLogic.sol</argument>
-                        <argument>${contracts.sources}/types/IporTypes.sol</argument>
+                        <argument>${contracts.sources}/libraries/PaginationUtils.sol</argument>
+                        <argument>${contracts.sources}/amm/libraries/SoapIndicatorLogic.sol</argument>                        
                         <argument>${contracts.sources}/mocks/MiltonFaucet.sol</argument>
                         <argument>${contracts.sources}/mocks/MockAmmMath.sol</argument>
                         <argument>${contracts.sources}/mocks/MockIporSwapLogic.sol</argument>

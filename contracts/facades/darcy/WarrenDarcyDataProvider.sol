@@ -3,10 +3,11 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import {Constants} from "../../utils/Constants.sol";
-import {IporMath} from "../../utils/math/IporMath.sol";
-import "../../interfaces/IWarrenDarcyDataProvider.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../interfaces/types/DataProviderTypes.sol";
 import "../../interfaces/IWarren.sol";
+import "../../interfaces/IWarrenDarcyDataProvider.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 contract WarrenDarcyDataProvider is
@@ -23,19 +24,30 @@ contract WarrenDarcyDataProvider is
         _assets = assets;
     }
 
-    function getIndexes() external view override returns (IporFront[] memory) {
-        IporFront[] memory indexes = new IporFront[](_assets.length);
+    function getIndexes() external view override returns (DataProviderTypes.IporFront[] memory) {
+        DataProviderTypes.IporFront[] memory indexes = new DataProviderTypes.IporFront[](
+            _assets.length
+        );
 
-        uint256 i = 0;
-        for (i; i != _assets.length; i++) {
+        uint256 assetLength = _assets.length;
+        for (uint256 i = 0; i != assetLength; i++) {
             indexes[i] = _createIporFront(_assets[i]);
         }
         return indexes;
     }
 
-    function _createIporFront(address asset) internal view returns (IporFront memory iporFront) {
+    function _createIporFront(address asset)
+        internal
+        view
+        returns (DataProviderTypes.IporFront memory iporFront)
+    {
         (uint256 value, uint256 ibtPrice, , , uint256 date) = IWarren(_warren).getIndex(asset);
-        iporFront = IporFront(IERC20MetadataUpgradeable(asset).symbol(), value, ibtPrice, date);
+        iporFront = DataProviderTypes.IporFront(
+            IERC20MetadataUpgradeable(asset).symbol(),
+            value,
+            ibtPrice,
+            date
+        );
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}

@@ -2,8 +2,9 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "../../interfaces/IJosephConfiguration.sol";
+import "../../libraries/errors/JosephErrors.sol";
 import "../../interfaces/IIpToken.sol";
+import "../../interfaces/IJosephConfiguration.sol";
 import "../../interfaces/IMilton.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/IStanley.sol";
@@ -39,7 +40,7 @@ abstract contract JosephConfiguration is
         onlyOwner
         whenNotPaused
     {
-        require(newCharlieTreasurer != address(0), IporErrors.JOSEPH_INCORRECT_CHARLIE_TREASURER);
+        require(newCharlieTreasurer != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
         _charlieTreasurer = newCharlieTreasurer;
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }

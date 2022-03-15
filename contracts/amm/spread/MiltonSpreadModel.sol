@@ -3,13 +3,13 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import {IporErrors} from "../../IporErrors.sol";
-import "../../utils/Constants.sol";
-import "../../utils/math/IporMath.sol";
-import "../../types/IporTypes.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/MiltonErrors.sol";
+import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
-import "./MiltonSpreadModelCore.sol";
 import "../configuration/MiltonSpreadConfiguration.sol";
+import "./MiltonSpreadModelCore.sol";
 
 contract MiltonSpreadModel is
     UUPSUpgradeable,
@@ -118,7 +118,7 @@ contract MiltonSpreadModel is
     ) internal pure returns (uint256 spreadPremiumsValue) {
         require(
             accruedBalance.liquidityPool != 0,
-            IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentPayFixed(
             accruedBalance.liquidityPool,
@@ -142,7 +142,7 @@ contract MiltonSpreadModel is
     ) internal pure returns (uint256 spreadValue) {
         require(
             accruedBalance.liquidityPool != 0,
-            IporErrors.MILTON_SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
         uint256 result = _calculateDemandComponentRecFixed(
             accruedBalance.liquidityPool,

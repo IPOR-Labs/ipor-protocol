@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../../libraries/math/IporMath.sol";
 import "../../../vault/interfaces/compound/CErc20Mock.sol";
-import "../../../utils/math/IporMath.sol";
 
 contract MockCDAI is ERC20, CErc20Mock {
     address private _dai;

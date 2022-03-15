@@ -2,10 +2,10 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../../types/IporTypes.sol";
-import "../../utils/math/IporMath.sol";
-import "../../utils/Constants.sol";
-import "../../IporErrors.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../libraries/errors/MiltonErrors.sol";
+import "../../interfaces/types/IporTypes.sol";
 import "hardhat/console.sol";
 
 library IporSwapLogic {
@@ -82,7 +82,7 @@ library IporSwapLogic {
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
             closingTimestamp >= swap.startingTimestamp,
-            IporErrors.MILTON_CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
+            MiltonErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
 
         uint256 calculatedPeriodInSeconds = 0;

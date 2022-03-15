@@ -2,17 +2,17 @@
 pragma solidity 0.8.9;
 
 import "../../tokens/IpToken.sol";
+import "../../tokens/IvToken.sol";
 import "../../amm/Milton.sol";
 import "../../amm/MiltonStorage.sol";
 import "../../amm/pool/Joseph.sol";
+import "../../vault/Stanley.sol";
+import "../../vault/strategy/AaveStrategy.sol";
+import "../../vault/strategy/CompoundStartegy.sol";
 import "../../itf/ItfMilton.sol";
 import "../../itf/ItfJoseph.sol";
-import "../../vault/Stanley.sol";
-import "../../tokens/IvToken.sol";
-import {AaveStrategy} from "../../vault/strategy/AaveStrategy.sol";
-import {CompoundStrategy} from "../../vault/strategy/CompoundStartegy.sol";
-import {MockCToken} from "../../mocks/stanley/compound/MockCToken.sol";
-import {MockComptroller} from "../../mocks/stanley/compound/MockComptroller.sol";
+import "../../mocks/stanley/compound/MockCToken.sol";
+import "../../mocks/stanley/compound/MockComptroller.sol";
 
 contract IpTokenUsdt is IpToken {
     constructor(

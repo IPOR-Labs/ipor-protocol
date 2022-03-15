@@ -4,16 +4,17 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../../security/IporOwnableUpgradeable.sol";
-import "../../utils/Constants.sol";
+import "../../libraries/Constants.sol";
+import "../../interfaces/types/DataProviderTypes.sol";
 import "../../interfaces/IWarren.sol";
 import "../../interfaces/IMilton.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/ICockpitDataProvider.sol";
+import "../../security/IporOwnableUpgradeable.sol";
 
 contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpitDataProvider {
     address internal _warren;
-    mapping(address => AssetConfig) internal _assetConfig;
+    mapping(address => DataProviderTypes.AssetConfig) internal _assetConfig;
     address[] internal _assets;
 
     function initialize(
@@ -34,9 +35,9 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         _warren = warren;
         _assets = assets;
 
-        uint256 i = 0;
-        for (i; i != assets.length; i++) {
-            _assetConfig[assets[i]] = AssetConfig(
+        uint256 assetsLength = assets.length;
+        for (uint256 i = 0; i != assetsLength; i++) {
+            _assetConfig[assets[i]] = DataProviderTypes.AssetConfig(
                 miltons[i],
                 miltonStorages[i],
                 josephs[i],
@@ -46,11 +47,13 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         }
     }
 
-    function getIndexes() external view override returns (IporFront[] memory) {
-        IporFront[] memory indexes = new IporFront[](_assets.length);
+    function getIndexes() external view override returns (DataProviderTypes.IporFront[] memory) {
+        DataProviderTypes.IporFront[] memory indexes = new DataProviderTypes.IporFront[](
+            _assets.length
+        );
 
-        uint256 i = 0;
-        for (i; i != _assets.length; i++) {
+        uint256 assetsLength = _assets.length;
+        for (uint256 i = 0; i != assetsLength; i++) {
             indexes[i] = _createIporFront(_assets[i]);
         }
         return indexes;
@@ -72,13 +75,13 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
     }
 
     function getMyAllowanceInMilton(address asset) external view override returns (uint256) {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.AssetConfig memory config = _assetConfig[asset];
         IERC20 token = IERC20(asset);
         return token.allowance(msg.sender, config.milton);
     }
 
     function getMyAllowanceInJoseph(address asset) external view override returns (uint256) {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.AssetConfig memory config = _assetConfig[asset];
         IERC20 token = IERC20(asset);
         return token.allowance(msg.sender, config.joseph);
     }
@@ -89,7 +92,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.AssetConfig memory config = _assetConfig[asset];
         return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(account, offset, chunkSize);
     }
 
@@ -99,7 +102,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.AssetConfig memory config = _assetConfig[asset];
         return
             IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(account, offset, chunkSize);
     }
@@ -109,7 +112,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.AssetConfig memory config = _assetConfig[asset];
         return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(msg.sender, offset, chunkSize);
     }
 
@@ -118,7 +121,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.AssetConfig memory config = _assetConfig[asset];
         return
             IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(
                 msg.sender,
@@ -133,7 +136,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         override
         returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
     {
-        AssetConfig memory config = _assetConfig[asset];
+        DataProviderTypes.AssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
 
         try milton.calculateSpread() returns (
@@ -148,7 +151,11 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         }
     }
 
-    function _createIporFront(address asset) internal view returns (IporFront memory iporFront) {
+    function _createIporFront(address asset)
+        internal
+        view
+        returns (DataProviderTypes.IporFront memory iporFront)
+    {
         (
             uint256 value,
             uint256 ibtPrice,
@@ -157,7 +164,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
             uint256 date
         ) = IWarren(_warren).getIndex(asset);
 
-        iporFront = IporFront(
+        iporFront = DataProviderTypes.IporFront(
             IERC20MetadataUpgradeable(asset).symbol(),
             value,
             ibtPrice,
