@@ -142,7 +142,8 @@ library IporErrors {
     string public constant MILTON_VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_330";
 
     //@notice Opening Fee Balance is too low
-    string public constant MILTON_PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_330";
+    string public constant MILTON_PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_331";
+    string public constant MILTON_INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_332";
 
     // 400-499-joseph
     //@notice IP Token Value which should be minted is too low

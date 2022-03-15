@@ -64,8 +64,8 @@ export const usdcFactory = async (): Promise<ERC20> => {
     return new hre.ethers.Contract(usdcAddress, usdcAbi, admin) as ERC20;
 };
 // max amound 1606287659962048
-export const transferUsdcToAddress = async (to: string, amoung: BigNumber) => {
-    const accountToImpersonate = "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7"; // Usdc rich address - Curve.fi: DAI/USDC/USDT Pool
+export const transferUsdcToAddress = async (from: string, to: string, amoung: BigNumber) => {
+    const accountToImpersonate = from; // Usdc rich address - Curve.fi: DAI/USDC/USDT Pool
     await hre.network.provider.send("hardhat_setBalance", [
         accountToImpersonate,
         "0x500000000000000000000",
@@ -84,8 +84,8 @@ export const usdtFactory = async (): Promise<ERC20> => {
     return new hre.ethers.Contract(usdtAddress, usdtAbi, admin) as ERC20;
 };
 // max amound 1010694873293061
-export const transferUsdtToAddress = async (to: string, amoung: BigNumber) => {
-    const accountToImpersonate = "0x5754284f345afc66a98fbb0a0afe71e0f007b949"; // Usdt rich address
+export const transferUsdtToAddress = async (from: string, to: string, amoung: BigNumber) => {
+    const accountToImpersonate = from; // Usdt rich address
     await hre.network.provider.send("hardhat_setBalance", [
         accountToImpersonate,
         "0x500000000000000000000",
@@ -104,8 +104,8 @@ export const daiFactory = async (): Promise<ERC20> => {
     return new hre.ethers.Contract(daiAddress, daiAbi, admin) as ERC20;
 };
 // max amound 1700078532741875411567855723
-export const transferDaiToAddress = async (to: string, amoung: BigNumber) => {
-    const accountToImpersonate = "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7"; // Dai rich address - Curve.fi: DAI/USDC/USDT Pool
+export const transferDaiToAddress = async (from: string, to: string, amoung: BigNumber) => {
+    const accountToImpersonate = from; // Dai rich address - Curve.fi: DAI/USDC/USDT Pool
     await hre.network.provider.send("hardhat_setBalance", [
         accountToImpersonate,
         "0x500000000000000000000",

@@ -50,8 +50,6 @@ abstract contract Milton is
         address miltonSpreadModel,
         address stanley
     ) public initializer {
-        console.log("ERC20Upgradeable(asset).decimals()", ERC20Upgradeable(asset).decimals());
-        console.log("_getDecimals()", _getDecimals());
         __Ownable_init();
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(ipToken) != address(0), IporErrors.WRONG_ADDRESS);

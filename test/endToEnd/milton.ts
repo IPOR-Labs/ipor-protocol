@@ -48,21 +48,53 @@ export const miltonFaucetSetup = async (
         miltonFaucet.address,
         "0x500000000000000000000",
     ]);
-    await transferDaiToAddress(miltonFaucet.address, faucetSupply18Decimals);
+    await transferDaiToAddress(
+        "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+        miltonFaucet.address,
+        faucetSupply18Decimals
+    );
     console.log(
         "daiAddress -> balanseOf -> miltonFaucet",
         await dai.balanceOf(miltonFaucet.address)
     );
-    await transferUsdcToAddress(miltonFaucet.address, faucetSupply6Decimals);
+    await transferUsdcToAddress(
+        "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+        miltonFaucet.address,
+        faucetSupply6Decimals
+    );
     console.log(
         "usdcAddress -> balanseOf -> miltonFaucet",
         await usdc.balanceOf(miltonFaucet.address)
     );
-    await transferUsdtToAddress(miltonFaucet.address, faucetSupply6Decimals);
+    await transferUsdtToAddress(
+        "0x5754284f345afc66a98fbb0a0afe71e0f007b949",
+        miltonFaucet.address,
+        faucetSupply6Decimals
+    );
     console.log(
         "usdtAddress -> balanseOf -> miltonFaucet",
         await usdt.balanceOf(miltonFaucet.address)
     );
+};
+
+export const transferFromFaucetTo = async (
+    miltonFaucet: MiltonFaucet,
+    asset: ERC20,
+    to: string,
+    amound: BigNumber
+) => {
+    if (asset.address === daiAddress) {
+        await transferDaiToAddress(miltonFaucet.address, to, amound);
+        return;
+    }
+    if (asset.address === usdcAddress) {
+        await transferUsdcToAddress(miltonFaucet.address, to, amound);
+        return;
+    }
+    if (asset.address === usdtAddress) {
+        await transferUsdtToAddress(miltonFaucet.address, to, amound);
+        return;
+    }
 };
 
 export const miltonStorageDaiFactory = async (): Promise<MiltonStorageDai> => {

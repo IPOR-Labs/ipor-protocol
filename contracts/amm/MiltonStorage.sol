@@ -136,37 +136,38 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             );
     }
 
-    function getSwapsPayFixed(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        override
-        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
-    {
+    function getSwapsPayFixed(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
         uint128[] storage ids = _swapsPayFixed.ids[account];
         return (ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize));
     }
 
-    function getSwapsReceiveFixed(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        override
-        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps)
-    {
+    function getSwapsReceiveFixed(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
         uint128[] storage ids = _swapsReceiveFixed.ids[account];
         return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
     }
 
-    function getSwapPayFixedIds(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        override
-        returns (uint256 totalCount, uint128[] memory ids)
-    {
+    function getSwapPayFixedIds(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view override returns (uint256 totalCount, uint128[] memory ids) {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
         uint128[] storage idsRef = _swapsPayFixed.ids[account];
-        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(idsRef.length, offset, chunkSize);
+        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(
+            idsRef.length,
+            offset,
+            chunkSize
+        );
         uint128[] memory ids = new uint128[](resultSetSize);
         for (uint256 i = 0; i != resultSetSize; i++) {
             ids[i] = idsRef[offset + i];
@@ -174,17 +175,20 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         return (idsRef.length, ids);
     }
 
-    function getSwapReceiveFixedIds(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        override
-        returns (uint256 totalCount, uint128[] memory ids)
-    {
+    function getSwapReceiveFixedIds(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view override returns (uint256 totalCount, uint128[] memory ids) {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
         uint128[] storage idsRef = _swapsReceiveFixed.ids[account];
-        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(idsRef.length, offset, chunkSize);
+        uint256 resultSetSize = PaginationUtils.resolveResultSetSize(
+            idsRef.length,
+            offset,
+            chunkSize
+        );
         uint128[] memory ids = new uint128[](resultSetSize);
         for (uint256 i = 0; i != resultSetSize; i++) {
             ids[i] = idsRef[offset + i];
@@ -192,12 +196,11 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         return (idsRef.length, ids);
     }
 
-    function getSwapIds(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        override
-        returns (uint256 totalCount, IMiltonStorage.IporSwapId[] memory ids)
-    {
+    function getSwapIds(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view override returns (uint256 totalCount, IMiltonStorage.IporSwapId[] memory ids) {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
@@ -355,7 +358,13 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         onlyMilton
     {
         uint256 currentVaultBalance = _balances.vault;
+        // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
+        require(
+            vaultBalance + withdrawnValue >= currentVaultBalance,
+            IporErrors.MILTON_INTREST_FROM_STRATEGY_BELOW_ZERO
+        );
         uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
+
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
@@ -434,7 +443,11 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
-        uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(ids.length, offset, chunkSize);
+        uint256 swapsIdsLength = PaginationUtils.resolveResultSetSize(
+            ids.length,
+            offset,
+            chunkSize
+        );
         DataTypes.IporSwapMemory[] memory derivatives = new DataTypes.IporSwapMemory[](
             swapsIdsLength
         );
