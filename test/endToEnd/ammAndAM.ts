@@ -75,7 +75,7 @@ import {
 } from "./tokens";
 import { josephDaiFactory, josephUsdcFactory, josephUsdtFactory } from "./joseph";
 
-import { warrenFactory, warrenSetup, initIporValuse } from "./warren";
+import { warrenFactory, warrenSetup, initIporValues } from "./warren";
 import { stanleyDaiFactory, stanleyUsdcFactory, stanleyUsdtFactory, stanleySetup } from "./stanley";
 
 // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
@@ -269,7 +269,7 @@ describe("End to End tests on mainnet fork", function () {
         await compoundStrategySetup(strategyCompoundUsdt, stanleyUsdt.address);
 
         await warrenSetup(warren);
-        await initIporValuse(warren);
+        await initIporValues(warren);
 
         await miltonFaucetSetup(miltonFaucet, dai, usdc, usdt);
     });
