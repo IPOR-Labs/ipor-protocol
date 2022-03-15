@@ -642,8 +642,6 @@ abstract contract Milton is
             MiltonErrors.INCORRECT_SWAP_STATUS
         );
 
-        uint256 incomeFeePercentage = _getIncomeFeePercentage();
-
         int256 positionValue = _calculateSwapPayFixedValue(closeTimestamp, iporSwap);
 
         _miltonStorage.updateStorageWhenCloseSwapPayFixed(
@@ -651,7 +649,9 @@ abstract contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeFeePercentage()
+            _getIncomeFeePercentage(),
+            _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
         );
 
         (
@@ -661,7 +661,9 @@ abstract contract Milton is
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                incomeFeePercentage
+                _getIncomeFeePercentage(),
+                _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+                _getSecondsBeforeMaturityWhenPositionCanBeClosed()
             );
 
         emit CloseSwap(
@@ -691,7 +693,9 @@ abstract contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeFeePercentage()
+            _getIncomeFeePercentage(),
+            _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
         );
 
         (
@@ -701,7 +705,9 @@ abstract contract Milton is
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                _getIncomeFeePercentage()
+                _getIncomeFeePercentage(),
+                _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+                _getSecondsBeforeMaturityWhenPositionCanBeClosed()
             );
 
         emit CloseSwap(
@@ -734,15 +740,22 @@ abstract contract Milton is
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 incomeFeePercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
+        uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
+            derivativeItem.collateral,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity
+        );
 
-        if (absPositionValue < derivativeItem.collateral) {
+        if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (msg.sender != derivativeItem.buyer) {
                 require(
-                    _calculationTimestamp >= derivativeItem.endingTimestamp,
+                    _calculationTimestamp >=
+                        derivativeItem.endingTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
@@ -755,7 +768,7 @@ abstract contract Milton is
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral +
                     absPositionValue -
-                    IporMath.division(absPositionValue * incomeFeePercentage, Constants.D18)
+                    IporMath.division(absPositionValue * cfgIncomeFeePercentage, Constants.D18)
             );
         } else {
             //Milton earn, Trader looseMiltonStorage

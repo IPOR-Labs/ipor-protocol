@@ -332,7 +332,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(
@@ -340,7 +342,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             iporSwap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
     }
@@ -350,7 +354,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(
@@ -358,7 +364,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             iporSwap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
     }
@@ -603,14 +611,18 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
             account,
             swap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
         _balances.payFixedSwaps = _balances.payFixedSwaps - swap.collateral.toUint128();
@@ -621,14 +633,18 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
             account,
             swap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
         _balances.receiveFixedSwaps = _balances.receiveFixedSwaps - swap.collateral.toUint128();
@@ -639,7 +655,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         //decrease from balances the liquidation deposit
         require(
@@ -648,13 +666,16 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         );
 
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
+        uint256 minPositionValueToCloseBeforeMaturity =
+            IporMath.percentOf(swap.collateral, cfgMinPercentagePositionValueToCloseBeforeMaturity);
 
-        if (absPositionValue < swap.collateral) {
+        if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,
             //if yes then close even if not an owner
             if (account != swap.buyer) {
                 require(
-                    closingTimestamp >= swap.endingTimestamp,
+                    closingTimestamp >=
+                        swap.endingTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
