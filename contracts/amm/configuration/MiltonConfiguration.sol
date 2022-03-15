@@ -42,7 +42,7 @@ abstract contract MiltonConfiguration is
 
     uint256 internal constant _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY = 99 * 1e16;
 
-    uint256 internal constant _SECONDS_TO_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
+    uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
     address internal _asset;
     IIpToken internal _ipToken;
@@ -159,7 +159,7 @@ abstract contract MiltonConfiguration is
         return _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY;
     }
 
-    function _getSecondsToMaturityWhenPositionCanBeClosed() internal pure virtual returns (uint256) {
-        return _SECONDS_TO_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
+    function _getSecondsBeforeMaturityWhenPositionCanBeClosed() internal pure virtual returns (uint256) {
+        return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
     }
 }

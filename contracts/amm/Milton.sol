@@ -651,7 +651,7 @@ abstract contract Milton is
             closeTimestamp,
             _getIncomeFeePercentage(),
             _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
-            _getSecondsToMaturityWhenPositionCanBeClosed()
+            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
         );
 
         (
@@ -663,7 +663,7 @@ abstract contract Milton is
                 closeTimestamp,
                 _getIncomeFeePercentage(),
                 _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
-                _getSecondsToMaturityWhenPositionCanBeClosed()
+                _getSecondsBeforeMaturityWhenPositionCanBeClosed()
             );
 
         emit CloseSwap(
@@ -695,7 +695,7 @@ abstract contract Milton is
             closeTimestamp,
             _getIncomeFeePercentage(),
             _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
-            _getSecondsToMaturityWhenPositionCanBeClosed()
+            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
         );
 
         (
@@ -707,7 +707,7 @@ abstract contract Milton is
                 closeTimestamp,
                 _getIncomeFeePercentage(),
                 _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
-                _getSecondsToMaturityWhenPositionCanBeClosed()
+                _getSecondsBeforeMaturityWhenPositionCanBeClosed()
             );
 
         emit CloseSwap(
@@ -742,7 +742,7 @@ abstract contract Milton is
         uint256 _calculationTimestamp,
         uint256 incomeFeePercentage,
         uint256 minPercentagePositionValueToCloseBeforeMaturity,
-        uint256 secondsToMaturityWhenPositionCanBeClosed
+        uint256 secondsBeforeMaturityWhenPositionCanBeClosed
     ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
         uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
@@ -755,7 +755,7 @@ abstract contract Milton is
             if (msg.sender != derivativeItem.buyer) {
                 require(
                     _calculationTimestamp >=
-                        derivativeItem.endingTimestamp - secondsToMaturityWhenPositionCanBeClosed,
+                        derivativeItem.endingTimestamp - secondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
