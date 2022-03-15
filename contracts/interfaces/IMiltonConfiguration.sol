@@ -12,7 +12,7 @@ interface IMiltonConfiguration {
 
     function getMaxLpUtilizationPerLegPercentage() external pure returns (uint256);
 
-    function getIncomeTaxPercentage() external pure returns (uint256);
+    function getIncomeFeePercentage() external pure returns (uint256);
 
     function getOpeningFeePercentage() external pure returns (uint256);
 

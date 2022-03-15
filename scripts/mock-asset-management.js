@@ -19,15 +19,8 @@ const delay = (time) => {
     return new Promise((resolve) => setTimeout(resolve, time));
 };
 
-const calculate = async (
-    milton,
-    asset,
-    warren,
-    zeroNight,
-    timeDeltaPerYear
-) => {
-    const { payFixedSwaps, receiveFixedSwaps, liquidityPool } =
-        await milton.getBalance();
+const calculate = async (milton, asset, warren, zeroNight, timeDeltaPerYear) => {
+    const { payFixedSwaps, receiveFixedSwaps, liquidityPool } = await milton.getBalance();
     const total = BigNumber.from(liquidityPool)
         .add(BigNumber.from(receiveFixedSwaps))
         .add(BigNumber.from(payFixedSwaps));

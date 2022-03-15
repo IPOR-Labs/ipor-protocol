@@ -1,6 +1,5 @@
 import Warren from "./contracts/Warren.json";
 import ItfWarren from "./contracts/ItfWarren.json";
-import WarrenDevToolDataProvider from "./contracts/WarrenDevToolDataProvider.json";
 import MiltonUsdt from "./contracts/MiltonUsdt.json";
 import MiltonUsdc from "./contracts/MiltonUsdc.json";
 import MiltonDai from "./contracts/MiltonDai.json";
@@ -28,8 +27,8 @@ import MockCUSDT from "./contracts/MockCUSDT.json";
 import MockCDai from "./contracts/MockCDai.json";
 
 import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
-import MiltonDevToolDataProvider from "./contracts/MiltonDevToolDataProvider.json";
-import MiltonFrontendDataProvider from "./contracts/MiltonFrontendDataProvider.json";
+import CockpitDataProvider from "./contracts/CockpitDataProvider.json";
+import MiltonDarcyDataProvider from "./contracts/MiltonDarcyDataProvider.json";
 import JosephUsdt from "./contracts/JosephUsdt.json";
 import JosephUsdc from "./contracts/JosephUsdc.json";
 import JosephDai from "./contracts/JosephDai.json";
@@ -57,11 +56,10 @@ const options = {
     },
 
     contracts: [
-        MiltonDevToolDataProvider,
-        MiltonFrontendDataProvider,
+        CockpitDataProvider,
+        MiltonDarcyDataProvider,
         Warren,
-        ItfWarren,
-        WarrenDevToolDataProvider,
+        ItfWarren,        
         MiltonUsdt,
         MiltonUsdc,
         MiltonDai,

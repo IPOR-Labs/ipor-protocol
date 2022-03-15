@@ -3,9 +3,10 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IStanley.sol";
-import "../../libraries/IporMath.sol";
-import {IporErrors} from "../../IporErrors.sol";
 
 contract MockCaseBaseStanley is IStanley {
     using SafeERC20 for IERC20;
@@ -24,7 +25,7 @@ contract MockCaseBaseStanley is IStanley {
         return _balance[who];
     }
 
-    function calculateExchangeRate() external view override returns (uint256) {
+    function calculateExchangeRate() external pure override returns (uint256) {
         return 0;
     }
 

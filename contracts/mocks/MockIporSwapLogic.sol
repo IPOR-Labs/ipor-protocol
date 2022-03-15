@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
-import "../libraries/IporSwapLogic.sol";
+import "../interfaces/types/IporTypes.sol";
+import "../amm/libraries/IporSwapLogic.sol";
 
 contract MockIporSwapLogic {
     function calculateQuasiInterest(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (uint256 quasiIFixed, uint256 quasiIFloating) {
@@ -37,7 +37,7 @@ contract MockIporSwapLogic {
     }
 
     function calculateSwapPayFixedValue(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
@@ -45,7 +45,7 @@ contract MockIporSwapLogic {
     }
 
     function calculateSwapReceiveFixedValue(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {

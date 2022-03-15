@@ -1,24 +1,21 @@
+// SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "../../libraries/errors/StanleyErrors.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../interfaces/IStrategy.sol";
+import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
-import "../interfaces/IStrategy.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../../IporErrors.sol";
-import "../../security/IporOwnableUpgradeable.sol";
-import {IporMath} from "../../libraries/IporMath.sol";
-import "hardhat/console.sol";
-
 import "hardhat/console.sol";
 
 contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgradeable, IStrategy {
@@ -66,12 +63,12 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
     }
 
     modifier onlyStanley() {
-        require(msg.sender == _stanley, IporErrors.STANLEY_CALLER_NOT_STANLEY);
+        require(msg.sender == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
         _;
     }
 
     modifier onlyTreasuryManager() {
-        require(msg.sender == _treasuryManager, IporErrors.STRATEGY_CALLER_NOT_TREASURY_MANAGER);
+        require(msg.sender == _treasuryManager, StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 
@@ -155,7 +152,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
 
      */
     function beforeClaim() external override whenNotPaused {
-        require(_treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
+        require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         address[] memory assets = new address[](1);
         assets[0] = _shareToken;
         _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
@@ -171,7 +168,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
         when window is open you can call this function to claim _aave
      */
     function doClaim() external override whenNotPaused {
-        require(_treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
+        require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
@@ -203,7 +200,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
     }
 
     function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
-        require(treasury != address(0), IporErrors.STANLEY_INCORRECT_TREASURY_ADDRESS);
+        require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         _treasury = treasury;
         emit SetTreasury(address(this), treasury);
     }

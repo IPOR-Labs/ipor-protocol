@@ -50,10 +50,9 @@ const JosephDai = artifacts.require("JosephDai");
 const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
-const WarrenDevToolDataProvider = artifacts.require("WarrenDevToolDataProvider");
-const WarrenFrontendDataProvider = artifacts.require("WarrenFrontendDataProvider");
-const MiltonDevToolDataProvider = artifacts.require("MiltonDevToolDataProvider");
-const MiltonFrontendDataProvider = artifacts.require("MiltonFrontendDataProvider");
+const WarrenDarcyDataProvider = artifacts.require("WarrenDarcyDataProvider");
+const CockpitDataProvider = artifacts.require("CockpitDataProvider");
+const MiltonDarcyDataProvider = artifacts.require("MiltonDarcyDataProvider");
 const MockLendingPoolAave = artifacts.require("MockLendingPoolAave");
 const MockProviderAave = artifacts.require("MockProviderAave");
 const MockStakedAave = artifacts.require("MockStakedAave");
@@ -582,18 +581,8 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const warrenDevToolDataProvider = await deployProxy(
-        WarrenDevToolDataProvider,
-        [[mockedDai.address, mockedUsdc.address, mockedUsdt.address], warren.address],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const warrenFrontendDataProvider = await deployProxy(
-        WarrenFrontendDataProvider,
+    const warrenDarcyDataProvider = await deployProxy(
+        WarrenDarcyDataProvider,
         [[mockedDai.address, mockedUsdt.address, mockedUsdc.address], warren.address],
         {
             deployer: deployer,
@@ -603,7 +592,7 @@ module.exports = async function (deployer, _network) {
     );
     if (process.env.ITF_ENABLED === "true") {
         const miltonDevToolDataProvider = await deployProxy(
-            MiltonDevToolDataProvider,
+            CockpitDataProvider,
             [
                 itfWarren.address,
                 [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
@@ -621,7 +610,7 @@ module.exports = async function (deployer, _network) {
         );
     } else {
         const miltonDevToolDataProvider = await deployProxy(
-            MiltonDevToolDataProvider,
+            CockpitDataProvider,
             [
                 warren.address,
                 [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
@@ -639,8 +628,8 @@ module.exports = async function (deployer, _network) {
         );
     }
 
-    const miltonFrontendDataProvider = await deployProxy(
-        MiltonFrontendDataProvider,
+    const miltonDarcyDataProvider = await deployProxy(
+        MiltonDarcyDataProvider,
         [
             warren.address,
             [mockedUsdt.address, mockedUsdc.address, mockedDai.address],

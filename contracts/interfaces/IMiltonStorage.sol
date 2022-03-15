@@ -1,22 +1,21 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
+import "./types/IporTypes.sol";
+import "./types/AmmTypes.sol";
+import "./types/MiltonStorageTypes.sol";
 
 interface IMiltonStorage {
     function getVersion() external pure returns (uint256);
 
     function getLastSwapId() external view returns (uint256);
 
-    function getBalance()
-        external
-        view
-        returns (DataTypes.MiltonBalanceMemory memory);
+    function getBalance() external view returns (IporTypes.MiltonBalancesMemory memory);
 
     function getExtendedBalance()
         external
         view
-        returns (DataTypes.MiltonExtendedBalanceMemory memory);
+        returns (MiltonStorageTypes.ExtendedBalancesMemory memory);
 
     function getTotalOutstandingNotional()
         external
@@ -26,37 +25,42 @@ interface IMiltonStorage {
     function getSwapPayFixed(uint256 swapId)
         external
         view
-        returns (DataTypes.IporSwapMemory memory);
+        returns (IporTypes.IporSwapMemory memory);
 
     function getSwapReceiveFixed(uint256 swapId)
         external
         view
-        returns (DataTypes.IporSwapMemory memory);
+        returns (IporTypes.IporSwapMemory memory);
 
-    function getSwapsPayFixed(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps);
+    function getSwapsPayFixed(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
 
-    function getSwapsReceiveFixed(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        returns (uint256 totalCount ,DataTypes.IporSwapMemory[] memory swaps);
+    function getSwapsReceiveFixed(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
 
-    function getSwapPayFixedIds(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        returns (uint256 totalCount, uint128[] memory ids);
+    function getSwapPayFixedIds(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view returns (uint256 totalCount, uint128[] memory ids);
 
-    function getSwapReceiveFixedIds(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        returns (uint256 totalCount, uint128[] memory ids);
+    function getSwapReceiveFixedIds(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view returns (uint256 totalCount, uint128[] memory ids);
 
-    function getSwapIds(address account, uint256 offset, uint256 chunkSize)
-        external
-        view
-        returns (uint256 totalCount, IporSwapId[] memory ids);
+    function getSwapIds(
+        address account,
+        uint256 offset,
+        uint256 chunkSize
+    ) external view returns (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids);
 
     function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
         external
@@ -72,17 +76,17 @@ interface IMiltonStorage {
         view
         returns (int256 soapPf);
 
-    function calculateSoapReceiveFixed(
-        uint256 ibtPrice,
-        uint256 calculateTimestamp
-    ) external view returns (int256 soapRf);
+    function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
+        external
+        view
+        returns (int256 soapRf);
 
     function addLiquidity(uint256 liquidityAmount) external;
 
     function subtractLiquidity(uint256 liquidityAmount) external;
 
     function updateStorageWhenOpenSwapPayFixed(
-        DataTypes.NewSwap memory newSwap,
+        AmmTypes.NewSwap memory newSwap,
         uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
@@ -90,7 +94,7 @@ interface IMiltonStorage {
     ) external returns (uint256);
 
     function updateStorageWhenOpenSwapReceiveFixed(
-        DataTypes.NewSwap memory newSwap,
+        AmmTypes.NewSwap memory newSwap,
         uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
@@ -99,46 +103,34 @@ interface IMiltonStorage {
 
     function updateStorageWhenCloseSwapPayFixed(
         address account,
-        DataTypes.IporSwapMemory memory iporSwap,
+        IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage,
+        uint256 cfgIncomeFeePercentage,
         uint256 minPercentagePositionValueToCloseBeforeMaturity,
         uint256 secondsToMaturityWhenPositionCanBeClosed
     ) external;
 
     function updateStorageWhenCloseSwapReceiveFixed(
         address account,
-        DataTypes.IporSwapMemory memory iporSwap,
+        IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage,
+        uint256 cfgIncomeFeePercentage,
         uint256 minPercentagePositionValueToCloseBeforeMaturity,
         uint256 secondsToMaturityWhenPositionCanBeClosed
     ) external;
 
-    function updateStorageWhenWithdrawFromStanley(
-        uint256 withdrawnValue,
-        uint256 vaultBalance
-    ) external;
-
-    function updateStorageWhenDepositToStanley(
-        uint256 depositValue,
-        uint256 vaultBalance
-    ) external;
-
-    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
+    function updateStorageWhenWithdrawFromStanley(uint256 withdrawnValue, uint256 vaultBalance)
         external;
 
-    function updateStorageWhenTransferTreasure(uint256 transferedValue)
-        external;
+    function updateStorageWhenDepositToStanley(uint256 depositValue, uint256 vaultBalance) external;
+
+    function updateStorageWhenTransferPublicationFee(uint256 transferedValue) external;
+
+    function updateStorageWhenTransferTreasure(uint256 transferedValue) external;
 
     function setMilton(address milton) external;
 
     function setJoseph(address joseph) external;
-
-    struct IporSwapId {
-        uint256 id;
-        uint8 direction;
-    }
 }
