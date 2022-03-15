@@ -3,9 +3,9 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import "../../interfaces/types/DarcyTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
-import "../../interfaces/types/DarcyTypes.sol";
 import "../../interfaces/IWarren.sol";
 import "../../interfaces/IWarrenDarcyDataProvider.sol";
 import "../../security/IporOwnableUpgradeable.sol";

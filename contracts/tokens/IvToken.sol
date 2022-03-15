@@ -38,10 +38,6 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         return _asset;
     }
 
-    function decimals() public view override returns (uint8) {
-        return _decimals;
-    }
-
     function setStanley(address newStanley) external onlyOwner {
         _stanley = newStanley;
         emit StanleyChanged(msg.sender, newStanley);
@@ -57,5 +53,9 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         require(amount != 0, StanleyErrors.IV_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
+    }
+
+    function decimals() public view override returns (uint8) {
+        return _decimals;
     }
 }

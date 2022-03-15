@@ -2,9 +2,9 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../libraries/errors/IporErrors.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
-import "../libraries/errors/IporErrors.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IMiltonStorage.sol";

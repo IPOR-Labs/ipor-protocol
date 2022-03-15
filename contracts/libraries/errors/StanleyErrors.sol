@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-// 000-199 - general codes
-// 200-299- warren
-// 300-399-milton
-// 400-499-joseph
-// 500-599-stanley
 library StanleyErrors {
     // 500-599-stanley
     string public constant ASSET_MISMATCH = "IPOR_500";

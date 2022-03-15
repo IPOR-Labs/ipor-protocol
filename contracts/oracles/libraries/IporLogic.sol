@@ -2,10 +2,10 @@
 pragma solidity 0.8.9;
 
 import "../../libraries/Constants.sol";
-import "../../libraries/math/IporMath.sol";
 import "../../libraries/errors/WarrenErrors.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/WarrenTypes.sol";
+import "../../libraries/math/IporMath.sol";
 
 library IporLogic {
     function accrueQuasiIbtPrice(WarrenTypes.IPOR memory ipor, uint256 accrueTimestamp)

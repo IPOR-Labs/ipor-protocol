@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
-import "../../libraries/errors/MiltonErrors.sol";
 import "./types/AmmMiltonStorageTypes.sol";
 
 library SoapIndicatorLogic {
