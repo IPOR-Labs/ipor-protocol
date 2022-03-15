@@ -49,4 +49,8 @@ library IporMath {
     function absoluteValue(int256 value) internal pure returns (uint256) {
         return (uint256)(value < 0 ? -value : value);
     }
+
+    function percentOf(uint256 value, uint256 percentage) internal pure returns (uint256) {
+        return division(value * percentage, Constants.D18);
+    }
 }

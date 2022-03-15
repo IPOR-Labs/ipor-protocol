@@ -40,6 +40,10 @@ abstract contract MiltonConfiguration is
 
     uint256 internal constant _MIN_COLLATERALIZATION_FACTOR_VALUE = 10 * 1e18;
 
+    uint256 internal constant _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY = 99 * 1e16;
+
+    uint256 internal constant _SECONDS_TO_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
+
     address internal _asset;
     IIpToken internal _ipToken;
     address internal _joseph;
@@ -149,5 +153,13 @@ abstract contract MiltonConfiguration is
 
     function _getMinCollateralizationFactorValue() internal pure virtual returns (uint256) {
         return _MIN_COLLATERALIZATION_FACTOR_VALUE;
+    }
+
+    function _getMinPercentagePositionValueWhenClosingBeforeMaturity() internal pure virtual returns (uint256) {
+        return _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY;
+    }
+
+    function _getSecondsToMaturityWhenPositionCanBeClosed() internal pure virtual returns (uint256) {
+        return _SECONDS_TO_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
     }
 }

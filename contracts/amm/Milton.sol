@@ -649,8 +649,6 @@ abstract contract Milton is
             IporErrors.MILTON_INCORRECT_SWAP_STATUS
         );
 
-        uint256 incomeTaxPercentage = _getIncomeTaxPercentage();
-
         int256 positionValue = _calculateSwapPayFixedValue(closeTimestamp, iporSwap);
 
         _miltonStorage.updateStorageWhenCloseSwapPayFixed(
@@ -658,7 +656,9 @@ abstract contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeTaxPercentage()
+            _getIncomeTaxPercentage(),
+            _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+            _getSecondsToMaturityWhenPositionCanBeClosed()
         );
 
         (
@@ -668,7 +668,9 @@ abstract contract Milton is
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                incomeTaxPercentage
+                _getIncomeTaxPercentage(),
+                _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+                _getSecondsToMaturityWhenPositionCanBeClosed()
             );
 
         emit CloseSwap(
@@ -698,7 +700,9 @@ abstract contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeTaxPercentage()
+            _getIncomeTaxPercentage(),
+            _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+            _getSecondsToMaturityWhenPositionCanBeClosed()
         );
 
         (
@@ -708,7 +712,9 @@ abstract contract Milton is
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                _getIncomeTaxPercentage()
+                _getIncomeTaxPercentage(),
+                _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+                _getSecondsToMaturityWhenPositionCanBeClosed()
             );
 
         emit CloseSwap(
@@ -741,15 +747,22 @@ abstract contract Milton is
         DataTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 incomeTaxPercentage
+        uint256 incomeTaxPercentage,
+        uint256 minPercentagePositionValueToCloseBeforeMaturity,
+        uint256 secondsToMaturityWhenPositionCanBeClosed
     ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
+        uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
+            derivativeItem.collateral,
+            minPercentagePositionValueToCloseBeforeMaturity
+        );
 
-        if (absPositionValue < derivativeItem.collateral) {
+        if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
             if (msg.sender != derivativeItem.buyer) {
                 require(
-                    _calculationTimestamp >= derivativeItem.endingTimestamp,
+                    _calculationTimestamp >=
+                        derivativeItem.endingTimestamp - secondsToMaturityWhenPositionCanBeClosed,
                     IporErrors.MILTON_CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
