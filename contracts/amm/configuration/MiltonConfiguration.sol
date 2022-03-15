@@ -68,7 +68,7 @@ abstract contract MiltonConfiguration is
         return _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE;
     }
 
-    function getIncomeTaxPercentage() external pure override returns (uint256) {
+    function getIncomeFeePercentage() external pure override returns (uint256) {
         return _INCOME_TAX_PERCENTAGE;
     }
 
@@ -123,7 +123,7 @@ abstract contract MiltonConfiguration is
         return _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE;
     }
 
-    function _getIncomeTaxPercentage() internal pure virtual returns (uint256) {
+    function _getIncomeFeePercentage() internal pure virtual returns (uint256) {
         return _INCOME_TAX_PERCENTAGE;
     }
 

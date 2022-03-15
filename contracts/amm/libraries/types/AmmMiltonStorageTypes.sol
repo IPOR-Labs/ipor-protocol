@@ -43,7 +43,7 @@ library AmmMiltonStorageTypes {
         uint128 openingFee;
         uint128 liquidationDeposit;
         uint128 iporPublicationFee;
-        //@notice income tax goes here, part of opening fee also goes here, how many of Opening Fee goes here is
+        //@notice income fee goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 treasury;
     }

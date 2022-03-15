@@ -13,7 +13,7 @@ interface IMiltonDarcyDataProvider {
         uint256 openingFeePercentage;
         uint256 iporPublicationFeeAmount;
         uint256 liquidationDepositAmount;
-        uint256 incomeTaxPercentage;
+        uint256 incomeFeePercentage;
         uint256 spreadPayFixedValue;
         uint256 spreadRecFixedValue;
     }

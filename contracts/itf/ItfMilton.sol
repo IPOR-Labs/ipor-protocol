@@ -88,7 +88,7 @@ abstract contract ItfMilton is Milton {
         return _calculateSwapReceiveFixedValue(calculateTimestamp, swap);
     }
 
-    function itfCalculateIncomeTaxValue(int256 positionValue) external pure returns (uint256) {
-        return _calculateIncomeTaxValue(positionValue);
+    function itfCalculateIncomeFeeValue(int256 positionValue) external pure returns (uint256) {
+        return _calculateIncomeFeeValue(positionValue);
     }
 }

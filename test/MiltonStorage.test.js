@@ -49,7 +49,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 
@@ -70,7 +71,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 
@@ -91,7 +93,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 
@@ -112,7 +115,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 
@@ -134,7 +138,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 
@@ -157,7 +162,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const expectedNewOwner = userTwo;
 
@@ -178,7 +184,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -211,7 +218,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const derivativeStruct = await preprareSwapPayFixedStruct18DecSimpleCase1(testData);
         await assertError(
@@ -237,7 +245,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -286,7 +295,7 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigInt("10000000000000000000"),
                 closeSwapTimestamp,
-                await testData.miltonDai.getIncomeTaxPercentage()
+                await testData.miltonDai.getIncomeFeePercentage()
             );
 
         await testData.miltonStorageDai.setMilton(testData.miltonDai.address);
@@ -302,7 +311,8 @@ describe("MiltonStorage", () => {
             ["USDT"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -351,7 +361,7 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigInt("10000000"),
                 closeSwapTimestamp,
-                await testData.miltonUsdt.getIncomeTaxPercentage()
+                await testData.miltonUsdt.getIncomeFeePercentage()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -364,7 +374,8 @@ describe("MiltonStorage", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -411,7 +422,7 @@ describe("MiltonStorage", () => {
                     derivativeItem,
                     BigInt("10000000000000000000"),
                     closeSwapTimestamp,
-                    await testData.miltonDai.getIncomeTaxPercentage()
+                    await testData.miltonDai.getIncomeFeePercentage()
                 ),
             //then
             "IPOR_008"
@@ -419,7 +430,7 @@ describe("MiltonStorage", () => {
     });
 
     it("get swaps - pay fixed, should fail when page size is equal 0", async () => {
-        await testCasePaginationPayFixed(0, 0, 0, 0, 'IPOR_009');
+        await testCasePaginationPayFixed(0, 0, 0, 0, "IPOR_009");
     });
 
     it("get swaps - pay fixed, should return empty list of swaps", async () => {
@@ -447,7 +458,7 @@ describe("MiltonStorage", () => {
     });
 
     it("get swaps - receive fixed, should fail when page size is equal 0", async () => {
-        await testCasePaginationReceiveFixed(0, 0, 0, 0, 'IPOR_009');
+        await testCasePaginationReceiveFixed(0, 0, 0, 0, "IPOR_009");
     });
 
     it("get swaps - receive fixed, should return empty list of swaps", async () => {
@@ -475,7 +486,7 @@ describe("MiltonStorage", () => {
     });
 
     it("get swap ids - pay fixed, should fail when page size is equal 0", async () => {
-        await testCaseIdsPaginationPayFixed(0, 0, 0, 0, 'IPOR_009');
+        await testCaseIdsPaginationPayFixed(0, 0, 0, 0, "IPOR_009");
     });
 
     it("get swap ids - pay fixed, should return empty list of swaps", async () => {
@@ -503,7 +514,7 @@ describe("MiltonStorage", () => {
     });
 
     it("get swap ids - receive fixed, should fail when page size is equal 0", async () => {
-        await testCaseIdsPaginationReceiveFixed(0, 0, 0, 0, 'IPOR_009');
+        await testCaseIdsPaginationReceiveFixed(0, 0, 0, 0, "IPOR_009");
     });
 
     it("get swap ids - receive fixed, should return empty list of swaps", async () => {
@@ -531,7 +542,7 @@ describe("MiltonStorage", () => {
     });
 
     it("get swap ids - all, should fail when page size is equal 0", async () => {
-        await testCaseIdsPagination(0, 0, 0, 0, 0, 'IPOR_009');
+        await testCaseIdsPagination(0, 0, 0, 0, 0, "IPOR_009");
     });
 
     it("get swap ids - all, should receive empty list of swap ids", async () => {
@@ -562,16 +573,26 @@ describe("MiltonStorage", () => {
         await testCaseIdsPagination(9, 12, 80, 10, 0, null);
     });
 
-    const testCasePaginationPayFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
+    const testCasePaginationPayFixed = async (
+        numberOfSwapsToCreate,
+        offset,
+        pageSize,
+        expectedResponseSize,
+        expectedError
+    ) => {
         // given
         const testData = await preparePayFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            const response = await testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize);
+            const response = await testData.miltonStorageUsdt.getSwapsPayFixed(
+                userTwo.address,
+                offset,
+                pageSize
+            );
 
             const actualSwapsLength = response.swaps.length;
-            const totalSwapCount = response.totalCount
+            const totalSwapCount = response.totalCount;
 
             //then
             expect(actualSwapsLength).to.be.eq(expectedResponseSize);
@@ -584,16 +605,26 @@ describe("MiltonStorage", () => {
         }
     };
 
-    const testCasePaginationReceiveFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
+    const testCasePaginationReceiveFixed = async (
+        numberOfSwapsToCreate,
+        offset,
+        pageSize,
+        expectedResponseSize,
+        expectedError
+    ) => {
         // given
         const testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            const response = await testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize);
+            const response = await testData.miltonStorageUsdt.getSwapsReceiveFixed(
+                userTwo.address,
+                offset,
+                pageSize
+            );
 
             const actualSwapsLength = response.swaps.length;
-            const totalSwapCount = response.totalCount
+            const totalSwapCount = response.totalCount;
 
             //then
             expect(actualSwapsLength).to.be.eq(expectedResponseSize);
@@ -606,65 +637,100 @@ describe("MiltonStorage", () => {
         }
     };
 
-    const testCaseIdsPaginationPayFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
+    const testCaseIdsPaginationPayFixed = async (
+        numberOfSwapsToCreate,
+        offset,
+        pageSize,
+        expectedResponseSize,
+        expectedError
+    ) => {
         // given
         const testData = await preparePayFixedState(numberOfSwapsToCreate);
 
         //when
         if (expectedError == null) {
-            const response = await testData.miltonStorageUsdt.getSwapPayFixedIds(userTwo.address, offset, pageSize);
-
-            const actualSwapsLength = response.ids.length;
-            const totalSwapCount = response.totalCount
-
-            //then
-            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
-            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
-        } else {
-            await assertError(
-                testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize),
-                expectedError
+            const response = await testData.miltonStorageUsdt.getSwapPayFixedIds(
+                userTwo.address,
+                offset,
+                pageSize
             );
-        }
-    };
-
-    const testCaseIdsPaginationReceiveFixed = async (numberOfSwapsToCreate, offset, pageSize, expectedResponseSize, expectedError) => {
-        // given
-        const testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
-
-        //when
-        if (expectedError == null) {
-            const response = await testData.miltonStorageUsdt.getSwapReceiveFixedIds(userTwo.address, offset, pageSize);
-
-            const actualSwapsLength = response.ids.length;
-            const totalSwapCount = response.totalCount
-
-            //then
-            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
-            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
-        } else {
-            await assertError(
-                testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize),
-                expectedError
-            );
-        }
-    };
-
-    const testCaseIdsPagination = async (numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate,
-                                         offset, pageSize, expectedResponseSize, expectedError) => {
-        // given
-        const testData = await prepareState(numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate);
-
-        //when
-        if (expectedError == null) {
-            const response = await testData.miltonStorageUsdt.getSwapIds(userTwo.address, offset, pageSize);
 
             const actualSwapsLength = response.ids.length;
             const totalSwapCount = response.totalCount;
 
             //then
             expect(actualSwapsLength).to.be.eq(expectedResponseSize);
-            expect(totalSwapCount).to.be.eq(numberOfPayFixedSwapsToCreate + numberOfReceiveFixedSwapsToCreate);
+            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
+        } else {
+            await assertError(
+                testData.miltonStorageUsdt.getSwapsPayFixed(userTwo.address, offset, pageSize),
+                expectedError
+            );
+        }
+    };
+
+    const testCaseIdsPaginationReceiveFixed = async (
+        numberOfSwapsToCreate,
+        offset,
+        pageSize,
+        expectedResponseSize,
+        expectedError
+    ) => {
+        // given
+        const testData = await prepareReceiveFixedState(numberOfSwapsToCreate);
+
+        //when
+        if (expectedError == null) {
+            const response = await testData.miltonStorageUsdt.getSwapReceiveFixedIds(
+                userTwo.address,
+                offset,
+                pageSize
+            );
+
+            const actualSwapsLength = response.ids.length;
+            const totalSwapCount = response.totalCount;
+
+            //then
+            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
+        } else {
+            await assertError(
+                testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize),
+                expectedError
+            );
+        }
+    };
+
+    const testCaseIdsPagination = async (
+        numberOfPayFixedSwapsToCreate,
+        numberOfReceiveFixedSwapsToCreate,
+        offset,
+        pageSize,
+        expectedResponseSize,
+        expectedError
+    ) => {
+        // given
+        const testData = await prepareState(
+            numberOfPayFixedSwapsToCreate,
+            numberOfReceiveFixedSwapsToCreate
+        );
+
+        //when
+        if (expectedError == null) {
+            const response = await testData.miltonStorageUsdt.getSwapIds(
+                userTwo.address,
+                offset,
+                pageSize
+            );
+
+            const actualSwapsLength = response.ids.length;
+            const totalSwapCount = response.totalCount;
+
+            //then
+            expect(actualSwapsLength).to.be.eq(expectedResponseSize);
+            expect(totalSwapCount).to.be.eq(
+                numberOfPayFixedSwapsToCreate + numberOfReceiveFixedSwapsToCreate
+            );
         } else {
             await assertError(
                 testData.miltonStorageUsdt.getSwapsReceiveFixed(userTwo.address, offset, pageSize),
@@ -763,14 +829,7 @@ describe("MiltonStorage", () => {
 
     const preparePayFixedState = async (numberOfSwapsToCreate) => {
         const testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["USDT"],
             data,
             0,
@@ -800,11 +859,7 @@ describe("MiltonStorage", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdt.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdt.openTimestamp
-            );
+            .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
         await testData.josephUsdt
             .connect(liquidityProvider)
@@ -815,18 +870,11 @@ describe("MiltonStorage", () => {
         }
 
         return testData;
-    }
+    };
 
     const prepareReceiveFixedState = async (numberOfSwapsToCreate) => {
         const testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["USDT", "USDC", "DAI"],
             data,
             0,
@@ -856,11 +904,7 @@ describe("MiltonStorage", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdt.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdt.openTimestamp
-            );
+            .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
         await testData.josephUsdt
             .connect(liquidityProvider)
@@ -871,18 +915,14 @@ describe("MiltonStorage", () => {
         }
 
         return testData;
-    }
+    };
 
-    const prepareState = async (numberOfPayFixedSwapsToCreate, numberOfReceiveFixedSwapsToCreate) => {
+    const prepareState = async (
+        numberOfPayFixedSwapsToCreate,
+        numberOfReceiveFixedSwapsToCreate
+    ) => {
         const testData = await prepareTestData(
-            [
-                admin,
-                userOne,
-                userTwo,
-                userThree,
-                liquidityProvider,
-                miltonStorageAddress,
-            ],
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["USDT", "USDC", "DAI"],
             data,
             0,
@@ -912,11 +952,7 @@ describe("MiltonStorage", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                paramsUsdt.asset,
-                PERCENTAGE_5_18DEC,
-                paramsUsdt.openTimestamp
-            );
+            .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
         await testData.josephUsdt
             .connect(liquidityProvider)
@@ -930,5 +966,5 @@ describe("MiltonStorage", () => {
         }
 
         return testData;
-    }
+    };
 });

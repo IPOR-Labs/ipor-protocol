@@ -26,7 +26,7 @@ abstract contract MockCase3Milton is ItfMilton {
         return 48 * 1e18;
     }
 
-    function _getIncomeTaxPercentage() internal pure virtual override returns (uint256) {
+    function _getIncomeFeePercentage() internal pure virtual override returns (uint256) {
         return 1000000000000000000;
     }
 

@@ -13,7 +13,7 @@ export default (configurations) =>
                         <th scope="col">Opening Fee Percentage</th>
                         <th scope="col">IPOR Publication Fee Amount</th>
                         <th scope="col">Liquidation Deposit Amount</th>
-                        <th scope="col">Income Tax Percentage</th>
+                        <th scope="col">Income Fee Percentage</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,53 +25,33 @@ export default (configurations) =>
                                     {configuration.minCollateralizationFactorValue /
                                         1000000000000000000}
                                     <br />
-                                    <small>
-                                        {
-                                            configuration.minCollateralizationFactorValue
-                                        }
-                                    </small>
+                                    <small>{configuration.minCollateralizationFactorValue}</small>
                                 </td>
                                 <td>
                                     {configuration.maxCollateralizationFactorValue /
                                         1000000000000000000}
                                     <br />
-                                    <small>
-                                        {
-                                            configuration.maxCollateralizationFactorValue
-                                        }
-                                    </small>
+                                    <small>{configuration.maxCollateralizationFactorValue}</small>
                                 </td>
                                 <td>
-                                    {configuration.openingFeePercentage /
-                                        1000000000000000000}
+                                    {configuration.openingFeePercentage / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.openingFeePercentage}
-                                    </small>
+                                    <small>{configuration.openingFeePercentage}</small>
                                 </td>
                                 <td>
-                                    {configuration.iporPublicationFeeAmount /
-                                        1000000000000000000}
+                                    {configuration.iporPublicationFeeAmount / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.iporPublicationFeeAmount}
-                                    </small>
+                                    <small>{configuration.iporPublicationFeeAmount}</small>
                                 </td>
                                 <td>
-                                    {configuration.liquidationDepositAmount /
-                                        1000000000000000000}
+                                    {configuration.liquidationDepositAmount / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.liquidationDepositAmount}
-                                    </small>
+                                    <small>{configuration.liquidationDepositAmount}</small>
                                 </td>
                                 <td>
-                                    {configuration.incomeTaxPercentage /
-                                        1000000000000000000}
+                                    {configuration.incomeFeePercentage / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.incomeTaxPercentage}
-                                    </small>
+                                    <small>{configuration.incomeFeePercentage}</small>
                                 </td>
                             </tr>
                         );

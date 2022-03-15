@@ -106,7 +106,7 @@ interface IMiltonStorage {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeFeePercentage
     ) external;
 
     function updateStorageWhenCloseSwapReceiveFixed(
@@ -114,7 +114,7 @@ interface IMiltonStorage {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeFeePercentage
     ) external;
 
     function updateStorageWhenWithdrawFromStanley(uint256 withdrawnValue, uint256 vaultBalance)

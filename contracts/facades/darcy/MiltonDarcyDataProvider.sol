@@ -183,7 +183,7 @@ contract MiltonDarcyDataProvider is
             milton.getOpeningFeePercentage(),
             milton.getIporPublicationFeeAmount(),
             milton.getLiquidationDepositAmount(),
-            milton.getIncomeTaxPercentage(),
+            milton.getIncomeFeePercentage(),
             spreadPayFixedValue,
             spreadRecFixedValue
         );

@@ -294,10 +294,10 @@ abstract contract Milton is
             );
     }
 
-    function _calculateIncomeTaxValue(int256 positionValue) internal pure returns (uint256) {
+    function _calculateIncomeFeeValue(int256 positionValue) internal pure returns (uint256) {
         return
             IporMath.division(
-                IporMath.absoluteValue(positionValue) * _getIncomeTaxPercentage(),
+                IporMath.absoluteValue(positionValue) * _getIncomeFeePercentage(),
                 Constants.D18
             );
     }
@@ -642,7 +642,7 @@ abstract contract Milton is
             MiltonErrors.INCORRECT_SWAP_STATUS
         );
 
-        uint256 incomeTaxPercentage = _getIncomeTaxPercentage();
+        uint256 incomeFeePercentage = _getIncomeFeePercentage();
 
         int256 positionValue = _calculateSwapPayFixedValue(closeTimestamp, iporSwap);
 
@@ -651,7 +651,7 @@ abstract contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeTaxPercentage()
+            _getIncomeFeePercentage()
         );
 
         (
@@ -661,7 +661,7 @@ abstract contract Milton is
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                incomeTaxPercentage
+                incomeFeePercentage
             );
 
         emit CloseSwap(
@@ -691,7 +691,7 @@ abstract contract Milton is
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeTaxPercentage()
+            _getIncomeFeePercentage()
         );
 
         (
@@ -701,7 +701,7 @@ abstract contract Milton is
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                _getIncomeTaxPercentage()
+                _getIncomeFeePercentage()
             );
 
         emit CloseSwap(
@@ -734,7 +734,7 @@ abstract contract Milton is
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 incomeTaxPercentage
+        uint256 incomeFeePercentage
     ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
 
@@ -755,7 +755,7 @@ abstract contract Milton is
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral +
                     absPositionValue -
-                    IporMath.division(absPositionValue * incomeTaxPercentage, Constants.D18)
+                    IporMath.division(absPositionValue * incomeFeePercentage, Constants.D18)
             );
         } else {
             //Milton earn, Trader looseMiltonStorage
