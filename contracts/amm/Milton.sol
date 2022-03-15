@@ -740,14 +740,14 @@ abstract contract Milton is
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 incomeFeePercentage,
-        uint256 minPercentagePositionValueToCloseBeforeMaturity,
-        uint256 secondsBeforeMaturityWhenPositionCanBeClosed
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
         uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
             derivativeItem.collateral,
-            minPercentagePositionValueToCloseBeforeMaturity
+            cfgMinPercentagePositionValueToCloseBeforeMaturity
         );
 
         if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
@@ -755,7 +755,7 @@ abstract contract Milton is
             if (msg.sender != derivativeItem.buyer) {
                 require(
                     _calculationTimestamp >=
-                        derivativeItem.endingTimestamp - secondsBeforeMaturityWhenPositionCanBeClosed,
+                        derivativeItem.endingTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
@@ -768,7 +768,7 @@ abstract contract Milton is
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral +
                     absPositionValue -
-                    IporMath.division(absPositionValue * incomeFeePercentage, Constants.D18)
+                    IporMath.division(absPositionValue * cfgIncomeFeePercentage, Constants.D18)
             );
         } else {
             //Milton earn, Trader looseMiltonStorage
