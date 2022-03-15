@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "./types/DataProviderTypes.sol";
+import "./types/DarcyTypes.sol";
 
 interface IWarrenDarcyDataProvider {
     struct IporFront {
@@ -15,5 +15,5 @@ interface IWarrenDarcyDataProvider {
         uint256 blockTimestamp;
     }
 
-    function getIndexes() external view returns (DataProviderTypes.IporFront[] memory);
+    function getIndexes() external view returns (DarcyTypes.IporFront[] memory);
 }

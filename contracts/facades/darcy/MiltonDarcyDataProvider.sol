@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../interfaces/types/MiltonStorageTypes.sol";
-import "../../interfaces/types/DataProviderTypes.sol";
+import "../../interfaces/types/DarcyTypes.sol";
 import "../../interfaces/IWarren.sol";
 import "../../interfaces/IMiltonConfiguration.sol";
 import "../../interfaces/IMilton.sol";
@@ -20,7 +20,7 @@ contract MiltonDarcyDataProvider is
 {
     address internal _warren;
     address[] internal _assets;
-    mapping(address => DataProviderTypes.AssetConfig) internal _assetConfig;
+    mapping(address => DarcyTypes.AssetConfig) internal _assetConfig;
 
     function initialize(
         address warren,
@@ -38,16 +38,13 @@ contract MiltonDarcyDataProvider is
 
         uint256 assetsLength = assets.length;
         for (uint256 i = 0; i != assetsLength; i++) {
-            _assetConfig[assets[i]] = DataProviderTypes.DarcyAssetConfig(
-                miltons[i],
-                miltonStorages[i]
-            );
+            _assetConfig[assets[i]] = DarcyTypes.AssetConfig(miltons[i], miltonStorages[i]);
         }
         _assets = assets;
     }
 
     function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
-        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
+        DarcyTypes.AssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
         uint256 result = milton.calculateExchangeRate(block.timestamp);
         return result;
@@ -59,7 +56,7 @@ contract MiltonDarcyDataProvider is
         override
         returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional)
     {
-        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
+        DarcyTypes.AssetConfig memory config = _assetConfig[asset];
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         (payFixedTotalNotional, recFixedTotalNotional) = miltonStorage
             .getTotalOutstandingNotional();
@@ -73,7 +70,7 @@ contract MiltonDarcyDataProvider is
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
-        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
+        DarcyTypes.AssetConfig memory config = _assetConfig[asset];
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
 
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage
@@ -153,7 +150,7 @@ contract MiltonDarcyDataProvider is
         view
         returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
     {
-        DataProviderTypes.DarcyAssetConfig memory config = _assetConfig[asset];
+        DarcyTypes.AssetConfig memory config = _assetConfig[asset];
 
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         address miltonAddr = config.milton;

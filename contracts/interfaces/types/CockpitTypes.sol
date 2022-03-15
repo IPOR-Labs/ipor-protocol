@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-library DarcyDataProviderTypes {
+library CockpitTypes {
     struct AssetConfig {
         address milton;
         address miltonStorage;
+        address joseph;
+        address ipToken;
+        address ivToken;
     }
 
     struct IporFront {

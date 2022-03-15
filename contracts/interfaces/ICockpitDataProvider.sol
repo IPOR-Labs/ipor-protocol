@@ -2,10 +2,10 @@
 pragma solidity 0.8.9;
 
 import "./types/IporTypes.sol";
-import "./types/DataProviderTypes.sol";
+import "./types/CockpitTypes.sol";
 
 interface ICockpitDataProvider {
-    function getIndexes() external view returns (DataProviderTypes.IporFront[] memory);
+    function getIndexes() external view returns (CockpitTypes.IporFront[] memory);
 
     function getMyTotalSupply(address asset) external view returns (uint256);
 
