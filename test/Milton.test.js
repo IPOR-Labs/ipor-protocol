@@ -14,6 +14,9 @@ const {
     PERCENTAGE_119_18DEC,
     PERCENTAGE_120_18DEC,
     PERCENTAGE_121_18DEC,
+    PERCENTAGE_149_18DEC,
+    PERCENTAGE_150_18DEC,
+    PERCENTAGE_151_18DEC,
     PERCENTAGE_160_18DEC,
     PERCENTAGE_161_18DEC,
 
@@ -1125,6 +1128,42 @@ describe("Milton", () => {
         );
     });
 
+    it("should close position, DAI, not owner, pay fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("989874270595533665253");
+        let expectedIncomeTaxValueWad = BigInt("989874270595533665253");
+        let expectedPositionValue = BigInt("9898742705955336652531");
+        let expectedPositionValueWad = BigInt("9898742705955336652531");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_151_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
     it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
@@ -1330,6 +1369,40 @@ describe("Milton", () => {
             PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_161_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, pay fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("989874270595533672762");
+        let expectedIncomeTaxValueWad = BigInt("989874270595533672762");
+        let expectedPositionValue = BigInt("-9898742705955336727624");
+        let expectedPositionValueWad = BigInt("-9898742705955336727624");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userThree,
+            PERCENTAGE_150_18DEC,
+            PERCENTAGE_6_18DEC,
+            PERCENTAGE_151_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
@@ -1862,6 +1935,41 @@ describe("Milton", () => {
         );
     });
 
+    it("should close position, DAI, not owner, receive fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("989874270595533672080");
+        let expectedIncomeTaxValueWad = BigInt("989874270595533672080");
+        let expectedPositionValue = BigInt("9898742705955336720799");
+        let expectedPositionValueWad = BigInt("9898742705955336720799");
+
+        await testCaseWhenMiltonLostAndUserEarn(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_151_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_151_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValue,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
     it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
@@ -1963,6 +2071,41 @@ describe("Milton", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
+            PERCENTAGE_5_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            0,
+            ZERO,
+            ZERO,
+            expectedIncomeTaxValueWad,
+            ZERO,
+            null,
+            expectedIncomeTaxValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    it("should close position, DAI, not owner, receive fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let expectedIncomeTaxValue = BigInt("989874270595533666618");
+        let expectedIncomeTaxValueWad = BigInt("989874270595533666618");
+        let expectedPositionValue = BigInt("-9898742705955336666184");
+        let expectedPositionValueWad = BigInt("-9898742705955336666184");
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userThree,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_149_18DEC,
             PERCENTAGE_5_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
