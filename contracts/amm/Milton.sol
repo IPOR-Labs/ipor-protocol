@@ -50,6 +50,8 @@ abstract contract Milton is
         address miltonSpreadModel,
         address stanley
     ) public initializer {
+        console.log("ERC20Upgradeable(asset).decimals()", ERC20Upgradeable(asset).decimals());
+        console.log("_getDecimals()", _getDecimals());
         __Ownable_init();
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(ipToken) != address(0), IporErrors.WRONG_ADDRESS);
@@ -197,22 +199,11 @@ abstract contract Milton is
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
 
-
-    function emergencyCloseSwapPayFixed(uint256 swapId)
-        external
-        override
-        onlyOwner
-        whenPaused
-    {
+    function emergencyCloseSwapPayFixed(uint256 swapId) external override onlyOwner whenPaused {
         _closeSwapPayFixed(swapId, block.timestamp);
     }
 
-    function emergencyCloseSwapReceiveFixed(uint256 swapId)
-        external
-        override
-        onlyOwner
-        whenPaused
-    {
+    function emergencyCloseSwapReceiveFixed(uint256 swapId) external override onlyOwner whenPaused {
         _closeSwapReceiveFixed(swapId, block.timestamp);
     }
 
@@ -236,7 +227,7 @@ abstract contract Milton is
 
     //@param assetValue underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetValue) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 vaultBalance = _stanley.deposit(assetValue);		
+        uint256 vaultBalance = _stanley.deposit(assetValue);
         _miltonStorage.updateStorageWhenDepositToStanley(assetValue, vaultBalance);
     }
 

@@ -1,0 +1,191 @@
+import hre, { upgrades } from "hardhat";
+import { BigNumber } from "ethers";
+
+import {
+    Milton,
+    MiltonFaucet,
+    MiltonStorageUsdc,
+    MiltonStorageUsdt,
+    MiltonStorageDai,
+    MiltonSpreadModel,
+    MiltonUsdc,
+    MiltonUsdt,
+    MiltonDai,
+    Joseph,
+    JosephDai,
+    JosephUsdc,
+    JosephUsdt,
+    Stanley,
+    StanleyDai,
+    StanleyUsdc,
+    StanleyUsdt,
+    MiltonStorage,
+    ERC20,
+} from "../../types";
+import {
+    usdtAddress,
+    usdcAddress,
+    daiAddress,
+    transferDaiToAddress,
+    transferUsdcToAddress,
+    transferUsdtToAddress,
+} from "./tokens";
+
+const faucetSupply6Decimals = BigNumber.from("1000000000000000");
+const faucetSupply18Decimals = BigNumber.from("1000000000000000000000000000");
+export const miltonFaucetFactory = async (): Promise<MiltonFaucet> => {
+    const MiltonFaucetFactory = await hre.ethers.getContractFactory("MiltonFaucet");
+    return MiltonFaucetFactory.deploy() as Promise<MiltonFaucet>;
+};
+
+export const miltonFaucetSetup = async (
+    miltonFaucet: MiltonFaucet,
+    dai: ERC20,
+    usdc: ERC20,
+    usdt: ERC20
+) => {
+    await hre.network.provider.send("hardhat_setBalance", [
+        miltonFaucet.address,
+        "0x500000000000000000000",
+    ]);
+    await transferDaiToAddress(miltonFaucet.address, faucetSupply18Decimals);
+    console.log(
+        "daiAddress -> balanseOf -> miltonFaucet",
+        await dai.balanceOf(miltonFaucet.address)
+    );
+    await transferUsdcToAddress(miltonFaucet.address, faucetSupply6Decimals);
+    console.log(
+        "usdcAddress -> balanseOf -> miltonFaucet",
+        await usdc.balanceOf(miltonFaucet.address)
+    );
+    await transferUsdtToAddress(miltonFaucet.address, faucetSupply6Decimals);
+    console.log(
+        "usdtAddress -> balanseOf -> miltonFaucet",
+        await usdt.balanceOf(miltonFaucet.address)
+    );
+};
+
+export const miltonStorageDaiFactory = async (): Promise<MiltonStorageDai> => {
+    const [admin] = await hre.ethers.getSigners();
+    const miltonStorageFactory = await hre.ethers.getContractFactory("MiltonStorageDai", admin);
+    return upgrades.deployProxy(miltonStorageFactory, [], {
+        kind: "uups",
+    }) as Promise<MiltonStorageDai>;
+};
+
+export const miltonStorageUsdcFactory = async (): Promise<MiltonStorageUsdc> => {
+    const [admin] = await hre.ethers.getSigners();
+    const miltonStorageFactory = await hre.ethers.getContractFactory("MiltonStorageUsdc", admin);
+    return upgrades.deployProxy(miltonStorageFactory, [], {
+        kind: "uups",
+    }) as Promise<MiltonStorageUsdc>;
+};
+
+export const miltonStorageUsdtFactory = async (): Promise<MiltonStorageUsdt> => {
+    const [admin] = await hre.ethers.getSigners();
+    const miltonStorageFactory = await hre.ethers.getContractFactory("MiltonStorageUsdt", admin);
+    return upgrades.deployProxy(miltonStorageFactory, [], {
+        kind: "uups",
+    }) as Promise<MiltonStorageUsdt>;
+};
+
+export const miltonSpreadModelFactory = async (): Promise<MiltonSpreadModel> => {
+    const [admin] = await hre.ethers.getSigners();
+    const spreadModelFactory = await hre.ethers.getContractFactory("MiltonSpreadModel", admin);
+    return upgrades.deployProxy(spreadModelFactory, [], {
+        kind: "uups",
+    }) as Promise<MiltonSpreadModel>;
+};
+
+export const miltonUsdtFactory = async (
+    ipTokenUsdtAddress: string,
+    warrenAddress: string,
+    miltonStorageUsdtAddress: string,
+    miltonSpreadModelAddress: string,
+    stanleyUsdtAddress: string
+): Promise<MiltonUsdt> => {
+    const [admin] = await hre.ethers.getSigners();
+    const miltonFactory = await hre.ethers.getContractFactory("MiltonUsdt", admin);
+    return upgrades.deployProxy(
+        miltonFactory,
+        [
+            usdtAddress,
+            ipTokenUsdtAddress,
+            warrenAddress,
+            miltonStorageUsdtAddress,
+            miltonSpreadModelAddress,
+            stanleyUsdtAddress,
+        ],
+        {
+            kind: "uups",
+        }
+    ) as Promise<MiltonUsdt>;
+};
+
+export const miltonUsdcFactory = async (
+    ipTokenUsdcAddress: string,
+    warrenAddress: string,
+    miltonStorageUsdcAddress: string,
+    miltonSpreadModelAddress: string,
+    stanleyUsdcAddress: string
+): Promise<MiltonUsdc> => {
+    const [admin] = await hre.ethers.getSigners();
+    const miltonFactory = await hre.ethers.getContractFactory("MiltonUsdc", admin);
+    return upgrades.deployProxy(
+        miltonFactory,
+        [
+            usdcAddress,
+            ipTokenUsdcAddress,
+            warrenAddress,
+            miltonStorageUsdcAddress,
+            miltonSpreadModelAddress,
+            stanleyUsdcAddress,
+        ],
+        {
+            kind: "uups",
+        }
+    ) as Promise<MiltonUsdc>;
+};
+
+export const miltonDaiFactory = async (
+    ipTokenDaiAddress: string,
+    warrenAddress: string,
+    miltonStorageDaiAddress: string,
+    miltonSpreadModelAddress: string,
+    stanleyDaiAddress: string
+): Promise<MiltonDai> => {
+    const [admin] = await hre.ethers.getSigners();
+    const miltonFactory = await hre.ethers.getContractFactory("MiltonDai", admin);
+    return upgrades.deployProxy(
+        miltonFactory,
+        [
+            daiAddress,
+            ipTokenDaiAddress,
+            warrenAddress,
+            miltonStorageDaiAddress,
+            miltonSpreadModelAddress,
+            stanleyDaiAddress,
+        ],
+        {
+            kind: "uups",
+        }
+    ) as Promise<MiltonDai>;
+};
+
+export const miltonSetup = async (
+    milton: Milton | MiltonDai | MiltonUsdc | MiltonUsdt,
+    joseph: Joseph | JosephDai | JosephUsdc | JosephUsdt,
+    stanley: Stanley | StanleyDai | StanleyUsdc | StanleyUsdt
+) => {
+    await milton.setJoseph(joseph.address);
+    await milton.setupMaxAllowance(joseph.address);
+    await milton.setupMaxAllowance(stanley.address);
+};
+export const miltonStorageSetup = async (
+    miltonStorage: MiltonStorage | MiltonStorageDai | MiltonStorageUsdc | MiltonStorageUsdt,
+    milton: Milton | MiltonDai | MiltonUsdc | MiltonUsdt,
+    joseph: Joseph | JosephDai | JosephUsdc | JosephUsdt
+) => {
+    await miltonStorage.setJoseph(joseph.address);
+    await miltonStorage.setMilton(milton.address);
+};

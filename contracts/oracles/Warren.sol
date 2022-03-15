@@ -167,8 +167,8 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         uint256 updateTimestamp
     ) internal onlyUpdater {
         require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
-        
-		uint256 i = 0;
+
+        uint256 i = 0;
         for (i; i != assets.length; i++) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
         }
