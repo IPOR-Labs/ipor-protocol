@@ -1,5 +1,6 @@
 module.exports.YEARS_IN_SECONDS = BigInt("31536000");
 module.exports.ZERO = BigInt("0");
+module.exports.PERIOD_6_HOURS_IN_SECONDS = 60 * 60 * 6;
 module.exports.PERIOD_1_DAY_IN_SECONDS = 60 * 60 * 24 * 1;
 module.exports.PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
 module.exports.PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;
@@ -53,6 +54,7 @@ module.exports.PERCENTAGE_10_18DEC = BigInt("100000000000000000");
 module.exports.PERCENTAGE_20_18DEC = BigInt("200000000000000000");
 module.exports.PERCENTAGE_50_18DEC = BigInt("500000000000000000");
 module.exports.PERCENTAGE_50_6DEC = BigInt("500000");
+module.exports.PERCENTAGE_95_18DEC = BigInt("950000000000000000");
 module.exports.PERCENTAGE_100_18DEC = BigInt("1000000000000000000");
 module.exports.PERCENTAGE_119_18DEC = BigInt("1190000000000000000");
 module.exports.PERCENTAGE_120_18DEC = BigInt("1200000000000000000");

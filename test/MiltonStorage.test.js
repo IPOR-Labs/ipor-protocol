@@ -11,6 +11,7 @@ const {
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
+    PERCENTAGE_95_18DEC,
     TC_TOTAL_AMOUNT_100_6DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
@@ -19,6 +20,7 @@ const {
     USD_14_000_6DEC,
     USD_28_000_6DEC,
     USD_50_000_6DEC,
+    PERIOD_6_HOURS_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
 } = require("./Const.js");
 
@@ -286,7 +288,9 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigInt("10000000000000000000"),
                 closeSwapTimestamp,
-                await testData.miltonDai.getIncomeTaxPercentage()
+                await testData.miltonDai.getIncomeTaxPercentage(),
+                PERCENTAGE_95_18DEC,
+                PERIOD_6_HOURS_IN_SECONDS
             );
 
         await testData.miltonStorageDai.setMilton(testData.miltonDai.address);
@@ -351,7 +355,9 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigInt("10000000"),
                 closeSwapTimestamp,
-                await testData.miltonUsdt.getIncomeTaxPercentage()
+                await testData.miltonUsdt.getIncomeTaxPercentage(),
+                PERCENTAGE_95_18DEC,
+                PERIOD_6_HOURS_IN_SECONDS
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -411,7 +417,9 @@ describe("MiltonStorage", () => {
                     derivativeItem,
                     BigInt("10000000000000000000"),
                     closeSwapTimestamp,
-                    await testData.miltonDai.getIncomeTaxPercentage()
+                    await testData.miltonDai.getIncomeTaxPercentage(),
+                    PERCENTAGE_95_18DEC,
+                    PERIOD_6_HOURS_IN_SECONDS
                 ),
             //then
             "IPOR_008"
