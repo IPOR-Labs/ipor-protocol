@@ -276,8 +276,6 @@ abstract contract Joseph is
         );
     }
 
-    function _calculateRedeemValue(uint256 timestamp) internal view returns (uint256) {}
-
     function _calculateRedeemedUtilizationRate(
         uint256 totalLiquidityPoolBalance,
         uint256 totalCollateralBalance,
@@ -295,5 +293,6 @@ abstract contract Joseph is
         }
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }
