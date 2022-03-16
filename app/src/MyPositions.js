@@ -10,7 +10,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
             methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
             render={DerivativeList}
@@ -19,7 +19,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
             methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
             render={DerivativeList}
@@ -28,7 +28,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
             methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
             render={DerivativeList}
@@ -37,7 +37,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
             methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
             render={DerivativeList}
@@ -46,7 +46,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
             methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
             render={DerivativeList}
@@ -55,7 +55,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
             methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
             render={DerivativeList}

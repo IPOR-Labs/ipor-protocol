@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import {DataTypes} from "../libraries/types/DataTypes.sol";
+import "./types/IporTypes.sol";
 
 interface IWarren {
     function getVersion() external pure returns (uint256);
@@ -20,7 +20,7 @@ interface IWarren {
     function getAccruedIndex(uint256 calculateTimestamp, address asset)
         external
         view
-        returns (DataTypes.AccruedIpor memory accruedIpor);
+        returns (IporTypes.AccruedIpor memory accruedIpor);
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
         external
@@ -29,10 +29,7 @@ interface IWarren {
 
     function updateIndex(address asset, uint256 indexValue) external;
 
-    function updateIndexes(
-        address[] memory assets,
-        uint256[] memory indexValues
-    ) external;
+    function updateIndexes(address[] memory assets, uint256[] memory indexValues) external;
 
     function addUpdater(address updater) external;
 

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../libraries/types/DataTypes.sol";
-import "../libraries/IporMath.sol";
+import "../libraries/math/IporMath.sol";
 
 contract MockIporMath {
     //@notice Division with rounding up on last position, x, and y is with MD
@@ -22,11 +21,7 @@ contract MockIporMath {
         return IporMath.convertWadToAssetDecimals(value, assetDecimals);
     }
 
-    function convertToWad(uint256 value, uint256 assetDecimals)
-        public
-        pure
-        returns (uint256)
-    {
+    function convertToWad(uint256 value, uint256 assetDecimals) public pure returns (uint256) {
         return IporMath.convertToWad(value, assetDecimals);
     }
 

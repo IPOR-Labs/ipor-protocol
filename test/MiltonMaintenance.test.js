@@ -243,7 +243,7 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(userOne).getMaxSwapCollateralAmount();
         await testData.miltonDai.connect(userOne).getMaxLpUtilizationPercentage();
         await testData.miltonDai.connect(userOne).getMaxLpUtilizationPerLegPercentage();
-        await testData.miltonDai.connect(userOne).getIncomeTaxPercentage();
+        await testData.miltonDai.connect(userOne).getIncomeFeePercentage();
         await testData.miltonDai.connect(userOne).getOpeningFeePercentage();
         await testData.miltonDai.connect(userOne).getOpeningFeeForTreasuryPercentage();
         await testData.miltonDai.connect(userOne).getIporPublicationFeeAmount();

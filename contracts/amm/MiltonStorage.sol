@@ -3,29 +3,30 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import {DataTypes} from "../libraries/types/DataTypes.sol";
-import "../libraries/IporSwapLogic.sol";
-import "../libraries/SoapIndicatorLogic.sol";
-import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/types/MiltonStorageTypes.sol";
 import "../libraries/Constants.sol";
 import "../libraries/PaginationUtils.sol";
+import "../interfaces/types/MiltonStorageTypes.sol";
+import "../interfaces/IMiltonStorage.sol";
+import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/types/AmmMiltonStorageTypes.sol";
+import "./libraries/SoapIndicatorLogic.sol";
 import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
     using SafeCast for uint256;
-    using SoapIndicatorLogic for DataTypes.SoapIndicatorMemory;
+    using SoapIndicatorLogic for AmmMiltonStorageTypes.SoapIndicatorsMemory;
 
     uint64 private _lastSwapId;
     address private _milton;
     address private _joseph;
 
-    DataTypes.MiltonBalanceStorage internal _balances;
-    DataTypes.SoapIndicatorStorage internal _soapIndicatorsPayFixed;
-    DataTypes.SoapIndicatorStorage internal _soapIndicatorsReceiveFixed;
-    DataTypes.IporSwapContainer internal _swapsPayFixed;
-    DataTypes.IporSwapContainer internal _swapsReceiveFixed;
+    AmmMiltonStorageTypes.Balances internal _balances;
+    AmmMiltonStorageTypes.SoapIndicators internal _soapIndicatorsPayFixed;
+    AmmMiltonStorageTypes.SoapIndicators internal _soapIndicatorsReceiveFixed;
+    AmmMiltonStorageTypes.IporSwapContainer internal _swapsPayFixed;
+    AmmMiltonStorageTypes.IporSwapContainer internal _swapsReceiveFixed;
 
     modifier onlyMilton() {
         require(msg.sender == _milton, IporErrors.CALLER_NOT_MILTON);
@@ -33,7 +34,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     modifier onlyJoseph() {
-        require(msg.sender == _joseph, IporErrors.MILTON_CALLER_NOT_JOSEPH);
+        require(msg.sender == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -49,9 +50,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         return _lastSwapId;
     }
 
-    function getBalance() external view override returns (DataTypes.MiltonBalanceMemory memory) {
+    function getBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
         return
-            DataTypes.MiltonBalanceMemory(
+            IporTypes.MiltonBalancesMemory(
                 _balances.payFixedSwaps,
                 _balances.receiveFixedSwaps,
                 _balances.liquidityPool,
@@ -63,10 +64,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         external
         view
         override
-        returns (DataTypes.MiltonExtendedBalanceMemory memory)
+        returns (MiltonStorageTypes.ExtendedBalancesMemory memory)
     {
         return
-            DataTypes.MiltonExtendedBalanceMemory(
+            MiltonStorageTypes.ExtendedBalancesMemory(
                 _balances.payFixedSwaps,
                 _balances.receiveFixedSwaps,
                 _balances.liquidityPool,
@@ -92,12 +93,12 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         external
         view
         override
-        returns (DataTypes.IporSwapMemory memory)
+        returns (IporTypes.IporSwapMemory memory)
     {
         uint64 id = swapId.toUint64();
-        DataTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
+        AmmMiltonStorageTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
         return
-            DataTypes.IporSwapMemory(
+            IporTypes.IporSwapMemory(
                 uint256(swap.state),
                 swap.buyer,
                 swap.startingTimestamp,
@@ -116,12 +117,12 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         external
         view
         override
-        returns (DataTypes.IporSwapMemory memory)
+        returns (IporTypes.IporSwapMemory memory)
     {
         uint64 id = swapId.toUint64();
-        DataTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
+        AmmMiltonStorageTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
         return
-            DataTypes.IporSwapMemory(
+            IporTypes.IporSwapMemory(
                 uint256(swap.state),
                 swap.buyer,
                 swap.startingTimestamp,
@@ -140,7 +141,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
+    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
         uint128[] storage ids = _swapsPayFixed.ids[account];
         return (ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize));
     }
@@ -149,7 +150,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, DataTypes.IporSwapMemory[] memory swaps) {
+    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
         uint128[] storage ids = _swapsReceiveFixed.ids[account];
         return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
     }
@@ -200,7 +201,12 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IMiltonStorage.IporSwapId[] memory ids) {
+    )
+        external
+        view
+        override
+        returns (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids)
+    {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
@@ -214,12 +220,17 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             chunkSize
         );
 
-        IMiltonStorage.IporSwapId[] memory ids = new IMiltonStorage.IporSwapId[](resultSetSize);
+        MiltonStorageTypes.IporSwapId[] memory ids = new MiltonStorageTypes.IporSwapId[](
+            resultSetSize
+        );
         for (uint256 i = 0; i != resultSetSize; i++) {
             if (offset + i < payFixedLength) {
-                ids[i] = IporSwapId(payFixedIdsRef[offset + i], 0);
+                ids[i] = MiltonStorageTypes.IporSwapId(payFixedIdsRef[offset + i], 0);
             } else {
-                ids[i] = IporSwapId(receiveFixedIdsRef[offset + i - payFixedLength], 1);
+                ids[i] = MiltonStorageTypes.IporSwapId(
+                    receiveFixedIdsRef[offset + i - payFixedLength],
+                    1
+                );
             }
         }
         return (payFixedLength + receiveFixedLength, ids);
@@ -270,7 +281,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function addLiquidity(uint256 liquidityAmount) external override onlyJoseph {
-        require(liquidityAmount != 0, IporErrors.MILTON_DEPOSIT_AMOUNT_TOO_LOW);
+        require(liquidityAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_TOO_LOW);
         _balances.liquidityPool = _balances.liquidityPool + liquidityAmount.toUint128();
     }
 
@@ -279,7 +290,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function updateStorageWhenOpenSwapPayFixed(
-        DataTypes.NewSwap memory newSwap,
+        AmmTypes.NewSwap memory newSwap,
         uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
@@ -298,7 +309,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function updateStorageWhenOpenSwapReceiveFixed(
-        DataTypes.NewSwap memory newSwap,
+        AmmTypes.NewSwap memory newSwap,
         uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
@@ -318,10 +329,12 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function updateStorageWhenCloseSwapPayFixed(
         address account,
-        DataTypes.IporSwapMemory memory iporSwap,
+        IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(
@@ -329,17 +342,21 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             iporSwap,
             positionValue,
             closingTimestamp,
-            cfgIncomeTaxPercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
         address account,
-        DataTypes.IporSwapMemory memory iporSwap,
+        IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(
@@ -347,7 +364,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             iporSwap,
             positionValue,
             closingTimestamp,
-            cfgIncomeTaxPercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
     }
@@ -361,7 +380,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(
             vaultBalance + withdrawnValue >= currentVaultBalance,
-            IporErrors.MILTON_INTREST_FROM_STRATEGY_BELOW_ZERO
+            MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
         );
         uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
 
@@ -375,16 +394,13 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         override
         onlyMilton
     {
-        require(
-            vaultBalance >= depositValue,
-            IporErrors.MILTON_VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE
-        );
+        require(vaultBalance >= depositValue, MiltonErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
         uint256 currentVaultBalance = _balances.vault;
 
         require(
             currentVaultBalance <= (vaultBalance - depositValue),
-            IporErrors.MILTON_VAULT_BALANCE_TOO_LOW
+            MiltonErrors.VAULT_BALANCE_TOO_LOW
         );
         uint256 interest = currentVaultBalance != 0
             ? (vaultBalance - currentVaultBalance - depositValue)
@@ -403,7 +419,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         uint256 balance = _balances.iporPublicationFee;
 
-        require(transferedValue <= balance, IporErrors.MILTON_PUBLICATION_FEE_BALANCE_TOO_LOW);
+        require(transferedValue <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_TOO_LOW);
 
         balance = balance - transferedValue;
 
@@ -419,7 +435,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         uint256 balance = _balances.treasury;
 
-        require(transferedValue <= balance, IporErrors.MILTON_TREASURE_BALANCE_TOO_LOW);
+        require(transferedValue <= balance, MiltonErrors.TREASURE_BALANCE_TOO_LOW);
 
         balance = balance - transferedValue;
 
@@ -435,11 +451,11 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _getPositions(
-        mapping(uint128 => DataTypes.IporSwap) storage swaps,
+        mapping(uint128 => AmmMiltonStorageTypes.IporSwap) storage swaps,
         uint128[] storage ids,
         uint256 offset,
         uint256 chunkSize
-    ) internal view returns (DataTypes.IporSwapMemory[] memory) {
+    ) internal view returns (IporTypes.IporSwapMemory[] memory) {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
@@ -448,14 +464,14 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             offset,
             chunkSize
         );
-        DataTypes.IporSwapMemory[] memory derivatives = new DataTypes.IporSwapMemory[](
+        IporTypes.IporSwapMemory[] memory derivatives = new IporTypes.IporSwapMemory[](
             swapsIdsLength
         );
 
         for (uint256 i = 0; i != swapsIdsLength; i++) {
             uint128 id = ids[i + offset];
-            DataTypes.IporSwap storage swap = swaps[id];
-            derivatives[i] = DataTypes.IporSwapMemory(
+            AmmMiltonStorageTypes.IporSwap storage swap = swaps[id];
+            derivatives[i] = IporTypes.IporSwapMemory(
                 uint256(swaps[id].state),
                 swap.buyer,
                 swap.startingTimestamp,
@@ -481,22 +497,24 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             int256 soap
         )
     {
-        DataTypes.SoapIndicatorMemory memory spf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsPayFixed.rebalanceTimestamp,
-            _soapIndicatorsPayFixed.totalNotional,
-            _soapIndicatorsPayFixed.averageInterestRate,
-            _soapIndicatorsPayFixed.totalIbtQuantity,
-            _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
-        );
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory spf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.totalNotional,
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.totalIbtQuantity,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+            );
         int256 _soapPf = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
 
-        DataTypes.SoapIndicatorMemory memory srf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsReceiveFixed.rebalanceTimestamp,
-            _soapIndicatorsReceiveFixed.totalNotional,
-            _soapIndicatorsReceiveFixed.averageInterestRate,
-            _soapIndicatorsReceiveFixed.totalIbtQuantity,
-            _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
-        );
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.totalNotional,
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.totalIbtQuantity,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+            );
         int256 _soapRf = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
     }
@@ -506,13 +524,14 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         view
         returns (int256 soapPf)
     {
-        DataTypes.SoapIndicatorMemory memory spf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsPayFixed.rebalanceTimestamp,
-            _soapIndicatorsPayFixed.totalNotional,
-            _soapIndicatorsPayFixed.averageInterestRate,
-            _soapIndicatorsPayFixed.totalIbtQuantity,
-            _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
-        );
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory spf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.totalNotional,
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.totalIbtQuantity,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+            );
         soapPf = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
     }
 
@@ -521,13 +540,14 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         view
         returns (int256 soapRf)
     {
-        DataTypes.SoapIndicatorMemory memory srf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsReceiveFixed.rebalanceTimestamp,
-            _soapIndicatorsReceiveFixed.totalNotional,
-            _soapIndicatorsReceiveFixed.averageInterestRate,
-            _soapIndicatorsReceiveFixed.totalIbtQuantity,
-            _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
-        );
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.totalNotional,
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.totalIbtQuantity,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+            );
         soapRf = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
     }
 
@@ -594,17 +614,21 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function _updateBalancesWhenCloseSwapPayFixed(
         address account,
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
             account,
             swap,
             positionValue,
             closingTimestamp,
-            cfgIncomeTaxPercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
         _balances.payFixedSwaps = _balances.payFixedSwaps - swap.collateral.toUint128();
@@ -612,17 +636,21 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
         address account,
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
             account,
             swap,
             positionValue,
             closingTimestamp,
-            cfgIncomeTaxPercentage
+            cfgIncomeFeePercentage,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
         _balances.receiveFixedSwaps = _balances.receiveFixedSwaps - swap.collateral.toUint128();
@@ -630,32 +658,39 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function _updateBalancesWhenCloseSwap(
         address account,
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeTaxPercentage
+        uint256 cfgIncomeFeePercentage,
+        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         //decrease from balances the liquidation deposit
         require(
             _balances.liquidationDeposit >= swap.liquidationDepositAmount,
-            IporErrors.MILTON_CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
+            MiltonErrors.CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
         );
 
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
+        uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
+            swap.collateral,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity
+        );
 
-        if (absPositionValue < swap.collateral) {
+        if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,
             //if yes then close even if not an owner
             if (account != swap.buyer) {
                 require(
-                    closingTimestamp >= swap.endingTimestamp,
-                    IporErrors.MILTON_CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
+                    closingTimestamp >=
+                        swap.endingTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
+                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
         }
 
-        uint256 incomeTax = IporMath.division(
-            absPositionValue * cfgIncomeTaxPercentage,
+        uint256 incomeFee = IporMath.division(
+            absPositionValue * cfgIncomeFeePercentage,
             Constants.D18
         );
 
@@ -663,32 +698,32 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             _balances.liquidationDeposit -
             swap.liquidationDepositAmount.toUint128();
 
-        _balances.treasury = _balances.treasury + incomeTax.toUint128();
+        _balances.treasury = _balances.treasury + incomeFee.toUint128();
 
         if (positionValue > 0) {
             require(
                 _balances.liquidityPool >= absPositionValue,
-                IporErrors.MILTON_CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
+                MiltonErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
             _balances.liquidityPool = _balances.liquidityPool - absPositionValue.toUint128();
         } else {
             _balances.liquidityPool =
                 _balances.liquidityPool +
-                (absPositionValue - incomeTax).toUint128();
+                (absPositionValue - incomeFee).toUint128();
         }
     }
 
-    function _updateSwapsWhenOpenPayFixed(DataTypes.NewSwap memory newSwap)
+    function _updateSwapsWhenOpenPayFixed(AmmTypes.NewSwap memory newSwap)
         internal
         returns (uint256)
     {
         _lastSwapId++;
         uint64 id = _lastSwapId;
 
-        DataTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
+        AmmMiltonStorageTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
 
-        swap.state = DataTypes.SwapState.ACTIVE;
+        swap.state = AmmTypes.SwapState.ACTIVE;
         swap.buyer = newSwap.buyer;
         swap.startingTimestamp = newSwap.startingTimestamp.toUint32();
 
@@ -706,16 +741,16 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         return id;
     }
 
-    function _updateSwapsWhenOpenReceiveFixed(DataTypes.NewSwap memory newSwap)
+    function _updateSwapsWhenOpenReceiveFixed(AmmTypes.NewSwap memory newSwap)
         internal
         returns (uint256)
     {
         _lastSwapId++;
         uint64 id = _lastSwapId;
 
-        DataTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
+        AmmMiltonStorageTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
 
-        swap.state = DataTypes.SwapState.ACTIVE;
+        swap.state = AmmTypes.SwapState.ACTIVE;
         swap.buyer = newSwap.buyer;
         swap.startingTimestamp = newSwap.startingTimestamp.toUint32();
 
@@ -733,11 +768,11 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         return id;
     }
 
-    function _updateSwapsWhenClosePayFixed(DataTypes.IporSwapMemory memory iporSwap) internal {
-        require(iporSwap.id != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
+    function _updateSwapsWhenClosePayFixed(IporTypes.IporSwapMemory memory iporSwap) internal {
+        require(iporSwap.id != 0, MiltonErrors.INCORRECT_SWAP_ID);
         require(
-            iporSwap.state != uint256(DataTypes.SwapState.INACTIVE),
-            IporErrors.MILTON_INCORRECT_SWAP_STATUS
+            iporSwap.state != uint256(AmmTypes.SwapState.INACTIVE),
+            MiltonErrors.INCORRECT_SWAP_STATUS
         );
 
         uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();
@@ -751,15 +786,15 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             _swapsPayFixed.ids[buyer][idsIndexToDelete] = accountDerivativeIdToMove;
         }
 
-        _swapsPayFixed.swaps[iporSwap.id.toUint64()].state = DataTypes.SwapState.INACTIVE;
+        _swapsPayFixed.swaps[iporSwap.id.toUint64()].state = AmmTypes.SwapState.INACTIVE;
         _swapsPayFixed.ids[buyer].pop();
     }
 
-    function _updateSwapsWhenCloseReceiveFixed(DataTypes.IporSwapMemory memory iporSwap) internal {
-        require(iporSwap.id != 0, IporErrors.MILTON_INCORRECT_SWAP_ID);
+    function _updateSwapsWhenCloseReceiveFixed(IporTypes.IporSwapMemory memory iporSwap) internal {
+        require(iporSwap.id != 0, MiltonErrors.INCORRECT_SWAP_ID);
         require(
-            iporSwap.state != uint256(DataTypes.SwapState.INACTIVE),
-            IporErrors.MILTON_INCORRECT_SWAP_STATUS
+            iporSwap.state != uint256(AmmTypes.SwapState.INACTIVE),
+            MiltonErrors.INCORRECT_SWAP_STATUS
         );
 
         uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();
@@ -774,18 +809,19 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             _swapsReceiveFixed.ids[buyer][idsIndexToDelete] = accountDerivativeIdToMove;
         }
 
-        _swapsReceiveFixed.swaps[iporSwap.id.toUint64()].state = DataTypes.SwapState.INACTIVE;
+        _swapsReceiveFixed.swaps[iporSwap.id.toUint64()].state = AmmTypes.SwapState.INACTIVE;
         _swapsReceiveFixed.ids[buyer].pop();
     }
 
-    function _updateSoapIndicatorsWhenOpenSwapPayFixed(DataTypes.NewSwap memory newSwap) internal {
-        DataTypes.SoapIndicatorMemory memory pf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsPayFixed.rebalanceTimestamp,
-            _soapIndicatorsPayFixed.totalNotional,
-            _soapIndicatorsPayFixed.averageInterestRate,
-            _soapIndicatorsPayFixed.totalIbtQuantity,
-            _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
-        );
+    function _updateSoapIndicatorsWhenOpenSwapPayFixed(AmmTypes.NewSwap memory newSwap) internal {
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory pf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.totalNotional,
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.totalIbtQuantity,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+            );
         pf.rebalanceWhenOpenSwap(
             newSwap.startingTimestamp,
             newSwap.notionalAmount,
@@ -800,16 +836,17 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             .quasiHypotheticalInterestCumulative;
     }
 
-    function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(DataTypes.NewSwap memory newSwap)
+    function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(AmmTypes.NewSwap memory newSwap)
         internal
     {
-        DataTypes.SoapIndicatorMemory memory rf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsReceiveFixed.rebalanceTimestamp,
-            _soapIndicatorsReceiveFixed.totalNotional,
-            _soapIndicatorsReceiveFixed.averageInterestRate,
-            _soapIndicatorsReceiveFixed.totalIbtQuantity,
-            _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
-        );
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory rf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.totalNotional,
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.totalIbtQuantity,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+            );
         rf.rebalanceWhenOpenSwap(
             newSwap.startingTimestamp,
             newSwap.notionalAmount,
@@ -826,16 +863,17 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _updateSoapIndicatorsWhenCloseSwapPayFixed(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp
     ) internal {
-        DataTypes.SoapIndicatorMemory memory pf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsPayFixed.rebalanceTimestamp,
-            _soapIndicatorsPayFixed.totalNotional,
-            _soapIndicatorsPayFixed.averageInterestRate,
-            _soapIndicatorsPayFixed.totalIbtQuantity,
-            _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
-        );
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory pf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.totalNotional,
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.totalIbtQuantity,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+            );
 
         pf.rebalanceWhenCloseSwap(
             closingTimestamp,
@@ -845,7 +883,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             swap.ibtQuantity
         );
 
-        _soapIndicatorsPayFixed = DataTypes.SoapIndicatorStorage(
+        _soapIndicatorsPayFixed = AmmMiltonStorageTypes.SoapIndicators(
             pf.rebalanceTimestamp.toUint32(),
             pf.totalNotional.toUint128(),
             pf.averageInterestRate.toUint128(),
@@ -855,16 +893,17 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _updateSoapIndicatorsWhenCloseSwapReceiveFixed(
-        DataTypes.IporSwapMemory memory swap,
+        IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp
     ) internal {
-        DataTypes.SoapIndicatorMemory memory rf = DataTypes.SoapIndicatorMemory(
-            _soapIndicatorsReceiveFixed.rebalanceTimestamp,
-            _soapIndicatorsReceiveFixed.totalNotional,
-            _soapIndicatorsReceiveFixed.averageInterestRate,
-            _soapIndicatorsReceiveFixed.totalIbtQuantity,
-            _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
-        );
+        AmmMiltonStorageTypes.SoapIndicatorsMemory memory rf = AmmMiltonStorageTypes
+            .SoapIndicatorsMemory(
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.totalNotional,
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.totalIbtQuantity,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+            );
 
         rf.rebalanceWhenCloseSwap(
             closingTimestamp,
@@ -874,7 +913,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             swap.ibtQuantity
         );
 
-        _soapIndicatorsReceiveFixed = DataTypes.SoapIndicatorStorage(
+        _soapIndicatorsReceiveFixed = AmmMiltonStorageTypes.SoapIndicators(
             rf.rebalanceTimestamp.toUint32(),
             rf.totalNotional.toUint128(),
             rf.averageInterestRate.toUint128(),
