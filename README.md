@@ -4,10 +4,20 @@ IPOR smart contracts
 
 ## Job statuses
 
-* [![CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml)
-* [![CD](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml)
+-   [![CI](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/ci.yml)
+-   [![CD](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml/badge.svg)](https://github.com/IPOR-Labs/ipor-protocol/actions/workflows/cd.yml)
 
 ## Usage
+
+### Pre-run steps
+
+-   Install `python3-pip`.
+-   Install `solc-select` using pip: `pip3 install solc-select`
+-   Install docker and docker-compose
+-   Install `node` and `npm`.
+-   Install `truffle` : `npm install -g truffle`
+-   Check truffle binary execution permission. Run `chmod +x truffle` in binary dir if execution flag is missing.
+-   Run `sudo apt-get install build-essential`
 
 ### How to run as developer?
 
@@ -15,11 +25,11 @@ IPOR smart contracts
 2. In directory `ipor-protocol` configure `.env` file based on `.env-local.j2`
 3. In directory `ipor-protocol/containers/dev-tool` configure `.env` file based on `.env-local.j2`
 4. Execute script `./run.sh` with specific commands in order like below:
-   - `b` - build docker containers
-   - `r` - run docker-compose
-   - `m` - migrate Smart Contracts to blockchain
-   - `b` - build docker containers with migrated smart contract addresses
-   - `r` - run docker-compose once again
+    - `b` - build docker containers
+    - `r` - run docker-compose
+    - `m` - migrate Smart Contracts to blockchain
+    - `b` - build docker containers with migrated smart contract addresses
+    - `r` - run docker-compose once again
 5. Application will be available at `http://localhost:4000`
 6. Local blockchain will be available at `http://localhost:9545` `chainId = 5777`
 7. Local blockchain explorer will be available at `http://localhost:9055`
@@ -33,6 +43,18 @@ IPOR smart contracts
 #### How to run all tests?
 
 `npx hardhat test`
+
+#### How to run all tests with coverage?
+
+`npx hardhat coverage`
+
+Coverage reports available in `coverage` folder.
+
+#### How to run tests inside specific file with coverage for mainnet fork?
+
+`export FORK_ENABLED=true; npx hardhat coverage --testfiles "test/vault/mainnet-fork/stanley-aave-dai.ts"`
+
+Notice! `npx hardhat coverage` not includes coverage from tests in mainnet fork, this test coverage should be executed separately on every file.
 
 #### How to run tests for specific file?
 
@@ -51,14 +73,17 @@ Run in command line: `truffle run contract-size`
 Run in command line: `./run.sh c`
 
 ### Environment variables configuration
+
 #### COMPOSE_PROFILE
+
 Docker compose profile used to run containers selectively, locally developer should use: `developer`
 other available options:
-- developer - run containers needed to work locally as a developer, so without ssl containers 
-- eth-bc-provider - run containers needed to serve Ethereum blockchain on remote server
-- eth-explorer-provider - run containers needed to serve Ethereum blockchain explorer on remote server 
-- explorer - run only Ethereum blockchain explorer
-- dev-tool - run only dev-tool
-- ssl-eth-bc - run only ssl containers needed for Ethereum blockchain
-- ssl-explorer - run only ssl containers needed for Ethereum blockchain explorer
-- all - run all containers
+
+-   developer - run containers needed to work locally as a developer, so without ssl containers
+-   eth-bc-provider - run containers needed to serve Ethereum blockchain on remote server
+-   eth-explorer-provider - run containers needed to serve Ethereum blockchain explorer on remote server
+-   explorer - run only Ethereum blockchain explorer
+-   dev-tool - run only dev-tool
+-   ssl-eth-bc - run only ssl containers needed for Ethereum blockchain
+-   ssl-explorer - run only ssl containers needed for Ethereum blockchain explorer
+-   all - run all containers
