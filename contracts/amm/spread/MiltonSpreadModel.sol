@@ -22,6 +22,7 @@ contract MiltonSpreadModel is
         __Ownable_init();
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
