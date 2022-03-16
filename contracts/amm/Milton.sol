@@ -755,7 +755,8 @@ abstract contract Milton is
             if (msg.sender != derivativeItem.buyer) {
                 require(
                     _calculationTimestamp >=
-                        derivativeItem.endingTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
+                        derivativeItem.endingTimestamp -
+                            cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
@@ -812,5 +813,6 @@ abstract contract Milton is
         }
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

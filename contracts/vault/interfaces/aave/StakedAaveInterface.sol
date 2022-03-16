@@ -8,7 +8,9 @@ interface StakedAaveInterface {
 
     function stakersCooldowns(address user) external view returns (uint256);
 
+    //solhint-disable func-name-mixedcase
     function COOLDOWN_SECONDS() external view returns (uint256);
 
+    //solhint-disable func-name-mixedcase
     function UNSTAKE_WINDOW() external view returns (uint256);
 }

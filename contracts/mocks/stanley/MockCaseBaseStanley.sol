@@ -64,6 +64,7 @@ contract MockCaseBaseStanley is IStanley {
         _asset.safeTransfer(msg.sender, finalAssetValue);
     }
 
+    //solhint-disable no-empty-blocks
     function withdrawAll()
         external
         override

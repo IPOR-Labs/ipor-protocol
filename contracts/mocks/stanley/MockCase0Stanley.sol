@@ -3,5 +3,6 @@ pragma solidity 0.8.9;
 import "./MockCaseBaseStanley.sol";
 
 contract MockCase0Stanley is MockCaseBaseStanley {
+    //solhint-disable no-empty-blocks
     constructor(address asset) MockCaseBaseStanley(asset) {}
 }

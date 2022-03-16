@@ -6,6 +6,7 @@ import "./MockIAToken.sol";
 import "hardhat/console.sol";
 
 contract MockADai is ERC20, MockIAToken {
+    //solhint-disable no-empty-blocks
     constructor() ERC20("aDAI", "aDAI") {}
 
     function burn(address user, uint256 amount) external {
