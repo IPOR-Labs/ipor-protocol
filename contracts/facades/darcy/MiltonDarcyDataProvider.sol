@@ -189,5 +189,6 @@ contract MiltonDarcyDataProvider is
         );
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

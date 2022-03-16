@@ -1,3 +1,4 @@
+//solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
@@ -41,6 +42,7 @@ contract MockComptroller is Comptroller {
         );
     }
 
+    //solhint-disable no-unused-vars
     function claimComp(address _sender, address[] memory assets) external {
         IERC20(_compAddr).transfer(
             _sender,

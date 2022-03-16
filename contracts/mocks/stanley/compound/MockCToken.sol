@@ -1,3 +1,4 @@
+//solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
@@ -81,11 +82,11 @@ contract MockCToken is ERC20, CErc20Mock {
         return _exchangeRate;
     }
 
-    function _setExchangeRateStored(uint256 rate) external returns (uint256) {
+    function setExchangeRateStored(uint256 rate) external returns (uint256) {
         _exchangeRate = rate;
     }
 
-    function _setComptroller(address comp) external {
+    function setComptroller(address comp) external {
         _comptroller = comp;
     }
 

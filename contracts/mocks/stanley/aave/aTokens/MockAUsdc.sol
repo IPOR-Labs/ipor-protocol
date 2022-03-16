@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./MockIAToken.sol";
 
 contract MockAUsdc is ERC20, MockIAToken {
+    //solhint-disable no-empty-blocks
     constructor() ERC20("aUsdc", "aUsdc") {}
 
     function burn(address user, uint256 amount) external {

@@ -666,8 +666,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         );
 
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
-        uint256 minPositionValueToCloseBeforeMaturity =
-            IporMath.percentOf(swap.collateral, cfgMinPercentagePositionValueToCloseBeforeMaturity);
+        uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
+            swap.collateral,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity
+        );
 
         if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,
@@ -914,5 +916,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         );
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

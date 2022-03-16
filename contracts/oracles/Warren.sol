@@ -236,5 +236,6 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
             );
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

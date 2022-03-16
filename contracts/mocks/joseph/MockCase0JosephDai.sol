@@ -3,4 +3,7 @@ pragma solidity 0.8.9;
 
 import "../../itf/ItfJosephDai.sol";
 
-contract MockCase0JosephDai is ItfJosephDai {}
+//solhint-disable no-empty-blocks
+contract MockCase0JosephDai is ItfJosephDai {
+
+}

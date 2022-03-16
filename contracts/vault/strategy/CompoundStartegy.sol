@@ -152,6 +152,7 @@ contract CompoundStrategy is
     /**
      * @dev beforeClaim is not needed to implement
      */
+    //solhint-disable no-empty-blocks
     function beforeClaim() external whenNotPaused {
         // No implementation
     }
@@ -194,5 +195,6 @@ contract CompoundStrategy is
         _blocksPerYear = blocksPerYear;
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }
