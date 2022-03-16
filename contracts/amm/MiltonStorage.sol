@@ -377,7 +377,13 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         onlyMilton
     {
         uint256 currentVaultBalance = _balances.vault;
+        // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
+        require(
+            vaultBalance + withdrawnValue >= currentVaultBalance,
+            MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
+        );
         uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
+
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
@@ -666,8 +672,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         );
 
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
-        uint256 minPositionValueToCloseBeforeMaturity =
-            IporMath.percentOf(swap.collateral, cfgMinPercentagePositionValueToCloseBeforeMaturity);
+        uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
+            swap.collateral,
+            cfgMinPercentagePositionValueToCloseBeforeMaturity
+        );
 
         if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,

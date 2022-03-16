@@ -46,6 +46,7 @@ library MiltonErrors {
     string public constant SWAP_IDS_ARRAY_IS_EMPTY = "IPOR_314";
 
     string public constant CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP = "IPOR_315";
+
     string public constant CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_316";
 
     string public constant CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_317";
@@ -88,5 +89,7 @@ library MiltonErrors {
     string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_330";
 
     //@notice Opening Fee Balance is too low
-    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_330";
+    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_331";
+
+    string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_332";
 }
