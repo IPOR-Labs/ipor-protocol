@@ -125,17 +125,17 @@ export const transferDaiToAddress = async (from: string, to: string, amoung: Big
 
 export const ipTokenUsdtFactory = async (): Promise<IpToken> => {
     const ipTokenFactory = await hre.ethers.getContractFactory("IpToken");
-    return ipTokenFactory.deploy(usdtAddress, "IP USDT", "ipUSDT") as Promise<IpToken>;
+    return ipTokenFactory.deploy("IP USDT", "ipUSDT", usdtAddress) as Promise<IpToken>;
 };
 
 export const ipTokenUsdcFactory = async (): Promise<IpToken> => {
     const ipTokenFactory = await hre.ethers.getContractFactory("IpToken");
-    return ipTokenFactory.deploy(usdtAddress, "IP USDC", "ipUSDC") as Promise<IpToken>;
+    return ipTokenFactory.deploy("IP USDC", "ipUSDC", usdtAddress) as Promise<IpToken>;
 };
 
 export const ipTokenDaiFactory = async (): Promise<IpToken> => {
     const ipTokenFactory = await hre.ethers.getContractFactory("IpToken");
-    return ipTokenFactory.deploy(usdtAddress, "IP DAI", "ipDAI") as Promise<IpToken>;
+    return ipTokenFactory.deploy("IP DAI", "ipDAI", usdtAddress) as Promise<IpToken>;
 };
 
 export const ipTokenSetup = async (ipToken: IpToken, josephAddress: string) => {

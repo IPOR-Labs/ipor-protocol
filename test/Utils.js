@@ -278,7 +278,9 @@ module.exports.prepareWarren = async (accounts) => {
     const warren = await ItfWarren.deploy();
     await warren.deployed();
     await warren.initialize();
-    await warren.addUpdater(accounts[1].address);
+    if (accounts[1]) {
+        await warren.addUpdater(accounts[1].address);
+    }
     return warren;
 };
 
@@ -351,7 +353,7 @@ module.exports.prepareTestData = async (
     const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
-    const MiltonStorage = await ethers.getContractFactory("MiltonStorage");    
+    const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
 
     const warren = await this.prepareWarren(accounts);
 
@@ -362,7 +364,7 @@ module.exports.prepareTestData = async (
 
             stanleyUsdt = await this.getMockStanleyCase(stanleyCaseNumber, tokenUsdt.address);
 
-            ipTokenUsdt = await IpToken.deploy(tokenUsdt.address, "IP USDT", "ipUSDT");
+            ipTokenUsdt = await IpToken.deploy("IP USDT", "ipUSDT", tokenUsdt.address);
             await ipTokenUsdt.deployed();
 
             miltonStorageUsdt = await MiltonStorage.deploy();
@@ -406,7 +408,7 @@ module.exports.prepareTestData = async (
 
             stanleyUsdc = await this.getMockStanleyCase(stanleyCaseNumber, tokenUsdc.address);
 
-            ipTokenUsdc = await IpToken.deploy(tokenUsdc.address, "IP USDC", "ipUSDC");
+            ipTokenUsdc = await IpToken.deploy("IP USDC", "ipUSDC", tokenUsdc.address);
             ipTokenUsdc.deployed();
 
             miltonStorageUsdc = await MiltonStorage.deploy();
@@ -451,7 +453,7 @@ module.exports.prepareTestData = async (
 
             stanleyDai = await this.getMockStanleyCase(stanleyCaseNumber, tokenDai.address);
 
-            ipTokenDai = await IpToken.deploy(tokenDai.address, "IP DAI", "ipDAI");
+            ipTokenDai = await IpToken.deploy("IP DAI", "ipDAI", tokenDai.address);
             await ipTokenDai.deployed();
 
             miltonStorageDai = await MiltonStorage.deploy();
