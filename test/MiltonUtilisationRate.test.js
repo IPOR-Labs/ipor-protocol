@@ -104,7 +104,7 @@ describe("Milton - Utilization Rate", () => {
     //             params.direction
     //         ),
     //         //then
-    //         "IPOR_302"
+    //         "IPOR_303"
     //     );
     // });
 
@@ -115,7 +115,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -156,7 +157,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -197,7 +199,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -238,7 +241,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -279,7 +283,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -313,7 +318,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_302"
+            "IPOR_303"
         );
     });
 
@@ -324,7 +329,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -358,7 +364,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_302"
+            "IPOR_303"
         );
     });
 
@@ -369,7 +375,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -403,7 +410,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_302"
+            "IPOR_303"
         );
     });
 
@@ -414,7 +421,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -448,7 +456,7 @@ describe("Milton - Utilization Rate", () => {
                     params.collateralizationFactor
                 ),
             //then
-            "IPOR_302"
+            "IPOR_303"
         );
     });
 });
