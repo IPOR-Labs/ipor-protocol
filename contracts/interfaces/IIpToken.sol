@@ -26,14 +26,14 @@ interface IIpToken is IERC20 {
     /// @param amount volume of IP Tokens which will be destroyed
     function burn(address account, uint256 amount) external;
 
-    /// @notice Emmited when `amount` tokens were mint and transfered to `account`.
-    /// @param account address where tokens are transfered after mind
-    /// @param amount volume of tokens which will be minted
+    /// @notice Emmited when `amount` IP Tokens were mint and transfered to `account`.
+    /// @param account address where IP Tokens are transfered after mind
+    /// @param amount volume of IP Tokens which will be minted
     event Mint(address indexed account, uint256 amount);
 
-    /// @notice Emmited when `amount` tokens were burnt and transfered from `account`.
-    /// @param account address where tokens are transfered from, after burn
-    /// @param amount volume of tokens which will be burned
+    /// @notice Emmited when `amount` IP Tokens were burnt and transfered from `account`.
+    /// @param account address where IP Tokens are transfered from, after burn
+    /// @param amount volume of IP Tokens which will be burned
     event Burn(address indexed account, uint256 amount);
 
     /// @notice Emmited when Joseph address is changed by Owner.

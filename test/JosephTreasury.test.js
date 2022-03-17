@@ -143,7 +143,7 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            testData.josephDai.connect(userThree).transferTreasury(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToTreasury(BigInt("100")),
             //then
             "IPOR_404"
         );
@@ -161,7 +161,7 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            testData.josephDai.connect(userThree).transferTreasury(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToTreasury(BigInt("100")),
             //then
             "IPOR_405"
         );
@@ -200,7 +200,7 @@ describe("Joseph Treasury", () => {
         const transferedValue = BigInt("100");
 
         //when
-        await testData.josephDai.connect(userThree).transferTreasury(transferedValue);
+        await testData.josephDai.connect(userThree).transferToTreasury(transferedValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();

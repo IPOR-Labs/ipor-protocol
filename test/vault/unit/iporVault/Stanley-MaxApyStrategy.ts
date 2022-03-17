@@ -55,8 +55,10 @@ describe("Stanley -> maxApyStrategy", () => {
 
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
+
         //  when
         const result = await stanley.getMaxApyStrategy();
+
         //  then
         expect(result.strategyMaxApy).to.be.equal(aaveStrategy.address);
     });
@@ -68,8 +70,10 @@ describe("Stanley -> maxApyStrategy", () => {
 
         await stanley.setAaveStrategy(aaveStrategy.address);
         await stanley.setCompoundStrategy(compoundStrategy.address);
+
         //  when
         const result = await stanley.getMaxApyStrategy();
+
         //  then
         expect(result.strategyMaxApy).to.be.equal(aaveStrategy.address);
     });

@@ -50,11 +50,11 @@ abstract contract Joseph is
     ) public initializer {
         __Ownable_init();
 
-        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(ipToken) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(stanley) != address(0), IporErrors.WRONG_ADDRESS);
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
+        require(milton != address(0), IporErrors.WRONG_ADDRESS);
+        require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
+        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
         IIpToken iipToken = IIpToken(ipToken);
@@ -113,7 +113,7 @@ abstract contract Joseph is
     }
 
     //@param assetValue underlying token amount represented in 18 decimals
-    function transferTreasury(uint256 assetValue)
+    function transferToTreasury(uint256 assetValue)
         external
         override
         nonReentrant

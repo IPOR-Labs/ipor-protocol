@@ -94,7 +94,7 @@ describe("Joseph Maintenance", () => {
         await assertError(testData.josephDai.connect(userOne).redeem(123), "Pausable: paused");
 
         await assertError(
-            testData.josephDai.connect(userOne).transferTreasury(123),
+            testData.josephDai.connect(userOne).transferToTreasury(123),
             "Pausable: paused"
         );
 
