@@ -122,7 +122,7 @@ abstract contract Joseph is
     {
         require(address(0) != _treasuryTreasurer, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
-        _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
+        _miltonStorage.updateStorageWhenTransferToTreasury(assetValue);
 
         uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(
             assetValue,

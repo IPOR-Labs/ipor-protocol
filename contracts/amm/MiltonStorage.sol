@@ -424,7 +424,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.iporPublicationFee = balance.toUint128();
     }
 
-    function updateStorageWhenTransferTreasure(uint256 transferedValue)
+    function updateStorageWhenTransferToTreasury(uint256 transferedValue)
         external
         override
         onlyJoseph
