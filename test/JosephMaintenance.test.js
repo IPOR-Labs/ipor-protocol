@@ -47,7 +47,8 @@ describe("Joseph Maintenance", () => {
             ["DAI"],
             data,
             1,
-            1,0
+            1,
+            0
         );
         await testData.josephDai.connect(admin).pause();
 
@@ -65,7 +66,8 @@ describe("Joseph Maintenance", () => {
             ["DAI"],
             data,
             1,
-            1,0
+            1,
+            0
         );
 
         //when
@@ -313,5 +315,40 @@ describe("Joseph Maintenance", () => {
         //then
         const actualNewOwner = await testData.josephDai.connect(userOne).owner();
         expect(admin.address).to.be.eql(actualNewOwner);
+    });
+
+    it("should not sent ETH to Joseph DAI, USDT, USDC", async () => {
+        //given
+        const testData = await prepareTestData([admin], ["DAI", "USDT", "USDC"], data, 0, 0, 0);
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.josephDai.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.josephUsdt.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.josephUsdc.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
     });
 });

@@ -768,4 +768,18 @@ describe("Warren", () => {
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
         ).to.be.eql(expectedExpoMovingAverage);
     });
+
+    it("should not sent ETH to Warren", async () => {
+        //given
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.warren.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+    });
 });

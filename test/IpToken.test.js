@@ -206,4 +206,18 @@ describe("IpToken", () => {
             `Incorrect underlying token address actual: ${actualUnderlyingTokenAddress}, expected: ${expectedUnderlyingTokenAddress}`
         ).to.be.eql(actualUnderlyingTokenAddress);
     });
+
+    it("should not sent ETH to IpToken DAI", async () => {
+        //given
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.ipTokenDai.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+    });
 });

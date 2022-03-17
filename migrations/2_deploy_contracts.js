@@ -97,13 +97,13 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(AAVEMockedToken, stableTotalSupply18Decimals, 18);
     const AAVE = await AAVEMockedToken.deployed();
 
-    await deployer.deploy(IpTokenUsdt, mockedUsdt.address, "IP USDT", "ipUSDT");
+    await deployer.deploy(IpTokenUsdt, "IP USDT", "ipUSDT", mockedUsdt.address);
     const ipTokenUsdt = await IpTokenUsdt.deployed();
 
-    await deployer.deploy(IpTokenUsdc, mockedUsdc.address, "IP USDC", "ipUSDC");
+    await deployer.deploy(IpTokenUsdc, "IP USDC", "ipUSDC", mockedUsdc.address);
     const ipTokenUsdc = await IpTokenUsdc.deployed();
 
-    await deployer.deploy(IpTokenDai, mockedDai.address, "IP DAI", "ipDAI");
+    await deployer.deploy(IpTokenDai, "IP DAI", "ipDAI", mockedDai.address);
     const ipTokenDai = await IpTokenDai.deployed();
 
     await deployer.deploy(IvTokenUsdt, "IV USDT", "ivUSDT", mockedUsdt.address);

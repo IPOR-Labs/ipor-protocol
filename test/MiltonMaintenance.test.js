@@ -442,4 +442,90 @@ describe("Milton Maintenance", () => {
         const actualNewOwner = await testData.miltonDai.connect(userOne).owner();
         expect(admin.address).to.be.eql(actualNewOwner);
     });
+
+    it("should not sent ETH to Milton DAI, USDT, USDC", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin],
+            ["DAI", "USDT", "USDC"],
+            data,
+            0,
+            0,
+            0
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.miltonDai.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.miltonUsdt.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.miltonUsdc.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+    });
+
+    it("should not sent ETH to MiltonStorage DAI, USDT, USDC", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin],
+            ["DAI", "USDT", "USDC"],
+            data,
+            0,
+            0,
+            0
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.miltonStorageDai.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.miltonStorageUsdt.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.miltonStorageUsdc.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+    });
+
+    
 });
