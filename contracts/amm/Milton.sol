@@ -264,9 +264,13 @@ abstract contract Milton is
     function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
         IporTypes.MiltonBalancesMemory memory accruedBalance = _miltonStorage.getBalance();
         uint256 actualVaultBalance = _stanley.totalBalance(address(this));
-        accruedBalance.liquidityPool =
-            accruedBalance.liquidityPool +
-            (actualVaultBalance - accruedBalance.vault);
+        int256 liquidityPool = int256(accruedBalance.liquidityPool) +
+            int256(actualVaultBalance) -
+            int256(accruedBalance.vault);
+
+        require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+        accruedBalance.liquidityPool = uint256(liquidityPool);
+
         accruedBalance.vault = actualVaultBalance;
         return accruedBalance;
     }

@@ -92,4 +92,6 @@ library MiltonErrors {
     string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_331";
 
     string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_332";
+
+    string public constant LIQUIDITY_POOL_AMOUNT_TOO_LOW = "IPOR_333";
 }
