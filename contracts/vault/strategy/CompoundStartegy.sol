@@ -50,6 +50,12 @@ contract CompoundStrategy is
         address compToken
     ) public initializer {
         __Ownable_init();
+
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(cErc20Contract != address(0), IporErrors.WRONG_ADDRESS);
+        require(comptroller != address(0), IporErrors.WRONG_ADDRESS);
+        require(compToken != address(0), IporErrors.WRONG_ADDRESS);
+
         _asset = asset;
         _cToken = CErc20(cErc20Contract);
         _comptroller = ComptrollerInterface(comptroller);

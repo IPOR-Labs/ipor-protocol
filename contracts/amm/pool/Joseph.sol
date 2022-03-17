@@ -42,24 +42,26 @@ abstract contract Joseph is
     }
 
     function initialize(
-        address assetAddress,
+        address asset,
         address ipToken,
         address milton,
         address miltonStorage,
         address stanley
     ) public initializer {
         __Ownable_init();
-        require(address(assetAddress) != address(0), IporErrors.WRONG_ADDRESS);
+
+        require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(ipToken) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(stanley) != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _getDecimals() == ERC20Upgradeable(assetAddress).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
+        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
-        _asset = assetAddress;
-        _ipToken = IIpToken(ipToken);
+        IIpToken iipToken = IIpToken(ipToken);
+        require(asset == iipToken.getAsset(), IporErrors.WRONG_ADDRESS);
+
+        _asset = asset;
+        _ipToken = iipToken;
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);

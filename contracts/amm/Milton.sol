@@ -55,17 +55,22 @@ abstract contract Milton is
         address stanley
     ) public initializer {
         __Ownable_init();
+
         require(address(asset) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(ipToken) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(warren) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
         require(address(miltonSpreadModel) != address(0), IporErrors.WRONG_ADDRESS);
+        require(address(stanley) != address(0), IporErrors.WRONG_ADDRESS);
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+
+        IIpToken iipToken = IIpToken(ipToken);
+        require(asset == iipToken.getAsset(), IporErrors.WRONG_ADDRESS);
 
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
         _warren = IWarren(warren);
-        _ipToken = IIpToken(ipToken);
+        _ipToken = iipToken;
         _asset = asset;
         _stanley = IStanley(stanley);
     }

@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "./types/IporTypes.sol";
 import "./types/CockpitTypes.sol";
 
-/// @title Contract resposnible for interaction Cockpit web application with IPOR Protocol
+/// @title Interface of Ipor Protocol for interaction with Cockpit web application
 interface ICockpitDataProvider {
     /// @notice gets list all IPOR Indexes for all supported assets
     /// @return List of all IPOR Indexes for all supported assets in IPOR Protocol
@@ -40,7 +40,8 @@ interface ICockpitDataProvider {
     /// @param account account address for which list of swaps is filtered
     /// @param offset offset for paging functionality purposes
     /// @param chunkSize page size for paging functionality purposes
-    /// @return totalCount and list of active swaps for a given filter
+    /// @return totalCount total amount of elements in Milton
+    /// @return swaps list of active swaps for a given filter
     function getSwapsPayFixed(
         address asset,
         address account,
@@ -53,7 +54,8 @@ interface ICockpitDataProvider {
     /// @param account account address for which list of swaps is filtered
     /// @param offset offset for paging functionality purposes
     /// @param chunkSize page size for paging functionality purposes
-    /// @return totalCount and list of active swaps for a given filter
+    /// @return totalCount total amount of elements in Milton
+    /// @return swaps list of active swaps for a given filter
     function getSwapsReceiveFixed(
         address asset,
         address account,
@@ -61,18 +63,35 @@ interface ICockpitDataProvider {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
 
+    /// @notice Gets list of active Pay Fixed Receive Floating Swaps in Milton of sender for a given asset
+    /// @param asset asset / stablecoin address
+    /// @param offset offset for paging functionality purposes
+    /// @param chunkSize page size for paging functionality purposes
+    /// @return totalCount total amount of elements in Milton
+    /// @return swaps list of active swaps for a given asset
     function getMySwapsPayFixed(
         address asset,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
 
+    /// @notice Gets list of active Receive Fixed Pay Floating Swaps in Milton of sender for a given asset
+    /// @param asset asset / stablecoin address
+    /// @param offset offset for paging functionality purposes
+    /// @param chunkSize page size for paging functionality purposes
+    /// @return totalCount total amount of elements in Milton
+    /// @return swaps list of active swaps for a given asset
     function getMySwapsReceiveFixed(
         address asset,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
 
+    /// @notice Calculates spread value for a given asset based on a current Milton balance,
+    /// SOAP, Utilization adn IPOR Index indicators.
+    /// @param asset asset / stablecoin address
+    /// @return spreadPayFixedValue Spread value for Pay Fixed leg for a given asset
+    /// @return spreadRecFixedValue Spread value for Receive Fixed leg for a given asset
     function calculateSpread(address asset)
         external
         view

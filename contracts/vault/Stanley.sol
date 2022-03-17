@@ -46,12 +46,16 @@ abstract contract Stanley is
         address strategyCompound
     ) public initializer {
         __Ownable_init();
+
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
+        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+
+        IIvToken iivToken = IIvToken(ivToken);
+        require(asset == iivToken.getAsset(), IporErrors.WRONG_ADDRESS);
 
         _asset = asset;
-        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
-        _ivToken = IIvToken(ivToken);
+        _ivToken = iivToken;
 
         _setAaveStrategy(strategyAave);
         _setCompoundStrategy(strategyCompound);
