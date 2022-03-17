@@ -58,7 +58,7 @@ abstract contract Joseph is
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
         IIpToken iipToken = IIpToken(ipToken);
-        require(asset == iipToken.getAsset(), IporErrors.WRONG_ADDRESS);
+        require(asset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
 
         _asset = asset;
         _ipToken = iipToken;
@@ -159,7 +159,6 @@ abstract contract Joseph is
         );
     }
 
-    //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
     function checkVaultReservesRatio() external view override returns (uint256) {
         return _checkVaultReservesRatio();
     }

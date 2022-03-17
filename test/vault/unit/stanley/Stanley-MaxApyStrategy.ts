@@ -22,16 +22,14 @@ describe("Stanley -> maxApyStrategy", () => {
         DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
 
         const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
-        const ivToken = await tokenFactoryIvToken.deploy(
-            "IvToken",
-            "IVT",
-            "0x6b175474e89094c44da98b954eedeac495271d0f"
-        );
+        const ivToken = await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address);
 
         const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
         aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
+
         await aaveStrategy.setShareToken(DAI.address);
         await aaveStrategy.setAsset(DAI.address);
+
         const CompoundStrategy = await hre.ethers.getContractFactory("MockStrategy");
         compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
         await compoundStrategy.setShareToken(DAI.address);
@@ -49,7 +47,6 @@ describe("Stanley -> maxApyStrategy", () => {
 
     it("Should select aave strategy", async () => {
         //  given
-
         await aaveStrategy.setApy(BigNumber.from("100000"));
         await compoundStrategy.setApy(BigNumber.from("99999"));
 

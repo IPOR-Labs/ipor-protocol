@@ -31,4 +31,5 @@ library IporErrors {
 
     string public constant CHUNK_SIZE_EQUAL_ZERO = "IPOR_009";
     string public constant CHUNK_SIZE_TOO_BIG = "IPOR_010";
+    string public constant ADDRESSES_MISMATCH = "IPOR_011";
 }

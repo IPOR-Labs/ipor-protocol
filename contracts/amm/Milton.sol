@@ -65,7 +65,7 @@ abstract contract Milton is
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
         IIpToken iipToken = IIpToken(ipToken);
-        require(asset == iipToken.getAsset(), IporErrors.WRONG_ADDRESS);
+        require(asset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
 
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);

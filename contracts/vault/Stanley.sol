@@ -52,7 +52,7 @@ abstract contract Stanley is
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
         IIvToken iivToken = IIvToken(ivToken);
-        require(asset == iivToken.getAsset(), IporErrors.WRONG_ADDRESS);
+        require(asset == iivToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
 
         _asset = asset;
         _ivToken = iivToken;

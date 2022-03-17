@@ -40,4 +40,5 @@ interface IIpToken is IERC20 {
     /// @param changedBy account address who changed Joseph address
     /// @param newJosephAddress new Joseph address
     event JosephChanged(address changedBy, address newJosephAddress);
+	
 }

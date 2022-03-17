@@ -40,4 +40,5 @@ interface IIvToken is IERC20 {
     /// @param changedBy account address who changed Stanley address
     /// @param newStanleyAddress new Stanley address
     event StanleyChanged(address changedBy, address newStanleyAddress);
+	
 }
