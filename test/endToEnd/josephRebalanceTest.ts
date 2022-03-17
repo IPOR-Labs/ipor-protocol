@@ -5,8 +5,6 @@ import {
     MiltonFaucet,
     AaveStrategy,
     CompoundStrategy,
-    StanleyDai,
-    StanleyUsdc,
     StanleyUsdt,
     MiltonUsdc,
     MiltonUsdt,
@@ -30,6 +28,21 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     }
     let admin: Signer;
 
+    let miltonDai: MiltonDai;
+    let miltonUsdc: MiltonUsdc;
+    let miltonUsdt: MiltonUsdt;
+
+    let josephDai: JosephDai;
+    let josephUsdc: JosephUsdc;
+    let josephUsdt: JosephUsdt;
+
+    let stanleyUsdt: StanleyUsdt;
+
+    let strategyAaveDai: AaveStrategy;
+    let strategyAaveUsdc: AaveStrategy;
+
+    let strategyCompoundUsdt: CompoundStrategy;
+
     let dai: ERC20;
     let usdc: ERC20;
     let usdt: ERC20;
@@ -41,21 +54,6 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     let ivTokenUsdt: IvToken;
 
     let miltonFaucet: MiltonFaucet;
-
-    let strategyAaveDai: AaveStrategy;
-    let strategyAaveUsdc: AaveStrategy;
-
-    let strategyCompoundUsdt: CompoundStrategy;
-
-    let stanleyUsdt: StanleyUsdt;
-
-    let miltonDai: MiltonDai;
-    let miltonUsdc: MiltonUsdc;
-    let miltonUsdt: MiltonUsdt;
-
-    let josephDai: JosephDai;
-    let josephUsdc: JosephUsdc;
-    let josephUsdt: JosephUsdt;
 
     before(async () => {
         [admin] = await hre.ethers.getSigners();
