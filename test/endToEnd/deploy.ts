@@ -22,26 +22,9 @@ import {
     JosephUsdc,
     JosephUsdt,
 } from "../../types";
-
-import {
-    aaveTokenFactory,
-    aaveUsdtStrategyFactory,
-    aaveUsdcStrategyFactory,
-    aaveDaiStrategyFactory,
-    aaveStrategySetup,
-} from "./aave";
-
-import {
-    compTokenFactory,
-    compoundDaiStrategyFactory,
-    compoundUsdcStrategyFactory,
-    compoundUsdtStrategyFactory,
-    compoundStrategySetup,
-} from "./compound";
 import {
     miltonFaucetFactory,
     miltonFaucetSetup,
-    transferFromFaucetTo,
     miltonStorageDaiFactory,
     miltonStorageUsdcFactory,
     miltonStorageUsdtFactory,
@@ -52,6 +35,9 @@ import {
     miltonUsdtFactory,
     miltonSetup,
 } from "./milton";
+import { josephDaiFactory, josephUsdcFactory, josephUsdtFactory } from "./joseph";
+import { warrenFactory, warrenSetup, initIporValues } from "./warren";
+import { stanleyDaiFactory, stanleyUsdcFactory, stanleyUsdtFactory, stanleySetup } from "./stanley";
 import {
     aDaiFactory,
     aUsdcFactory,
@@ -71,11 +57,20 @@ import {
     ivTokenDaiFactory,
     ivTokenSetup,
 } from "./tokens";
-import { josephDaiFactory, josephUsdcFactory, josephUsdtFactory } from "./joseph";
-
-import { warrenFactory, warrenSetup, initIporValues } from "./warren";
-import { stanleyDaiFactory, stanleyUsdcFactory, stanleyUsdtFactory, stanleySetup } from "./stanley";
-
+import {
+    aaveTokenFactory,
+    aaveUsdtStrategyFactory,
+    aaveUsdcStrategyFactory,
+    aaveDaiStrategyFactory,
+    aaveStrategySetup,
+} from "./aave";
+import {
+    compTokenFactory,
+    compoundDaiStrategyFactory,
+    compoundUsdcStrategyFactory,
+    compoundUsdtStrategyFactory,
+    compoundStrategySetup,
+} from "./compound";
 export type DeployType = {
     dai: ERC20;
     usdc: ERC20;
