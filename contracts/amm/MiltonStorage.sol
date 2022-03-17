@@ -400,7 +400,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         require(
             currentVaultBalance <= (vaultBalance - depositValue),
-            MiltonErrors.VAULT_BALANCE_TOO_LOW
+            MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
         );
         uint256 interest = currentVaultBalance != 0
             ? (vaultBalance - currentVaultBalance - depositValue)

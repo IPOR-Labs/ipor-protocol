@@ -231,7 +231,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("Redeem tokens from Joseph(usdt)", async () => {
         //given
         const ipTokenUsdtBalansBefore = await ipTokenUsdt.balanceOf(await admin.getAddress());
-        const toRedeem = BigNumber.from("10000000000");
+        const toRedeem = BigNumber.from("1000000");
         //when
         await josephUsdt.redeem(toRedeem);
         //then
@@ -246,7 +246,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         //given
         const compoundStrategyBalance = await strategyCompoundUsdt.balanceOf();
         //when
-        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_328");
+        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_333");
         //then
         const compoundStrategyAfter = await strategyCompoundUsdt.balanceOf();
         expect(
