@@ -29,7 +29,7 @@ describe("IporLogic", () => {
             quasiIbtPrice: initialQuasiIbtPrice,
             exponentialMovingAverage: BigInt("30000000000000000"),
             exponentialWeightedMovingVariance: BigInt("30000000000000000"),
-            blockTimestamp: initialTimestamp,
+            lastUpdateTimestamp: initialTimestamp,
         };
 
         const days25 = BigInt(60 * 60 * 24 * 25);
@@ -56,7 +56,7 @@ describe("IporLogic", () => {
             quasiIbtPrice: initialQuasiIbtPrice,
             exponentialMovingAverage: BigInt("30000000000000000"),
             exponentialWeightedMovingVariance: BigInt("30000000000000000"),
-            blockTimestamp: initialTimestamp,
+            lastUpdateTimestamp: initialTimestamp,
         };
 
         const days25 = BigInt(60 * 60 * 24 * 25);

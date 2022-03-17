@@ -149,30 +149,18 @@ abstract contract Milton is
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) external override nonReentrant whenNotPaused returns (uint256) {
-        return
-            _openSwapPayFixed(
-                block.timestamp,
-                totalAmount,
-                toleratedQuoteValue,
-                collateralizationFactor
-            );
+        return _openSwapPayFixed(block.timestamp, totalAmount, toleratedQuoteValue, leverage);
     }
 
     //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) external override nonReentrant whenNotPaused returns (uint256) {
-        return
-            _openSwapReceiveFixed(
-                block.timestamp,
-                totalAmount,
-                toleratedQuoteValue,
-                collateralizationFactor
-            );
+        return _openSwapReceiveFixed(block.timestamp, totalAmount, toleratedQuoteValue, leverage);
     }
 
     function closeSwapPayFixed(uint256 swapId) external override nonReentrant whenNotPaused {
@@ -346,7 +334,7 @@ abstract contract Milton is
     function _beforeOpenSwap(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) internal view returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(totalAmount != 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
 
@@ -357,24 +345,18 @@ abstract contract Milton is
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
 
-        require(
-            collateralizationFactor >= _getMinCollateralizationFactorValue(),
-            MiltonErrors.COLLATERALIZATION_FACTOR_TOO_LOW
-        );
-        require(
-            collateralizationFactor <= _getMaxCollateralizationFactorValue(),
-            MiltonErrors.COLLATERALIZATION_FACTOR_TOO_HIGH
-        );
+        require(leverage >= _getMinLeverageValue(), MiltonErrors.LEVERAGE_TOO_LOW);
+        require(leverage <= _getMaxLeverageValue(), MiltonErrors.LEVERAGE_TOO_HIGH);
 
         require(
             wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
-        (uint256 collateral, uint256 notional, uint256 openingFee) = IporSwapLogic
+        (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic
             .calculateSwapAmount(
                 wadTotalAmount,
-                collateralizationFactor,
+                leverage,
                 _getLiquidationDepositAmount(),
                 _getIporPublicationFeeAmount(),
                 _getOpeningFeePercentage()
@@ -387,7 +369,7 @@ abstract contract Milton is
 
         require(
             wadTotalAmount >
-                _getLiquidationDepositAmount() + _getIporPublicationFeeAmount() + openingFee,
+                _getLiquidationDepositAmount() + _getIporPublicationFeeAmount() + openingFeeAmount,
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -396,7 +378,7 @@ abstract contract Milton is
                 wadTotalAmount,
                 collateral,
                 notional,
-                openingFee,
+                openingFeeAmount,
                 _getLiquidationDepositAmount(),
                 _getIporPublicationFeeAmount(),
                 _warren.getAccruedIndex(openTimestamp, _asset)
@@ -408,16 +390,16 @@ abstract contract Milton is
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
-            collateralizationFactor
+            leverage
         );
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeAmount;
         balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
@@ -450,12 +432,12 @@ abstract contract Milton is
             bosStruct.liquidationDepositAmount,
             bosStruct.notional,
             indicator.fixedInterestRate,
-            indicator.ibtQuantity
+            indicator.ibtQuantity,
+            bosStruct.openingFeeAmount
         );
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
-            bosStruct.openingFee,
             _getLiquidationDepositAmount(),
             _getIporPublicationFeeAmount(),
             _getOpeningFeeForTreasuryPercentage()
@@ -469,7 +451,6 @@ abstract contract Milton is
             newSwap,
             indicator,
             0,
-            bosStruct.openingFee,
             bosStruct.iporPublicationFeeAmount
         );
 
@@ -481,17 +462,17 @@ abstract contract Milton is
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             openTimestamp,
             totalAmount,
-            collateralizationFactor
+            leverage
         );
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFee;
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeAmount;
         balance.receiveFixedSwaps = balance.receiveFixedSwaps + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
@@ -524,12 +505,12 @@ abstract contract Milton is
             bosStruct.liquidationDepositAmount,
             bosStruct.notional,
             indicator.fixedInterestRate,
-            indicator.ibtQuantity
+            indicator.ibtQuantity,
+            bosStruct.openingFeeAmount
         );
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
             newSwap,
-            bosStruct.openingFee,
             _getLiquidationDepositAmount(),
             _getIporPublicationFeeAmount(),
             _getOpeningFeeForTreasuryPercentage()
@@ -543,7 +524,6 @@ abstract contract Milton is
             newSwap,
             indicator,
             1,
-            bosStruct.openingFee,
             bosStruct.iporPublicationFeeAmount
         );
 
@@ -590,7 +570,6 @@ abstract contract Milton is
         AmmTypes.NewSwap memory newSwap,
         MiltonTypes.IporSwapIndicator memory indicator,
         uint256 direction,
-        uint256 openingAmount,
         uint256 iporPublicationAmount
     ) internal {
         emit OpenSwap(
@@ -602,12 +581,12 @@ abstract contract Milton is
                 wadTotalAmount,
                 newSwap.collateral,
                 newSwap.notionalAmount,
-                openingAmount,
+                newSwap.openingFeeAmount,
                 iporPublicationAmount,
                 newSwap.liquidationDepositAmount
             ),
-            newSwap.startingTimestamp,
-            newSwap.startingTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+            newSwap.openTimestamp,
+            newSwap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
             indicator
         );
     }
@@ -755,7 +734,7 @@ abstract contract Milton is
             if (msg.sender != derivativeItem.buyer) {
                 require(
                     _calculationTimestamp >=
-                        derivativeItem.endingTimestamp -
+                        derivativeItem.endTimestamp -
                             cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );

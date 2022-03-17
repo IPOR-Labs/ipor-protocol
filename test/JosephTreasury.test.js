@@ -85,7 +85,7 @@ describe("Joseph Treasury", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         await testData.josephDai.connect(admin).setPublicationFeeTransferer(userThree.address);
@@ -133,7 +133,7 @@ describe("Joseph Treasury", () => {
         ).to.be.eq(actualPublicationFeeBalanceMilton);
     });
 
-    it("should NOT transfer Treasure Treasury - caller not treasure transferer", async () => {
+    it("should NOT transfer Treasure - caller not treasure transferer", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -149,14 +149,14 @@ describe("Joseph Treasury", () => {
         );
     });
 
-    it("should NOT transfer Publication Fee to Charlie Treasury - Treasure Treasury address incorrect", async () => {
+    it("should NOT transfer Publication Fee to Charlie Treasury - Treasury Transferer address incorrect", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
 
-        await testData.josephDai.connect(admin).setTreasureTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasuryTransferer(userThree.address);
 
         //when
         await assertError(
@@ -167,7 +167,7 @@ describe("Joseph Treasury", () => {
         );
     });
 
-    it("should transfer Treasury to Treasure Treasurer - simple case 1", async () => {
+    it("should transfer Treasury to Treasury Treasurer - simple case 1", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase400(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -190,12 +190,12 @@ describe("Joseph Treasury", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
-        await testData.josephDai.connect(admin).setTreasureTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasuryTransferer(userThree.address);
 
-        await testData.josephDai.connect(admin).setTreasureTreasurer(userOne.address);
+        await testData.josephDai.connect(admin).setTreasuryTreasurer(userOne.address);
 
         const transferedValue = BigInt("100");
 
@@ -205,8 +205,8 @@ describe("Joseph Treasury", () => {
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceTreasureTreasurer = USER_SUPPLY_10MLN_18DEC + transferedValue;
-        let actualErc20BalanceTreasureTreasurer = BigInt(
+        let expectedErc20BalanceTreasuryTreasurer = USER_SUPPLY_10MLN_18DEC + transferedValue;
+        let actualErc20BalanceTreasuryTreasurer = BigInt(
             await testData.tokenDai.balanceOf(userOne.address)
         );
 
@@ -220,9 +220,9 @@ describe("Joseph Treasury", () => {
         const actualTreasuryBalanceMilton = BigInt(balance.treasury);
 
         expect(
-            expectedErc20BalanceTreasureTreasurer,
+            expectedErc20BalanceTreasuryTreasurer,
             `Incorrect ERC20 Treasury Treasurer balance`
-        ).to.be.eq(actualErc20BalanceTreasureTreasurer);
+        ).to.be.eq(actualErc20BalanceTreasuryTreasurer);
 
         expect(expectedErc20BalanceMilton, `Incorrect ERC20 Milton balance`).to.be.eq(
             actualErc20BalanceMilton

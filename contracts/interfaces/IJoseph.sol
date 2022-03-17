@@ -14,7 +14,7 @@ interface IJoseph {
 
     function withdrawFromStanley(uint256 assetValue) external;
 
-    //@notice Transfers asset value from Miltons's Treasure Balance to Treasure Treaserer account
+    //@notice Transfers asset value from Miltons's Treasury Balance to Treasury Treaserer account
     function transferTreasury(uint256 assetValue) external;
 
     //@notice Transfers asset value from Miltons's Ipor Publication Fee Balance to Charlie Treaserer account

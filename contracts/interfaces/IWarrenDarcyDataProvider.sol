@@ -12,7 +12,7 @@ interface IWarrenDarcyDataProvider {
         //@notice Interest Bearing Token Price
         uint256 ibtPrice;
         //@notice block timestamp
-        uint256 blockTimestamp;
+        uint256 lastUpdateTimestamp;
     }
 
     function getIndexes() external view returns (DarcyTypes.IporFront[] memory);

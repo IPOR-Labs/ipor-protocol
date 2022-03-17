@@ -87,7 +87,6 @@ interface IMiltonStorage {
 
     function updateStorageWhenOpenSwapPayFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
         uint256 cfgOpeningFeeForTreasuryPercentage
@@ -95,7 +94,6 @@ interface IMiltonStorage {
 
     function updateStorageWhenOpenSwapReceiveFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
         uint256 cfgOpeningFeeForTreasuryPercentage

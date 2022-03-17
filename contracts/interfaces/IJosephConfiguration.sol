@@ -6,25 +6,25 @@ interface IJosephConfiguration {
 
     event PublicationFeeTransfererUpdated(address indexed newPublicationFeeTransferer);
 
-    event TreasureTransfererUpdated(address indexed newTreasureTransferer);
+    event TreasuryTransfererUpdated(address indexed newTreasuryTransferer);
 
-    event TreasureTreasurerUpdated(address indexed asset, address indexed newTreasureTreasurer);
+    event TreasuryTreasurerUpdated(address indexed asset, address indexed newTreasuryTreasurer);
 
     function getCharlieTreasurer() external view returns (address);
 
     function setCharlieTreasurer(address newCharlieTreasurer) external;
 
-    function getTreasureTreasurer() external view returns (address);
+    function getTreasuryTreasurer() external view returns (address);
 
-    function setTreasureTreasurer(address newTreasureTreasurer) external;
+    function setTreasuryTreasurer(address newTreasuryTreasurer) external;
 
     function getPublicationFeeTransferer() external view returns (address);
 
     function setPublicationFeeTransferer(address newPublicationFeeTransferer) external;
 
-    function getTreasureTransferer() external view returns (address);
+    function getTreasuryTransferer() external view returns (address);
 
-    function setTreasureTransferer(address treasureTransferer) external;
+    function setTreasuryTransferer(address treasuryTransferer) external;
 
     function getRedeemFeePercentage() external pure returns (uint256);
 

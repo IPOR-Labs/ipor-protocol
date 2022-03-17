@@ -26,9 +26,9 @@ abstract contract JosephConfiguration is
     IStanley internal _stanley;
 
     address internal _charlieTreasurer;
-    address internal _treasureTreasurer;
+    address internal _treasuryTreasurer;
     address internal _publicationFeeTransferer;
-    address internal _treasureTransferer;
+    address internal _treasuryTransferer;
 
     function getCharlieTreasurer() external view override returns (address) {
         return _charlieTreasurer;
@@ -45,19 +45,19 @@ abstract contract JosephConfiguration is
         emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
     }
 
-    function getTreasureTreasurer() external view override returns (address) {
-        return _treasureTreasurer;
+    function getTreasuryTreasurer() external view override returns (address) {
+        return _treasuryTreasurer;
     }
 
-    function setTreasureTreasurer(address newTreasureTreasurer)
+    function setTreasuryTreasurer(address newTreasuryTreasurer)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
-        _treasureTreasurer = newTreasureTreasurer;
-        emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
+        require(newTreasuryTreasurer != address(0), IporErrors.WRONG_ADDRESS);
+        _treasuryTreasurer = newTreasuryTreasurer;
+        emit TreasuryTreasurerUpdated(_asset, newTreasuryTreasurer);
     }
 
     function getPublicationFeeTransferer() external view override returns (address) {
@@ -75,19 +75,19 @@ abstract contract JosephConfiguration is
         emit PublicationFeeTransfererUpdated(publicationFeeTransferer);
     }
 
-    function getTreasureTransferer() external view override returns (address) {
-        return _treasureTransferer;
+    function getTreasuryTransferer() external view override returns (address) {
+        return _treasuryTransferer;
     }
 
-    function setTreasureTransferer(address treasureTransferer)
+    function setTreasuryTransferer(address treasuryTransferer)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        require(address(0) != treasureTransferer, IporErrors.WRONG_ADDRESS);
-        _treasureTransferer = treasureTransferer;
-        emit TreasureTransfererUpdated(treasureTransferer);
+        require(address(0) != treasuryTransferer, IporErrors.WRONG_ADDRESS);
+        _treasuryTransferer = treasuryTransferer;
+        emit TreasuryTransfererUpdated(treasuryTransferer);
     }
 
     function getRedeemFeePercentage() external pure override returns (uint256) {

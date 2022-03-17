@@ -750,7 +750,8 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
         const expectedSpreadReceiveFixed = BigInt("360000000000000");
@@ -781,7 +782,8 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             ["USDT"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);
@@ -813,7 +815,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 params.openTimestamp,
                 BigInt("1000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const calculateTimestamp = Math.floor(Date.now() / 1000);
@@ -835,7 +837,8 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             ["DAI"],
             data,
             0,
-            0,0
+            0,
+            0
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
         const expectedSpreadReceiveFixed = BigInt("360000000000000");
@@ -866,7 +869,8 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
             ["USDT"],
             data,
             0,
-            0,0
+            0,
+            0
         );
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, testData);
@@ -898,7 +902,7 @@ describe("MiltonSpreadModel - Rec Fixed", () => {
                 params.openTimestamp,
                 BigInt("1000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const calculateTimestamp = Math.floor(Date.now() / 1000);

@@ -108,7 +108,7 @@ describe("Joseph Maintenance", () => {
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai.connect(admin).setTreasureTreasurer(userTwo.address),
+            testData.josephDai.connect(admin).setTreasuryTreasurer(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
@@ -116,7 +116,7 @@ describe("Joseph Maintenance", () => {
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai.connect(admin).setTreasureTransferer(userTwo.address),
+            testData.josephDai.connect(admin).setTreasuryTransferer(userTwo.address),
             "Pausable: paused"
         );
     });
@@ -141,9 +141,9 @@ describe("Joseph Maintenance", () => {
         await testData.josephDai.connect(userOne).getVersion();
         await testData.josephDai.connect(userOne).checkVaultReservesRatio();
         await testData.josephDai.connect(userOne).getCharlieTreasurer();
-        await testData.josephDai.connect(userOne).getTreasureTreasurer();
+        await testData.josephDai.connect(userOne).getTreasuryTreasurer();
         await testData.josephDai.connect(userOne).getPublicationFeeTransferer();
-        await testData.josephDai.connect(userOne).getTreasureTransferer();
+        await testData.josephDai.connect(userOne).getTreasuryTransferer();
         await testData.josephDai.connect(userOne).getRedeemLpMaxUtilizationPercentage();
         await testData.josephDai.connect(userOne).getMiltonStanleyBalancePercentage();
         await testData.josephDai.connect(userOne).asset();

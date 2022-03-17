@@ -52,23 +52,11 @@ abstract contract MockCase0Milton is ItfMilton {
         return 20 * 1e18;
     }
 
-    function _getMaxCollateralizationFactorValue()
-        internal
-        pure
-        virtual
-        override
-        returns (uint256)
-    {
+    function _getMaxLeverageValue() internal pure virtual override returns (uint256) {
         return 1000 * 1e18;
     }
 
-    function _getMinCollateralizationFactorValue()
-        internal
-        pure
-        virtual
-        override
-        returns (uint256)
-    {
+    function _getMinLeverageValue() internal pure virtual override returns (uint256) {
         return 10 * 1e18;
     }
 }

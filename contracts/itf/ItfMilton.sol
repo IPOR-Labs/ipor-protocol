@@ -8,30 +8,18 @@ abstract contract ItfMilton is Milton {
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) external returns (uint256) {
-        return
-            _openSwapPayFixed(
-                openTimestamp,
-                totalAmount,
-                toleratedQuoteValue,
-                collateralizationFactor
-            );
+        return _openSwapPayFixed(openTimestamp, totalAmount, toleratedQuoteValue, leverage);
     }
 
     function itfOpenSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) external returns (uint256) {
-        return
-            _openSwapReceiveFixed(
-                openTimestamp,
-                totalAmount,
-                toleratedQuoteValue,
-                collateralizationFactor
-            );
+        return _openSwapReceiveFixed(openTimestamp, totalAmount, toleratedQuoteValue, leverage);
     }
 
     function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {

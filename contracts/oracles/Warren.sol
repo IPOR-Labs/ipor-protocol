@@ -52,7 +52,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
             uint256 ibtPrice,
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance,
-            uint256 blockTimestamp
+            uint256 lastUpdateTimestamp
         )
     {
         WarrenTypes.IPOR memory ipor = _indexes[asset];
@@ -65,7 +65,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
             ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
             exponentialMovingAverage = ipor.exponentialMovingAverage,
             exponentialWeightedMovingVariance = ipor.exponentialWeightedMovingVariance,
-            blockTimestamp = ipor.blockTimestamp
+            lastUpdateTimestamp = ipor.lastUpdateTimestamp
         );
     }
 

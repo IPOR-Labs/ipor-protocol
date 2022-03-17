@@ -8,8 +8,8 @@ export default (configurations) =>
                 <thead>
                     <tr>
                         <th scope="col">Asset</th>
-                        <th scope="col">Min Collateralization Factor Value</th>
-                        <th scope="col">Max Collateralization Factor Value</th>
+                        <th scope="col">Min Leverage Value</th>
+                        <th scope="col">Max Leverage Value</th>
                         <th scope="col">Opening Fee Percentage</th>
                         <th scope="col">IPOR Publication Fee Amount</th>
                         <th scope="col">Liquidation Deposit Amount</th>
@@ -22,16 +22,14 @@ export default (configurations) =>
                             <tr key={configuration.asset}>
                                 <td>{configuration.asset}</td>
                                 <td>
-                                    {configuration.minCollateralizationFactorValue /
-                                        1000000000000000000}
+                                    {configuration.minLeverageValue / 1000000000000000000}
                                     <br />
-                                    <small>{configuration.minCollateralizationFactorValue}</small>
+                                    <small>{configuration.minLeverageValue}</small>
                                 </td>
                                 <td>
-                                    {configuration.maxCollateralizationFactorValue /
-                                        1000000000000000000}
+                                    {configuration.maxLeverageValue / 1000000000000000000}
                                     <br />
-                                    <small>{configuration.maxCollateralizationFactorValue}</small>
+                                    <small>{configuration.maxLeverageValue}</small>
                                 </td>
                                 <td>
                                     {configuration.openingFeePercentage / 1000000000000000000}

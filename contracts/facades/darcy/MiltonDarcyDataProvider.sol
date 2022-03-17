@@ -121,8 +121,8 @@ contract MiltonDarcyDataProvider is
                 direction,
                 iporSwap.fixedInterestRate,
                 value,
-                iporSwap.startingTimestamp,
-                iporSwap.endingTimestamp,
+                iporSwap.openTimestamp,
+                iporSwap.endTimestamp,
                 iporSwap.liquidationDepositAmount
             );
     }
@@ -178,8 +178,8 @@ contract MiltonDarcyDataProvider is
 
         iporAssetConfigurationFront = IporAssetConfigurationFront(
             asset,
-            milton.getMinCollateralizationFactorValue(),
-            milton.getMaxCollateralizationFactorValue(),
+            milton.getMinLeverageValue(),
+            milton.getMaxLeverageValue(),
             milton.getOpeningFeePercentage(),
             milton.getIporPublicationFeeAmount(),
             milton.getLiquidationDepositAmount(),

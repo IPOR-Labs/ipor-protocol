@@ -830,7 +830,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
@@ -894,7 +894,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
@@ -960,7 +960,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const balance = await testData.miltonDai.getAccruedBalance();
@@ -1018,7 +1018,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const balance = await testData.miltonDai.getAccruedBalance();
@@ -1074,7 +1074,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const balance = await testData.miltonDai.getAccruedBalance();
@@ -1133,7 +1133,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("40000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const balance = await testData.miltonDai.getAccruedBalance();
@@ -1193,7 +1193,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("48000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //first small redeem
@@ -1209,7 +1209,7 @@ describe("Joseph - redeem", () => {
                     params.openTimestamp,
                     BigInt("50000000000000000000"),
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             "IPOR_302"
         );
@@ -1261,7 +1261,7 @@ describe("Joseph - redeem", () => {
                 params.openTimestamp,
                 BigInt("48000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //first small redeem
@@ -1277,7 +1277,7 @@ describe("Joseph - redeem", () => {
                     params.openTimestamp,
                     BigInt("50000000000000000000"),
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             "IPOR_302"
         );

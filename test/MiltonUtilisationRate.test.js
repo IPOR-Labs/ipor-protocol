@@ -6,7 +6,7 @@ const keccak256 = require("keccak256");
 const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_6_18DEC,
@@ -100,7 +100,7 @@ describe("Milton - Utilization Rate", () => {
     //             params.asset,
     //             params.totalAmount,
     //             params.toleratedQuoteValue,
-    //             params.collateralizationFactor,
+    //             params.leverage,
     //             params.direction
     //         ),
     //         //then
@@ -115,7 +115,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -145,7 +146,7 @@ describe("Milton - Utilization Rate", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
     });
 
@@ -156,7 +157,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -186,7 +188,7 @@ describe("Milton - Utilization Rate", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
     });
 
@@ -197,7 +199,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -227,7 +230,7 @@ describe("Milton - Utilization Rate", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
     });
 
@@ -238,7 +241,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -268,7 +272,7 @@ describe("Milton - Utilization Rate", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
     });
 
@@ -279,7 +283,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -310,7 +315,7 @@ describe("Milton - Utilization Rate", () => {
                     params.openTimestamp,
                     USD_14_000_18DEC,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             //then
             "IPOR_302"
@@ -324,7 +329,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -355,7 +361,7 @@ describe("Milton - Utilization Rate", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             //then
             "IPOR_302"
@@ -369,7 +375,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -400,7 +407,7 @@ describe("Milton - Utilization Rate", () => {
                     params.openTimestamp,
                     USD_14_000_18DEC,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             //then
             "IPOR_302"
@@ -414,7 +421,8 @@ describe("Milton - Utilization Rate", () => {
             ["DAI"],
             data,
             6,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -445,7 +453,7 @@ describe("Milton - Utilization Rate", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             //then
             "IPOR_302"

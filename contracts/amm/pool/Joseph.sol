@@ -36,8 +36,8 @@ abstract contract Joseph is
         _;
     }
 
-    modifier onlyTreasureTransferer() {
-        require(msg.sender == _treasureTransferer, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
+    modifier onlyTreasuryTransferer() {
+        require(msg.sender == _treasuryTransferer, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
         _;
     }
 
@@ -116,9 +116,9 @@ abstract contract Joseph is
         override
         nonReentrant
         whenNotPaused
-        onlyTreasureTransferer
+        onlyTreasuryTransferer
     {
-        require(address(0) != _treasureTreasurer, JosephErrors.INCORRECT_TREASURE_TREASURER);
+        require(address(0) != _treasuryTreasurer, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
 
@@ -129,7 +129,7 @@ abstract contract Joseph is
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
-            _treasureTreasurer,
+            _treasuryTreasurer,
             assetValueAssetDecimals
         );
     }

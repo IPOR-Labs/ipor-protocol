@@ -6,8 +6,8 @@ const keccak256 = require("keccak256");
 const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
-    COLLATERALIZATION_FACTOR_6DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_6DEC,
+    LEVERAGE_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
@@ -91,7 +91,7 @@ describe("MiltonDarcyDataProvider", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -100,7 +100,7 @@ describe("MiltonDarcyDataProvider", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -109,7 +109,7 @@ describe("MiltonDarcyDataProvider", () => {
             asset: testData.tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -225,7 +225,7 @@ describe("MiltonDarcyDataProvider", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -236,7 +236,7 @@ describe("MiltonDarcyDataProvider", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -247,7 +247,7 @@ describe("MiltonDarcyDataProvider", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };
@@ -260,7 +260,7 @@ describe("MiltonDarcyDataProvider", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -271,7 +271,7 @@ describe("MiltonDarcyDataProvider", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -282,7 +282,7 @@ describe("MiltonDarcyDataProvider", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };
@@ -294,8 +294,8 @@ describe("MiltonDarcyDataProvider", () => {
         return {
             state: 0,
             buyer: userTwo.address,
-            startingTimestamp: openingTimestamp,
-            endingTimestamp: closeSwapTimestamp,
+            openTimestamp: openingTimestamp,
+            endTimestamp: closeSwapTimestamp,
             id: 1,
             collateral: BigInt("1000000000000000000000"),
             liquidationDepositAmount: BigInt("20000000000000000000"),
@@ -337,7 +337,7 @@ describe("MiltonDarcyDataProvider", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_100_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };

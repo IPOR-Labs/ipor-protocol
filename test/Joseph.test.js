@@ -341,7 +341,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("40000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //when
@@ -381,7 +381,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("26000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
@@ -430,7 +430,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         await testData.warren
@@ -484,7 +484,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         await testData.warren
@@ -538,7 +538,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         await testData.warren
@@ -590,7 +590,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
@@ -652,7 +652,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken
@@ -713,7 +713,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
@@ -776,7 +776,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("27000000000000000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //BEGIN HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
@@ -855,7 +855,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 BigInt("40000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //when
@@ -961,7 +961,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 amount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const expectedExchangeRate = BigInt("1312500000000000000");
@@ -1042,7 +1042,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 amount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const expectedExchangeRateBeforeRedeem = BigInt("1312500000000000000");
@@ -1127,7 +1127,7 @@ describe("Joseph", () => {
                 params.openTimestamp,
                 amount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const expectedExchangeRateBeforeRedeem = BigInt("1312500000000000000");

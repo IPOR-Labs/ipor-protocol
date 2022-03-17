@@ -6,7 +6,7 @@ const keccak256 = require("keccak256");
 const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_6_18DEC,
@@ -125,16 +125,16 @@ describe("MiltonConfiguration", () => {
         //then
         expect(actualValue).to.be.eq(BigInt("20000000000000000000"));
     });
-    it("should setup init value for Max Collateralization Factory Value", async () => {
+    it("should setup init value for Max Leveragey Value", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMaxCollateralizationFactorValue();
+        let actualValue = await miltonConfiguration.getMaxLeverageValue();
         //then
         expect(actualValue).to.be.eq(BigInt("1000000000000000000000"));
     });
 
-    it("should setup init value for Min Collateralization Factory Value", async () => {
+    it("should setup init value for Min Leveragey Value", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMinCollateralizationFactorValue();
+        let actualValue = await miltonConfiguration.getMinLeverageValue();
         //then
         expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
     });

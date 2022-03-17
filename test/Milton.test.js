@@ -33,7 +33,7 @@ const {
     USD_28_000_6DEC,
     USD_10_000_000_6DEC,
     USD_10_000_000_18DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     TC_COLLATERAL_18DEC,
     TC_OPENING_FEE_6DEC,
@@ -64,7 +64,7 @@ const {
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
 } = require("./Utils");
-const {PERIOD_27_DAYS_17_HOURS_IN_SECONDS} = require("./Const");
+const { PERIOD_27_DAYS_17_HOURS_IN_SECONDS } = require("./Const");
 
 describe("Milton", () => {
     let data = null;
@@ -83,7 +83,7 @@ describe("Milton", () => {
         );
         const totalAmount = 0;
         const toleratedQuoteValue = 3;
-        const collateralizationFactor = USD_10_18DEC;
+        const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
             //when
@@ -91,7 +91,7 @@ describe("Milton", () => {
                 timestamp,
                 totalAmount,
                 toleratedQuoteValue,
-                collateralizationFactor
+                leverage
             ),
             //then
             "IPOR_307"
@@ -107,7 +107,7 @@ describe("Milton", () => {
 
         const totalAmount = BigInt("30000000000000000001");
         const toleratedQuoteValue = BigInt("39999999999999999");
-        const collateralizationFactor = USD_10_18DEC;
+        const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
         await testData.warren
@@ -124,7 +124,7 @@ describe("Milton", () => {
                 timestamp,
                 totalAmount,
                 toleratedQuoteValue,
-                collateralizationFactor
+                leverage
             ),
             //then
             "IPOR_311"
@@ -140,7 +140,7 @@ describe("Milton", () => {
 
         const totalAmount = BigInt("30000000000000000001");
         const toleratedQuoteValue = BigInt("19999999999999999");
-        const collateralizationFactor = USD_10_18DEC;
+        const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
         await testData.warren
@@ -157,7 +157,7 @@ describe("Milton", () => {
                 timestamp,
                 totalAmount,
                 toleratedQuoteValue,
-                collateralizationFactor
+                leverage
             ),
             //then
             "IPOR_311"
@@ -188,7 +188,7 @@ describe("Milton", () => {
 
         const totalAmount = BigInt("30000001");
         const toleratedQuoteValue = BigInt("39999999999999999");
-        const collateralizationFactor = USD_10_18DEC;
+        const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
         await testData.warren
@@ -205,7 +205,7 @@ describe("Milton", () => {
                 timestamp,
                 totalAmount,
                 toleratedQuoteValue,
-                collateralizationFactor
+                leverage
             ),
             //then
             "IPOR_311"
@@ -236,7 +236,7 @@ describe("Milton", () => {
 
         const totalAmount = BigInt("30000001");
         const toleratedQuoteValue = BigInt("19999999999999999");
-        const collateralizationFactor = USD_10_18DEC;
+        const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
         await testData.warren
@@ -253,7 +253,7 @@ describe("Milton", () => {
                 timestamp,
                 totalAmount,
                 toleratedQuoteValue,
-                collateralizationFactor
+                leverage
             ),
             //then
             "IPOR_311"
@@ -269,7 +269,7 @@ describe("Milton", () => {
 
         const totalAmount = BigInt("1000000000000000000000001");
         const toleratedQuoteValue = 3;
-        const collateralizationFactor = BigInt(10000000000000000000);
+        const leverage = BigInt(10000000000000000000);
         const timestamp = Math.floor(Date.now() / 1000);
 
         await assertError(
@@ -278,7 +278,7 @@ describe("Milton", () => {
                 timestamp,
                 totalAmount,
                 toleratedQuoteValue,
-                collateralizationFactor
+                leverage
             ),
             //then
             "IPOR_309"
@@ -294,7 +294,7 @@ describe("Milton", () => {
 
         const totalAmount = BigInt("100688870576704582165765");
         const toleratedQuoteValue = 3;
-        const collateralizationFactor = BigInt(10000000000000000000);
+        const leverage = BigInt(10000000000000000000);
         const timestamp = Math.floor(Date.now() / 1000);
 
         await assertError(
@@ -303,7 +303,7 @@ describe("Milton", () => {
                 timestamp,
                 totalAmount,
                 toleratedQuoteValue,
-                collateralizationFactor
+                leverage
             ),
             //then
             "IPOR_309"
@@ -344,7 +344,7 @@ describe("Milton", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //then
@@ -431,7 +431,7 @@ describe("Milton", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //then
@@ -619,7 +619,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: BigInt("10000000000000000000000"), //10 000 USD
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -1175,7 +1175,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -1214,7 +1214,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -1427,7 +1427,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: PERCENTAGE_121_18DEC,
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -1981,7 +1981,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("11900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -2021,7 +2021,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("11900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -2131,7 +2131,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -2352,7 +2352,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2394,7 +2394,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2417,7 +2417,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -2451,7 +2451,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2474,7 +2474,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -2527,7 +2527,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2550,7 +2550,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -2599,7 +2599,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2622,7 +2622,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -2664,7 +2664,7 @@ describe("Milton", () => {
 
         let expectedIncomeFeeValue = BigInt("636796358352768143662");
         let expectedPositionValue = BigInt("6367963583527681436620");
-        let collateralizationFactor = USD_10_18DEC;
+        let leverage = USD_10_18DEC;
         let openerUser = userTwo;
         let closerUser = userTwo;
         let iporValueBeforeOpenSwap = PERCENTAGE_5_18DEC;
@@ -2724,7 +2724,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: collateralizationFactor,
+            leverage: leverage,
             openTimestamp: localOpenTimestamp,
             from: openerUser,
         };
@@ -2807,7 +2807,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -2864,7 +2864,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userTwo,
         };
@@ -2930,7 +2930,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userTwo,
         };
@@ -2999,7 +2999,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userTwo,
         };
@@ -3070,7 +3070,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userThree,
         };
@@ -3135,7 +3135,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userThree,
         };
@@ -3201,7 +3201,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: USD_10_18DEC,
+            leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userThree,
         };
@@ -3695,7 +3695,7 @@ describe("Milton", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //then
@@ -3765,7 +3765,7 @@ describe("Milton", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //then
@@ -3792,7 +3792,7 @@ describe("Milton", () => {
         ).to.be.eq(actualTreasuryTotalBalanceWad);
     });
 
-    it("should NOT open pay fixed position, DAI, collateralization factor too low", async () => {
+    it("should NOT open pay fixed position, DAI, leverage too low", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -3803,7 +3803,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: BigInt(500),
+            leverage: BigInt(500),
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -3820,14 +3820,14 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             //then
             "IPOR_305"
         );
     });
 
-    it("should NOT open pay fixed position, DAI, collateralization factor too high", async () => {
+    it("should NOT open pay fixed position, DAI, leverage too high", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -3838,7 +3838,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: BigInt("1000000000000000000001"),
+            leverage: BigInt("1000000000000000000001"),
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -3855,14 +3855,14 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             //then
             "IPOR_306"
         );
     });
 
-    it("should open pay fixed position, DAI, custom collateralization factor - simple case 1", async () => {
+    it("should open pay fixed position, DAI, custom leverage - simple case 1", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -3873,7 +3873,7 @@ describe("Milton", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: BigInt("15125000000000000000"),
+            leverage: BigInt("15125000000000000000"),
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -3892,7 +3892,7 @@ describe("Milton", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         //then
@@ -5038,7 +5038,7 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
         if (testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
@@ -5048,7 +5048,7 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
         if (testData.tokenDai && params.asset === testData.tokenDai.address) {
@@ -5058,7 +5058,7 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };
@@ -5070,7 +5070,7 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -5081,7 +5081,7 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -5092,7 +5092,7 @@ describe("Milton", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };
@@ -5153,7 +5153,7 @@ describe("Milton", () => {
     const testCaseWhenMiltonEarnAndUserLost = async function (
         testData,
         asset,
-        collateralizationFactor,
+        leverage,
         direction,
         openerUser,
         closerUser,
@@ -5253,7 +5253,7 @@ describe("Milton", () => {
         await exetuceCloseSwapTestCase(
             testData,
             asset,
-            collateralizationFactor,
+            leverage,
             direction,
             openerUser,
             closerUser,
@@ -5280,7 +5280,7 @@ describe("Milton", () => {
     const testCaseWhenMiltonLostAndUserEarn = async function (
         testData,
         asset,
-        collateralizationFactor,
+        leverage,
         direction,
         openerUser,
         closerUser,
@@ -5383,7 +5383,7 @@ describe("Milton", () => {
         await exetuceCloseSwapTestCase(
             testData,
             asset,
-            collateralizationFactor,
+            leverage,
             direction,
             openerUser,
             closerUser,
@@ -5410,7 +5410,7 @@ describe("Milton", () => {
     const testCaseWhenUserClosesPositions = async function (
         testData,
         asset,
-        collateralizationFactor,
+        leverage,
         direction,
         openerUser,
         closerUser,
@@ -5426,7 +5426,7 @@ describe("Milton", () => {
         await executeCloseSwapsTestCase(
             testData,
             asset,
-            collateralizationFactor,
+            leverage,
             direction,
             openerUser,
             closerUser,
@@ -5444,7 +5444,7 @@ describe("Milton", () => {
     const exetuceCloseSwapTestCase = async function (
         testData,
         asset,
-        collateralizationFactor,
+        leverage,
         direction,
         openerUser,
         closerUser,
@@ -5488,7 +5488,7 @@ describe("Milton", () => {
             asset: asset,
             totalAmount: totalAmount,
             toleratedQuoteValue: toleratedQuoteValue,
-            collateralizationFactor: collateralizationFactor,
+            leverage: leverage,
             direction: direction,
             openTimestamp: localOpenTimestamp,
             from: openerUser,
@@ -5626,7 +5626,7 @@ describe("Milton", () => {
     const executeCloseSwapsTestCase = async function (
         testData,
         asset,
-        collateralizationFactor,
+        leverage,
         direction,
         openerUser,
         closerUser,
@@ -5661,7 +5661,7 @@ describe("Milton", () => {
             asset: asset,
             totalAmount: totalAmount,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: collateralizationFactor,
+            leverage: leverage,
             direction: direction,
             openTimestamp: localOpenTimestamp,
             from: openerUser,

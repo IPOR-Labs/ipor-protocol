@@ -42,7 +42,7 @@ export default (indexes) =>
                             <br />
                             <small>{index.exponentialWeightedMovingVariance}</small>
                         </td>
-                        <td>{toDate(index.blockTimestamp)}</td>
+                        <td>{toDate(index.lastUpdateTimestamp)}</td>
                     </tr>
                 ))}
             </tbody>

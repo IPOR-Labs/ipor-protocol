@@ -13,7 +13,7 @@ library IporSwapLogic {
 
     function calculateSwapAmount(
         uint256 totalAmount,
-        uint256 collateralizationFactor,
+        uint256 leverage,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
         uint256 openingFeePercentage
@@ -30,7 +30,7 @@ library IporSwapLogic {
             (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * Constants.D18,
             Constants.D18 + openingFeePercentage
         );
-        notional = IporMath.division(collateralizationFactor * collateral, Constants.D18);
+        notional = IporMath.division(leverage * collateral, Constants.D18);
         openingFee = IporMath.division(collateral * openingFeePercentage, Constants.D18);
     }
 
@@ -81,17 +81,17 @@ library IporSwapLogic {
     ) internal pure returns (uint256 quasiIFixed, uint256 quasiIFloating) {
         //iFixed = fixed interest rate * notional amount * T / Ty
         require(
-            closingTimestamp >= swap.startingTimestamp,
+            closingTimestamp >= swap.openTimestamp,
             MiltonErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
 
         uint256 calculatedPeriodInSeconds = 0;
 
         //calculated period cannot be longer than whole swap period
-        if (closingTimestamp > swap.endingTimestamp) {
-            calculatedPeriodInSeconds = swap.endingTimestamp - swap.startingTimestamp;
+        if (closingTimestamp > swap.endTimestamp) {
+            calculatedPeriodInSeconds = swap.endTimestamp - swap.openTimestamp;
         } else {
-            calculatedPeriodInSeconds = closingTimestamp - swap.startingTimestamp;
+            calculatedPeriodInSeconds = closingTimestamp - swap.openTimestamp;
         }
 
         quasiIFixed = calculateQuasiInterestFixed(

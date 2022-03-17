@@ -17,10 +17,10 @@ library MiltonErrors {
     //@notice Swap has incorrect status
     string public constant INCORRECT_SWAP_STATUS = "IPOR_304";
 
-    //@notice Deposit amount to notional amount collateralization factor is too low
-    string public constant COLLATERALIZATION_FACTOR_TOO_LOW = "IPOR_305";
+    //@notice Deposit amount to notional amount leverage is too low
+    string public constant LEVERAGE_TOO_LOW = "IPOR_305";
 
-    string public constant COLLATERALIZATION_FACTOR_TOO_HIGH = "IPOR_306";
+    string public constant LEVERAGE_TOO_HIGH = "IPOR_306";
 
     //@notice Total Amount when opening swap is too low
     string public constant TOTAL_AMOUNT_TOO_LOW = "IPOR_307";

@@ -101,8 +101,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             IporTypes.IporSwapMemory(
                 uint256(swap.state),
                 swap.buyer,
-                swap.startingTimestamp,
-                swap.startingTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                swap.openTimestamp,
+                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
                 swap.id,
                 swap.idsIndex,
                 swap.collateral,
@@ -125,8 +125,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             IporTypes.IporSwapMemory(
                 uint256(swap.state),
                 swap.buyer,
-                swap.startingTimestamp,
-                swap.startingTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                swap.openTimestamp,
+                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
                 swap.id,
                 swap.idsIndex,
                 swap.collateral,
@@ -291,7 +291,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function updateStorageWhenOpenSwapPayFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
         uint256 cfgOpeningFeeForTreasuryPercentage
@@ -299,7 +298,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
-            openingAmount,
+            newSwap.openingFeeAmount,
             cfgLiquidationDepositAmount,
             cfgIporPublicationFeeAmount,
             cfgOpeningFeeForTreasuryPercentage
@@ -310,7 +309,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function updateStorageWhenOpenSwapReceiveFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 openingAmount,
         uint256 cfgLiquidationDepositAmount,
         uint256 cfgIporPublicationFeeAmount,
         uint256 cfgOpeningFeeForTreasuryPercentage
@@ -318,7 +316,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
-            openingAmount,
+            newSwap.openingFeeAmount,
             cfgLiquidationDepositAmount,
             cfgIporPublicationFeeAmount,
             cfgOpeningFeeForTreasuryPercentage
@@ -474,8 +472,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             derivatives[i] = IporTypes.IporSwapMemory(
                 uint256(swaps[id].state),
                 swap.buyer,
-                swap.startingTimestamp,
-                swap.startingTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+                swap.openTimestamp,
+                swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
                 swap.id,
                 swap.idsIndex,
                 swap.collateral,
@@ -683,7 +681,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             if (account != swap.buyer) {
                 require(
                     closingTimestamp >=
-                        swap.endingTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
+                        swap.endTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
@@ -725,7 +723,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         swap.state = AmmTypes.SwapState.ACTIVE;
         swap.buyer = newSwap.buyer;
-        swap.startingTimestamp = newSwap.startingTimestamp.toUint32();
+        swap.openTimestamp = newSwap.openTimestamp.toUint32();
 
         swap.id = id;
         swap.collateral = newSwap.collateral.toUint128();
@@ -752,7 +750,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         swap.state = AmmTypes.SwapState.ACTIVE;
         swap.buyer = newSwap.buyer;
-        swap.startingTimestamp = newSwap.startingTimestamp.toUint32();
+        swap.openTimestamp = newSwap.openTimestamp.toUint32();
 
         swap.id = id;
         swap.collateral = newSwap.collateral.toUint128();
@@ -823,7 +821,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
             );
         pf.rebalanceWhenOpenSwap(
-            newSwap.startingTimestamp,
+            newSwap.openTimestamp,
             newSwap.notionalAmount,
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
@@ -848,7 +846,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
         rf.rebalanceWhenOpenSwap(
-            newSwap.startingTimestamp,
+            newSwap.openTimestamp,
             newSwap.notionalAmount,
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
@@ -877,7 +875,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         pf.rebalanceWhenCloseSwap(
             closingTimestamp,
-            swap.startingTimestamp,
+            swap.openTimestamp,
             swap.notionalAmount,
             swap.fixedInterestRate,
             swap.ibtQuantity
@@ -907,7 +905,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         rf.rebalanceWhenCloseSwap(
             closingTimestamp,
-            swap.startingTimestamp,
+            swap.openTimestamp,
             swap.notionalAmount,
             swap.fixedInterestRate,
             swap.ibtQuantity
