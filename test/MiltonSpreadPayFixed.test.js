@@ -888,7 +888,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     receiveFixedSwapsBalance
                 ),
             //then
-            "IPOR_321"
+            "IPOR_322"
         );
     });
 

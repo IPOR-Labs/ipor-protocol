@@ -1211,7 +1211,7 @@ describe("Joseph - redeem", () => {
                     params.toleratedQuoteValue,
                     params.leverage
                 ),
-            "IPOR_302"
+            "IPOR_303"
         );
 
         //when
@@ -1279,7 +1279,7 @@ describe("Joseph - redeem", () => {
                     params.toleratedQuoteValue,
                     params.leverage
                 ),
-            "IPOR_302"
+            "IPOR_303"
         );
 
         //when

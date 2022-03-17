@@ -151,7 +151,7 @@ describe("IpToken", () => {
                 .connect(userTwo)
                 .mint(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_325"
+            "IPOR_326"
         );
     });
 
@@ -163,7 +163,7 @@ describe("IpToken", () => {
                 .connect(userTwo)
                 .burn(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_325"
+            "IPOR_326"
         );
     });
 

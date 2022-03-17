@@ -97,7 +97,6 @@ abstract contract Joseph is
                 _MILTON_STANLEY_BALANCE_PERCENTAGE * totalBalance,
                 Constants.D18
             ) - wadMiltonAssetBalance;
-
             _milton.withdrawFromStanley(assetValue);
         }
     }
