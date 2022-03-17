@@ -42,7 +42,8 @@ describe("AssetManagementIntegration", () => {
             ["DAI"],
             data,
             0,
-            1, 0
+            1,
+            0
         );
 
         await testData.tokenDai
@@ -121,7 +122,8 @@ describe("AssetManagementIntegration", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await testData.tokenDai
@@ -202,7 +204,8 @@ describe("AssetManagementIntegration", () => {
             ["DAI"],
             data,
             0,
-            2,0
+            2,
+            0
         );
 
         await testData.tokenDai
@@ -274,5 +277,40 @@ describe("AssetManagementIntegration", () => {
             expectedMiltonLiquidityPoolBalance,
             `Incorrect Milton Accrued Liquidity Pool Balance`
         ).to.be.eq(actualMiltonAccruedBalance.liquidityPool);
+    });
+
+    it("should not sent ETH to Stanley DAI, USDT, USDC", async () => {
+        //given
+        const testData = await prepareTestData([admin], ["DAI", "USDT", "USDC"], data, 0, 0, 0);
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.stanleyDai.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.stanleyUsdt.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+
+        await assertError(
+            //when
+            admin.sendTransaction({
+                to: testData.stanleyUsdc.address,
+                value: ethers.utils.parseEther("1.0"),
+            }),
+            //then
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
     });
 });

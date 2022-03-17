@@ -17,26 +17,26 @@ import "../../mocks/stanley/compound/MockComptroller.sol";
 
 contract IpTokenUsdt is IpToken {
     constructor(
-        address asset,
         string memory name,
-        string memory symbol
-    ) IpToken(asset, name, symbol) {}
+        string memory symbol,
+        address asset
+    ) IpToken(name, symbol, asset) {}
 }
 
 contract IpTokenUsdc is IpToken {
     constructor(
-        address asset,
         string memory name,
-        string memory symbol
-    ) IpToken(asset, name, symbol) {}
+        string memory symbol,
+        address asset
+    ) IpToken(name, symbol, asset) {}
 }
 
 contract IpTokenDai is IpToken {
     constructor(
-        address asset,
         string memory name,
-        string memory symbol
-    ) IpToken(asset, name, symbol) {}
+        string memory symbol,
+        address asset
+    ) IpToken(name, symbol, asset) {}
 }
 
 contract IvTokenUsdt is IvToken {

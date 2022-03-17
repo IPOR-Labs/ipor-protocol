@@ -24,9 +24,9 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
     }
 
     constructor(
-        address asset,
         string memory name,
-        string memory symbol
+        string memory symbol,
+        address asset
     ) ERC20(name, symbol) {
         require(address(0) != asset, IporErrors.WRONG_ADDRESS);
         _asset = asset;
