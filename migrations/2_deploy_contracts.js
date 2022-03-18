@@ -628,7 +628,7 @@ module.exports = async function (deployer, _network) {
         );
     }
 
-    const miltonDarcyDataProvider = await deployProxy(
+    const miltonFacadeDataProvider = await deployProxy(
         MiltonFacadeDataProvider,
         [
             warren.address,
