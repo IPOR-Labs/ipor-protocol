@@ -361,7 +361,6 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             1,
             TC_COLLATERAL_18DEC,
-            USD_20_18DEC,
             BigInt("0")
         );
 
@@ -448,7 +447,6 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             1,
             TC_COLLATERAL_18DEC,
-            USD_20_18DEC,
             BigInt("0")
         );
         const actualPayFixDerivativesBalanceWad = BigInt(
@@ -518,7 +516,6 @@ describe("Milton", () => {
             expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
             expectedLiquidityPoolTotalBalanceWad,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValue,
             ZERO,
@@ -870,7 +867,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -919,7 +915,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -954,7 +949,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1004,7 +998,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1039,7 +1032,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1073,7 +1065,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1110,7 +1101,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1145,7 +1135,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
@@ -1260,7 +1249,6 @@ describe("Milton", () => {
             PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
             null,
@@ -1295,7 +1283,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1329,7 +1316,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1635,7 +1621,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1685,7 +1670,6 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
@@ -1702,6 +1686,7 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
+            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1768,7 +1753,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1802,7 +1786,6 @@ describe("Milton", () => {
             PERCENTAGE_120_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1838,7 +1821,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1854,7 +1836,6 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeFeeValue = BigInt("652088209153692249992");
         let expectedIncomeFeeValueWad = BigInt("652088209153692249992");
         let expectedPositionValue = BigInt("-6520882091536922499916");
         let expectedPositionValueWad = BigInt("-6520882091536922499916");
@@ -1871,6 +1852,7 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
+            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1903,7 +1885,6 @@ describe("Milton", () => {
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1938,7 +1919,6 @@ describe("Milton", () => {
             PERCENTAGE_151_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
@@ -2037,7 +2017,6 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
@@ -2054,6 +2033,7 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
+            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -2161,7 +2141,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -2197,7 +2176,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -2232,6 +2210,7 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
+            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -2265,6 +2244,7 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
+            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3264,7 +3244,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3314,7 +3293,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -3460,7 +3438,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3509,7 +3486,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -3607,6 +3583,7 @@ describe("Milton", () => {
             PERCENTAGE_160_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
+            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
