@@ -11,7 +11,6 @@ import "../libraries/errors/MiltonErrors.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
-import "../interfaces/IIpToken.sol";
 import "../interfaces/IWarren.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IJoseph.sol";
@@ -48,7 +47,6 @@ abstract contract Milton is
 
     function initialize(
         address asset,
-        address ipToken,
         address warren,
         address miltonStorage,
         address miltonSpreadModel,
@@ -57,20 +55,15 @@ abstract contract Milton is
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
         require(warren != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
-        IIpToken iipToken = IIpToken(ipToken);
-        require(asset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
-
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
         _warren = IWarren(warren);
-        _ipToken = iipToken;
         _asset = asset;
         _stanley = IStanley(stanley);
     }
@@ -111,25 +104,18 @@ abstract contract Milton is
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function calculateExchangeRate(uint256 calculateTimestamp)
+	function calculateSoap(uint256 calculateTimestamp)
         external
         view
         override
-        returns (uint256)
+        returns (
+            int256 soapPf,
+            int256 soapRf,
+            int256 soap
+        )
     {
-        (, , int256 soap) = _calculateSoap(calculateTimestamp);
-
-        int256 balance = _getAccruedBalance().liquidityPool.toInt256() - soap;
-
-        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
-
-        uint256 ipTokenTotalSupply = _ipToken.totalSupply();
-
-        if (ipTokenTotalSupply != 0) {
-            return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
-        } else {
-            return Constants.D18;
-        }
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(uint256 calculateTimestamp);
+        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
     function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)

@@ -7,6 +7,7 @@ import "../../interfaces/types/DarcyTypes.sol";
 import "../../interfaces/IWarren.sol";
 import "../../interfaces/IMiltonConfiguration.sol";
 import "../../interfaces/IMilton.sol";
+import "../../interfaces/IJoseph.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 import "../../interfaces/IMiltonDarcyDataProvider.sol";
@@ -26,7 +27,8 @@ contract MiltonDarcyDataProvider is
         address warren,
         address[] memory assets,
         address[] memory miltons,
-        address[] memory miltonStorages
+        address[] memory miltonStorages,
+        address[] memory josephs
     ) public initializer {
         require(
             assets.length == miltons.length && assets.length == miltonStorages.length,
@@ -41,16 +43,21 @@ contract MiltonDarcyDataProvider is
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(miltons[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(miltonStorages[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(josephs[i] != address(0), IporErrors.WRONG_ADDRESS);
 
-            _assetConfig[assets[i]] = DarcyTypes.AssetConfig(miltons[i], miltonStorages[i]);
+            _assetConfig[assets[i]] = DarcyTypes.AssetConfig(
+                miltons[i],
+                miltonStorages[i],
+                josephs[i]
+            );
         }
         _assets = assets;
     }
 
     function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
         DarcyTypes.AssetConfig memory config = _assetConfig[asset];
-        IMilton milton = IMilton(config.milton);
-        uint256 result = milton.calculateExchangeRate(block.timestamp);
+        IJoseph joseph = IJoseph(config.joseph);
+        uint256 result = joseph.calculateExchangeRate();
         return result;
     }
 

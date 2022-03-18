@@ -7,6 +7,8 @@ interface IJoseph {
     /// @return current Joseph version
     function getVersion() external pure returns (uint256);
 
+    function calculateExchangeRate() external view returns (uint256);
+
     /// @notice Provides `assetValue` asset tokens to Liquidity Pool
     /// @dev Emits `ProvideLiquidity` event, and transfer asset ERC20 tokens from sender to Milton,
     /// and transfer minted IpTokens to sender, volume transfered IpTokens is based on current exchange rate

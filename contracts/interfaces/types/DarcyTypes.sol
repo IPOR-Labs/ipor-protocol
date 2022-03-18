@@ -11,6 +11,8 @@ library DarcyTypes {
         address milton;
         /// @notice MiltonStorage address
         address miltonStorage;
+		/// @notice Joseph address
+        address joseph;
     }
 
     /// @notice IPOR Index data required for Darcy. Data represented for one specific asset.

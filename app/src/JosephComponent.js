@@ -34,9 +34,8 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="ItfMiltonUsdt"
+                                contract="ItfJosephUsdt"
                                 method="calculateExchangeRate"
-                                methodArgs={[Math.floor(Date.now() / 1000)]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -49,9 +48,8 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="MiltonUsdt"
+                                contract="JosephUsdt"
                                 method="calculateExchangeRate"
-                                methodArgs={[Math.floor(Date.now() / 1000)]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -67,9 +65,8 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="ItfMiltonUsdc"
+                                contract="ItfJosephUsdc"
                                 method="calculateExchangeRate"
-                                methodArgs={[Math.floor(Date.now() / 1000)]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -82,9 +79,8 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="MiltonUsdc"
+                                contract="JosephUsdc"
                                 method="calculateExchangeRate"
-                                methodArgs={[Math.floor(Date.now() / 1000)]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -100,9 +96,8 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="ItfMiltonDai"
+                                contract="ItfJosephDai"
                                 method="calculateExchangeRate"
-                                methodArgs={[Math.floor(Date.now() / 1000)]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -115,9 +110,8 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="MiltonDai"
+                                contract="JosephDai"
                                 method="calculateExchangeRate"
-                                methodArgs={[Math.floor(Date.now() / 1000)]}
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

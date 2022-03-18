@@ -71,6 +71,10 @@ abstract contract Joseph is
         return 1;
     }
 
+    function calculateExchangeRate() external view override returns (uint256) {
+        return _calculateExchangeRate(block.timestamp);
+    }
+
     //@param liquidityAmount underlying token amount represented in decimals specific for underlying asset
     function provideLiquidity(uint256 liquidityAmount) external override whenNotPaused {
         _provideLiquidity(liquidityAmount, _getDecimals(), block.timestamp);
@@ -171,6 +175,24 @@ abstract contract Joseph is
         _unpause();
     }
 
+    function _calculateExchangeRate(uint256 calculateTimestamp) internal view returns (uint256) {
+        IMilton milton = _milton;
+
+        (, , int256 soap) = milton.calculateSoap(calculateTimestamp);
+
+        int256 balance = milton.getAccruedBalance().liquidityPool.toInt256() - soap;
+
+        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+
+        uint256 ipTokenTotalSupply = _ipToken.totalSupply();
+
+        if (ipTokenTotalSupply != 0) {
+            return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
+        } else {
+            return Constants.D18;
+        }
+    }
+
     function _checkVaultReservesRatio() internal view returns (uint256) {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
         require(totalBalance != 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
@@ -200,7 +222,7 @@ abstract contract Joseph is
     ) internal {
         IMilton milton = _milton;
 
-        uint256 exchangeRate = milton.calculateExchangeRate(timestamp);
+        uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
         require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
@@ -230,7 +252,7 @@ abstract contract Joseph is
         );
         IMilton milton = _milton;
 
-        uint256 exchangeRate = milton.calculateExchangeRate(timestamp);
+        uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
         require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
