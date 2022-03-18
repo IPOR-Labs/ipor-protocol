@@ -360,7 +360,6 @@ abstract contract Milton is
         );
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
-
         require(
             collateralizationFactor >= _getMinCollateralizationFactorValue(),
             MiltonErrors.COLLATERALIZATION_FACTOR_TOO_LOW
