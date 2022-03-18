@@ -130,7 +130,6 @@ export const miltonSpreadModelFactory = async (): Promise<MiltonSpreadModel> => 
 };
 
 export const miltonUsdtFactory = async (
-    ipTokenUsdtAddress: string,
     warrenAddress: string,
     miltonStorageUsdtAddress: string,
     miltonSpreadModelAddress: string,
@@ -142,7 +141,6 @@ export const miltonUsdtFactory = async (
         miltonFactory,
         [
             usdtAddress,
-            ipTokenUsdtAddress,
             warrenAddress,
             miltonStorageUsdtAddress,
             miltonSpreadModelAddress,
@@ -155,7 +153,6 @@ export const miltonUsdtFactory = async (
 };
 
 export const miltonUsdcFactory = async (
-    ipTokenUsdcAddress: string,
     warrenAddress: string,
     miltonStorageUsdcAddress: string,
     miltonSpreadModelAddress: string,
@@ -167,7 +164,6 @@ export const miltonUsdcFactory = async (
         miltonFactory,
         [
             usdcAddress,
-            ipTokenUsdcAddress,
             warrenAddress,
             miltonStorageUsdcAddress,
             miltonSpreadModelAddress,
@@ -180,7 +176,6 @@ export const miltonUsdcFactory = async (
 };
 
 export const miltonDaiFactory = async (
-    ipTokenDaiAddress: string,
     warrenAddress: string,
     miltonStorageDaiAddress: string,
     miltonSpreadModelAddress: string,
@@ -192,7 +187,6 @@ export const miltonDaiFactory = async (
         miltonFactory,
         [
             daiAddress,
-            ipTokenDaiAddress,
             warrenAddress,
             miltonStorageDaiAddress,
             miltonSpreadModelAddress,

@@ -171,21 +171,18 @@ export const deploy = async (): Promise<DeployType> => {
     const warren = await warrenFactory();
 
     const miltonDai = await miltonDaiFactory(
-        ipTokenDai.address,
         warren.address,
         miltonStorageDai.address,
         miltonSpreadModel.address,
         stanleyDai.address
     );
     const miltonUsdc = await miltonUsdcFactory(
-        ipTokenUsdc.address,
         warren.address,
         miltonStorageUsdc.address,
         miltonSpreadModel.address,
         stanleyUsdc.address
     );
     const miltonUsdt = await miltonUsdtFactory(
-        ipTokenUsdt.address,
         warren.address,
         miltonStorageUsdt.address,
         miltonSpreadModel.address,
