@@ -39,9 +39,7 @@ library AmmMiltonStorageTypes {
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 liquidityPool;
         //@notice Actual Balance on IporVault site in Asset Management
-        uint128 vault;
-        uint128 openingFee;
-        uint128 liquidationDeposit;
+        uint128 vault;        
         uint128 iporPublicationFee;
         //@notice income fee goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage

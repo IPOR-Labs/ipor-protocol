@@ -31,9 +31,8 @@ library AmmTypes {
         /// @notice quantity of Interest Bearing Token at moment when position was opened
         /// @dev value represented in 18 decimals
         uint256 ibtQuantity;
-        /// @notice Opening Fee Amount taken from trader
-        /// @dev value represented in 18 decimals
-        uint256 openingFeeAmount;
+        uint256 openingFeeLPValue;
+        uint256 openingFeeTreasuryValue;
     }
 
     /// @notice Struct which represents moneys related with upcoming opened Swap.
@@ -46,7 +45,8 @@ library AmmTypes {
         /// @notice Notional Swap
         uint256 notionalAmount;
         /// @notice Opening Fee Amount taken from trader
-        uint256 openingFeeAmount;
+        uint256 openingFeeLPValue;
+        uint256 openingFeeTreasuryValue;
         /// @notcie Ipor Publication Amount taken from trader, intended for request to IPOR index update by Charlie
         uint256 iporPublicationAmount;
         /// @notice  Amount intended for user who will liquidate this new created position in future

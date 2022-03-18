@@ -204,9 +204,7 @@ describe("MiltonStorage", () => {
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
-                await testData.miltonDai.getLiquidationDepositAmount(),
-                await testData.miltonDai.getIporPublicationFeeAmount(),
-                await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
+                await testData.miltonDai.getIporPublicationFeeAmount()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -229,9 +227,7 @@ describe("MiltonStorage", () => {
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
-                    await testData.miltonDai.getLiquidationDepositAmount(),
-                    await testData.miltonDai.getIporPublicationFeeAmount(),
-                    await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
+                    await testData.miltonDai.getIporPublicationFeeAmount()
                 ),
             //then
             "IPOR_008"
