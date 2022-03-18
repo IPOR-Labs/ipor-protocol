@@ -23,7 +23,7 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         require(msg.sender == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
         _;
     }
-
+	
     constructor(
         string memory name,
         string memory symbol,
@@ -38,7 +38,7 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         return _asset;
     }
 
-    function setStanley(address newStanley) external onlyOwner {
+    function setStanley(address newStanley) external override onlyOwner {
         _stanley = newStanley;
         emit StanleyChanged(msg.sender, newStanley);
     }

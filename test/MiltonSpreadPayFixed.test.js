@@ -964,7 +964,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 params.openTimestamp,
                 BigInt("1000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const calculateTimestamp = Math.floor(Date.now() / 1000);
@@ -1051,7 +1051,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                 params.openTimestamp,
                 BigInt("1000000000"),
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const calculateTimestamp = Math.floor(Date.now() / 1000);

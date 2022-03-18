@@ -38,6 +38,10 @@ contract MiltonDarcyDataProvider is
 
         uint256 assetsLength = assets.length;
         for (uint256 i = 0; i != assetsLength; i++) {
+            require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(miltons[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(miltonStorages[i] != address(0), IporErrors.WRONG_ADDRESS);
+
             _assetConfig[assets[i]] = DarcyTypes.AssetConfig(miltons[i], miltonStorages[i]);
         }
         _assets = assets;
@@ -121,8 +125,8 @@ contract MiltonDarcyDataProvider is
                 direction,
                 iporSwap.fixedInterestRate,
                 value,
-                iporSwap.startingTimestamp,
-                iporSwap.endingTimestamp,
+                iporSwap.openTimestamp,
+                iporSwap.endTimestamp,
                 iporSwap.liquidationDepositAmount
             );
     }
@@ -178,8 +182,8 @@ contract MiltonDarcyDataProvider is
 
         iporAssetConfigurationFront = IporAssetConfigurationFront(
             asset,
-            milton.getMinCollateralizationFactorValue(),
-            milton.getMaxCollateralizationFactorValue(),
+            milton.getMinLeverageValue(),
+            milton.getMaxLeverageValue(),
             milton.getOpeningFeePercentage(),
             milton.getIporPublicationFeeAmount(),
             milton.getLiquidationDepositAmount(),

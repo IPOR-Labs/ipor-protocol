@@ -4,8 +4,8 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 
 const {
-    COLLATERALIZATION_FACTOR_6DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_6DEC,
+    LEVERAGE_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_6_6DEC,
@@ -42,7 +42,7 @@ describe("MiltonSoap", () => {
     });
     it("should calculate soap, no derivatives, soap equal 0", async () => {
         //given
-        let testData = await prepareTestData([admin, userTwo], ["DAI"], data, 0, 1,0);
+        let testData = await prepareTestData([admin, userTwo], ["DAI"], data, 0, 1, 0);
         const params = {
             asset: testData.tokenDai.address,
             calculateTimestamp: Math.floor(Date.now() / 1000),
@@ -68,7 +68,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -89,7 +90,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress,
         };
@@ -125,7 +126,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            0,0
+            0,
+            0
         );
 
         await prepareApproveForUsers(
@@ -145,7 +147,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -181,7 +183,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -201,7 +204,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -237,7 +240,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -257,7 +261,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -293,7 +297,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -314,7 +319,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -356,7 +361,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -377,7 +383,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
         };
@@ -421,7 +427,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -443,7 +450,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -452,7 +459,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -486,7 +493,8 @@ describe("MiltonSoap", () => {
             ["USDT"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -508,7 +516,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -517,7 +525,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -551,7 +559,8 @@ describe("MiltonSoap", () => {
             ["DAI", "USDT"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -586,7 +595,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -595,7 +604,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -653,7 +662,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -676,7 +686,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -685,7 +695,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -723,7 +733,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -746,7 +757,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -755,7 +766,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -793,7 +804,8 @@ describe("MiltonSoap", () => {
             ["DAI", "USDT"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -828,7 +840,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -837,7 +849,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -898,7 +910,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -921,7 +934,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -972,7 +985,8 @@ describe("MiltonSoap", () => {
             ["USDT"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -995,7 +1009,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1046,7 +1060,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1069,7 +1084,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1129,7 +1144,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1151,7 +1167,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1159,7 +1175,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -1200,7 +1216,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1222,7 +1239,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1230,7 +1247,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
         };
@@ -1284,7 +1301,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1306,7 +1324,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
         };
@@ -1382,7 +1400,8 @@ describe("MiltonSoap", () => {
             ["DAI"],
             data,
             0,
-            1,0
+            1,
+            0
         );
 
         await prepareApproveForUsers(
@@ -1408,7 +1427,7 @@ describe("MiltonSoap", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUser,
         };
@@ -1461,7 +1480,7 @@ describe("MiltonSoap", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -1472,7 +1491,7 @@ describe("MiltonSoap", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -1483,7 +1502,7 @@ describe("MiltonSoap", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };
@@ -1496,7 +1515,7 @@ describe("MiltonSoap", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -1507,7 +1526,7 @@ describe("MiltonSoap", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -1518,7 +1537,7 @@ describe("MiltonSoap", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };

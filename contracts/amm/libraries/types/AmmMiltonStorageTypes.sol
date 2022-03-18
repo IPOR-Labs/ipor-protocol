@@ -7,7 +7,7 @@ library AmmMiltonStorageTypes {
     struct IporSwap {
         AmmTypes.SwapState state;
         //@notice Starting time of this swap
-        uint32 startingTimestamp;
+        uint32 openTimestamp;
         //@notice unique ID of this swap
         //@notice Buyer of this swap
         address buyer;

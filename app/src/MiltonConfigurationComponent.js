@@ -982,7 +982,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Max Collateralization Factor Value</strong>
+                        <strong>Max Leverage Value</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -990,7 +990,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMaxCollateralizationFactorValue"
+                                method="getMaxLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1004,7 +1004,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMaxCollateralizationFactorValue"
+                                method="getMaxLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1021,7 +1021,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMaxCollateralizationFactorValue"
+                                method="getMaxLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1035,7 +1035,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMaxCollateralizationFactorValue"
+                                method="getMaxLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1052,7 +1052,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMaxCollateralizationFactorValue"
+                                method="getMaxLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1066,7 +1066,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMaxCollateralizationFactorValue"
+                                method="getMaxLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1081,7 +1081,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Min Collateralization Factor Value</strong>
+                        <strong>Min Leverage Value</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -1089,7 +1089,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMinCollateralizationFactorValue"
+                                method="getMinLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1103,7 +1103,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMinCollateralizationFactorValue"
+                                method="getMinLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1120,7 +1120,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMinCollateralizationFactorValue"
+                                method="getMinLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1134,7 +1134,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMinCollateralizationFactorValue"
+                                method="getMinLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1151,7 +1151,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMinCollateralizationFactorValue"
+                                method="getMinLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1165,7 +1165,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMinCollateralizationFactorValue"
+                                method="getMinLeverageValue"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

@@ -51,6 +51,14 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
         address aaveToken
     ) public initializer {
         __Ownable_init();
+
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(aToken != address(0), IporErrors.WRONG_ADDRESS);
+        require(addressesProvider != address(0), IporErrors.WRONG_ADDRESS);
+        require(stkAave != address(0), IporErrors.WRONG_ADDRESS);
+        require(aaveIncentive != address(0), IporErrors.WRONG_ADDRESS);
+        require(aaveToken != address(0), IporErrors.WRONG_ADDRESS);
+
         _asset = asset;
         _shareToken = aToken;
         _provider = AaveLendingPoolProviderV2(addressesProvider);

@@ -6,7 +6,7 @@ const keccak256 = require("keccak256");
 const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_6_18DEC,
@@ -92,11 +92,7 @@ describe("Milton Maintenance", () => {
         await assertError(
             testData.miltonDai
                 .connect(userOne)
-                .openSwapPayFixed(
-                    params.totalAmount,
-                    params.toleratedQuoteValue,
-                    params.collateralizationFactor
-                ),
+                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
             "Pausable: paused"
         );
     });
@@ -128,11 +124,7 @@ describe("Milton Maintenance", () => {
         await assertError(
             testData.miltonDai
                 .connect(userOne)
-                .openSwapPayFixed(
-                    params.totalAmount,
-                    params.toleratedQuoteValue,
-                    params.collateralizationFactor
-                ),
+                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
             "Pausable: paused"
         );
 
@@ -142,7 +134,7 @@ describe("Milton Maintenance", () => {
                 .openSwapReceiveFixed(
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 ),
             "Pausable: paused"
         );
@@ -211,7 +203,7 @@ describe("Milton Maintenance", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
         const swapPayFixed = await testData.miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
 
@@ -221,7 +213,7 @@ describe("Milton Maintenance", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         const swapReceiveFixed = await testData.miltonStorageDai
@@ -248,8 +240,8 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(userOne).getOpeningFeeForTreasuryPercentage();
         await testData.miltonDai.connect(userOne).getIporPublicationFeeAmount();
         await testData.miltonDai.connect(userOne).getLiquidationDepositAmount();
-        await testData.miltonDai.connect(userOne).getMaxCollateralizationFactorValue();
-        await testData.miltonDai.connect(userOne).getMinCollateralizationFactorValue();
+        await testData.miltonDai.connect(userOne).getMaxLeverageValue();
+        await testData.miltonDai.connect(userOne).getMinLeverageValue();
         await testData.miltonDai.connect(userOne).getJoseph();
     });
 
@@ -290,11 +282,7 @@ describe("Milton Maintenance", () => {
         await assertError(
             testData.miltonDai
                 .connect(userTwo)
-                .openSwapPayFixed(
-                    params.totalAmount,
-                    params.toleratedQuoteValue,
-                    params.collateralizationFactor
-                ),
+                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
             "Pausable: paused"
         );
 
@@ -304,11 +292,7 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(admin).unpause();
         await testData.miltonDai
             .connect(userTwo)
-            .openSwapPayFixed(
-                params.totalAmount,
-                params.toleratedQuoteValue,
-                params.collateralizationFactor
-            );
+            .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage);
 
         //then
         const swapPayFixed = await testData.miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
@@ -445,14 +429,7 @@ describe("Milton Maintenance", () => {
 
     it("should not sent ETH to Milton DAI, USDT, USDC", async () => {
         //given
-        const testData = await prepareTestData(
-            [admin],
-            ["DAI", "USDT", "USDC"],
-            data,
-            0,
-            0,
-            0
-        );
+        const testData = await prepareTestData([admin], ["DAI", "USDT", "USDC"], data, 0, 0, 0);
 
         await assertError(
             //when
@@ -487,14 +464,7 @@ describe("Milton Maintenance", () => {
 
     it("should not sent ETH to MiltonStorage DAI, USDT, USDC", async () => {
         //given
-        const testData = await prepareTestData(
-            [admin],
-            ["DAI", "USDT", "USDC"],
-            data,
-            0,
-            0,
-            0
-        );
+        const testData = await prepareTestData([admin], ["DAI", "USDT", "USDC"], data, 0, 0, 0);
 
         await assertError(
             //when
@@ -526,6 +496,4 @@ describe("Milton Maintenance", () => {
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
     });
-
-    
 });

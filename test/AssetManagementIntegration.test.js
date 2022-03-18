@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 const {
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_18DEC,
     TOTAL_SUPPLY_18_DECIMALS,
     PERCENTAGE_3_18DEC,
     USD_3_18DEC,

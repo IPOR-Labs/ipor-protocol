@@ -33,11 +33,15 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         _decimals = 18;
     }
 
+    function decimals() public view override returns (uint8) {
+        return _decimals;
+    }
+
     function getAsset() external view override returns (address) {
         return _asset;
     }
 
-    function setJoseph(address newJoseph) external onlyOwner {
+    function setJoseph(address newJoseph) external override onlyOwner {
         _joseph = newJoseph;
         emit JosephChanged(msg.sender, newJoseph);
     }
@@ -52,9 +56,5 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         require(amount != 0, JosephErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
-    }
-
-    function decimals() public view override returns (uint8) {
-        return _decimals;
     }
 }

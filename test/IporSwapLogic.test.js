@@ -15,16 +15,16 @@ const prepareSwapPayFixedCase1 = async (fixedInterestRate, admin) => {
     const daiMockedToken = await DaiMockedToken.deploy(BigInt("1000000000000000000"), 18);
     await daiMockedToken.deployed();
     const collateral = BigInt("9870300000000000000000");
-    const collateralizationFactor = BigInt("10");
+    const leverage = BigInt("10");
 
     const timeStamp = Math.floor(Date.now() / 1000);
-    const notionalAmount = collateral * collateralizationFactor;
+    const notionalAmount = collateral * leverage;
     const swap = {
         state: SwapState.ACTIVE,
         buyer: admin.address,
         asset: daiMockedToken.address,
-        startingTimestamp: BigInt(timeStamp),
-        endingTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
+        openTimestamp: BigInt(timeStamp),
+        endTimestamp: BigInt(timeStamp + 60 * 60 * 24 * 28),
         id: BigInt("0"),
         idsIndex: BigInt("0"),
         idsIndex: BigInt("0"),
@@ -213,7 +213,7 @@ describe("IporSwapLogic", () => {
         //when
         const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
             swap,
-            swap.startingTimestamp,
+            swap.openTimestamp,
             ibtPriceSecond
         );
 
@@ -232,7 +232,7 @@ describe("IporSwapLogic", () => {
         //when
         const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
-            swap.startingTimestamp,
+            swap.openTimestamp,
             ibtPriceSecond
         );
 
@@ -256,7 +256,7 @@ describe("IporSwapLogic", () => {
 
         const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             ibtPriceSecond
         );
 
@@ -275,7 +275,7 @@ describe("IporSwapLogic", () => {
 
         const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             ibtPriceSecond
         );
 
@@ -297,7 +297,7 @@ describe("IporSwapLogic", () => {
 
         const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             ibtPriceSecond
         );
 
@@ -316,7 +316,7 @@ describe("IporSwapLogic", () => {
 
         const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             ibtPriceSecond
         );
 
@@ -341,7 +341,7 @@ describe("IporSwapLogic", () => {
         //when
         const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             ibtPriceSecond
         );
 
@@ -361,7 +361,7 @@ describe("IporSwapLogic", () => {
         //when
         const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS,
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             ibtPriceSecond
         );
 
@@ -389,7 +389,7 @@ describe("IporSwapLogic", () => {
 
         const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
             ibtPriceSecond
         );
 
@@ -410,7 +410,7 @@ describe("IporSwapLogic", () => {
 
         const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
-            swap.startingTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
+            swap.openTimestamp + PERIOD_25_DAYS_IN_SECONDS * BigInt(4),
             ibtPriceSecond
         );
 

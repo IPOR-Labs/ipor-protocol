@@ -6,8 +6,8 @@ const keccak256 = require("keccak256");
 const {
     USER_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
-    COLLATERALIZATION_FACTOR_6DEC,
-    COLLATERALIZATION_FACTOR_18DEC,
+    LEVERAGE_6DEC,
+    LEVERAGE_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_3_6DEC,
     PERCENTAGE_5_18DEC,
@@ -204,7 +204,6 @@ describe("MiltonStorage", () => {
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
-                BigInt("1500000000000000000000"),
                 await testData.miltonDai.getLiquidationDepositAmount(),
                 await testData.miltonDai.getIporPublicationFeeAmount(),
                 await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
@@ -230,7 +229,6 @@ describe("MiltonStorage", () => {
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
-                    BigInt("1500000000000000000000"),
                     await testData.miltonDai.getLiquidationDepositAmount(),
                     await testData.miltonDai.getIporPublicationFeeAmount(),
                     await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
@@ -266,7 +264,7 @@ describe("MiltonStorage", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -334,7 +332,7 @@ describe("MiltonStorage", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -398,7 +396,7 @@ describe("MiltonStorage", () => {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -755,7 +753,7 @@ describe("MiltonStorage", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -766,7 +764,7 @@ describe("MiltonStorage", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -777,7 +775,7 @@ describe("MiltonStorage", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };
@@ -790,7 +788,7 @@ describe("MiltonStorage", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -801,7 +799,7 @@ describe("MiltonStorage", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
 
@@ -812,7 +810,7 @@ describe("MiltonStorage", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 );
         }
     };
@@ -824,14 +822,15 @@ describe("MiltonStorage", () => {
         return {
             state: 0,
             buyer: userTwo.address,
-            startingTimestamp: openingTimestamp,
-            endingTimestamp: closeSwapTimestamp,
+            openTimestamp: openingTimestamp,
+            endTimestamp: closeSwapTimestamp,
             id: 1,
             collateral: BigInt("1000000000000000000000"),
             liquidationDepositAmount: BigInt("20000000000000000000"),
             notionalAmount: BigInt("50000000000000000000000"),
             ibtQuantity: 123,
             fixedInterestRate: 234,
+            openingFeeAmount: BigInt("1500000000000000000000"),
         };
     };
 
@@ -860,7 +859,7 @@ describe("MiltonStorage", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -905,7 +904,7 @@ describe("MiltonStorage", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };
@@ -953,7 +952,7 @@ describe("MiltonStorage", () => {
             asset: testData.tokenUsdt.address,
             totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
             toleratedQuoteValue: BigInt("900000000000000000"),
-            collateralizationFactor: COLLATERALIZATION_FACTOR_18DEC,
+            leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
         };

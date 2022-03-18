@@ -36,11 +36,12 @@ abstract contract MiltonConfiguration is
 
     uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 20 * 1e18;
 
-    uint256 internal constant _MAX_COLLATERALIZATION_FACTOR_VALUE = 1000 * 1e18;
+    uint256 internal constant _MAX_LEVERAGE_VALUE = 1000 * 1e18;
 
-    uint256 internal constant _MIN_COLLATERALIZATION_FACTOR_VALUE = 10 * 1e18;
+    uint256 internal constant _MIN_LEVERAGE_VALUE = 10 * 1e18;
 
-    uint256 internal constant _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY = 99 * 1e16;
+    uint256 internal constant _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY =
+        99 * 1e16;
 
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
@@ -92,12 +93,12 @@ abstract contract MiltonConfiguration is
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function getMaxCollateralizationFactorValue() external pure override returns (uint256) {
-        return _MAX_COLLATERALIZATION_FACTOR_VALUE;
+    function getMaxLeverageValue() external pure override returns (uint256) {
+        return _MAX_LEVERAGE_VALUE;
     }
 
-    function getMinCollateralizationFactorValue() external pure override returns (uint256) {
-        return _MIN_COLLATERALIZATION_FACTOR_VALUE;
+    function getMinLeverageValue() external pure override returns (uint256) {
+        return _MIN_LEVERAGE_VALUE;
     }
 
     function getJoseph() external view override returns (address) {
@@ -147,19 +148,29 @@ abstract contract MiltonConfiguration is
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxCollateralizationFactorValue() internal pure virtual returns (uint256) {
-        return _MAX_COLLATERALIZATION_FACTOR_VALUE;
+    function _getMaxLeverageValue() internal pure virtual returns (uint256) {
+        return _MAX_LEVERAGE_VALUE;
     }
 
-    function _getMinCollateralizationFactorValue() internal pure virtual returns (uint256) {
-        return _MIN_COLLATERALIZATION_FACTOR_VALUE;
+    function _getMinLeverageValue() internal pure virtual returns (uint256) {
+        return _MIN_LEVERAGE_VALUE;
     }
 
-    function _getMinPercentagePositionValueWhenClosingBeforeMaturity() internal pure virtual returns (uint256) {
+    function _getMinPercentagePositionValueWhenClosingBeforeMaturity()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
         return _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY;
     }
 
-    function _getSecondsBeforeMaturityWhenPositionCanBeClosed() internal pure virtual returns (uint256) {
+    function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
     }
 }
