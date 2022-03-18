@@ -32,17 +32,17 @@ interface IJoseph {
     function withdrawFromStanley(uint256 amount) external;
 
     /// @notice Transfers asset value from Miltons's Treasury Balance to Treasury Treaserer
-    /// account configured in `_treasuryTreasurer` field
-    /// @dev Transfer can be requested by account address which is defined in field `_treasuryTransferer`
+    /// account configured in `_treasury` field
+    /// @dev Transfer can be requested by account address which is defined in field `_treasuryManager`
     /// @dev Emits `ERC20-Transfer` event
     /// @param amount asset volume which will be transfered from Milton's Treasury Balance
     function transferToTreasury(uint256 amount) external;
 
     /// @notice Transfers asset value from Miltons's Ipor Publication Fee Balance to Charlie Treaserer account
-    /// @dev Transfer can be requested by account address which is defined in field `_publicationFeeTransferer`,
+    /// @dev Transfer can be requested by account address which is defined in field `_charlieTreasuryManager`,
     /// Emits `ERC20-Transfer` event
     /// @param amount asset volume which will be transfered from Milton's IPOR Publication Fee Balance
-    function transferPublicationFee(uint256 amount) external;
+    function transferToCharlieTreasury(uint256 amount) external;
 
     /// @notice Returns reserve ratio Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset
     /// @return reserves ratio

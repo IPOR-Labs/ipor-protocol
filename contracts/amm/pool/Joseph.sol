@@ -28,16 +28,16 @@ abstract contract Joseph is
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    modifier onlyPublicationFeeTransferer() {
+    modifier onlyCharlieTreasuryManager() {
         require(
-            msg.sender == _publicationFeeTransferer,
+            msg.sender == _charlieTreasuryManager,
             JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
         );
         _;
     }
 
-    modifier onlyTreasuryTransferer() {
-        require(msg.sender == _treasuryTransferer, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
+    modifier onlyTreasuryManager() {
+        require(msg.sender == _treasuryManager, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
         _;
     }
 
@@ -117,9 +117,9 @@ abstract contract Joseph is
         override
         nonReentrant
         whenNotPaused
-        onlyTreasuryTransferer
+        onlyTreasuryManager
     {
-        require(address(0) != _treasuryTreasurer, JosephErrors.INCORRECT_TREASURE_TREASURER);
+        require(address(0) != _treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferToTreasury(assetValue);
 
@@ -130,20 +130,20 @@ abstract contract Joseph is
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
-            _treasuryTreasurer,
+            _treasury,
             assetValueAssetDecimals
         );
     }
 
     //@param assetValue underlying token amount represented in 18 decimals
-    function transferPublicationFee(uint256 assetValue)
+    function transferToCharlieTreasury(uint256 assetValue)
         external
         override
         nonReentrant
         whenNotPaused
-        onlyPublicationFeeTransferer
+        onlyCharlieTreasuryManager
     {
-        require(address(0) != _charlieTreasurer, JosephErrors.INCORRECT_CHARLIE_TREASURER);
+        require(address(0) != _charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
 
@@ -154,7 +154,7 @@ abstract contract Joseph is
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
-            _charlieTreasurer,
+            _charlieTreasury,
             assetValueAssetDecimals
         );
     }

@@ -99,24 +99,24 @@ describe("Joseph Maintenance", () => {
         );
 
         await assertError(
-            testData.josephDai.connect(userOne).transferPublicationFee(123),
+            testData.josephDai.connect(userOne).transferToCharlieTreasury(123),
             "Pausable: paused"
         );
 
         await assertError(
-            testData.josephDai.connect(admin).setCharlieTreasurer(userTwo.address),
+            testData.josephDai.connect(admin).setCharlieTreasury(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai.connect(admin).setTreasuryTreasurer(userTwo.address),
+            testData.josephDai.connect(admin).setTreasury(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai.connect(admin).setPublicationFeeTransferer(userTwo.address),
+            testData.josephDai.connect(admin).setCharlieTreasuryManager(userTwo.address),
             "Pausable: paused"
         );
         await assertError(
-            testData.josephDai.connect(admin).setTreasuryTransferer(userTwo.address),
+            testData.josephDai.connect(admin).setTreasuryManager(userTwo.address),
             "Pausable: paused"
         );
     });
@@ -140,10 +140,10 @@ describe("Joseph Maintenance", () => {
         //then
         await testData.josephDai.connect(userOne).getVersion();
         await testData.josephDai.connect(userOne).checkVaultReservesRatio();
-        await testData.josephDai.connect(userOne).getCharlieTreasurer();
-        await testData.josephDai.connect(userOne).getTreasuryTreasurer();
-        await testData.josephDai.connect(userOne).getPublicationFeeTransferer();
-        await testData.josephDai.connect(userOne).getTreasuryTransferer();
+        await testData.josephDai.connect(userOne).getCharlieTreasury();
+        await testData.josephDai.connect(userOne).getTreasury();
+        await testData.josephDai.connect(userOne).getCharlieTreasuryManager();
+        await testData.josephDai.connect(userOne).getTreasuryManager();
         await testData.josephDai.connect(userOne).getRedeemLpMaxUtilizationPercentage();
         await testData.josephDai.connect(userOne).getMiltonStanleyBalancePercentage();
         await testData.josephDai.connect(userOne).asset();

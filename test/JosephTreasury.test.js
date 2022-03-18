@@ -38,7 +38,7 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            testData.josephDai.connect(userThree).transferPublicationFee(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToCharlieTreasury(BigInt("100")),
             //then
             "IPOR_406"
         );
@@ -51,12 +51,12 @@ describe("Joseph Treasury", () => {
             data
         );
 
-        await testData.josephDai.connect(admin).setPublicationFeeTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setCharlieTreasuryManager(userThree.address);
 
         //when
         await assertError(
             //when
-            testData.josephDai.connect(userThree).transferPublicationFee(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToCharlieTreasury(BigInt("100")),
             //then
             "IPOR_407"
         );
@@ -88,20 +88,20 @@ describe("Joseph Treasury", () => {
                 params.leverage
             );
 
-        await testData.josephDai.connect(admin).setPublicationFeeTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setCharlieTreasuryManager(userThree.address);
 
-        await testData.josephDai.connect(admin).setCharlieTreasurer(userOne.address);
+        await testData.josephDai.connect(admin).setCharlieTreasury(userOne.address);
 
         const transferedValue = BigInt("100");
 
         //when
-        await testData.josephDai.connect(userThree).transferPublicationFee(transferedValue);
+        await testData.josephDai.connect(userThree).transferToCharlieTreasury(transferedValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceCharlieTreasurer = USER_SUPPLY_10MLN_18DEC + transferedValue;
-        let actualErc20BalanceCharlieTreasurer = BigInt(
+        let expectedErc20BalanceCharlieTreasury = USER_SUPPLY_10MLN_18DEC + transferedValue;
+        let actualErc20BalanceCharlieTreasury = BigInt(
             await testData.tokenDai.balanceOf(userOne.address)
         );
 
@@ -115,10 +115,10 @@ describe("Joseph Treasury", () => {
         const actualPublicationFeeBalanceMilton = BigInt(balance.iporPublicationFee);
 
         expect(
-            expectedErc20BalanceCharlieTreasurer,
-            `Incorrect ERC20 Charlie Treasurer balance for ${params.asset}, actual:  ${actualErc20BalanceCharlieTreasurer},
-                expected: ${expectedErc20BalanceCharlieTreasurer}`
-        ).to.be.eq(actualErc20BalanceCharlieTreasurer);
+            expectedErc20BalanceCharlieTreasury,
+            `Incorrect ERC20 Charlie Treasurer balance for ${params.asset}, actual:  ${actualErc20BalanceCharlieTreasury},
+                expected: ${expectedErc20BalanceCharlieTreasury}`
+        ).to.be.eq(actualErc20BalanceCharlieTreasury);
 
         expect(
             expectedErc20BalanceMilton,
@@ -156,7 +156,7 @@ describe("Joseph Treasury", () => {
             data
         );
 
-        await testData.josephDai.connect(admin).setTreasuryTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasuryManager(userThree.address);
 
         //when
         await assertError(
@@ -193,9 +193,9 @@ describe("Joseph Treasury", () => {
                 params.leverage
             );
 
-        await testData.josephDai.connect(admin).setTreasuryTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasuryManager(userThree.address);
 
-        await testData.josephDai.connect(admin).setTreasuryTreasurer(userOne.address);
+        await testData.josephDai.connect(admin).setTreasury(userOne.address);
 
         const transferedValue = BigInt("100");
 
@@ -205,10 +205,8 @@ describe("Joseph Treasury", () => {
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceTreasuryTreasurer = USER_SUPPLY_10MLN_18DEC + transferedValue;
-        let actualErc20BalanceTreasuryTreasurer = BigInt(
-            await testData.tokenDai.balanceOf(userOne.address)
-        );
+        let expectedErc20BalanceTreasury = USER_SUPPLY_10MLN_18DEC + transferedValue;
+        let actualErc20BalanceTreasury = BigInt(await testData.tokenDai.balanceOf(userOne.address));
 
         let expectedErc20BalanceMilton =
             USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedValue;
@@ -219,10 +217,9 @@ describe("Joseph Treasury", () => {
         let expectedTreasuryBalanceMilton = BigInt("149505148455463261");
         const actualTreasuryBalanceMilton = BigInt(balance.treasury);
 
-        expect(
-            expectedErc20BalanceTreasuryTreasurer,
-            `Incorrect ERC20 Treasury Treasurer balance`
-        ).to.be.eq(actualErc20BalanceTreasuryTreasurer);
+        expect(expectedErc20BalanceTreasury, `Incorrect ERC20 Treasury Treasurer balance`).to.be.eq(
+            actualErc20BalanceTreasury
+        );
 
         expect(expectedErc20BalanceMilton, `Incorrect ERC20 Milton balance`).to.be.eq(
             actualErc20BalanceMilton
