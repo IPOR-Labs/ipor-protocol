@@ -26,13 +26,13 @@ interface IIvToken is IERC20 {
     /// @param amount volume of IV Tokens which will be destroyed
     function burn(address account, uint256 amount) external;
 
-    /// @notice Emmited when `amount` IV Tokens were mint and transfered to `account`.
-    /// @param account address where IV Tokens are transfered after mind
+    /// @notice Emmited when `amount` IV Tokens were mint and transferred to `account`.
+    /// @param account address where IV Tokens are transferred after mind
     /// @param amount volume of IV Tokens which will be minted
     event Mint(address indexed account, uint256 amount);
 
-    /// @notice Emmited when `amount` IV Tokens were burnt and transfered from `account`.
-    /// @param account address where IV Tokens are transfered from, after burn
+    /// @notice Emmited when `amount` IV Tokens were burnt and transferred from `account`.
+    /// @param account address where IV Tokens are transferred from, after burn
     /// @param amount volume of IV Tokens which will be burned
     event Burn(address indexed account, uint256 amount);
 
@@ -40,5 +40,4 @@ interface IIvToken is IERC20 {
     /// @param changedBy account address who changed Stanley address
     /// @param newStanleyAddress new Stanley address
     event StanleyChanged(address changedBy, address newStanleyAddress);
-	
 }

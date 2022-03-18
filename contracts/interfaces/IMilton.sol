@@ -96,7 +96,7 @@ interface IMilton {
         address asset,
         uint256 closeTimestamp,
         address liquidator,
-        uint256 transferedToBuyer,
-        uint256 transferedToLiquidator
+        uint256 transferredToBuyer,
+        uint256 transferredToLiquidator
     );
 }

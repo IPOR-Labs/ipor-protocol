@@ -11,7 +11,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../amm/pool/Joseph.sol";
 
 abstract contract ItfJoseph is Joseph {
-    function itfCalculateExchangeRate(uint256 timestamp) external {
+    function itfCalculateExchangeRate(uint256 timestamp) external view returns (uint256) {
         return _calculateExchangeRate(timestamp);
     }
 

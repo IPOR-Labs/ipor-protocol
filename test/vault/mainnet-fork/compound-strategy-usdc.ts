@@ -97,7 +97,7 @@ describe("compound deployed Contract on Mainnet fork", function () {
             expect(true).to.be.true;
         });
 
-        it("hardhat_impersonateAccount and check transfered balance to our account", async function () {
+        it("hardhat_impersonateAccount and check transferred balance to our account", async function () {
             let usdcBalanceBefore = await usdcContract.balanceOf(accounts[0].address);
             console.log("USDC Balance Before", usdcBalanceBefore.toString());
 

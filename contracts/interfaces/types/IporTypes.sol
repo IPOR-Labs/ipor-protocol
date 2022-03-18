@@ -63,7 +63,7 @@ library IporTypes {
         /// @notice Liquidity Pool Balance includes part of Opening Fee,
         /// @ dev how many of Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 liquidityPool;
-        /// @notice Vault balance, describe how many asset balance is transfered to Asset Management Vault (Stanley)
+        /// @notice Vault balance, describe how many asset balance is transferred to Asset Management Vault (Stanley)
         uint256 vault;
     }
 }

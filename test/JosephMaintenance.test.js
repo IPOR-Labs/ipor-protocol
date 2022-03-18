@@ -147,6 +147,7 @@ describe("Joseph Maintenance", () => {
         await testData.josephDai.connect(userOne).getRedeemLpMaxUtilizationPercentage();
         await testData.josephDai.connect(userOne).getMiltonStanleyBalancePercentage();
         await testData.josephDai.connect(userOne).asset();
+		await testData.josephDai.connect(userOne).calculateExchangeRate();
     });
 
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {

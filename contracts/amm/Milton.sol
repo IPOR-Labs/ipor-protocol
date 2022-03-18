@@ -104,7 +104,7 @@ abstract contract Milton is
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-	function calculateSoap(uint256 calculateTimestamp)
+    function calculateSoap(uint256 calculateTimestamp)
         external
         view
         override
@@ -114,7 +114,7 @@ abstract contract Milton is
             int256 soap
         )
     {
-        (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(uint256 calculateTimestamp);
+        (int256 _soapPf, int256 _soapRf, int256 _soap) = _calculateSoap(calculateTimestamp);
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
@@ -136,7 +136,7 @@ abstract contract Milton is
         return _calculateSwapReceiveFixedValue(block.timestamp, swap);
     }
 
-    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
+    //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
@@ -145,7 +145,7 @@ abstract contract Milton is
         return _openSwapPayFixed(block.timestamp, totalAmount, toleratedQuoteValue, leverage);
     }
 
-    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
+    //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
@@ -380,7 +380,7 @@ abstract contract Milton is
             );
     }
 
-    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
+    //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function _openSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -452,7 +452,7 @@ abstract contract Milton is
         return newSwapId;
     }
 
-    //@param totalAmount underlying tokens transfered from buyer to Milton, represented in decimals specific for asset
+    //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function _openSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -629,8 +629,8 @@ abstract contract Milton is
         );
 
         (
-            uint256 transferedToBuyer,
-            uint256 transferedToLiquidator
+            uint256 transferredToBuyer,
+            uint256 transferredToLiquidator
         ) = _transferTokensBasedOnPositionValue(
                 iporSwap,
                 positionValue,
@@ -645,8 +645,8 @@ abstract contract Milton is
             _asset,
             closeTimestamp,
             msg.sender,
-            transferedToBuyer,
-            transferedToLiquidator
+            transferredToBuyer,
+            transferredToLiquidator
         );
     }
 
@@ -673,8 +673,8 @@ abstract contract Milton is
         );
 
         (
-            uint256 transferedToBuyer,
-            uint256 transferedToLiquidator
+            uint256 transferredToBuyer,
+            uint256 transferredToLiquidator
         ) = _transferTokensBasedOnPositionValue(
                 iporSwap,
                 positionValue,
@@ -689,8 +689,8 @@ abstract contract Milton is
             _asset,
             closeTimestamp,
             msg.sender,
-            transferedToBuyer,
-            transferedToLiquidator
+            transferredToBuyer,
+            transferredToLiquidator
         );
     }
 
@@ -717,7 +717,7 @@ abstract contract Milton is
         uint256 cfgIncomeFeePercentage,
         uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
-    ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
+    ) internal returns (uint256 transferredToBuyer, uint256 transferredToLiquidator) {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
         uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
             derivativeItem.collateral,
@@ -738,7 +738,7 @@ abstract contract Milton is
 
         if (positionValue > 0) {
             //Trader earn, Milton loose
-            (transferedToBuyer, transferedToLiquidator) = _transferDerivativeAmount(
+            (transferredToBuyer, transferredToLiquidator) = _transferDerivativeAmount(
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral +
@@ -747,7 +747,7 @@ abstract contract Milton is
             );
         } else {
             //Milton earn, Trader looseMiltonStorage
-            (transferedToBuyer, transferedToLiquidator) = _transferDerivativeAmount(
+            (transferredToBuyer, transferredToLiquidator) = _transferDerivativeAmount(
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral - absPositionValue
@@ -760,7 +760,7 @@ abstract contract Milton is
         address buyer,
         uint256 liquidationDepositAmount,
         uint256 transferAmount
-    ) internal returns (uint256 transferedToBuyer, uint256 transferedToLiquidator) {
+    ) internal returns (uint256 transferredToBuyer, uint256 transferredToLiquidator) {
         uint256 decimals = _getDecimals();
 
         if (msg.sender == buyer) {
@@ -772,7 +772,10 @@ abstract contract Milton is
                 decimals
             );
             IERC20Upgradeable(_asset).safeTransfer(msg.sender, liqDepositAmountAssetDecimals);
-            transferedToLiquidator = IporMath.convertToWad(liqDepositAmountAssetDecimals, decimals);
+            transferredToLiquidator = IporMath.convertToWad(
+                liqDepositAmountAssetDecimals,
+                decimals
+            );
         }
 
         if (transferAmount != 0) {
@@ -783,7 +786,7 @@ abstract contract Milton is
             //transfer from Milton to Trader
             IERC20Upgradeable(_asset).safeTransfer(buyer, transferAmmountAssetDecimals);
 
-            transferedToBuyer = IporMath.convertToWad(transferAmmountAssetDecimals, decimals);
+            transferredToBuyer = IporMath.convertToWad(transferAmmountAssetDecimals, decimals);
         }
     }
 

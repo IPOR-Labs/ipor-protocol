@@ -408,34 +408,34 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
     }
 
-    function updateStorageWhenTransferPublicationFee(uint256 transferedValue)
+    function updateStorageWhenTransferPublicationFee(uint256 transferredValue)
         external
         override
         onlyJoseph
     {
-        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        require(transferredValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
         uint256 balance = _balances.iporPublicationFee;
 
-        require(transferedValue <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_TOO_LOW);
+        require(transferredValue <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_TOO_LOW);
 
-        balance = balance - transferedValue;
+        balance = balance - transferredValue;
 
         _balances.iporPublicationFee = balance.toUint128();
     }
 
-    function updateStorageWhenTransferToTreasury(uint256 transferedValue)
+    function updateStorageWhenTransferToTreasury(uint256 transferredValue)
         external
         override
         onlyJoseph
     {
-        require(transferedValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        require(transferredValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
         uint256 balance = _balances.treasury;
 
-        require(transferedValue <= balance, MiltonErrors.TREASURE_BALANCE_TOO_LOW);
+        require(transferredValue <= balance, MiltonErrors.TREASURE_BALANCE_TOO_LOW);
 
-        balance = balance - transferedValue;
+        balance = balance - transferredValue;
 
         _balances.treasury = balance.toUint128();
     }
