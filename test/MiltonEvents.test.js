@@ -52,7 +52,7 @@ describe("Milton Events", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 )
         )
             .to.emit(testData.miltonDai, "OpenSwap")
@@ -103,7 +103,7 @@ describe("Milton Events", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 )
         )
             .to.emit(testData.miltonDai, "OpenSwap")
@@ -154,7 +154,7 @@ describe("Milton Events", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 )
         )
             .to.emit(testData.miltonUsdt, "OpenSwap")
@@ -205,7 +205,7 @@ describe("Milton Events", () => {
                     params.openTimestamp,
                     params.totalAmount,
                     params.toleratedQuoteValue,
-                    params.collateralizationFactor
+                    params.leverage
                 )
         )
             .to.emit(testData.miltonUsdt, "OpenSwap")
@@ -256,7 +256,7 @@ describe("Milton Events", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         await testData.warren
@@ -302,7 +302,7 @@ describe("Milton Events", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         await testData.warren
@@ -348,7 +348,7 @@ describe("Milton Events", () => {
                 params.openTimestamp,
                 params.totalAmount,
                 params.toleratedQuoteValue,
-                params.collateralizationFactor
+                params.leverage
             );
 
         await testData.warren

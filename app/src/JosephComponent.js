@@ -792,7 +792,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="transferTreasury"
+                                    method="transferToTreasury"
                                 />
                             </div>
                         ) : (
@@ -800,7 +800,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="transferTreasury"
+                                    method="transferToTreasury"
                                 />
                             </div>
                         )}
@@ -811,7 +811,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="transferTreasury"
+                                    method="transferToTreasury"
                                 />
                             </div>
                         ) : (
@@ -819,7 +819,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="transferTreasury"
+                                    method="transferToTreasury"
                                 />
                             </div>
                         )}
@@ -830,7 +830,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="transferTreasury"
+                                    method="transferToTreasury"
                                 />
                             </div>
                         ) : (
@@ -838,7 +838,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="transferTreasury"
+                                    method="transferToTreasury"
                                 />
                             </div>
                         )}
@@ -855,7 +855,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="transferPublicationFee"
+                                    method="transferToCharlieTreasury"
                                 />
                             </div>
                         ) : (
@@ -863,7 +863,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="transferPublicationFee"
+                                    method="transferToCharlieTreasury"
                                 />
                             </div>
                         )}
@@ -874,7 +874,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="transferPublicationFee"
+                                    method="transferToCharlieTreasury"
                                 />
                             </div>
                         ) : (
@@ -882,7 +882,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="transferPublicationFee"
+                                    method="transferToCharlieTreasury"
                                 />
                             </div>
                         )}
@@ -893,7 +893,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="transferPublicationFee"
+                                    method="transferToCharlieTreasury"
                                 />
                             </div>
                         ) : (
@@ -901,7 +901,7 @@ export default ({ drizzle, drizzleState }) => (
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="transferPublicationFee"
+                                    method="transferToCharlieTreasury"
                                 />
                             </div>
                         )}

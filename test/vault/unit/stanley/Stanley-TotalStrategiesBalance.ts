@@ -37,11 +37,7 @@ describe("Stanley -> totalStrategiesBalance", () => {
         await compoundStrategy.setShareToken(DAI.address);
         await compoundStrategy.setAsset(DAI.address);
 
-        ivTokenDai = (await tokenFactoryIvToken.deploy(
-            "IvToken",
-            "IVT",
-            "0x6b175474e89094c44da98b954eedeac495271d0f"
-        )) as IvToken;
+        ivTokenDai = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
 
         const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
         stanley = (await upgrades.deployProxy(StanleyDai, [

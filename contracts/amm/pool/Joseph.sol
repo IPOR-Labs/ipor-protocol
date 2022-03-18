@@ -28,38 +28,40 @@ abstract contract Joseph is
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    modifier onlyPublicationFeeTransferer() {
+    modifier onlyCharlieTreasuryManager() {
         require(
-            msg.sender == _publicationFeeTransferer,
+            msg.sender == _charlieTreasuryManager,
             JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
         );
         _;
     }
 
-    modifier onlyTreasureTransferer() {
-        require(msg.sender == _treasureTransferer, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
+    modifier onlyTreasuryManager() {
+        require(msg.sender == _treasuryManager, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
         _;
     }
 
     function initialize(
-        address assetAddress,
+        address asset,
         address ipToken,
         address milton,
         address miltonStorage,
         address stanley
     ) public initializer {
         __Ownable_init();
-        require(address(assetAddress) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(milton) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(miltonStorage) != address(0), IporErrors.WRONG_ADDRESS);
-        require(address(stanley) != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _getDecimals() == ERC20Upgradeable(assetAddress).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
 
-        _asset = assetAddress;
-        _ipToken = IIpToken(ipToken);
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
+        require(milton != address(0), IporErrors.WRONG_ADDRESS);
+        require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
+        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
+        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+
+        IIpToken iipToken = IIpToken(ipToken);
+        require(asset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
+
+        _asset = asset;
+        _ipToken = iipToken;
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
@@ -110,16 +112,16 @@ abstract contract Joseph is
     }
 
     //@param assetValue underlying token amount represented in 18 decimals
-    function transferTreasury(uint256 assetValue)
+    function transferToTreasury(uint256 assetValue)
         external
         override
         nonReentrant
         whenNotPaused
-        onlyTreasureTransferer
+        onlyTreasuryManager
     {
-        require(address(0) != _treasureTreasurer, JosephErrors.INCORRECT_TREASURE_TREASURER);
+        require(address(0) != _treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
-        _miltonStorage.updateStorageWhenTransferTreasure(assetValue);
+        _miltonStorage.updateStorageWhenTransferToTreasury(assetValue);
 
         uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(
             assetValue,
@@ -128,20 +130,20 @@ abstract contract Joseph is
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
-            _treasureTreasurer,
+            _treasury,
             assetValueAssetDecimals
         );
     }
 
     //@param assetValue underlying token amount represented in 18 decimals
-    function transferPublicationFee(uint256 assetValue)
+    function transferToCharlieTreasury(uint256 assetValue)
         external
         override
         nonReentrant
         whenNotPaused
-        onlyPublicationFeeTransferer
+        onlyCharlieTreasuryManager
     {
-        require(address(0) != _charlieTreasurer, JosephErrors.INCORRECT_CHARLIE_TREASURER);
+        require(address(0) != _charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
         _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
 
@@ -152,12 +154,11 @@ abstract contract Joseph is
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_milton),
-            _charlieTreasurer,
+            _charlieTreasury,
             assetValueAssetDecimals
         );
     }
 
-    //@notice Return reserve ration Milton Balance / (Milton Balance + Vault Balance) for a given asset
     function checkVaultReservesRatio() external view override returns (uint256) {
         return _checkVaultReservesRatio();
     }

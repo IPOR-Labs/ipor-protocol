@@ -25,69 +25,59 @@ abstract contract JosephConfiguration is
     IMiltonStorage internal _miltonStorage;
     IStanley internal _stanley;
 
-    address internal _charlieTreasurer;
-    address internal _treasureTreasurer;
-    address internal _publicationFeeTransferer;
-    address internal _treasureTransferer;
+    address internal _treasury;
+    address internal _treasuryManager;
+    address internal _charlieTreasury;
+    address internal _charlieTreasuryManager;
 
-    function getCharlieTreasurer() external view override returns (address) {
-        return _charlieTreasurer;
+    function getCharlieTreasury() external view override returns (address) {
+        return _charlieTreasury;
     }
 
-    function setCharlieTreasurer(address newCharlieTreasurer)
+    function setCharlieTreasury(address newCharlieTreasury)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        require(newCharlieTreasurer != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
-        _charlieTreasurer = newCharlieTreasurer;
-        emit CharlieTreasurerUpdated(_asset, newCharlieTreasurer);
+        require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
+        _charlieTreasury = newCharlieTreasury;
+        emit CharlieTreasuryUpdated(_asset, newCharlieTreasury);
     }
 
-    function getTreasureTreasurer() external view override returns (address) {
-        return _treasureTreasurer;
+    function getTreasury() external view override returns (address) {
+        return _treasury;
     }
 
-    function setTreasureTreasurer(address newTreasureTreasurer)
+    function setTreasury(address newTreasury) external override onlyOwner whenNotPaused {
+        require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
+        _treasury = newTreasury;
+        emit TreasuryUpdated(_asset, newTreasury);
+    }
+
+    function getCharlieTreasuryManager() external view override returns (address) {
+        return _charlieTreasuryManager;
+    }
+
+    function setCharlieTreasuryManager(address charlieTreasuryManager)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        require(newTreasureTreasurer != address(0), IporErrors.WRONG_ADDRESS);
-        _treasureTreasurer = newTreasureTreasurer;
-        emit TreasureTreasurerUpdated(_asset, newTreasureTreasurer);
+        require(address(0) != charlieTreasuryManager, IporErrors.WRONG_ADDRESS);
+        _charlieTreasuryManager = charlieTreasuryManager;
+        emit CharlieTreasuryManagerUpdated(charlieTreasuryManager);
     }
 
-    function getPublicationFeeTransferer() external view override returns (address) {
-        return _publicationFeeTransferer;
+    function getTreasuryManager() external view override returns (address) {
+        return _treasuryManager;
     }
 
-    function setPublicationFeeTransferer(address publicationFeeTransferer)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        require(address(0) != publicationFeeTransferer, IporErrors.WRONG_ADDRESS);
-        _publicationFeeTransferer = publicationFeeTransferer;
-        emit PublicationFeeTransfererUpdated(publicationFeeTransferer);
-    }
-
-    function getTreasureTransferer() external view override returns (address) {
-        return _treasureTransferer;
-    }
-
-    function setTreasureTransferer(address treasureTransferer)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        require(address(0) != treasureTransferer, IporErrors.WRONG_ADDRESS);
-        _treasureTransferer = treasureTransferer;
-        emit TreasureTransfererUpdated(treasureTransferer);
+    function setTreasuryManager(address treasuryManager) external override onlyOwner whenNotPaused {
+        require(address(0) != treasuryManager, IporErrors.WRONG_ADDRESS);
+        _treasuryManager = treasuryManager;
+        emit TreasuryManagerUpdated(treasuryManager);
     }
 
     function getRedeemFeePercentage() external pure override returns (uint256) {

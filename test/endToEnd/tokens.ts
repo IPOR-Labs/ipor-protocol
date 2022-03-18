@@ -130,12 +130,12 @@ export const ipTokenUsdtFactory = async (): Promise<IpToken> => {
 
 export const ipTokenUsdcFactory = async (): Promise<IpToken> => {
     const ipTokenFactory = await hre.ethers.getContractFactory("IpToken");
-    return ipTokenFactory.deploy("IP USDC", "ipUSDC", usdtAddress) as Promise<IpToken>;
+    return ipTokenFactory.deploy("IP USDC", "ipUSDC", usdcAddress) as Promise<IpToken>;
 };
 
 export const ipTokenDaiFactory = async (): Promise<IpToken> => {
     const ipTokenFactory = await hre.ethers.getContractFactory("IpToken");
-    return ipTokenFactory.deploy("IP DAI", "ipDAI", usdtAddress) as Promise<IpToken>;
+    return ipTokenFactory.deploy("IP DAI", "ipDAI", daiAddress) as Promise<IpToken>;
 };
 
 export const ipTokenSetup = async (ipToken: IpToken, josephAddress: string) => {
@@ -158,7 +158,7 @@ export const ivTokenUsdcFactory = async (): Promise<IvToken> => {
 
 export const ivTokenDaiFactory = async (): Promise<IvToken> => {
     const ivTokenFactory = await hre.ethers.getContractFactory("IvToken");
-    return ivTokenFactory.deploy("IV DAI", "ivDAI", usdtAddress) as Promise<IvToken>;
+    return ivTokenFactory.deploy("IV DAI", "ivDAI", daiAddress) as Promise<IvToken>;
 };
 
 export const ivTokenSetup = async (ivToken: IvToken, stanleyAddress: string) => {

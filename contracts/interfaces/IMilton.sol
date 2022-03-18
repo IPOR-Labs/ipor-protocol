@@ -36,13 +36,13 @@ interface IMilton {
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) external returns (uint256);
 
     function openSwapReceiveFixed(
         uint256 totalAmount,
         uint256 toleratedQuoteValue,
-        uint256 collateralizationFactor
+        uint256 leverage
     ) external returns (uint256);
 
     function closeSwapPayFixed(uint256 swapId) external;
@@ -78,8 +78,8 @@ interface IMilton {
         address asset,
         MiltonTypes.SwapDirection direction,
         AmmTypes.OpenSwapMoney money,
-        uint256 startingTimestamp,
-        uint256 endingTimestamp,
+        uint256 openTimestamp,
+        uint256 endTimestamp,
         MiltonTypes.IporSwapIndicator indicator
     );
 

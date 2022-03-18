@@ -26,17 +26,25 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address[] memory ipTokens,
         address[] memory ivTokens
     ) public initializer {
+        __Ownable_init();
+        require(warren != address(0), IporErrors.WRONG_ADDRESS);
         require(
             assets.length == miltons.length && assets.length == miltonStorages.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
-        __Ownable_init();
         _warren = warren;
         _assets = assets;
 
         uint256 assetsLength = assets.length;
         for (uint256 i = 0; i != assetsLength; i++) {
+            require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(miltons[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(miltonStorages[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(josephs[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(ipTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(ivTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
+
             _assetConfig[assets[i]] = CockpitTypes.AssetConfig(
                 miltons[i],
                 miltonStorages[i],

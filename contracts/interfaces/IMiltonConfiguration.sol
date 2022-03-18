@@ -22,9 +22,9 @@ interface IMiltonConfiguration {
 
     function getLiquidationDepositAmount() external pure returns (uint256);
 
-    function getMaxCollateralizationFactorValue() external pure returns (uint256);
+    function getMaxLeverageValue() external pure returns (uint256);
 
-    function getMinCollateralizationFactorValue() external pure returns (uint256);
+    function getMinLeverageValue() external pure returns (uint256);
 
     function getMiltonSpreadModel() external view returns (address);
 

@@ -42,6 +42,7 @@ contract WarrenDarcyDataProvider is
         (uint256 value, uint256 ibtPrice, , , uint256 date) = IWarren(_warren).getIndex(asset);
         iporFront = DarcyTypes.IporFront(
             IERC20MetadataUpgradeable(asset).symbol(),
+            asset,
             value,
             ibtPrice,
             date

@@ -8,8 +8,8 @@ interface IMiltonDarcyDataProvider {
     }
     struct IporAssetConfigurationFront {
         address asset;
-        uint256 minCollateralizationFactorValue;
-        uint256 maxCollateralizationFactorValue;
+        uint256 minLeverageValue;
+        uint256 maxLeverageValue;
         uint256 openingFeePercentage;
         uint256 iporPublicationFeeAmount;
         uint256 liquidationDepositAmount;
@@ -23,12 +23,12 @@ interface IMiltonDarcyDataProvider {
         address asset;
         uint256 collateral;
         uint256 notionalAmount;
-        uint256 collateralizationFactor;
+        uint256 leverage;
         uint8 direction;
         uint256 fixedInterestRate;
         int256 positionValue;
-        uint256 startingTimestamp;
-        uint256 endingTimestamp;
+        uint256 openTimestamp;
+        uint256 endTimestamp;
         uint256 liquidationDepositAmount;
     }
 

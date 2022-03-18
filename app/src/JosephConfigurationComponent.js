@@ -242,12 +242,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdt"
-                                    method="getCharlieTreasurer"
+                                    method="getCharlieTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="setCharlieTreasurer"
+                                    method="setCharlieTreasury"
                                 />
                             </div>
                         ) : (
@@ -256,12 +256,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdt"
-                                    method="getCharlieTreasurer"
+                                    method="getCharlieTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="setCharlieTreasurer"
+                                    method="setCharlieTreasury"
                                 />
                             </div>
                         )}
@@ -273,12 +273,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdc"
-                                    method="getCharlieTreasurer"
+                                    method="getCharlieTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="setCharlieTreasurer"
+                                    method="setCharlieTreasury"
                                 />
                             </div>
                         ) : (
@@ -287,12 +287,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdc"
-                                    method="getCharlieTreasurer"
+                                    method="getCharlieTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="setCharlieTreasurer"
+                                    method="setCharlieTreasury"
                                 />
                             </div>
                         )}
@@ -304,12 +304,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephDai"
-                                    method="getCharlieTreasurer"
+                                    method="getCharlieTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="setCharlieTreasurer"
+                                    method="setCharlieTreasury"
                                 />
                             </div>
                         ) : (
@@ -318,12 +318,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephDai"
-                                    method="getCharlieTreasurer"
+                                    method="getCharlieTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="setCharlieTreasurer"
+                                    method="setCharlieTreasury"
                                 />
                             </div>
                         )}
@@ -332,7 +332,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Treasure Treasurer</strong>
+                        <strong>Treasury Treasurer</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -341,12 +341,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdt"
-                                    method="getTreasureTreasurer"
+                                    method="getTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="setTreasureTreasurer"
+                                    method="setTreasury"
                                 />
                             </div>
                         ) : (
@@ -355,12 +355,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdt"
-                                    method="getTreasureTreasurer"
+                                    method="getTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="setTreasureTreasurer"
+                                    method="setTreasury"
                                 />
                             </div>
                         )}
@@ -372,12 +372,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdc"
-                                    method="getTreasureTreasurer"
+                                    method="getTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="setTreasureTreasurer"
+                                    method="setTreasury"
                                 />
                             </div>
                         ) : (
@@ -386,12 +386,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdc"
-                                    method="getTreasureTreasurer"
+                                    method="getTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="setTreasureTreasurer"
+                                    method="setTreasury"
                                 />
                             </div>
                         )}
@@ -403,12 +403,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephDai"
-                                    method="getTreasureTreasurer"
+                                    method="getTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="setTreasureTreasurer"
+                                    method="setTreasury"
                                 />
                             </div>
                         ) : (
@@ -417,12 +417,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephDai"
-                                    method="getTreasureTreasurer"
+                                    method="getTreasury"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="setTreasureTreasurer"
+                                    method="setTreasury"
                                 />
                             </div>
                         )}
@@ -440,12 +440,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdt"
-                                    method="getPublicationFeeTransferer"
+                                    method="getCharlieTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="setPublicationFeeTransferer"
+                                    method="setCharlieTreasuryManager"
                                 />
                             </div>
                         ) : (
@@ -454,12 +454,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdt"
-                                    method="getPublicationFeeTransferer"
+                                    method="getCharlieTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="setPublicationFeeTransferer"
+                                    method="setCharlieTreasuryManager"
                                 />
                             </div>
                         )}
@@ -471,12 +471,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdc"
-                                    method="getPublicationFeeTransferer"
+                                    method="getCharlieTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="setPublicationFeeTransferer"
+                                    method="setCharlieTreasuryManager"
                                 />
                             </div>
                         ) : (
@@ -485,12 +485,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdc"
-                                    method="getPublicationFeeTransferer"
+                                    method="getCharlieTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="setPublicationFeeTransferer"
+                                    method="setCharlieTreasuryManager"
                                 />
                             </div>
                         )}
@@ -502,12 +502,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephDai"
-                                    method="getPublicationFeeTransferer"
+                                    method="getCharlieTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="setPublicationFeeTransferer"
+                                    method="setCharlieTreasuryManager"
                                 />
                             </div>
                         ) : (
@@ -516,12 +516,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephDai"
-                                    method="getPublicationFeeTransferer"
+                                    method="getCharlieTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="setPublicationFeeTransferer"
+                                    method="setCharlieTreasuryManager"
                                 />
                             </div>
                         )}
@@ -530,7 +530,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Treasure Transferer</strong>
+                        <strong>Treasury Transferer</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -539,12 +539,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdt"
-                                    method="getTreasureTransferer"
+                                    method="getTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
-                                    method="setTreasureTransferer"
+                                    method="setTreasuryManager"
                                 />
                             </div>
                         ) : (
@@ -553,12 +553,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdt"
-                                    method="getTreasureTransferer"
+                                    method="getTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
-                                    method="setTreasureTransferer"
+                                    method="setTreasuryManager"
                                 />
                             </div>
                         )}
@@ -570,12 +570,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephUsdc"
-                                    method="getTreasureTransferer"
+                                    method="getTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
-                                    method="setTreasureTransferer"
+                                    method="setTreasuryManager"
                                 />
                             </div>
                         ) : (
@@ -584,12 +584,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephUsdc"
-                                    method="getTreasureTransferer"
+                                    method="getTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
-                                    method="setTreasureTransferer"
+                                    method="setTreasuryManager"
                                 />
                             </div>
                         )}
@@ -601,12 +601,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="ItfJosephDai"
-                                    method="getTreasureTransferer"
+                                    method="getTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
-                                    method="setTreasureTransferer"
+                                    method="setTreasuryManager"
                                 />
                             </div>
                         ) : (
@@ -615,12 +615,12 @@ export default ({ drizzle, drizzleState }) => (
                                     drizzle={drizzle}
                                     drizzleState={drizzleState}
                                     contract="JosephDai"
-                                    method="getTreasureTransferer"
+                                    method="getTreasuryManager"
                                 />
                                 <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
-                                    method="setTreasureTransferer"
+                                    method="setTreasuryManager"
                                 />
                             </div>
                         )}

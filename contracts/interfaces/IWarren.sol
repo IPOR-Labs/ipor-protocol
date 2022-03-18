@@ -14,7 +14,7 @@ interface IWarren {
             uint256 ibtPrice,
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance,
-            uint256 date
+            uint256 lastUpdateTimestamp
         );
 
     function getAccruedIndex(uint256 calculateTimestamp, address asset)

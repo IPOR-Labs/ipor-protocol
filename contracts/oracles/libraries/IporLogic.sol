@@ -17,7 +17,7 @@ library IporLogic {
             accrueQuasiIbtPrice(
                 ipor.indexValue,
                 ipor.quasiIbtPrice,
-                ipor.blockTimestamp,
+                ipor.lastUpdateTimestamp,
                 accrueTimestamp
             );
     }
