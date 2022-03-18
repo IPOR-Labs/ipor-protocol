@@ -28,7 +28,7 @@ import MockCDai from "./contracts/MockCDai.json";
 
 import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
 import CockpitDataProvider from "./contracts/CockpitDataProvider.json";
-import MiltonDarcyDataProvider from "./contracts/MiltonDarcyDataProvider.json";
+import MiltonFacadeDataProvider from "./contracts/MiltonFacadeDataProvider.json";
 import JosephUsdt from "./contracts/JosephUsdt.json";
 import JosephUsdc from "./contracts/JosephUsdc.json";
 import JosephDai from "./contracts/JosephDai.json";
@@ -57,9 +57,9 @@ const options = {
 
     contracts: [
         CockpitDataProvider,
-        MiltonDarcyDataProvider,
+        MiltonFacadeDataProvider,
         Warren,
-        ItfWarren,        
+        ItfWarren,
         MiltonUsdt,
         MiltonUsdc,
         MiltonDai,

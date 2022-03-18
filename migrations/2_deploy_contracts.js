@@ -50,9 +50,9 @@ const JosephDai = artifacts.require("JosephDai");
 const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
-const WarrenDarcyDataProvider = artifacts.require("WarrenDarcyDataProvider");
+const WarrenFacadeDataProvider = artifacts.require("WarrenFacadeDataProvider");
 const CockpitDataProvider = artifacts.require("CockpitDataProvider");
-const MiltonDarcyDataProvider = artifacts.require("MiltonDarcyDataProvider");
+const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 const MockLendingPoolAave = artifacts.require("MockLendingPoolAave");
 const MockProviderAave = artifacts.require("MockProviderAave");
 const MockStakedAave = artifacts.require("MockStakedAave");
@@ -582,7 +582,7 @@ module.exports = async function (deployer, _network) {
     );
 
     const warrenDarcyDataProvider = await deployProxy(
-        WarrenDarcyDataProvider,
+        WarrenFacadeDataProvider,
         [[mockedDai.address, mockedUsdt.address, mockedUsdc.address], warren.address],
         {
             deployer: deployer,
@@ -629,7 +629,7 @@ module.exports = async function (deployer, _network) {
     }
 
     const miltonDarcyDataProvider = await deployProxy(
-        MiltonDarcyDataProvider,
+        MiltonFacadeDataProvider,
         [
             warren.address,
             [mockedUsdt.address, mockedUsdc.address, mockedDai.address],

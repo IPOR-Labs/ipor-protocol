@@ -32,7 +32,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getTotalOutstandingNotional"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
@@ -48,7 +48,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getTotalOutstandingNotional"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
@@ -64,7 +64,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getTotalOutstandingNotional"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
@@ -83,7 +83,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getTotalOutstandingNotional"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
@@ -99,7 +99,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getTotalOutstandingNotional"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
@@ -115,7 +115,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getTotalOutstandingNotional"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
@@ -134,7 +134,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getIpTokenExchangeRate"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
@@ -150,7 +150,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getIpTokenExchangeRate"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
@@ -166,7 +166,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDarcyDataProvider"
+                        contract="MiltonFacadeDataProvider"
                         method="getIpTokenExchangeRate"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
@@ -185,7 +185,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDarcyDataProvider"
+            contract="MiltonFacadeDataProvider"
             method="getConfiguration"
             render={FrontendConfigurations}
         />
@@ -194,7 +194,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDarcyDataProvider"
+            contract="MiltonFacadeDataProvider"
             method="getMySwaps"
             methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
             render={FrontendPositions}
@@ -203,7 +203,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDarcyDataProvider"
+            contract="MiltonFacadeDataProvider"
             method="getMySwaps"
             methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
             render={FrontendPositions}
@@ -212,7 +212,7 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDarcyDataProvider"
+            contract="MiltonFacadeDataProvider"
             method="getMySwaps"
             methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
             render={FrontendPositions}

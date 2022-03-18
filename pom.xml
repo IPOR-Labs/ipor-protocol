@@ -152,19 +152,19 @@
                         <argument>${contracts.sources}/amm/configuration/MiltonSpreadConfiguration.sol</argument>
                         <argument>${contracts.sources}/facades/cockpit/CockpitSmartContracts.sol</argument>
                         <argument>${contracts.sources}/facades/cockpit/CockpitDataProvider.sol</argument>
-                        <argument>${contracts.sources}/facades/darcy/MiltonDarcyDataProvider.sol</argument>                        
-                        <argument>${contracts.sources}/facades/darcy/WarrenDarcyDataProvider.sol</argument>
+                        <argument>${contracts.sources}/facades/MiltonFacadeDataProvider.sol</argument>                        
+                        <argument>${contracts.sources}/facades/WarrenFacadeDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/types/IporTypes.sol</argument>
 						<argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/ICockpitDataProvider.sol</argument>                        
-                        <argument>${contracts.sources}/interfaces/IMiltonDarcyDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonFacadeDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonSpreadConfiguration.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>                        
-                        <argument>${contracts.sources}/interfaces/IWarrenDarcyDataProvider.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IWarrenFacadeDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IWarren.sol</argument>
                         <argument>${contracts.sources}/itf/ItfJoseph.sol</argument>
                         <argument>${contracts.sources}/itf/ItfMilton.sol</argument>
@@ -240,7 +240,7 @@
                             <include>ItfMilton.abi</include>
                             <include>ItfWarren.abi</include>
                             <include>Warren.abi</include>
-                            <include>MiltonDarcyDataProvider.abi</include>
+                            <include>MiltonFacadeDataProvider.abi</include>
                         </includes>
                     </abiSourceFiles>
                     <outputDirectory>

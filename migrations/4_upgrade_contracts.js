@@ -28,8 +28,8 @@ const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
 
 const CockpitDataProvider = artifacts.require("CockpitDataProvider");
-const WarrenDarcyDataProvider = artifacts.require("WarrenDarcyDataProvider");
-const MiltonDarcyDataProvider = artifacts.require("MiltonDarcyDataProvider");
+const WarrenFacadeDataProvider = artifacts.require("WarrenFacadeDataProvider");
+const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
 module.exports = async function (deployer, _network, addresses) {
     console.log("Upgrade Smart Contracts...");
@@ -39,9 +39,9 @@ module.exports = async function (deployer, _network, addresses) {
     await upgradeContract(Warren);
     await upgradeContract(ItfWarren);
 
-    await upgradeContract(WarrenDarcyDataProvider);
+    await upgradeContract(WarrenFacadeDataProvider);
     await upgradeContract(CockpitDataProvider);
-    await upgradeContract(MiltonDarcyDataProvider);
+    await upgradeContract(MiltonFacadeDataProvider);
 
     await upgradeContract(MiltonStorageUsdt);
     await upgradeContract(MiltonStorageUsdc);

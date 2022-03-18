@@ -2,19 +2,8 @@
 pragma solidity 0.8.9;
 
 /// @title Structs used in comunication Darcy web application with Ipor Protocol
-/// @dev structs used in IMiltonDarcyDataProvider and IWarrenDarcyDataProvider interfaces
-library DarcyTypes {
-    /// @notice Technical struct which groups important addresses used in smart contract MiltonDarcyDataProvider,
-    /// struct represent data for one specific asset which is USDT, USDC, DAI etc.
-    struct AssetConfig {
-        /// @notice Milton address
-        address milton;
-        /// @notice MiltonStorage address
-        address miltonStorage;
-		/// @notice Joseph address
-        address joseph;
-    }
-
+/// @dev structs used in IMiltonFacadeDataProvider and IWarrenFacadeDataProvider interfaces
+library WarrenFacadeTypes {
     /// @notice IPOR Index data required for Darcy. Data represented for one specific asset.
     struct IporFront {
         /// @notice Asset Symbol like USDT, USDC, DAI etc.

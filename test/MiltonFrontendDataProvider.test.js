@@ -33,7 +33,7 @@ const {
 } = require("./Utils");
 const { TC_TOTAL_AMOUNT_10_18DEC } = require("./Const");
 
-describe("MiltonDarcyDataProvider", () => {
+describe("MiltonFacadeDataProvider", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress;
 
@@ -140,8 +140,10 @@ describe("MiltonDarcyDataProvider", () => {
 
         const expectedSwapsLength = 3;
 
-        const MiltonDarcyDataProvider = await ethers.getContractFactory("MiltonDarcyDataProvider");
-        const miltonDarcyDataProvider = await MiltonDarcyDataProvider.deploy();
+        const MiltonFacadeDataProvider = await ethers.getContractFactory(
+            "MiltonFacadeDataProvider"
+        );
+        const miltonDarcyDataProvider = await MiltonFacadeDataProvider.deploy();
         await miltonDarcyDataProvider.deployed();
 
         await miltonDarcyDataProvider.initialize(
@@ -350,8 +352,10 @@ describe("MiltonDarcyDataProvider", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_50_000_18DEC, paramsDai.openTimestamp);
 
-        const MiltonDarcyDataProvider = await ethers.getContractFactory("MiltonDarcyDataProvider");
-        const miltonDarcyDataProvider = await MiltonDarcyDataProvider.deploy();
+        const MiltonFacadeDataProvider = await ethers.getContractFactory(
+            "MiltonFacadeDataProvider"
+        );
+        const miltonDarcyDataProvider = await MiltonFacadeDataProvider.deploy();
         await miltonDarcyDataProvider.deployed();
         await miltonDarcyDataProvider.initialize(
             testData.warren.address,
