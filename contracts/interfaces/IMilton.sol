@@ -21,7 +21,7 @@ interface IMilton {
             int256 soap
         );
 
-    function calculateSoap(uint256 calculateTimestamp)
+    function calculateSoapForTimestamp(uint256 calculateTimestamp)
         external
         view
         returns (

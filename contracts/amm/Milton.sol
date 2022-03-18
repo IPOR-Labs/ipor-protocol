@@ -104,7 +104,7 @@ abstract contract Milton is
         return (soapPf = _soapPf, soapRf = _soapRf, soap = _soap);
     }
 
-    function calculateSoap(uint256 calculateTimestamp)
+    function calculateSoapForTimestamp(uint256 calculateTimestamp)
         external
         view
         override

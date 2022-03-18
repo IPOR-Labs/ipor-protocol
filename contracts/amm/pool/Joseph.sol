@@ -178,7 +178,7 @@ abstract contract Joseph is
     function _calculateExchangeRate(uint256 calculateTimestamp) internal view returns (uint256) {
         IMilton milton = _milton;
 
-        (, , int256 soap) = milton.calculateSoap(calculateTimestamp);
+        (, , int256 soap) = milton.calculateSoapForTimestamp(calculateTimestamp);
 
         int256 balance = milton.getAccruedBalance().liquidityPool.toInt256() - soap;
 
