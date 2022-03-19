@@ -242,8 +242,8 @@ abstract contract Milton is
 
     function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
         IporTypes.MiltonBalancesMemory memory accruedBalance = _miltonStorage.getBalance();
-        
-		uint256 actualVaultBalance = _stanley.totalBalance(address(this));
+
+        uint256 actualVaultBalance = _stanley.totalBalance(address(this));
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
@@ -413,12 +413,12 @@ abstract contract Milton is
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
-        balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
+        balance.payFixedTotalCollateral = balance.payFixedTotalCollateral + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.payFixedSwaps,
-            balance.payFixedSwaps + balance.receiveFixedSwaps
+            balance.payFixedTotalCollateral,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
@@ -485,12 +485,14 @@ abstract contract Milton is
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
-        balance.receiveFixedSwaps = balance.receiveFixedSwaps + bosStruct.collateral;
+        balance.receiveFixedTotalCollateral =
+            balance.receiveFixedTotalCollateral +
+            bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.receiveFixedSwaps,
-            balance.payFixedSwaps + balance.receiveFixedSwaps
+            balance.receiveFixedTotalCollateral,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(

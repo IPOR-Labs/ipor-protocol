@@ -271,7 +271,7 @@ abstract contract Joseph is
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
-            balance.payFixedSwaps + balance.receiveFixedSwaps,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral,
             wadRedeemValue
         );
 

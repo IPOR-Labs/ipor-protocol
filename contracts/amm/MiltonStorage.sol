@@ -53,8 +53,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     function getBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
         return
             IporTypes.MiltonBalancesMemory(
-                _balances.payFixedSwaps,
-                _balances.receiveFixedSwaps,
+                _balances.payFixedTotalCollateral,
+                _balances.receiveFixedTotalCollateral,
                 _balances.liquidityPool,
                 _balances.vault
             );
@@ -68,8 +68,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     {
         return
             MiltonStorageTypes.ExtendedBalancesMemory(
-                _balances.payFixedSwaps,
-                _balances.receiveFixedSwaps,
+                _balances.payFixedTotalCollateral,
+                _balances.receiveFixedTotalCollateral,
                 _balances.liquidityPool,
                 _balances.vault,
                 _balances.iporPublicationFee,
@@ -558,7 +558,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 openingFeeTreasuryValue,
         uint256 cfgIporPublicationFeeAmount
     ) internal {
-        _balances.payFixedSwaps = _balances.payFixedSwaps + collateral.toUint128();
+        _balances.payFixedTotalCollateral =
+            _balances.payFixedTotalCollateral +
+            collateral.toUint128();
 
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
@@ -574,7 +576,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 openingFeeTreasuryValue,
         uint256 cfgIporPublicationFeeAmount
     ) internal {
-        _balances.receiveFixedSwaps = _balances.receiveFixedSwaps + collateral.toUint128();
+        _balances.receiveFixedTotalCollateral =
+            _balances.receiveFixedTotalCollateral +
+            collateral.toUint128();
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
             cfgIporPublicationFeeAmount.toUint128();
@@ -602,7 +606,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
-        _balances.payFixedSwaps = _balances.payFixedSwaps - swap.collateral.toUint128();
+        _balances.payFixedTotalCollateral =
+            _balances.payFixedTotalCollateral -
+            swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -624,7 +630,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
-        _balances.receiveFixedSwaps = _balances.receiveFixedSwaps - swap.collateral.toUint128();
+        _balances.receiveFixedTotalCollateral =
+            _balances.receiveFixedTotalCollateral -
+            swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
