@@ -49,7 +49,7 @@
         "mainnet-test:josephRebalanceTest": "npx hardhat test test/endToEnd/josephRebalanceTest.ts",
         "test:unit": "export FORK_ENABLED=false; npx hardhat test",
         "test:mainnet": "export FORK_ENABLED=true; npm-run-all mainnet-test:*",
-        "test": "npm-run-all test:*",
+        "test": "npx hardhat compile --force; npm-run-all test:*",
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol"
     },
     "dependencies": {
