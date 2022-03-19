@@ -66,7 +66,7 @@ contract MiltonFacadeDataProvider is
             memory config = new MiltonFacadeTypes.AssetConfiguration[](assetsLength);
 
         for (uint256 i = 0; i != assetsLength; i++) {
-            config[0] = _createIporAssetConfig(_assets[i], timestamp);
+            config[i] = _createIporAssetConfig(_assets[i], timestamp);
         }
         return config;
     }
@@ -210,7 +210,9 @@ contract MiltonFacadeDataProvider is
             milton.getLiquidationDepositAmount(),
             milton.getIncomeFeePercentage(),
             spreadPayFixedValue,
-            spreadRecFixedValue
+            spreadRecFixedValue,
+            milton.getMaxLpUtilizationPercentage(),
+            milton.getMaxLpUtilizationPerLegPercentage()
         );
     }
 

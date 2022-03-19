@@ -387,7 +387,6 @@ module.exports = async function (deployer, _network) {
         MiltonUsdt,
         [
             mockedUsdt.address,
-            ipTokenUsdt.address,
             warren.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
@@ -404,7 +403,6 @@ module.exports = async function (deployer, _network) {
         ItfMiltonUsdt,
         [
             mockedUsdt.address,
-            ipTokenUsdt.address,
             itfWarren.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
@@ -421,7 +419,6 @@ module.exports = async function (deployer, _network) {
         MiltonUsdc,
         [
             mockedUsdc.address,
-            ipTokenUsdc.address,
             warren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
@@ -438,7 +435,6 @@ module.exports = async function (deployer, _network) {
         ItfMiltonUsdc,
         [
             mockedUsdc.address,
-            ipTokenUsdc.address,
             itfWarren.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
@@ -455,7 +451,6 @@ module.exports = async function (deployer, _network) {
         MiltonDai,
         [
             mockedDai.address,
-            ipTokenDai.address,
             warren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
@@ -472,7 +467,6 @@ module.exports = async function (deployer, _network) {
         ItfMiltonDai,
         [
             mockedDai.address,
-            ipTokenDai.address,
             itfWarren.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
@@ -608,6 +602,22 @@ module.exports = async function (deployer, _network) {
                 kind: "uups",
             }
         );
+
+        const miltonFacadeDataProvider = await deployProxy(
+            MiltonFacadeDataProvider,
+            [
+                warren.address,
+                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
+                [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
+                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+                [itfJosephUsdt.address, itfJosephUsdc.address, itfJosephDai.address],
+            ],
+            {
+                deployer: deployer,
+                initializer: "initialize",
+                kind: "uups",
+            }
+        );
     } else {
         const miltonDevToolDataProvider = await deployProxy(
             CockpitDataProvider,
@@ -626,22 +636,22 @@ module.exports = async function (deployer, _network) {
                 kind: "uups",
             }
         );
+        const miltonFacadeDataProvider = await deployProxy(
+            MiltonFacadeDataProvider,
+            [
+                warren.address,
+                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
+                [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
+                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+                [josephUsdt.address, josephUsdc.address, josephDai.address],
+            ],
+            {
+                deployer: deployer,
+                initializer: "initialize",
+                kind: "uups",
+            }
+        );
     }
-
-    const miltonFacadeDataProvider = await deployProxy(
-        MiltonFacadeDataProvider,
-        [
-            warren.address,
-            [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
-            [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
-            [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
 
     console.log("Congratulations! DEPLOY Smart Contracts finished!");
 };

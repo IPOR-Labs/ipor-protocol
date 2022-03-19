@@ -33,6 +33,8 @@ library MiltonFacadeTypes {
         uint256 incomeFeePercentage;
         uint256 spreadPayFixedValue;
         uint256 spreadRecFixedValue;
+        uint256 maxLpUtilizationPercentage;
+        uint256 maxLpUtilizationPerLegPercentage;
     }
 
     struct IporSwap {
