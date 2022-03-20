@@ -39,7 +39,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         __Ownable_init();
     }
 
-    function getVersion() external pure returns (uint256) {
+    function getVersion() external pure override virtual returns (uint256) {
         return 1;
     }
 

@@ -67,7 +67,7 @@ abstract contract Joseph is
         _stanley = IStanley(stanley);
     }
 
-    function getVersion() external pure override returns (uint256) {
+    function getVersion() external pure override virtual returns (uint256) {
         return 1;
     }
 

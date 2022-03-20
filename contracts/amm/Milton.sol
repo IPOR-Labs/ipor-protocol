@@ -68,7 +68,7 @@ abstract contract Milton is
         _stanley = IStanley(stanley);
     }
 
-    function getVersion() external pure override returns (uint256) {
+    function getVersion() external pure virtual override returns (uint256) {
         return 1;
     }
 
@@ -215,15 +215,15 @@ abstract contract Milton is
     //@param assetValue underlying token amount represented in 18 decimals
     function withdrawFromStanley(uint256 assetValue)
         external
-        onlyJoseph
         nonReentrant
+        onlyJoseph
         whenNotPaused
     {
         (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdraw(assetValue);
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
 
-    function withdrawAllFromStanley() external onlyJoseph nonReentrant whenNotPaused {
+    function withdrawAllFromStanley() external nonReentrant onlyJoseph whenNotPaused {
         (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdrawAll();
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
