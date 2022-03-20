@@ -220,6 +220,9 @@ export const deploy = async (): Promise<DeployType> => {
         miltonStorageDai,
         miltonStorageUsdc,
         miltonStorageUsdt,
+		josephUsdt,
+		josephUsdc,
+		josephDai,
         warren
     );
     return {
