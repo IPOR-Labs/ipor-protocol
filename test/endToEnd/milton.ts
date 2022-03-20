@@ -21,6 +21,8 @@ import {
     StanleyUsdt,
     MiltonStorage,
     ERC20,
+    Warren,
+    MiltonDarcyDataProvider,
 } from "../../types";
 import {
     usdtAddress,
@@ -196,6 +198,37 @@ export const miltonDaiFactory = async (
             kind: "uups",
         }
     ) as Promise<MiltonDai>;
+};
+
+export const miltonDarcyDataProviderFactory = async (
+    dai: ERC20,
+    usdc: ERC20,
+    usdt: ERC20,
+    miltonDai: MiltonDai,
+    miltonUsdc: MiltonUsdc,
+    miltonUsdt: MiltonUsdt,
+    miltonStorageDai: MiltonStorageDai,
+    miltonStorageUsdc: MiltonStorageUsdc,
+    miltonStorageUsdt: MiltonStorageUsdt,
+    warren: Warren
+): Promise<MiltonDarcyDataProvider> => {
+    const [admin] = await hre.ethers.getSigners();
+    const miltonDarcyDataProvider = await hre.ethers.getContractFactory(
+        "MiltonDarcyDataProvider",
+        admin
+    );
+    return upgrades.deployProxy(
+        miltonDarcyDataProvider,
+        [
+            warren.address,
+            [usdt.address, usdc.address, dai.address],
+            [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
+            [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+        ],
+        {
+            kind: "uups",
+        }
+    ) as Promise<MiltonDarcyDataProvider>;
 };
 
 export const miltonSetup = async (
