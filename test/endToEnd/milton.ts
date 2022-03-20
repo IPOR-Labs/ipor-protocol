@@ -210,6 +210,9 @@ export const miltonFacadeDataProviderFactory = async (
     miltonStorageDai: MiltonStorageDai,
     miltonStorageUsdc: MiltonStorageUsdc,
     miltonStorageUsdt: MiltonStorageUsdt,
+	josephUsdt: JosephUsdt,
+	josephUsdc: JosephUsdc,
+	josephDai: JosephDai,
     warren: Warren
 ): Promise<MiltonFacadeDataProvider> => {
     const [admin] = await hre.ethers.getSigners();
@@ -224,6 +227,7 @@ export const miltonFacadeDataProviderFactory = async (
             [usdt.address, usdc.address, dai.address],
             [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
             [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+			[josephUsdt.address, josephUsdc.address, josephDai.address],
         ],
         {
             kind: "uups",
