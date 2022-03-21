@@ -80,7 +80,7 @@ describe("AAVE strategy", () => {
         const stanleyAddress = await userTwo.getAddress(); // random address
         //when
         await expect(aaveStrategyInstance.setStanley(stanleyAddress))
-            .to.emit(aaveStrategyInstance, "SetStanley")
+            .to.emit(aaveStrategyInstance, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstance.address);
     });
 

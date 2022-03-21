@@ -329,7 +329,9 @@ abstract contract Stanley is
     }
 
     function setMilton(address milton) external override whenNotPaused onlyOwner {
+        require(milton != address(0), IporErrors.WRONG_ADDRESS);
         _milton = milton;
+        emit MiltonChanged(msg.sender, milton);
     }
 
     function pause() external override onlyOwner {

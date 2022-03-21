@@ -199,18 +199,21 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
     }
 
     function setStanley(address stanley) external override whenNotPaused onlyOwner {
+        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         _stanley = stanley;
-        emit SetStanley(msg.sender, stanley, address(this));
+        emit StanleyChanged(msg.sender, stanley, address(this));
     }
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
+        require(manager != address(0), IporErrors.WRONG_ADDRESS);
         _treasuryManager = manager;
+        emit TreasuryManagerChanged(address(this), manager);
     }
 
     function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
         require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         _treasury = treasury;
-        emit SetTreasury(address(this), treasury);
+        emit TreasuryChanged(address(this), treasury);
     }
 
     /**
@@ -219,7 +222,9 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
      * @param stkAave stakedAAVE token
      */
     function setStkAave(address stkAave) external whenNotPaused onlyOwner {
+        require(stkAave != address(0), IporErrors.WRONG_ADDRESS);
         _stkAave = stkAave;
+        emit StkAaveChanged(msg.sender, stkAave);
     }
 
     //solhint-disable no-empty-blocks

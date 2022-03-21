@@ -106,6 +106,7 @@ abstract contract MiltonConfiguration is
     }
 
     function setJoseph(address joseph) external override onlyOwner whenNotPaused {
+        require(joseph != address(0), IporErrors.WRONG_ADDRESS);
         _joseph = joseph;
         emit JosephUpdated(joseph);
     }

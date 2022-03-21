@@ -19,6 +19,7 @@ contract WarrenFacadeDataProvider is
     address[] internal _assets;
 
     function initialize(address[] memory assets, address warren) public initializer {
+        require(warren != address(0), IporErrors.WRONG_ADDRESS);
         __Ownable_init();
         _warren = warren;
         _assets = assets;

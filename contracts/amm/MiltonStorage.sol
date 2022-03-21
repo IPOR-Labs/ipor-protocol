@@ -441,11 +441,15 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function setMilton(address milton) external override onlyOwner {
+        require(milton != address(0), IporErrors.WRONG_ADDRESS);
         _milton = milton;
+        emit MiltonChanged(msg.sender, milton);
     }
 
     function setJoseph(address joseph) external override onlyOwner {
+        require(joseph != address(0), IporErrors.WRONG_ADDRESS);
         _joseph = joseph;
+        emit JosephChanged(msg.sender, joseph);
     }
 
     function _getPositions(

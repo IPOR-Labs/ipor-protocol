@@ -178,18 +178,21 @@ contract CompoundStrategy is
     }
 
     function setStanley(address stanley) external whenNotPaused onlyOwner {
+        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         _stanley = stanley;
-        emit SetStanley(msg.sender, stanley, address(this));
+        emit StanleyChanged(msg.sender, stanley, address(this));
     }
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
+        require(manager != address(0), IporErrors.WRONG_ADDRESS);
         _treasuryManager = manager;
+        emit TreasuryManagerChanged(address(this), manager);
     }
 
     function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);
         _treasury = treasury;
-        emit SetTreasury(address(this), treasury);
+        emit TreasuryChanged(address(this), treasury);
     }
 
     /**

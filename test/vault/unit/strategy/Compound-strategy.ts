@@ -138,7 +138,7 @@ describe("Compound strategy", () => {
         const stanleyAddress = await userTwo.getAddress(); // random address
         //when
         await expect(compoundStrategyInstanceDAI.setStanley(stanleyAddress))
-            .to.emit(compoundStrategyInstanceDAI, "SetStanley")
+            .to.emit(compoundStrategyInstanceDAI, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, compoundStrategyInstanceDAI.address);
     });
 
@@ -155,7 +155,7 @@ describe("Compound strategy", () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(compoundStrategyInstanceDAI.setStanley(stanleyAddress))
-            .to.emit(compoundStrategyInstanceDAI, "SetStanley")
+            .to.emit(compoundStrategyInstanceDAI, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, compoundStrategyInstanceDAI.address);
 
         await DAI.setupInitialAmount(stanleyAddress, TC_10_000_USD_18DEC);
@@ -182,7 +182,7 @@ describe("Compound strategy", () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(compoundStrategyInstanceUSDT.setStanley(stanleyAddress))
-            .to.emit(compoundStrategyInstanceUSDT, "SetStanley")
+            .to.emit(compoundStrategyInstanceUSDT, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, compoundStrategyInstanceUSDT.address);
 
         await USDT.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);
@@ -210,7 +210,7 @@ describe("Compound strategy", () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(compoundStrategyInstanceUSDC.setStanley(stanleyAddress))
-            .to.emit(compoundStrategyInstanceUSDC, "SetStanley")
+            .to.emit(compoundStrategyInstanceUSDC, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, compoundStrategyInstanceUSDC.address);
 
         await USDC.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);

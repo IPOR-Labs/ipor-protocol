@@ -34,6 +34,7 @@ contract MiltonFacadeDataProvider is
             assets.length == miltons.length && assets.length == miltonStorages.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
+        require(warren != address(0), IporErrors.WRONG_ADDRESS);
 
         __Ownable_init();
         _warren = warren;
