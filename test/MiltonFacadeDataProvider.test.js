@@ -43,6 +43,152 @@ describe("MiltonFacadeDataProvider", () => {
         data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
+    it("should list configuration DAI, USDC, USDT", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI", "USDC", "USDT"],
+            data,
+            0,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDC",
+            data,
+            testData
+        );
+        await setupTokenUsdcInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            data,
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const paramsDai = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        const paramsUsdt = {
+            asset: testData.tokenUsdt.address,
+            totalAmount: USD_10_000_6DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        const paramsUsdc = {
+            asset: testData.tokenUsdc.address,
+            totalAmount: USD_10_000_6DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(paramsUsdc.asset, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, paramsDai.openTimestamp);
+
+        await testData.josephUsdc
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_6DEC, paramsUsdc.openTimestamp);
+
+        await testData.josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_6DEC, paramsUsdt.openTimestamp);
+
+        const MiltonFacadeDataProvider = await ethers.getContractFactory(
+            "MiltonFacadeDataProvider"
+        );
+        const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
+        await miltonFacadeDataProvider.deployed();
+        await miltonFacadeDataProvider.initialize(
+            testData.warren.address,
+            [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
+            [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
+            [
+                testData.miltonStorageDai.address,
+                testData.miltonStorageUsdt.address,
+                testData.miltonStorageUsdc.address,
+            ],
+            [testData.josephDai.address, testData.josephUsdt.address, testData.josephUsdc.address]
+        );
+
+        const expectedMinLeverage = BigInt("10000000000000000000");
+        const expectedMaxLeverage = BigInt("1000000000000000000000");
+        const expectedOpeningFeePercentage = BigInt("10000000000000000");
+        const expectedIporPublicationFeeAmount = BigInt("10000000000000000000");
+        const expectedLiquidationDepositAmount = BigInt("20000000000000000000");
+        const expectedIncomeFeePercentage = BigInt("100000000000000000");
+        const expectedSpreadPayFixedValue = BigInt("10000000000000000");
+        const expectedSpreadRecFixedValue = BigInt("10000000000000000");
+        const expectedMaxLpUtilizationPercentage = BigInt("800000000000000000");
+        const expectedMaxLpUtilizationPerLegPercentage = BigInt("480000000000000000");
+
+        //when
+        const configs = await miltonFacadeDataProvider.getConfiguration();
+
+        //then
+
+        for (let i = 0; i < configs.length; i++) {
+            expect(expectedMinLeverage).to.be.eq(configs[i].minLeverageValue);
+            expect(expectedMaxLeverage).to.be.eq(configs[i].maxLeverageValue);
+            expect(expectedOpeningFeePercentage).to.be.eq(configs[i].openingFeePercentage);
+            expect(expectedIporPublicationFeeAmount).to.be.eq(configs[i].iporPublicationFeeAmount);
+            expect(expectedLiquidationDepositAmount).to.be.eq(configs[i].liquidationDepositAmount);
+            expect(expectedIncomeFeePercentage).to.be.eq(configs[i].incomeFeePercentage);
+            expect(expectedSpreadPayFixedValue).to.be.eq(configs[i].spreadPayFixedValue);
+            expect(expectedSpreadRecFixedValue).to.be.eq(configs[i].spreadRecFixedValue);
+            expect(expectedMaxLpUtilizationPercentage).to.be.eq(
+                configs[i].maxLpUtilizationPercentage
+            );
+            expect(expectedMaxLpUtilizationPerLegPercentage).to.be.eq(
+                configs[i].maxLpUtilizationPerLegPercentage
+            );
+        }
+    });
+
     it("should list correct number DAI, USDC, USDT items", async () => {
         //given
         let testData = await prepareTestData(
