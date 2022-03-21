@@ -22,7 +22,7 @@ import {
     MiltonStorage,
     ERC20,
     Warren,
-    MiltonDarcyDataProvider,
+    MiltonFacadeDataProvider,
 } from "../../types";
 import {
     usdtAddress,
@@ -200,7 +200,7 @@ export const miltonDaiFactory = async (
     ) as Promise<MiltonDai>;
 };
 
-export const miltonDarcyDataProviderFactory = async (
+export const miltonFacadeDataProviderFactory = async (
     dai: ERC20,
     usdc: ERC20,
     usdt: ERC20,
@@ -210,25 +210,29 @@ export const miltonDarcyDataProviderFactory = async (
     miltonStorageDai: MiltonStorageDai,
     miltonStorageUsdc: MiltonStorageUsdc,
     miltonStorageUsdt: MiltonStorageUsdt,
+	josephUsdt: JosephUsdt,
+	josephUsdc: JosephUsdc,
+	josephDai: JosephDai,
     warren: Warren
-): Promise<MiltonDarcyDataProvider> => {
+): Promise<MiltonFacadeDataProvider> => {
     const [admin] = await hre.ethers.getSigners();
-    const miltonDarcyDataProvider = await hre.ethers.getContractFactory(
-        "MiltonDarcyDataProvider",
+    const miltonFacadeDataProvider = await hre.ethers.getContractFactory(
+        "MiltonFacadeDataProvider",
         admin
     );
     return upgrades.deployProxy(
-        miltonDarcyDataProvider,
+        miltonFacadeDataProvider,
         [
             warren.address,
             [usdt.address, usdc.address, dai.address],
             [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
             [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+			[josephUsdt.address, josephUsdc.address, josephDai.address],
         ],
         {
             kind: "uups",
         }
-    ) as Promise<MiltonDarcyDataProvider>;
+    ) as Promise<MiltonFacadeDataProvider>;
 };
 
 export const miltonSetup = async (

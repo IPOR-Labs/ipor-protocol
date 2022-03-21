@@ -21,7 +21,7 @@ import {
     JosephDai,
     JosephUsdc,
     JosephUsdt,
-    MiltonDarcyDataProvider,
+    MiltonFacadeDataProvider,
 } from "../../types";
 import {
     miltonFaucetFactory,
@@ -35,7 +35,7 @@ import {
     miltonUsdcFactory,
     miltonUsdtFactory,
     miltonSetup,
-    miltonDarcyDataProviderFactory,
+    miltonFacadeDataProviderFactory,
 } from "./milton";
 import { josephDaiFactory, josephUsdcFactory, josephUsdtFactory } from "./joseph";
 import { warrenFactory, warrenSetup, initIporValues } from "./warren";
@@ -105,7 +105,7 @@ export type DeployType = {
     miltonStorageUsdc: MiltonStorageUsdc;
     miltonStorageUsdt: MiltonStorageUsdt;
     miltonSpreadModel: MiltonSpreadModel;
-    miltonDarcyDataProvider: MiltonDarcyDataProvider;
+    miltonFacadeDataProvider: MiltonFacadeDataProvider;
     warren: Warren;
     miltonDai: MiltonDai;
     miltonUsdc: MiltonUsdc;
@@ -210,7 +210,7 @@ export const deploy = async (): Promise<DeployType> => {
         miltonStorageUsdt.address,
         stanleyUsdt.address
     );
-    const miltonDarcyDataProvider = await miltonDarcyDataProviderFactory(
+    const miltonFacadeDataProvider = await miltonFacadeDataProviderFactory(
         dai,
         usdc,
         usdt,
@@ -220,6 +220,9 @@ export const deploy = async (): Promise<DeployType> => {
         miltonStorageDai,
         miltonStorageUsdc,
         miltonStorageUsdt,
+		josephUsdt,
+		josephUsdc,
+		josephDai,
         warren
     );
     return {
@@ -254,7 +257,7 @@ export const deploy = async (): Promise<DeployType> => {
         miltonStorageUsdc,
         miltonStorageUsdt,
         miltonSpreadModel,
-        miltonDarcyDataProvider,
+        miltonFacadeDataProvider,
         warren,
         miltonDai,
         miltonUsdc,
