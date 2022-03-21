@@ -204,9 +204,7 @@ describe("MiltonStorage", () => {
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
-                await testData.miltonDai.getLiquidationDepositAmount(),
-                await testData.miltonDai.getIporPublicationFeeAmount(),
-                await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
+                await testData.miltonDai.getIporPublicationFeeAmount()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -229,9 +227,7 @@ describe("MiltonStorage", () => {
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
-                    await testData.miltonDai.getLiquidationDepositAmount(),
-                    await testData.miltonDai.getIporPublicationFeeAmount(),
-                    await testData.miltonDai.getOpeningFeeForTreasuryPercentage()
+                    await testData.miltonDai.getIporPublicationFeeAmount()
                 ),
             //then
             "IPOR_008"
@@ -828,9 +824,10 @@ describe("MiltonStorage", () => {
             collateral: BigInt("1000000000000000000000"),
             liquidationDepositAmount: BigInt("20000000000000000000"),
             notionalAmount: BigInt("50000000000000000000000"),
-            ibtQuantity: 123,
             fixedInterestRate: 234,
-            openingFeeAmount: BigInt("1500000000000000000000"),
+            ibtQuantity: 123,
+            openingFeeLPValue: BigInt("1500000000000000000000"),
+			openingFeeTreasuryValue: BigInt("1500000000000000000000")
         };
     };
 

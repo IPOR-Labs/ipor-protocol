@@ -361,19 +361,18 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             1,
             TC_COLLATERAL_18DEC,
-            USD_20_18DEC,
             BigInt("0")
         );
 
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonDai.getAccruedBalance()
-            ).payFixedSwaps
+            ).payFixedTotalCollateral
         );
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonDai.getAccruedBalance()
-            ).receiveFixedSwaps
+            ).receiveFixedTotalCollateral
         );
         const actualDerivativesTotalBalanceWad =
             actualPayFixDerivativesBalanceWad + actualRecFixDerivativesBalanceWad;
@@ -448,19 +447,18 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             1,
             TC_COLLATERAL_18DEC,
-            USD_20_18DEC,
             BigInt("0")
         );
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonUsdt.getAccruedBalance()
-            ).payFixedSwaps
+            ).payFixedTotalCollateral
         );
 
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonUsdt.getAccruedBalance()
-            ).receiveFixedSwaps
+            ).receiveFixedTotalCollateral
         );
 
         const actualDerivativesTotalBalanceWad =
@@ -519,7 +517,6 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValue,
             ZERO,
             null,
@@ -550,7 +547,6 @@ describe("Milton", () => {
             PERCENTAGE_366_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -597,7 +593,6 @@ describe("Milton", () => {
             PERCENTAGE_366_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -683,7 +678,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -730,7 +724,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -761,7 +754,6 @@ describe("Milton", () => {
             PERCENTAGE_121_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -810,7 +802,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -842,7 +833,6 @@ describe("Milton", () => {
             PERCENTAGE_121_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -876,7 +866,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -926,7 +915,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -961,7 +949,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1011,7 +998,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1046,7 +1032,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1080,7 +1065,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1117,7 +1101,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1152,7 +1135,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
@@ -1267,7 +1249,6 @@ describe("Milton", () => {
             PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
             null,
@@ -1301,7 +1282,6 @@ describe("Milton", () => {
             PERCENTAGE_6_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1337,7 +1317,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1372,7 +1351,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1405,7 +1383,6 @@ describe("Milton", () => {
             PERCENTAGE_151_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
@@ -1480,7 +1457,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1513,7 +1489,6 @@ describe("Milton", () => {
             PERCENTAGE_121_18DEC,
             PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
@@ -1548,7 +1523,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1582,7 +1556,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1614,7 +1587,6 @@ describe("Milton", () => {
             PERCENTAGE_365_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1648,7 +1620,6 @@ describe("Milton", () => {
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1684,7 +1655,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1700,7 +1670,6 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
@@ -1717,7 +1686,6 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1752,7 +1720,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1785,7 +1752,6 @@ describe("Milton", () => {
             PERCENTAGE_160_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1821,7 +1787,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1856,7 +1821,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1872,7 +1836,6 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeFeeValue = BigInt("652088209153692249992");
         let expectedIncomeFeeValueWad = BigInt("652088209153692249992");
         let expectedPositionValue = BigInt("-6520882091536922499916");
         let expectedPositionValueWad = BigInt("-6520882091536922499916");
@@ -1889,7 +1852,6 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -1924,7 +1886,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -1958,7 +1919,6 @@ describe("Milton", () => {
             PERCENTAGE_151_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
@@ -2057,7 +2017,6 @@ describe("Milton", () => {
             data
         );
 
-        let expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         let expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         let expectedPositionValue = -TC_COLLATERAL_18DEC;
         let expectedPositionValueWad = -TC_COLLATERAL_18DEC;
@@ -2074,7 +2033,6 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -2109,7 +2067,6 @@ describe("Milton", () => {
             PERCENTAGE_5_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
             ZERO,
@@ -2184,7 +2141,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -2219,7 +2175,6 @@ describe("Milton", () => {
             PERCENTAGE_120_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -2256,7 +2211,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -2291,7 +2245,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -2325,7 +2278,6 @@ describe("Milton", () => {
             PERCENTAGE_161_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -2672,7 +2624,6 @@ describe("Milton", () => {
         let periodOfTimeElapsedInSeconds = PERIOD_50_DAYS_IN_SECONDS;
         let expectedOpenedPositions = 0;
         let expectedDerivativesTotalBalanceWad = ZERO;
-        let expectedLiquidationDepositTotalBalanceWad = ZERO;
         let expectedTreasuryTotalBalanceWad = expectedIncomeFeeValue;
         let expectedSoap = ZERO;
         let openTimestamp = null;
@@ -2779,7 +2730,6 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
             expectedDerivativesTotalBalanceWad,
-            expectedLiquidationDepositTotalBalanceWad,
             expectedTreasuryTotalBalanceWad
         );
 
@@ -3294,7 +3244,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3345,7 +3294,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3395,7 +3343,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3444,7 +3391,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3491,7 +3437,6 @@ describe("Milton", () => {
             PERCENTAGE_119_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -3542,7 +3487,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3592,7 +3536,6 @@ describe("Milton", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3641,7 +3584,6 @@ describe("Milton", () => {
             PERIOD_50_DAYS_IN_SECONDS,
             0,
             ZERO,
-            ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
             null,
@@ -3678,7 +3620,6 @@ describe("Milton", () => {
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
-        let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalanceWad = BigInt("149505148455463361");
 
         let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
@@ -3701,15 +3642,9 @@ describe("Milton", () => {
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
         const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
         const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
 
-        expect(
-            expectedOpeningFeeTotalBalanceWad,
-            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
-            expected: ${expectedOpeningFeeTotalBalanceWad}`
-        ).to.be.eq(actualOpeningFeeTotalBalance);
         expect(
             expectedLiquidityPoolTotalBalanceWad,
             `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
@@ -3749,7 +3684,6 @@ describe("Milton", () => {
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
-        let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
         let expectedTreasuryTotalBalanceWad = BigInt("74752574227731681");
 
         let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
@@ -3771,15 +3705,9 @@ describe("Milton", () => {
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
         const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
         const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
 
-        expect(
-            expectedOpeningFeeTotalBalanceWad,
-            `Incorrect opening fee total balance for ${params.asset}, actual:  ${actualOpeningFeeTotalBalance},
-            expected: ${expectedOpeningFeeTotalBalanceWad}`
-        ).to.be.eq(actualOpeningFeeTotalBalance);
         expect(
             expectedLiquidityPoolTotalBalanceWad,
             `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
@@ -3932,7 +3860,6 @@ describe("Milton", () => {
             PERCENTAGE_4_18DEC,
             0,
             0,
-            ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
             ZERO,
@@ -5163,7 +5090,6 @@ describe("Milton", () => {
         periodOfTimeElapsedInSeconds,
         expectedOpenedPositions,
         expectedDerivativesTotalBalanceWad,
-        expectedLiquidationDepositTotalBalanceWad,
         expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
@@ -5268,7 +5194,6 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
             expectedDerivativesTotalBalanceWad,
-            expectedLiquidationDepositTotalBalanceWad,
             expectedTreasuryTotalBalanceWad,
             expectedSoap,
             openTimestamp,
@@ -5290,7 +5215,6 @@ describe("Milton", () => {
         periodOfTimeElapsedInSeconds,
         expectedOpenedPositions,
         expectedDerivativesTotalBalanceWad,
-        expectedLiquidationDepositTotalBalanceWad,
         expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
@@ -5398,7 +5322,6 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
             expectedDerivativesTotalBalanceWad,
-            expectedLiquidationDepositTotalBalanceWad,
             expectedTreasuryTotalBalanceWad,
             expectedSoap,
             openTimestamp,
@@ -5459,7 +5382,6 @@ describe("Milton", () => {
         expectedLiquidityPoolTotalBalanceWad,
         expectedOpenedPositions,
         expectedDerivativesTotalBalanceWad,
-        expectedLiquidationDepositTotalBalanceWad,
         expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
@@ -5610,7 +5532,6 @@ describe("Milton", () => {
             expectedLiquidityPoolTotalBalanceWad,
             expectedOpenedPositions,
             expectedDerivativesTotalBalanceWad,
-            expectedLiquidationDepositTotalBalanceWad,
             expectedTreasuryTotalBalanceWad
         );
 
@@ -5738,7 +5659,6 @@ describe("Milton", () => {
         expectedLiquidityPoolTotalBalanceWad,
         expectedOpenedPositions,
         expectedDerivativesTotalBalanceWad,
-        expectedLiquidationDepositTotalBalanceWad,
         expectedTreasuryTotalBalanceWad
     ) {
         let actualDerivatives = null;
@@ -5800,7 +5720,6 @@ describe("Milton", () => {
             `Incorrect number of opened derivatives, actual:  ${actualOpenSwapsVol}, expected: ${expectedOpenedPositions}`
         ).to.be.eq(actualOpenSwapsVol);
 
-        let expectedOpeningFeeTotalBalanceWad = TC_OPENING_FEE_18DEC;
         let expectedPublicationFeeTotalBalanceWad = USD_10_18DEC;
         let openerUserUnderlyingTokenBalanceBeforePayout = null;
         let closerUserUnderlyingTokenBalanceBeforePayout = null;
@@ -5846,8 +5765,6 @@ describe("Milton", () => {
             expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
             expectedMiltonUnderlyingTokenBalance,
             expectedDerivativesTotalBalanceWad,
-            expectedOpeningFeeTotalBalanceWad,
-            expectedLiquidationDepositTotalBalanceWad,
             expectedPublicationFeeTotalBalanceWad,
             expectedLiquidityPoolTotalBalanceWad,
             expectedTreasuryTotalBalanceWad
@@ -5899,8 +5816,6 @@ describe("Milton", () => {
         expectedCloserUserUnderlyingTokenBalance,
         expectedMiltonUnderlyingTokenBalance,
         expectedDerivativesTotalBalanceWad,
-        expectedOpeningFeeTotalBalanceWad,
-        expectedLiquidationDepositTotalBalanceWad,
         expectedPublicationFeeTotalBalanceWad,
         expectedLiquidityPoolTotalBalanceWad,
         expectedTreasuryTotalBalanceWad
@@ -5946,12 +5861,11 @@ describe("Milton", () => {
             );
         }
 
-        const actualPayFixedDerivativesBalance = BigInt(balance.payFixedSwaps);
-        const actualRecFixedDerivativesBalance = BigInt(balance.receiveFixedSwaps);
+        const actualPayFixedDerivativesBalance = BigInt(balance.payFixedTotalCollateral);
+        const actualRecFixedDerivativesBalance = BigInt(balance.receiveFixedTotalCollateral);
         const actualDerivativesTotalBalance =
             actualPayFixedDerivativesBalance + actualRecFixedDerivativesBalance;
-        const actualOpeningFeeTotalBalance = BigInt(balance.openingFee);
-        const actualLiquidationDepositTotalBalance = BigInt(balance.liquidationDeposit);
+
         const actualPublicationFeeTotalBalance = BigInt(balance.iporPublicationFee);
         const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
         const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
@@ -5982,20 +5896,6 @@ describe("Milton", () => {
                 expectedDerivativesTotalBalanceWad,
                 `Incorrect derivatives total balance for ${asset}, actual:  ${actualDerivativesTotalBalance}, expected: ${expectedDerivativesTotalBalanceWad}`
             ).to.be.eq(actualDerivativesTotalBalance);
-        }
-
-        if (expectedOpeningFeeTotalBalanceWad != null) {
-            expect(
-                expectedOpeningFeeTotalBalanceWad,
-                `Incorrect opening fee total balance for ${asset}, actual:  ${actualOpeningFeeTotalBalance}, expected: ${expectedOpeningFeeTotalBalanceWad}`
-            ).to.be.eq(actualOpeningFeeTotalBalance);
-        }
-
-        if (expectedLiquidationDepositTotalBalanceWad !== null) {
-            expect(
-                expectedLiquidationDepositTotalBalanceWad,
-                `Incorrect liquidation deposit fee total balance for ${asset}, actual:  ${actualLiquidationDepositTotalBalance}, expected: ${expectedLiquidationDepositTotalBalanceWad}`
-            ).to.be.eq(actualLiquidationDepositTotalBalance);
         }
 
         if (expectedPublicationFeeTotalBalanceWad != null) {

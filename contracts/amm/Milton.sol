@@ -68,7 +68,7 @@ abstract contract Milton is
         _stanley = IStanley(stanley);
     }
 
-    function getVersion() external pure override returns (uint256) {
+    function getVersion() external pure virtual override returns (uint256) {
         return 1;
     }
 
@@ -215,15 +215,15 @@ abstract contract Milton is
     //@param assetValue underlying token amount represented in 18 decimals
     function withdrawFromStanley(uint256 assetValue)
         external
-        onlyJoseph
         nonReentrant
+        onlyJoseph
         whenNotPaused
     {
         (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdraw(assetValue);
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
 
-    function withdrawAllFromStanley() external onlyJoseph nonReentrant whenNotPaused {
+    function withdrawAllFromStanley() external nonReentrant onlyJoseph whenNotPaused {
         (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdrawAll();
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
@@ -242,6 +242,7 @@ abstract contract Milton is
 
     function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
         IporTypes.MiltonBalancesMemory memory accruedBalance = _miltonStorage.getBalance();
+
         uint256 actualVaultBalance = _stanley.totalBalance(address(this));
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
@@ -357,6 +358,11 @@ abstract contract Milton is
                 _getOpeningFeePercentage()
             );
 
+        (uint256 openingFeeLPValue, uint256 openingFeeTreasuryValue) = _splitOpeningFeeAmount(
+            openingFeeAmount,
+            _getOpeningFeeForTreasuryPercentage()
+        );
+
         require(
             collateral <= _getMaxSwapCollateralAmount(),
             MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH
@@ -373,11 +379,23 @@ abstract contract Milton is
                 wadTotalAmount,
                 collateral,
                 notional,
-                openingFeeAmount,
-                _getLiquidationDepositAmount(),
+                openingFeeLPValue,
+                openingFeeTreasuryValue,
                 _getIporPublicationFeeAmount(),
+                _getLiquidationDepositAmount(),
                 _warren.getAccruedIndex(openTimestamp, _asset)
             );
+    }
+
+    function _splitOpeningFeeAmount(
+        uint256 openingFeeAmount,
+        uint256 openingFeeForTreasurePercentage
+    ) internal pure returns (uint256 liquidityPoolValue, uint256 treasuryValue) {
+        treasuryValue = IporMath.division(
+            openingFeeAmount * openingFeeForTreasurePercentage,
+            Constants.D18
+        );
+        liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
 
     //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
@@ -394,13 +412,13 @@ abstract contract Milton is
         );
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeAmount;
-        balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
+        balance.payFixedTotalCollateral = balance.payFixedTotalCollateral + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.payFixedSwaps,
-            balance.payFixedSwaps + balance.receiveFixedSwaps
+            balance.payFixedTotalCollateral,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
@@ -428,14 +446,13 @@ abstract contract Milton is
             bosStruct.notional,
             indicator.fixedInterestRate,
             indicator.ibtQuantity,
-            bosStruct.openingFeeAmount
+            bosStruct.openingFeeLPValue,
+            bosStruct.openingFeeTreasuryValue
         );
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
-            _getLiquidationDepositAmount(),
-            _getIporPublicationFeeAmount(),
-            _getOpeningFeeForTreasuryPercentage()
+            _getIporPublicationFeeAmount()
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
@@ -467,13 +484,15 @@ abstract contract Milton is
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeAmount;
-        balance.receiveFixedSwaps = balance.receiveFixedSwaps + bosStruct.collateral;
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
+        balance.receiveFixedTotalCollateral =
+            balance.receiveFixedTotalCollateral +
+            bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.receiveFixedSwaps,
-            balance.payFixedSwaps + balance.receiveFixedSwaps
+            balance.receiveFixedTotalCollateral,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
@@ -501,14 +520,13 @@ abstract contract Milton is
             bosStruct.notional,
             indicator.fixedInterestRate,
             indicator.ibtQuantity,
-            bosStruct.openingFeeAmount
+            bosStruct.openingFeeLPValue,
+            bosStruct.openingFeeTreasuryValue
         );
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
             newSwap,
-            _getLiquidationDepositAmount(),
-            _getIporPublicationFeeAmount(),
-            _getOpeningFeeForTreasuryPercentage()
+            _getIporPublicationFeeAmount()
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
@@ -576,7 +594,8 @@ abstract contract Milton is
                 wadTotalAmount,
                 newSwap.collateral,
                 newSwap.notionalAmount,
-                newSwap.openingFeeAmount,
+                newSwap.openingFeeLPValue,
+                newSwap.openingFeeTreasuryValue,
                 iporPublicationAmount,
                 newSwap.liquidationDepositAmount
             ),

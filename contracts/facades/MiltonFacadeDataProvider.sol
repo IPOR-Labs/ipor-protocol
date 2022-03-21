@@ -55,6 +55,43 @@ contract MiltonFacadeDataProvider is
         _assets = assets;
     }
 
+    function getConfiguration()
+        external
+        view
+        override
+        returns (MiltonFacadeTypes.AssetConfiguration[] memory)
+    {
+        uint256 timestamp = block.timestamp;
+        uint256 assetsLength = _assets.length;
+        MiltonFacadeTypes.AssetConfiguration[]
+            memory config = new MiltonFacadeTypes.AssetConfiguration[](assetsLength);
+
+        for (uint256 i = 0; i != assetsLength; i++) {
+            config[i] = _createIporAssetConfig(_assets[i], timestamp);
+        }
+        return config;
+    }
+
+    function getBalance(address asset)
+        external
+        view
+        override
+        returns (MiltonFacadeTypes.Balance memory balance)
+    {
+        MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
+
+        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
+        (balance.payFixedTotalNotional, balance.recFixedTotalNotional) = miltonStorage
+            .getTotalOutstandingNotional();
+
+        IMilton milton = IMilton(config.milton);
+        IporTypes.MiltonBalancesMemory memory accruedBalance = milton.getAccruedBalance();
+
+        balance.payFixedTotalCollateral = accruedBalance.payFixedTotalCollateral;
+        balance.recFixedTotalCollateral = accruedBalance.receiveFixedTotalCollateral;
+        balance.liquidityPool = accruedBalance.liquidityPool;
+    }
+
     function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
         IJoseph joseph = IJoseph(config.joseph);
@@ -62,23 +99,16 @@ contract MiltonFacadeDataProvider is
         return result;
     }
 
-    function getTotalOutstandingNotional(address asset)
-        external
-        view
-        override
-        returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional)
-    {
-        MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
-        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
-        (payFixedTotalNotional, recFixedTotalNotional) = miltonStorage
-            .getTotalOutstandingNotional();
-    }
-
     function getMySwaps(
         address asset,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IporSwapFront[] memory swaps) {
+    )
+        external
+        view
+        override
+        returns (uint256 totalCount, MiltonFacadeTypes.IporSwap[] memory swaps)
+    {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
@@ -90,12 +120,14 @@ contract MiltonFacadeDataProvider is
 
         IMilton milton = IMilton(config.milton);
 
-        IporSwapFront[] memory iporDerivatives = new IporSwapFront[](swapIds.length);
+        MiltonFacadeTypes.IporSwap[] memory iporDerivatives = new MiltonFacadeTypes.IporSwap[](
+            swapIds.length
+        );
         for (uint256 i = 0; i != swapIds.length; i++) {
             MiltonStorageTypes.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
                 IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);
-                iporDerivatives[i] = _mapToIporSwapFront(
+                iporDerivatives[i] = _mapToIporSwap(
                     asset,
                     iporSwap,
                     0,
@@ -105,7 +137,7 @@ contract MiltonFacadeDataProvider is
                 IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
                     swapId.id
                 );
-                iporDerivatives[i] = _mapToIporSwapFront(
+                iporDerivatives[i] = _mapToIporSwap(
                     asset,
                     iporSwap,
                     1,
@@ -117,14 +149,14 @@ contract MiltonFacadeDataProvider is
         return (totalCount, iporDerivatives);
     }
 
-    function _mapToIporSwapFront(
+    function _mapToIporSwap(
         address asset,
         IporTypes.IporSwapMemory memory iporSwap,
         uint8 direction,
         int256 value
-    ) internal pure returns (IporSwapFront memory) {
+    ) internal pure returns (MiltonFacadeTypes.IporSwap memory) {
         return
-            IporSwapFront(
+            MiltonFacadeTypes.IporSwap(
                 iporSwap.id,
                 asset,
                 iporSwap.collateral,
@@ -139,28 +171,10 @@ contract MiltonFacadeDataProvider is
             );
     }
 
-    function getConfiguration()
-        external
-        view
-        override
-        returns (IporAssetConfigurationFront[] memory)
-    {
-        uint256 timestamp = block.timestamp;
-        uint256 assetsLength = _assets.length;
-        IporAssetConfigurationFront[] memory configFront = new IporAssetConfigurationFront[](
-            assetsLength
-        );
-
-        for (uint256 i = 0; i != assetsLength; i++) {
-            configFront[0] = _createIporAssetConfFront(_assets[i], timestamp);
-        }
-        return configFront;
-    }
-
-    function _createIporAssetConfFront(address asset, uint256 timestamp)
+    function _createIporAssetConfig(address asset, uint256 timestamp)
         internal
         view
-        returns (IporAssetConfigurationFront memory iporAssetConfigurationFront)
+        returns (MiltonFacadeTypes.AssetConfiguration memory assetConfiguration)
     {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
@@ -188,7 +202,7 @@ contract MiltonFacadeDataProvider is
             balance
         );
 
-        iporAssetConfigurationFront = IporAssetConfigurationFront(
+        assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,
             milton.getMinLeverageValue(),
             milton.getMaxLeverageValue(),
@@ -197,7 +211,9 @@ contract MiltonFacadeDataProvider is
             milton.getLiquidationDepositAmount(),
             milton.getIncomeFeePercentage(),
             spreadPayFixedValue,
-            spreadRecFixedValue
+            spreadRecFixedValue,
+            milton.getMaxLpUtilizationPercentage(),
+            milton.getMaxLpUtilizationPerLegPercentage()
         );
     }
 

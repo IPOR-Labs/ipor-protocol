@@ -27,13 +27,64 @@ export default ({ drizzle, drizzleState }) => (
                 </th>
             </tr>
             <tr>
-                <td>Pay Fixed Total Notional</td>
+                <td>Liquidity Pool Balance</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
-                        method="getTotalOutstandingNotional"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>Pay Fixed Total Notional Balance</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -49,7 +100,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
-                        method="getTotalOutstandingNotional"
+                        method="getBalance"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -65,7 +116,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
-                        method="getTotalOutstandingNotional"
+                        method="getBalance"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -78,13 +129,13 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
             <tr>
-                <td>Receive Fixed Total Notional</td>
+                <td>Receive Fixed Total Notional Balance</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
-                        method="getTotalOutstandingNotional"
+                        method="getBalance"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -100,7 +151,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
-                        method="getTotalOutstandingNotional"
+                        method="getBalance"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
@@ -116,13 +167,115 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
-                        method="getTotalOutstandingNotional"
+                        method="getBalance"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value.recFixedTotalNotional / 1000000000000000000}
                                 <br />
                                 <small>{value.recFixedTotalNotional}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>Pay Fixed Total Collateral Balance</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                <br />
+                                <small>{value.payFixedTotalCollateral}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                <br />
+                                <small>{value.payFixedTotalCollateral}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                <br />
+                                <small>{value.payFixedTotalCollateral}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>Receive Fixed Total Collateral Balance</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.recFixedTotalCollateral / 1000000000000000000}
+                                <br />
+                                <small>{value.recFixedTotalCollateral}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.recFixedTotalCollateral / 1000000000000000000}
+                                <br />
+                                <small>{value.recFixedTotalCollateral}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        render={(value) => (
+                            <div>
+                                {value.recFixedTotalCollateral / 1000000000000000000}
+                                <br />
+                                <small>{value.recFixedTotalCollateral}</small>
                             </div>
                         )}
                     />

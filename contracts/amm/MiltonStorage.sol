@@ -42,7 +42,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         __Ownable_init();
     }
 
-    function getVersion() external pure override returns (uint256) {
+    function getVersion() external pure override virtual returns (uint256) {
         return 1;
     }
 
@@ -53,8 +53,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     function getBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
         return
             IporTypes.MiltonBalancesMemory(
-                _balances.payFixedSwaps,
-                _balances.receiveFixedSwaps,
+                _balances.payFixedTotalCollateral,
+                _balances.receiveFixedTotalCollateral,
                 _balances.liquidityPool,
                 _balances.vault
             );
@@ -68,12 +68,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     {
         return
             MiltonStorageTypes.ExtendedBalancesMemory(
-                _balances.payFixedSwaps,
-                _balances.receiveFixedSwaps,
+                _balances.payFixedTotalCollateral,
+                _balances.receiveFixedTotalCollateral,
                 _balances.liquidityPool,
                 _balances.vault,
-                _balances.openingFee,
-                _balances.liquidationDeposit,
                 _balances.iporPublicationFee,
                 _balances.treasury
             );
@@ -291,37 +289,42 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function updateStorageWhenOpenSwapPayFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
+        uint256 cfgIporPublicationFeeAmount
     ) external override onlyMilton returns (uint256) {
         uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
-            newSwap.openingFeeAmount,
-            cfgLiquidationDepositAmount,
-            cfgIporPublicationFeeAmount,
-            cfgOpeningFeeForTreasuryPercentage
+            newSwap.openingFeeLPValue,
+            newSwap.openingFeeTreasuryValue,
+            cfgIporPublicationFeeAmount
         );
-        _updateSoapIndicatorsWhenOpenSwapPayFixed(newSwap);
+
+        _updateSoapIndicatorsWhenOpenSwapPayFixed(
+            newSwap.openTimestamp,
+            newSwap.notionalAmount,
+            newSwap.fixedInterestRate,
+            newSwap.ibtQuantity
+        );
         return id;
     }
 
     function updateStorageWhenOpenSwapReceiveFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
+        uint256 cfgIporPublicationFeeAmount
     ) external override onlyMilton returns (uint256) {
         uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
-            newSwap.openingFeeAmount,
-            cfgLiquidationDepositAmount,
-            cfgIporPublicationFeeAmount,
-            cfgOpeningFeeForTreasuryPercentage
+            newSwap.openingFeeLPValue,
+            newSwap.openingFeeTreasuryValue,
+            cfgIporPublicationFeeAmount
         );
-        _updateSoapIndicatorsWhenOpenSwapReceiveFixed(newSwap);
+        _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
+            newSwap.openTimestamp,
+            newSwap.notionalAmount,
+            newSwap.fixedInterestRate,
+            newSwap.ibtQuantity
+        );
         return id;
     }
 
@@ -408,7 +411,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
     }
 
-    function updateStorageWhenTransferPublicationFee(uint256 transferredValue)
+    function updateStorageWhenTransferToCharlieTreasury(uint256 transferredValue)
         external
         override
         onlyJoseph
@@ -555,63 +558,37 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function _updateBalancesWhenOpenSwapPayFixed(
         uint256 collateral,
-        uint256 openingFeeAmount,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
+        uint256 openingFeeLPValue,
+        uint256 openingFeeTreasuryValue,
+        uint256 cfgIporPublicationFeeAmount
     ) internal {
-        _balances.payFixedSwaps = _balances.payFixedSwaps + collateral.toUint128();
+        _balances.payFixedTotalCollateral =
+            _balances.payFixedTotalCollateral +
+            collateral.toUint128();
 
-        _balances.openingFee = _balances.openingFee + openingFeeAmount.toUint128();
-        _balances.liquidationDeposit =
-            _balances.liquidationDeposit +
-            cfgLiquidationDepositAmount.toUint128();
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
             cfgIporPublicationFeeAmount.toUint128();
 
-        (uint256 openingFeeLPValue, uint256 openingFeeTreasuryValue) = _splitOpeningFeeAmount(
-            openingFeeAmount,
-            cfgOpeningFeeForTreasuryPercentage
-        );
         _balances.liquidityPool = _balances.liquidityPool + openingFeeLPValue.toUint128();
         _balances.treasury = _balances.treasury + openingFeeTreasuryValue.toUint128();
     }
 
     function _updateBalancesWhenOpenSwapReceiveFixed(
         uint256 collateral,
-        uint256 openingFeeAmount,
-        uint256 cfgLiquidationDepositAmount,
-        uint256 cfgIporPublicationFeeAmount,
-        uint256 cfgOpeningFeeForTreasuryPercentage
+        uint256 openingFeeLPValue,
+        uint256 openingFeeTreasuryValue,
+        uint256 cfgIporPublicationFeeAmount
     ) internal {
-        _balances.receiveFixedSwaps = _balances.receiveFixedSwaps + collateral.toUint128();
-
-        _balances.openingFee = _balances.openingFee + openingFeeAmount.toUint128();
-        _balances.liquidationDeposit =
-            _balances.liquidationDeposit +
-            cfgLiquidationDepositAmount.toUint128();
+        _balances.receiveFixedTotalCollateral =
+            _balances.receiveFixedTotalCollateral +
+            collateral.toUint128();
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
             cfgIporPublicationFeeAmount.toUint128();
 
-        (uint256 openingFeeLPValue, uint256 openingFeeTreasuryValue) = _splitOpeningFeeAmount(
-            openingFeeAmount,
-            cfgOpeningFeeForTreasuryPercentage
-        );
         _balances.liquidityPool = _balances.liquidityPool + openingFeeLPValue.toUint128();
         _balances.treasury = _balances.treasury + openingFeeTreasuryValue.toUint128();
-    }
-
-    function _splitOpeningFeeAmount(
-        uint256 openingFeeAmount,
-        uint256 openingFeeForTreasurePercentage
-    ) internal pure returns (uint256 liquidityPoolValue, uint256 treasuryValue) {
-        treasuryValue = IporMath.division(
-            openingFeeAmount * openingFeeForTreasurePercentage,
-            Constants.D18
-        );
-        liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(
@@ -633,7 +610,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
-        _balances.payFixedSwaps = _balances.payFixedSwaps - swap.collateral.toUint128();
+        _balances.payFixedTotalCollateral =
+            _balances.payFixedTotalCollateral -
+            swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
@@ -655,7 +634,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
-        _balances.receiveFixedSwaps = _balances.receiveFixedSwaps - swap.collateral.toUint128();
+        _balances.receiveFixedTotalCollateral =
+            _balances.receiveFixedTotalCollateral -
+            swap.collateral.toUint128();
     }
 
     function _updateBalancesWhenCloseSwap(
@@ -667,12 +648,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
-        //decrease from balances the liquidation deposit
-        require(
-            _balances.liquidationDeposit >= swap.liquidationDepositAmount,
-            MiltonErrors.CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW
-        );
-
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
         uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
             swap.collateral,
@@ -695,10 +670,6 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             absPositionValue * cfgIncomeFeePercentage,
             Constants.D18
         );
-
-        _balances.liquidationDeposit =
-            _balances.liquidationDeposit -
-            swap.liquidationDepositAmount.toUint128();
 
         _balances.treasury = _balances.treasury + incomeFee.toUint128();
 
@@ -815,7 +786,12 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _swapsReceiveFixed.ids[buyer].pop();
     }
 
-    function _updateSoapIndicatorsWhenOpenSwapPayFixed(AmmTypes.NewSwap memory newSwap) internal {
+    function _updateSoapIndicatorsWhenOpenSwapPayFixed(
+        uint256 openTimestamp,
+        uint256 notionalAmount,
+        uint256 fixedInterestRate,
+        uint256 ibtQuantity
+    ) internal {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory pf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
                 _soapIndicatorsPayFixed.rebalanceTimestamp,
@@ -824,12 +800,9 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsPayFixed.totalIbtQuantity,
                 _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
             );
-        pf.rebalanceWhenOpenSwap(
-            newSwap.openTimestamp,
-            newSwap.notionalAmount,
-            newSwap.fixedInterestRate,
-            newSwap.ibtQuantity
-        );
+
+        pf.rebalanceWhenOpenSwap(openTimestamp, notionalAmount, fixedInterestRate, ibtQuantity);
+
         _soapIndicatorsPayFixed.rebalanceTimestamp = pf.rebalanceTimestamp.toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
         _soapIndicatorsPayFixed.averageInterestRate = pf.averageInterestRate.toUint128();
@@ -838,9 +811,12 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             .quasiHypotheticalInterestCumulative;
     }
 
-    function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(AmmTypes.NewSwap memory newSwap)
-        internal
-    {
+    function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
+        uint256 openTimestamp,
+        uint256 notionalAmount,
+        uint256 fixedInterestRate,
+        uint256 ibtQuantity
+    ) internal {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory rf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
                 _soapIndicatorsReceiveFixed.rebalanceTimestamp,
@@ -849,12 +825,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
-        rf.rebalanceWhenOpenSwap(
-            newSwap.openTimestamp,
-            newSwap.notionalAmount,
-            newSwap.fixedInterestRate,
-            newSwap.ibtQuantity
-        );
+        rf.rebalanceWhenOpenSwap(openTimestamp, notionalAmount, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
         _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();

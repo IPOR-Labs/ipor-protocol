@@ -17,21 +17,15 @@ library MiltonStorageTypes {
     /// Ipor Publication Fee Balance, Treasury Balance, all balances in 18 decimals
     struct ExtendedBalancesMemory {
         /// @notice Swaps balance for Pay Fixed leg
-        uint256 payFixedSwaps;
+        uint256 payFixedTotalCollateral;
         /// @notice Swaps balance for Receive Fixed leg
-        uint256 receiveFixedSwaps;
+        uint256 receiveFixedTotalCollateral;
         /// @notice Liquidity Pool Balance
         /// @dev Includes part of Opening Fee, how big percentage of total amount is taken as a opening fee
         /// is defined in param _OPENING_FEE_PERCENTAGE
         uint256 liquidityPool;
         /// @notice Actual Balance on Stanley (Asset Management) site vault
-        uint128 vault;
-        /// @notice Opening fee balance
-        /// @dev how big percentage of total amount is taken as a opening fee
-        /// is defined in param _OPENING_FEE_PERCENTAGE
-        uint256 openingFee;
-        /// @notice Liquidation Deposit Balance
-        uint256 liquidationDeposit;
+        uint256 vault;
         /// @notice Ipor Publication Fee Balance, intended for Charlie off-chain service for
         /// oracle which need cash for updating IPOR Index
         uint256 iporPublicationFee;

@@ -27,9 +27,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedSwaps / 1000000000000000000}
+                                {value.payFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedSwaps}</small>
+                                <small>{value.payFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -42,9 +42,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedSwaps / 1000000000000000000}
+                                {value.payFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedSwaps}</small>
+                                <small>{value.payFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -57,9 +57,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedSwaps / 1000000000000000000}
+                                {value.payFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedSwaps}</small>
+                                <small>{value.payFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -75,9 +75,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedSwaps / 1000000000000000000}
+                                {value.receiveFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedSwaps}</small>
+                                <small>{value.receiveFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -90,9 +90,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedSwaps / 1000000000000000000}
+                                {value.receiveFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedSwaps}</small>
+                                <small>{value.receiveFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -105,9 +105,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedSwaps / 1000000000000000000}
+                                {value.receiveFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedSwaps}</small>
+                                <small>{value.receiveFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -156,102 +156,6 @@ export default ({ drizzle, drizzleState }) => (
                                 {value.liquidityPool / 1000000000000000000}
                                 <br />
                                 <small>{value.liquidityPool}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>Opening Fee</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonStorageUsdt"
-                        method="getExtendedBalance"
-                        render={(value) => (
-                            <div>
-                                {value.openingFee / 1000000000000000000}
-                                <br />
-                                <small>{value.openingFee}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonStorageUsdc"
-                        method="getExtendedBalance"
-                        render={(value) => (
-                            <div>
-                                {value.openingFee / 1000000000000000000}
-                                <br />
-                                <small>{value.openingFee}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonStorageDai"
-                        method="getExtendedBalance"
-                        render={(value) => (
-                            <div>
-                                {value.openingFee / 1000000000000000000}
-                                <br />
-                                <small>{value.openingFee}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>Liquidation Deposit Fee</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonStorageUsdt"
-                        method="getExtendedBalance"
-                        render={(value) => (
-                            <div>
-                                {value.liquidationDeposit / 1000000000000000000}
-                                <br />
-                                <small>{value.liquidationDeposit}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonStorageUsdc"
-                        method="getExtendedBalance"
-                        render={(value) => (
-                            <div>
-                                {value.liquidationDeposit / 1000000000000000000}
-                                <br />
-                                <small>{value.liquidationDeposit}</small>
-                            </div>
-                        )}
-                    />
-                </td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonStorageDai"
-                        method="getExtendedBalance"
-                        render={(value) => (
-                            <div>
-                                {value.liquidationDeposit / 1000000000000000000}
-                                <br />
-                                <small>{value.liquidationDeposit}</small>
                             </div>
                         )}
                     />

@@ -70,7 +70,7 @@ abstract contract Joseph is
         _stanley = IStanley(stanley);
     }
 
-    function getVersion() external pure override returns (uint256) {
+    function getVersion() external pure override virtual returns (uint256) {
         return 1;
     }
 
@@ -152,7 +152,7 @@ abstract contract Joseph is
     {
         require(address(0) != _charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
-        _miltonStorage.updateStorageWhenTransferPublicationFee(assetValue);
+        _miltonStorage.updateStorageWhenTransferToCharlieTreasury(assetValue);
 
         uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(
             assetValue,
@@ -274,7 +274,7 @@ abstract contract Joseph is
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
-            balance.payFixedSwaps + balance.receiveFixedSwaps,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral,
             wadRedeemValue
         );
 
