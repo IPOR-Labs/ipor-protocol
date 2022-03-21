@@ -357,6 +357,11 @@ abstract contract Milton is
                 _getOpeningFeePercentage()
             );
 
+        (uint256 openingFeeLPValue, uint256 openingFeeTreasuryValue) = _splitOpeningFeeAmount(
+            openingFeeAmount,
+            _getOpeningFeeForTreasuryPercentage()
+        );
+
         require(
             collateral <= _getMaxSwapCollateralAmount(),
             MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH
@@ -373,11 +378,23 @@ abstract contract Milton is
                 wadTotalAmount,
                 collateral,
                 notional,
-                openingFeeAmount,
-                _getLiquidationDepositAmount(),
+                openingFeeLPValue,
+                openingFeeTreasuryValue,
                 _getIporPublicationFeeAmount(),
+                _getLiquidationDepositAmount(),
                 _warren.getAccruedIndex(openTimestamp, _asset)
             );
+    }
+
+    function _splitOpeningFeeAmount(
+        uint256 openingFeeAmount,
+        uint256 openingFeeForTreasurePercentage
+    ) internal pure returns (uint256 liquidityPoolValue, uint256 treasuryValue) {
+        treasuryValue = IporMath.division(
+            openingFeeAmount * openingFeeForTreasurePercentage,
+            Constants.D18
+        );
+        liquidityPoolValue = openingFeeAmount - treasuryValue;
     }
 
     //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
@@ -394,7 +411,7 @@ abstract contract Milton is
         );
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeAmount;
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
         balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
@@ -428,14 +445,13 @@ abstract contract Milton is
             bosStruct.notional,
             indicator.fixedInterestRate,
             indicator.ibtQuantity,
-            bosStruct.openingFeeAmount
+            bosStruct.openingFeeLPValue,
+            bosStruct.openingFeeTreasuryValue
         );
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
-            _getLiquidationDepositAmount(),
-            _getIporPublicationFeeAmount(),
-            _getOpeningFeeForTreasuryPercentage()
+            _getIporPublicationFeeAmount()
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
@@ -467,7 +483,7 @@ abstract contract Milton is
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeAmount;
+        balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
         balance.receiveFixedSwaps = balance.receiveFixedSwaps + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
@@ -501,14 +517,13 @@ abstract contract Milton is
             bosStruct.notional,
             indicator.fixedInterestRate,
             indicator.ibtQuantity,
-            bosStruct.openingFeeAmount
+            bosStruct.openingFeeLPValue,
+            bosStruct.openingFeeTreasuryValue
         );
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
             newSwap,
-            _getLiquidationDepositAmount(),
-            _getIporPublicationFeeAmount(),
-            _getOpeningFeeForTreasuryPercentage()
+            _getIporPublicationFeeAmount()
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
@@ -576,7 +591,8 @@ abstract contract Milton is
                 wadTotalAmount,
                 newSwap.collateral,
                 newSwap.notionalAmount,
-                newSwap.openingFeeAmount,
+                newSwap.openingFeeLPValue,
+                newSwap.openingFeeTreasuryValue,
                 iporPublicationAmount,
                 newSwap.liquidationDepositAmount
             ),

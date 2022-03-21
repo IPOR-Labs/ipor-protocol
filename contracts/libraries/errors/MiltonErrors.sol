@@ -60,7 +60,7 @@ library MiltonErrors {
     string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY = "IPOR_320";
 
     //@notcie Swap cannot be closed because liquidation deposit balance is to low to pay sender for liquidation
-    string public constant CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = "IPOR_321";
+    // string public constant CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = "IPOR_321";
 
     //@notice Liquiditiy
     string public constant SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO = "IPOR_322";
