@@ -16,7 +16,6 @@ library MiltonStorageTypes {
     /// @dev extended information includes: opening fee balance, liquidation deposit balance,
     /// IPOR publication fee balance, treasury balance, all balances are in 18 decimals
     struct ExtendedBalancesMemory {
-<<<<<<< HEAD
         /// @notice Swaps balance for Pay Fixed leg
         uint256 payFixedTotalCollateral;
         /// @notice Swaps balance for Receive Fixed leg
@@ -24,13 +23,6 @@ library MiltonStorageTypes {
         /// @notice Liquidity Pool Balance
         /// @dev Includes part of Opening Fee, how big percentage of total amount is taken as a opening fee
         /// is defined in param _OPENING_FEE_PERCENTAGE
-=======
-        /// @notice Sum of collaterals on Pay Fixed leg
-        uint256 payFixedSwaps;
-        /// @notice Sum of collaterals on Receive Fixed leg
-        uint256 receiveFixedSwaps;
-        /// @notice Liquidity pool balance
->>>>>>> 761cff5 (updated documenation)
         uint256 liquidityPool;
         /// @notice Stanley's (Asset Management) balance
         uint256 vault;
