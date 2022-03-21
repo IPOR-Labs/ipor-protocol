@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -18,6 +19,7 @@ import "hardhat/console.sol";
 
 contract CompoundStrategy is
     UUPSUpgradeable,
+    ReentrancyGuardUpgradeable,
     IporOwnableUpgradeable,
     PausableUpgradeable,
     IStrategy
@@ -48,7 +50,7 @@ contract CompoundStrategy is
         address cErc20Contract,
         address comptroller,
         address compToken
-    ) public initializer {
+    ) public initializer nonReentrant {
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
@@ -86,7 +88,7 @@ contract CompoundStrategy is
     /**
      * @dev _asset return
      */
-    function getAsset() public view override returns (address) {
+    function getAsset() external view override returns (address) {
         return _asset;
     }
 
@@ -109,7 +111,7 @@ contract CompoundStrategy is
      * @dev Total Balance = Principal Amount + Interest Amount.
      * returns uint256 with 18 Decimals
      */
-    function balanceOf() public view override returns (uint256) {
+    function balanceOf() external view override returns (uint256) {
         return (
             IporMath.division(
                 (_cToken.exchangeRateStored() * _cToken.balanceOf(address(this))),
@@ -167,7 +169,7 @@ contract CompoundStrategy is
      * @dev Claim extra reward of Governace token(COMP).
      * @notice claim can only done by owner.
      */
-    function doClaim() external override whenNotPaused {
+    function doClaim() external override whenNotPaused nonReentrant {
         require(_treasury != address(0), IporErrors.WRONG_ADDRESS);
         address[] memory assets = new address[](1);
         assets[0] = address(_cToken);

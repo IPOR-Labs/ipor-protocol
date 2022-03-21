@@ -222,7 +222,7 @@ abstract contract Joseph is
         uint256 assetValue,
         uint256 assetDecimals,
         uint256 timestamp
-    ) internal {
+    ) internal nonReentrant {
         IMilton milton = _milton;
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
@@ -248,7 +248,7 @@ abstract contract Joseph is
         );
     }
 
-    function _redeem(uint256 ipTokenValue, uint256 timestamp) internal {
+    function _redeem(uint256 ipTokenValue, uint256 timestamp) internal nonReentrant {
         require(
             ipTokenValue != 0 && ipTokenValue <= _ipToken.balanceOf(msg.sender),
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW

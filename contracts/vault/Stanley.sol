@@ -441,7 +441,7 @@ abstract contract Stanley is
         uint256 ivTokenValue,
         uint256 exchangeRate,
         bool transfer
-    ) internal {
+    ) internal nonReentrant {
         if (amount != 0) {
             IStrategy(strategyAddress).withdraw(amount);
 
