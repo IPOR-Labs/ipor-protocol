@@ -161,7 +161,6 @@ export default ({ drizzle, drizzleState }) => (
                     />
                 </td>
             </tr>
-
             <tr>
                 <td>Ipor Publication Fee</td>
                 <td>
