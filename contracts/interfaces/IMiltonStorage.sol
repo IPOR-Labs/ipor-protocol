@@ -124,9 +124,9 @@ interface IMiltonStorage {
 
     function updateStorageWhenDepositToStanley(uint256 depositValue, uint256 vaultBalance) external;
 
-    function updateStorageWhenTransferPublicationFee(uint256 transferedValue) external;
+    function updateStorageWhenTransferPublicationFee(uint256 transferredValue) external;
 
-    function updateStorageWhenTransferToTreasury(uint256 transferedValue) external;
+    function updateStorageWhenTransferToTreasury(uint256 transferredValue) external;
 
     function setMilton(address milton) external;
 

@@ -228,7 +228,7 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(userOne).getAccruedBalance();
         await testData.miltonDai.connect(userOne).calculateSpread();
         await testData.miltonDai.connect(userOne).calculateSoap();
-        await testData.miltonDai.connect(userOne).calculateExchangeRate(params.openTimestamp);
+        await testData.miltonDai.connect(userOne).calculateSoapForTimestamp(params.openTimestamp);
         await testData.miltonDai.connect(userOne).calculateSwapPayFixedValue(swapPayFixed);
         await testData.miltonDai.connect(userOne).calculateSwapReceiveFixedValue(swapReceiveFixed);
         await testData.miltonDai.connect(userOne).getMiltonSpreadModel();

@@ -24,7 +24,7 @@ const {
     setupTokenDaiInitialValuesForUsers,
 } = require("./Utils");
 
-describe("AssetManagementIntegration", () => {
+describe("Stanley - Asset Management Vault", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider;
 

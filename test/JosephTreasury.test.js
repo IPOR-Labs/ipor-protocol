@@ -92,26 +92,26 @@ describe("Joseph Treasury", () => {
 
         await testData.josephDai.connect(admin).setCharlieTreasury(userOne.address);
 
-        const transferedValue = BigInt("100");
+        const transferredValue = BigInt("100");
 
         //when
-        await testData.josephDai.connect(userThree).transferToCharlieTreasury(transferedValue);
+        await testData.josephDai.connect(userThree).transferToCharlieTreasury(transferredValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceCharlieTreasury = USER_SUPPLY_10MLN_18DEC + transferedValue;
+        let expectedErc20BalanceCharlieTreasury = USER_SUPPLY_10MLN_18DEC + transferredValue;
         let actualErc20BalanceCharlieTreasury = BigInt(
             await testData.tokenDai.balanceOf(userOne.address)
         );
 
         let expectedErc20BalanceMilton =
-            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedValue;
+            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferredValue;
         let actualErc20BalanceMilton = BigInt(
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
 
-        let expectedPublicationFeeBalanceMilton = USD_10_18DEC - transferedValue;
+        let expectedPublicationFeeBalanceMilton = USD_10_18DEC - transferredValue;
         const actualPublicationFeeBalanceMilton = BigInt(balance.iporPublicationFee);
 
         expect(
@@ -197,19 +197,19 @@ describe("Joseph Treasury", () => {
 
         await testData.josephDai.connect(admin).setTreasury(userOne.address);
 
-        const transferedValue = BigInt("100");
+        const transferredValue = BigInt("100");
 
         //when
-        await testData.josephDai.connect(userThree).transferToTreasury(transferedValue);
+        await testData.josephDai.connect(userThree).transferToTreasury(transferredValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceTreasury = USER_SUPPLY_10MLN_18DEC + transferedValue;
+        let expectedErc20BalanceTreasury = USER_SUPPLY_10MLN_18DEC + transferredValue;
         let actualErc20BalanceTreasury = BigInt(await testData.tokenDai.balanceOf(userOne.address));
 
         let expectedErc20BalanceMilton =
-            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedValue;
+            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferredValue;
         let actualErc20BalanceMilton = BigInt(
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );

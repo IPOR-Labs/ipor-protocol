@@ -26,13 +26,13 @@ interface IIpToken is IERC20 {
     /// @param amount volume of IP Tokens which will be destroyed
     function burn(address account, uint256 amount) external;
 
-    /// @notice Emmited when `amount` IP Tokens were mint and transfered to `account`.
-    /// @param account address where IP Tokens are transfered after mind
+    /// @notice Emmited when `amount` IP Tokens were mint and transferred to `account`.
+    /// @param account address where IP Tokens are transferred after mind
     /// @param amount volume of IP Tokens which will be minted
     event Mint(address indexed account, uint256 amount);
 
-    /// @notice Emmited when `amount` IP Tokens were burnt and transfered from `account`.
-    /// @param account address where IP Tokens are transfered from, after burn
+    /// @notice Emmited when `amount` IP Tokens were burnt and transferred from `account`.
+    /// @param account address where IP Tokens are transferred from, after burn
     /// @param amount volume of IP Tokens which will be burned
     event Burn(address indexed account, uint256 amount);
 
@@ -40,5 +40,4 @@ interface IIpToken is IERC20 {
     /// @param changedBy account address who changed Joseph address
     /// @param newJosephAddress new Joseph address
     event JosephChanged(address changedBy, address newJosephAddress);
-	
 }

@@ -33,7 +33,7 @@ const {
 } = require("./Utils");
 const { TC_TOTAL_AMOUNT_10_18DEC } = require("./Const");
 
-describe("MiltonDarcyDataProvider", () => {
+describe("MiltonFacadeDataProvider", () => {
     let data = null;
     let admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress;
 
@@ -140,11 +140,13 @@ describe("MiltonDarcyDataProvider", () => {
 
         const expectedSwapsLength = 3;
 
-        const MiltonDarcyDataProvider = await ethers.getContractFactory("MiltonDarcyDataProvider");
-        const miltonDarcyDataProvider = await MiltonDarcyDataProvider.deploy();
-        await miltonDarcyDataProvider.deployed();
+        const MiltonFacadeDataProvider = await ethers.getContractFactory(
+            "MiltonFacadeDataProvider"
+        );
+        const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
+        await miltonFacadeDataProvider.deployed();
 
-        await miltonDarcyDataProvider.initialize(
+        await miltonFacadeDataProvider.initialize(
             testData.warren.address,
             [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
             [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
@@ -152,7 +154,8 @@ describe("MiltonDarcyDataProvider", () => {
                 testData.miltonStorageDai.address,
                 testData.miltonStorageUsdt.address,
                 testData.miltonStorageUsdc.address,
-            ]
+            ],
+            [testData.josephDai.address, testData.josephUsdt.address, testData.josephUsdc.address]
         );
 
         //when
@@ -160,17 +163,17 @@ describe("MiltonDarcyDataProvider", () => {
         await openSwapPayFixed(testData, paramsUsdc);
         await openSwapPayFixed(testData, paramsUsdt);
 
-        const responseDai = await miltonDarcyDataProvider
+        const responseDai = await miltonFacadeDataProvider
             .connect(paramsDai.from)
             .getMySwaps(paramsDai.asset, 0, 50);
         const itemsDai = responseDai.swaps;
 
-        const responseUsdc = await miltonDarcyDataProvider
+        const responseUsdc = await miltonFacadeDataProvider
             .connect(paramsUsdc.from)
             .getMySwaps(paramsUsdc.asset, 0, 50);
         const itemsUsdc = responseUsdc.swaps;
 
-        const responseUsdt = await miltonDarcyDataProvider
+        const responseUsdt = await miltonFacadeDataProvider
             .connect(paramsUsdt.from)
             .getMySwaps(paramsUsdt.asset, 0, 50);
         const itemsUsdt = responseUsdt.swaps;
@@ -350,10 +353,12 @@ describe("MiltonDarcyDataProvider", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_50_000_18DEC, paramsDai.openTimestamp);
 
-        const MiltonDarcyDataProvider = await ethers.getContractFactory("MiltonDarcyDataProvider");
-        const miltonDarcyDataProvider = await MiltonDarcyDataProvider.deploy();
-        await miltonDarcyDataProvider.deployed();
-        await miltonDarcyDataProvider.initialize(
+        const MiltonFacadeDataProvider = await ethers.getContractFactory(
+            "MiltonFacadeDataProvider"
+        );
+        const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
+        await miltonFacadeDataProvider.deployed();
+        await miltonFacadeDataProvider.initialize(
             testData.warren.address,
             [testData.tokenDai.address, testData.tokenUsdt.address, testData.tokenUsdc.address],
             [testData.miltonDai.address, testData.miltonUsdt.address, testData.miltonUsdc.address],
@@ -361,7 +366,8 @@ describe("MiltonDarcyDataProvider", () => {
                 testData.miltonStorageDai.address,
                 testData.miltonStorageUsdt.address,
                 testData.miltonStorageUsdc.address,
-            ]
+            ],
+            [testData.josephDai.address, testData.josephUsdt.address, testData.josephUsdc.address]
         );
 
         for (let i = 0; i < numberOfSwapsToCreate; i++) {
@@ -374,7 +380,7 @@ describe("MiltonDarcyDataProvider", () => {
 
         //when
         if (expectedError == null) {
-            const response = await miltonDarcyDataProvider
+            const response = await miltonFacadeDataProvider
                 .connect(paramsDai.from)
                 .getMySwaps(paramsDai.asset, offset, pageSize);
 
@@ -386,7 +392,7 @@ describe("MiltonDarcyDataProvider", () => {
             expect(totalSwapCount).to.be.eq(numberOfSwapsToCreate);
         } else {
             await assertError(
-                miltonDarcyDataProvider
+                miltonFacadeDataProvider
                     .connect(paramsDai.from)
                     .getMySwaps(paramsDai.asset, offset, pageSize),
                 expectedError

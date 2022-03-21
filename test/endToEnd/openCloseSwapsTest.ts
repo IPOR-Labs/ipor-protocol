@@ -14,7 +14,7 @@ import {
     JosephUsdt,
     IpToken,
     IvToken,
-    MiltonDarcyDataProvider,
+    MiltonFacadeDataProvider,
 } from "../../types";
 
 import { deploy, DeployType, setup } from "./deploy";
@@ -57,7 +57,7 @@ describe("Open/Close Swap", function () {
     let ivTokenUsdt: IvToken;
 
     let miltonFaucet: MiltonFaucet;
-    let miltonDarcyDataProvider: MiltonDarcyDataProvider;
+    let miltonFacadeDataProvider: MiltonFacadeDataProvider;
 
     before(async () => {
         [admin] = await hre.ethers.getSigners();
@@ -82,7 +82,7 @@ describe("Open/Close Swap", function () {
             ipTokenUsdc,
             ipTokenUsdt,
             ivTokenUsdt,
-            miltonDarcyDataProvider,
+            miltonFacadeDataProvider,
         } = deployd);
 
         // #####################################################################
@@ -137,7 +137,7 @@ describe("Open/Close Swap", function () {
             );
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 dai.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -156,7 +156,7 @@ describe("Open/Close Swap", function () {
             );
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 dai.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -171,7 +171,7 @@ describe("Open/Close Swap", function () {
             await miltonDai.closeSwapPayFixed(swapPayFixedId);
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 dai.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -188,7 +188,7 @@ describe("Open/Close Swap", function () {
             await miltonDai.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 dai.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -247,7 +247,7 @@ describe("Open/Close Swap", function () {
             );
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdc.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -266,7 +266,7 @@ describe("Open/Close Swap", function () {
             );
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdc.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -281,7 +281,7 @@ describe("Open/Close Swap", function () {
             await miltonUsdc.closeSwapPayFixed(swapPayFixedId);
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdc.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -298,7 +298,7 @@ describe("Open/Close Swap", function () {
             await miltonUsdc.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdc.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -353,7 +353,7 @@ describe("Open/Close Swap", function () {
             );
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdt.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -372,7 +372,7 @@ describe("Open/Close Swap", function () {
             );
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdt.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -387,7 +387,7 @@ describe("Open/Close Swap", function () {
             await miltonUsdt.closeSwapPayFixed(swapPayFixedId);
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdt.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")
@@ -404,7 +404,7 @@ describe("Open/Close Swap", function () {
             await miltonUsdt.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
 
-            const swaps = await miltonDarcyDataProvider.getMySwaps(
+            const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdt.address,
                 BigNumber.from("0"),
                 BigNumber.from("10")

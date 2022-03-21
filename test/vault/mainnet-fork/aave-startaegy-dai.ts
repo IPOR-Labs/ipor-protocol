@@ -94,7 +94,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             );
         });
 
-        it("hardhat_impersonateAccount and check transfered balance to our account", async function () {
+        it("hardhat_impersonateAccount and check transferred balance to our account", async function () {
             const usdcBalanceBefore = await daiContract.balanceOf(accounts[0].address);
             console.log("Dai Balance Before", usdcBalanceBefore.toString());
 

@@ -375,7 +375,6 @@ module.exports.prepareTestData = async (
             await miltonUsdt.deployed();
             miltonUsdt.initialize(
                 tokenUsdt.address,
-                ipTokenUsdt.address,
                 warren.address,
                 miltonStorageUsdt.address,
                 data.miltonSpread.address,
@@ -419,7 +418,6 @@ module.exports.prepareTestData = async (
             await miltonUsdc.deployed();
             miltonUsdc.initialize(
                 tokenUsdc.address,
-                ipTokenUsdc.address,
                 warren.address,
                 miltonStorageUsdc.address,
                 data.miltonSpread.address,
@@ -464,7 +462,6 @@ module.exports.prepareTestData = async (
             await miltonDai.deployed();
             miltonDai.initialize(
                 tokenDai.address,
-                ipTokenDai.address,
                 warren.address,
                 miltonStorageDai.address,
                 data.miltonSpread.address,

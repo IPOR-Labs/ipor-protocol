@@ -197,7 +197,7 @@ describe("Joseph", () => {
 
         //when
         const actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(Math.floor(Date.now() / 1000))
+            await testData.josephDai.itfCalculateExchangeRate(Math.floor(Date.now() / 1000))
         );
 
         //then
@@ -226,7 +226,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -268,7 +268,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
+            await testData.josephUsdt.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -305,7 +305,7 @@ describe("Joseph", () => {
 
         //when
         const actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -346,7 +346,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -392,7 +392,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(calculateTimestamp)
         );
 
         //then
@@ -445,7 +445,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(calculateTimestamp)
         );
 
         //then
@@ -500,7 +500,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(calculateTimestamp)
         );
 
         //then
@@ -553,7 +553,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(calculateTimestamp)
         );
 
         //then
@@ -616,7 +616,7 @@ describe("Joseph", () => {
 
         await assertError(
             //when
-            testData.miltonDai.calculateExchangeRate(calculateTimestamp),
+            testData.josephDai.itfCalculateExchangeRate(calculateTimestamp),
             //then
             "IPOR_314"
         );
@@ -678,7 +678,7 @@ describe("Joseph", () => {
 
         await assertError(
             //when
-            testData.miltonDai.calculateExchangeRate(calculateTimestamp),
+            testData.josephDai.itfCalculateExchangeRate(calculateTimestamp),
             //then
             "IPOR_314"
         );
@@ -729,7 +729,7 @@ describe("Joseph", () => {
         const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(calculateTimestamp)
         );
         const expectedExchangeRate = BigInt("231204643857984158");
         //Notice! |SOAP| > Liquidity Pool Balance
@@ -792,7 +792,7 @@ describe("Joseph", () => {
         const calculateTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
 
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(calculateTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(calculateTimestamp)
         );
         const expectedExchangeRate = BigInt("231204643857984155");
 
@@ -860,7 +860,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
+            await testData.josephUsdt.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -908,7 +908,7 @@ describe("Joseph", () => {
 
         //when
         let actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -966,7 +966,7 @@ describe("Joseph", () => {
 
         const expectedExchangeRate = BigInt("1312500000000000000");
         const exchangeRateBeforeProvideLiquidity = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
         const expectedIpTokenBalanceForUserThree = BigInt("1142857142857142857143");
 
@@ -979,7 +979,7 @@ describe("Joseph", () => {
             await testData.ipTokenDai.balanceOf(userThree.address)
         );
         const actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -1048,7 +1048,7 @@ describe("Joseph", () => {
         const expectedExchangeRateBeforeRedeem = BigInt("1312500000000000000");
         const expectedExchangeRateAfterRedeem = BigInt("1325321471291866029");
         const exchangeRateBeforeProvideLiquidity = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
         const expectedIpTokenBalanceForUserThree = BigInt("267857142857142857289");
 
@@ -1065,7 +1065,7 @@ describe("Joseph", () => {
             await testData.ipTokenDai.balanceOf(userThree.address)
         );
         const actualExchangeRate = BigInt(
-            await testData.miltonDai.calculateExchangeRate(params.openTimestamp)
+            await testData.josephDai.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then
@@ -1133,7 +1133,7 @@ describe("Joseph", () => {
         const expectedExchangeRateBeforeRedeem = BigInt("1312500000000000000");
         const expectedExchangeRateAfterRedeem = BigInt("1325321471291866029");
         const exchangeRateBeforeProvideLiquidity = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
+            await testData.josephUsdt.itfCalculateExchangeRate(params.openTimestamp)
         );
         const expectedIpTokenBalanceForUserThree = BigInt("267857142857142857289");
 
@@ -1149,7 +1149,7 @@ describe("Joseph", () => {
             await testData.ipTokenUsdt.balanceOf(userThree.address)
         );
         let actualExchangeRate = BigInt(
-            await testData.miltonUsdt.calculateExchangeRate(params.openTimestamp)
+            await testData.josephUsdt.itfCalculateExchangeRate(params.openTimestamp)
         );
 
         //then

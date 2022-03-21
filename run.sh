@@ -189,8 +189,8 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "ItfJosephUsdc.json" "itf_joseph_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "ItfJosephDai.json" "itf_joseph_dai_address")
   RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProvider.json" "cockpit_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonDarcyDataProvider.json" "milton_darcy_data_provider_address")  
-  RESULT=$(set_smart_contract_address_from_json_file "WarrenDarcyDataProvider.json" "warren_darcy_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProvider.json" "milton_facade_data_provider_address")  
+  RESULT=$(set_smart_contract_address_from_json_file "WarrenFacadeDataProvider.json" "warren_facade_data_provider_address")
   RESULT=$(set_smart_contract_address_from_json_file "DaiMockedToken.json" "dai_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "UsdcMockedToken.json" "usdc_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "UsdtMockedToken.json" "usdt_mocked_address")
@@ -198,10 +198,11 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageUsdc.json" "milton_storage_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageDai.json" "milton_storage_dai_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModel.json" "milton_spread_model_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonFaucet.json" "milton_faucet_address")  
-  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_USDC}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_usdc_address")
-  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_USDT}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_usdt_address")
-  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_DAI}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonFaucet.json" "milton_faucet_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdc.json" "ipor_ip_token_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdt.json" "ipor_ip_token_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IpTokenDai.json" "ipor_ip_token_dai_address")
+  
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }
@@ -213,7 +214,7 @@ function create_contracts_zip(){
   zip -r -j -q "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_DIR}"
   echo -e "${ENV_CONTRACTS_ZIP_DEST} file was created"
 }
-
+dev
 function put_file_to_bucket(){
   local FILE_NAME="${1}"
   local FILE_KEY="${2}"

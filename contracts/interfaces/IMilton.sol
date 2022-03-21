@@ -21,7 +21,14 @@ interface IMilton {
             int256 soap
         );
 
-    function calculateExchangeRate(uint256 calculateTimestamp) external view returns (uint256);
+    function calculateSoapForTimestamp(uint256 calculateTimestamp)
+        external
+        view
+        returns (
+            int256 soapPf,
+            int256 soapRf,
+            int256 soap
+        );
 
     function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)
         external
@@ -89,7 +96,7 @@ interface IMilton {
         address asset,
         uint256 closeTimestamp,
         address liquidator,
-        uint256 transferedToBuyer,
-        uint256 transferedToLiquidator
+        uint256 transferredToBuyer,
+        uint256 transferredToLiquidator
     );
 }
