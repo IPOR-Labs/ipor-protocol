@@ -214,7 +214,7 @@ function create_contracts_zip(){
   zip -r -j -q "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_DIR}"
   echo -e "${ENV_CONTRACTS_ZIP_DEST} file was created"
 }
-dev
+
 function put_file_to_bucket(){
   local FILE_NAME="${1}"
   local FILE_KEY="${2}"
