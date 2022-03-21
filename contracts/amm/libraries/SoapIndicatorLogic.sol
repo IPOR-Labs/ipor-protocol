@@ -40,7 +40,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) internal pure {
         uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -57,7 +57,6 @@ library SoapIndicatorLogic {
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
-        return si;
     }
 
     function rebalanceWhenCloseSwap(
