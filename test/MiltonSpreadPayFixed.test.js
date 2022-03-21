@@ -180,8 +180,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
         const accruedBalance = {
-            payFixedSwaps: BigInt("1000000000000000000000") + swapCollateral,
-            receiveFixedSwaps: BigInt("13000000000000000000000"),
+            payFixedTotalCollateral: BigInt("1000000000000000000000") + swapCollateral,
+            receiveFixedTotalCollateral: BigInt("13000000000000000000000"),
             openingFee: openingFee,
             liquidationDeposit: ZERO,
             vault: ZERO,
@@ -217,8 +217,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             exponentialWeightedMovingVariance: BigInt("35000000000000000"),
         };
         const accruedBalance = {
-            payFixedSwaps: BigInt("1000000000000000000000") + swapCollateral,
-            receiveFixedSwaps: BigInt("13000000000000000000000"),
+            payFixedTotalCollateral: BigInt("1000000000000000000000") + swapCollateral,
+            receiveFixedTotalCollateral: BigInt("13000000000000000000000"),
             openingFee: openingFee,
             liquidationDeposit: ZERO,
             vault: ZERO,
@@ -248,8 +248,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -270,8 +270,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -292,8 +292,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -314,8 +314,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -336,8 +336,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -358,8 +358,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -380,10 +380,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
-        const soap = payFixedSwapsBalance;
+        const soap = payFixedTotalCollateralBalance;
 
         const accruedIpor = {
             indexValue: BigInt("30000000000000000"),
@@ -402,8 +402,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -424,10 +424,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
-        const soap = payFixedSwapsBalance;
+        const soap = payFixedTotalCollateralBalance;
 
         const accruedIpor = {
             indexValue: BigInt("30000000000000000"),
@@ -446,8 +446,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -468,10 +468,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
-        const soap = payFixedSwapsBalance;
+        const soap = payFixedTotalCollateralBalance;
 
         const iporIndexValue = BigInt("30000000000000000");
 
@@ -492,8 +492,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -513,10 +513,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
-        const soap = payFixedSwapsBalance;
+        const soap = payFixedTotalCollateralBalance;
 
         const iporIndexValue = BigInt("30000000000000000");
 
@@ -537,8 +537,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -558,8 +558,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -582,8 +582,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -603,8 +603,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -627,8 +627,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -650,8 +650,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("1000000000000000");
         const swapOpeningFee = BigInt("0");
 
-        const payFixedSwapsBalance = BigInt("99990000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("99990000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("100");
 
@@ -672,8 +672,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -693,8 +693,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = USD_100_18DEC;
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("999999999999999990000");
 
@@ -715,8 +715,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -736,8 +736,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -758,8 +758,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -779,8 +779,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -801,8 +801,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -822,8 +822,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("20000000000000000000");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -844,8 +844,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 )
         );
 
@@ -864,8 +864,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = BigInt("0");
 
-        const payFixedSwapsBalance = BigInt("1000000000000000000000");
-        const receiveFixedSwapsBalance = BigInt("13000000000000000000000");
+        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
 
         const soap = BigInt("500000000000000000000");
 
@@ -884,8 +884,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     soap,
                     accruedIpor,
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedSwapsBalance + swapCollateral,
-                    receiveFixedSwapsBalance
+                    payFixedTotalCollateralBalance + swapCollateral,
+                    receiveFixedTotalCollateralBalance
                 ),
             //then
             "IPOR_322"

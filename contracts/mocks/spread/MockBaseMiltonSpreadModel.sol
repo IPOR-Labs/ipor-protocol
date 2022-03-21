@@ -8,12 +8,12 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance
     ) public pure returns (uint256 spreadValue) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
-            payFixedSwapsBalance,
-            receiveFixedSwapsBalance,
+            payFixedTotalCollateralBalance,
+            receiveFixedTotalCollateralBalance,
             liquidityPoolBalance,
             0
         );
@@ -24,12 +24,12 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance
     ) public pure returns (uint256 spreadValue) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
-            payFixedSwapsBalance,
-            receiveFixedSwapsBalance,
+            payFixedTotalCollateralBalance,
+            receiveFixedTotalCollateralBalance,
             liquidityPoolBalance,
             0
         );
@@ -51,15 +51,15 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
 
     function calculateDemandComponentPayFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         int256 soapPayFixed
     ) public pure returns (uint256) {
         return
             _calculateDemandComponentPayFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 soapPayFixed
             );
     }
@@ -94,30 +94,30 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
 
     function calculateAdjustedUtilizationRatePayFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
             _calculateAdjustedUtilizationRatePayFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 lambda
             );
     }
 
     function calculateDemandComponentRecFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         int256 soapRecFixed
     ) public pure returns (uint256) {
         return
             _calculateDemandComponentRecFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 soapRecFixed
             );
     }
@@ -152,15 +152,15 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
 
     function calculateAdjustedUtilizationRateRecFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
             _calculateAdjustedUtilizationRateRecFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 lambda
             );
     }
