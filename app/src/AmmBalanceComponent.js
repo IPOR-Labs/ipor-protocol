@@ -27,9 +27,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedSwaps / 1000000000000000000}
+                                {value.payFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedSwaps}</small>
+                                <small>{value.payFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -42,9 +42,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedSwaps / 1000000000000000000}
+                                {value.payFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedSwaps}</small>
+                                <small>{value.payFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -57,9 +57,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedSwaps / 1000000000000000000}
+                                {value.payFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedSwaps}</small>
+                                <small>{value.payFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -75,9 +75,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedSwaps / 1000000000000000000}
+                                {value.receiveFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedSwaps}</small>
+                                <small>{value.receiveFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -90,9 +90,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedSwaps / 1000000000000000000}
+                                {value.receiveFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedSwaps}</small>
+                                <small>{value.receiveFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -105,9 +105,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedSwaps / 1000000000000000000}
+                                {value.receiveFixedTotalCollateral / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedSwaps}</small>
+                                <small>{value.receiveFixedTotalCollateral}</small>
                             </div>
                         )}
                     />
@@ -160,8 +160,7 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
-            </tr>           
-            
+            </tr>
             <tr>
                 <td>Ipor Publication Fee</td>
                 <td>

@@ -86,8 +86,8 @@ contract MiltonFacadeDataProvider is
         IMilton milton = IMilton(config.milton);
         IporTypes.MiltonBalancesMemory memory accruedBalance = milton.getAccruedBalance();
 
-        balance.payFixedTotalCollateral = accruedBalance.payFixedSwaps;
-        balance.recFixedTotalCollateral = accruedBalance.receiveFixedSwaps;
+        balance.payFixedTotalCollateral = accruedBalance.payFixedTotalCollateral;
+        balance.recFixedTotalCollateral = accruedBalance.receiveFixedTotalCollateral;
         balance.liquidityPool = accruedBalance.liquidityPool;
     }
 

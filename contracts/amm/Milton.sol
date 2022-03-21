@@ -68,7 +68,7 @@ abstract contract Milton is
         _stanley = IStanley(stanley);
     }
 
-    function getVersion() external pure override returns (uint256) {
+    function getVersion() external pure virtual override returns (uint256) {
         return 1;
     }
 
@@ -215,15 +215,15 @@ abstract contract Milton is
     //@param assetValue underlying token amount represented in 18 decimals
     function withdrawFromStanley(uint256 assetValue)
         external
-        onlyJoseph
         nonReentrant
+        onlyJoseph
         whenNotPaused
     {
         (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdraw(assetValue);
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
 
-    function withdrawAllFromStanley() external onlyJoseph nonReentrant whenNotPaused {
+    function withdrawAllFromStanley() external nonReentrant onlyJoseph whenNotPaused {
         (uint256 withdrawnValue, uint256 vaultBalance) = _stanley.withdrawAll();
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnValue, vaultBalance);
     }
@@ -242,8 +242,8 @@ abstract contract Milton is
 
     function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
         IporTypes.MiltonBalancesMemory memory accruedBalance = _miltonStorage.getBalance();
-        
-		uint256 actualVaultBalance = _stanley.totalBalance(address(this));
+
+        uint256 actualVaultBalance = _stanley.totalBalance(address(this));
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
@@ -413,12 +413,12 @@ abstract contract Milton is
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
-        balance.payFixedSwaps = balance.payFixedSwaps + bosStruct.collateral;
+        balance.payFixedTotalCollateral = balance.payFixedTotalCollateral + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.payFixedSwaps,
-            balance.payFixedSwaps + balance.receiveFixedSwaps
+            balance.payFixedTotalCollateral,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
@@ -485,12 +485,14 @@ abstract contract Milton is
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPValue;
-        balance.receiveFixedSwaps = balance.receiveFixedSwaps + bosStruct.collateral;
+        balance.receiveFixedTotalCollateral =
+            balance.receiveFixedTotalCollateral +
+            bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.receiveFixedSwaps,
-            balance.payFixedSwaps + balance.receiveFixedSwaps
+            balance.receiveFixedTotalCollateral,
+            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(

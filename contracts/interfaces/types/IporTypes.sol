@@ -57,9 +57,9 @@ library IporTypes {
     /// @dev all balances in 18 decimals
     struct MiltonBalancesMemory {
         /// @notice Swaps total balance for Pay Fixed leg
-        uint256 payFixedSwaps;
+        uint256 payFixedTotalCollateral;
         /// @notice Swaps total balance for Receive Fixed leg
-        uint256 receiveFixedSwaps;
+        uint256 receiveFixedTotalCollateral;
         /// @notice Liquidity Pool Balance includes part of Opening Fee,
         /// @ dev how many of Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint256 liquidityPool;

@@ -32,14 +32,14 @@ library AmmMiltonStorageTypes {
     //@dev all balances in 18 decimals
     struct Balances {
         //@notice derivatives balance for Pay Fixed & Receive Floating leg
-        uint128 payFixedSwaps;
+        uint128 payFixedTotalCollateral;
         //@notice derivatives balance for Pay Floating & Receive Fixed leg
-        uint128 receiveFixedSwaps;
+        uint128 receiveFixedTotalCollateral;
         //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
         //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasurePercentage
         uint128 liquidityPool;
         //@notice Actual Balance on IporVault site in Asset Management
-        uint128 vault;        
+        uint128 vault;
         uint128 iporPublicationFee;
         //@notice income fee goes here, part of opening fee also goes here, how many of Opening Fee goes here is
         //configured here IporAssetConfiguration.openingFeeForTreasurePercentage

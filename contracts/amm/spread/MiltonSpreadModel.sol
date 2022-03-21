@@ -123,8 +123,8 @@ contract MiltonSpreadModel is
         );
         uint256 result = _calculateDemandComponentPayFixed(
             accruedBalance.liquidityPool,
-            accruedBalance.payFixedSwaps,
-            accruedBalance.receiveFixedSwaps,
+            accruedBalance.payFixedTotalCollateral,
+            accruedBalance.receiveFixedTotalCollateral,
             soap
         ) +
             _calculateAtParComponentPayFixed(
@@ -147,8 +147,8 @@ contract MiltonSpreadModel is
         );
         uint256 result = _calculateDemandComponentRecFixed(
             accruedBalance.liquidityPool,
-            accruedBalance.payFixedSwaps,
-            accruedBalance.receiveFixedSwaps,
+            accruedBalance.payFixedTotalCollateral,
+            accruedBalance.receiveFixedTotalCollateral,
             soap
         ) +
             _calculateAtParComponentRecFixed(
@@ -163,22 +163,22 @@ contract MiltonSpreadModel is
 
     function _calculateDemandComponentPayFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         int256 soapPayFixed
     ) internal pure returns (uint256) {
         uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
             _calculateAdjustedUtilizationRatePayFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 _getDCLambdaValue()
             );
 
         if (kfDenominator != 0) {
             if (soapPayFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
-                    _calculateSoapPlus(soapPayFixed, payFixedSwapsBalance);
+                    _calculateSoapPlus(soapPayFixed, payFixedTotalCollateralBalance);
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(_getDCKfValue() * Constants.D18, kfDenominator) +
@@ -228,18 +228,18 @@ contract MiltonSpreadModel is
     //URlambda_leg(M0)
     function _calculateAdjustedUtilizationRatePayFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutSwap(
             liquidityPoolBalance,
-            receiveFixedSwapsBalance
+            receiveFixedTotalCollateralBalance
         );
 
         uint256 utilizationRatePayFixedWithPosition = _calculateUtilizationRateWithPosition(
             liquidityPoolBalance,
-            payFixedSwapsBalance
+            payFixedTotalCollateralBalance
         );
 
         uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
@@ -252,21 +252,21 @@ contract MiltonSpreadModel is
 
     function _calculateDemandComponentRecFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         int256 soapRecFixed
     ) internal pure returns (uint256) {
         uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
             _calculateAdjustedUtilizationRateRecFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 _getDCLambdaValue()
             );
         if (kfDenominator != 0) {
             if (soapRecFixed > 0) {
                 uint256 kOmegaDenominator = Constants.D18 -
-                    _calculateSoapPlus(soapRecFixed, receiveFixedSwapsBalance);
+                    _calculateSoapPlus(soapRecFixed, receiveFixedTotalCollateralBalance);
                 if (kOmegaDenominator != 0) {
                     return
                         IporMath.division(_getDCKfValue() * Constants.D18, kfDenominator) +
@@ -314,18 +314,18 @@ contract MiltonSpreadModel is
 
     function _calculateAdjustedUtilizationRateRecFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         uint256 lambda
     ) internal pure returns (uint256) {
         uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutSwap(
             liquidityPoolBalance,
-            payFixedSwapsBalance
+            payFixedTotalCollateralBalance
         );
 
         uint256 utilizationRateRecFixedWithPosition = _calculateUtilizationRateWithPosition(
             liquidityPoolBalance,
-            receiveFixedSwapsBalance
+            receiveFixedTotalCollateralBalance
         );
 
         uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
