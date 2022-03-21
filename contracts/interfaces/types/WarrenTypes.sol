@@ -3,9 +3,9 @@ pragma solidity 0.8.9;
 
 /// @title Structs used in Warren smart contract
 library WarrenTypes {
-    //@notice IPOR Index Structure for a specifi asset
+    //@notice IPOR Index Structure for a given asset
     struct IPOR {
-        //@notice Last update date Ipor Index, upate take by Charlie
+        //@notice Tiestamp of most recent IPOR index update, action performed by Charlie (refer to the documentation for more details)
         uint32 lastUpdateTimestamp;
         //@notice IPOR Index Value
         uint128 indexValue;
