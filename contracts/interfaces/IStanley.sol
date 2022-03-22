@@ -43,4 +43,6 @@ interface IStanley {
         uint256 amount,
         uint256 ivTokenValue
     );
+
+    event MiltonChanged(address changedBy, address newMilton);
 }
