@@ -1,11 +1,11 @@
 {
     "detectors_to_exclude": "solc-version,similar-names,timestamp,dead-code",
-    "exclude_informational": false,
+    "exclude_informational": true,
     "exclude_low": false,
     "exclude_medium": false,
     "exclude_high": false,
-    "json": "slither-report.json",
+    "json": "slitherReport.json",
     "disable_color": false,
-    "filter_paths": "ItfJoseph.sol|ItfWarren.sol|ItfMilton.sol|@openzeppelin/contracts/",
+    "filter_paths": "@openzeppelin/contracts|contracts/itf|contracts/mocks",
     "legacy_ast": false
 }

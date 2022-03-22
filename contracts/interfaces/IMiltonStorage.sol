@@ -127,4 +127,8 @@ interface IMiltonStorage {
     function setMilton(address milton) external;
 
     function setJoseph(address joseph) external;
+
+    event MiltonChanged(address changedBy, address newMilton);
+
+    event JosephChanged(address changedBy, address newJoseph);
 }

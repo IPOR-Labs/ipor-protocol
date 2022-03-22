@@ -146,7 +146,7 @@ describe("AAVE strategy", () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(aaveStrategyInstanceDAI.setStanley(stanleyAddress))
-            .to.emit(aaveStrategyInstanceDAI, "SetStanley")
+            .to.emit(aaveStrategyInstanceDAI, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceDAI.address);
 
         await DAI.setupInitialAmount(stanleyAddress, TC_10_000_USD_18DEC);
@@ -173,7 +173,7 @@ describe("AAVE strategy", () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(aaveStrategyInstanceUSDC.setStanley(stanleyAddress))
-            .to.emit(aaveStrategyInstanceUSDC, "SetStanley")
+            .to.emit(aaveStrategyInstanceUSDC, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceUSDC.address);
 
         await USDC.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);
@@ -200,7 +200,7 @@ describe("AAVE strategy", () => {
         //given
         const stanleyAddress = await userTwo.getAddress(); // random address
         await expect(aaveStrategyInstanceUSDT.setStanley(stanleyAddress))
-            .to.emit(aaveStrategyInstanceUSDT, "SetStanley")
+            .to.emit(aaveStrategyInstanceUSDT, "StanleyChanged")
             .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceUSDT.address);
 
         await USDT.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);

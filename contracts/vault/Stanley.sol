@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -19,6 +20,7 @@ import "hardhat/console.sol";
 abstract contract Stanley is
     UUPSUpgradeable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
     IporOwnableUpgradeable,
     IStanley,
     IStanleyAdministration
@@ -276,14 +278,15 @@ abstract contract Stanley is
         );
 
         uint256 balance = ERC20Upgradeable(_asset).balanceOf(address(this));
-        uint256 wadBalance;
 
         if (balance != 0) {
             IERC20Upgradeable(_asset).safeTransfer(msg.sender, balance);
-            wadBalance = IporMath.convertToWad(balance, _getDecimals());
+            uint256 wadBalance = IporMath.convertToWad(balance, _getDecimals());
+            withdrawnValue = assetBalanceAave + assetBalanceCompound + wadBalance;
+        } else {
+            withdrawnValue = assetBalanceAave + assetBalanceCompound;
         }
 
-        withdrawnValue = assetBalanceAave + assetBalanceCompound + wadBalance;
         vaultBalance = 0;
     }
 
@@ -326,7 +329,9 @@ abstract contract Stanley is
     }
 
     function setMilton(address milton) external override whenNotPaused onlyOwner {
+        require(milton != address(0), IporErrors.WRONG_ADDRESS);
         _milton = milton;
+        emit MiltonChanged(msg.sender, milton);
     }
 
     function pause() external override onlyOwner {
@@ -367,7 +372,7 @@ abstract contract Stanley is
      * @dev to migrate all asset from current strategy to another higher apy strategy.
      * @notice only owner can migrate.
      */
-    function _setCompoundStrategy(address newStrategy) internal {
+    function _setCompoundStrategy(address newStrategy) internal nonReentrant {
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
@@ -396,7 +401,7 @@ abstract contract Stanley is
         emit SetStrategy(newStrategy, _compoundShareToken);
     }
 
-    function _setAaveStrategy(address newStrategy) internal {
+    function _setAaveStrategy(address newStrategy) internal nonReentrant {
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
         IERC20Upgradeable asset = ERC20Upgradeable(_asset);
@@ -436,7 +441,7 @@ abstract contract Stanley is
         uint256 ivTokenValue,
         uint256 exchangeRate,
         bool transfer
-    ) internal {
+    ) internal nonReentrant {
         if (amount != 0) {
             IStrategy(strategyAddress).withdraw(amount);
 

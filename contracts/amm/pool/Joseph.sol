@@ -42,7 +42,7 @@ abstract contract Joseph is
     }
 
     function initialize(
-        address asset,
+        address initAsset,
         address ipToken,
         address milton,
         address miltonStorage,
@@ -50,17 +50,20 @@ abstract contract Joseph is
     ) public initializer {
         __Ownable_init();
 
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(initAsset != address(0), IporErrors.WRONG_ADDRESS);
         require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
         require(milton != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+        require(
+            _getDecimals() == ERC20Upgradeable(initAsset).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
 
         IIpToken iipToken = IIpToken(ipToken);
-        require(asset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
+        require(initAsset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
 
-        _asset = asset;
+        _asset = initAsset;
         _ipToken = iipToken;
         _milton = IMilton(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
@@ -219,7 +222,7 @@ abstract contract Joseph is
         uint256 assetValue,
         uint256 assetDecimals,
         uint256 timestamp
-    ) internal {
+    ) internal nonReentrant {
         IMilton milton = _milton;
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
@@ -245,7 +248,7 @@ abstract contract Joseph is
         );
     }
 
-    function _redeem(uint256 ipTokenValue, uint256 timestamp) internal {
+    function _redeem(uint256 ipTokenValue, uint256 timestamp) internal nonReentrant {
         require(
             ipTokenValue != 0 && ipTokenValue <= _ipToken.balanceOf(msg.sender),
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
