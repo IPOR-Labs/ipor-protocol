@@ -1,4 +1,3 @@
-// @ts-ignore
 const hre = require("hardhat");
 import chai from "chai";
 import { constants, Signer } from "ethers";
@@ -6,33 +5,21 @@ import { solidity } from "ethereum-waffle";
 chai.use(solidity);
 const { expect } = chai;
 
-import { IporOwnableUpgradeable } from "../../../../types";
-//TODO: move outsite vault - it is a general functionality
-describe("IporOwnableUpgradeable", () => {
+import { IporOwnable } from "../../types";
+
+describe("IporOwnable", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
-    let iporOwnable: IporOwnableUpgradeable;
+    let iporOwnable: IporOwnable;
 
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
 
-        const IporOwnableUpgradeable = await hre.ethers.getContractFactory(
-            "MockIporOwnableUpgradeable"
-        );
-        iporOwnable = (await IporOwnableUpgradeable.deploy()) as IporOwnableUpgradeable;
-    });
-
-    it("Should 0x00 address be owner when deployed without initialize", async () => {
-        // given
-        // when
-        // then
-        const owner = await iporOwnable.owner();
-        expect(owner, "should be 0x00 address").to.be.equal(constants.AddressZero);
+        const IporOwnable = await hre.ethers.getContractFactory("IporOwnable");
+        iporOwnable = await IporOwnable.deploy();
     });
 
     it("Should deployer be owner of contract", async () => {
         // given
-        // @ts-ignore
-        iporOwnable.initialize();
         // when
         // then
         const owner = await iporOwnable.owner();
@@ -41,8 +28,6 @@ describe("IporOwnableUpgradeable", () => {
 
     it("Should not be possible to transfer 0x00 address", async () => {
         // given
-        // @ts-ignore
-        iporOwnable.initialize();
         // when
         await expect(
             iporOwnable.transferOwnership(constants.AddressZero),
@@ -52,9 +37,8 @@ describe("IporOwnableUpgradeable", () => {
 
     it("should not be possible to confirm the transfer ownership for different address", async () => {
         // given
-        // @ts-ignore
-        iporOwnable.initialize();
         await iporOwnable.transferOwnership(await userOne.getAddress());
+        // when
         await expect(
             iporOwnable.connect(userTwo).confirmTransferOwnership(),
             "Should revert when pass userTwo address"
@@ -63,8 +47,6 @@ describe("IporOwnableUpgradeable", () => {
 
     it("Should be able to transfer ownership to userOne", async () => {
         // when
-        // @ts-ignore
-        iporOwnable.initialize();
         await iporOwnable.transferOwnership(await userOne.getAddress());
         await iporOwnable.connect(userOne).confirmTransferOwnership();
         // then
