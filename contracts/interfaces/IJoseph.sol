@@ -41,7 +41,7 @@ interface IJoseph {
     /// @param amount asset amount transferred from Milton's Treasury Balance
     function transferToTreasury(uint256 amount) external;
 
-    /// @notice Transfers amount of assetfrom Miltons's IPOR Publication Fee Balance to Charlie Treasurer account
+    /// @notice Transfers amount of asset from Miltons's IPOR Publication Fee Balance to Charlie Treasurer account
     /// @dev Transfer can be requested by an address defined in field `_charlieTreasuryManager`,
     /// Emits `ERC20-Transfer` event
     /// @param amount asset amount transferred from Milton's IPOR Publication Fee Balance

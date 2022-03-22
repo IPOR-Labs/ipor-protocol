@@ -44,19 +44,19 @@ library AmmTypes {
     /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.
     /// @dev all values represented in 18 decimals
     struct OpenSwapMoney {
-        /// @notice Total Amount of asset which is sent from buyer to Milton to open the swap.
+        /// @notice Total Amount of asset that is sent from buyer to Milton when opening swap.
         uint256 totalAmount;
         /// @notice Swap's collateral
         uint256 collateral;
         /// @notice Swap's notional
         uint256 notionalAmount;
-        /// @notice Opening Fee Amount Part allocated in Liquidity Pool balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool 
         uint256 openingFeeLPValue;
-		/// @notice Opening Fee Amount Part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
+		/// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 openingFeeTreasuryValue;        
-        /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 iporPublicationAmount;
-        /// @notice  Liquidation deposit is retained when the swap is opened.
+        /// @notice Liquidation deposit is retained when the swap is opened.
         uint256 liquidationDepositAmount;
     }
 }

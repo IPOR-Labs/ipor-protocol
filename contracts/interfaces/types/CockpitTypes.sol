@@ -11,7 +11,7 @@ library CockpitTypes {
         address milton;
         /// @notice MiltonStorage address
         address miltonStorage;
-        /// @notice Joseph (part of AMM responsible for liquidity) address
+        /// @notice Joseph (part of AMM responsible for Liquidity Pool management) address
         address joseph;
         /// @notice ipToken address (Liquidity Pool Token)
         address ipToken;
