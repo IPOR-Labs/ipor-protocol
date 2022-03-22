@@ -3,18 +3,18 @@ pragma solidity 0.8.9;
 
 /// @title Structs used in Warren smart contract
 library WarrenTypes {
-    //@notice IPOR Index Structure for a specifi asset
+    //@notice IPOR Index Structure for a given asset
     struct IPOR {
-        //@notice Last update date Ipor Index, upate take by Charlie
+        //@notice Tiestamp of most recent IPOR index update
         uint32 lastUpdateTimestamp;
-        //@notice IPOR Index Value
+        //@notice IPOR Index value.
         uint128 indexValue;
-        //@notice quasi Interest Bearing Token Price, it is IBT Price without division by year in seconds
+        //@notice Quasi Interest Bearing Token Price - IBT Price without division by year in seconds
         uint128 quasiIbtPrice;
-        /// @notice Exponential Moving Average indicator
-        /// @dev used in calculating SPREAD in MiltonSpreadModel smart contract
+        /// @notice Exponential Moving Average
+        /// @dev used in calculating spread in MiltonSpreadModel smart contract
         uint128 exponentialMovingAverage;
-        //@notice exponential weighted moving variance - required for calculating SPREAD in Milton
+        //@notice exponential weighted moving variance - required for calculating spread in Milton
         uint128 exponentialWeightedMovingVariance;
     }
 }
