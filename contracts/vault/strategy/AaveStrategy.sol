@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -18,7 +19,13 @@ import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
 import "hardhat/console.sol";
 
-contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgradeable, IStrategy {
+contract AaveStrategy is
+    UUPSUpgradeable,
+    ReentrancyGuardUpgradeable,
+    PausableUpgradeable,
+    IporOwnableUpgradeable,
+    IStrategy
+{
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -49,7 +56,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
         address stkAave,
         address aaveIncentive,
         address aaveToken
-    ) public initializer {
+    ) public initializer nonReentrant {
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
@@ -159,7 +166,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
      * @notice Internal method.
 
      */
-    function beforeClaim() external override whenNotPaused {
+    function beforeClaim() external override whenNotPaused nonReentrant {
         require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         address[] memory assets = new address[](1);
         assets[0] = _shareToken;
@@ -175,7 +182,7 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
         so you have to claim beforeClaim function. 
         when window is open you can call this function to claim _aave
      */
-    function doClaim() external override whenNotPaused {
+    function doClaim() external override whenNotPaused nonReentrant {
         require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
@@ -199,18 +206,21 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
     }
 
     function setStanley(address stanley) external override whenNotPaused onlyOwner {
+        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         _stanley = stanley;
-        emit SetStanley(msg.sender, stanley, address(this));
+        emit StanleyChanged(msg.sender, stanley, address(this));
     }
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
+        require(manager != address(0), IporErrors.WRONG_ADDRESS);
         _treasuryManager = manager;
+        emit TreasuryManagerChanged(address(this), manager);
     }
 
     function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
         require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         _treasury = treasury;
-        emit SetTreasury(address(this), treasury);
+        emit TreasuryChanged(address(this), treasury);
     }
 
     /**
@@ -219,7 +229,9 @@ contract AaveStrategy is UUPSUpgradeable, PausableUpgradeable, IporOwnableUpgrad
      * @param stkAave stakedAAVE token
      */
     function setStkAave(address stkAave) external whenNotPaused onlyOwner {
+        require(stkAave != address(0), IporErrors.WRONG_ADDRESS);
         _stkAave = stkAave;
+        emit StkAaveChanged(msg.sender, stkAave);
     }
 
     //solhint-disable no-empty-blocks

@@ -87,3 +87,12 @@ other available options:
 -   ssl-eth-bc - run only ssl containers needed for Ethereum blockchain
 -   ssl-explorer - run only ssl containers needed for Ethereum blockchain explorer
 -   all - run all containers
+
+## Slither
+
+-   `docker pull trailofbits/eth-security-toolbox`
+-   go to main project folder
+-   `docker run -it --platform linux/amd64 -v /Users/piotrrzonsowski/ipor/ipor-protocol:/share trailofbits/eth-security-toolbox`
+-   `cd /share`
+-   `npm install`
+-   `slither . --solc-remaps @openzeppelin/=$(pwd)/node_modules/@openzeppelin/ < Optional --print human-summary >`

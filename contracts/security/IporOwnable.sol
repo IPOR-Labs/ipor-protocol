@@ -15,7 +15,7 @@ contract IporOwnable is Ownable {
         emit AppointedToTransferOwnership(appointedOwner);
     }
 
-    function confirmTransferOwnership() public onlyAppointedOwner {
+    function confirmTransferOwnership() external onlyAppointedOwner {
         _appointedOwner = address(0);
         _transferOwnership(_msgSender());
     }

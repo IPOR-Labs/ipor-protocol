@@ -29,11 +29,17 @@ interface IStrategy {
 
     function unpause() external;
 
-    event SetStanley(address sender, address newStanley, address strategy);
+    event StanleyChanged(address sender, address newStanley, address strategy);
     // TODO: ADD test for events into fork test
     event DoClaim(address strategy, address[] assets, address claimAddress, uint256 amount);
 
     event DoBeforeClaim(address strategy, address[] assets);
 
-    event SetTreasury(address strategy, address newTreasury);
+    event TreasuryChanged(address strategy, address newTreasury);
+
+    event SetTreasuryManager(address strategy, address newTreasuryManager);
+
+    event TreasuryManagerChanged(address strategy, address newTreasuryManager);
+
+    event StkAaveChanged(address changedBy, address newStkAave);
 }
