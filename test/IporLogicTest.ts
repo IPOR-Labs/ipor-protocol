@@ -9,15 +9,15 @@ import { ZERO, ONE_18DEC, YEAR_IN_SECONDS } from "./utils/Constants";
 const { expect } = chai;
 
 describe("IporLogic", () => {
-    const P_01_DEC18 = BigNumber.from("100000000000000000");
-    const P_001_DEC18 = BigNumber.from("10000000000000000");
-    const P_03_DEC18 = BigNumber.from("30000000000000000");
-    const P_0004_DEC18 = BigNumber.from("4000000000000000");
-    const P_05_DEC18 = BigNumber.from("500000000000000000");
-    const P_005_DEC18 = BigNumber.from("50000000000000000");
-    const P_0005_DEC18 = BigNumber.from("5000000000000000");
-    const P_006_DEC18 = BigNumber.from("60000000000000000");
-    const P_0006_DEC18 = BigNumber.from("6000000000000000");
+    const P_0_1_DEC18 = BigNumber.from("100000000000000000");
+    const P_0_01_DEC18 = BigNumber.from("10000000000000000");
+    const P_0_3_DEC18 = BigNumber.from("30000000000000000");
+    const P_0_004_DEC18 = BigNumber.from("4000000000000000");
+    const P_0_5_DEC18 = BigNumber.from("500000000000000000");
+    const P_0_05_DEC18 = BigNumber.from("50000000000000000");
+    const P_0_005_DEC18 = BigNumber.from("5000000000000000");
+    const P_0_06_DEC18 = BigNumber.from("60000000000000000");
+    const P_0_006_DEC18 = BigNumber.from("6000000000000000");
 
     let admin: Signer;
     let iporLogic: MockIporLogic;
@@ -36,10 +36,10 @@ describe("IporLogic", () => {
 
         const ipor = {
             asset: await admin.getAddress(),
-            indexValue: P_03_DEC18,
+            indexValue: P_0_3_DEC18,
             quasiIbtPrice: initialQuasiIbtPrice,
-            exponentialMovingAverage: P_03_DEC18,
-            exponentialWeightedMovingVariance: P_03_DEC18,
+            exponentialMovingAverage: P_0_3_DEC18,
+            exponentialWeightedMovingVariance: P_0_3_DEC18,
             lastUpdateTimestamp: initialTimestamp,
         };
 
@@ -62,10 +62,10 @@ describe("IporLogic", () => {
 
         const ipor = {
             asset: await admin.getAddress(),
-            indexValue: P_03_DEC18,
+            indexValue: P_0_3_DEC18,
             quasiIbtPrice: initialQuasiIbtPrice,
-            exponentialMovingAverage: P_03_DEC18,
-            exponentialWeightedMovingVariance: P_03_DEC18,
+            exponentialMovingAverage: P_0_3_DEC18,
+            exponentialWeightedMovingVariance: P_0_3_DEC18,
             lastUpdateTimestamp: initialTimestamp,
         };
 
@@ -90,9 +90,9 @@ describe("IporLogic", () => {
 
     it("Should calculate Exponential Moving Average Two Calculations Decimals 18", async () => {
         //given
-        const exponentialMovingAverage = P_03_DEC18;
-        const indexValue = P_005_DEC18;
-        const alfa = P_001_DEC18;
+        const exponentialMovingAverage = P_0_3_DEC18;
+        const indexValue = P_0_05_DEC18;
+        const alfa = P_0_01_DEC18;
         const expectedExponentialMovingAverage = "30200000000000000";
 
         //when
@@ -112,8 +112,8 @@ describe("IporLogic", () => {
         //given
         const lastExponentialWeightedMovingVariance = ZERO;
         const exponentialMovingAverage = BigNumber.from("113000000000000000");
-        const indexValue = P_05_DEC18;
-        const alfa = P_01_DEC18;
+        const indexValue = P_0_5_DEC18;
+        const alfa = P_0_1_DEC18;
 
         //when
         const actualExponentialWeightedMovingVariance =
@@ -135,11 +135,11 @@ describe("IporLogic", () => {
 
     it("Should calculate Exponential Weighted Moving Variance - two calculations - Decimals 18", async () => {
         //given
-        const alfa = P_01_DEC18;
+        const alfa = P_0_1_DEC18;
 
         const firstLastExponentialWeightedMovingVariance = BigNumber.from("13479210000000000");
-        const firstExponentialMovingAverage = P_0005_DEC18;
-        const firstIndexValue = P_005_DEC18;
+        const firstExponentialMovingAverage = P_0_005_DEC18;
+        const firstIndexValue = P_0_05_DEC18;
 
         //first calculation
         const actualFirstExponentialWeightedMovingVariance =
@@ -154,7 +154,7 @@ describe("IporLogic", () => {
             actualFirstExponentialWeightedMovingVariance;
 
         const secondExponentialMovingAverage = BigNumber.from("10500000000000000");
-        const secondIndexValue = P_006_DEC18;
+        const secondIndexValue = P_0_06_DEC18;
 
         //when
         //second calculation
@@ -177,11 +177,11 @@ describe("IporLogic", () => {
 
     it("Should calculate Exponential Weighted Moving Variance - two calculations - Decimals 18", async () => {
         //given
-        const alfa = P_01_DEC18;
+        const alfa = P_0_1_DEC18;
 
         const firstLastExponentialWeightedMovingVariance = BigNumber.from("13479210000000000");
-        const firstExponentialMovingAverage = P_0005_DEC18;
-        const firstIndexValue = P_005_DEC18;
+        const firstExponentialMovingAverage = P_0_005_DEC18;
+        const firstIndexValue = P_0_05_DEC18;
 
         //first calculation
         const actualFirstExponentialWeightedMovingVariance =
@@ -195,7 +195,7 @@ describe("IporLogic", () => {
         const secondLastExponentialWeightedMovingVariance =
             actualFirstExponentialWeightedMovingVariance;
         const secondExponentialMovingAverage = BigNumber.from("10500000000000000");
-        const secondIndexValue = P_006_DEC18;
+        const secondIndexValue = P_0_06_DEC18;
 
         //when
         //second calculation
@@ -218,11 +218,11 @@ describe("IporLogic", () => {
 
     it("Should calculate Exponential Weighted Moving Variance - IPOR Index < EMA (Exponential Moving Average) - Decimals 18", async () => {
         //given
-        const alfa = P_01_DEC18;
+        const alfa = P_0_1_DEC18;
 
         const lastExponentialWeightedMovingVariance = BigNumber.from("13479210000000000");
-        const exponentialMovingAverage = P_0005_DEC18;
-        const indexValue = P_0004_DEC18;
+        const exponentialMovingAverage = P_0_005_DEC18;
+        const indexValue = P_0_004_DEC18;
 
         //when
         const actualExponentialWeightedMovingVariance =
@@ -244,11 +244,11 @@ describe("IporLogic", () => {
 
     it("Should calculate Exponential Weighted Moving Variance - IPOR Index = EMA (Exponential Moving Average) - Decimals 18", async () => {
         //given
-        const alfa = P_01_DEC18;
+        const alfa = P_0_1_DEC18;
 
         const lastExponentialWeightedMovingVariance = BigNumber.from("13479210000000000");
-        const exponentialMovingAverage = P_0005_DEC18;
-        const indexValue = P_0005_DEC18;
+        const exponentialMovingAverage = P_0_005_DEC18;
+        const indexValue = P_0_005_DEC18;
 
         //when
         const actualExponentialWeightedMovingVariance =
@@ -273,8 +273,8 @@ describe("IporLogic", () => {
         const alfa = ZERO;
 
         const lastExponentialWeightedMovingVariance = BigNumber.from("13479210000000000");
-        const exponentialMovingAverage = P_0005_DEC18;
-        const indexValue = P_0006_DEC18;
+        const exponentialMovingAverage = P_0_005_DEC18;
+        const indexValue = P_0_006_DEC18;
 
         //when
         const actualExponentialWeightedMovingVariance =
@@ -299,8 +299,8 @@ describe("IporLogic", () => {
         const alfa = ONE_18DEC;
 
         const lastExponentialWeightedMovingVariance = BigNumber.from("13479210000000000");
-        const exponentialMovingAverage = P_0005_DEC18;
-        const indexValue = P_0006_DEC18;
+        const exponentialMovingAverage = P_0_005_DEC18;
+        const indexValue = P_0_006_DEC18;
 
         //when
         const actualExponentialWeightedMovingVariance =
@@ -348,7 +348,7 @@ describe("IporLogic", () => {
 
         const lastExponentialWeightedMovingVariance = ZERO;
         const exponentialMovingAverage = BigNumber.from("113000000000000000");
-        const indexValue = P_05_DEC18;
+        const indexValue = P_0_5_DEC18;
 
         //when
         await assertError(
