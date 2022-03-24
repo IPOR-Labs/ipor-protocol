@@ -3,41 +3,42 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/// @title Interface of IpToken, which is Liquidity Pool Token managed by Joseph in IPOR Protocol for a given asset.
+/// @title Interface of ipToken - Liquidity Pool Token managed by Joseph in IPOR Protocol for a given asset. 
+/// For more information refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidity-provisioning#liquidity-tokens
 interface IIpToken is IERC20 {
-    /// @notice Gets asset / stablecoin address which is assocciated with this IpToken smart contract instance
+    /// @notice Gets the asset / stablecoin address which is assocciated with particular ipToken smart contract instance
     /// @return asset / stablecoin address
     function getAsset() external view returns (address);
 
-    /// @notice Sets Joseph address by Owner
-    /// @dev only Joseph can mind or burn IP Tokens. Emits `JosephChanged` event.
-    /// @param newJoseph Joseph address
+    /// @notice Sets Joseph's address. Owner only
+    /// @dev only Joseph can mint or burn ipTokens. Function emits `JosephChanged` event.
+    /// @param newJoseph Joseph's address
     function setJoseph(address newJoseph) external;
 
-    /// @notice Creates `amount` IP Tokens and assign them to `account`
+    /// @notice Creates the ipTokens in the `amount` given and assigns them to the `account`
     /// @dev Emits {Transfer} and {Mint} events
-    /// @param account to which the created IP Tokens were assigned
-    /// @param amount volume of IP Tokens which will be created
+    /// @param account to which the created ipTokens were assigned
+    /// @param amount volume of ipTokens created
     function mint(address account, uint256 amount) external;
 
-    /// @notice Destroys `amount` IP Tokens from `account`, reducing the total supply
+    /// @notice Burns the `amount` of ipTokens from `account`, reducing the total supply
     /// @dev Emits {Transfer} and {Burn} events
-    /// @param account from which the destroyed IP Tokens will be taken
-    /// @param amount volume of IP Tokens which will be destroyed
+    /// @param account from which burned ipTokens are taken
+    /// @param amount volume of ipTokens that will be burned
     function burn(address account, uint256 amount) external;
 
-    /// @notice Emmited when `amount` IP Tokens were mint and transferred to `account`.
-    /// @param account address where IP Tokens are transferred after mind
-    /// @param amount volume of IP Tokens which will be minted
+    /// @notice Emmited after the `amount` ipTokens were mint and transferred to `account`.
+    /// @param account address where ipTokens are transferred after minting
+    /// @param amount of ipTokens minted
     event Mint(address indexed account, uint256 amount);
 
-    /// @notice Emmited when `amount` IP Tokens were burnt and transferred from `account`.
-    /// @param account address where IP Tokens are transferred from, after burn
-    /// @param amount volume of IP Tokens which will be burned
+    /// @notice Emmited after `amount` ipTokens were transferred from `account` and burnt.
+    /// @param account address from which ipTokens are transferred to be burned
+    /// @param amount volume of ipTokens burned
     event Burn(address indexed account, uint256 amount);
 
-    /// @notice Emmited when Joseph address is changed by Owner.
-    /// @param changedBy account address who changed Joseph address
-    /// @param newJosephAddress new Joseph address
+    /// @notice Emmited when Joseph address is changed by its owner.
+    /// @param changedBy account address that changed Joseph's address
+    /// @param newJosephAddress new address of Joseph
     event JosephChanged(address changedBy, address newJosephAddress);
 }
