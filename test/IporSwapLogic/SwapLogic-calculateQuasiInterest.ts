@@ -1,0 +1,156 @@
+import hre from "hardhat";
+import chai from "chai";
+import { BigNumber, Signer } from "ethers";
+import { MockIporSwapLogic } from "../../types";
+import { ONE_18DEC, ONE_16DEC, PERIOD_25_DAYS_IN_SECONDS } from "../utils/Constants";
+import { prepareSwapPayFixedCase1 } from "../utils/SwapUtiles";
+
+const { expect } = chai;
+
+describe("IporSwapLogic calculateSwapPayFixedValue", () => {
+    let iporSwapLogic: MockIporSwapLogic;
+    let admin: Signer;
+
+    before(async () => {
+        const MockIporSwapLogic = await hre.ethers.getContractFactory("MockIporSwapLogic");
+        iporSwapLogic = (await MockIporSwapLogic.deploy()) as MockIporSwapLogic;
+        iporSwapLogic.deployed();
+        [admin] = await hre.ethers.getSigners();
+    });
+
+    it("Calculate Quasi Interest Case Huge Ipor 25 days Later IBT Price Changed User Loses Decimals 18", async () => {
+        const iporIndex = BigNumber.from("365").mul(ONE_16DEC);
+        const spread = ONE_16DEC;
+        const fixedInterestRate = iporIndex.add(spread);
+
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+
+        const ibtPriceSecond = BigNumber.from("125").mul(ONE_18DEC);
+
+        //when
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong interest fixed").to.be.equal(
+            "3893004244800000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong interest floating").to.be.equal(
+            "3890872260000000000000000000000000000000000000000"
+        );
+    });
+
+    it("Calculate Quasi Interest Case 100 days Later IBT Price Not Changed Decimals 18", async () => {
+        //given
+
+        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigNumber.from("120").mul(ONE_18DEC);
+
+        //when
+
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS.mul(BigNumber.from("4"))),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong quasi interest fixed").to.be.equal(
+            "3122249099904000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong interest floating").to.be.equal(
+            "3735237369600000000000000000000000000000000000000"
+        );
+    });
+
+    it("Calculate Quasi Interest Case 1", async () => {
+        //given
+        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        //when
+        const quastiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            BigNumber.from(Date.now() + 60 * 60 * 24 * 28),
+            ONE_18DEC
+        );
+        //then
+        expect(quastiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3122249099904000000000000000000000000000000000000"
+        );
+        expect(quastiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
+            BigNumber.from("31126978080000000000000000000000000000000000000")
+        );
+    });
+
+    it("Calculate Quasi Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
+        //given
+        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+
+        const ibtPriceSecond = BigNumber.from("125").mul(ONE_18DEC);
+        //when
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.openTimestamp,
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3112697808000000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
+            "3890872260000000000000000000000000000000000000000"
+        );
+    });
+
+    it("Calculate Quasi Interest Case 25 days Later IBT Price Not Changed Decimal18", async () => {
+        //given
+
+        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigNumber.from("100").mul(ONE_18DEC);
+
+        //when
+
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3121225747200000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
+            "3112697808000000000000000000000000000000000000000"
+        );
+    });
+
+    it("Calculate Quasi Interest Case 25 days Later IBT Price Changed Decimals 18", async () => {
+        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigNumber.from("125").mul(ONE_18DEC);
+
+        //when
+
+        const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
+            swap,
+            swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(quasiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
+            "3121225747200000000000000000000000000000000000000"
+        );
+        expect(quasiInterest.quasiIFloating, "Wrong Quasi Interest Floating").to.be.equal(
+            "3890872260000000000000000000000000000000000000000"
+        );
+    });
+});
