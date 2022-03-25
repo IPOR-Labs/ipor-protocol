@@ -1,37 +1,56 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import hre from "hardhat";
+import chai from "chai";
+import { Signer } from "ethers";
+import { IvToken, DaiMockedToken } from "../../types";
+import { TOTAL_SUPPLY_18_DECIMALS } from "../utils/Constants";
+import { assertError } from "../utils/AssertUtils";
 
-const { assertError } = require("./Utils");
-
-const {
-    TOTAL_SUPPLY_18_DECIMALS,
-    TOTAL_SUPPLY_6_DECIMALS,
-    TC_TOTAL_AMOUNT_10_000_18DEC,
-} = require("./Const.js");
+const { expect } = chai;
 
 describe("IvToken", () => {
-    let admin, userOne, userTwo, userThree, liquidityProvider;
-    let tokenUsdt;
-    let tokenDai;
-    let ivTokenUsdt;
-    let ivTokenDai;
+    let admin: Signer, userOne: Signer, userTwo: Signer, userThree: Signer;
+    let ivToken: IvToken;
+    let ivTokenDai: IvToken;
+    let tokenDai: DaiMockedToken;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
-        const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
-        const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
-        tokenUsdt = await UsdtMockedToken.deploy(TOTAL_SUPPLY_6_DECIMALS, 6);
-        await tokenUsdt.deployed();
-        tokenDai = await DaiMockedToken.deploy(TOTAL_SUPPLY_18_DECIMALS, 18);
-        await tokenDai.deployed();
+        [admin, userOne, userTwo, userThree] = await hre.ethers.getSigners();
+        const DaiMockedToken = await hre.ethers.getContractFactory("DaiMockedToken");
+        tokenDai = (await DaiMockedToken.deploy(TOTAL_SUPPLY_18_DECIMALS, 18)) as DaiMockedToken;
     });
 
     beforeEach(async () => {
-        const IvToken = await ethers.getContractFactory("IvToken");
-        ivTokenUsdt = await IvToken.deploy("IV USDT", "ivUSDT", tokenUsdt.address);
-        await ivTokenUsdt.deployed();
-        ivTokenDai = await IvToken.deploy("IV DAI", "ivDAI", tokenDai.address);
-        await ivTokenDai.deployed();
+        const tokenFactory = await hre.ethers.getContractFactory("IvToken");
+        ivTokenDai = (await tokenFactory.deploy("IV DAI", "ivDAI", tokenDai.address)) as IvToken;
+
+        ivToken = (await tokenFactory.deploy(
+            "IvToken",
+            "IVT",
+            "0x6b175474e89094c44da98b954eedeac495271d0f"
+        )) as IvToken;
+        await ivToken.deployed();
+    });
+
+    it("Should not be able to setup vault address when is not owner", async () => {
+        //when
+        await expect(
+            ivToken.connect(userOne).setStanley("0x6b175474e89094c44da98b954eedeac495271d0f"),
+            "Only owner should be able to set vault address"
+        ).revertedWith("Ownable: caller is not the owner");
+    });
+
+    it("should contain 18 decimals", async () => {
+        //given
+        await ivTokenDai.setStanley(await admin.getAddress());
+        const expectedDecimals = BigInt("18");
+        //when
+        let actualDecimals = BigInt(await ivTokenDai.decimals());
+
+        //then
+        expect(
+            expectedDecimals,
+            `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
+        ).to.be.eql(actualDecimals);
     });
 
     it("should transfer ownership - simple case 1", async () => {
@@ -39,13 +58,13 @@ describe("IvToken", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await ivTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
+        await ivTokenDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         await ivTokenDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //then
         const actualNewOwner = await ivTokenDai.connect(userOne).owner();
-        expect(expectedNewOwner.address).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -54,7 +73,7 @@ describe("IvToken", () => {
 
         //when
         await assertError(
-            ivTokenDai.connect(userThree).transferOwnership(expectedNewOwner.address),
+            ivTokenDai.connect(userThree).transferOwnership(await expectedNewOwner.getAddress()),
             //then
             "Ownable: caller is not the owner"
         );
@@ -65,7 +84,7 @@ describe("IvToken", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await ivTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
+        await ivTokenDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         await assertError(
             ivTokenDai.connect(userThree).confirmTransferOwnership(),
@@ -79,7 +98,7 @@ describe("IvToken", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await ivTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
+        await ivTokenDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         await ivTokenDai.connect(expectedNewOwner).confirmTransferOwnership();
 
@@ -93,13 +112,13 @@ describe("IvToken", () => {
         //given
         const expectedNewOwner = userTwo;
 
-        await ivTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
+        await ivTokenDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         await ivTokenDai.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            ivTokenDai.connect(admin).transferOwnership(expectedNewOwner.address),
+            ivTokenDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress()),
             //then
             "Ownable: caller is not the owner"
         );
@@ -109,48 +128,19 @@ describe("IvToken", () => {
         //given
         const expectedNewOwner = userTwo;
 
-        await ivTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
+        await ivTokenDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         //when
-        await ivTokenDai.connect(admin).transferOwnership(expectedNewOwner.address);
+        await ivTokenDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         //then
         const actualNewOwner = await ivTokenDai.connect(userOne).owner();
-        expect(admin.address).to.be.eql(actualNewOwner);
-    });
-
-    it("should NOT mint IvToken if not a Stanley", async () => {
-        //when
-        await assertError(
-            //when
-            ivTokenDai.connect(userTwo).mint(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
-            //then
-            "IPOR_501"
-        );
-    });
-
-    it("should NOT burn IvToken if not a Stanley", async () => {
-        //when
-        await assertError(
-            //when
-            ivTokenDai.connect(userTwo).burn(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC),
-            //then
-            "IPOR_501"
-        );
-    });
-
-    it("should emit event", async () => {
-        //given
-        await ivTokenDai.setStanley(admin.address);
-
-        await expect(ivTokenDai.mint(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC))
-            .to.emit(ivTokenDai, "Mint")
-            .withArgs(userOne.address, TC_TOTAL_AMOUNT_10_000_18DEC);
+        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
     });
 
     it("should contain 18 decimals", async () => {
         //given
-        await ivTokenDai.setStanley(admin.address);
+        await ivTokenDai.setStanley(await admin.getAddress());
         const expectedDecimals = BigInt("18");
         //when
         let actualDecimals = BigInt(await ivTokenDai.decimals());
@@ -182,7 +172,7 @@ describe("IvToken", () => {
             //when
             admin.sendTransaction({
                 to: ivTokenDai.address,
-                value: ethers.utils.parseEther("1.0"),
+                value: hre.ethers.utils.parseEther("1.0"),
             }),
             //then
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
