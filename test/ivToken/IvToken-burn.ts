@@ -1,12 +1,10 @@
-const hre = require("hardhat");
+import hre from "hardhat";
 import chai from "chai";
-import { constants, BigNumber, Signer } from "ethers";
-import { solidity } from "ethereum-waffle";
-chai.use(solidity);
-const { expect } = chai;
-const keccak256 = require("keccak256");
+import { constants, Signer } from "ethers";
+import { IvToken } from "../../types";
+import { ZERO, N1__0_18DEC } from "../utils/Constants";
 
-import { IvToken } from "../../../../types";
+const { expect } = chai;
 
 describe("#IvToken burn function tests", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
@@ -15,18 +13,18 @@ describe("#IvToken burn function tests", () => {
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
         const tokenFactory = await hre.ethers.getContractFactory("IvToken");
-        ivToken = await tokenFactory.deploy(
+        ivToken = (await tokenFactory.deploy(
             "IvToken",
             "IVT",
             "0x6b175474e89094c44da98b954eedeac495271d0f"
-        );
+        )) as IvToken;
     });
 
-    it("should not to be able burn when sender is not Stanley", async () => {
+    it("should NOT burn IvToken if not a Stanley", async () => {
         //given
         await expect(
             //when
-            ivToken.burn(await userOne.getAddress(), BigNumber.from("10"))
+            ivToken.burn(await userOne.getAddress(), N1__0_18DEC)
             //then
         ).to.be.revertedWith("IPOR_501");
     });
@@ -34,8 +32,9 @@ describe("#IvToken burn function tests", () => {
     it("should not be able to burn when amount is 0", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
+        const amount = ZERO;
+
         await ivToken.setStanley(mockIporVaultAddress);
-        const amount = BigNumber.from("0");
         await expect(
             //when
             ivToken.connect(userOne).burn(await userOne.getAddress(), amount)
@@ -46,11 +45,12 @@ describe("#IvToken burn function tests", () => {
     it("should not be able to burn when pass zero address", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
+        const amount = ZERO;
+
         await ivToken.setStanley(mockIporVaultAddress);
-        const amount = BigNumber.from("0");
         await expect(
             //when
-            ivToken.connect(userOne).burn(constants.AddressZero, BigNumber.from(1))
+            ivToken.connect(userOne).burn(constants.AddressZero, N1__0_18DEC)
             //then
         ).to.be.revertedWith("ERC20: burn from the zero address");
     });
@@ -58,9 +58,10 @@ describe("#IvToken burn function tests", () => {
     it("should not be able to burn when burn amount exceeds balance", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setStanley(mockIporVaultAddress);
-        const amount = BigNumber.from("10");
+        const amount = N1__0_18DEC;
         const addressOne = await userOne.getAddress();
+
+        await ivToken.setStanley(mockIporVaultAddress);
 
         //when
         await expect(ivToken.connect(userOne).burn(addressOne, amount))
@@ -71,10 +72,11 @@ describe("#IvToken burn function tests", () => {
     it("should burn tokens", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        await ivToken.setStanley(mockIporVaultAddress);
-        const amount = BigNumber.from("10");
+        const amount = N1__0_18DEC;
         const addressOne = await userOne.getAddress();
-        ivToken.connect(userOne).mint(await userOne.getAddress(), amount);
+
+        await ivToken.setStanley(mockIporVaultAddress);
+        await ivToken.connect(userOne).mint(await userOne.getAddress(), amount);
 
         //when
         await expect(ivToken.connect(userOne).burn(addressOne, amount))
