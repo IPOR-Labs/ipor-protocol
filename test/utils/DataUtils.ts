@@ -47,7 +47,7 @@ const { ethers } = hre;
 
 type AssetsType = "DAI" | "USDC" | "USDT";
 
-type TestData = {
+export type TestData = {
     tokenDai?: DaiMockedToken;
     tokenUsdt?: UsdtMockedToken;
     tokenUsdc?: UsdcMockedToken;

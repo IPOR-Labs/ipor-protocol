@@ -20,6 +20,7 @@ export const USD_19_997_18DEC = BigNumber.from("19997").mul(N1__0_18DEC);
 export const USD_20_000_18DEC = BigNumber.from("20000").mul(N1__0_18DEC);
 
 export const TC_50_000_18DEC = BigNumber.from("50000").mul(N1__0_18DEC);
+export const TC_TOTAL_AMOUNT_10_000_18DEC = BigNumber.from("10000").mul(N1__0_18DEC);
 
 export const TOTAL_SUPPLY_18_DECIMALS = BigNumber.from("10000000000000000").mul(N1__0_18DEC);
 export const USER_SUPPLY_10MLN_18DEC = BigNumber.from("10000000").mul(N1__0_18DEC);
