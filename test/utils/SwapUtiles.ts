@@ -1,6 +1,6 @@
 import { DaiMockedToken } from "../../types";
 import { BigNumber, Signer } from "ethers";
-import { ONE_18DEC, TC_50_000_18DEC } from "../utils/Constants";
+import { N1__0_18DEC, TC_50_000_18DEC } from "../utils/Constants";
 
 export enum SwapState {
     "INACTIVE",
@@ -27,7 +27,7 @@ export const prepareSwapPayFixedCase1 = async (
     admin: Signer
 ): Promise<SWAP> => {
     const DaiMockedToken = await hre.ethers.getContractFactory("DaiMockedToken");
-    const daiMockedToken = (await DaiMockedToken.deploy(ONE_18DEC, 18)) as DaiMockedToken;
+    const daiMockedToken = (await DaiMockedToken.deploy(N1__0_18DEC, 18)) as DaiMockedToken;
     const collateral = BigNumber.from("9870300000000000000000");
     const leverage = BigNumber.from("10");
 
@@ -42,7 +42,7 @@ export const prepareSwapPayFixedCase1 = async (
         id: BigNumber.from("0"),
         idsIndex: BigNumber.from("0"),
         collateral: TC_50_000_18DEC,
-        liquidationDepositAmount: BigNumber.from("20").mul(ONE_18DEC),
+        liquidationDepositAmount: BigNumber.from("20").mul(N1__0_18DEC),
         notionalAmount,
         ibtQuantity: BigNumber.from("987030000000000000000"), //ibtQuantity
         fixedInterestRate: fixedInterestRate,

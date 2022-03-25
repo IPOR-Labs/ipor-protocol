@@ -2,7 +2,7 @@ import hre from "hardhat";
 import chai from "chai";
 import { BigNumber } from "ethers";
 import { MockIporSwapLogic } from "../../types";
-import { ONE_18DEC, ONE_6DEC } from "../utils/Constants";
+import { N1__0_18DEC, N0__01_18DEC, N1__0_6DEC } from "../utils/Constants";
 
 const { expect } = chai;
 
@@ -18,7 +18,7 @@ describe("IporSwapLogic calculateQuasiInterestFloating", () => {
     it("Calculate Interest Floating Case", async () => {
         //given
         const ibtQuantity = BigNumber.from("987030000000000000000");
-        const ibtCurrentPrice = BigNumber.from("100").mul(ONE_18DEC);
+        const ibtCurrentPrice = BigNumber.from("100").mul(N1__0_18DEC);
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFloating(
@@ -35,7 +35,7 @@ describe("IporSwapLogic calculateQuasiInterestFloating", () => {
     it("Calculate Interest Floating Case 2", async () => {
         //given
         const ibtQuantity = BigNumber.from("987030000000000000000");
-        const ibtCurrentPrice = BigNumber.from("150").mul(ONE_18DEC);
+        const ibtCurrentPrice = BigNumber.from("150").mul(N1__0_18DEC);
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFloating(
@@ -52,7 +52,7 @@ describe("IporSwapLogic calculateQuasiInterestFloating", () => {
     it("Calculate Interest Floating Case 3", async () => {
         //given
         const ibtQuantity = BigNumber.from("987030000");
-        const ibtCurrentPrice = BigNumber.from("100").mul(ONE_18DEC);
+        const ibtCurrentPrice = BigNumber.from("100").mul(N1__0_18DEC);
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFloating(
@@ -69,7 +69,7 @@ describe("IporSwapLogic calculateQuasiInterestFloating", () => {
     it("Calculate Interest Floating Case 4", async () => {
         //given
         const ibtQuantity = BigNumber.from("987030000");
-        const ibtCurrentPrice = BigNumber.from(150).mul(ONE_6DEC);
+        const ibtCurrentPrice = BigNumber.from(150).mul(N1__0_6DEC);
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFloating(

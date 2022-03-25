@@ -2,7 +2,7 @@ import hre from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { MockIporSwapLogic } from "../../types";
-import { ONE_18DEC, ONE_16DEC, PERIOD_25_DAYS_IN_SECONDS } from "../utils/Constants";
+import { N1__0_18DEC, N0__01_18DEC, PERIOD_25_DAYS_IN_SECONDS } from "../utils/Constants";
 import { prepareSwapPayFixedCase1 } from "../utils/SwapUtiles";
 
 const { expect } = chai;
@@ -19,13 +19,13 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
     });
 
     it("Calculate Quasi Interest Case Huge Ipor 25 days Later IBT Price Changed User Loses Decimals 18", async () => {
-        const iporIndex = BigNumber.from("365").mul(ONE_16DEC);
-        const spread = ONE_16DEC;
+        const iporIndex = BigNumber.from("365").mul(N0__01_18DEC);
+        const spread = N0__01_18DEC;
         const fixedInterestRate = iporIndex.add(spread);
 
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
 
-        const ibtPriceSecond = BigNumber.from("125").mul(ONE_18DEC);
+        const ibtPriceSecond = BigNumber.from("125").mul(N1__0_18DEC);
 
         //when
         const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
@@ -46,9 +46,9 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
     it("Calculate Quasi Interest Case 100 days Later IBT Price Not Changed Decimals 18", async () => {
         //given
 
-        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
-        const ibtPriceSecond = BigNumber.from("120").mul(ONE_18DEC);
+        const ibtPriceSecond = BigNumber.from("120").mul(N1__0_18DEC);
 
         //when
 
@@ -69,13 +69,13 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
 
     it("Calculate Quasi Interest Case 1", async () => {
         //given
-        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         //when
         const quastiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
             BigNumber.from(Date.now() + 60 * 60 * 24 * 28),
-            ONE_18DEC
+            N1__0_18DEC
         );
         //then
         expect(quastiInterest.quasiIFixed, "Wrong Quasi Interest Fixed").to.be.equal(
@@ -88,10 +88,10 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
 
     it("Calculate Quasi Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
         //given
-        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
 
-        const ibtPriceSecond = BigNumber.from("125").mul(ONE_18DEC);
+        const ibtPriceSecond = BigNumber.from("125").mul(N1__0_18DEC);
         //when
         const quasiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
@@ -111,9 +111,9 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
     it("Calculate Quasi Interest Case 25 days Later IBT Price Not Changed Decimal18", async () => {
         //given
 
-        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
-        const ibtPriceSecond = BigNumber.from("100").mul(ONE_18DEC);
+        const ibtPriceSecond = BigNumber.from("100").mul(N1__0_18DEC);
 
         //when
 
@@ -133,9 +133,9 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
     });
 
     it("Calculate Quasi Interest Case 25 days Later IBT Price Changed Decimals 18", async () => {
-        const fixedInterestRate = BigNumber.from("4").mul(ONE_16DEC);
+        const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
-        const ibtPriceSecond = BigNumber.from("125").mul(ONE_18DEC);
+        const ibtPriceSecond = BigNumber.from("125").mul(N1__0_18DEC);
 
         //when
 
