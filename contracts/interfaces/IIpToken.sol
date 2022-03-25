@@ -39,11 +39,11 @@ interface IIpToken is IERC20 {
 
     /// @notice Emmited when Joseph address is changed by its owner.
     /// @param changedBy account address that changed Joseph's address
-    /// @param oldJosephAddress old address of Joseph
-    /// @param newJosephAddress new address of Joseph
+    /// @param oldJoseph old address of Joseph
+    /// @param newJoseph new address of Joseph
     event JosephChanged(
         address indexed changedBy,
-        address indexed oldJosephAddress,
-        address indexed newJosephAddress
+        address indexed oldJoseph,
+        address indexed newJoseph
     );
 }

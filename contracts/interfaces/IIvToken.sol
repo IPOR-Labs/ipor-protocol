@@ -38,11 +38,11 @@ interface IIvToken is IERC20 {
 
     /// @notice Emmited when Stanley address is changed by Owner.
     /// @param changedBy account address who changed Stanley address
-    /// @param oldStanleyAddress old Stanley address
-    /// @param newStanleyAddress new Stanley address
+    /// @param oldStanley old Stanley address
+    /// @param newStanley new Stanley address
     event StanleyChanged(
         address indexed changedBy,
-        address indexed oldStanleyAddress,
-        address indexed newStanleyAddress
+        address indexed oldStanley,
+        address indexed newStanley
     );
 }

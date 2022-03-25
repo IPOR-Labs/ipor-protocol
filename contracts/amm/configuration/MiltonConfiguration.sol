@@ -18,8 +18,6 @@ abstract contract MiltonConfiguration is
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
-    uint256 internal constant _MAX_SLIPPAGE_PERCENTAGE = 1e18;
-
     uint256 internal constant _MAX_LP_UTILIZATION_PERCENTAGE = 8 * 1e17;
 
     uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE = 48 * 1e16;
@@ -59,10 +57,6 @@ abstract contract MiltonConfiguration is
 
     function getMaxSwapCollateralAmount() external pure override returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
-    }
-
-    function getMaxSlippagePercentage() external pure override returns (uint256) {
-        return _MAX_SLIPPAGE_PERCENTAGE;
     }
 
     function getMaxLpUtilizationPercentage() external pure override returns (uint256) {
@@ -108,17 +102,13 @@ abstract contract MiltonConfiguration is
     function setJoseph(address joseph) external override onlyOwner whenNotPaused {
         require(joseph != address(0), IporErrors.WRONG_ADDRESS);
         _joseph = joseph;
-        emit JosephUpdated(joseph);
+        emit JosephChanged(joseph);
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
 
     function _getMaxSwapCollateralAmount() internal pure virtual returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
-    }
-
-    function _getMaxSlippagePercentage() internal pure virtual returns (uint256) {
-        return _MAX_SLIPPAGE_PERCENTAGE;
     }
 
     function _getMaxLpUtilizationPercentage() internal pure virtual returns (uint256) {
