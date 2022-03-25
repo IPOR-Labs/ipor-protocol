@@ -2,6 +2,8 @@
 pragma solidity 0.8.9;
 
 interface IStrategy {
+    /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Strategy instance
+    /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
 
     function getShareToken() external view returns (address);
@@ -25,8 +27,12 @@ interface IStrategy {
 
     function setTreasuryManager(address manager) external;
 
+    /// @notice Pauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits {Paused} event from Strategy implementation.
     function pause() external;
 
+    /// @notice Unpauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits {Unpaused} event from Strategy implementation.
     function unpause() external;
 
     event StanleyChanged(address sender, address newStanley, address strategy);

@@ -4,6 +4,10 @@ pragma solidity 0.8.9;
 import "./types/IporTypes.sol";
 
 interface IMiltonSpreadModel {
+    /// @notice Returns current version of Milton Spread Model's
+    /// @return current Milton Spread Model version
+    function getVersion() external pure returns (uint256);
+
     function calculateQuotePayFixed(
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,

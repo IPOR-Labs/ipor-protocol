@@ -131,4 +131,6 @@ interface IMiltonStorage {
     event MiltonChanged(address changedBy, address newMilton);
 
     event JosephChanged(address changedBy, address newJoseph);
+
+	//TODO: pause and unpause
 }

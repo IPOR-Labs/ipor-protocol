@@ -2,7 +2,9 @@
 pragma solidity 0.8.9;
 
 interface IMiltonConfiguration {
-    event JosephUpdated(address indexed newJoseph);
+    /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Joseph instance
+    /// @return asset / underlying token / stablecoin address
+    function getAsset() external view returns (address);
 
     function getMaxSwapCollateralAmount() external pure returns (uint256);
 
@@ -31,4 +33,6 @@ interface IMiltonConfiguration {
     function getJoseph() external view returns (address);
 
     function setJoseph(address joseph) external;
+
+    event JosephUpdated(address indexed newJoseph);
 }

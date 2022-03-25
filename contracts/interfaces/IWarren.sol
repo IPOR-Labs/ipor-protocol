@@ -4,6 +4,8 @@ pragma solidity 0.8.9;
 import "./types/IporTypes.sol";
 
 interface IWarren {
+    /// @notice Returns current version of Warren's
+    /// @return current Warren version
     function getVersion() external pure returns (uint256);
 
     function getIndex(address asset)
@@ -41,8 +43,12 @@ interface IWarren {
 
     function removeAsset(address asset) external;
 
+    /// @notice Pauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits {Paused} event from Warren.
     function pause() external;
 
+    /// @notice Unpauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits {Unpaused} event from Warren.
     function unpause() external;
 
     event IporIndexUpdate(

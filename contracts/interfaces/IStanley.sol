@@ -2,6 +2,14 @@
 pragma solidity 0.8.9;
 
 interface IStanley {
+    /// @notice Returns current version of Stanley's
+    /// @return current Stanley version
+    function getVersion() external pure returns (uint256);
+
+    /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Stanley instance
+    /// @return asset / underlying token / stablecoin address
+    function getAsset() external view returns (address);
+
     //@notice return amount of assset token always in 18 decimals
     function totalBalance(address who) external view returns (uint256);
 

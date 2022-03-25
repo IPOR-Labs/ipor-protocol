@@ -42,7 +42,7 @@ abstract contract JosephConfiguration is
     {
         require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
         _charlieTreasury = newCharlieTreasury;
-        emit CharlieTreasuryUpdated(_asset, newCharlieTreasury);
+        emit CharlieTreasuryChanged(_asset, newCharlieTreasury);
     }
 
     function getTreasury() external view override returns (address) {
@@ -52,7 +52,7 @@ abstract contract JosephConfiguration is
     function setTreasury(address newTreasury) external override onlyOwner whenNotPaused {
         require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
         _treasury = newTreasury;
-        emit TreasuryUpdated(_asset, newTreasury);
+        emit TreasuryChanged(_asset, newTreasury);
     }
 
     function getCharlieTreasuryManager() external view override returns (address) {
@@ -67,7 +67,7 @@ abstract contract JosephConfiguration is
     {
         require(address(0) != charlieTreasuryManager, IporErrors.WRONG_ADDRESS);
         _charlieTreasuryManager = charlieTreasuryManager;
-        emit CharlieTreasuryManagerUpdated(charlieTreasuryManager);
+        emit CharlieTreasuryManagerChanged(charlieTreasuryManager);
     }
 
     function getTreasuryManager() external view override returns (address) {
@@ -77,7 +77,7 @@ abstract contract JosephConfiguration is
     function setTreasuryManager(address treasuryManager) external override onlyOwner whenNotPaused {
         require(address(0) != treasuryManager, IporErrors.WRONG_ADDRESS);
         _treasuryManager = treasuryManager;
-        emit TreasuryManagerUpdated(treasuryManager);
+        emit TreasuryManagerChanged(treasuryManager);
     }
 
     function getRedeemFeePercentage() external pure override returns (uint256) {
