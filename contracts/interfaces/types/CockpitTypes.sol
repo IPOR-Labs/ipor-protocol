@@ -11,7 +11,7 @@ library CockpitTypes {
         address milton;
         /// @notice MiltonStorage address
         address miltonStorage;
-        /// @notice Joseph (part of AMM responsible for liquidity) address
+        /// @notice Joseph (part of AMM responsible for Liquidity Pool management) address
         address joseph;
         /// @notice ipToken address (Liquidity Pool Token)
         address ipToken;
@@ -21,7 +21,7 @@ library CockpitTypes {
 
     /// @notice Structure used to represent IPOR Index data in Cockpit web app
     struct IporFront {
-        /// @notice Asset Symbol ie. USDT, USDC, DAI etc. 
+        /// @notice Asset Symbol ie. USDT, USDC, DAI etc.
         string asset;
         /// @notice IPOR Index Value
         /// @dev value represented in 18 decimals
@@ -29,7 +29,7 @@ library CockpitTypes {
         /// @notice Interest Bearing Token (IBT) Price
         /// @dev value represented in 18 decimals
         uint256 ibtPrice;
-        /// @notice Exponential Moving Average 
+        /// @notice Exponential Moving Average
         /// @dev value represented in 18 decimals
         uint256 exponentialMovingAverage;
         /// @notice Exponential Weighted Moving Variance

@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "./types/IporTypes.sol";
 import "./types/CockpitTypes.sol";
 
-/// @title Interface of IPOR Protocol for interaction with exteranal web applications
+/// @title Interface of IPOR Protocol for interaction with external diagnostics web applications
 interface ICockpitDataProvider {
     /// @notice gets list all IPOR Indexes for all supported assets
     /// @return List of all IPOR Indexes for all supported assets in IPOR Protocol
@@ -40,7 +40,7 @@ interface ICockpitDataProvider {
     /// @param account account address for which list of swaps is scoped
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total amount of elements in Milton
+    /// @return totalCount total number of active Pay Fixed swaps in Milton
     /// @return swaps list of active swaps for a given filter
     function getSwapsPayFixed(
         address asset,
@@ -54,7 +54,7 @@ interface ICockpitDataProvider {
     /// @param account account address for which list of swaps is scoped
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total amount of elements in Milton
+    /// @return totalCount total number of Receive Fixed swaps in Milton
     /// @return swaps list of active swaps for a given filter
     function getSwapsReceiveFixed(
         address asset,
@@ -67,7 +67,7 @@ interface ICockpitDataProvider {
     /// @param asset asset / stablecoin address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total amount of elements in Milton
+    /// @return totalCount total number of Pay Fixed swaps in Milton for a current user
     /// @return swaps list of active swaps for a given asset
     function getMySwapsPayFixed(
         address asset,
@@ -79,7 +79,7 @@ interface ICockpitDataProvider {
     /// @param asset asset / stablecoin address
     /// @param offset offset for paging functionality purposes
     /// @param chunkSize page size for paging functionality purposes
-    /// @return totalCount total amount of elements in Milton
+    /// @return totalCount total amount of Receive Fixed swaps in Milton for a current user
     /// @return swaps list of active swaps for a given asset
     function getMySwapsReceiveFixed(
         address asset,

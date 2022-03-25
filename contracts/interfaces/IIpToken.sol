@@ -23,7 +23,7 @@ interface IIpToken is IERC20 {
 
     /// @notice Burns the `amount` of ipTokens from `account`, reducing the total supply
     /// @dev Emits {Transfer} from ERC20 asset and {Burn} event from ipToken
-    /// @param account from which burned ipTokens are be taken
+    /// @param account from which burned ipTokens are taken
     /// @param amount volume of ipTokens that will be burned
     function burn(address account, uint256 amount) external;
 

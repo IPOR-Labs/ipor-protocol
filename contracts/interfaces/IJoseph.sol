@@ -29,9 +29,9 @@ interface IJoseph {
     /// @notice Rebalances ERC20 balance between Milton and Stanley, based on configuration
     /// `_MILTON_STANLEY_BALANCE_PERCENTAGE` part of Milton balance is transferred to Stanley or vice versa.
     /// for more information refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
-    /// @dev Emits {Deposit} or {Withdraw} event from Stanley depends on current asset balance on Milton and Stanley. 
-	/// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on Milton and Stanley. 
-	/// @dev Emits {Transfer} from ERC20 asset.
+    /// @dev Emits {Deposit} or {Withdraw} event from Stanley depends on current asset balance on Milton and Stanley.
+    /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on Milton and Stanley.
+    /// @dev Emits {Transfer} from ERC20 asset.
     function rebalance() external;
 
     /// @notice Executes deposit underlying asset in the `amount` from Milton to Stanley
