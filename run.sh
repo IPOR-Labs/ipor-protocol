@@ -188,10 +188,9 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "ItfJosephUsdt.json" "itf_joseph_usdt_address")
   RESULT=$(set_smart_contract_address_from_json_file "ItfJosephUsdc.json" "itf_joseph_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "ItfJosephDai.json" "itf_joseph_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonDevToolDataProvider.json" "milton_dev_tool_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonFrontendDataProvider.json" "milton_frontend_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "WarrenDevToolDataProvider.json" "warren_dev_tool_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "WarrenFrontendDataProvider.json" "warren_frontend_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProvider.json" "cockpit_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProvider.json" "milton_facade_data_provider_address")  
+  RESULT=$(set_smart_contract_address_from_json_file "WarrenFacadeDataProvider.json" "warren_facade_data_provider_address")
   RESULT=$(set_smart_contract_address_from_json_file "DaiMockedToken.json" "dai_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "UsdcMockedToken.json" "usdc_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "UsdtMockedToken.json" "usdt_mocked_address")
@@ -200,13 +199,10 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageDai.json" "milton_storage_dai_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModel.json" "milton_spread_model_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonFaucet.json" "milton_faucet_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IporConfiguration.json" "ipor_configuration_address")
-  local IPOR_ASSET_CONFIG_USDC=$(set_smart_contract_address_from_json_file "IporAssetConfigurationUsdc.json" "ipor_asset_configuration_usdc_address")
-  local IPOR_ASSET_CONFIG_USDT=$(set_smart_contract_address_from_json_file "IporAssetConfigurationUsdt.json" "ipor_asset_configuration_usdt_address")
-  local IPOR_ASSET_CONFIG_DAI=$(set_smart_contract_address_from_json_file "IporAssetConfigurationDai.json" "ipor_asset_configuration_dai_address")
-  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_USDC}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_usdc_address")
-  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_USDT}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_usdt_address")
-  RESULT=$(set_smart_contract_address_from_eth_method "${IPOR_ASSET_CONFIG_DAI}" "${GET_IP_TOKEN_METHOD_SIGNATURE}" "ipor_ip_token_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdc.json" "ipor_ip_token_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdt.json" "ipor_ip_token_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IpTokenDai.json" "ipor_ip_token_dai_address")
+  
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }

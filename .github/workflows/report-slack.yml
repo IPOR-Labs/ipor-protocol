@@ -1,0 +1,86 @@
+name: Slack report
+
+on:
+  workflow_call:
+
+    secrets:
+      SLACK_BOT_TOKEN:
+        required: true
+
+    inputs:
+
+      success:
+        description: 'Is workflow status a success'
+        required: true
+        type: boolean
+
+      slack-status-msg-id:
+        description: 'Slack message id'
+        required: true
+        type: string
+
+      status-slack-channel-name:
+        description: 'Slack channel name used for jobs statuses'
+        type: string
+        default: github-ci
+
+      alarms-slack-channel-name:
+        description: 'Slack channel name used for jobs alarms'
+        type: string
+        default: alarms-github
+
+    outputs:
+
+      slack-status-msg-id:
+        description: "Slack status message id"
+        value: ${{ jobs.slack.outputs.slack-status-msg-id }}
+
+      slack-alarm-msg-id:
+        description: "Slack alarm message id"
+        value: ${{ jobs.slack.outputs.slack-alarm-msg-id }}
+
+jobs:
+
+  slack:
+    runs-on: ubuntu-latest
+    outputs:
+      slack-status-msg-id: ${{ inputs.slack-status-msg-id }}
+      slack-alarm-msg-id: ${{ steps.slack-alarm.outputs.message_id }} 
+
+    steps:
+
+      - name: Slack status success
+        if: inputs.success
+        # from tag: v1.5.0-ipor-v2
+        uses: IPOR-Labs/github-action-slack-notify-build@3c8c336d9f03897665305e2283e5aa9a547c94bc
+        with:
+          message_id: ${{ inputs.slack-status-msg-id }}
+          channel: ${{ inputs.status-slack-channel-name }}
+          status: SUCCESS
+          color: good
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Slack status fail
+        if: ${{ !inputs.success }}
+        # from tag: v1.5.0-ipor-v2
+        uses: IPOR-Labs/github-action-slack-notify-build@3c8c336d9f03897665305e2283e5aa9a547c94bc
+        with:
+          message_id: ${{ inputs.slack-status-msg-id }}
+          channel: ${{ inputs.status-slack-channel-name }}
+          status: FAILED
+          color: danger
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Slack alarm
+        id: slack-alarm
+        if: ${{ !inputs.success }}
+        # from tag: v1.5.0-ipor-v2
+        uses: IPOR-Labs/github-action-slack-notify-build@3c8c336d9f03897665305e2283e5aa9a547c94bc
+        with:
+          channel: ${{ inputs.alarms-slack-channel-name }}
+          status: FAILED
+          color: danger
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

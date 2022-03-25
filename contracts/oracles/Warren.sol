@@ -5,39 +5,33 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import {IporErrors} from "../IporErrors.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../libraries/errors/WarrenErrors.sol";
+import "../interfaces/types/IporTypes.sol";
+import "../interfaces/types/WarrenTypes.sol";
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
 import "../interfaces/IWarren.sol";
-import {DataTypes} from "../libraries/types/DataTypes.sol";
-import {Constants} from "../libraries/Constants.sol";
-import "../libraries/IporLogic.sol";
-import {IporMath} from "../libraries/IporMath.sol";
+import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/IporLogic.sol";
 
 /**
  * @title IPOR Index Oracle Contract
  *
  * @author IPOR Labs
  */
-contract Warren is
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    PausableUpgradeable,
-    IWarren
-{
+contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable, IWarren {
     using SafeCast for uint256;
-    using IporLogic for DataTypes.IPOR;
+    using IporLogic for WarrenTypes.IPOR;
 
     uint256 internal constant _DECAY_FACTOR_VALUE = 5e17;
 
     mapping(address => uint256) internal _updaters;
 
-    mapping(address => DataTypes.IPOR) internal _indexes;
+    mapping(address => WarrenTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {
-        require(
-            _updaters[msg.sender] == 1,
-            IporErrors.WARREN_CALLER_NOT_WARREN_UPDATER
-        );
+        require(_updaters[msg.sender] == 1, WarrenErrors.CALLER_NOT_UPDATER);
         _;
     }
 
@@ -45,16 +39,8 @@ contract Warren is
         __Ownable_init();
     }
 
-    function getVersion() external pure returns (uint256) {
+    function getVersion() external pure override virtual returns (uint256) {
         return 1;
-    }
-
-    function pause() external onlyOwner {
-        _pause();
-    }
-
-    function unpause() external onlyOwner {
-        _unpause();
     }
 
     function getIndex(address asset)
@@ -66,24 +52,20 @@ contract Warren is
             uint256 ibtPrice,
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance,
-            uint256 blockTimestamp
+            uint256 lastUpdateTimestamp
         )
     {
-        DataTypes.IPOR memory ipor = _indexes[asset];
+        WarrenTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            WarrenErrors.ASSET_NOT_SUPPORTED
         );
         return (
             indexValue = ipor.indexValue,
-            ibtPrice = IporMath.division(
-                ipor.quasiIbtPrice,
-                Constants.YEAR_IN_SECONDS
-            ),
+            ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
             exponentialMovingAverage = ipor.exponentialMovingAverage,
-            exponentialWeightedMovingVariance = ipor
-                .exponentialWeightedMovingVariance,
-            blockTimestamp = ipor.blockTimestamp
+            exponentialWeightedMovingVariance = ipor.exponentialWeightedMovingVariance,
+            lastUpdateTimestamp = ipor.lastUpdateTimestamp
         );
     }
 
@@ -91,15 +73,15 @@ contract Warren is
         external
         view
         override
-        returns (DataTypes.AccruedIpor memory accruedIpor)
+        returns (IporTypes.AccruedIpor memory accruedIpor)
     {
-        DataTypes.IPOR memory ipor = _indexes[asset];
+        WarrenTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            WarrenErrors.ASSET_NOT_SUPPORTED
         );
 
-        accruedIpor = DataTypes.AccruedIpor(
+        accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
             _calculateAccruedIbtPrice(calculateTimestamp, asset),
             ipor.exponentialMovingAverage,
@@ -130,71 +112,55 @@ contract Warren is
         _updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateIndexes(
-        address[] memory assets,
-        uint256[] memory indexValues
-    ) external override onlyUpdater whenNotPaused {
+    function updateIndexes(address[] memory assets, uint256[] memory indexValues)
+        external
+        override
+        onlyUpdater
+        whenNotPaused
+    {
         _updateIndexes(assets, indexValues, block.timestamp);
+    }
+
+    function addUpdater(address updater) external override onlyOwner whenNotPaused {
+        _updaters[updater] = 1;
+        emit IporIndexAddUpdater(updater);
+    }
+
+    function removeUpdater(address updater) external override onlyOwner whenNotPaused {
+        _updaters[updater] = 0;
+        emit IporIndexRemoveUpdater(updater);
+    }
+
+    function isUpdater(address updater) external view override returns (uint256) {
+        return _updaters[updater];
     }
 
     function addAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
+            WarrenErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
-        _indexes[asset] = DataTypes.IPOR(
-            0,
-            0,
-            Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-            0,
-            0
-        );
+        _indexes[asset] = WarrenTypes.IPOR(0, 0, Constants.WAD_YEAR_IN_SECONDS.toUint128(), 0, 0);
         emit IporIndexAddAsset(asset);
     }
 
-    function removeAsset(address asset)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function removeAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
+            WarrenErrors.ASSET_NOT_SUPPORTED
         );
         delete _indexes[asset];
         emit IporIndexRemoveAsset(asset);
     }
 
-    function addUpdater(address updater)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        _updaters[updater] = 1;
-        emit IporIndexAddUpdater(updater);
+    function pause() external override onlyOwner {
+        _pause();
     }
 
-    function removeUpdater(address updater)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
-        _updaters[updater] = 0;
-        emit IporIndexRemoveUpdater(updater);
-    }
-
-    function isUpdater(address updater)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return _updaters[updater];
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     function _updateIndexes(
@@ -202,12 +168,9 @@ contract Warren is
         uint256[] memory indexValues,
         uint256 updateTimestamp
     ) internal onlyUpdater {
-        require(
-            assets.length == indexValues.length,
-            IporErrors.WARREN_INPUT_ARRAYS_LENGTH_MISMATCH
-        );
-        uint256 i = 0;
-        for (i; i != assets.length; i++) {
+        require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
+
+        for (uint256 i = 0; i != assets.length; i++) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
         }
     }
@@ -217,11 +180,8 @@ contract Warren is
         uint256 indexValue,
         uint256 updateTimestamp
     ) internal {
-        DataTypes.IPOR memory ipor = _indexes[asset];
-        require(
-            ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            IporErrors.MILTON_ASSET_ADDRESS_NOT_SUPPORTED
-        );
+        WarrenTypes.IPOR memory ipor = _indexes[asset];
+        require(ipor.quasiIbtPrice != 0, WarrenErrors.ASSET_NOT_SUPPORTED);
 
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
@@ -232,12 +192,11 @@ contract Warren is
             newExponentialMovingAverage = indexValue;
         } else {
             newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
-            newExponentialMovingAverage = IporLogic
-                .calculateExponentialMovingAverage(
-                    ipor.exponentialMovingAverage,
-                    indexValue,
-                    _DECAY_FACTOR_VALUE
-                );
+            newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
+                ipor.exponentialMovingAverage,
+                indexValue,
+                _DECAY_FACTOR_VALUE
+            );
             newExponentialWeightedMovingVariance = IporLogic
                 .calculateExponentialWeightedMovingVariance(
                     ipor.exponentialWeightedMovingVariance,
@@ -247,7 +206,7 @@ contract Warren is
                 );
         }
 
-        _indexes[asset] = DataTypes.IPOR(
+        _indexes[asset] = WarrenTypes.IPOR(
             updateTimestamp.toUint32(),
             indexValue.toUint128(),
             newQuasiIbtPrice.toUint128(),
@@ -265,10 +224,11 @@ contract Warren is
         );
     }
 
-    function _calculateAccruedIbtPrice(
-        uint256 calculateTimestamp,
-        address asset
-    ) internal view returns (uint256) {
+    function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)
+        internal
+        view
+        returns (uint256)
+    {
         return
             IporMath.division(
                 _indexes[asset].accrueQuasiIbtPrice(calculateTimestamp),
@@ -276,5 +236,6 @@ contract Warren is
             );
     }
 
+    //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

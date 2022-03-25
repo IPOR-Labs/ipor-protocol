@@ -1,45 +1,105 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
+/// @title Interface for interaction with Joseph - smart contract responsible for managing ipTokens and ERC20 tokens in IPOR Protocol.
 interface IJoseph {
-    event ProvideLiquidity(
-        uint256 timestamp,
-        address from,
-        address to,
-        uint256 exchangeRate,
-        uint256 assetValue,
-        uint256 ipTokenValue
-    );
-    event Redeem(
-        uint256 timestamp,
-        address from,
-        address to,
-        uint256 exchangeRate,
-        uint256 assetValue,
-        uint256 ipTokenValue
-    );    
-
+    /// @notice Returns current version of Joseph's
+    /// @return current Joseph version
     function getVersion() external pure returns (uint256);
 
-    function pause() external;
+    function calculateExchangeRate() external view returns (uint256);
 
-    function unpause() external;    
+    /// @notice Function invoked to provide asset to Liquidity Pool in amount `assetValue`
+    /// @dev Emits `ProvideLiquidity` event and transfers ERC20 tokens from sender to Milton,
+    /// in return transfers minted ipTokens to the sender. Volume of transferred ipTokens is based on current ipToken exchange rate
+    /// @param assetValue volume of ERC20 tokens which are transferred from sender to Milton
+    function provideLiquidity(uint256 assetValue) external;
 
-    function rebalance() external;
-
-    function depositToVault(uint256 assetValue) external;
-
-    function withdrawFromVault(uint256 assetValue) external;
-
-    function provideLiquidity(uint256 liquidityAmount) external;
-
+    /// @notice Redeems `ipTokenVolume` IpTokens for underlying asset
+    /// @dev Emits `Redeem` event, transfer asser ERC20 tokens from Milton to sender based on current exchange rate.
+    /// @param ipTokenVolume redeem amount
     function redeem(uint256 ipTokenVolume) external;
 
-    //@notice Transfers asset value from Miltons's Treasure Balance to Treasure Treaserer account
-    function transferTreasury(uint256 assetValue) external;
+    /// @notice Rebalances ERC20 balance between Milton and Stanley, based on configuration
+    /// `_MILTON_STANLEY_BALANCE_PERCENTAGE` part of Milton balance is transferred to Stanley or vice versa.
+    /// for more information refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
+    /// @dev Emits `Stanley-Deposit` event or `Stanley-Withdraw` depends on current asset balance on Milton and Stanley.
+    function rebalance() external;
 
-    //@notice Transfers asset value from Miltons's Ipor Publication Fee Balance to Charlie Treaserer account
-    function transferPublicationFee(uint256 assetValue) external;
+    /// @notice Executes deposit underlying asset in the `amount` from Milton to Stanley
+    /// @dev Emits `Stanley-Deposit` event
+    function depositToStanley(uint256 amount) external;
 
+    /// @notice Executes withdraw underlying asset in the `amount` from Stanley to Milton
+    /// @dev Emits `Stanley-Withdraw` event
+    function withdrawFromStanley(uint256 amount) external;
+
+    /// @notice Transfers `amount` of asset from Miltons's Treasury Balance to Treasury (ie. external multisig wallet)
+    /// Treasury's address is configured in `_treasury` field
+    /// @dev Transfer can be requested by address defined in field `_treasuryManager`
+    /// @dev Emits `ERC20-Transfer` event
+    /// @param amount asset amount transferred from Milton's Treasury Balance
+    function transferToTreasury(uint256 amount) external;
+
+    /// @notice Transfers amount of asset from Miltons's IPOR Publication Fee Balance to Charlie Treasurer account
+    /// @dev Transfer can be requested by an address defined in field `_charlieTreasuryManager`,
+    /// Emits `ERC20-Transfer` event
+    /// @param amount asset amount transferred from Milton's IPOR Publication Fee Balance
+    function transferToCharlieTreasury(uint256 amount) external;
+
+    /// @notice Returns reserve ratio on Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset
+    /// @return reserves ratio
     function checkVaultReservesRatio() external returns (uint256);
+
+    /// @notice Pauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits `Paused` event.
+    function pause() external;
+
+    /// @notice Unpauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits `Unpaused` event.
+    function unpause() external;
+
+    /// @notice Emitted when `from` account provides liquidity to Milton Liquidity Pool
+    event ProvideLiquidity(
+        /// @notice moment when liquidity is provided by `from` account
+        uint256 timestamp,
+        /// @notice user who provide liquidity, `from` account are transferred asset tokens to `to` account
+        address from,
+        /// @notice Milton address where liquidity is provided, to this account asset tokens are transferred from sender `to`
+        address to,
+        /// @notice actual IP Token exchange rate
+        /// @dev value represented in 18 decimals
+        uint256 exchangeRate,
+        /// @notice asset amount which was provided by user to Milton liquidity pool
+        /// @dev value represented in 18 decimals
+        uint256 assetValue,
+        /// @notice ipToken value corresponding to `assetValue` and `excangeRate`
+        /// @dev value represented in 18 decimals
+        uint256 ipTokenValue
+    );
+
+    /// @notice Emitted when `to` accound executes redeem ipTokens
+    event Redeem(
+        /// @notice moment when IP Tokens were redeemed by `to` account
+        uint256 timestamp,
+        /// @notice Milton address from asset tokens are transferred to `to` account
+        address from,
+        /// @notice sender account where underlying asset tokens are transferred after redeem
+        address to,
+        /// @notice IP Token exchange rate used for calculating `assetValue`
+        /// @dev value represented in 18 decimals
+        uint256 exchangeRate,
+        /// @notice underlying asset value calculated based on `exchangeRate` and `ipTokenValue`
+        /// @dev value represented in 18 decimals
+        uint256 assetValue,
+        /// @notice redeemed IP Token value
+        /// @dev value represented in 18 decimals
+        uint256 ipTokenValue,
+        /// @notice underlying asset fee taken for redeeming
+        /// @dev value represented in 18 decimals
+        uint256 redeemFee,
+        /// @notice final asset value transferred from Milton to `to` / sender account, substraction assetValue - redeemFee
+        /// @dev value represented in 18 decimals
+        uint256 redeemValue
+    );
 }

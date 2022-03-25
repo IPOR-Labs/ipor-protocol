@@ -106,7 +106,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="getMyTotalSupply"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
@@ -122,7 +122,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="getMyTotalSupply"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
@@ -138,7 +138,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonDevToolDataProvider"
+                        contract="CockpitDataProvider"
                         method="getMyTotalSupply"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
@@ -155,13 +155,9 @@ export default ({ drizzle, drizzleState }) => (
         <div className="row">
             <div className="col-md-6">
                 <strong>Transfer ETH to specific address</strong>
-				<br/>
-				<small>Value represented in WEI</small>
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonFaucet"
-                    method="transferEth"
-                />
+                <br />
+                <small>Value represented in WEI</small>
+                <ContractForm drizzle={drizzle} contract="MiltonFaucet" method="transferEth" />
             </div>
             <div className="col-md-6">
                 <strong>Transfer TOKENS to your wallet</strong>
@@ -171,11 +167,7 @@ export default ({ drizzle, drizzleState }) => (
                 <small>Max in 6 decimals: 1000000000000</small>
                 <br />
                 <small>Max in 18 decimals: 1000000000000000000000000</small>
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonFaucet"
-                    method="transfer"
-                />
+                <ContractForm drizzle={drizzle} contract="MiltonFaucet" method="transfer" />
             </div>
         </div>
     </div>

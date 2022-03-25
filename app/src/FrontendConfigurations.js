@@ -8,12 +8,14 @@ export default (configurations) =>
                 <thead>
                     <tr>
                         <th scope="col">Asset</th>
-                        <th scope="col">Min Collateralization Factor Value</th>
-                        <th scope="col">Max Collateralization Factor Value</th>
+                        <th scope="col">Min Leverage Value</th>
+                        <th scope="col">Max Leverage Value</th>
                         <th scope="col">Opening Fee Percentage</th>
                         <th scope="col">IPOR Publication Fee Amount</th>
                         <th scope="col">Liquidation Deposit Amount</th>
-                        <th scope="col">Income Tax Percentage</th>
+                        <th scope="col">Income Fee Percentage</th>
+                        <th scope="col">Max Liquidity Pool Utilization Percentage</th>
+                        <th scope="col">Max Liquidity Pool Utilization Per Leg Percentage</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -22,56 +24,45 @@ export default (configurations) =>
                             <tr key={configuration.asset}>
                                 <td>{configuration.asset}</td>
                                 <td>
-                                    {configuration.minCollateralizationFactorValue /
-                                        1000000000000000000}
+                                    {configuration.minLeverageValue / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {
-                                            configuration.minCollateralizationFactorValue
-                                        }
-                                    </small>
+                                    <small>{configuration.minLeverageValue}</small>
                                 </td>
                                 <td>
-                                    {configuration.maxCollateralizationFactorValue /
-                                        1000000000000000000}
+                                    {configuration.maxLeverageValue / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {
-                                            configuration.maxCollateralizationFactorValue
-                                        }
-                                    </small>
+                                    <small>{configuration.maxLeverageValue}</small>
                                 </td>
                                 <td>
-                                    {configuration.openingFeePercentage /
-                                        1000000000000000000}
+                                    {configuration.openingFeePercentage / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.openingFeePercentage}
-                                    </small>
+                                    <small>{configuration.openingFeePercentage}</small>
                                 </td>
                                 <td>
-                                    {configuration.iporPublicationFeeAmount /
-                                        1000000000000000000}
+                                    {configuration.iporPublicationFeeAmount / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.iporPublicationFeeAmount}
-                                    </small>
+                                    <small>{configuration.iporPublicationFeeAmount}</small>
                                 </td>
                                 <td>
-                                    {configuration.liquidationDepositAmount /
-                                        1000000000000000000}
+                                    {configuration.liquidationDepositAmount / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.liquidationDepositAmount}
-                                    </small>
+                                    <small>{configuration.liquidationDepositAmount}</small>
                                 </td>
                                 <td>
-                                    {configuration.incomeTaxPercentage /
+                                    {configuration.incomeFeePercentage / 1000000000000000000}
+                                    <br />
+                                    <small>{configuration.incomeFeePercentage}</small>
+                                </td>
+                                <td>
+                                    {configuration.maxLpUtilizationPercentage / 1000000000000000000}
+                                    <br />
+                                    <small>{configuration.maxLpUtilizationPercentage}</small>
+                                </td>
+                                <td>
+                                    {configuration.maxLpUtilizationPerLegPercentage /
                                         1000000000000000000}
                                     <br />
-                                    <small>
-                                        {configuration.incomeTaxPercentage}
-                                    </small>
+                                    <small>{configuration.maxLpUtilizationPerLegPercentage}</small>
                                 </td>
                             </tr>
                         );

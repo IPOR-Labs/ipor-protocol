@@ -14,8 +14,8 @@ const {
 const {
     assertError,
     prepareData,
-    prepareComplexTestDataDaiCase00,
-    prepareComplexTestDataDaiCase40,
+    prepareComplexTestDataDaiCase000,
+    prepareComplexTestDataDaiCase400,
     getPayFixedDerivativeParamsDAICase1,
 } = require("./Utils");
 
@@ -24,17 +24,13 @@ describe("Joseph Treasury", () => {
     let admin, userOne, userTwo, userThree, liquidityProvider;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await ethers.getSigners();
+        data = await prepareData([admin, userOne, userTwo, userThree, liquidityProvider], 1);
     });
 
     it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -42,39 +38,33 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferPublicationFee(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToCharlieTreasury(BigInt("100")),
             //then
-            "IPOR_31"
+            "IPOR_406"
         );
     });
 
     it("should NOT transfer Publication Fee to Charlie Treasury - Charlie Treasury address incorrect", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
 
-        await testData.josephDai
-            .connect(admin)
-            .setPublicationFeeTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setCharlieTreasuryManager(userThree.address);
 
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferPublicationFee(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToCharlieTreasury(BigInt("100")),
             //then
-            "IPOR_29"
+            "IPOR_407"
         );
     });
 
     it("should transfer Publication Fee to Charlie Treasury - simple case 1", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -83,11 +73,7 @@ describe("Joseph Treasury", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -98,51 +84,41 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor
+                params.toleratedQuoteValue,
+                params.leverage
             );
 
-        await testData.josephDai
-            .connect(admin)
-            .setPublicationFeeTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setCharlieTreasuryManager(userThree.address);
 
-        await testData.josephDai
-            .connect(admin)
-            .setCharlieTreasurer(userOne.address);
+        await testData.josephDai.connect(admin).setCharlieTreasury(userOne.address);
 
-        const transferedValue = BigInt("100");
+        const transferredValue = BigInt("100");
 
         //when
-        await testData.josephDai
-            .connect(userThree)
-            .transferPublicationFee(transferedValue);
+        await testData.josephDai.connect(userThree).transferToCharlieTreasury(transferredValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceCharlieTreasurer =
-            USER_SUPPLY_10MLN_18DEC + transferedValue;
-        let actualErc20BalanceCharlieTreasurer = BigInt(
+        let expectedErc20BalanceCharlieTreasury = USER_SUPPLY_10MLN_18DEC + transferredValue;
+        let actualErc20BalanceCharlieTreasury = BigInt(
             await testData.tokenDai.balanceOf(userOne.address)
         );
 
         let expectedErc20BalanceMilton =
-            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedValue;
+            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferredValue;
         let actualErc20BalanceMilton = BigInt(
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
 
-        let expectedPublicationFeeBalanceMilton =
-            USD_10_18DEC - transferedValue;
-        const actualPublicationFeeBalanceMilton = BigInt(
-            balance.iporPublicationFee
-        );
+        let expectedPublicationFeeBalanceMilton = USD_10_18DEC - transferredValue;
+        const actualPublicationFeeBalanceMilton = BigInt(balance.iporPublicationFee);
 
         expect(
-            expectedErc20BalanceCharlieTreasurer,
-            `Incorrect ERC20 Charlie Treasurer balance for ${params.asset}, actual:  ${actualErc20BalanceCharlieTreasurer},
-                expected: ${expectedErc20BalanceCharlieTreasurer}`
-        ).to.be.eq(actualErc20BalanceCharlieTreasurer);
+            expectedErc20BalanceCharlieTreasury,
+            `Incorrect ERC20 Charlie Treasurer balance for ${params.asset}, actual:  ${actualErc20BalanceCharlieTreasury},
+                expected: ${expectedErc20BalanceCharlieTreasury}`
+        ).to.be.eq(actualErc20BalanceCharlieTreasury);
 
         expect(
             expectedErc20BalanceMilton,
@@ -157,9 +133,9 @@ describe("Joseph Treasury", () => {
         ).to.be.eq(actualPublicationFeeBalanceMilton);
     });
 
-    it("should NOT transfer Treasure Treasury - caller not treasure transferer", async () => {
+    it("should NOT transfer Treasure - caller not treasure transferer", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -167,39 +143,33 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferTreasury(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToTreasury(BigInt("100")),
             //then
-            "IPOR_11"
+            "IPOR_404"
         );
     });
 
-    it("should NOT transfer Publication Fee to Charlie Treasury - Treasure Treasury address incorrect", async () => {
+    it("should NOT transfer Publication Fee to Charlie Treasury - Treasury Transferer address incorrect", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase00(
+        const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
 
-        await testData.josephDai
-            .connect(admin)
-            .setTreasureTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasuryManager(userThree.address);
 
         //when
         await assertError(
             //when
-            testData.josephDai
-                .connect(userThree)
-                .transferTreasury(BigInt("100")),
+            testData.josephDai.connect(userThree).transferToTreasury(BigInt("100")),
             //then
-            "IPOR_51"
+            "IPOR_405"
         );
     });
 
-    it("should transfer Treasury to Treasure Treasurer - simple case 1", async () => {
+    it("should transfer Treasury to Treasury Treasurer - simple case 1", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase40(
+        const testData = await prepareComplexTestDataDaiCase400(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             data
         );
@@ -208,11 +178,7 @@ describe("Joseph Treasury", () => {
 
         await testData.warren
             .connect(userOne)
-            .itfUpdateIndex(
-                params.asset,
-                PERCENTAGE_3_18DEC,
-                params.openTimestamp
-            );
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
         await testData.josephDai
             .connect(liquidityProvider)
@@ -223,36 +189,27 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.slippageValue,
-                params.collateralizationFactor
+                params.toleratedQuoteValue,
+                params.leverage
             );
 
-        await testData.josephDai
-            .connect(admin)
-            .setTreasureTransferer(userThree.address);
+        await testData.josephDai.connect(admin).setTreasuryManager(userThree.address);
 
-        await testData.josephDai
-            .connect(admin)
-            .setTreasureTreasurer(userOne.address);
+        await testData.josephDai.connect(admin).setTreasury(userOne.address);
 
-        const transferedValue = BigInt("100");
+        const transferredValue = BigInt("100");
 
         //when
-        await testData.josephDai
-            .connect(userThree)
-            .transferTreasury(transferedValue);
+        await testData.josephDai.connect(userThree).transferToTreasury(transferredValue);
 
         //then
         let balance = await testData.miltonStorageDai.getExtendedBalance();
 
-        let expectedErc20BalanceTreasureTreasurer =
-            USER_SUPPLY_10MLN_18DEC + transferedValue;
-        let actualErc20BalanceTreasureTreasurer = BigInt(
-            await testData.tokenDai.balanceOf(userOne.address)
-        );
+        let expectedErc20BalanceTreasury = USER_SUPPLY_10MLN_18DEC + transferredValue;
+        let actualErc20BalanceTreasury = BigInt(await testData.tokenDai.balanceOf(userOne.address));
 
         let expectedErc20BalanceMilton =
-            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferedValue;
+            USD_28_000_18DEC + TC_TOTAL_AMOUNT_10_000_18DEC - transferredValue;
         let actualErc20BalanceMilton = BigInt(
             await testData.tokenDai.balanceOf(testData.miltonDai.address)
         );
@@ -260,19 +217,16 @@ describe("Joseph Treasury", () => {
         let expectedTreasuryBalanceMilton = BigInt("149505148455463261");
         const actualTreasuryBalanceMilton = BigInt(balance.treasury);
 
-        expect(
-            expectedErc20BalanceTreasureTreasurer,
-            `Incorrect ERC20 Treasury Treasurer balance`
-        ).to.be.eq(actualErc20BalanceTreasureTreasurer);
+        expect(expectedErc20BalanceTreasury, `Incorrect ERC20 Treasury Treasurer balance`).to.be.eq(
+            actualErc20BalanceTreasury
+        );
 
-        expect(
-            expectedErc20BalanceMilton,
-            `Incorrect ERC20 Milton balance`
-        ).to.be.eq(actualErc20BalanceMilton);
+        expect(expectedErc20BalanceMilton, `Incorrect ERC20 Milton balance`).to.be.eq(
+            actualErc20BalanceMilton
+        );
 
-        expect(
-            expectedTreasuryBalanceMilton,
-            `Incorrect Treasury Balance in Milton`
-        ).to.be.eq(actualTreasuryBalanceMilton);
+        expect(expectedTreasuryBalanceMilton, `Incorrect Treasury Balance in Milton`).to.be.eq(
+            actualTreasuryBalanceMilton
+        );
     });
 });

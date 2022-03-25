@@ -10,54 +10,54 @@ export default ({ drizzle, drizzleState }) => (
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
-            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+            methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Pay Fixed USDC</h5>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
-            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+            methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Pay Fixed DAI</h5>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
-            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+            methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Receive Fixed USDT</h5>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
-            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+            methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Receive Fixed USDC</h5>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
-            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+            methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Receive Fixed DAI</h5>
         <ContractData
             drizzle={drizzle}
             drizzleState={drizzleState}
-            contract="MiltonDevToolDataProvider"
+            contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
-            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+            methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
             render={DerivativeList}
         />
         <br />

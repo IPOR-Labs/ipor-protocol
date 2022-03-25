@@ -2,50 +2,35 @@
 pragma solidity 0.8.9;
 
 interface IJosephConfiguration {
-    event CharlieTreasurerUpdated(
-        address indexed asset,
-        address indexed newCharlieTreasurer
-    );
+    event CharlieTreasuryUpdated(address indexed asset, address indexed newCharlieTreasury);
 
-    event PublicationFeeTransfererUpdated(
-        address indexed newPublicationFeeTransferer
-    );
+    event CharlieTreasuryManagerUpdated(address indexed newCharlieTreasuryManager);
 
-    event TreasureTransfererUpdated(address indexed newTreasureTransferer);
+    event TreasuryManagerUpdated(address indexed newTreasuryManager);
 
-    event TreasureTreasurerUpdated(
-        address indexed asset,
-        address indexed newTreasureTreasurer
-    );
+    event TreasuryUpdated(address indexed asset, address indexed newTreasury);
 
-    function getCharlieTreasurer() external view returns (address);
+    function getCharlieTreasury() external view returns (address);
 
-    function setCharlieTreasurer(address newCharlieTreasurer) external;
+    function setCharlieTreasury(address newCharlieTreasury) external;
 
-    function getTreasureTreasurer() external view returns (address);
+    function getTreasury() external view returns (address);
 
-    function setTreasureTreasurer(address newTreasureTreasurer) external;
+    function setTreasury(address newTreasury) external;
 
-    function getPublicationFeeTransferer() external view returns (address);
+    function getCharlieTreasuryManager() external view returns (address);
 
-    function setPublicationFeeTransferer(address newPublicationFeeTransferer)
-        external;
+    function setCharlieTreasuryManager(address newCharlieTreasuryManager) external;
 
-    function getTreasureTransferer() external view returns (address);
+    function getTreasuryManager() external view returns (address);
 
-    function setTreasureTransferer(address treasureTransferer) external;
+    function setTreasuryManager(address treasuryManager) external;
 
-    function getRedeemLpMaxUtilizationPercentage()
-        external
-        pure
-        returns (uint256);
+    function getRedeemFeePercentage() external pure returns (uint256);
 
-    function getMiltonStanleyBalancePercentage()
-        external
-        pure
-        returns (uint256);
+    function getRedeemLpMaxUtilizationPercentage() external pure returns (uint256);
 
-    function decimals() external view returns (uint8);
+    function getMiltonStanleyBalancePercentage() external pure returns (uint256);
 
     function asset() external view returns (address);
 }

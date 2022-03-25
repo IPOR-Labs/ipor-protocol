@@ -2,18 +2,6 @@ require("dotenv").config({ path: "../.env" });
 const keccak256 = require("keccak256");
 const { erc1967, upgradeProxy } = require("@openzeppelin/truffle-upgrades");
 
-const IporConfiguration = artifacts.require("IporConfiguration");
-
-const IporAssetConfigurationUsdt = artifacts.require(
-    "IporAssetConfigurationUsdt"
-);
-const IporAssetConfigurationUsdc = artifacts.require(
-    "IporAssetConfigurationUsdc"
-);
-const IporAssetConfigurationDai = artifacts.require(
-    "IporAssetConfigurationDai"
-);
-
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 
 const Warren = artifacts.require("Warren");
@@ -39,35 +27,21 @@ const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
 
-const WarrenDevToolDataProvider = artifacts.require(
-    "WarrenDevToolDataProvider"
-);
-const MiltonDevToolDataProvider = artifacts.require(
-    "MiltonDevToolDataProvider"
-);
-const WarrenFrontendDataProvider = artifacts.require(
-    "WarrenFrontendDataProvider"
-);
-const MiltonFrontendDataProvider = artifacts.require(
-    "MiltonFrontendDataProvider"
-);
+const CockpitDataProvider = artifacts.require("CockpitDataProvider");
+const WarrenFacadeDataProvider = artifacts.require("WarrenFacadeDataProvider");
+const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
 module.exports = async function (deployer, _network, addresses) {
     console.log("Upgrade Smart Contracts...");
 
-    await upgradeContract(IporConfiguration);
-    await upgradeContract(IporAssetConfigurationUsdt);
-    await upgradeContract(IporAssetConfigurationUsdc);
-    await upgradeContract(IporAssetConfigurationDai);
     await upgradeContract(MiltonSpreadModel);
 
     await upgradeContract(Warren);
     await upgradeContract(ItfWarren);
 
-    await upgradeContract(WarrenDevToolDataProvider);
-    await upgradeContract(WarrenFrontendDataProvider);
-    await upgradeContract(MiltonDevToolDataProvider);
-    await upgradeContract(MiltonFrontendDataProvider);
+    await upgradeContract(WarrenFacadeDataProvider);
+    await upgradeContract(CockpitDataProvider);
+    await upgradeContract(MiltonFacadeDataProvider);
 
     await upgradeContract(MiltonStorageUsdt);
     await upgradeContract(MiltonStorageUsdc);

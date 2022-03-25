@@ -2,8 +2,8 @@ import React from "react";
 import { toDate } from "./utils";
 // import { Link } from "react-router-dom";
 
-export default (derivatives) =>
-    derivatives && derivatives.length > 0 ? (
+export default (response) =>
+    response && response.swaps && response.swaps.length > 0 ? (
         <table className="table">
             <thead>
                 <tr>
@@ -19,48 +19,39 @@ export default (derivatives) =>
                 </tr>
             </thead>
             <tbody>
-                {derivatives.map((derivative) => {
+                {response.swaps.map((derivative) => {
                     if (derivative.state == 1) {
                         return (
                             <tr key={derivative.id}>
                                 <td>{derivative.id}</td>
                                 <td>{derivative.buyer}</td>
                                 <td>
-                                    {derivative.collateral /
-                                        1000000000000000000}
+                                    {derivative.collateral / 1000000000000000000}
                                     <br />
                                     <small>{derivative.collateral}</small>
                                 </td>
                                 <td>
-                                    {derivative.notionalAmount /
-                                        1000000000000000000}
+                                    {derivative.notionalAmount / 1000000000000000000}
                                     <br />
                                     <small>{derivative.notionalAmount}</small>
                                 </td>
                                 <td>
-                                    {derivative.liquidationDepositAmount /
-                                        1000000000000000000}
+                                    {derivative.liquidationDepositAmount / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {derivative.liquidationDepositAmount}
-                                    </small>
+                                    <small>{derivative.liquidationDepositAmount}</small>
                                 </td>
                                 <td>
-                                    {derivative.ibtQuantity /
-                                        1000000000000000000}
+                                    {derivative.ibtQuantity / 1000000000000000000}
                                     <br />
                                     <small>{derivative.ibtQuantity}</small>
                                 </td>
                                 <td>
-                                    {derivative.fixedInterestRate /
-                                        1000000000000000000}
+                                    {derivative.fixedInterestRate / 1000000000000000000}
                                     <br />
-                                    <small>
-                                        {derivative.fixedInterestRate}
-                                    </small>
+                                    <small>{derivative.fixedInterestRate}</small>
                                 </td>
-                                <td>{toDate(derivative.startingTimestamp)}</td>
-                                <td>{toDate(derivative.endingTimestamp)}</td>
+                                <td>{toDate(derivative.openTimestamp)}</td>
+                                <td>{toDate(derivative.endTimestamp)}</td>
                             </tr>
                         );
                     }

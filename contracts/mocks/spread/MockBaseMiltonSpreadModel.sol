@@ -1,40 +1,38 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../../amm/MiltonSpreadModel.sol";
+import "../../amm/spread/MiltonSpreadModel.sol";
 
 contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
     function testCalculateSpreadPremiumsPayFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
+        IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance
     ) public pure returns (uint256 spreadValue) {
-        DataTypes.MiltonBalanceMemory memory balance = DataTypes
-            .MiltonBalanceMemory(
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
-                liquidityPoolBalance,
-                0
-            );
+        IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
+            payFixedTotalCollateralBalance,
+            receiveFixedTotalCollateralBalance,
+            liquidityPoolBalance,
+            0
+        );
         return _calculateSpreadPremiumsPayFixed(soap, accruedIpor, balance);
     }
 
     function testCalculateSpreadPremiumsRecFixed(
         int256 soap,
-        DataTypes.AccruedIpor memory accruedIpor,
+        IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance
     ) public pure returns (uint256 spreadValue) {
-        DataTypes.MiltonBalanceMemory memory balance = DataTypes
-            .MiltonBalanceMemory(
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
-                liquidityPoolBalance,
-                0
-            );
+        IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
+            payFixedTotalCollateralBalance,
+            receiveFixedTotalCollateralBalance,
+            liquidityPoolBalance,
+            0
+        );
         return _calculateSpreadPremiumsRecFixed(soap, accruedIpor, balance);
     }
 
@@ -53,15 +51,15 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
 
     function calculateDemandComponentPayFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         int256 soapPayFixed
     ) public pure returns (uint256) {
         return
             _calculateDemandComponentPayFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 soapPayFixed
             );
     }
@@ -96,30 +94,30 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
 
     function calculateAdjustedUtilizationRatePayFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
             _calculateAdjustedUtilizationRatePayFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 lambda
             );
     }
 
     function calculateDemandComponentRecFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         int256 soapRecFixed
     ) public pure returns (uint256) {
         return
             _calculateDemandComponentRecFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 soapRecFixed
             );
     }
@@ -154,15 +152,15 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
 
     function calculateAdjustedUtilizationRateRecFixed(
         uint256 liquidityPoolBalance,
-        uint256 payFixedSwapsBalance,
-        uint256 receiveFixedSwapsBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
         uint256 lambda
     ) public pure returns (uint256) {
         return
             _calculateAdjustedUtilizationRateRecFixed(
                 liquidityPoolBalance,
-                payFixedSwapsBalance,
-                receiveFixedSwapsBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
                 lambda
             );
     }

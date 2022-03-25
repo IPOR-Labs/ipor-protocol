@@ -18,6 +18,12 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
                 <td>{drizzle.contracts.ItfWarren.address}</td>
             </tr>
+            <tr>
+                <td>
+                    <strong>Milton Spread Model</strong>
+                </td>
+                <td>{drizzle.contracts.MiltonSpreadModel.address}</td>
+            </tr>
         </table>
         <table className="table" align="center">
             <tr>
@@ -26,15 +32,6 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">USDC</th>
                 <th scope="col">DAI</th>
             </tr>
-            <tr>
-                <td>
-                    <strong>Ipor Asset Configuration</strong>
-                </td>
-                <td>{drizzle.contracts.IporAssetConfigurationUsdt.address}</td>
-                <td>{drizzle.contracts.IporAssetConfigurationUsdc.address}</td>
-                <td>{drizzle.contracts.IporAssetConfigurationDai.address}</td>
-            </tr>
-
             <tr>
                 <td>
                     <strong>Milton</strong>
@@ -74,6 +71,70 @@ export default ({ drizzle, drizzleState }) => (
                 <td>{drizzle.contracts.ItfJosephUsdt.address}</td>
                 <td>{drizzle.contracts.ItfJosephUsdc.address}</td>
                 <td>{drizzle.contracts.ItfJosephDai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Stanley</strong>
+                </td>
+                <td>{drizzle.contracts.StanleyUsdt.address}</td>
+                <td>{drizzle.contracts.StanleyUsdc.address}</td>
+                <td>{drizzle.contracts.StanleyDai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>ItfStanley</strong>
+                </td>
+                <td>{drizzle.contracts.ItfStanleyUsdt.address}</td>
+                <td>{drizzle.contracts.ItfStanleyUsdc.address}</td>
+                <td>{drizzle.contracts.ItfStanleyDai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>IpToken</strong>
+                </td>
+                <td>{drizzle.contracts.IpTokenUsdt.address}</td>
+                <td>{drizzle.contracts.IpTokenUsdc.address}</td>
+                <td>{drizzle.contracts.IpTokenDai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>IvToken</strong>
+                </td>
+                <td>{drizzle.contracts.IvTokenUsdt.address}</td>
+                <td>{drizzle.contracts.IvTokenUsdc.address}</td>
+                <td>{drizzle.contracts.IvTokenDai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>aToken (Aave Share Token)</strong>
+                </td>
+                <td>{drizzle.contracts.MockAUsdt.address}</td>
+                <td>{drizzle.contracts.MockAUsdc.address}</td>
+                <td>{drizzle.contracts.MockADai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>cToken (Compound Share Token)</strong>
+                </td>
+                <td>{drizzle.contracts.MockCUSDT.address}</td>
+                <td>{drizzle.contracts.MockCUSDC.address}</td>
+                <td>{drizzle.contracts.MockCDai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Aave Strategy</strong>
+                </td>
+                <td>{drizzle.contracts.StrategyAaveUsdt.address}</td>
+                <td>{drizzle.contracts.StrategyAaveUsdc.address}</td>
+                <td>{drizzle.contracts.StrategyAaveDai.address}</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Compound Strategy</strong>
+                </td>
+                <td>{drizzle.contracts.StrategyCompoundUsdt.address}</td>
+                <td>{drizzle.contracts.StrategyCompoundUsdc.address}</td>
+                <td>{drizzle.contracts.StrategyCompoundDai.address}</td>
             </tr>
         </table>
     </div>

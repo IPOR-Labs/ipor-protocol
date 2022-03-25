@@ -68,12 +68,83 @@ export default ({ drizzle, drizzleState }) => (
                 <ContractData
                     drizzle={drizzle}
                     drizzleState={drizzleState}
-                    contract="WarrenDevToolDataProvider"
+                    contract="CockpitDataProvider"
                     method="getIndexes"
                     render={IporIndexList}
                 />
             </p>
             <hr />
+        </div>
+        <div className="row">
+            <div className="col-md-3">
+                <label>Pause</label>
+
+                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="ItfWarren"
+                        method="pause"
+                    />
+                ) : (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="Warren"
+                        method="pause"
+                    />
+                )}
+            </div>
+            <div className="col-md-3">
+                <label>Unpause</label>
+
+                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="ItfWarren"
+                        method="unpause"
+                    />
+                ) : (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="Warren"
+                        method="unpause"
+                    />
+                )}
+            </div>
+            <div className="col-md-3">
+                <label>Transfer Ownership</label>
+
+                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="ItfWarren"
+                        method="transferOwnership"
+                    />
+                ) : (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="Warren"
+                        method="transferOwnership"
+                    />
+                )}
+            </div>
+
+            <div className="col-md-3">
+                <label>Confirm Transfer Ownership</label>
+
+                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="ItfWarren"
+                        method="confirmTransferOwnership"
+                    />
+                ) : (
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="Warren"
+                        method="confirmTransferOwnership"
+                    />
+                )}
+            </div>
         </div>
     </div>
 );

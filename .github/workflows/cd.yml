@@ -5,149 +5,50 @@ on:
     branches:
       - main
 
-env:
-  SOLC_VERSION: 0.8.9
-  SLACK_ID_FILE: slack-id.txt
-
 jobs:
 
   notify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack status start
-        id: slack
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
-        with:
-          channel: github-ci
-          status: STARTING
-          color: warning
+    uses: ./.github/workflows/notify-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - name: Save slack message id
-        shell: bash
-        run: echo ${{ steps.slack.outputs.message_id }} > ${{ env.SLACK_ID_FILE }}
-
-      - name: Upload slack message id
-        uses: actions/upload-artifact@v2
-        with:
-          name: slack-id
-          path: ${{ env.SLACK_ID_FILE }}
-
-
-  build-smart-contracts:
+  build-1:
     needs: notify
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    uses: ./.github/workflows/build-smart-contracts.yml
 
-      - name: Install
-        run: npm install
-
-      - name: Hardhat compile
-        run: npx hardhat compile
-
-      - name: Tests
-        run: npm run test
-
-
-  build-java:
+  build-2:
     needs: notify
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    uses: ./.github/workflows/build-java.yml
+    with:
+      smart-contracts-compile-enabled: true
+      build-enabled: true
+      tests-enabled: true
+      publish-jar-enabled: false
+      push-docker-enabled: false
 
-      - name: Set up solidity compiler
-        run: |
-          python -m pip install --upgrade --no-cache-dir solc-select
-          solc-select install $SOLC_VERSION
-          solc-select use $SOLC_VERSION
-        shell: bash
-
-      - name: Set up java
-        uses: actions/setup-java@v2
-        with:
-          java-version: 11
-          distribution: temurin
-          server-id: github
-          settings-path: ${{ github.workspace }}
-
-      - name: Set up maven
-        uses: stCarolas/setup-maven@v4.2
-        with:
-          maven-version: 3.8.4
-
-      - name: Cache maven repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-
-      - name: Set up node_modules
-        run: npm install
-
-      - name: Build
-        run: mvn clean package -B -ntp -s '${{ github.workspace }}/settings.xml' -Dmaven.test.skip=true --update-snapshots
-
-      - name: Tests
-        run: mvn test -B -ntp -s '${{ github.workspace }}/settings.xml'
-
-      - name: Publish
-        run: mvn deploy -B -ntp -s '${{ github.workspace }}/settings.xml' -Dmaven.test.skip=true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  publish:
+    needs:
+      - notify
+      - build-1
+      - build-2
+    uses: ./.github/workflows/build-java.yml
+    with:
+      smart-contracts-compile-enabled: true
+      build-enabled: true
+      tests-enabled: false
+      publish-jar-enabled: true
+      push-docker-enabled: false
 
   report:
+    if: ${{ always() }}
     needs:
-      - build-smart-contracts
-      - build-java
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Download slack message id
-        uses: actions/download-artifact@v2
-        with:
-          name: slack-id
-
-      - name: Read slack message id
-        id: slack-id
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ${{ env.SLACK_ID_FILE }}
-
-      - name: Slack Status Success
-        if: success()
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
-        with:
-          message_id: ${{ steps.slack-id.outputs.content }}
-          channel: github-ci
-          status: SUCCESS
-          color: good
-
-      - name: Slack Status Fail
-        if: failure()
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
-        with:
-          message_id: ${{ steps.slack-id.outputs.content }}
-          channel: github-ci
-          status: FAILED
-          color: danger
-
-      - name: Slack Alarm
-        if: failure()
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: IPOR-Labs/github-action-slack-notify-build@v1.5.0-ipor-v2
-        with:
-          channel: alarms-github
-          status: FAILED
-          color: danger
+      - notify
+      - build-1
+      - build-2
+      - publish
+    uses: ./.github/workflows/report-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    with:
+      success: ${{ needs.publish.result == 'success' }}
+      slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}

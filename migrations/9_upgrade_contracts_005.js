@@ -27,9 +27,7 @@ const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
 
-const MiltonFrontendDataProvider = artifacts.require(
-    "MiltonFrontendDataProvider"
-);
+const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
 module.exports = async function (deployer, _network, addresses) {
     console.log("Upgrade Smart Contracts...");
@@ -39,7 +37,7 @@ module.exports = async function (deployer, _network, addresses) {
     await upgradeContract(Warren);
     await upgradeContract(ItfWarren);
 
-    await upgradeContract(MiltonFrontendDataProvider);
+    await upgradeContract(MiltonFacadeDataProvider);
 
     await upgradeContract(MiltonStorageUsdt);
     await upgradeContract(MiltonStorageUsdc);

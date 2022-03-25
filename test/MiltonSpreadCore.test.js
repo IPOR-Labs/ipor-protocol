@@ -33,7 +33,9 @@ describe("MiltonSpreadModel - Core", () => {
             1
         );
     });
-    it("should init config with ", async () => {});
+    
+	it("should init config with ", async () => {});
+
     it("should calculate Adjusted Utilization Rate - simple case 1", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadBase();

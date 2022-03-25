@@ -9,5 +9,8 @@ function Enum(...options) {
 module.exports = {
     Enum,
     SwapState: Enum("INACTIVE", "ACTIVE"),
-    SwapDirection: Enum("PayFixedReceiveFloating", "PayFloatingReceiveFixed"),
+    SwapDirection: Enum(
+        "PAY_FIXED_RECEIVE_FLOATING",
+        "PAY_FLOATING_RECEIVE_FIXED"
+    ),
 };

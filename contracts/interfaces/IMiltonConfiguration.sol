@@ -10,33 +10,21 @@ interface IMiltonConfiguration {
 
     function getMaxLpUtilizationPercentage() external pure returns (uint256);
 
-    function getMaxLpUtilizationPerLegPercentage()
-        external
-        pure
-        returns (uint256);
+    function getMaxLpUtilizationPerLegPercentage() external pure returns (uint256);
 
-    function getIncomeTaxPercentage() external pure returns (uint256);
+    function getIncomeFeePercentage() external pure returns (uint256);
 
     function getOpeningFeePercentage() external pure returns (uint256);
 
-    function getOpeningFeeForTreasuryPercentage()
-        external
-        pure
-        returns (uint256);
+    function getOpeningFeeForTreasuryPercentage() external pure returns (uint256);
 
     function getIporPublicationFeeAmount() external pure returns (uint256);
 
     function getLiquidationDepositAmount() external pure returns (uint256);
 
-    function getMaxCollateralizationFactorValue()
-        external
-        pure
-        returns (uint256);
+    function getMaxLeverageValue() external pure returns (uint256);
 
-    function getMinCollateralizationFactorValue()
-        external
-        pure
-        returns (uint256);
+    function getMinLeverageValue() external pure returns (uint256);
 
     function getMiltonSpreadModel() external view returns (address);
 

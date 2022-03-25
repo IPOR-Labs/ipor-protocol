@@ -1,0 +1,360 @@
+// SPDX-License-Identifier: agpl-3.0
+pragma solidity 0.8.9;
+
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "../../security/IporOwnableUpgradeable.sol";
+import "../../libraries/Constants.sol";
+import "../../libraries/errors/MiltonErrors.sol";
+import "../../interfaces/types/IporTypes.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../interfaces/IMiltonSpreadModel.sol";
+import "../configuration/MiltonSpreadConfiguration.sol";
+import "./MiltonSpreadModelCore.sol";
+
+contract MiltonSpreadModel is
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    MiltonSpreadModelCore,
+    MiltonSpreadConfiguration,
+    IMiltonSpreadModel
+{
+    function initialize() public initializer {
+        __Ownable_init();
+    }
+
+    //solhint-disable no-empty-blocks
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
+    function calculateQuotePayFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) external pure override returns (uint256 quoteValue) {
+        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
+            soap,
+            accruedIpor,
+            accruedBalance
+        );
+        quoteValue = refLeg + spreadPremiums;
+    }
+
+    //@dev Quote = RefLeg - SpreadPremiums, RefLeg = min(IPOR, EMAi), Spread = IPOR - RefLeg + SpreadPremiums
+    function calculateQuoteReceiveFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) external pure override returns (uint256 quoteValue) {
+        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
+            soap,
+            accruedIpor,
+            accruedBalance
+        );
+
+        if (refLeg > spreadPremiums) {
+            quoteValue = refLeg - spreadPremiums;
+        }
+    }
+
+    //@dev Spread = SpreadPremiums + RefLeg - IPOR
+    function calculateSpreadPayFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) external pure override returns (uint256 spreadValue) {
+        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
+            soap,
+            accruedIpor,
+            accruedBalance
+        );
+
+        spreadValue = spreadPremiums + refLeg - accruedIpor.indexValue;
+    }
+
+    //@dev Spread = SpreadPremiums + IPOR - RefLeg
+    function calculateSpreadRecFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) external pure override returns (uint256 spreadValue) {
+        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
+            soap,
+            accruedIpor,
+            accruedBalance
+        );
+
+        spreadValue = spreadPremiums + accruedIpor.indexValue - refLeg;
+    }
+
+    function _calculateQuoteChunksPayFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
+        spreadPremiums = _calculateSpreadPremiumsPayFixed(soap, accruedIpor, accruedBalance);
+
+        refLeg = _calculateReferenceLegPayFixed(
+            accruedIpor.indexValue,
+            accruedIpor.exponentialMovingAverage
+        );
+    }
+
+    function _calculateQuoteChunksReceiveFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
+        spreadPremiums = _calculateSpreadPremiumsRecFixed(soap, accruedIpor, accruedBalance);
+
+        refLeg = _calculateReferenceLegRecFixed(
+            accruedIpor.indexValue,
+            accruedIpor.exponentialMovingAverage
+        );
+    }
+
+    function _calculateSpreadPremiumsPayFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) internal pure returns (uint256 spreadPremiumsValue) {
+        require(
+            accruedBalance.liquidityPool != 0,
+            MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+        );
+        uint256 result = _calculateDemandComponentPayFixed(
+            accruedBalance.liquidityPool,
+            accruedBalance.payFixedTotalCollateral,
+            accruedBalance.receiveFixedTotalCollateral,
+            soap
+        ) +
+            _calculateAtParComponentPayFixed(
+                accruedIpor.indexValue,
+                accruedIpor.exponentialMovingAverage,
+                accruedIpor.exponentialWeightedMovingVariance
+            );
+        uint256 maxValue = _getSpreadPremiumsMaxValue();
+        spreadPremiumsValue = result < maxValue ? result : maxValue;
+    }
+
+    function _calculateSpreadPremiumsRecFixed(
+        int256 soap,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) internal pure returns (uint256 spreadValue) {
+        require(
+            accruedBalance.liquidityPool != 0,
+            MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+        );
+        uint256 result = _calculateDemandComponentRecFixed(
+            accruedBalance.liquidityPool,
+            accruedBalance.payFixedTotalCollateral,
+            accruedBalance.receiveFixedTotalCollateral,
+            soap
+        ) +
+            _calculateAtParComponentRecFixed(
+                accruedIpor.indexValue,
+                accruedIpor.exponentialMovingAverage,
+                accruedIpor.exponentialWeightedMovingVariance
+            );
+
+        uint256 maxValue = _getSpreadPremiumsMaxValue();
+        spreadValue = result < maxValue ? result : maxValue;
+    }
+
+    function _calculateDemandComponentPayFixed(
+        uint256 liquidityPoolBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
+        int256 soapPayFixed
+    ) internal pure returns (uint256) {
+        uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
+            _calculateAdjustedUtilizationRatePayFixed(
+                liquidityPoolBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
+                _getDCLambdaValue()
+            );
+
+        if (kfDenominator != 0) {
+            if (soapPayFixed > 0) {
+                uint256 kOmegaDenominator = Constants.D18 -
+                    _calculateSoapPlus(soapPayFixed, payFixedTotalCollateralBalance);
+                if (kOmegaDenominator != 0) {
+                    return
+                        IporMath.division(_getDCKfValue() * Constants.D18, kfDenominator) +
+                        IporMath.division(_getDCKOmegaValue() * Constants.D18, kOmegaDenominator);
+                } else {
+                    return _getSpreadPremiumsMaxValue();
+                }
+            } else {
+                return
+                    IporMath.division(_getDCKfValue() * Constants.D18, kfDenominator) +
+                    _getDCKOmegaValue();
+            }
+        } else {
+            return _getSpreadPremiumsMaxValue();
+        }
+    }
+
+    function _calculateAtParComponentPayFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    ) internal pure returns (uint256) {
+        uint256 maxValue = _getSpreadPremiumsMaxValue();
+
+        if (exponentialWeightedMovingVariance >= Constants.D18) {
+            return maxValue;
+        } else {
+            uint256 historicalDeviation = _calculateHistoricalDeviationPayFixed(
+                _getAtParComponentKHistValue(),
+                iporIndexValue,
+                exponentialMovingAverage,
+                maxValue
+            );
+
+            if (historicalDeviation < maxValue) {
+                return
+                    IporMath.division(
+                        _getAtParComponentKVolValue() * Constants.D18,
+                        Constants.D18 - exponentialWeightedMovingVariance
+                    ) + historicalDeviation;
+            } else {
+                return maxValue;
+            }
+        }
+    }
+
+    //URlambda_leg(M0)
+    function _calculateAdjustedUtilizationRatePayFixed(
+        uint256 liquidityPoolBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
+        uint256 lambda
+    ) internal pure returns (uint256) {
+        uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutSwap(
+            liquidityPoolBalance,
+            receiveFixedTotalCollateralBalance
+        );
+
+        uint256 utilizationRatePayFixedWithPosition = _calculateUtilizationRateWithPosition(
+            liquidityPoolBalance,
+            payFixedTotalCollateralBalance
+        );
+
+        uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
+            utilizationRatePayFixedWithPosition,
+            utilizationRateRecFixed,
+            lambda
+        );
+        return adjustedUtilizationRate;
+    }
+
+    function _calculateDemandComponentRecFixed(
+        uint256 liquidityPoolBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
+        int256 soapRecFixed
+    ) internal pure returns (uint256) {
+        uint256 kfDenominator = _getDCMaxLiquidityRedemptionValue() -
+            _calculateAdjustedUtilizationRateRecFixed(
+                liquidityPoolBalance,
+                payFixedTotalCollateralBalance,
+                receiveFixedTotalCollateralBalance,
+                _getDCLambdaValue()
+            );
+        if (kfDenominator != 0) {
+            if (soapRecFixed > 0) {
+                uint256 kOmegaDenominator = Constants.D18 -
+                    _calculateSoapPlus(soapRecFixed, receiveFixedTotalCollateralBalance);
+                if (kOmegaDenominator != 0) {
+                    return
+                        IporMath.division(_getDCKfValue() * Constants.D18, kfDenominator) +
+                        IporMath.division(_getDCKOmegaValue() * Constants.D18, kOmegaDenominator);
+                } else {
+                    return _getSpreadPremiumsMaxValue();
+                }
+            } else {
+                return
+                    IporMath.division(_getDCKfValue() * Constants.D18, kfDenominator) +
+                    _getDCKOmegaValue();
+            }
+        } else {
+            return _getSpreadPremiumsMaxValue();
+        }
+    }
+
+    function _calculateAtParComponentRecFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    ) internal pure returns (uint256) {
+        uint256 maxSpreadValue = _getSpreadPremiumsMaxValue();
+
+        if (exponentialWeightedMovingVariance == Constants.D18) {
+            return maxSpreadValue;
+        } else {
+            uint256 historicalDeviation = _calculateHistoricalDeviationRecFixed(
+                _getAtParComponentKHistValue(),
+                iporIndexValue,
+                exponentialMovingAverage,
+                maxSpreadValue
+            );
+            if (historicalDeviation < maxSpreadValue) {
+                return
+                    IporMath.division(
+                        _getAtParComponentKVolValue() * Constants.D18,
+                        Constants.D18 - exponentialWeightedMovingVariance
+                    ) + historicalDeviation;
+            } else {
+                return maxSpreadValue;
+            }
+        }
+    }
+
+    function _calculateAdjustedUtilizationRateRecFixed(
+        uint256 liquidityPoolBalance,
+        uint256 payFixedTotalCollateralBalance,
+        uint256 receiveFixedTotalCollateralBalance,
+        uint256 lambda
+    ) internal pure returns (uint256) {
+        uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutSwap(
+            liquidityPoolBalance,
+            payFixedTotalCollateralBalance
+        );
+
+        uint256 utilizationRateRecFixedWithPosition = _calculateUtilizationRateWithPosition(
+            liquidityPoolBalance,
+            receiveFixedTotalCollateralBalance
+        );
+
+        uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
+            utilizationRateRecFixedWithPosition,
+            utilizationRatePayFixed,
+            lambda
+        );
+        return adjustedUtilizationRate;
+    }
+
+    function _calculateReferenceLegPayFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue > exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
+    }
+
+    function _calculateReferenceLegRecFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue < exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
+    }
+}

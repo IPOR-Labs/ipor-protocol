@@ -2,27 +2,26 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporConfiguration.sol";
-import "../interfaces/IJoseph.sol";
-import {IporErrors} from "../IporErrors.sol";
-import "../interfaces/IMiltonStorage.sol";
-import {IporMath} from "../libraries/IporMath.sol";
+import "../libraries/errors/IporErrors.sol";
 import "../libraries/Constants.sol";
-import "../tokenization/Joseph.sol";
+import "../libraries/math/IporMath.sol";
+import "../interfaces/IIpToken.sol";
+import "../interfaces/IJoseph.sol";
+import "../interfaces/IMiltonStorage.sol";
+import "../amm/pool/Joseph.sol";
 
-contract ItfJoseph is Joseph {
-    
+abstract contract ItfJoseph is Joseph {
+    function itfCalculateExchangeRate(uint256 timestamp) external view returns (uint256) {
+        return _calculateExchangeRate(timestamp);
+    }
+
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
-    function itfProvideLiquidity(uint256 liquidityAmount, uint256 timestamp)
-        external
-    {
-        _provideLiquidity(liquidityAmount, _decimals, timestamp);
+    function itfProvideLiquidity(uint256 liquidityAmount, uint256 timestamp) external {
+        _provideLiquidity(liquidityAmount, _getDecimals(), timestamp);
     }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
     function itfRedeem(uint256 ipTokenVolume, uint256 timestamp) external {
         _redeem(ipTokenVolume, timestamp);
     }
-
 }
