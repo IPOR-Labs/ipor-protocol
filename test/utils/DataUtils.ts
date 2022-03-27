@@ -43,6 +43,7 @@ import {
     USER_SUPPLY_10MLN_18DEC,
     LEVERAGE_18DEC,
     ZERO,
+    N0__01_18DEC,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -355,6 +356,27 @@ export const prepareComplexTestDataDaiCase000 = async (
     return testData;
 };
 
+export const prepareComplexTestDataDaiCase400 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE4,
+        MiltonUsdtCase.CASE4,
+        MiltonDaiCase.CASE4,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0
+    );
+    await prepareApproveForUsers(accounts, "DAI", testData);
+    await setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
 export const setupIpTokenInitialValues = async (
     asset: IpToken,
     liquidityProvider: Signer,
@@ -398,4 +420,16 @@ export const setupTokenUsdtInitialValuesForUsers = async (
     for (let i = 0; i < users.length; i++) {
         await tokenUsdt.setupInitialAmount(await users[i].getAddress(), USER_SUPPLY_6_DECIMALS);
     }
+};
+
+export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiMockedToken) => {
+    return {
+        asset: tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        toleratedQuoteValue: BigNumber.from("6").mul(N0__01_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
 };
