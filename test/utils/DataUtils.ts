@@ -328,6 +328,24 @@ export const prepareTestDataDaiCase000 = async (
     );
 };
 
+export const prepareTestDataDaiCase001 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel //data
+): Promise<TestData> => {
+    return await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE0,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE1,
+        JosephUsdtMockCases.CASE1,
+        JosephDaiMockCases.CASE1
+    );
+};
+
 export const prepareTestDataUsdtCase000 = async (
     accounts: Signer[],
     miltonSpreadModel: MockMiltonSpreadModel

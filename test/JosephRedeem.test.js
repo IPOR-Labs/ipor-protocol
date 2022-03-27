@@ -197,79 +197,6 @@ describe("Joseph - redeem", () => {
         ).to.be.eql(actualUnderlyingBalanceSender);
     });
 
-    it("should NOT redeem ipTokens because of empty Liquidity Pool", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
-        const params = getStandardDerivativeParamsDAI(userTwo, testData);
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
-
-        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
-        await testData.miltonStorageDai.setJoseph(userOne.address);
-        await testData.miltonStorageDai.connect(userOne).subtractLiquidity(params.totalAmount);
-        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
-
-        //when
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(liquidityProvider)
-                .itfRedeem(BigInt("1000000000000000000000"), params.openTimestamp),
-            //then
-            "IPOR_300"
-        );
-    });
-
-    it("should NOT redeem ipTokens because after redeem Liquidity Pool will be empty", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase001(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
-        const params = getStandardDerivativeParamsDAI(userTwo, testData);
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
-
-        //when
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(liquidityProvider)
-                .itfRedeem(params.totalAmount, params.openTimestamp),
-            //then
-            "IPOR_402"
-        );
-    });
-
     it("should redeem ipTokens because NO validation for cool off period", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
@@ -795,255 +722,6 @@ describe("Joseph - redeem", () => {
         ).to.be.eql(actualDAIBalanceUserThree);
     });
 
-    it("should NOT redeem - Redeem Liquidity Pool Utilization already exceeded, Pay Fixed", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
-
-        const params = getStandardDerivativeParamsDAI(userTwo, testData);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-        const ipTokenAmount = BigInt("60000000000000000000000");
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(ipTokenAmount, params.openTimestamp);
-
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                BigInt("27000000000000000000000"),
-                params.toleratedQuoteValue,
-                params.leverage
-            );
-
-        //BEGIN HACK - substract liquidity without  burn ipToken
-        await testData.miltonStorageDai.setJoseph(admin.address);
-        await testData.miltonStorageDai.subtractLiquidity(BigInt("45000000000000000000000"));
-        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken
-
-        const balance = await testData.miltonDai.getAccruedBalance();
-        const actualCollateral =
-            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
-        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
-
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(liquidityProvider)
-                .itfRedeem(ipTokenAmount, params.openTimestamp),
-            //then
-            "IPOR_402"
-        );
-
-        //then
-        assert(
-            actualCollateral > actualLiquidityPoolBalance,
-            "Actual collateral cannot be lower than actual Liquidity Pool Balance"
-        );
-    });
-
-    it("should NOT redeem - Redeem Liquidity Pool Utilization already exceeded, Receive Fixed", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
-
-        const params = getStandardDerivativeParamsDAI(userTwo, testData);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-        const ipTokenAmount = BigInt("60000000000000000000000");
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(ipTokenAmount, params.openTimestamp);
-
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapReceiveFixed(
-                params.openTimestamp,
-                BigInt("27000000000000000000000"),
-                params.toleratedQuoteValue,
-                params.leverage
-            );
-
-        //BEGIN HACK - substract liquidity without  burn ipToken
-        await testData.miltonStorageDai.setJoseph(admin.address);
-
-        await testData.miltonStorageDai.subtractLiquidity(BigInt("45000000000000000000000"));
-        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken
-
-        const balance = await testData.miltonDai.getAccruedBalance();
-        const actualCollateral =
-            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
-        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
-
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(liquidityProvider)
-                .itfRedeem(ipTokenAmount, params.openTimestamp),
-            //then
-            "IPOR_402"
-        );
-
-        //then
-        assert(
-            actualCollateral > actualLiquidityPoolBalance,
-            "Actual collateral cannot be lower than actual Liquidity Pool Balance"
-        );
-    });
-
-    it("should NOT redeem - Redeem Liquidity Pool Utilization exceeded, Pay Fixed", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
-
-        const params = getStandardDerivativeParamsDAI(userTwo, testData);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-        const ipTokenAmount = BigInt("41000000000000000000000");
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
-
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                BigInt("27000000000000000000000"),
-                params.toleratedQuoteValue,
-                params.leverage
-            );
-
-        const balance = await testData.miltonDai.getAccruedBalance();
-
-        const actualCollateral =
-            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
-        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
-
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(liquidityProvider)
-                .itfRedeem(ipTokenAmount, params.openTimestamp),
-            //then
-            "IPOR_402"
-        );
-        assert(
-            actualCollateral < actualLiquidityPoolBalance,
-            "Actual collateral cannot be higher than actual Liquidity Pool Balance"
-        );
-    });
-
-    it("should NOT redeem - Redeem Liquidity Pool Utilization exceeded, Receive Fixed", async () => {
-        //given
-        const testData = await prepareTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
-
-        const params = getStandardDerivativeParamsDAI(userTwo, testData);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-        const ipTokenAmount = BigInt("41000000000000000000000");
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
-
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapReceiveFixed(
-                params.openTimestamp,
-                BigInt("27000000000000000000000"),
-                params.toleratedQuoteValue,
-                params.leverage
-            );
-
-        const balance = await testData.miltonDai.getAccruedBalance();
-
-        const actualCollateral =
-            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
-        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
-
-        await assertError(
-            //when
-            testData.josephDai
-                .connect(liquidityProvider)
-                .itfRedeem(ipTokenAmount, params.openTimestamp),
-            //then
-            "IPOR_402"
-        );
-        assert(
-            actualCollateral < actualLiquidityPoolBalance,
-            "Actual collateral cannot be higher than actual Liquidity Pool Balance"
-        );
-    });
-
     it("should redeem - Liquidity Pool Utilization not exceedeed, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
@@ -1299,5 +977,327 @@ describe("Joseph - redeem", () => {
             await testData.ipTokenDai.balanceOf(liquidityProvider.address)
         );
         expect(actualIpTokenBalanceSender).to.be.eq(BigInt("79700000000000000000000"));
+    });
+
+    it("should NOT redeem - Redeem Liquidity Pool Utilization already exceeded, Pay Fixed", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        const ipTokenAmount = BigInt("60000000000000000000000");
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(ipTokenAmount, params.openTimestamp);
+
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                BigInt("27000000000000000000000"),
+                params.toleratedQuoteValue,
+                params.leverage
+            );
+
+        //BEGIN HACK - substract liquidity without  burn ipToken
+        await testData.miltonStorageDai.setJoseph(admin.address);
+        await testData.miltonStorageDai.subtractLiquidity(BigInt("45000000000000000000000"));
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
+        //END HACK - substract liquidity without  burn ipToken
+
+        const balance = await testData.miltonDai.getAccruedBalance();
+        const actualCollateral =
+            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
+        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
+
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(liquidityProvider)
+                .itfRedeem(ipTokenAmount, params.openTimestamp),
+            //then
+            "IPOR_402"
+        );
+
+        //then
+        assert(
+            actualCollateral > actualLiquidityPoolBalance,
+            "Actual collateral cannot be lower than actual Liquidity Pool Balance"
+        );
+    });
+
+    it("should NOT redeem - Redeem Liquidity Pool Utilization already exceeded, Receive Fixed", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        const ipTokenAmount = BigInt("60000000000000000000000");
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(ipTokenAmount, params.openTimestamp);
+
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                BigInt("27000000000000000000000"),
+                params.toleratedQuoteValue,
+                params.leverage
+            );
+
+        //BEGIN HACK - substract liquidity without  burn ipToken
+        await testData.miltonStorageDai.setJoseph(admin.address);
+
+        await testData.miltonStorageDai.subtractLiquidity(BigInt("45000000000000000000000"));
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
+        //END HACK - substract liquidity without  burn ipToken
+
+        const balance = await testData.miltonDai.getAccruedBalance();
+        const actualCollateral =
+            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
+        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
+
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(liquidityProvider)
+                .itfRedeem(ipTokenAmount, params.openTimestamp),
+            //then
+            "IPOR_402"
+        );
+
+        //then
+        assert(
+            actualCollateral > actualLiquidityPoolBalance,
+            "Actual collateral cannot be lower than actual Liquidity Pool Balance"
+        );
+    });
+
+    it("should NOT redeem - Redeem Liquidity Pool Utilization exceeded, Pay Fixed", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        const ipTokenAmount = BigInt("41000000000000000000000");
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
+
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                BigInt("27000000000000000000000"),
+                params.toleratedQuoteValue,
+                params.leverage
+            );
+
+        const balance = await testData.miltonDai.getAccruedBalance();
+
+        const actualCollateral =
+            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
+        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
+
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(liquidityProvider)
+                .itfRedeem(ipTokenAmount, params.openTimestamp),
+            //then
+            "IPOR_402"
+        );
+        assert(
+            actualCollateral < actualLiquidityPoolBalance,
+            "Actual collateral cannot be higher than actual Liquidity Pool Balance"
+        );
+    });
+
+    it("should NOT redeem - Redeem Liquidity Pool Utilization exceeded, Receive Fixed", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
+
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        const ipTokenAmount = BigInt("41000000000000000000000");
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigInt("60000000000000000000000"), params.openTimestamp);
+
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                BigInt("27000000000000000000000"),
+                params.toleratedQuoteValue,
+                params.leverage
+            );
+
+        const balance = await testData.miltonDai.getAccruedBalance();
+
+        const actualCollateral =
+            BigInt(balance.payFixedTotalCollateral) + BigInt(balance.receiveFixedTotalCollateral);
+        const actualLiquidityPoolBalance = BigInt(balance.liquidityPool);
+
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(liquidityProvider)
+                .itfRedeem(ipTokenAmount, params.openTimestamp),
+            //then
+            "IPOR_402"
+        );
+        assert(
+            actualCollateral < actualLiquidityPoolBalance,
+            "Actual collateral cannot be higher than actual Liquidity Pool Balance"
+        );
+    });
+
+    it("should NOT redeem ipTokens because of empty Liquidity Pool", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
+
+        //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
+        await testData.miltonStorageDai.setJoseph(userOne.address);
+        await testData.miltonStorageDai.connect(userOne).subtractLiquidity(params.totalAmount);
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
+
+        //when
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(liquidityProvider)
+                .itfRedeem(BigInt("1000000000000000000000"), params.openTimestamp),
+            //then
+            "IPOR_300"
+        );
+    });
+
+    it("should NOT redeem ipTokens because after redeem Liquidity Pool will be empty", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase001(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenDaiInitialValues(testData, liquidityProvider, ZERO);
+        const params = getStandardDerivativeParamsDAI(userTwo, testData);
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.josephDai
+                .connect(liquidityProvider)
+                .itfRedeem(params.totalAmount, params.openTimestamp),
+            //then
+            "IPOR_402"
+        );
     });
 });
