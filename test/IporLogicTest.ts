@@ -4,7 +4,7 @@ import { Signer } from "ethers";
 import { BigNumber } from "ethers";
 import { MockIporLogic } from "../types";
 import { assertError } from "./utils/AssertUtils";
-import { ZERO, ONE_18DEC, YEAR_IN_SECONDS } from "./utils/Constants";
+import { ZERO, N1__0_18DEC, YEAR_IN_SECONDS } from "./utils/Constants";
 
 const { expect } = chai;
 
@@ -32,7 +32,7 @@ describe("IporLogic", () => {
     it("Should accrue Ibt Price Decimals 18", async () => {
         //given
         const initialTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
-        const initialQuasiIbtPrice = ONE_18DEC.mul(YEAR_IN_SECONDS);
+        const initialQuasiIbtPrice = N1__0_18DEC.mul(YEAR_IN_SECONDS);
 
         const ipor = {
             asset: await admin.getAddress(),
@@ -58,7 +58,7 @@ describe("IporLogic", () => {
     it("Should accrue IbtPrice Two Calculations Decimals18", async () => {
         //given
         const initialTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
-        const initialQuasiIbtPrice = ONE_18DEC.mul(YEAR_IN_SECONDS);
+        const initialQuasiIbtPrice = N1__0_18DEC.mul(YEAR_IN_SECONDS);
 
         const ipor = {
             asset: await admin.getAddress(),
@@ -296,7 +296,7 @@ describe("IporLogic", () => {
 
     it("Should calculate Exponential Weighted Moving Variance - IPOR Index > EMA (Exponential Moving Average), Alfa = 1 - Decimals 18", async () => {
         //given
-        const alfa = ONE_18DEC;
+        const alfa = N1__0_18DEC;
 
         const lastExponentialWeightedMovingVariance = BigNumber.from("13479210000000000");
         const exponentialMovingAverage = P_0_005_DEC18;
@@ -324,9 +324,9 @@ describe("IporLogic", () => {
         //given
         const alfa = BigNumber.from("250000000000000000");
 
-        const lastExponentialWeightedMovingVariance = ONE_18DEC;
-        const exponentialMovingAverage = ONE_18DEC;
-        const indexValue = BigNumber.from("4").mul(ONE_18DEC);
+        const lastExponentialWeightedMovingVariance = N1__0_18DEC;
+        const exponentialMovingAverage = N1__0_18DEC;
+        const indexValue = BigNumber.from("4").mul(N1__0_18DEC);
 
         //when
         await assertError(
