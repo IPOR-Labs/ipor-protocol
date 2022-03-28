@@ -530,6 +530,7 @@ module.exports.setupIpTokenDaiInitialValues = async (
 
 module.exports.setupIpTokenUsdtInitialValues = async (liquidityProvider, initialAmount) => {
     if (initialAmount > 0) {
+        console.log("###################################");
         await data.ipTokenUsdt.connect(liquidityProvider).mint(liquidityProvider, initialAmount);
     }
 };
