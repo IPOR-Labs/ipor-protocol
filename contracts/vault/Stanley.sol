@@ -17,6 +17,7 @@ import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "hardhat/console.sol";
 
+/// @title Stanley represents Asset Management module resposnible for investing Milton's cash in external DeFi protocols.
 abstract contract Stanley is
     UUPSUpgradeable,
     PausableUpgradeable,

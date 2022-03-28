@@ -329,7 +329,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function updateStorageWhenCloseSwapPayFixed(
-        address account,
+        address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
@@ -339,7 +339,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(
-            account,
+            liquidator,
             iporSwap,
             positionValue,
             closingTimestamp,
@@ -351,7 +351,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
-        address account,
+        address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
@@ -361,7 +361,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(
-            account,
+            liquidator,
             iporSwap,
             positionValue,
             closingTimestamp,
@@ -592,7 +592,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(
-        address account,
+        address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
@@ -601,7 +601,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
-            account,
+            liquidator,
             swap,
             positionValue,
             closingTimestamp,
@@ -616,7 +616,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
-        address account,
+        address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
@@ -625,7 +625,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
-            account,
+            liquidator,
             swap,
             positionValue,
             closingTimestamp,
@@ -640,7 +640,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
     }
 
     function _updateBalancesWhenCloseSwap(
-        address account,
+        address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
@@ -657,7 +657,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,
             //if yes then close even if not an owner
-            if (account != swap.buyer) {
+            if (liquidator != swap.buyer) {
                 require(
                     closingTimestamp >=
                         swap.endTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
