@@ -224,18 +224,32 @@ interface IMiltonStorage {
         external;
 
     /// @notice Updates balance when Joseph transfers Milton's cash to Charlie Treasury's multisig wallet.
-	/// @param transferredAmount 
+    /// @param transferredAmount asset amount which is transferred to Charlie Treasury multisig wallet.
     function updateStorageWhenTransferToCharlieTreasury(uint256 transferredAmount) external;
 
+    /// @notice Updates balance when Joseph transfers Milton's cash to Treasury's multisig wallet.
+    /// @param transferredAmount asset amount which is transferred to Treasury multisig wallet.
     function updateStorageWhenTransferToTreasury(uint256 transferredAmount) external;
 
+    /// @notice Sets Milton address. Function available only for smart contract Owner.
+    /// @param milton Milton address
     function setMilton(address milton) external;
 
+    /// @notice Sets Joseph address. Function available only for smart contract Owner.
+    /// @param joseph Joseph address
     function setJoseph(address joseph) external;
 
-    event MiltonChanged(address changedBy, address newMilton);
+    /// @notice Emmited when Milton address changed by smart contract Owner.
+    /// @param changedBy account address who changed Milton address
+    /// @param oldMilton old Milton address
+    /// @param newMilton new Milton address
+    event MiltonChanged(address changedBy, address oldMilton, address newMilton);
 
-    event JosephChanged(address changedBy, address newJoseph);
+    /// @notice Emmited when Joseph address changed by smart contract Owner.
+    /// @param changedBy account address who changed Jospeh address
+    /// @param oldJoseph old Joseph address
+    /// @param newJoseph new Joseph address
+    event JosephChanged(address changedBy, address oldJoseph, address newJoseph);
 
     //TODO: pause and unpause
 }

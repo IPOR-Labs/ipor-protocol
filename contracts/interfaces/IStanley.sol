@@ -10,7 +10,8 @@ interface IStanley {
     /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
 
-    //@notice return amount of assset token always in 18 decimals
+    /// @notice Gets total balance of account `who`,  transferred to Stanley and earned by Stanley using external DeFi protocols.
+	/// @who 
     function totalBalance(address who) external view returns (uint256);
 
     function calculateExchangeRate() external view returns (uint256);
